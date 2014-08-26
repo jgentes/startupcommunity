@@ -76,14 +76,14 @@ exports.linkedinAuth = function (req, accessToken, refreshToken, userprofile) {
   var deferred = Q.defer();
   //console.log(userprofile);
   
-  db.search('users', 'value.linkedin.id: ' + userprofile.linkedin.id)
+  db.search('users', 'value.linkedin.id: "' + userprofile.linkedin.id + '"')
   .then(function (result){
     //console.log('Result of db search:');
     //console.log(result.body.results);
     if (result.body.results.length > 0){
       if (result.body.results[0].value.linkedin.id == userprofile.linkedin.id){
         console.log("FOUND USER: " + userprofile.name);
-        db.put('users', userprofile.username, userprofile)
+        db.post('users', result.body.results[0].path.key, userprofile)
         .then(function () {
           console.log("PROFILE UPDATED: " + userprofile.username);
           //console.log(user);
@@ -97,7 +97,7 @@ exports.linkedinAuth = function (req, accessToken, refreshToken, userprofile) {
       }
     } else { 
       console.log('No existing linkedin user found!');
-      db.put('users', userprofile.username, userprofile)
+      db.post('users', userprofile)
         .then(function () {
           console.log("REGISTERED: " + userprofile.username);
           //console.log(user);
@@ -114,6 +114,54 @@ exports.linkedinAuth = function (req, accessToken, refreshToken, userprofile) {
   
   return deferred.promise;
 };
+
+exports.linkedinPull = function (linkedinuser) {
+  var deferred = Q.defer();
+  
+  //console.log('STARTING LINKEDINPULL');
+  //console.log(linkedinuser);
+  
+  db.search('users', 'value.linkedin.publicProfileUrl: "' + linkedinuser.linkedin.publicProfileUrl + '"')
+  .then(function (result){
+    console.log('Result of db search:');
+    console.log(result.body.results);
+    if (result.body.results.length > 0){
+      if (result.body.results[0].value.linkedin.id == linkedinuser.linkedin.id){
+        console.log("FOUND USER: " + linkedinuser.name);
+        db.put('users', result.body.results[0].path.key, linkedinuser, result.body.results[0].path.ref)
+        .then(function () {
+          console.log("PROFILE UPDATED: " + linkedinuser.username);
+          deferred.resolve(linkedinuser);
+        })
+        .fail(function (err) {
+          console.log("PUT FAIL:");
+          console.log(err.body);
+         deferred.reject(new Error(err.body));
+        });
+        
+      }
+    } else { 
+      console.log('No existing linkedin user found!');
+      db.post('users', linkedinuser)
+      .then(function () {
+        console.log("REGISTERED: " + linkedinuser.username);
+        deferred.resolve(linkedinuser);
+      })
+      .fail(function (err) {
+        console.log("FAIL:" + err.body);
+       deferred.reject(new Error(err.body));
+      });
+    }
+  })
+  .fail(function (result) {
+    console.log("SEARCH FAIL: ");
+    console.log(result.body);
+    deferred.reject(new Error(result.body));
+  });
+  
+  return deferred.promise;
+};
+
 
 exports.showallusers = function(){
   var deferred = Q.defer();

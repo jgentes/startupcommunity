@@ -2,7 +2,6 @@
 
 var express = require('express'),
     bodyParser = require('body-parser'),
-    cookieParser = require('cookie-parser'),
     methodOverride = require('method-override'),
     session = require('express-session'),
     logger = require('morgan'),
@@ -44,11 +43,12 @@ passport.use('local-signin', new LocalStrategy(
       if (!user) {
         console.log("COULD NOT LOG IN");
         req.session.error = 'Could not log user in. Please try again.'; //inform user could not log them in
-        done(null, user);
+        done(null, false);
       }
     })
     .fail(function (err){
       console.log(err.body);
+      done(err);
     });
   }
 ));
@@ -67,11 +67,12 @@ passport.use('local-signup', new LocalStrategy(
       if (!user) {
         console.log("COULD NOT REGISTER");
         req.session.error = 'That username is already in use, please try a different one.'; //inform user could not log them in
-        done(null, user);
+        done(null, false);
       }
     })
     .fail(function (err){
       console.log(err.body);
+      done(err);
     });
   }
 ));
@@ -98,14 +99,45 @@ passport.use('linkedin', new LinkedInStrategy({
           provider: 'linkedin'
         };
     
-    if (req.query.state !== 'none') {
+    var getlinkedinprofile = function(url, email) {
       request.get(
-        'https://api.linkedin.com/v1/people/url=' + querystring.escape(req.query.state) + ':(id,first-name,last-name,picture-url;secure=true,headline,summary,public-profile-url)' + '?oauth2_access_token=' + accessToken + '&format=json',
+        'https://api.linkedin.com/v1/people/url=' + querystring.escape(userlist[i].url) + ':(id,first-name,last-name,picture-url;secure=true,headline,summary,public-profile-url)' + '?oauth2_access_token=' + accessToken + '&format=json',
         function(error, response, body) {
-          console.log(body);
-          req.session.success = body;
-          done(null, userprofile);
+          var newbody = JSON.parse(body);
+          if (newbody.id !== undefined) {
+            var linkedinuser = {
+              name: newbody.firstName + ' ' + newbody.lastName,
+              email: email,
+              username: email,
+              linkedin: newbody,
+              avatar: newbody.pictureUrl || '',
+              provider: 'linkedin'
+            };
+            console.log('LINKEDIN USER:');
+            console.log(linkedinuser);
+            funct.linkedinPull(linkedinuser)
+            .then(function(user) {
+              console.log ("Database Update Successful");
+              //done(null, user);
+            })
+            .fail(function(err){
+              console.log("FAIL");
+              console.log(err.body);
+              //done(err);
+            });
+          }
+          
         });
+    };
+    
+    if (req.query.state !== 'none') {
+      
+      var userlist = [];
+      for (var i=0; i < userlist.length; i++) {
+        getlinkedinprofile(userlist[i].url, userlist[i].email);
+      }
+      
+        //done(null, false);
     } else {
     
       funct.linkedinAuth(req, accessToken, refreshToken, userprofile)
@@ -117,11 +149,12 @@ passport.use('linkedin', new LinkedInStrategy({
         if (!user) {
           console.log("COULD NOT REGISTER");
           req.session.error = 'That Linkedin ID is already in use, please try a different one.'; //inform user could not log them in
-          done(null, user);
+          done(null, false);
         }
       })
       .fail(function (err){
         console.log(err.body);
+        done(err);
       });
     }
   }
@@ -136,7 +169,6 @@ function ensureAuthenticated(req, res, next) {
 
 //===============EXPRESS=================
 app.use(logger('combined'));
-app.use(cookieParser());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(methodOverride());
 app.use(session({secret: 'junglist', resave: true, saveUninitialized: true}));
@@ -159,7 +191,7 @@ app.get('/', function(req, res){
 */
 //displays our signup page
 app.get('/signin', function(req, res){
-  res.render('signin');
+  //res.render('signin');
 });
 
 //display all users
@@ -222,7 +254,7 @@ app.post('/login', passport.authenticate('local-signin', {
 //logs user out of site, deleting them from the session, and returns to homepage
 app.get('/logout', function(req, res){
   var name = req.user.username;
-  console.log("LOGGIN OUT " + req.user.username)
+  console.log("LOGGIN OUT " + req.user.username);
   req.logout();
   res.redirect('/');
   req.session.notice = "You have successfully been logged out " + name + "!";
@@ -230,7 +262,7 @@ app.get('/logout', function(req, res){
 
 
 app.get('/', function(req, res) {
-    res.sendfile('index.html', { root: '/home/ubuntu/workspace/dist/'}); // load the single view file (angular will handle the page changes on the front-end)
+    res.sendFile('index.html', { root: '/home/ubuntu/workspace/dist/'}); // load the single view file (angular will handle the page changes on the front-end)
 });
 
 
@@ -254,20 +286,7 @@ app.use(function(req, res, next){
 });
 
 
-/*
-// Configure express to use handlebars templates
-var hbs = exphbs.create({
-    defaultLayout: 'main',
-});
-app.engine('handlebars', hbs.engine);
-app.set('view engine', 'handlebars');
-*/
-//app.set('views', __dirname + './dist/views');
-//app.engine('html', require('ejs').renderFile);
-//app.set("view options", {layout: false});
 app.use(express.static(__dirname + '/dist'));
-//app.engine('.html', require('ejs').renderFile);
-//app.set('view engine', 'html');
 
 
 //===============PORT=================
