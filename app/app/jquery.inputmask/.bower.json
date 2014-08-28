@@ -1,0 +1,33 @@
+{
+  "name": "jquery.inputmask",
+  "version": "3.0.0",
+  "main": "./dist/jquery.inputmask.bundle.js",
+  "keywords": [
+    "jQuery",
+    "plugins",
+    "input",
+    "form",
+    "inputmask",
+    "mask"
+  ],
+  "description": "jquery.inputmask is a jquery plugin which create an input mask.",
+  "license": "http://opensource.org/licenses/mit-license.php",
+  "dependencies": {
+    "jquery": ">=1.7"
+  },
+  "authors": [
+    {
+      "name": "Robin Herbots"
+    }
+  ],
+  "homepage": "http://robinherbots.github.io/jquery.inputmask",
+  "_release": "3.0.0",
+  "_resolution": {
+    "type": "version",
+    "tag": "3.0.0",
+    "commit": "3a8f645fef40804247e35843a5725f409884fcc4"
+  },
+  "_source": "git://github.com/RobinHerbots/jquery.inputmask.git",
+  "_target": "3.0.0",
+  "_originalSource": "jquery.inputmask"
+}

@@ -23,8 +23,8 @@ build/Release
 # Dependency directory
 # Deployed apps should consider commenting this line out:
 # see https://npmjs.org/doc/faq.html#Should-I-check-my-node_modules-folder-into-git
-node_modules
-bower_components
+app/node_modules
+app/bower_components
 
 # Config files
 config.js
@@ -34,3 +34,6 @@ config.js
 
 # Distribution files built via Grunt
 dist
+
+# Forza demo site
+demo

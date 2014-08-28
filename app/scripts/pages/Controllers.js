@@ -4,6 +4,7 @@ angular
   .module('theme.pages-controllers', [])
   .controller('SignupPageController', ['$scope', '$global', function ($scope, $global) {
     $global.set('fullscreen', true);
+    
 
     $scope.$on('$destroy', function () {
       $global.set('fullscreen', false);

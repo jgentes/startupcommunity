@@ -66,7 +66,7 @@ angular
     $scope.style_leftbarShown = $global.get('leftbarShown');
     $scope.style_rightbarCollapsed = $global.get('rightbarCollapsed');
     $scope.style_isSmallScreen = false;
-    $scope.style_showSearchCollapsed = $global.get('showSearchCollapsed');;
+    $scope.style_showSearchCollapsed = $global.get('showSearchCollapsed');
 
     $scope.hideSearchBar = function () {
         $global.set('showSearchCollapsed', false);
@@ -115,6 +115,8 @@ angular
     $scope.logIn = function () {
       $scope.isLoggedIn = true;
     };
+    
+    
 
     $scope.rightbarAccordionsShowOne = false;
     $scope.rightbarAccordions = [{open:true},{open:true},{open:true},{open:true},{open:true},{open:true},{open:true}];
@@ -132,7 +134,7 @@ angular
   .config(['$provide', '$routeProvider', function ($provide, $routeProvider) {
     $routeProvider
       .when('/', {
-        templateUrl: 'views/index.html',
+        templateUrl: 'views/launchform.html',
       })
       .when('/calendar', {
         templateUrl: 'views/calendar.html',
