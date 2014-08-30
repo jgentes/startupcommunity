@@ -122,6 +122,7 @@ module.exports = function (grunt) {
     // Empties folders to start fresh
     clean: {
       dist: {
+        options: { force: true },
         files: [{
           dot: true,
           src: [

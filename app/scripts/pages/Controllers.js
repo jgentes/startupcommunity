@@ -22,6 +22,12 @@ angular
   		}, 500);
   	};
   }])
+  .controller('LaunchformController', ['$scope', '$global', function ($scope, $global) {
+  	$global.set('fullscreen', true);
+  	$scope.subscribeAlert = function() {
+  	  $scope.alert = {msg: 'Success! We\'ll be in touch soon.'};
+  	};
+  }])
   .controller('ChatRoomController', ['$scope', '$timeout', function ($scope, $t) {
     var eliza = new ElizaBot();
     var avatars = ['potter.png', 'tennant.png', 'johansson.png', 'jackson.png', 'jobs.png'];

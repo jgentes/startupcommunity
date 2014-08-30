@@ -2,16 +2,19 @@
 
 angular
   .module('themesApp', [
-    'easypiechart',
-    'toggle-switch',
     'ui.bootstrap',
-    'ui.tree',
-    'ui.select2',
     'ngGrid',
-    'xeditable',
-    'flow',
+    'theme.pages-controllers',
     'theme.services',
     'theme.directives',
+    /* 
+    'easypiechart',
+    'toggle-switch',
+    'ui.tree',
+    'ui.select2',
+    'xeditable',
+    'flow',
+    
     'theme.navigation-controller',
     'theme.notifications-controller',
     'theme.messages-controller',
@@ -47,10 +50,11 @@ angular
     'theme.charts-canvas',
     'theme.charts-svg',
     'theme.charts-inline',
-    'theme.pages-controllers',
+    
     'theme.dashboard',
     'theme.templates',
     'theme.template-overrides',
+    */
     'ngCookies',
     'ngResource',
     'ngSanitize',
@@ -58,10 +62,11 @@ angular
     'ngAnimate',
   ])
   .controller('MainController', ['$scope', '$global', '$timeout', 'progressLoader', '$location', function ($scope, $global, $timeout, progressLoader, $location) {
+    $scope.style_fullscreen = $global.get('fullscreen');
+    /*
     $scope.style_fixedHeader = $global.get('fixedHeader');
     $scope.style_headerBarHidden = $global.get('headerBarHidden');
     $scope.style_layoutBoxed = $global.get('layoutBoxed');
-    $scope.style_fullscreen = $global.get('fullscreen');
     $scope.style_leftbarCollapsed = $global.get('leftbarCollapsed');
     $scope.style_leftbarShown = $global.get('leftbarShown');
     $scope.style_rightbarCollapsed = $global.get('rightbarCollapsed');
@@ -91,7 +96,7 @@ angular
     $scope.toggleRightBar = function () {
       $global.set('rightbarCollapsed', !$scope.style_rightbarCollapsed);
     };
-
+*/
     $scope.$on('globalStyles:changed', function (event, newVal) {
       $scope['style_'+newVal.key] = newVal.value;
     });
@@ -105,7 +110,7 @@ angular
         }
       });
     });
-
+/*
     // there are better ways to do this, e.g. using a dedicated service
     // but for the purposes of this demo this will do :P
     $scope.isLoggedIn = true;
@@ -120,7 +125,7 @@ angular
 
     $scope.rightbarAccordionsShowOne = false;
     $scope.rightbarAccordions = [{open:true},{open:true},{open:true},{open:true},{open:true},{open:true},{open:true}];
-
+*/
     $scope.$on('$routeChangeStart', function (e) {
       // console.log('start: ', $location.path());
       progressLoader.start();
@@ -136,6 +141,7 @@ angular
       .when('/', {
         templateUrl: 'views/launchform.html',
       })
+      /*
       .when('/calendar', {
         templateUrl: 'views/calendar.html',
         resolve: {
@@ -220,6 +226,7 @@ angular
           }]
         }
       })
+      */
       .when('/:templateFile', {
         templateUrl: function (param) { return 'views/'+param.templateFile+'.html' }
       })

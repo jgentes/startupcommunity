@@ -16,7 +16,7 @@ body {
 ::-moz-focus-inner {border:none;}
 
 /* Logo */
-@navbar-brand-width: 24px;
+@navbar-brand-width: 106px;
 .navbar-brand {.text-hide() !important; background: url("../img/logo.png") no-repeat center center;height: @navbar-height;width: @navbar-brand-width;}
 
 // In small screens header becomes two lines
@@ -108,15 +108,13 @@ footer {
 
 .focusedform {
 	height: 100%;
-	//background: @sidebar-background;
-	background-image: url("../img/office_table.jpg"); 
-	background-size: 100%;
+	background: @sidebar-background;
 	padding: 0;
-
+	
 	#page-rightbar, header {display: none;}
 
 	.panel {width: 400px;}
-	.brand {display: block; padding-bottom: 20px; margin: 0 auto; width: 400px;}
+	.brand {display: block; padding-bottom: 40px; margin: 0 auto; width: 224px;}
 
 	.verticalcenter {
 		position: absolute;
@@ -138,6 +136,11 @@ footer {
   		margin-left: 0px !important;
   		height: 100%;
   		position: relative;
+  		background: url('../img/office_table_wash.jpg') no-repeat center center fixed;
+  		-webkit-background-size: cover;
+  		-moz-background-size: cover;
+  		-o-background-size: cover;
+  		background-size: cover;
 	}
 
 	#page-rightbar, #page-leftbar {

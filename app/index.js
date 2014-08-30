@@ -5,15 +5,19 @@ var express = require('express'),
     methodOverride = require('method-override'),
     session = require('express-session'),
     logger = require('morgan'),
+    favicon = require('serve-favicon'),
     request = require("request"),
     passport = require('passport'),
     LocalStrategy = require('passport-local'),
-    LinkedInStrategy = require('passport-linkedin-oauth2').Strategy;
+    LinkedInStrategy = require('passport-linkedin-oauth2').Strategy,
+    mcapi = require('mailchimp-api/mailchimp');
 
 var config = require('../config.js'), //config file contains all tokens and other private info
     funct = require('./functions.js');
 
 var app = express();
+
+var mc = new mcapi.Mailchimp(config.mailchimp);
 
 //===============PASSPORT=================
 
@@ -180,7 +184,7 @@ app.use(passport.session());
 
 // load the single view file (angular will handle the page changes on the front-end)
 app.get('/', function(req, res) {
-    res.sendFile('index.html', { root: '/home/ubuntu/workspace/app/' }); 
+    res.sendFile('index.html', { root: __dirname }); 
 });
 
 //displays our signup page
@@ -248,12 +252,26 @@ app.post('/login', passport.authenticate('local-signin', {
 //logs user out of site, deleting them from the session, and returns to homepage
 app.get('/logout', function(req, res){
   var name = req.user.username;
-  console.log("LOGGIN OUT " + req.user.username);
+  console.log("LOGGING OUT " + req.user.username);
   req.logout();
   res.redirect('/');
   req.session.notice = "You have successfully been logged out " + name + "!";
 });
 
+app.post('/sub', function(req, res){
+  mc.lists.subscribe({id: 'ba6c99c719', email:{email:req.body.email}}, function(data) {
+      req.session.success = "You've subscribed successfully! Look for the confirmation email.";
+      res.redirect('/');
+    },
+    function(error) {
+      if (error.error) {
+        req.session.error = error.code + ": " + error.error;
+      } else {
+        req.session.error = 'There was an error subscribing that user';
+      }
+      res.redirect('/');
+    });
+});
 
 
 
@@ -277,9 +295,8 @@ app.use(function(req, res, next){
 });
 
 
-
-app.use("/", express.static(__dirname + '/'));
-
+app.use("/", express.static(__dirname));
+app.use(favicon(__dirname + '/images/favicon.ico'));
 
 //===============PORT=================
 var port = process.env.PORT || 5000;
