@@ -339,7 +339,7 @@ module.exports = function (grunt) {
     ngtemplates:  {
       app: {
         src:      'app/views/templates/**.html',
-        dest:     'scripts/templates/templates.js',
+        dest:     'dist/scripts/templates/templates.js',
         options:  {
           url:    function(url) { return url.replace('views/', ''); },
           bootstrap: function(module, script) {

@@ -184,7 +184,7 @@ app.use(passport.session());
 
 // load the single view file (angular will handle the page changes on the front-end)
 app.get('/', function(req, res) {
-    res.sendFile('index.html', { root: config.path + '/' }); 
+    res.sendFile('index.html', { root: __dirname + config.path }); 
 });
 
 //displays our signup page
@@ -293,12 +293,12 @@ app.use(function(req, res, next){
   next();
 });
 
-app.use("/", express.static(config.path));
-app.use("/public", express.static('/home/ubuntu/workspace/public'));
-app.use(favicon('/home/ubuntu/workspace/public/favicon.png'));
+app.use("/", express.static(__dirname + config.path));
+app.use("/public", express.static(__dirname + '/public'));
+app.use(favicon(__dirname + '/public/favicon.png'));
 
 if (process.env.NODE_ENV !== "production") {  
-  app.use("/bower_components", express.static("/home/ubuntu/workspace/bower_components"));
+  app.use("/bower_components", express.static(__dirname + "/bower_components"));
 }
 
 //===============PORT=================
