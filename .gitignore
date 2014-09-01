@@ -33,8 +33,5 @@ config.js
 # C9
 .c9
 
-# Distribution files built via Grunt
-dist
-
 # Forza theme
 theme
