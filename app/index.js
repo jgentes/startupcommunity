@@ -292,8 +292,7 @@ app.use(function(req, res, next){
 
   next();
 });
-console.log("CONFIG PATH");
-console.log(config.path);
+
 app.use("/", express.static(config.path));
 app.use("/public", express.static('/home/ubuntu/workspace/public'));
 app.use(favicon('/home/ubuntu/workspace/public/favicon.png'));

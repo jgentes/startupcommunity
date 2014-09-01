@@ -36,5 +36,5 @@ config.js
 # Distribution files built via Grunt
 dist
 
-# Forza demo site
-demo
+# Forza theme
+theme
