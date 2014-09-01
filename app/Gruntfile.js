@@ -8,7 +8,7 @@
 // 'test/spec/**/*.js'
 
 module.exports = function (grunt) {
-
+  
   // Load grunt tasks automatically
   require('load-grunt-tasks')(grunt);
 
@@ -64,12 +64,12 @@ module.exports = function (grunt) {
     // The actual grunt server settings
     connect: {
       options: {
-        port: 9000,
+        port: process.env.PORT,
         // Change this to '0.0.0.0' to access the server from outside.
-        hostname: 'localhost',
+        hostname: '0.0.0.0',
         livereload: 35729
       },
-      // courtesy of Phubase Tiewthanom
+      /*
       livereload: {
         options: {
           middleware: function (connect) {
@@ -84,6 +84,7 @@ module.exports = function (grunt) {
           }
         }
       },
+      */
       test: {
         options: {
           port: 9001,
@@ -222,7 +223,7 @@ module.exports = function (grunt) {
     },
 
     imagemin: {
-      dist: {
+      dist: {        
         files: [{
           expand: true,
           cwd: '<%= yeoman.app %>/images',
@@ -337,10 +338,10 @@ module.exports = function (grunt) {
     },
     ngtemplates:  {
       app: {
-        src:      'app/views/templates/**.html',
-        dest:     'app/scripts/templates/templates.js',
+        src:      'views/templates/**.html',
+        dest:     'scripts/templates/templates.js',
         options:  {
-          url:    function(url) { return url.replace('app/views/', ''); },
+          url:    function(url) { return url.replace('views/', ''); },
           bootstrap: function(module, script) {
             return "angular.module('theme.templates', []).run(['$templateCache', function ($templateCache) {\n"+script+"}])";
           }

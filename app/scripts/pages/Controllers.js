@@ -22,11 +22,25 @@ angular
   		}, 500);
   	};
   }])
-  .controller('LaunchformController', ['$scope', '$global', function ($scope, $global) {
+  .controller('LaunchformController', ['$scope', '$global', '$http', function ($scope, $global, $http) {
   	$global.set('fullscreen', true);
-  	$scope.subscribeAlert = function() {
-  	  $scope.alert = {msg: 'Success! We\'ll be in touch soon.'};
-  	};
+  	$scope.formData = {};
+  	
+  	$scope.subscribe = function() { 
+      $http({
+  	        method  : 'POST',
+  	        url     : '/sub',
+  	        data    : $.param({ email: $scope.formData.email }),  // pass in data as strings
+  	        headers : { 'Content-Type': 'application/x-www-form-urlencoded' }  // set the headers so angular passing info as form data (not request payload)
+  	    }).success(function(data, status, headers, config) {
+          if(data.success){
+            $scope.alert = {msg: 'Thanks ' + $scope.formData.email + '! We\'ll be in touch soon.'}; 
+            $scope.formData = {};
+          }else {
+            $scope.alert = {type: 'error', msg: 'Something went wrong!'}; 
+          }
+      });
+    };  
   }])
   .controller('ChatRoomController', ['$scope', '$timeout', function ($scope, $t) {
     var eliza = new ElizaBot();

@@ -1,6 +1,6 @@
 var bcrypt = require('bcryptjs'),
     Q = require('q'),
-    config = require('../config.js'), //config file contains all tokens and other private info
+    config = require('../config.json')[process.env.NODE_ENV || 'development'],
     db = require('orchestrate')(config.db); //config.db holds Orchestrate token
 
 //used in local-signup strategy
@@ -11,7 +11,7 @@ exports.localReg = function (username, password) {
     "username": username,
     "password": hash,
     "avatar": "http://placepuppy.it/images/homepage/Beagle_puppy_6_weeks.JPG"
-  }
+  };
   //check if username is already assigned in our database
   db.get('users', username)
   .then(function (result){ //case in which user already exists in db

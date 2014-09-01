@@ -6,13 +6,13 @@ var express = require('express'),
     session = require('express-session'),
     logger = require('morgan'),
     favicon = require('serve-favicon'),
-    request = require("request"),
+    request = require('request'),
     passport = require('passport'),
     LocalStrategy = require('passport-local'),
     LinkedInStrategy = require('passport-linkedin-oauth2').Strategy,
     mcapi = require('mailchimp-api/mailchimp');
 
-var config = require('../config.js'), //config file contains all tokens and other private info
+var config = require('../config.json')[process.env.NODE_ENV || 'development'],
     funct = require('./functions.js');
 
 var app = express();
@@ -184,7 +184,7 @@ app.use(passport.session());
 
 // load the single view file (angular will handle the page changes on the front-end)
 app.get('/', function(req, res) {
-    res.sendFile('index.html', { root: __dirname }); 
+    res.sendFile('index.html', { root: config.path + '/' }); 
 });
 
 //displays our signup page
@@ -258,18 +258,17 @@ app.get('/logout', function(req, res){
   req.session.notice = "You have successfully been logged out " + name + "!";
 });
 
-app.post('/sub', function(req, res){
-  mc.lists.subscribe({id: 'ba6c99c719', email:{email:req.body.email}}, function(data) {
-      req.session.success = "You've subscribed successfully! Look for the confirmation email.";
-      res.redirect('/');
+app.post('/sub', function(req, res){  
+  mc.lists.subscribe({id: 'ba6c99c719', email:{email:req.body.email}}, function(data) { 
+    console.log(data);
+    res.send({ success: "Successfully subscribed " + req.body.email });
     },
     function(error) {
       if (error.error) {
-        req.session.error = error.code + ": " + error.error;
+        console.log("Mailchimp API Error" + error.code + ": " + error.error);
       } else {
-        req.session.error = 'There was an error subscribing that user';
-      }
-      res.redirect('/');
+        console.log('There was an error subscribing ' + req.body.email);
+      }      
     });
 });
 
@@ -293,12 +292,13 @@ app.use(function(req, res, next){
 
   next();
 });
-
-
-app.use("/", express.static(__dirname));
-app.use(favicon(__dirname + '/images/favicon.ico'));
+console.log("CONFIG PATH");
+console.log(config.path);
+app.use("/", express.static(config.path));
+app.use("/public", express.static('/home/ubuntu/workspace/public'));
+app.use(favicon('/home/ubuntu/workspace/public/favicon.png'));
 
 //===============PORT=================
 var port = process.env.PORT || 5000;
 app.listen(port);
-console.log("StartupCommunity.org ready on " + port + "!");
+console.log("StartupCommunity.org ready!");
