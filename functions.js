@@ -166,7 +166,7 @@ exports.linkedinPull = function (linkedinuser) {
 exports.showallusers = function(){
   var deferred = Q.defer();
   //TODO ADD IS.AUTHENTICATED (HERE OR IN THE ROUTE?)
-  db.list('users')
+  db.list('users', {limit:50})
   .then(function(result){
     for (var i=0; i < result.body.results.length; i++) {
       delete result.body.results[i].path.collection;
