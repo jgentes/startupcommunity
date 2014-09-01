@@ -295,7 +295,7 @@ app.use(function(req, res, next){
 
 app.use("/", express.static(__dirname + config.path));
 app.use("/public", express.static(__dirname + '/public'));
-app.use(favicon('/public/favicon.png'));
+app.use(favicon(__dirname + '/public/favicon.png'));
 
 if (process.env.NODE_ENV !== "production") {  
   app.use("/bower_components", express.static(__dirname + "/bower_components"));
