@@ -9,7 +9,7 @@
     "mailchimp": "4cd1eb319ae631eb57ef642b9340af68-us9",
     "path": "/app"
   },
-  "production": {
+  "dist": {
     "db": "be406a43-5cc1-425f-9545-23bd75ec6cfc",
     "linkedin": {
       "clientID": "75s9q8uelaanvf",
@@ -18,5 +18,15 @@
     },
     "mailchimp": "4cd1eb319ae631eb57ef642b9340af68-us9",
     "path": "/dist"
+  },
+  "production": {
+    "db": "be406a43-5cc1-425f-9545-23bd75ec6cfc",
+    "linkedin": {
+      "clientID": "75s9q8uelaanvf",
+      "clientSecret": "kus8etN9TWmgJBba",
+      "callbackURL": "https://startupcommunity-c9-jgentes.c9.io/auth/linkedin/callback"
+    },
+    "mailchimp": "4cd1eb319ae631eb57ef642b9340af68-us9",
+    "path": "/app/dist"
   }
 }
