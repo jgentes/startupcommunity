@@ -1,0 +1,25 @@
+<div class="verticalcenter" ng-controller="LaunchformController">
+	<a href="#/"><img src="assets/img/logo-big.png" alt="Logo" class="brand" style="margin-bottom: -50px; width: 100%;"/></a>
+	<h4 class="text-center" style="margin-bottom: 20px; color: #5A5A5A;">Kickstart your city's entrepreneurial ecosystem</h4>
+	<div class="panel panel-primary">
+		<div class="panel-body" style="border-right: 1px solid #e1e3e8; border-bottom: 1px solid #e1e3e8; border-left: 1px solid #e1e3e8;">
+			<h4 class="text-center" style="margin-bottom: 25px;">Sign up to be notified when we launch!</h4>
+				<form ng-submit="subscribe()" class="form-horizontal" style="margin-bottom: 0px !important;">
+						<div class="form-group">
+							<div class="col-sm-12">
+								<div class="input-group">
+									<span class="input-group-addon"><i class="fa fa-envelope-o"></i></span>
+									<input type="text" class="form-control" id="email" placeholder="Email" ng-model="formData.email">
+									<div class="input-group-btn">
+ 			                          <button type="submit" class="btn btn-info">Sign up</button>
+			                        </div>
+								</div>
+							</div>
+						</div>	
+						<alert ng-hide="!alert.msg" class="ng-hide" type="success" style="margin-bottom: 0;"><span ng-bind-html="alert.msg | safe_html"></span></alert>
+					</form>
+					
+		</div>
+		
+	</div>
+</div>
