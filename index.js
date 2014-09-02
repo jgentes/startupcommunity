@@ -258,7 +258,7 @@ app.get('/logout', function(req, res){
 });
 
 app.post('/sub', function(req, res){  
-  mc.lists.subscribe({id: 'ba6c99c719', email:{email:req.body.email}}, function(data) { 
+  mc.lists.subscribe({id: 'ba6c99c719', email:{email:req.body.email}, merge_vars: {'CITY': req.body.city} }, function(data) { 
     console.log(data);
     res.send({ success: "Successfully subscribed " + req.body.email });
     },

@@ -24,23 +24,48 @@ angular
   }])
   .controller('LaunchformController', ['$scope', '$global', '$http', function ($scope, $global, $http) {
   	$global.set('fullscreen', true);
-  	$scope.formData = {};
-  	
+  	$scope.formData = {};  	
   	$scope.subscribe = function() { 
       $http({
   	        method  : 'POST',
   	        url     : '/sub',
-  	        data    : $.param({ email: $scope.formData.email }),  // pass in data as strings
+  	        data    : $.param({ email: $scope.formData.email, city: $scope.formData.city }),  // pass in data as strings
   	        headers : { 'Content-Type': 'application/x-www-form-urlencoded' }  // set the headers so angular passing info as form data (not request payload)
   	    }).success(function(data, status, headers, config) {
           if(data.success){
-            $scope.alert = {msg: 'Thanks ' + $scope.formData.email + '! We\'ll be in touch soon.'}; 
+            $scope.alert = {msg: 'Thanks, we look forward to helping you build a vibrant startup community in <strong>' + $scope.formData.city.substr(0, $scope.formData.city.length - 4) + '</strong>!  We\'ll be in touch soon.'}; 
             $scope.formData = {};
+            
           }else {
             $scope.alert = {type: 'error', msg: 'Something went wrong!'}; 
           }
       });
-    };  
+    };
+    
+    $scope.getLocation = function(val) {
+      return $http.get('http://maps.googleapis.com/maps/api/geocode/json', {
+        params: {
+          address: val,
+          sensor: false,
+          components: 'country:US'
+        }
+      }).then(function(res){
+        var addresses = [];
+        var f = '';
+        angular.forEach(res.data.results, function(item){           
+          if (item.types[0] == 'locality') {
+            for (f=1;f<item.address_components.length;f++) {
+              if (item.address_components[f].types[0] == "administrative_area_level_1") {
+                addresses.push(item.address_components[0].short_name + ', ' + item.address_components[f].short_name);
+                break;
+              }
+            }
+          }
+        });
+        return addresses;
+      });
+    };
+    
   }])
   .controller('ChatRoomController', ['$scope', '$timeout', function ($scope, $t) {
     var eliza = new ElizaBot();

@@ -14,11 +14,12 @@ angular
     'theme.form-directives',
     'theme.form-validation',
     'theme.form-inline',
-    'ui.select2',       
+    'ui.select2',
     /* 
     'easypiechart',
     'toggle-switch',
-    'ui.tree',    
+    'ui.tree',
+    
     'xeditable',
     'flow',    
     'theme.navigation-controller',
@@ -49,8 +50,8 @@ angular
     'theme.tables-editable',
     'theme.charts-flot',
     'theme.charts-canvas',
-    'theme.charts-inline', 
-    'theme.charts-svg',    
+    'theme.charts-svg',
+    'theme.charts-inline',    
     'theme.dashboard',
     
     */
