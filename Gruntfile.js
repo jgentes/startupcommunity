@@ -298,14 +298,16 @@ module.exports = function (grunt) {
             'images/{,*/}*.{webp}',
             'fonts/*',
             'assets/**',
-            'bower_components/jquery.inputmask/dist/jquery.inputmask.bundle.js',
-            'bower_components/jquery-validation/dist/jquery.validate.js',
-            'bower_components/jqvmap/jqvmap/maps/jquery.vmap.europe.js',
-            'bower_components/jqvmap/jqvmap/maps/jquery.vmap.usa.js',
-            'bower_components/stepy/lib/jquery.stepy.js',
-            'bower_components/Chart.js/Chart.min.js',
-            'bower_components/raphael/raphael.js',
-            'bower_components/morris.js/morris.js'
+            '../bower_components/jquery.inputmask/dist/jquery.inputmask.bundle.js',
+            '../bower_components/jquery-validation/dist/jquery.validate.js'
+            /*
+            '../bower_components/jqvmap/jqvmap/maps/jquery.vmap.europe.js',
+            '../bower_components/jqvmap/jqvmap/maps/jquery.vmap.usa.js',
+            '../bower_components/stepy/lib/jquery.stepy.js',
+            '../bower_components/Chart.js/Chart.min.js',
+            '../bower_components/raphael/raphael.js',
+            '../bower_components/morris.js/morris.js'
+            */
           ]
         }, {
           expand: true,
