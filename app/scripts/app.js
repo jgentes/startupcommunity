@@ -19,9 +19,7 @@ angular
     'ngResource',
     'ngSanitize',
     'ngRoute',
-    'ngAnimate',
-    'angulartics',
-    'angulartics.google.analytics'
+    'ngAnimate'
   ])
   .controller('MainController', ['$scope', '$global', '$timeout', 'progressLoader', '$location', function ($scope, $global, $timeout, progressLoader, $location) {
     $scope.style_fullscreen = $global.get('fullscreen');

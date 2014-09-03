@@ -20,8 +20,7 @@
     "google-code-prettify": "1.0.1",
     "jquery-validation": "*",
     "jquery.inputmask": "3.0.0",
-    "angular-ui-select2": "0.0.5",
-    "angulartics": "~0.16.5"
+    "angular-ui-select2": "0.0.5"
   },
   "olddependencies": {
     "seiyria-bootstrap-slider": "~1.9.0",
