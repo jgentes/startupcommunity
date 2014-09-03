@@ -206,7 +206,7 @@ app.get('/api/users', function(req, res){
   } else {
     funct.showallusers()
     .then(function(userlist){
-      res.send(JSON.stringify(userlist, null, 4));
+      res.send(userlist);
     })
     .fail(function(err){
       res.send(err);
