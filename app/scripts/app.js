@@ -21,10 +21,7 @@ angular
     'ngRoute',
     'ngAnimate',
     'angulartics',
-    'angulartics.google.analytics'.config(function ($analyticsProvider) {
-            $analyticsProvider.firstPageview(true); /* Records pages that don't use $state or $route */
-            $analyticsProvider.withAutoBase(true);  /* Records full path */
-    })
+    'angulartics.google.analytics'
   ])
   .controller('MainController', ['$scope', '$global', '$timeout', 'progressLoader', '$location', function ($scope, $global, $timeout, progressLoader, $location) {
     $scope.style_fullscreen = $global.get('fullscreen');
