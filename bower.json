@@ -21,8 +21,7 @@
     "jquery-validation": "*",
     "jquery.inputmask": "3.0.0",
     "angular-ui-select2": "0.0.5",
-    "angulartics": "0.16.3",
-    "angulartics-segmentio": "0.16.3"
+    "angulartics": "0.16.3"
   },
   "olddependencies": {
     "seiyria-bootstrap-slider": "~1.9.0",

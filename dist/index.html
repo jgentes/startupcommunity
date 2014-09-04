@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>StartupCommunity.org</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="StartupCommunity.org">
+  <meta name="author" content="James Gentes">
+
+  <link rel="icon" type="image/png" href="/public/favicon.png">
+
+  <link href='https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700' rel='stylesheet' type='text/css'>
+    
+  <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries. Placeholdr.js enables the placeholder attribute -->
+  <!--[if lt IE 9]>
+    <link rel="stylesheet" href="assets/css/668b0601.ie8.css">
+    <script type="text/javascript" src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/respond.js/1.1.0/respond.min.js"></script>
+    <script type="text/javascript" src="assets/plugins/charts-flot/excanvas.min.js"></script>
+    <script type='text/javascript' src='assets/plugins/misc/placeholdr.js'></script>
+  <![endif]-->
+
+
+    <link rel="stylesheet" href="assets/css/d42686af.vendor.css"/>
+    
+
+    <link rel="stylesheet" href="assets/css/8bc0878b.main.css"/>
+
+<style type="text/css">
+[ng-cloak] {
+  display: none;
+}
+.topNegative1000 {
+  top: -1000px !important;
+}
+.topZero {
+  top: 0 !important;
+}
+  
+.mainview-animation {
+  position: relative;
+}
+.mainview-animation.ng-enter {
+  -webkit-transition: .3s linear all; /* Safari/Chrome */
+  -moz-transition: .3s linear all; /* Firefox */
+  -o-transition: .3s linear all; /* Opera */
+  transition: .3s linear all; /* IE10+ and Future Browsers */
+}
+
+/**
+ * Pre animation -> enter
+ */
+.mainview-animation.ng-enter{
+  /* The animation preparation code */
+  opacity: 0;
+}
+
+/**
+ * Post animation -> enter
+ */
+.mainview-animation.ng-enter.ng-enter-active { 
+  /* The animation code itself */
+  opacity: 1;
+}
+
+.angular-google-map-container { height: 300px; }
+.navbar.navbar-default.ng-hide {
+  display: none;
+}
+#page-rightbar .jspHorizontalBar {
+  /*display: none !important;*/
+}
+.fc-grid .fc-day-number {
+  padding: 5px 6px;
+}
+</style>
+<script type="text/javascript">
+  window.analytics=window.analytics||[],window.analytics.methods=["identify","group","track","page","pageview","alias","ready","on","once","off","trackLink","trackForm","trackClick","trackSubmit"],window.analytics.factory=function(t){return function(){var a=Array.prototype.slice.call(arguments);return a.unshift(t),window.analytics.push(a),window.analytics}};for(var i=0;i<window.analytics.methods.length;i++){var key=window.analytics.methods[i];window.analytics[key]=window.analytics.factory(key)}window.analytics.load=function(t){if(!document.getElementById("analytics-js")){var a=document.createElement("script");a.type="text/javascript",a.id="analytics-js",a.async=!0,a.src=("https:"===document.location.protocol?"https://":"http://")+"cdn.segment.io/analytics.js/v1/"+t+"/analytics.min.js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n)}},window.analytics.SNIPPET_VERSION="2.0.9",
+  window.analytics.load("fn0wc8wvqu");
+</script>
+</head>
+
+<body class=""
+  ng-app="themesApp"
+  ng-controller="MainController"
+  ng-class="{
+              'static-header': !style_fixedHeader,
+              'focusedform': style_fullscreen,
+              'layout-horizontal': style_layoutHorizontal,
+              'fixed-layout': style_layoutBoxed,
+              'collapse-leftbar': style_leftbarCollapsed && !style_leftbarShown,
+              'show-rightbar': style_rightbarCollapsed,
+              'show-leftbar': style_leftbarShown
+            }"
+  ng-click="hideSearchBar();hideHeaderBar();"
+  ng-cloak
+>
+
+    <div id="page-content" class="clearfix" fit-height>
+        <div id="wrap" ng-view="" class="mainview-animation">
+        </div> <!--wrap -->
+    </div> <!-- page-content -->
+
+    <footer role="contentinfo">
+        <div class="clearfix">
+            <ul class="list-unstyled list-inline pull-left">
+                <li>StartupCommunity.org &copy; 2014</li>
+            </ul>
+            <button class="pull-right btn btn-default btn-xs hidden-print" back-to-top style="padding: 1px 10px;"><i class="fa fa-angle-up"></i></button>
+        </div>
+    </footer>
+
+</div> <!-- page-container -->
+
+    <!--[if lt IE 9]>
+    <script src="../bower_components/es5-shim/es5-shim.js"></script>
+    <script src="../bower_components/json3/lib/json3.min.js"></script>
+    <![endif]-->
+    
+    <script type='text/javascript' src='http://maps.google.com/maps/api/js?sensor=true'></script> 
+
+    <script src="scripts/e7aaeb2e.vendor.js"></script>
+    
+
+      <script src="scripts/5c1ec2ed.scripts.js"></script>
+
+</body>
+</html>
