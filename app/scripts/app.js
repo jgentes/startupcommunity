@@ -72,7 +72,7 @@ angular
         }
       });
     });
-/*
+
     // there are better ways to do this, e.g. using a dedicated service
     // but for the purposes of this demo this will do :P
     $scope.isLoggedIn = true;
@@ -84,7 +84,7 @@ angular
     };
     
     
-
+/*
     $scope.rightbarAccordionsShowOne = false;
     $scope.rightbarAccordions = [{open:true},{open:true},{open:true},{open:true},{open:true},{open:true},{open:true}];
 */
@@ -101,9 +101,9 @@ angular
   .config(['$provide', '$routeProvider', function ($provide, $routeProvider) {
     $routeProvider
       .when('/', {
-        templateUrl: 'views/launchform.html',
+        templateUrl: 'views/launchform.html'
       })
-      /*
+      /*      
       .when('/calendar', {
         templateUrl: 'views/calendar.html',
         resolve: {

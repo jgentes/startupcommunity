@@ -12,7 +12,7 @@ var express = require('express'),
     mcapi = require('mailchimp-api/mailchimp');
 
 var config = require('./config.json')[process.env.NODE_ENV || 'development'],
-    users = require('./users.js');
+    users = require('./server/users.js');
 
 var app = express();
 
