@@ -165,12 +165,38 @@ exports.linkedinPull = function (linkedinuser) {
 };
 
 
-exports.showallusers = function(city){
+exports.showallusers = function(city, state){
   var deferred = Q.defer();
   //TODO ADD IS.AUTHENTICATED (HERE OR IN THE ROUTE?)
-  db.newGraphReader().get()
-  .from('cities', city)
-  .related('in')  
+  db.newSearchBuilder()
+  .collection('users')
+  .limit(100)
+  .query('value.cities.' + state.toUpperCase() + ': "' + city + '"')
+  .then(function(result){
+    for (var i=0; i < result.body.results.length; i++) {
+      delete result.body.results[i].path.collection;
+      delete result.body.results[i].value.email;
+      delete result.body.results[i].value.username;
+      delete result.body.results[i].value.password;
+      delete result.body.results[i].value.emailAddress;
+    }
+    deferred.resolve(result.body);
+  })
+  .fail(function(err){
+    deferred.reject(new Error(err.body));
+  });
+ 
+  return deferred.promise;
+  
+};
+
+exports.searchincity = function(city, state, query){
+  var deferred = Q.defer();
+  //TODO ADD IS.AUTHENTICATED (HERE OR IN THE ROUTE?)  
+  db.newSearchBuilder()
+  .collection('users')
+  .limit(100)
+  .query('value.cities.' + state.toUpperCase() + ': "' + city + '" AND ' + query)
   .then(function(result){
     for (var i=0; i < result.body.results.length; i++) {
       delete result.body.results[i].path.collection;
@@ -201,7 +227,7 @@ exports.bendupdate = function() {
       thiskey = result.body.results[i].path.key;
       console.log('processing ' + thiskey);
       thisrecord = result.body.results[i].value;
-      thisrecord["cities"] = { "bend": "Bend, OR" };
+      thisrecord["cities"] = { "OR": "Bend" };
       db.put('users', thiskey, thisrecord)
       .then(function (res) {
         deferred.resolve(res.statusCode);
@@ -226,33 +252,4 @@ exports.bendupdate = function() {
   
 };
 
-exports.searchincity = function(query, city){
-  var deferred = Q.defer();
-  //TODO ADD IS.AUTHENTICATED (HERE OR IN THE ROUTE?)
-  db.newGraphReader()
-  .get()
-  .from('cities', 'kates-user-id')
-  .related('follows')
-  .then(function (res) {
-    console.log(res.body);
-  });
-  
-  db.search('users', query)
-  .then(function(result){
-    for (var i=0; i < result.body.results.length; i++) {
-      delete result.body.results[i].path.collection;
-      delete result.body.results[i].value.email;
-      delete result.body.results[i].value.username;
-      delete result.body.results[i].value.password;
-      delete result.body.results[i].value.emailAddress;
-    }
-    deferred.resolve(result.body);
-  })
-  .fail(function(err){
-    deferred.reject(new Error(err.body));
-  });
- 
-  return deferred.promise;
-  
-};
 

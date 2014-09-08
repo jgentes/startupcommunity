@@ -192,12 +192,16 @@ app.get('/signin', function(req, res){
 });
 
 //display all users
-app.get('/api/:city/users', function(req, res){
-  var city = req.param.city;
+app.get('/api/:citystate/users', function(req, res){  
+  var citystate = req.params.citystate;
   var query = req.query.search;
+  var city = citystate.substr(0, citystate.length - 3);
+  var state = citystate.substr(citystate.length - 2, 2);
+  console.log("City, State, Search: " + city + ', ' + state.toUpperCase() + ', ' + query);
+  
   //TODO ADD IS.AUTHENTICATED
   if (query !== undefined){
-    users.searchincity(city, query)
+    users.searchincity(city, state, query)
     .then(function(userlist){
       res.send(userlist);
     })
@@ -205,7 +209,7 @@ app.get('/api/:city/users', function(req, res){
       res.send(err);
     });
   } else {
-    users.showallusers(city)
+    users.showallusers(city, state)
     .then(function(userlist){
       res.send(userlist);
     })
@@ -214,7 +218,7 @@ app.get('/api/:city/users', function(req, res){
     });
   }
 });
-
+/*
 app.get('/api/update', function(req, res){
   console.log("update triggered!");
     users.bendupdate()
@@ -225,7 +229,7 @@ app.get('/api/update', function(req, res){
       res.send(err);
     });
 });
-
+*/
 //sends the request through our local signup strategy, and if successful takes user to homepage, otherwise returns then to signin page
 app.post('/local-reg', passport.authenticate('local-signup', {
   successRedirect: '/',
