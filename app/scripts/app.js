@@ -23,7 +23,6 @@ var app = angular.module('themesApp', [
     'angulartics.segment.io'
   ]);
 
-
 app.config(function ($httpProvider) {
     $httpProvider.interceptors.push('TokenInterceptor');
   })
