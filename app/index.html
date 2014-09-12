@@ -19,8 +19,8 @@
   <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries. Placeholdr.js enables the placeholder attribute -->
   <!--[if lt IE 9]>
     <link rel="stylesheet" href="assets/css/ie8.css">
-    <script type="text/javascript" src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
-    <script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/respond.js/1.1.0/respond.min.js"></script>
+    <script type="text/javascript" src="https://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/respond.js/1.1.0/respond.min.js"></script>
     <script type="text/javascript" src="assets/plugins/charts-flot/excanvas.min.js"></script>
     <script type='text/javascript' src='assets/plugins/misc/placeholdr.js'></script>
   <![endif]-->
@@ -31,6 +31,7 @@
     <link rel="stylesheet" href="../bower_components/ng-grid/ng-grid.css" />
     <link rel="stylesheet" href="../bower_components/select2/select2.css" />
     <!-- endbower -->    
+    <link rel='stylesheet' type='text/css' href='assets/plugins/icheck/all.css' /> 
     <link rel='stylesheet' type='text/css' href='assets/plugins/form-multiselect/css/multi-select.css' />     
     <link rel='stylesheet' type='text/css' href='assets/plugins/progress-skylo/skylo.css' /> 
     <link rel='stylesheet' type='text/css' href='assets/plugins/codeprettifier/prettify.css' />
@@ -139,7 +140,7 @@
     <script src="../bower_components/json3/lib/json3.min.js"></script>
     <![endif]-->
     
-    <script type='text/javascript' src='http://maps.google.com/maps/api/js?sensor=true'></script> 
+    <script type='text/javascript' src='https://maps.google.com/maps/api/js?sensor=true'></script> 
 
     <!-- build:js scripts/vendor.js -->
     <!-- bower:js -->
@@ -162,6 +163,7 @@
     <script src="../bower_components/SHA-1/sha1.js"></script>
     <script src="../bower_components/angulartics/src/angulartics.js"></script>
     <script src="../bower_components/angulartics/src/angulartics-segmentio.js"></script>
+    <script src="../bower_components/iCheck/icheck.min.js"></script>
     <!-- endbower -->
     <script type='text/javascript' src='assets/plugins/form-multiselect/js/jquery.multi-select.min.js'></script> 
     <script type='text/javascript' src='assets/plugins/progress-skylo/skylo.js'></script> 
@@ -169,15 +171,15 @@
     
 
       <!-- build:js({.tmp,app}) scripts/scripts.js -->
-      <script src="scripts/shared/Services.js"></script>
-      <script src="scripts/shared/Directives.js"></script>
+      <script src="scripts/services.js"></script>
+      <script src="scripts/directives.js"></script>
+      <script src="scripts/controllers.js"></script>
       <script src="scripts/form/Components.js"></script>
       <script src="scripts/form/Directives.js"></script>
       <script src="scripts/form/Validation.js"></script>
       <script src="scripts/form/Inline.js"></script>
       <script src="scripts/table/ngGrid.js"></script>
-      <script src="scripts/chart/Inline.js"></script>
-      <script src="scripts/pages/Controllers.js"></script>
+      <script src="scripts/chart/Inline.js"></script>      
       <script src="scripts/templates/templates.js"></script>
       <script src="scripts/templates/overrides.js"></script>
       <script src="scripts/app.js"></script>

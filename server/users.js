@@ -4,25 +4,26 @@ var bcrypt = require('bcryptjs'),
     db = require('orchestrate')(config.db); //config.db holds Orchestrate token
 
 //used in local-signup strategy
-exports.localReg = function (username, password) {
+exports.localReg = function (email, name, password) {
   var deferred = Q.defer();
   var hash = bcrypt.hashSync(password, 8);
   var user = {
-    "username": username,
+    "name": name,
+    "email": email,
     "password": hash,
-    "avatar": "http://placepuppy.it/images/homepage/Beagle_puppy_6_weeks.JPG"
+    "avatar": "/public/blank_avatar.png"
   };
-  //check if username is already assigned in our database
-  db.get('users', username)
+  //check if email is already assigned in our database
+  db.get('users', email)
   .then(function (result){ //case in which user already exists in db
-    console.log('username already exists');
+    console.log('User already exists');
     deferred.resolve(false); //username already exists
   })
   .fail(function (result) {//case in which user does not already exist in db
       console.log(result.body);
       if (result.body.message == 'The requested items could not be found.'){
-        console.log('Username is free for use');
-        db.put('users', username, user)
+        console.log('Email is free for use');
+        db.put('users', email, user)
         .then(function () {
           console.log("USER:");
           console.log(user);
@@ -45,10 +46,10 @@ exports.localReg = function (username, password) {
     //if user exists check if passwords match (use bcrypt.compareSync(password, hash); // true where 'hash' is password in DB)
       //if password matches take into website
   //if user doesn't exist or password doesn't match tell them it failed
-exports.localAuth = function (username, password) {
+exports.localAuth = function (email, password) {
   var deferred = Q.defer();
 
-  db.get('users', username)
+  db.get('users', email)
   .then(function (result){
     console.log("FOUND USER");
     var hash = result.body.password;
@@ -57,7 +58,7 @@ exports.localAuth = function (username, password) {
     if (bcrypt.compareSync(password, hash)) {
       deferred.resolve(result.body);
     } else {
-      console.log("PASSWORDS NOT MATCH");
+      console.log("PASSWORDS DO NOT MATCH");
       deferred.resolve(false);
     }
   }).fail(function (err){
@@ -85,8 +86,7 @@ exports.linkedinAuth = function (req, accessToken, refreshToken, userprofile) {
         console.log("FOUND USER: " + userprofile.name);
         db.put('users', result.body.results[0].path.key, userprofile)
         .then(function () {
-          console.log("PROFILE UPDATED: " + userprofile.username);
-          //console.log(user);
+          console.log("PROFILE UPDATED: " + userprofile.username);          
           deferred.resolve(userprofile);
         })
         .fail(function (err) {

@@ -3,13 +3,13 @@
 	<h4 class="text-center" style="margin-bottom: 20px; color: #5A5A5A;">Kickstart your city's entrepreneurial ecosystem</h4>
 	<div class="panel panel-primary">
 		<div class="panel-body">
-			<h4 class="text-center" style="margin-bottom: 25px;">Log in to get started or <a href="#/extras-signupform" class="btn btn-default">Register</a></h4>
+			<h4 class="text-center" style="margin-bottom: 25px;">Log in to get started or <a href="#/signupform" class="btn btn-default" style="padding: 5px 8px;">Sign Up</a></h4>
 				<form action="#" class="form-horizontal" style="margin-bottom: 0px !important;">
 						<div class="form-group">
 							<div class="col-sm-12">
 								<div class="input-group">
 									<span class="input-group-addon"><i class="fa fa-user"></i></span>
-									<input type="text" class="form-control" id="username" placeholder="Username" ng-model="formData.username" autofocus required>
+									<input type="text" class="form-control" id="email" placeholder="Email" ng-model="user.email" autofocus required>
 								</div>
 							</div>
 						</div>
@@ -17,7 +17,7 @@
 							<div class="col-sm-12">
 								<div class="input-group">
 									<span class="input-group-addon"><i class="fa fa-lock"></i></span>
-									<input type="password" class="form-control" id="password" placeholder="Password" ng-model="formData.password" required>
+									<input type="password" class="form-control" id="password" placeholder="Password" ng-model="user.password" required>
 								</div>
 							</div>
 						</div>
@@ -30,8 +30,9 @@
 		<div class="panel-footer">
 			<a href="#/" class="pull-left btn btn-link" style="padding-left:0">Forgot password?</a>
 			
-			<div class="pull-right">				
-				<a href="#/" class="btn btn-primary">Log In</a>
+			<div class="pull-right">		
+				<a href="/auth/linkedin" class="btn btn-sky">Linkedin</a>
+				<a href="#" class="btn btn-primary" ng-click="signIn(user.username, user.password)">Log In</a>
 			</div>
 		</div>
 	</div>

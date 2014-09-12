@@ -1,107 +1,39 @@
 'use strict';
 
-angular
-  .module('themesApp', [
+var app = angular.module('themesApp', [
     'ui.bootstrap',
-    'ngGrid',
-    'theme.pages-controllers',
-    'theme.services',
-    'theme.directives',
+    'ui.select2',
+    'ngGrid',    
     'theme.tables-ng-grid',
-    'theme.form-components',
-    'theme.templates',
-    'theme.template-overrides',
+    'theme.form-components',    
     'theme.form-directives',
     'theme.form-validation',
-    'theme.form-inline',
-    'ui.select2',    
+    'theme.form-inline',   
+    'theme.templates',
+    'theme.template-overrides',
     'ngCookies',
     'ngResource',
     'ngSanitize',
     'ngRoute',
     'ngAnimate',
+    'appControllers',
+    'appServices',
+    'appDirectives',
     'angulartics', 
     'angulartics.segment.io'
-  ])
-  .controller('MainController', ['$scope', '$global', '$timeout', 'progressLoader', '$location', function ($scope, $global, $timeout, progressLoader, $location) {
-    $scope.style_fullscreen = $global.get('fullscreen');
-    /*
-    $scope.style_fixedHeader = $global.get('fixedHeader');
-    $scope.style_headerBarHidden = $global.get('headerBarHidden');
-    $scope.style_layoutBoxed = $global.get('layoutBoxed');
-    $scope.style_leftbarCollapsed = $global.get('leftbarCollapsed');
-    $scope.style_leftbarShown = $global.get('leftbarShown');
-    $scope.style_rightbarCollapsed = $global.get('rightbarCollapsed');
-    $scope.style_isSmallScreen = false;
-    $scope.style_showSearchCollapsed = $global.get('showSearchCollapsed');
+  ]);
 
-    $scope.hideSearchBar = function () {
-        $global.set('showSearchCollapsed', false);
-    };
 
-    $scope.hideHeaderBar = function () {
-        $global.set('headerBarHidden', true);
-    };
-
-    $scope.showHeaderBar = function ($event) {
-      $event.stopPropagation();
-      $global.set('headerBarHidden', false);
-    };
-
-    $scope.toggleLeftBar = function () {
-      if ($scope.style_isSmallScreen) {
-        return $global.set('leftbarShown', !$scope.style_leftbarShown);
-      }
-      $global.set('leftbarCollapsed', !$scope.style_leftbarCollapsed);
-    };
-
-    $scope.toggleRightBar = function () {
-      $global.set('rightbarCollapsed', !$scope.style_rightbarCollapsed);
-    };
-*/
-    $scope.$on('globalStyles:changed', function (event, newVal) {
-      $scope['style_'+newVal.key] = newVal.value;
-    });
-    $scope.$on('globalStyles:maxWidth767', function (event, newVal) {
-      $timeout( function () {      
-        $scope.style_isSmallScreen = newVal;
-        if (!newVal) {
-          $global.set('leftbarShown', false);
-        } else {
-          $global.set('leftbarCollapsed', false);
-        }
-      });
-    });
-
-    // there are better ways to do this, e.g. using a dedicated service
-    // but for the purposes of this demo this will do :P
-    $scope.isLoggedIn = true;
-    $scope.logOut = function () {
-      $scope.isLoggedIn = false;
-    };
-    $scope.logIn = function () {
-      $scope.isLoggedIn = true;
-    };
-    
-    
-/*
-    $scope.rightbarAccordionsShowOne = false;
-    $scope.rightbarAccordions = [{open:true},{open:true},{open:true},{open:true},{open:true},{open:true},{open:true}];
-*/
-    $scope.$on('$routeChangeStart', function (e) {
-      // console.log('start: ', $location.path());
-      progressLoader.start();
-      progressLoader.set(50);
-    });
-    $scope.$on('$routeChangeSuccess', function (e) {
-      // console.log('success: ', $location.path());
-      progressLoader.end();
-    });
-  }])
+app.config(function ($httpProvider) {
+    $httpProvider.interceptors.push('TokenInterceptor');
+  })
+  
   .config(['$provide', '$routeProvider', function ($provide, $routeProvider) {
     $routeProvider
       .when('/', {
-        templateUrl: 'views/launchform.html'
+        templateUrl: 'views/launchform.html',
+        controller: 'LaunchformController',
+        access: { requiredAuthentication: false }
       })
       /*      
       .when('/calendar', {
@@ -195,4 +127,17 @@ angular
       .otherwise({
         redirectTo: '/'
       });
-  }]);
+  }])
+
+
+  .run(function($rootScope, $location, $window, AuthenticationService) {
+    $rootScope.$on("$routeChangeStart", function(event, nextRoute, currentRoute) {
+        //redirect only if both isAuthenticated is false and no token is set
+        if (nextRoute !== null && nextRoute.access !== null && nextRoute.access.requiredAuthentication 
+            && !AuthenticationService.isAuthenticated && !$window.sessionStorage.token) {
+
+            $location.path("/login");
+        }
+    });
+});
+ 

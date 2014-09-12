@@ -1,7 +1,5 @@
-'use strict'
-
 angular
-  .module('theme.directives', [])
+  .module('appDirectives', [])
   .directive('disableAnimation', ['$animate', function($animate){
     return {
         restrict: 'A',
@@ -10,7 +8,7 @@ angular
                 $animate.enabled(!value, $element);
             });
         }
-    }
+    };
   }])
   .directive('slideOut', function() {
     return {
@@ -28,7 +26,7 @@ angular
           }
         });
       }
-    }
+    };
   })
   .directive('slideOutNav', ['$timeout', function($t) {
     return {
@@ -48,19 +46,19 @@ angular
           if (newVal == true) {
             element.slideDown({
               complete: function () {
-                $t(function () { scope.$apply() })
+                $t(function () { scope.$apply() });
               }
             });
           } else if (newVal == false) {
             element.slideUp({
               complete: function () {
-                $t(function () { scope.$apply() })
+                $t(function () { scope.$apply() });
               }
             });
           }
         });
       }
-    }
+    };
   }])
   .directive('panel', function(){
     return {
@@ -72,7 +70,7 @@ angular
         panelIcon: '@'
       },
       templateUrl: 'templates/panel.html',
-    }
+    };
   })
   .directive('pulsate', function () {
     return {
@@ -82,7 +80,7 @@ angular
       link: function (scope, element, attr) {
         $(element).pulsate(scope.pulsate);
       }
-    }
+    };
   })
   .directive('prettyprint', function() {
     return {
@@ -153,7 +151,7 @@ angular
           $(element).toggleClass("fa-chevron-down fa-chevron-up");
           $(element).closest(".panel").find('.panel-body').slideToggle({duration: 200});
           $(element).closest(".panel-heading").toggleClass('rounded-bottom');
-        })
+        });
         return false;
       }
     };
@@ -171,7 +169,7 @@ angular
 
                   $scope.$watch($attrs['ngModel'], function(newValue){
                       $(element).iCheck('update');
-                  })
+                  });
 
                   return $(element).iCheck({
                       checkboxClass: 'icheckbox_minimal-blue',
@@ -204,7 +202,7 @@ angular
       link: function (scope, element, attr) {
         $(element).knob(scope.options);
       }
-    }
+    };
   })
   .directive('uiBsSlider', ['$timeout', function ($timeout) {
     return {
@@ -225,7 +223,7 @@ angular
       },
       templateUrl: 'templates/tile-large.html',
       transclude: true
-    }
+    };
   })
   .directive('tileMini', function() {
     return {
@@ -234,7 +232,7 @@ angular
         item: '=data'
       },
       templateUrl: 'templates/tile-mini.html'
-    }
+    };
   })
   .directive('tile', function() {
     return {
@@ -252,7 +250,7 @@ angular
         }
       },
       replace: true
-    }
+    };
   })
   .directive('jscrollpane', ['$timeout', function ($timeout) {
     return {
@@ -263,7 +261,7 @@ angular
       link: function (scope, element, attr) {
         $timeout( function () {
           if (navigator.appVersion.indexOf("Win")!=-1)
-            element.jScrollPane($.extend({mouseWheelSpeed: 20},scope.options))
+            element.jScrollPane($.extend({mouseWheelSpeed: 20},scope.options));
           else
             element.jScrollPane(scope.options);
           element.on('click', '.jspVerticalBar', function(event) { event.preventDefault(); event.stopPropagation(); });
@@ -299,7 +297,7 @@ angular
             stickyTop();
         });
       }
-    }
+    };
   })
   .directive('rightbarRightPosition', function () {
     return {
@@ -345,7 +343,7 @@ angular
         var resetHeight = function () {
             scope.docHeight = $(document).height();
             $timeout(resetHeight, 1000);
-          }
+          };
         $timeout(resetHeight , 1000);
       }
     };
@@ -378,6 +376,5 @@ angular
           $('body').scrollTop(0);
         });
       }
-    }
-  })
-
+    };
+});

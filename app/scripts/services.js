@@ -1,7 +1,65 @@
-'use strict'
-
 angular
-  .module('theme.services', [])
+  .module('appServices', [])
+  .factory('TokenInterceptor', function ($q, $window, $location, AuthenticationService) {
+    return {
+        request: function (setting) {
+            setting.headers = setting.headers || {};
+            if ($window.sessionStorage.token) {
+                setting.headers.Authorization = 'Bearer ' + $window.sessionStorage.token;
+            }
+            return setting;
+        },
+
+        requestError: function(rejection) {
+            return $q.reject(rejection);
+        },
+
+        /* Set Authentication.isAuthenticated to true if 200 received */
+        response: function (response) {
+            if (response != null && response.status == 200 && $window.sessionStorage.token && !AuthenticationService.isAuthenticated) {
+                AuthenticationService.isAuthenticated = true;
+            }
+            return response || $q.when(response);
+        },
+
+        /* Revoke client authentication if 401 is received */
+        responseError: function(rejection) {
+            if (rejection != null && rejection.status === 401 && ($window.sessionStorage.token || AuthenticationService.isAuthenticated)) {
+                delete $window.sessionStorage.token;
+                AuthenticationService.isAuthenticated = false;
+                $location.path("/admin/login");
+            }
+
+            return $q.reject(rejection);
+        }
+    };
+  })
+  
+  .factory('AuthenticationService', function() {
+    var auth = {
+        isAuthenticated: false,
+        isAdmin: false
+    };
+
+    return auth;
+  })
+
+  .factory('UserService', function ($http) {
+    return {
+        signIn: function(email, password) {
+            return $http.post('/login', {email: email, password: password});
+        },
+
+        logOut: function() {
+            return $http.get('/logout');
+        },
+
+        signup: function(email, password, passwordConfirmation) {
+            return $http.post('/signup', {email: email, password: password, passwordConfirmation: passwordConfirmation});
+        }
+    };
+  })
+
   .service('$global', ['$rootScope', 'EnquireService', '$document', function ($rootScope, EnquireService, $document) {
     this.settings = {
       fixedHeader: true,
@@ -74,7 +132,7 @@ angular
         return notification;
       },
       defaults: $.pnotify.defaults
-    }
+    };
   })
   .factory('progressLoader', function () {
     return {
@@ -95,7 +153,7 @@ angular
             $(document).skylo('inch', amount);
         });
       }
-    }
+    };
   })
   .factory('EnquireService', ['$window', function ($window) {
     return $window.enquire;
@@ -172,4 +230,4 @@ angular
     return function(val) {
       return $sce.trustAsHtml(val);
     };
-  }])
+}]);

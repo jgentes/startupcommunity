@@ -1,0 +1,59 @@
+<div class="verticalcenter" ng-controller="UserController">
+	<a href="#/"><img src="assets/img/logo-big.png" alt="Logo" class="brand" style="margin-bottom: -50px; width: 100%;"/></a>
+	<h4 class="text-center" style="margin-bottom: 20px; color: #5A5A5A;">Kickstart your city's entrepreneurial ecosystem</h4>
+	<div class="panel panel-primary">
+		<div class="panel-body">
+			<h4 class="text-center" style="margin-bottom: 25px;">Join Your Local Startup Community</h4>
+				<form action="#" class="form-horizontal" style="margin-bottom: 0px !important;">
+						<div class="form-group">
+							<div class="col-sm-12">
+								<div class="input-group">
+									<span class="input-group-addon"><i class="fa fa-user"></i></span>
+									<input type="text" class="form-control" id="name" placeholder="Name" ng-model="signupForm.name" required>
+								</div>
+							</div>
+						</div>
+						<div class="form-group">
+							<div class="col-sm-12">
+								<div class="input-group">
+									<span class="input-group-addon"><i class="fa fa-envelope-o"></i></span>
+		 							<input type="text" class="form-control" id="email" placeholder="Email" ng-model="signupForm.email" required>
+								</div>
+							</div>
+						</div>						
+						<div class="form-group">
+							<div class="col-sm-12">
+								<div class="input-group">
+									<span class="input-group-addon"><i class="fa fa-lock"></i></span>
+									<input type="password" class="form-control" id="password" placeholder="Password" ng-model="signupForm.password" required>
+								</div>
+							</div>
+						</div>
+						<div class="form-group">
+							<div class="col-sm-12">
+								<div class="input-group">
+									<span class="input-group-addon"><i class="fa fa-lock"></i></span>
+									<input type="password" class="form-control" id="passwordconfirmation" password-verify="signupForm.password" placeholder="Repeat password" ng-model="signupForm.passwordConfirmation" required>
+								</div>
+							</div>
+						</div>
+						<div class="checkbox block" style="text-align:center">
+							<input icheck type="checkbox" ng-model="signup.acceptAgreement" required>
+							<span>
+								I accept the <a href="#">User Agreement</a>
+							</span>
+						</div>
+						
+					</form>
+					
+		</div>
+		<div class="panel-footer">
+			<div class="pull-left">
+				<a href="#/" class="btn btn-default">Cancel</a>
+			</div>
+			<div class="pull-right">
+				<a href="#" class="btn btn-success" ng-click="signup(signupForm.email, signupForm.name, signupForm.password, signupForm.passwordConfirmation)">Sign up</a>
+			</div>
+		</div>
+	</div>
+</div>
