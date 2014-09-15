@@ -1,6 +1,6 @@
 angular
   .module('appControllers', [])
-  .controller('MainController', ['$scope', '$global', '$timeout', 'progressLoader', '$location', function ($scope, $global, $timeout, progressLoader, $location) {
+  .controller('MainController', ['$scope', '$window', '$global', '$timeout', '$interval', 'progressLoader', '$location', function ($scope, $window, $global, $timeout, $interval, progressLoader, $location) {
     $scope.style_fullscreen = $global.get('fullscreen');
     /*
     $scope.style_fixedHeader = $global.get('fixedHeader');
@@ -63,6 +63,8 @@ angular
       // console.log('success: ', $location.path());
       progressLoader.end();
     });
+    
+    
   }])
 
   .controller('UserController', ['$scope', '$location', '$window', '$global', 'UserService', 'AuthenticationService',  
@@ -73,6 +75,17 @@ angular
         $scope.$on('$destroy', function () {
           $global.set('fullscreen', false);
         });
+        
+        
+        $scope.signInLinkedin = function signInLinkedin() {
+                var url = '/auth/linkedin',
+                    width = 1000,
+                    height = 650,
+                    top = (window.outerHeight - height) / 2,
+                    left = (window.outerWidth - width) / 2;
+                $window.open(url, 'linkedin_login', 'width=' + width + ',height=' + height + ',scrollbars=0,top=' + top + ',left=' + left);
+                
+        };
         
         //User Controller (signIn, logOut)
         $scope.signIn = function signIn(email, password) {
@@ -108,7 +121,7 @@ angular
 
         $scope.signup = function signup(email, name, password, passwordConfirm) {
             if (AuthenticationService.isAuthenticated) {
-                $location.path("/index");
+                $location.path("/");
             }
             else {
                 UserService.signup(email, name, password, passwordConfirm).success(function(data) {
@@ -122,16 +135,14 @@ angular
     }
   ])
 
-  .controller('AuthTestController', ['$scope', '$global', function ($scope, $global) {
-    
-  }])
-  .controller('SignupPageController', ['$scope', '$global', function ($scope, $global) {
+  .controller('AuthTestController', ['$scope', '$global', 'AuthenticationService', function ($scope, $global, AuthenticationService) {
     $global.set('fullscreen', true);
-
+    console.log('AuthenticationService: ' + AuthenticationService.isAuthenticated);    
+    $scope.isAuthenticated = AuthenticationService.isAuthenticated;
     $scope.$on('$destroy', function () {
       $global.set('fullscreen', false);
     });
-  }])
+  }])  
   .controller('RegistrationPageController', ['$scope', '$timeout', function ($scope, $timeout) {
   	$scope.checking = false;
   	$scope.checked = false;

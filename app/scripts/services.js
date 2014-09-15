@@ -1,8 +1,11 @@
 angular
   .module('appServices', [])
   .factory('TokenInterceptor', function ($q, $window, $location, AuthenticationService) {
+    console.log('INTERCEPTOR TRIGGERED!');
     return {
+      
         request: function (setting) {
+          console.log('AuthenticationService request processing');
             setting.headers = setting.headers || {};
             if ($window.sessionStorage.token) {
                 setting.headers.Authorization = 'Bearer ' + $window.sessionStorage.token;
@@ -11,23 +14,32 @@ angular
         },
 
         requestError: function(rejection) {
+          console.log('AuthenticationService reject!');
             return $q.reject(rejection);
         },
 
         /* Set Authentication.isAuthenticated to true if 200 received */
         response: function (response) {
-            if (response != null && response.status == 200 && $window.sessionStorage.token && !AuthenticationService.isAuthenticated) {
+          console.log('AuthenticationService response:');
+          console.log(response);
+          console.log('$window');
+          console.log($window);
+          console.log('AuthenticationService:');
+          console.log(AuthenticationService);
+            if (response !== null && response.status == 200 && $window.sessionStorage.token && !AuthenticationService.isAuthenticated) {
                 AuthenticationService.isAuthenticated = true;
+                console.log('AuthenticationService set isAuthenticated to TRUE!');
             }
             return response || $q.when(response);
         },
 
         /* Revoke client authentication if 401 is received */
         responseError: function(rejection) {
-            if (rejection != null && rejection.status === 401 && ($window.sessionStorage.token || AuthenticationService.isAuthenticated)) {
+          console.log('AuthenticationService different reject!');
+            if (rejection !== null && rejection.status === 401 && ($window.sessionStorage.token || AuthenticationService.isAuthenticated)) {
                 delete $window.sessionStorage.token;
                 AuthenticationService.isAuthenticated = false;
-                $location.path("/admin/login");
+                $location.path("/login");
             }
 
             return $q.reject(rejection);
@@ -46,6 +58,7 @@ angular
 
   .factory('UserService', function ($http) {
     return {
+        
         signIn: function(email, password) {
             return $http.post('/login', {email: email, password: password});
         },

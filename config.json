@@ -6,6 +6,7 @@
       "clientSecret": "kus8etN9TWmgJBba",
       "callbackURL": "https://startupcommunity-c9-jgentes.c9.io/auth/linkedin/callback"
     },
+    "secret": "2l3knfgqlkn2fvkl23nvklgnvkg23bhva08",
     "mailchimp": "4cd1eb319ae631eb57ef642b9340af68-us9",
     "path": "/app",
     "api_base_url": "https://startupcommunity-c9-jgentes.c9.io"
@@ -17,6 +18,7 @@
       "clientSecret": "kus8etN9TWmgJBba",
       "callbackURL": "https://startupcommunity-c9-jgentes.c9.io/auth/linkedin/callback"
     },
+    "secret": "2l3knfgqlkn2fvkl23nvklgnvkg23bhva08",
     "mailchimp": "4cd1eb319ae631eb57ef642b9340af68-us9",
     "path": "/theme",
     "api_base_url": "https://startupcommunity-c9-jgentes.c9.io"
@@ -28,6 +30,7 @@
       "clientSecret": "kus8etN9TWmgJBba",
       "callbackURL": "https://startupcommunity-c9-jgentes.c9.io/auth/linkedin/callback"
     },
+    "secret": "2l3knfgqlkn2fvkl23nvklgnvkg23bhva08",
     "mailchimp": "4cd1eb319ae631eb57ef642b9340af68-us9",
     "path": "/dist",
     "api_base_url": "https://startupcommunity-c9-jgentes.c9.io"
@@ -39,6 +42,7 @@
       "clientSecret": "kus8etN9TWmgJBba",
       "callbackURL": "https://startupcommunity.org/auth/linkedin/callback"
     },
+    "secret": "2l3knfgqlkn2fvkl23nvklgnvkg23bhva08",
     "mailchimp": "4cd1eb319ae631eb57ef642b9340af68-us9",
     "path": "/dist",
     "api_base_url": "https://startupcommunity.org"

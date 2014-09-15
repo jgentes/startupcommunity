@@ -4,166 +4,29 @@ var express = require('express'),
     bodyParser = require('body-parser'),
     methodOverride = require('method-override'),
     session = require('express-session'),
-    logger = require('morgan'),
-    request = require('request'),
-    passport = require('passport'),
-    LocalStrategy = require('passport-local'),
-    LinkedInStrategy = require('passport-linkedin-oauth2').Strategy,
+    logger = require('morgan'),    
+    passport = require('passport'),    
     mcapi = require('mailchimp-api/mailchimp');
 
-var config = require('./config.json')[process.env.NODE_ENV || 'development'],
-    users = require('./server/users.js');
+var config = require('./config.json')[process.env.NODE_ENV || 'development'];
 
 var app = express();
 
 var mc = new mcapi.Mailchimp(config.mailchimp);
 
-//===============PASSPORT=================
-
-// Passport session setup.
-passport.serializeUser(function(user, done) {
-  console.log("serializing " + user.username);
-  done(null, user);
-});
-
-passport.deserializeUser(function(obj, done) {
-  console.log("deserializing " + obj.username);  
-  done(null, obj);
-});
-
-// Use the LocalStrategy within Passport to login users.
-passport.use('local-signin', new LocalStrategy(
-  {passReqToCallback : true}, //allows us to pass back the request to the callback
-  function(req, email, password, done) {
-    users.localAuth(email, password)
-    .then(function (user) {
-      if (user) {
-        console.log("LOGGED IN AS: " + user.username);
-        req.session.success = 'You are successfully logged in ' + user.username + '!';
-        done(null, user);
-      }
-      if (!user) {
-        console.log("COULD NOT LOG IN");
-        req.session.error = 'Could not log user in. Please try again.'; //inform user could not log them in
-        done(null, false);
-      }
-    })
-    .fail(function (err){
-      console.log(err.body);
-      done(err);
-    });
-  }
-));
-
-// Use the LocalStrategy within Passport to Register/"signup" users.
-passport.use('local-signup', new LocalStrategy(
-  {passReqToCallback : true}, //allows us to pass back the request to the callback
-  function(req, email, username, password, done) {
-    users.localReg(email, username, password)
-    .then(function (user) {
-      if (user) {
-        console.log("REGISTERED: " + user.username);
-        req.session.success = 'You are successfully registered and logged in ' + user.username + '!';
-        done(null, user);
-      }
-      if (!user) {
-        console.log("COULD NOT REGISTER");
-        req.session.error = 'That username is already in use, please try a different one.'; //inform user could not log them in
-        done(null, false);
-      }
-    })
-    .fail(function (err){
-      console.log(err.body);
-      done(err);
-    });
-  }
-));
-
-// use linkedin strategy
-passport.use('linkedin', new LinkedInStrategy({
-  passReqToCallback: true,
-  clientID: config.linkedin.clientID,
-  clientSecret: config.linkedin.clientSecret,
-  callbackURL: config.linkedin.callbackURL,
-  scope: ['r_fullprofile', 'r_emailaddress'],
-  profileFields: ['id', 'first-name', 'last-name', 'email-address', 'skills', 'picture-url;secure=true', 'headline', 'summary', 'public-profile-url']
-  },
-  function(req, accessToken, refreshToken, profile, done) {
-    
-    var querystring = require('querystring');
-    
-    var userprofile = {
-          name: profile.name.givenName + ' ' + profile.name.familyName,
-          email: profile.emails[0].value,
-          username: profile.emails[0].value,
-          linkedin: profile._json,
-          avatar: profile._json.pictureUrl || ''          
-        };
-    
-    
-    var getlinkedinprofile = function(url, email) {
-      request.get(
-        'https://api.linkedin.com/v1/people/url=' + querystring.escape(url) + ':(id,first-name,last-name,picture-url;secure=true,headline,summary,public-profile-url)' + '?oauth2_access_token=' + accessToken + '&format=json',
-        function(error, response, body) {
-          var newbody = JSON.parse(body);
-          if (newbody.id !== undefined) {
-            var linkedinuser = {
-              name: newbody.firstName + ' ' + newbody.lastName,
-              email: email,
-              username: email,
-              linkedin: newbody,
-              avatar: newbody.pictureUrl || ''
-            };
-            console.log('LINKEDIN USER:');
-            console.log(linkedinuser);
-            users.linkedinPull(linkedinuser)
-            .then(function(user) {
-              console.log ("Database Update Successful");
-              //done(null, user);
-            })
-            .fail(function(err){
-              console.log("FAIL");
-              console.log(err.body);
-              //done(err);
-            });
-          }
-          
-        });
-    };
-
-    // QUERY STATE IS SETUP ONLY TO TRIGGER PULL FOR LINKEDIN PROFILES
-    console.log('Query State: ' + req.query.state);
-    if (req.query.state !== 'none') { 
-      
-      var userlist = [];
-      for (var i=0; i < userlist.length; i++) {
-        getlinkedinprofile(userlist[i].url, userlist[i].email);
-      }
-      
-        //done(null, false);
-    } else {
-    
-      users.linkedinAuth(req, accessToken, refreshToken, userprofile)
-      .then(function(user) {        
-        if (user) {
-          console.log('successfully logged in!');
-          req.session.success = 'You successfully logged in!';
-          done(null, user);          
-        }
-        if (!user) {
-          console.log("COULD NOT REGISTER");
-          req.session.error = 'That Linkedin ID is already in use, please try a different one.'; //inform user could not log them in
-          done(null, false);
-        }
-      })
-      .fail(function (err){
-        console.log('FAILED LINKEDINAUTH!');
-        console.log(err.body);
-        done(err);
-      });
+var routes = {};
+routes.users = require('./handlers/users.js');
+/*
+app.all('*', function(req, res, next) {
+    res.header('Access-Control-Allow-Credentials', true);
+    res.header("Access-Control-Allow-Origin", req.headers.origin);
+    res.header('Access-Control-Allow-Methods', 'OPTIONS,GET,POST,PUT,DELETE');
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    if ('OPTIONS' == req.method){
+        return res.send(200);
     }
-  }
-));
+    next();
+});
 
 // Simple route middleware to ensure user is authenticated.
 function ensureAuthenticated(req, res, next) {
@@ -172,15 +35,14 @@ function ensureAuthenticated(req, res, next) {
   req.session.error = 'Please sign in!';
   res.redirect('/signin');
 }
-
+*/
 //===============EXPRESS=================
-app.use(logger('combined'));
+app.use(logger('dev'));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(methodOverride());
 app.use(session({secret: 'junglist', resave: true, saveUninitialized: true}));
 app.use(passport.initialize());
 app.use(passport.session());
-
 
 //===============ROUTES=================
 
@@ -204,7 +66,7 @@ app.get('/api/:citystate/users', function(req, res){
   
   //TODO ADD IS.AUTHENTICATED
   if (query !== undefined){
-    users.searchincity(city, state, query)
+    routes.users.searchincity(city, state, query)
     .then(function(userlist){
       res.send(userlist);
     })
@@ -212,7 +74,7 @@ app.get('/api/:citystate/users', function(req, res){
       res.send(err);
     });
   } else {
-    users.showallusers(city, state)
+    routes.users.showallusers(city, state)
     .then(function(userlist){
       res.send(userlist);
     })
@@ -224,7 +86,7 @@ app.get('/api/:citystate/users', function(req, res){
 /*
 app.get('/api/update', function(req, res){
   console.log("update triggered!");
-    users.bendupdate()
+    routes.users.bendupdate()
     .then(function(response){
       res.send(response).end();
     })
@@ -241,26 +103,19 @@ app.post('/local-reg', passport.authenticate('local-signup', {
 );
 
 // Setting the linkedin oauth routes
-app.get('/auth/linkedin', passport.authenticate('linkedin', {
-    state: 'none'
-  })
-);
+app.get('/auth/linkedin', routes.users.linkedin);
 
-app.get('/auth/linkedin/callback', passport.authenticate('linkedin', {
-    failureRedirect: '/signin', // i should be verifying the state here to avoid csrf
-    successRedirect: '/authtest'
-  }), function(req,res) {
-    console.log("REQ USER");
-    console.log(req.user); // ADD LINKEDIN CALLBACK HERE THAT STORES OAUTH CODE, OR PERHAPS SEND A PARAMETER IDENTIFYING THE PROVIDER
-    console.log("REQ ACCOUNT");
-    console.log(req.account);
-  }
-); 
+app.get('/auth/linkedin/callback', passport.authenticate('linkedin', {// i should be verifying the state here to avoid csrf
+    successRedirect: '/authsuccess',
+    failureRedirect: '/authfail'
+})); 
 
-app.get('/authtest', function(req, res) {
-  ensureAuthenticated(req, res, function(res) {  
-  res.sendFile('/public/404.html', { root: __dirname });
-  });
+app.get('/authsuccess', function(req, res) {  
+    res.sendFile('authsuccess.html', { root: __dirname + config.path + '/views/' });    
+});
+
+app.get('/authfail', function(req, res) {    
+    res.sendFile('authfail.html', { root: __dirname + config.path + '/views/' });    
 });
 
 // experiment with linkedin authenticated call
@@ -277,6 +132,10 @@ app.post('/login', passport.authenticate('local-signin', {
   failureRedirect: '/signin'
   })
 );
+
+app.get('/login', function(req, res){  
+  res.redirect('#/login');  
+});
 
 //logs user out of site, deleting them from the session, and returns to homepage
 app.get('/logout', function(req, res){
@@ -301,10 +160,6 @@ app.post('/sub', function(req, res){
     });
 });
 
-
-
-// All APP.USE should come after routes (https://github.com/strongloop/express/wiki/Migrating-from-3.x-to-4.x)
-
 // Session-persisted message middleware
 app.use(function(req, res, next){
   var err = req.session.error,
@@ -326,7 +181,8 @@ app.use("/", express.static(__dirname + config.path));
 app.use("/public", express.static(__dirname + '/public'));
 
 if (process.env.NODE_ENV !== "production") {  
-  app.use("/bower_components", express.static(__dirname + "/bower_components"));
+  app.use("/bower_components", express.static(__dirname + "/bower_components"));  
+  console.log("Development mode active");
 } 
 
 //===============PORT=================

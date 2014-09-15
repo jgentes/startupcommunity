@@ -1,4 +1,4 @@
-<div class="verticalcenter" ng-controller="SignupPageController">
+<div class="verticalcenter">
 	<a href="#/"><img src="assets/img/logo-big.png" alt="Logo" class="brand" style="margin-bottom: -50px; width: 100%;"/></a>
 	<h4 class="text-center" style="margin-bottom: 20px; color: #5A5A5A;">Kickstart your city's entrepreneurial ecosystem</h4>
 	<div class="panel panel-primary">
@@ -31,7 +31,7 @@
 			<a href="#/" class="pull-left btn btn-link" style="padding-left:0">Forgot password?</a>
 			
 			<div class="pull-right">		
-				<a href="/auth/linkedin" class="btn btn-sky">Linkedin</a>
+				<a href="#/authtest" class="btn btn-sky" ng-click="signInLinkedin()">Linkedin</a>
 				<a href="#" class="btn btn-primary" ng-click="signIn(user.username, user.password)">Log In</a>
 			</div>
 		</div>

@@ -24,14 +24,26 @@ var app = angular.module('themesApp', [
   ]);
 
 app.config(function ($httpProvider) {
-    $httpProvider.interceptors.push('TokenInterceptor');
+    $httpProvider.interceptors.push('TokenInterceptor');    
   })
   
   .config(['$provide', '$routeProvider', function ($provide, $routeProvider) {
     $routeProvider
       .when('/', {
         templateUrl: 'views/launchform.html',
-        controller: 'LaunchformController',
+        controller: 'LaunchformController'
+      })
+      .when('/login', {
+        templateUrl: 'views/login.html',
+        controller: 'UserController'
+      })
+      .when('/signup', {
+        templateUrl: 'views/signup.html',
+        controller: 'UserController'
+      })
+      .when('/authtest', {
+        templateUrl: 'views/authtest.html',
+        controller: 'AuthTestController',
         access: { requiredAuthentication: false }
       })
       /*      
@@ -132,6 +144,7 @@ app.config(function ($httpProvider) {
   .run(function($rootScope, $location, $window, AuthenticationService) {
     $rootScope.$on("$routeChangeStart", function(event, nextRoute, currentRoute) {
         //redirect only if both isAuthenticated is false and no token is set
+        if (nextRoute.access === undefined) { nextRoute.access = { 'requiredAuthentication': false }; }
         if (nextRoute !== null && nextRoute.access !== null && nextRoute.access.requiredAuthentication 
             && !AuthenticationService.isAuthenticated && !$window.sessionStorage.token) {
 
