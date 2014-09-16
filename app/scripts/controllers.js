@@ -71,20 +71,25 @@ angular
     function UserController($scope, $location, $window, $global, UserService, AuthenticationService) {
         //Borrowed heavily from http://www.kdelemme.com/2014/03/09/authentication-with-angularjs-and-a-node-js-rest-api/
         $global.set('fullscreen', true);
-
+        $scope.isAuthenticated = AuthenticationService.isAuthenticated;
         $scope.$on('$destroy', function () {
           $global.set('fullscreen', false);
         });
         
         
         $scope.signInLinkedin = function signInLinkedin() {
+          
+          $window.location.replace('/auth/linkedin');
+                
+          /*
+          
                 var url = '/auth/linkedin',
                     width = 1000,
                     height = 650,
                     top = (window.outerHeight - height) / 2,
                     left = (window.outerWidth - width) / 2;
                 $window.open(url, 'linkedin_login', 'width=' + width + ',height=' + height + ',scrollbars=0,top=' + top + ',left=' + left);
-                
+            */    
         };
         
         //User Controller (signIn, logOut)
@@ -94,7 +99,7 @@ angular
                 UserService.signIn(email, password).success(function(data) {
                     AuthenticationService.isAuthenticated = true;
                     $window.sessionStorage.token = data.token;
-                    $location.path("/index");
+                    $location.path("/authtest");
                 }).error(function(status, data) {
                     console.log(status);
                     console.log(data);

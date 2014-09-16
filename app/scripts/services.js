@@ -1,15 +1,39 @@
 angular
   .module('appServices', [])
-  .factory('TokenInterceptor', function ($q, $window, $location, AuthenticationService) {
-    console.log('INTERCEPTOR TRIGGERED!');
+  .factory('TokenInterceptor', function ($q, $window, $location, $document, AuthenticationService) {
     return {
       
-        request: function (setting) {
-          console.log('AuthenticationService request processing');
+        request: function (setting) {            
             setting.headers = setting.headers || {};
+            
             if ($window.sessionStorage.token) {
                 setting.headers.Authorization = 'Bearer ' + $window.sessionStorage.token;
-            }
+            } else if ($document[0].cookie) { 
+              var cookies;
+
+              var readCookie = function(name,c,C,i){
+                  if(cookies){ return cookies[name]; }
+          
+                  c = $document[0].cookie.split('; ');
+                  cookies = {};
+          
+                  for(i=c.length-1; i>=0; i--){
+                     C = c[i].split('=');
+                     cookies[C[0]] = C[1];
+                  }
+          
+                  return cookies[name];
+              };
+              
+              var token = readCookie('user');
+              if (token) {
+                $window.sessionStorage.token = token;
+                setting.headers.Authorization = 'Bearer ' + token;
+                console.log('Session token set: '); console.log(token); 
+              }
+            }              
+            
+                          
             return setting;
         },
 
@@ -20,10 +44,8 @@ angular
 
         /* Set Authentication.isAuthenticated to true if 200 received */
         response: function (response) {
-          console.log('AuthenticationService response:');
-          console.log(response);
-          console.log('$window');
-          console.log($window);
+          console.log('token:');
+          console.log($window.sessionStorage.token);
           console.log('AuthenticationService:');
           console.log(AuthenticationService);
             if (response !== null && response.status == 200 && $window.sessionStorage.token && !AuthenticationService.isAuthenticated) {
@@ -35,7 +57,6 @@ angular
 
         /* Revoke client authentication if 401 is received */
         responseError: function(rejection) {
-          console.log('AuthenticationService different reject!');
             if (rejection !== null && rejection.status === 401 && ($window.sessionStorage.token || AuthenticationService.isAuthenticated)) {
                 delete $window.sessionStorage.token;
                 AuthenticationService.isAuthenticated = false;

@@ -1,27 +1,41 @@
 var config = require('../config.json')[process.env.NODE_ENV || 'development'],
     db = require('orchestrate')(config.db),
+    jwt = require('jsonwebtoken'),    
     Q = require('q');
 var TOKEN_EXPIRATION = 60;
 var TOKEN_EXPIRATION_SEC = TOKEN_EXPIRATION * 60;
 
 // Middleware for token verification
-exports.verifyToken = function (req, res, next) {
+exports.verifyToken = function (req, res, next) {   
+  console.log('verifytoken req.session:');
+  console.log(req.session);
 	var token = getToken(req.headers);
-    console.log("this is the TOKEN: ");
-    console.log(token);
-    db.get('tokens', token)
-    .then(function (reply) {
-		if (reply) {
-			res.send(401);
-		}
-		else {
-			next();
-		}
-	})
-	.fail(function(err) {
+	console.log("VERIFYING TOKEN: " + token); 
+	jwt.verify(token, config.secret, function(err, decoded) {
+	  if (!err) {
+	    console.log('TOKEN VALID: ' + token);	    
+      db.get('tokens', req.user.email)
+      .then(function (response) {
+  		  if (response.body.token === token) {
+  		    console.log('TOKEN VERIFIED');
+  			  return res.send(401);
+  		  }
+  		  else {
+  		    console.log('TOKEN MISMATCH');
+  			  next();
+  		  }
+  	  })
+  	  .fail(function(err) {
+  	    console.log('TOKEN NOT FOUND IN DB!');
+  	    console.log(err);
+  		  return res.send(500);
+  	  });
+	  } else { 
+	    console.log('TOKEN INVALID!'); 
 	    console.log(err);
-		return res.send(500);
-	});
+	    next();
+	  }    
+  });
 };
 
 exports.expireToken = function(headers) {
@@ -75,10 +89,12 @@ exports.saveToken = function(key, token) {
 };
 
 var getToken = function(headers) {
+  console.log('GETTING TOKEN FROM HEADERS:');
+  console.log(headers);
 	if (headers && headers.authorization) {
 		var authorization = headers.authorization;
 		var part = authorization.split(' ');
-
+    console.log('AUTHORIZATION: ' + part);
 		if (part.length == 2) {
 			var token = part[1];
 

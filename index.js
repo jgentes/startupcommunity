@@ -2,10 +2,12 @@
 
 var express = require('express'),
     bodyParser = require('body-parser'),
+    cookieParser = require('cookie-parser'),
     methodOverride = require('method-override'),
     session = require('express-session'),
     logger = require('morgan'),    
     passport = require('passport'),    
+    tokenManager = require('./handlers/token_manager'),
     mcapi = require('mailchimp-api/mailchimp');
 
 var config = require('./config.json')[process.env.NODE_ENV || 'development'];
@@ -27,33 +29,56 @@ app.all('*', function(req, res, next) {
     }
     next();
 });
-
+*/
 // Simple route middleware to ensure user is authenticated.
 function ensureAuthenticated(req, res, next) {
-  if (req.isAuthenticated()) { console.log('Authentication validated!'); return next(res); }
+  if (req.isAuthenticated()) { console.log('Authentication validated!'); return next(); }
   console.log('Not authenticated!');
   req.session.error = 'Please sign in!';
-  res.redirect('/signin');
+  res.redirect('/login');
 }
-*/
-//===============EXPRESS=================
-app.use(logger('dev'));
+
+//===============EXPRESS================= // Order really matters here..!
+//app.use(logger('dev'));
 app.use(bodyParser.urlencoded({ extended: false }));
+app.use(cookieParser());
 app.use(methodOverride());
-app.use(session({secret: 'junglist', resave: true, saveUninitialized: true}));
+app.use(session({secret: config.secret, key: 'user', cookie: { maxAge: 60000, secure: false, httpOnly: false }, resave: true, saveUninitialized: true}));
+
+app.use("/", express.static(__dirname + config.path));
+app.use("/public", express.static(__dirname + '/public'));
+
+if (process.env.NODE_ENV !== "production") {  
+  app.use("/bower_components", express.static(__dirname + "/bower_components"));  
+  console.log("Development mode active");
+} 
+
+
 app.use(passport.initialize());
 app.use(passport.session());
+
+// Session-persisted message middleware
+app.use(function(req, res, next){
+  var err = req.session.error,
+      msg = req.session.notice,
+      success = req.session.success;
+
+  delete req.session.error;
+  delete req.session.success;
+  delete req.session.notice;
+
+  if (err) res.locals.error = err;
+  if (msg) res.locals.notice = msg;
+  if (success) res.locals.success = success;
+
+  next();
+});
 
 //===============ROUTES=================
 
 // load the single view file (angular will handle the page changes on the front-end)
 app.get('/', function(req, res) {
     res.sendFile('index.html', { root: __dirname + config.path }); 
-});
-
-//displays our signup page
-app.get('/signin', function(req, res){
-  res.render('signin');
 });
 
 //display all users
@@ -106,11 +131,12 @@ app.post('/local-reg', passport.authenticate('local-signup', {
 app.get('/auth/linkedin', routes.users.linkedin);
 
 app.get('/auth/linkedin/callback', passport.authenticate('linkedin', {// i should be verifying the state here to avoid csrf
-    successRedirect: '/authsuccess',
     failureRedirect: '/authfail'
-})); 
+}), function(req, res) {
+    res.redirect('/');
+    }); 
 
-app.get('/authsuccess', function(req, res) {  
+app.get('/authsuccess', ensureAuthenticated, function(req, res) {  
     res.sendFile('authsuccess.html', { root: __dirname + config.path + '/views/' });    
 });
 
@@ -160,30 +186,9 @@ app.post('/sub', function(req, res){
     });
 });
 
-// Session-persisted message middleware
-app.use(function(req, res, next){
-  var err = req.session.error,
-      msg = req.session.notice,
-      success = req.session.success;
 
-  delete req.session.error;
-  delete req.session.success;
-  delete req.session.notice;
 
-  if (err) res.locals.error = err;
-  if (msg) res.locals.notice = msg;
-  if (success) res.locals.success = success;
 
-  next();
-});
-
-app.use("/", express.static(__dirname + config.path));
-app.use("/public", express.static(__dirname + '/public'));
-
-if (process.env.NODE_ENV !== "production") {  
-  app.use("/bower_components", express.static(__dirname + "/bower_components"));  
-  console.log("Development mode active");
-} 
 
 //===============PORT=================
 var port = process.env.PORT || 5000;

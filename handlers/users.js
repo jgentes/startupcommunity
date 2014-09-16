@@ -130,8 +130,8 @@ var searchincity = function(city, state, query){
   return deferred.promise;
   
 };
-
-var bendupdate = function() {
+/*
+exports.bendupdate = function() {
   var deferred = Q.defer();
   var thiskey = '';
   var thisrecord = '';
@@ -143,11 +143,21 @@ var bendupdate = function() {
       thiskey = result.body.results[i].path.key;
       console.log('processing ' + thiskey);
       thisrecord = result.body.results[i].value;
-      thisrecord["cities"] = { "OR": "Bend" };
-      db.put('users', thiskey, thisrecord)
+      //thisrecord["cities"] = { "OR": "Bend" };
+      
+      db.put('users', thisrecord.email, thisrecord)
       .then(function (res) {
-        deferred.resolve(res.statusCode);
-        console.log('completed user update: ' + res.statusCode);
+        console.log('New record created, deleting old record');
+        db.remove('users', thiskey, true)
+        .then( function(res) {     
+          console.log('completed user update: ' + res.statusCode);
+          //deferred.resolve(res.statusCode);          
+        });
+        //deferred.resolve(res.statusCode);
+      })
+      .fail(function(err) {
+        console.log('something went wrong:' );
+        console.log(err);
       });
       /* EXAMPLE OF ADDING A GRAPH RELATIONSHIP    
       db.newGraphBuilder()
@@ -159,7 +169,7 @@ var bendupdate = function() {
         deferred.resolve(res.statusCode);
         console.log('completed graph from cities to users: ' + res.statusCode);
       });
-      */
+      
     }
     deferred.resolve(result.body.results.length);
   });
@@ -168,19 +178,26 @@ var bendupdate = function() {
   
 };
 
-
+*/
 
 //===============PASSPORT=================
 
 // Passport session setup.
 passport.serializeUser(function(user, done) {
-  console.log("serializing " + user.username);
-  done(null, user);
+  console.log("serializing " + user.email);
+  done(null, user.email);
 });
 
-passport.deserializeUser(function(obj, done) {
-  console.log("deserializing " + obj.username);  
-  done(null, obj);
+passport.deserializeUser(function(email, done) {
+  console.log("deserializing " + email);  
+  db.get('users', email)
+  .then(function(response) {
+    done(null, response.body);
+  })
+  .fail(function(err) {
+    console.log('Failed to deserialize user from db!');
+    console.log(err);
+  });
 });
 
 // Use the LocalStrategy within Passport to login users.
@@ -284,11 +301,12 @@ passport.use('linkedin', new LinkedInStrategy({
           getlinkedinprofile(userlist[i].url, userlist[i].email);
         }      
           done(null, false);
-      } else { 
+      } else {         
         linkedinAuth(accessToken, refreshToken, userprofile)
         .then( function(user) {
-          var token = jwt.sign({id: user.email}, config.secret);
-          console.log('TOKEN CREATED: ' + token);
+          var token = req.cookies.user;
+          //var token = jwt.sign({id: user.email}, config.secret);
+          console.log('TOKEN FOUND: ' + token);
           tokenManager.saveToken(user.email, token)
           .then(function(token) {
             done(null, user);

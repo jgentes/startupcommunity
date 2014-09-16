@@ -24,7 +24,7 @@ var app = angular.module('themesApp', [
   ]);
 
 app.config(function ($httpProvider) {
-    $httpProvider.interceptors.push('TokenInterceptor');    
+    $httpProvider.interceptors.push('TokenInterceptor');
   })
   
   .config(['$provide', '$routeProvider', function ($provide, $routeProvider) {
