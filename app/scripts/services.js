@@ -1,5 +1,6 @@
 angular
   .module('appServices', [])
+  /*
   .factory('TokenInterceptor', function ($q, $window, $location, $document, AuthenticationService) {
     return {
       
@@ -31,8 +32,7 @@ angular
                 setting.headers.Authorization = 'Bearer ' + token;
                 console.log('Session token set: '); console.log(token); 
               }
-            }              
-            
+            }                         
                           
             return setting;
         },
@@ -42,20 +42,16 @@ angular
             return $q.reject(rejection);
         },
 
-        /* Set Authentication.isAuthenticated to true if 200 received */
+        // Set Authentication.isAuthenticated to true if 200 received
         response: function (response) {
-          console.log('token:');
-          console.log($window.sessionStorage.token);
-          console.log('AuthenticationService:');
-          console.log(AuthenticationService);
             if (response !== null && response.status == 200 && $window.sessionStorage.token && !AuthenticationService.isAuthenticated) {
                 AuthenticationService.isAuthenticated = true;
-                console.log('AuthenticationService set isAuthenticated to TRUE!');
+                console.log('Client isAuthenticated!');
             }
             return response || $q.when(response);
         },
 
-        /* Revoke client authentication if 401 is received */
+        // Revoke client authentication if 401 is received
         responseError: function(rejection) {
             if (rejection !== null && rejection.status === 401 && ($window.sessionStorage.token || AuthenticationService.isAuthenticated)) {
                 delete $window.sessionStorage.token;
@@ -67,7 +63,7 @@ angular
         }
     };
   })
-  
+  */
   .factory('AuthenticationService', function() {
     var auth = {
         isAuthenticated: false,

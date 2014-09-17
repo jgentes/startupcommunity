@@ -20,11 +20,23 @@ var app = angular.module('themesApp', [
     'appServices',
     'appDirectives',
     'angulartics', 
-    'angulartics.segment.io'
+    'angulartics.segment.io',
+    'satellizer'
   ]);
 
-app.config(function ($httpProvider) {
+app
+  /*
+  .config(function ($httpProvider) {
     $httpProvider.interceptors.push('TokenInterceptor');
+  })  
+  */
+  .config(function($authProvider) {
+   
+    $authProvider.linkedin({
+      clientId: "75s9q8uelaanvf",
+      url: '/auth/linkedin'
+    });
+
   })
   
   .config(['$provide', '$routeProvider', function ($provide, $routeProvider) {
@@ -35,7 +47,7 @@ app.config(function ($httpProvider) {
       })
       .when('/login', {
         templateUrl: 'views/login.html',
-        controller: 'UserController'
+        controller: 'LoginCtrl'
       })
       .when('/signup', {
         templateUrl: 'views/signup.html',
@@ -138,9 +150,9 @@ app.config(function ($httpProvider) {
       .otherwise({
         redirectTo: '/'
       });
-  }])
+  }]);
 
-
+/*
   .run(function($rootScope, $location, $window, AuthenticationService) {
     $rootScope.$on("$routeChangeStart", function(event, nextRoute, currentRoute) {
         //redirect only if both isAuthenticated is false and no token is set
@@ -151,5 +163,7 @@ app.config(function ($httpProvider) {
             $location.path("/login");
         }
     });
+    
 });
+*/
  

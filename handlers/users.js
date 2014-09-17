@@ -1,11 +1,11 @@
 var bcrypt = require('bcryptjs'),
     Q = require('q'),
-    passport = require('passport'),
-    LocalStrategy = require('passport-local'),
-    LinkedInStrategy = require('passport-linkedin-oauth2').Strategy,
+    //passport = require('passport'),
+    //LocalStrategy = require('passport-local'),
+    //LinkedInStrategy = require('passport-linkedin-oauth2').Strategy,
     request = require('request'),
-    jwt = require('jsonwebtoken'),
-    tokenManager = require('./token_manager'),
+    jwt = require('jwt-simple'),
+    moment = require('moment'),
     config = require('../config.json')[process.env.NODE_ENV || 'development'],
     db = require('orchestrate')(config.db); //config.db holds Orchestrate token
 
@@ -181,7 +181,7 @@ exports.bendupdate = function() {
 */
 
 //===============PASSPORT=================
-
+/*
 // Passport session setup.
 passport.serializeUser(function(user, done) {
   console.log("serializing " + user.email);
@@ -302,28 +302,12 @@ passport.use('linkedin', new LinkedInStrategy({
         }      
           done(null, false);
       } else {         
-        linkedinAuth(accessToken, refreshToken, userprofile)
-        .then( function(user) {
-          var token = req.cookies.user;
-          //var token = jwt.sign({id: user.email}, config.secret);
-          console.log('TOKEN FOUND: ' + token);
-          tokenManager.saveToken(user.email, token)
-          .then(function(token) {
-            done(null, user);
-          })
-          .fail(function(err) {
-            done(null, err);
-          });
-        })
-        .fail( function(err) {
-          console.log ("ERR RETURNED: " + err);
-          done(null, err);
-        });
+        
       }
   }
   
 ));
-
+*/
 var linkedinAuth = function (accessToken, refreshToken, userprofile) {
   var deferred = Q.defer();
   console.log(userprofile);
@@ -410,4 +394,216 @@ var linkedinPull = function (linkedinuser, done) {
     return done(new Error(result.body));
   });
   
+};
+
+/*
+ |--------------------------------------------------------------------------
+ | Generate JSON Web Token
+ |--------------------------------------------------------------------------
+ */
+function createToken(req, user) {
+  var payload = {
+    iss: req.hostname,
+    sub: user._id,
+    iat: moment().valueOf(),
+    exp: moment().add(14, 'days').valueOf()
+  };
+  return jwt.encode(payload, config.token_secret);
+}
+
+
+/*
+ |--------------------------------------------------------------------------
+ | Login with LinkedIn
+ |--------------------------------------------------------------------------
+ */
+exports.newLinkedin = function(req, res) {
+  var accessTokenUrl = 'https://www.linkedin.com/uas/oauth2/accessToken';
+  var peopleApiUrl = 'https://api.linkedin.com/v1/people/~:(id,first-name,last-name,email-address,skills,picture-url;secure=true,headline,summary,public-profile-url)';
+  
+  var params = {
+    client_id: req.body.clientId,
+    redirect_uri: req.body.redirectUri,
+    client_secret: config.linkedin.clientSecret,
+    code: req.body.code,
+    grant_type: 'authorization_code',
+    scope: ['r_fullprofile r_emailaddress']
+  };
+    
+  // Step 1. Exchange authorization code for access token.
+  request.post(accessTokenUrl, { form: params, json: true }, function(err, response, body) {
+    console.log('EXCHANGED TOKEN');
+    if (response.statusCode !== 200) {
+      return res.status(response.statusCode).send({ message: body.error_description });
+    }
+    
+    var params = {
+      oauth2_access_token: body.access_token,
+      format: 'json'
+    };
+
+    // Step 2. Retrieve profile information about the current user.
+    request.get({ url: peopleApiUrl, qs: params, json: true }, function(err, response, profile) {
+      console.log('GOT PROFILE');
+      
+      var userprofile = {
+        name: profile.firstName + ' ' + profile.lastName,
+        email: profile.emailAddress,
+        linkedin: profile,
+        avatar: profile.pictureUrl || ''     
+      };
+      
+      console.log(req.headers);
+      // Step 3a. Link user accounts.
+      if (req.headers.authorization) {
+        console.log('AUTHORIZATION IN HEADER');
+        var token = req.headers.authorization.split(' ')[1];
+        var payload = jwt.decode(token, config.token_secret);
+        
+        console.log('payload');
+        console.log(payload);
+          /*
+        linkedinAuth(profile)
+        .then( function(user) {
+          var token = req.cookies.user;
+          //var token = jwt.sign({id: user.email}, config.secret);
+          console.log('TOKEN FOUND: ' + token);
+          tokenManager.saveToken(user.email, token)
+          .then(function(token) {
+            done(null, user);
+          })
+          .fail(function(err) {
+            done(null, err);
+          });
+        })
+        .fail( function(err) {
+          console.log ("ERR RETURNED: " + err);
+          done(null, err);
+        });
+        */
+        
+        var linkedinAuth = function (profile) {
+          var deferred = Q.defer();
+          console.log(profile);
+          
+          db.search('users', 'value.linkedin.id: "' + profile.id + '"')
+          .then(function (result){
+            console.log('Result of db search:');
+            console.log(result.body.results);
+            if (result.body.results.length > 0){
+              if (result.body.results[0].value.linkedin.id == profile.id){
+                console.log("FOUND USER: " + profile.firstName + ' ' + profile.lastName);
+                return res.status(409).send({ message: 'There is already a LinkedIn account that belongs to you' });
+                
+                /*
+                db.put('users', result.body.results[0].path.key, userprofile)
+                .then(function () {
+                  console.log("PROFILE UPDATED: " + userprofile.username);
+                  deferred.resolve(userprofile);          
+                })
+                .fail(function (err) {
+                  console.log("PUT FAIL:");
+                  console.log(err.body);
+                  deferred.reject(new Error(err.body));          
+                });
+                */
+              }
+            } else { 
+              console.log('No existing linkedin user found!');
+              
+              var token = req.headers.authorization.split(' ')[1];
+              var payload = jwt.decode(token, config.token_secret);
+              
+              console.log('payload');
+              console.log(payload);
+              
+              db.post('users', userprofile)
+                .then(function () {
+                  console.log("REGISTERED: " + userprofile.username);
+                  //console.log(user);
+                  deferred.resolve(userprofile);          
+                })
+                .fail(function (err) {
+                  console.log("POST FAIL:");
+                  console.log(err.body);
+                  deferred.reject(new Error(err.body));          
+                });
+            }
+          }).fail(function (result) {//case in which user does not already exist in db
+              deferred.reject(new Error(result.body));      
+          });
+          return deferred.promise;
+        };
+        
+      
+        User.findOne({ linkedin: profile.id }, function(err, existingUser) {         
+
+          User.findById(payload.sub, function(err, user) {
+            if (!user) {
+              return res.status(400).send({ message: 'User not found' });
+            }
+            user.linkedin = profile.id;
+            user.displayName = user.displayName || profile.firstName + ' ' + profile.lastName;
+            user.save(function(err) {
+              res.send({ token: createToken(req, user) });
+            });
+          });
+        });
+      } else {
+        console.log('AUTHORIZATION NOT IN HEADER');
+        // Step 3b. Create a new user account or return an existing one.
+        
+        var deferred = Q.defer();
+        
+        db.search('users', 'value.linkedin.id: "' + profile.id + '"')
+        .then(function (result){
+          console.log('Result of db search:');
+          console.log(result.body.results);
+          if (result.body.results.length > 0){
+            if (result.body.results[0].value.linkedin.id == profile.id){
+              console.log("FOUND USER: " + profile.firstName + ' ' + profile.lastName);
+              return deferred.resolve({ token: createToken(req, result.body.results[0].value) });
+            }
+          } else {
+            
+            db.put('users', userprofile.email, userprofile)
+            .then(function () {
+              console.log("PROFILE CREATED: " + userprofile.username);
+              deferred.resolve({ token: createToken(req, userprofile) });          
+            })
+            .fail(function (err) {
+              console.log("PUT FAIL:");
+              console.log(err.body);
+              deferred.reject(new Error(err.body));          
+            });                
+          }          
+        })
+        .fail(function (err){
+          console.log('SEARCH FAILED');
+          deferred.reject(new Error(err.body));  
+        });
+        return deferred.promise;
+      }
+    });
+  });
+};
+
+/*
+ |--------------------------------------------------------------------------
+ | Unlink Provider
+ |--------------------------------------------------------------------------
+ */
+
+exports.unlink = function(req, res) {
+  var provider = req.params.provider;
+  User.findById(req.user, function(err, user) {
+    if (!user) {
+      return res.status(400).send({ message: 'User not found' });
+    }
+
+    user[provider] = undefined;
+    user.save(function(err) {
+      res.status(200).end();
+    });
+  });
 };
