@@ -67,7 +67,8 @@ angular
     
   }])
   
-  .controller('LoginCtrl', ['$scope', '$auth', '$global', function($scope, $auth, $global) {
+  .controller('LoginCtrl', ['$scope', '$auth', '$global', 
+    function($scope, $auth, $global) {
       $global.set('fullscreen', true);    
       $scope.$on('$destroy', function () {
         $global.set('fullscreen', false);
@@ -75,9 +76,9 @@ angular
       $scope.authenticate = function(provider) {
         $auth.authenticate(provider);
       };
-
-  }])
   
+  }])
+  /*
   .controller('UserController', ['$scope', '$location', '$window', '$global', 'UserService', 'AuthenticationService',  
     function UserController($scope, $location, $window, $global, UserService, AuthenticationService) {
         //Borrowed heavily from http://www.kdelemme.com/2014/03/09/authentication-with-angularjs-and-a-node-js-rest-api/
@@ -101,8 +102,8 @@ angular
                     left = (window.outerWidth - width) / 2;
                 $window.open(url, 'linkedin_login', 'width=' + width + ',height=' + height + ',scrollbars=0,top=' + top + ',left=' + left);
             */    
-        };
-        
+ /*        };
+       
         //User Controller (signIn, logOut)
         $scope.signIn = function signIn(email, password) {
             if (email !== null && password !== null) {
@@ -150,7 +151,7 @@ angular
         };
     }
   ])
-
+*/
   .controller('AuthTestController', ['$scope', '$global', 'AuthenticationService', function ($scope, $global, AuthenticationService) {
     $global.set('fullscreen', true);
     console.log('AuthenticationService: ' + AuthenticationService.isAuthenticated);    

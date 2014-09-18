@@ -63,7 +63,7 @@ angular
         }
     };
   })
-  */
+  
   .factory('AuthenticationService', function() {
     var auth = {
         isAuthenticated: false,
@@ -89,7 +89,7 @@ angular
         }
     };
   })
-
+*/
   .service('$global', ['$rootScope', 'EnquireService', '$document', function ($rootScope, EnquireService, $document) {
     this.settings = {
       fixedHeader: true,

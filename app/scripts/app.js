@@ -51,7 +51,7 @@ app
       })
       .when('/signup', {
         templateUrl: 'views/signup.html',
-        controller: 'UserController'
+        controller: 'LoginCtrl'
       })
       .when('/authtest', {
         templateUrl: 'views/authtest.html',

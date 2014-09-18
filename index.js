@@ -2,12 +2,12 @@
 
 var express = require('express'),
     bodyParser = require('body-parser'),    
-    methodOverride = require('method-override'),
+    methodOverride = require('method-override'),    
     //session = require('express-session'),
     logger = require('morgan'),    
     //passport = require('passport'),
     request = require('request'),
-    jwt = require('jwt-simple'),
+    jwt = require('jwt-simple'),    
     mcapi = require('mailchimp-api/mailchimp');
 
 var config = require('./config.json')[process.env.NODE_ENV || 'development'];
@@ -19,32 +19,14 @@ var mc = new mcapi.Mailchimp(config.mailchimp);
 var routes = {};
 routes.users = require('./handlers/users.js');
 
-//require('request-debug')(request); // Very useful for debugging oauth and api req/res
-/*
-app.all('*', function(req, res, next) {
-    res.header('Access-Control-Allow-Credentials', true);
-    res.header("Access-Control-Allow-Origin", req.headers.origin);
-    res.header('Access-Control-Allow-Methods', 'OPTIONS,GET,POST,PUT,DELETE');
-    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-    if ('OPTIONS' == req.method){
-        return res.send(200);
-    }
-    next();
-});
 
-// Simple route middleware to ensure user is authenticated.
-function ensureAuthenticated(req, res, next) {
-  if (req.isAuthenticated()) { console.log('Authentication validated!'); return next(); }
-  console.log('Not authenticated!');
-  req.session.error = 'Please sign in!';
-  res.redirect('/login');
-}
-*/
 //===============EXPRESS================= // Order really matters here..!
+//require('request-debug')(request); // Very useful for debugging oauth and api req/res
 //app.use(logger('dev'));
+app.use(methodOverride());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(methodOverride());
+
 //app.use(session({secret: config.token_secret, key: 'user', cookie: { maxAge: 60000, secure: false, httpOnly: false }, resave: true, saveUninitialized: true}));
 //app.use(session({secret: config.token_secret, resave: true, saveUninitialized: true}));
 
@@ -56,26 +38,6 @@ if (process.env.NODE_ENV !== "production") {
   console.log("Development mode active");
 } 
 
-//app.use(passport.initialize());
-//app.use(passport.session());
-/*
-// Session-persisted message middleware
-app.use(function(req, res, next){
-  var err = req.session.error,
-      msg = req.session.notice,
-      success = req.session.success;
-
-  delete req.session.error;
-  delete req.session.success;
-  delete req.session.notice;
-
-  if (err) res.locals.error = err;
-  if (msg) res.locals.notice = msg;
-  if (success) res.locals.success = success;
-
-  next();
-});
-*/
 //===============ROUTES=================
 
 // load the single view file (angular will handle the page changes on the front-end)
@@ -122,45 +84,12 @@ app.get('/api/update', function(req, res){
     });
 });
 
-//sends the request through our local signup strategy, and if successful takes user to homepage, otherwise returns then to signin page
-app.post('/local-reg', passport.authenticate('local-signup', {
-  successRedirect: '/',
-  failureRedirect: '/signin'
-  })
-);
-*/
-// Setting the linkedin oauth routes
-/*
-app.get('/auth/linkedin', routes.users.linkedin);
-
-app.get('/auth/linkedin/callback', passport.authenticate('linkedin', {// i should be verifying the state here to avoid csrf
-    failureRedirect: '/authfail'
-}), function(req, res) {
-    res.redirect('/');
-    }); 
-
-app.get('/authsuccess', ensureAuthenticated, function(req, res) {  
-    res.sendFile('authsuccess.html', { root: __dirname + config.path + '/views/' });    
-});
-
-app.get('/authfail', function(req, res) {    
-    res.sendFile('authfail.html', { root: __dirname + config.path + '/views/' });    
-});
-/*
 // experiment with linkedin authenticated call
 app.get('/user/profile', function(req, res){
   passport.authenticate('linkedin', {
     state: req.query.state || 'none'
 })(req, res);
 });
-*/
-/*
-//sends the request through our local login/signin strategy, and if successful takes user to homepage, otherwise returns then to signin page
-app.post('/login', passport.authenticate('local-signin', { 
-  successRedirect: '/',
-  failureRedirect: '/signin'
-  })
-);
 */
 app.get('/login', function(req, res){  
  res.redirect('#/login');  
@@ -209,7 +138,8 @@ function ensureAuthenticated(req, res, next) {
   next();
 }
 
-app.post('/auth/linkedin', routes.users.newLinkedin);
+
+app.post('/auth/linkedin', routes.users.linkedin);
 
 
 app.get('/auth/unlink/:provider', ensureAuthenticated, routes.users.unlink);

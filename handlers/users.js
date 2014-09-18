@@ -307,7 +307,7 @@ passport.use('linkedin', new LinkedInStrategy({
   }
   
 ));
-*/
+
 var linkedinAuth = function (accessToken, refreshToken, userprofile) {
   var deferred = Q.defer();
   console.log(userprofile);
@@ -417,7 +417,7 @@ function createToken(req, user) {
  | Login with LinkedIn
  |--------------------------------------------------------------------------
  */
-exports.newLinkedin = function(req, res) {
+exports.linkedin = function(req, res) {
   var accessTokenUrl = 'https://www.linkedin.com/uas/oauth2/accessToken';
   var peopleApiUrl = 'https://api.linkedin.com/v1/people/~:(id,first-name,last-name,email-address,skills,picture-url;secure=true,headline,summary,public-profile-url)';
   
@@ -553,7 +553,7 @@ exports.newLinkedin = function(req, res) {
         console.log('AUTHORIZATION NOT IN HEADER');
         // Step 3b. Create a new user account or return an existing one.
         
-        var deferred = Q.defer();
+        //var deferred = Q.defer();
         
         db.search('users', 'value.linkedin.id: "' + profile.id + '"')
         .then(function (result){
@@ -562,27 +562,26 @@ exports.newLinkedin = function(req, res) {
           if (result.body.results.length > 0){
             if (result.body.results[0].value.linkedin.id == profile.id){
               console.log("FOUND USER: " + profile.firstName + ' ' + profile.lastName);
-              return deferred.resolve({ token: createToken(req, result.body.results[0].value) });
+              res.send({ token: createToken(req, result.body.results[0].value) });
             }
           } else {
             
             db.put('users', userprofile.email, userprofile)
             .then(function () {
               console.log("PROFILE CREATED: " + userprofile.username);
-              deferred.resolve({ token: createToken(req, userprofile) });          
+              res.send({ token: createToken(req, userprofile) });          
             })
             .fail(function (err) {
               console.log("PUT FAIL:");
               console.log(err.body);
-              deferred.reject(new Error(err.body));          
+              res.send(err.body);          
             });                
           }          
         })
         .fail(function (err){
           console.log('SEARCH FAILED');
-          deferred.reject(new Error(err.body));  
+          res.send(err.body); 
         });
-        return deferred.promise;
       }
     });
   });
