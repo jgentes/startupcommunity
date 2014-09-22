@@ -404,7 +404,7 @@ var linkedinPull = function (linkedinuser, done) {
 function createToken(req, user) {
   var payload = {
     iss: req.hostname,
-    sub: user._id,
+    sub: user.email,
     iat: moment().valueOf(),
     exp: moment().add(14, 'days').valueOf()
   };
@@ -432,7 +432,7 @@ exports.linkedin = function(req, res) {
     
   // Step 1. Exchange authorization code for access token.
   request.post(accessTokenUrl, { form: params, json: true }, function(err, response, body) {
-    console.log('EXCHANGED TOKEN');
+    
     if (response.statusCode !== 200) {
       return res.status(response.statusCode).send({ message: body.error_description });
     }
@@ -443,117 +443,63 @@ exports.linkedin = function(req, res) {
     };
 
     // Step 2. Retrieve profile information about the current user.
-    request.get({ url: peopleApiUrl, qs: params, json: true }, function(err, response, profile) {
-      console.log('GOT PROFILE');
+    request.get({ url: peopleApiUrl, qs: params, json: true }, function(err, response, profile) {      
       
       var userprofile = {
         name: profile.firstName + ' ' + profile.lastName,
         email: profile.emailAddress,
         linkedin: profile,
         avatar: profile.pictureUrl || ''     
-      };
+      };      
       
-      console.log(req.headers);
       // Step 3a. Link user accounts.
       if (req.headers.authorization) {
         console.log('AUTHORIZATION IN HEADER');
-        var token = req.headers.authorization.split(' ')[1];
-        var payload = jwt.decode(token, config.token_secret);
         
-        console.log('payload');
-        console.log(payload);
-          /*
-        linkedinAuth(profile)
-        .then( function(user) {
-          var token = req.cookies.user;
-          //var token = jwt.sign({id: user.email}, config.secret);
-          console.log('TOKEN FOUND: ' + token);
-          tokenManager.saveToken(user.email, token)
-          .then(function(token) {
-            done(null, user);
+        db.search('users', 'value.linkedin.id: "' + profile.id + '"')
+        .then(function (result){
+          console.log('Result of db search:');
+          console.log(result.body.results);
+          if (result.body.results.length > 0){
+            if (result.body.results[0].value.linkedin.id == profile.id){
+              console.log("FOUND USER: " + profile.firstName + ' ' + profile.lastName);
+              return res.status(409).send({ message: 'There is already a LinkedIn account that belongs to you' });
+            }
+            console.log("FOUND a profile, but couldn't match a linkedin id: " + profile.firstName + ' ' + profile.lastName);
+            return res.status(409).send({ message: 'There appears to be an existing Linkedin account, but something is wrong.' });
+          }
+          
+          var token = req.headers.authorization.split(' ')[1];
+          var payload = jwt.decode(token, config.token_secret);
+          
+          db.get('users', payload.sub)
+          .then(function(result) {
+            result.body["linkedin"] = profile;// get user account and re-upload with linkedin data
+            db.put('users', payload.sub, result.body)
+              .then(function () {
+                console.log("PROFILE UPDATED: " + userprofile.email);
+                res.send({ token: createToken(req, result.body) });         
+              })
+              .fail(function (err) {
+                console.log("PUT FAIL:");
+                console.log(err.body);
+                res.send(err.body);          
+              });
           })
           .fail(function(err) {
-            done(null, err);
+            return res.status(400).send({ message: 'User not found.' });
           });
-        })
-        .fail( function(err) {
-          console.log ("ERR RETURNED: " + err);
-          done(null, err);
-        });
-        */
-        
-        var linkedinAuth = function (profile) {
-          var deferred = Q.defer();
-          console.log(profile);
           
-          db.search('users', 'value.linkedin.id: "' + profile.id + '"')
-          .then(function (result){
-            console.log('Result of db search:');
-            console.log(result.body.results);
-            if (result.body.results.length > 0){
-              if (result.body.results[0].value.linkedin.id == profile.id){
-                console.log("FOUND USER: " + profile.firstName + ' ' + profile.lastName);
-                return res.status(409).send({ message: 'There is already a LinkedIn account that belongs to you' });
-                
-                /*
-                db.put('users', result.body.results[0].path.key, userprofile)
-                .then(function () {
-                  console.log("PROFILE UPDATED: " + userprofile.username);
-                  deferred.resolve(userprofile);          
-                })
-                .fail(function (err) {
-                  console.log("PUT FAIL:");
-                  console.log(err.body);
-                  deferred.reject(new Error(err.body));          
-                });
-                */
-              }
-            } else { 
-              console.log('No existing linkedin user found!');
-              
-              var token = req.headers.authorization.split(' ')[1];
-              var payload = jwt.decode(token, config.token_secret);
-              
-              console.log('payload');
-              console.log(payload);
-              
-              db.post('users', userprofile)
-                .then(function () {
-                  console.log("REGISTERED: " + userprofile.username);
-                  //console.log(user);
-                  deferred.resolve(userprofile);          
-                })
-                .fail(function (err) {
-                  console.log("POST FAIL:");
-                  console.log(err.body);
-                  deferred.reject(new Error(err.body));          
-                });
-            }
-          }).fail(function (result) {//case in which user does not already exist in db
-              deferred.reject(new Error(result.body));      
-          });
-          return deferred.promise;
-        };
+          
+        })
+        .fail(function(err) {
+          return res.status(404).send({ message: 'No existing Linkedin user account found.'});
+        });
         
       
-        User.findOne({ linkedin: profile.id }, function(err, existingUser) {         
-
-          User.findById(payload.sub, function(err, user) {
-            if (!user) {
-              return res.status(400).send({ message: 'User not found' });
-            }
-            user.linkedin = profile.id;
-            user.displayName = user.displayName || profile.firstName + ' ' + profile.lastName;
-            user.save(function(err) {
-              res.send({ token: createToken(req, user) });
-            });
-          });
-        });
       } else {
         console.log('AUTHORIZATION NOT IN HEADER');
-        // Step 3b. Create a new user account or return an existing one.
-        
-        //var deferred = Q.defer();
+        // Step 3b. Create a new user account or return an existing one.        
         
         db.search('users', 'value.linkedin.id: "' + profile.id + '"')
         .then(function (result){
@@ -568,7 +514,7 @@ exports.linkedin = function(req, res) {
             
             db.put('users', userprofile.email, userprofile)
             .then(function () {
-              console.log("PROFILE CREATED: " + userprofile.username);
+              console.log("PROFILE CREATED: " + JSON.stringify(userprofile));
               res.send({ token: createToken(req, userprofile) });          
             })
             .fail(function (err) {
@@ -584,6 +530,16 @@ exports.linkedin = function(req, res) {
         });
       }
     });
+  });
+};
+
+exports.getme = function(req, res) {
+  db.get('users', req.user.email)
+  .then(function(user) {
+    res.send(user);
+  })
+  .fail(function(err) {
+    return res.status(400).send({ message: 'User not found.' });
   });
 };
 

@@ -24,11 +24,12 @@
 						<div class="clearfix">
 							<div class="pull-right"><label><input type="checkbox" checked=""> Remember Me</label></div>
 						</div>
+						<alert ng-hide="!alert.msg" class="ng-hide" style="margin-bottom: 0;"><span ng-bind-html="alert.msg | safe_html"></span></alert>
 					</form>
 					
 		</div>
 		<div class="panel-footer">
-			<a href="#/" class="pull-left btn btn-link" style="padding-left:0">Forgot password?</a>
+			<a href="#/" class="pull-left btn btn-link" style="padding-left:0">Forgot password?</a><p ng-if="isAuthenticated()">Logged in!</p>
 			
 			<div class="pull-right">					
 				<a class="btn btn-sky" ng-click="authenticate('linkedin')">Linkedin</a>

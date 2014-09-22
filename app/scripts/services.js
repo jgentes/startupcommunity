@@ -1,95 +1,17 @@
 angular
   .module('appServices', [])
-  /*
-  .factory('TokenInterceptor', function ($q, $window, $location, $document, AuthenticationService) {
+
+  .factory('Account', function($http, $auth) {
     return {
-      
-        request: function (setting) {            
-            setting.headers = setting.headers || {};
-            
-            if ($window.sessionStorage.token) {
-                setting.headers.Authorization = 'Bearer ' + $window.sessionStorage.token;
-            } else if ($document[0].cookie) { 
-              var cookies;
-
-              var readCookie = function(name,c,C,i){
-                  if(cookies){ return cookies[name]; }
-          
-                  c = $document[0].cookie.split('; ');
-                  cookies = {};
-          
-                  for(i=c.length-1; i>=0; i--){
-                     C = c[i].split('=');
-                     cookies[C[0]] = C[1];
-                  }
-          
-                  return cookies[name];
-              };
-              
-              var token = readCookie('user');
-              if (token) {
-                $window.sessionStorage.token = token;
-                setting.headers.Authorization = 'Bearer ' + token;
-                console.log('Session token set: '); console.log(token); 
-              }
-            }                         
-                          
-            return setting;
-        },
-
-        requestError: function(rejection) {
-          console.log('AuthenticationService reject!');
-            return $q.reject(rejection);
-        },
-
-        // Set Authentication.isAuthenticated to true if 200 received
-        response: function (response) {
-            if (response !== null && response.status == 200 && $window.sessionStorage.token && !AuthenticationService.isAuthenticated) {
-                AuthenticationService.isAuthenticated = true;
-                console.log('Client isAuthenticated!');
-            }
-            return response || $q.when(response);
-        },
-
-        // Revoke client authentication if 401 is received
-        responseError: function(rejection) {
-            if (rejection !== null && rejection.status === 401 && ($window.sessionStorage.token || AuthenticationService.isAuthenticated)) {
-                delete $window.sessionStorage.token;
-                AuthenticationService.isAuthenticated = false;
-                $location.path("/login");
-            }
-
-            return $q.reject(rejection);
-        }
+      getProfile: function() {
+        return $http.get('/api/me');
+      },
+      updateProfile: function(profileData) {
+        return $http.put('/api/me', profileData);
+      }
     };
   })
-  
-  .factory('AuthenticationService', function() {
-    var auth = {
-        isAuthenticated: false,
-        isAdmin: false
-    };
 
-    return auth;
-  })
-
-  .factory('UserService', function ($http) {
-    return {
-        
-        signIn: function(email, password) {
-            return $http.post('/login', {email: email, password: password});
-        },
-
-        logOut: function() {
-            return $http.get('/logout');
-        },
-
-        signup: function(email, password, passwordConfirmation) {
-            return $http.post('/signup', {email: email, password: password, passwordConfirmation: passwordConfirmation});
-        }
-    };
-  })
-*/
   .service('$global', ['$rootScope', 'EnquireService', '$document', function ($rootScope, EnquireService, $document) {
     this.settings = {
       fixedHeader: true,

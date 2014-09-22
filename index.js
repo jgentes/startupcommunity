@@ -1,13 +1,12 @@
 //===============DEPENDENCIES=================
 
 var express = require('express'),
-    bodyParser = require('body-parser'),    
-    methodOverride = require('method-override'),    
+    bodyParser = require('body-parser'),
+    methodOverride = require('method-override'),
     //session = require('express-session'),
-    logger = require('morgan'),    
-    //passport = require('passport'),
+    logger = require('morgan'),
     request = require('request'),
-    jwt = require('jwt-simple'),    
+    jwt = require('jwt-simple'),
     mcapi = require('mailchimp-api/mailchimp');
 
 var config = require('./config.json')[process.env.NODE_ENV || 'development'];
@@ -22,13 +21,10 @@ routes.users = require('./handlers/users.js');
 
 //===============EXPRESS================= // Order really matters here..!
 //require('request-debug')(request); // Very useful for debugging oauth and api req/res
-//app.use(logger('dev'));
+app.use(logger('dev'));
 app.use(methodOverride());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-
-//app.use(session({secret: config.token_secret, key: 'user', cookie: { maxAge: 60000, secure: false, httpOnly: false }, resave: true, saveUninitialized: true}));
-//app.use(session({secret: config.token_secret, resave: true, saveUninitialized: true}));
 
 app.use("/", express.static(__dirname + config.path));
 app.use("/public", express.static(__dirname + '/public'));
@@ -37,6 +33,31 @@ if (process.env.NODE_ENV !== "production") {
   app.use("/bower_components", express.static(__dirname + "/bower_components"));  
   console.log("Development mode active");
 } 
+
+/*
+ |--------------------------------------------------------------------------
+ | Login Required Middleware
+ |--------------------------------------------------------------------------
+ */
+function ensureAuthenticated(req, res, next) {
+  console.log('entering ensureauth');
+  if (!req.headers.authorization) {
+    console.log('no auth headder');
+    res.redirect('#/login');
+    //return res.status(401).send({ message: 'Please make sure your request has an Authorization header' });
+  }
+
+  var token = req.headers.authorization.split(' ')[1];
+  var payload = jwt.decode(token, config.token_secret);
+  console.log('ensureauth req.user: ');
+  console.log(req.user);
+  if (payload.exp <= Date.now()) {
+    return res.status(401).send({ message: 'Token has expired' });
+  }
+
+  req.user = payload.sub;
+  next();
+}
 
 //===============ROUTES=================
 
@@ -117,27 +138,32 @@ app.post('/sub', function(req, res){
       }      
     });
 });
+
+
 /*
  |--------------------------------------------------------------------------
- | Login Required Middleware
+ | GET /api/me
  |--------------------------------------------------------------------------
  */
-function ensureAuthenticated(req, res, next) {
-  if (!req.headers.authorization) {
-    return res.status(401).send({ message: 'Please make sure your request has an Authorization header' });
-  }
+app.get('/api/me', ensureAuthenticated, routes.users.getme);
 
-  var token = req.headers.authorization.split(' ')[1];
-  var payload = jwt.decode(token, config.token_secret);
-
-  if (payload.exp <= Date.now()) {
-    return res.status(401).send({ message: 'Token has expired' });
-  }
-
-  req.user = payload.sub;
-  next();
-}
-
+/*
+ |--------------------------------------------------------------------------
+ | PUT /api/me
+ |--------------------------------------------------------------------------
+ */
+app.put('/api/me', ensureAuthenticated, function(req, res) {
+  User.findById(req.user, function(err, user) {
+    if (!user) {
+      return res.status(400).send({ message: 'User not found' });
+    }
+    user.displayName = req.body.displayName || user.displayName;
+    user.email = req.body.email || user.email;
+    user.save(function(err) {
+      res.status(200).end();
+    });
+  });
+});
 
 app.post('/auth/linkedin', routes.users.linkedin);
 
