@@ -99,6 +99,20 @@ angular
     };
   }])
   
+  .controller('SignupCtrl', function($scope, $auth, $global) {
+    $global.set('fullscreen', true);    
+    $scope.$on('$destroy', function () {
+      $global.set('fullscreen', false);
+    });
+    $scope.signup = function() {
+      $auth.signup({
+        name: $scope.name,
+        email: $scope.email,
+        password: $scope.password
+      });
+    };
+  })
+  
   .controller('ProfileCtrl', function($scope, $auth, $alert, Account) {
 
     /**

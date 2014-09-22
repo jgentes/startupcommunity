@@ -46,7 +46,7 @@ app
       })
       .when('/signup', {
         templateUrl: 'views/signup.html',
-        controller: 'LoginCtrl'
+        controller: 'SignupCtrl'
       })
       /*      
       .when('/calendar', {

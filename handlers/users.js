@@ -22,6 +22,8 @@ var UserHandler = function() {
   this.getMe = handleGetme;
   this.putMe = handlePutme;
   this.unlink = handleUnlink;
+  this.signup = handleSignup;
+  this.login = handleLogin;
 };
   
 
@@ -251,7 +253,74 @@ function handleCreateToken(req, user) {
   return jwt.encode(payload, config.token_secret);
 }
 
+/*
+ |--------------------------------------------------------------------------
+ | Create Email and Password Account
+ |--------------------------------------------------------------------------
+ */
+function handleSignup(req, res) {
+  var hash = bcrypt.hashSync(req.body.password, 8);
+  var user = {
+    "name": req.body.name,
+    "email": req.body.email,
+    "password": hash,
+    "avatar": "/public/blank_avatar.png"
+  };
+  //check if email is already assigned in our database
+  db.get('users', req.body.email)
+  .then(function (result){ //case in which user already exists in db
+    console.log('User already exists');
+    res.status(401).send('That email address is already registered to a user.'); //username already exists
+  })
+  .fail(function (result) {//case in which user does not already exist in db
+      console.log(result.body);
+      if (result.body.message == 'The requested items could not be found.'){
+        console.log('Email is free for use');
+        db.put('users', req.body.email, user)
+        .then(function () {
+          console.log("USER:");
+          console.log(user);
+          res.send({ token: handleCreateToken(req, user) });
+        })
+        .fail(function (err) {
+          console.log("PUT FAIL:" + err.body);
+          res.status(401).send('Something went wrong: ' + err);
+        });
+      } else {
+        res.status(401).send('Something went wrong!');
+      }
+  });    
+}
 
+
+/*
+ |--------------------------------------------------------------------------
+ | Log in with Email
+ |--------------------------------------------------------------------------
+ */
+
+function handleLogin(req, res) {  
+ db.get('users', req.body.email)
+  .then(function (result){
+    console.log("FOUND USER");
+    var hash = result.body.password;
+    if (bcrypt.compareSync(req.body.password, hash)) {
+      res.send({ token: handleCreateToken(req, result.body) });
+    } else {
+      console.log("PASSWORDS DO NOT MATCH");
+      return res.status(401).send({ message: 'Wrong email and/or password' });
+    }
+  }).fail(function (err){
+    if (err.body.message == 'The requested items could not be found.'){
+          console.log("COULD NOT FIND USER IN DB FOR SIGNIN");
+          return res.status(401).send({ message: 'Wrong email and/or password' });
+    } else {
+      return res.status(401).send({ message: 'Something went wrong!' });
+    }
+  });
+}
+  
+  
 /*
  |--------------------------------------------------------------------------
  | Login with LinkedIn
