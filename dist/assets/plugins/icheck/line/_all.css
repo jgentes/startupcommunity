@@ -61,7 +61,7 @@
         }
 
 /* HiDPI support */
-@media (-o-min-device-pixel-ratio: 5/4), (-webkit-min-device-pixel-ratio: 1.25), (min-resolution: 120dpi) {
+@media (-o-min-device-pixel-ratio: 5/4), (-webkit-min-device-pixel-ratio: 1.25), (min-resolution: 120dppx) {
     .icheckbox_line .icheck_line-icon,
     .iradio_line .icheck_line-icon {
         background-image: url(line@2x.png);
@@ -132,7 +132,7 @@
         }
 
 /* HiDPI support */
-@media (-o-min-device-pixel-ratio: 5/4), (-webkit-min-device-pixel-ratio: 1.25), (min-resolution: 120dpi) {
+@media (-o-min-device-pixel-ratio: 5/4), (-webkit-min-device-pixel-ratio: 1.25), (min-resolution: 120dppx) {
     .icheckbox_line-red .icheck_line-icon,
     .iradio_line-red .icheck_line-icon {
         background-image: url(line@2x.png);
@@ -203,7 +203,7 @@
         }
 
 /* HiDPI support */
-@media (-o-min-device-pixel-ratio: 5/4), (-webkit-min-device-pixel-ratio: 1.25), (min-resolution: 120dpi) {
+@media (-o-min-device-pixel-ratio: 5/4), (-webkit-min-device-pixel-ratio: 1.25), (min-resolution: 120dppx) {
     .icheckbox_line-green .icheck_line-icon,
     .iradio_line-green .icheck_line-icon {
         background-image: url(line@2x.png);
@@ -274,7 +274,7 @@
         }
 
 /* HiDPI support */
-@media (-o-min-device-pixel-ratio: 5/4), (-webkit-min-device-pixel-ratio: 1.25), (min-resolution: 120dpi) {
+@media (-o-min-device-pixel-ratio: 5/4), (-webkit-min-device-pixel-ratio: 1.25), (min-resolution: 120dppx) {
     .icheckbox_line-blue .icheck_line-icon,
     .iradio_line-blue .icheck_line-icon {
         background-image: url(line@2x.png);
@@ -345,7 +345,7 @@
         }
 
 /* HiDPI support */
-@media (-o-min-device-pixel-ratio: 5/4), (-webkit-min-device-pixel-ratio: 1.25), (min-resolution: 120dpi) {
+@media (-o-min-device-pixel-ratio: 5/4), (-webkit-min-device-pixel-ratio: 1.25), (min-resolution: 120dppx) {
     .icheckbox_line-aero .icheck_line-icon,
     .iradio_line-aero .icheck_line-icon {
         background-image: url(line@2x.png);
@@ -416,7 +416,7 @@
         }
 
 /* HiDPI support */
-@media (-o-min-device-pixel-ratio: 5/4), (-webkit-min-device-pixel-ratio: 1.25), (min-resolution: 120dpi) {
+@media (-o-min-device-pixel-ratio: 5/4), (-webkit-min-device-pixel-ratio: 1.25), (min-resolution: 120dppx) {
     .icheckbox_line-grey .icheck_line-icon,
     .iradio_line-grey .icheck_line-icon {
         background-image: url(line@2x.png);
@@ -487,7 +487,7 @@
         }
 
 /* HiDPI support */
-@media (-o-min-device-pixel-ratio: 5/4), (-webkit-min-device-pixel-ratio: 1.25), (min-resolution: 120dpi) {
+@media (-o-min-device-pixel-ratio: 5/4), (-webkit-min-device-pixel-ratio: 1.25), (min-resolution: 120dppx) {
     .icheckbox_line-orange .icheck_line-icon,
     .iradio_line-orange .icheck_line-icon {
         background-image: url(line@2x.png);
@@ -558,7 +558,7 @@
         }
 
 /* HiDPI support */
-@media (-o-min-device-pixel-ratio: 5/4), (-webkit-min-device-pixel-ratio: 1.25), (min-resolution: 120dpi) {
+@media (-o-min-device-pixel-ratio: 5/4), (-webkit-min-device-pixel-ratio: 1.25), (min-resolution: 120dppx) {
     .icheckbox_line-yellow .icheck_line-icon,
     .iradio_line-yellow .icheck_line-icon {
         background-image: url(line@2x.png);
@@ -629,7 +629,7 @@
         }
 
 /* HiDPI support */
-@media (-o-min-device-pixel-ratio: 5/4), (-webkit-min-device-pixel-ratio: 1.25), (min-resolution: 120dpi) {
+@media (-o-min-device-pixel-ratio: 5/4), (-webkit-min-device-pixel-ratio: 1.25), (min-resolution: 120dppx) {
     .icheckbox_line-pink .icheck_line-icon,
     .iradio_line-pink .icheck_line-icon {
         background-image: url(line@2x.png);
@@ -700,7 +700,7 @@
         }
 
 /* HiDPI support */
-@media (-o-min-device-pixel-ratio: 5/4), (-webkit-min-device-pixel-ratio: 1.25), (min-resolution: 120dpi) {
+@media (-o-min-device-pixel-ratio: 5/4), (-webkit-min-device-pixel-ratio: 1.25), (min-resolution: 120dppx) {
     .icheckbox_line-purple .icheck_line-icon,
     .iradio_line-purple .icheck_line-icon {
         background-image: url(line@2x.png);

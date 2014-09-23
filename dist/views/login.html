@@ -1,0 +1,42 @@
+<div class="verticalcenter">
+	<a href="#/"><img src="assets/img/logo-big.png" alt="Logo" class="brand" style="margin-bottom: -50px; width: 100%;"/></a>
+	<h4 class="text-center" style="margin-bottom: 20px; color: #5A5A5A;">Kickstart your city's entrepreneurial ecosystem</h4>
+	<div class="panel panel-primary">
+		<div class="panel-body">
+			<h4 class="text-center" style="margin-bottom: 25px;">Log in to get started or <a href="#/signup" class="btn btn-default" style="padding: 5px 8px;">Sign Up</a></h4>
+				<form method="post" ng-submit="login()" name="loginForm" class="form-horizontal" style="margin-bottom: 0px !important;">
+					<div class="form-group">
+						<div class="col-sm-12">
+							<div class="input-group">
+								<span class="input-group-addon"><i class="fa fa-user"></i></span>
+								<input type="text" class="form-control" id="email" placeholder="Email" ng-model="email" autofocus required>
+							</div>
+						</div>
+					</div>
+					<div class="form-group">
+						<div class="col-sm-12">
+							<div class="input-group">
+								<span class="input-group-addon"><i class="fa fa-lock"></i></span>
+								<input type="password" class="form-control" id="password" placeholder="Password" ng-model="password" required>
+							</div>
+						</div>
+					</div>
+					<div class="clearfix">
+						<div class="pull-right"><label><input type="checkbox" checked=""> Remember Me</label></div>
+					</div>
+					<alert ng-hide="!alert.msg" class="ng-hide" style="margin-bottom: 0;"><span ng-bind-html="alert.msg | safe_html"></span></alert>
+					<div class="panel-footer">
+						<a href="#/" class="pull-left btn btn-link" style="padding-left:0">Forgot password?</a><p ng-if="isAuthenticated()">Logged in!</p>
+						
+						<div class="pull-right">					
+							<a class="btn btn-sky" ng-click="authenticate('linkedin')">Linkedin</a>
+							<button type="submit" class="btn btn-primary">Log In</button>
+						</div>
+					</div>
+				
+				</form>
+					
+		</div>
+		
+	</div>
+</div>
