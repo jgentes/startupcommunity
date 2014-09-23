@@ -11,7 +11,7 @@ angular
     $scope.switchStatus6 = 1;
 
     $scope.getLocation = function(val) {
-      return $http.get('http://maps.googleapis.com/maps/api/geocode/json', {
+      return $http.get('https://maps.googleapis.com/maps/api/geocode/json', {
         params: {
           address: val,
           sensor: false
@@ -32,7 +32,7 @@ angular
         minimumInputLength: 3,
         width: 'resolve',
         ajax: {
-            url: "http://api.rottentomatoes.com/api/public/v1.0/movies.json",
+            url: "https://api.rottentomatoes.com/api/public/v1.0/movies.json",
             dataType: 'jsonp',
             quietMillis: 100,
             data: function (term, page) { // page is the one-based page number tracked by Select2

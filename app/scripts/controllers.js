@@ -241,7 +241,7 @@ angular
     };
     
     $scope.getLocation = function(val) {
-      return $http.get('http://maps.googleapis.com/maps/api/geocode/json', {
+      return $http.get('https://maps.googleapis.com/maps/api/geocode/json', {
         params: {
           address: val,
           sensor: false,
