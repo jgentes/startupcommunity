@@ -79,7 +79,7 @@ angular
       $auth.login({ email: $scope.email, password: $scope.password })
         .then(function() {
           // add alert here
-          console.log('LOGIN SUCCESS');
+          console.log('Logged in!');
         })
         .catch(function(response) {
           // add alert here
@@ -90,7 +90,7 @@ angular
       $auth.authenticate(provider)
         .then(function() {
           // add alert here
-          console.log('LOGIN SUCCESS');
+          console.log('Logged in!');
         })
         .catch(function(response) {
           // add alert here

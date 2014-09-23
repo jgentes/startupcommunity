@@ -28,7 +28,7 @@ app
   .config(function($authProvider) {
    
     $authProvider.linkedin({
-      clientId: "75s9q8uelaanvf",
+      clientId: "75bqixdv58z1az",
       url: '/auth/linkedin'
     });
 

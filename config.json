@@ -2,9 +2,8 @@
   "development": {
     "db": "be406a43-5cc1-425f-9545-23bd75ec6cfc",
     "linkedin": {
-      "clientID": "75s9q8uelaanvf",
-      "clientSecret": "kus8etN9TWmgJBba",
-      "callbackURL": "https://startupcommunity-c9-jgentes.c9.io/auth/linkedin/callback"
+      "clientID": "75bqixdv58z1az",
+      "clientSecret": "C5zHpSLjV4uNFUM1"
     },
     "token_secret": "2l3knfgqlkn2fvkl23nvklgnvkg23bhva08",
     "mailchimp": "4cd1eb319ae631eb57ef642b9340af68-us9",
@@ -14,9 +13,8 @@
   "theme": {
     "db": "be406a43-5cc1-425f-9545-23bd75ec6cfc",
     "linkedin": {
-      "clientID": "75s9q8uelaanvf",
-      "clientSecret": "kus8etN9TWmgJBba",
-      "callbackURL": "https://startupcommunity-c9-jgentes.c9.io/auth/linkedin/callback"
+      "clientID": "75bqixdv58z1az",
+      "clientSecret": "C5zHpSLjV4uNFUM1"
     },
     "token_secret": "2l3knfgqlkn2fvkl23nvklgnvkg23bhva08",
     "mailchimp": "4cd1eb319ae631eb57ef642b9340af68-us9",
@@ -26,9 +24,8 @@
   "test": {
     "db": "be406a43-5cc1-425f-9545-23bd75ec6cfc",
     "linkedin": {
-      "clientID": "75s9q8uelaanvf",
-      "clientSecret": "kus8etN9TWmgJBba",
-      "callbackURL": "https://startupcommunity-c9-jgentes.c9.io/auth/linkedin/callback"
+      "clientID": "75bqixdv58z1az",
+      "clientSecret": "C5zHpSLjV4uNFUM1"
     },
     "token_secret": "2l3knfgqlkn2fvkl23nvklgnvkg23bhva08",
     "mailchimp": "4cd1eb319ae631eb57ef642b9340af68-us9",
@@ -38,9 +35,8 @@
   "production": {
     "db": "be406a43-5cc1-425f-9545-23bd75ec6cfc",
     "linkedin": {
-      "clientID": "75s9q8uelaanvf",
-      "clientSecret": "kus8etN9TWmgJBba",
-      "callbackURL": "https://startupcommunity.org/auth/linkedin/callback"
+      "clientID": "75bqixdv58z1az",
+      "clientSecret": "C5zHpSLjV4uNFUM1"
     },
     "token_secret": "2l3knfgqlkn2fvkl23nvklgnvkg23bhva08",
     "mailchimp": "4cd1eb319ae631eb57ef642b9340af68-us9",
