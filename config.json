@@ -1,6 +1,6 @@
 {
   "development": {
-    "db": "be406a43-5cc1-425f-9545-23bd75ec6cfc",
+    "db": "95bd29ce-e6a9-48b1-888e-780c74d1ef3a",
     "linkedin": {
       "clientID": "75bqixdv58z1az",
       "clientSecret": "C5zHpSLjV4uNFUM1"
@@ -11,7 +11,7 @@
     "api_base_url": "https://startupcommunity-c9-jgentes.c9.io"
   },
   "theme": {
-    "db": "be406a43-5cc1-425f-9545-23bd75ec6cfc",
+    "db": "95bd29ce-e6a9-48b1-888e-780c74d1ef3a",
     "linkedin": {
       "clientID": "75bqixdv58z1az",
       "clientSecret": "C5zHpSLjV4uNFUM1"
@@ -22,7 +22,7 @@
     "api_base_url": "https://startupcommunity-c9-jgentes.c9.io"
   },
   "test": {
-    "db": "be406a43-5cc1-425f-9545-23bd75ec6cfc",
+    "db": "95bd29ce-e6a9-48b1-888e-780c74d1ef3a",
     "linkedin": {
       "clientID": "75bqixdv58z1az",
       "clientSecret": "C5zHpSLjV4uNFUM1"
