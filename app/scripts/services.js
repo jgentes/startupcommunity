@@ -23,8 +23,7 @@ angular
             if (item.types[0] == 'locality') {          
               for (f=1;f<item.address_components.length;f++) {              
                 if (item.address_components[f].types[0] == "administrative_area_level_1") {
-                addresses.push(item.address_components[0].short_name + ', ' + item.address_components[f].short_name);                
-                console.log('0 ' + addresses); 
+                addresses.push(item.address_components[0].short_name + ', ' + item.address_components[f].short_name);                                
                 break;
                 }
               }
