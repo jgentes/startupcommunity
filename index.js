@@ -14,10 +14,6 @@ app.use(logger('dev'));
 app.use(methodOverride());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(function(req, res, next) { // Force HTTPS
-    var protocol = req.get('x-forwarded-proto');
-    protocol == 'https' ? next() : res.redirect('https://' + req.hostname + req.url);
-  });
 app.use("/", express.static(__dirname + config.path));
 app.use("/public", express.static(__dirname + '/public'));
 /*
@@ -36,7 +32,10 @@ var allowCrossDomain = function(req, res, next) {
 */
 if (process.env.NODE_ENV !== "production") {  
   app.use("/bower_components", express.static(__dirname + "/bower_components"));
-  console.log("Development mode active");
+  app.use(function(req, res, next) { // Force HTTPS
+    var protocol = req.get('x-forwarded-proto');
+    protocol == 'https' ? next() : res.redirect('https://' + req.hostname + req.url);
+  });
 } 
 
 var handlers = {
