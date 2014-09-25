@@ -99,7 +99,7 @@ angular
     };
   }])
   
-  .controller('SignupCtrl', function($scope, $auth, $global) {
+  .controller('SignupCtrl', ['$scope', '$auth', '$global', function($scope, $auth, $global) {
     $global.set('fullscreen', true);    
     $scope.$on('$destroy', function () {
       $global.set('fullscreen', false);
@@ -111,7 +111,7 @@ angular
         password: $scope.password
       });
     };
-  })
+  }])
   
   .controller('ProfileCtrl', function($scope, $auth, $alert, Account) {
 
@@ -220,7 +220,7 @@ angular
   		}, 500);
   	};
   }])
-  .controller('LaunchformController', ['$scope', '$global', '$http', function ($scope, $global, $http) {
+  .controller('LaunchformController', ['$scope', '$global', '$http', '$q', 'geocoder', function ($scope, $global, $http, $q, geocoder) {
   	$global.set('fullscreen', true);
   	$scope.formData = {};  	
   	$scope.subscribe = function() { 
@@ -240,31 +240,17 @@ angular
       });
     };
     
-    $scope.getLocation = function(val) {
-      return $http.get('https://maps.googleapis.com/maps/api/geocode/json', {
-        params: {
-          address: val,
-          sensor: false,
-          components: 'country:US'
-        }
-      }).then(function(res){
-        var addresses = [];
-        var f = '';
-        angular.forEach(res.data.results, function(item){           
-          if (item.types[0] == 'locality') {
-            for (f=1;f<item.address_components.length;f++) {
-              if (item.address_components[f].types[0] == "administrative_area_level_1") {
-                addresses.push(item.address_components[0].short_name + ', ' + item.address_components[f].short_name);
-                break;
-              }
-            }
-          }
-        });
-        return addresses;
+    $scope.getLocation = function(val) {      
+      var deferred = $q.defer();      
+      
+      geocoder.geocode({ address: String(val), componentRestrictions: {'country':'US'} }, function(callbackResult) {        
+        deferred.resolve(callbackResult);
       });
+        
+      return deferred.promise;            
     };
-    
   }])
+  
   .controller('ChatRoomController', ['$scope', '$timeout', function ($scope, $t) {
     var eliza = new ElizaBot();
     var avatars = ['potter.png', 'tennant.png', 'johansson.png', 'jackson.png', 'jobs.png'];

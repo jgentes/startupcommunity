@@ -20,7 +20,7 @@ app.use(function(req, res, next) { // Force HTTPS
   });
 app.use("/", express.static(__dirname + config.path));
 app.use("/public", express.static(__dirname + '/public'));
-
+/*
 var allowCrossDomain = function(req, res, next) {
     res.header('Access-Control-Allow-Origin', '*');
     res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
@@ -33,7 +33,7 @@ var allowCrossDomain = function(req, res, next) {
     	next();
     }
 }; 
-
+*/
 if (process.env.NODE_ENV !== "production") {  
   app.use("/bower_components", express.static(__dirname + "/bower_components"));
   console.log("Development mode active");
