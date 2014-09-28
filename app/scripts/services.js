@@ -13,7 +13,7 @@ angular
   })
   
   .service('geocoder',function() {
-    this.geocode=function(georequest, outerCallback) {
+    this.geocode = function(georequest, outerCallback) {
       var geocoder = new google.maps.Geocoder();
       geocoder.geocode( georequest, function(results, status) {        
         if (status == google.maps.GeocoderStatus.OK) {          
@@ -104,11 +104,10 @@ angular
   .factory('pinesNotifications', function () {
     return {
       notify: function (args) {
-        var notification = $.pnotify(args);
-        notification.notify = notification.pnotify;
+        var notification = new PNotify(args);
+        notification.notify = notification.update;
         return notification;
       },
-      defaults: $.pnotify.defaults
     };
   })
   .factory('progressLoader', function () {

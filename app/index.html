@@ -30,18 +30,20 @@
     <!-- bower:css -->
     <link rel="stylesheet" href="../bower_components/ng-grid/ng-grid.css" />
     <link rel="stylesheet" href="../bower_components/select2/select2.css" />
+    <link rel="stylesheet" href="../bower_components/pnotify/pnotify.core.css" />
+    <link rel="stylesheet" href="../bower_components/jScrollPane/style/jquery.jscrollpane.css" />
     <!-- endbower -->    
     <link rel='stylesheet' type='text/css' href='assets/plugins/icheck/all.css' /> 
     <link rel='stylesheet' type='text/css' href='assets/plugins/form-multiselect/css/multi-select.css' />     
     <link rel='stylesheet' type='text/css' href='assets/plugins/progress-skylo/skylo.css' /> 
     <link rel='stylesheet' type='text/css' href='assets/plugins/codeprettifier/prettify.css' />
-    <link rel='stylesheet' type='text/css' href='assets/plugins/form-select2/select2.css' />
+    <link rel='stylesheet' type='text/css' href='assets/plugins/form-select2/select2.css' />    
     <!-- endbuild -->
     
 
     <!-- build:css({.tmp,app}) assets/css/main.css -->
-      <link rel="stylesheet" href="assets/css/main.css">
-      <link rel="stylesheet" href="assets/css/styles.css">
+    <link rel="stylesheet" href="assets/css/proui.css">
+    <link rel="stylesheet" href="assets/css/themes.css">
     <!-- endbuild -->
 
     <!-- prochtml:remove:dist -->
@@ -49,62 +51,100 @@
     <script type="text/javascript" src="assets/plugins/misc/less.js"></script>
     <!-- /prochtml -->
 
-<style type="text/css">
-[ng-cloak] {
-  display: none;
-}
-.topNegative1000 {
-  top: -1000px !important;
-}
-.topZero {
-  top: 0 !important;
-}
-  
-.mainview-animation {
-  position: relative;
-}
-.mainview-animation.ng-enter {
-  -webkit-transition: .3s linear all; /* Safari/Chrome */
-  -moz-transition: .3s linear all; /* Firefox */
-  -o-transition: .3s linear all; /* Opera */
-  transition: .3s linear all; /* IE10+ and Future Browsers */
-}
-
-/**
- * Pre animation -> enter
- */
-.mainview-animation.ng-enter{
-  /* The animation preparation code */
-  opacity: 0;
-}
-
-/**
- * Post animation -> enter
- */
-.mainview-animation.ng-enter.ng-enter-active { 
-  /* The animation code itself */
-  opacity: 1;
-}
-
-.angular-google-map-container { height: 300px; }
-.navbar.navbar-default.ng-hide {
-  display: none;
-}
-#page-rightbar .jspHorizontalBar {
-  /*display: none !important;*/
-}
-.fc-grid .fc-day-number {
-  padding: 5px 6px;
-}
-</style>
-<script type="text/javascript">
-  window.analytics=window.analytics||[],window.analytics.methods=["identify","group","track","page","pageview","alias","ready","on","once","off","trackLink","trackForm","trackClick","trackSubmit"],window.analytics.factory=function(t){return function(){var a=Array.prototype.slice.call(arguments);return a.unshift(t),window.analytics.push(a),window.analytics}};for(var i=0;i<window.analytics.methods.length;i++){var key=window.analytics.methods[i];window.analytics[key]=window.analytics.factory(key)}window.analytics.load=function(t){if(!document.getElementById("analytics-js")){var a=document.createElement("script");a.type="text/javascript",a.id="analytics-js",a.async=!0,a.src=("https:"===document.location.protocol?"https://":"http://")+"cdn.segment.io/analytics.js/v1/"+t+"/analytics.min.js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n)}},window.analytics.SNIPPET_VERSION="2.0.9",
-  window.analytics.load("fn0wc8wvqu");
-</script>
+  <style type="text/css">
+    [ng-cloak] {
+      display: none;
+    }
+    .topNegative1000 {
+      top: -1000px !important;
+    }
+    .topZero {
+      top: 0 !important;
+    }
+      
+    .mainview-animation {
+      position: relative;
+    }
+    .mainview-animation.ng-enter {
+      -webkit-transition: .3s linear all; /* Safari/Chrome */
+      -moz-transition: .3s linear all; /* Firefox */
+      -o-transition: .3s linear all; /* Opera */
+      transition: .3s linear all; /* IE10+ and Future Browsers */
+    }
+    
+    /**
+     * Pre animation -> enter
+     */
+    .mainview-animation.ng-enter{
+      /* The animation preparation code */
+      opacity: 0;
+    }
+    
+    /**
+     * Post animation -> enter
+     */
+    .mainview-animation.ng-enter.ng-enter-active { 
+      /* The animation code itself */
+      opacity: 1;
+    }
+    
+    .angular-google-map-container { height: 300px; }
+    .navbar.navbar-default.ng-hide {
+      display: none;
+    }
+    #page-rightbar .jspHorizontalBar {
+      /*display: none !important;*/
+    }
+    .fc-grid .fc-day-number {
+      padding: 5px 6px;
+    }
+    
+    .large-icons-nav #top-nav > li > ul {
+            top: 85px;
+    }
+    #top-nav li > ul {
+      display: none;
+      position: absolute;
+      top: 40px;
+      left: 0;
+      padding-left: 0;
+      min-width: 200px;
+    }
+    @media (max-width: 768px) {
+      #top-nav li > ul {
+        position: inherit !important;
+        top: 0px !important;
+        padding-left: 20px !important;
+      }
+    }
+    #top-nav li > ul li {
+      list-style-type: none;
+    }
+    #top-nav li > ul li ul{
+      left: 100%;
+    }
+    #top-nav li > ul li a {
+      width: 100%;
+      display: inline-block;
+    }
+    #top-nav li > ul li a:hover {
+      text-decoration: none;
+    }
+    #top-nav li:hover > ul {
+      display: block;
+    }
+    #horizontal-navbar .navbar-nav li.active a:before {
+      display: none;
+    }
+  </style>
+  <script type="text/javascript">
+    window.analytics=window.analytics||[],window.analytics.methods=["identify","group","track","page","pageview","alias","ready","on","once","off","trackLink","trackForm","trackClick","trackSubmit"],window.analytics.factory=function(t){return function(){var a=Array.prototype.slice.call(arguments);return a.unshift(t),window.analytics.push(a),window.analytics}};for(var i=0;i<window.analytics.methods.length;i++){var key=window.analytics.methods[i];window.analytics[key]=window.analytics.factory(key)}window.analytics.load=function(t){if(!document.getElementById("analytics-js")){var a=document.createElement("script");a.type="text/javascript",a.id="analytics-js",a.async=!0,a.src=("https:"===document.location.protocol?"https://":"http://")+"cdn.segment.io/analytics.js/v1/"+t+"/analytics.min.js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n)}},window.analytics.SNIPPET_VERSION="2.0.9",
+    window.analytics.load("fn0wc8wvqu");
+  </script>
 </head>
 
 <body class=""
-  ng-app="themesApp"
+  ng-app="StartupCommunity"
   ng-controller="MainController"
   ng-class="{
               'static-header': !style_fixedHeader,
@@ -118,6 +158,215 @@
   ng-click="hideSearchBar();hideHeaderBar();"
   ng-cloak
 >
+
+  <div id="headerbar" ng-class="{topNegative1000: style_headerBarHidden, topZero: !style_headerBarHidden}">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-xs-6 col-sm-2">
+                    <a href="#" class="shortcut-tiles tiles-brown">
+                        <div class="tiles-body">
+                            <div class="pull-left"><i class="fa fa-pencil"></i></div>
+                        </div>
+                        <div class="tiles-footer">
+                            Create Post
+                        </div>
+                    </a>
+                </div>
+                <div class="col-xs-6 col-sm-2">
+                    <a href="#" class="shortcut-tiles tiles-grape">
+                        <div class="tiles-body">
+                            <div class="pull-left"><i class="fa fa-group"></i></div>
+                            <div class="pull-right"><span class="badge">2</span></div>
+                        </div>
+                        <div class="tiles-footer">
+                            Contacts
+                        </div>
+                    </a>
+                </div>
+                <div class="col-xs-6 col-sm-2">
+                    <a href="#" class="shortcut-tiles tiles-primary">
+                        <div class="tiles-body">
+                            <div class="pull-left"><i class="fa fa-envelope-o"></i></div>
+                            <div class="pull-right"><span class="badge">10</span></div>
+                        </div>
+                        <div class="tiles-footer">
+                            Messages
+                        </div>
+                    </a>
+                </div>
+                <div class="col-xs-6 col-sm-2">
+                    <a href="#" class="shortcut-tiles tiles-inverse">
+                        <div class="tiles-body">
+                            <div class="pull-left"><i class="fa fa-camera"></i></div>
+                            <div class="pull-right"><span class="badge">3</span></div>
+                        </div>
+                        <div class="tiles-footer">
+                            Gallery
+                        </div>
+                    </a>
+                </div>
+
+                <div class="col-xs-6 col-sm-2">
+                    <a href="#" class="shortcut-tiles tiles-midnightblue">
+                        <div class="tiles-body">
+                            <div class="pull-left"><i class="fa fa-cog"></i></div>
+                        </div>
+                        <div class="tiles-footer">
+                            Settings
+                        </div>
+                    </a>
+                </div>
+                <div class="col-xs-6 col-sm-2">
+                    <a href="#" class="shortcut-tiles tiles-orange">
+                        <div class="tiles-body">
+                            <div class="pull-left"><i class="fa fa-wrench"></i></div>
+                        </div>
+                        <div class="tiles-footer">
+                            Plugins
+                        </div>
+                    </a>
+                </div>
+                            
+            </div>
+        </div>
+    </div>
+
+    <header class="navbar navbar-inverse" ng-class="{'navbar-fixed-top': style_fixedHeader, 'navbar-static-top': !style_fixedHeader}" role="banner">
+        <a id="leftmenu-trigger" tooltip-placement="right" tooltip="Toggle Sidebar" ng-click="toggleLeftBar()"></a>
+        <a id="rightmenu-trigger" tooltip-placement="left" tooltip="Toggle Infobar" ng-click="toggleRightBar()"></a>
+
+        <div class="navbar-header pull-left">
+            <li id="search" ng-class="{'keep-open':style_showSearchCollapsed}">
+                <a href=""
+                  ng-class="{blockImportant:style_leftbarCollapsed && !style_showSearchCollapsed}"
+                  ng-click="showSearchBar($event)"
+                ><i class="fa fa-search opacity-control"></i></a>
+                 <form ng-show="!style_leftbarCollapsed || style_showSearchCollapsed"
+                  ng-style="{display: style_showSearchCollapsed? 'block':''}"
+                  ng-click="$event.stopPropagation()"
+                  ng-submit="goToSearch()"
+                 >
+                    <input type="text" ng-model="searchQuery" class="search-query" placeholder="Search..."
+                      ng-style="{width: style_showSearchCollapsed? 'auto':''}"
+                    >
+                    <button type="submit" ng-click="goToSearch()"><i class="fa fa-search"></i></button>
+                </form>
+            </li>
+        </div>
+
+        <ul class="nav navbar-nav pull-right toolbar">
+          <li class="dropdown" ng-show="!isAuthenticated">
+            <a href="#/extras-login2" style="font-size: 14px"><i class="fa fa-sign-in"></i> Log in</a>
+          </li>
+          <li class="dropdown" ng-show="isAuthenticated">
+            <a href="#" class="dropdown-toggle username"><span class="hidden-xs">Matt Smith</span><img src="assets/demo/avatar/dangerfield.png" alt="Dangerfield" /></a>
+            <ul class="dropdown-menu userinfo arrow">
+              <li class="userlinks">
+                <ul class="dropdown-menu">
+                  <li><a href="#">Edit Profile <i class="pull-right fa fa-fw fa-pencil"></i></a></li>
+                  <li><a href="#">Account <i class="pull-right fa fa-fw fa-user"></i></a></li>
+                  <li><a href="#">Settings <i class="pull-right fa fa-fw fa-cog"></i></a></li>
+                  <li class="divider"></li>
+                  <li><a href="#">Earnings <i class="pull-right fa fa-fw fa-dollar"></i></a></li>
+                  <li><a href="#">Statement <i class="pull-right fa fa-fw fa-bars"></i></a></li>
+                  <li><a href="#">Withdrawals <i class="pull-right fa fa-fw fa-credit-card"></i></a></li>
+                  <li class="divider"></li>
+                  <li><a href="" class="text-right" ng-click="logOut()">Sign Out</a></li>
+                </ul>
+              </li>
+            </ul>
+          </li>
+          <li class="dropdown" ng-controller="MessagesController" ng-show="isAuthenticated"
+            data-bootstro
+            data-bootstro-step="2"
+            data-bootstro-placement='bottom'
+            data-bootstro-content="Click to mark messages as read."
+            >
+            <a href="#" class="dropdown-toggle">
+              <i class="fa fa-envelope"></i><span class="badge badge-danger" ng-if="unseenCount>0" ng-bind="unseenCount"></span>
+            </a>
+            <ul class="dropdown-menu messages arrow">
+              <li class="dd-header">
+                <span>You have {{unseenCount}} new message(s)</span>
+                <span><a href="#" ng-click="setReadAll($event)">Mark all Read</a></span>
+              </li>
+                  <div class="scrollthis" jscrollpane="{autoReinitialise:true, autoReinitialiseDelay: 20}">
+                    <li ng-repeat="item in messages">
+                      <a href="#/extras-chatroom" ng-class="{active: !item.read}">
+                        <button tooltip-placement="top" tooltip-append-to-body="true" tooltip="Mark Read" class="btn-mark-read" ng-if="!item.read" ng-click="setRead(item, $event)"><i class="fa fa-circle"></i></button>
+                        <button tooltip-placement="top" tooltip-append-to-body="true" tooltip="Mark Unread" class="btn-mark-unread" ng-if="item.read" ng-click="setUnread(item, $event)"><i class="fa fa-circle-thin"></i></button>
+                        <span class="time">{{item.time}}</span>
+                        <img ng-src="{{item.thumb}}" alt="avatar" />
+                        <div>
+                          <span class="name">{{item.name}}</span>
+                          <span class="msg">{{item.message}}</span>
+                        </div>
+                      </a>
+                    </li>
+                  </div>
+              <li class="dd-footer"><a href="#">View All Messages</a></li>
+            </ul>
+          </li>
+          <li class="dropdown" ng-controller="NotificationsController" ng-show="isAuthenticated"
+            data-bootstro
+            data-bootstro-step="1"
+            data-bootstro-placement='bottom'
+            data-bootstro-content="Click here to check out the dynamic notifications section. You can mark items as read and see the changes in real time."
+            >
+            <a href="#" class="dropdown-toggle">
+              <i class="fa fa-bell"></i><span class="badge badge-orange" ng-if="unseenCount>0" ng-bind="unseenCount"></span>
+            </a>
+            <ul class="dropdown-menu notifications arrow">
+              <li class="dd-header">
+                <span>You have {{unseenCount}} new notification(s)</span>
+                <span><a href="javascript:;" ng-click="setSeenAll($event)">Mark all Seen</a></span>
+              </li>
+                    <div class="scrollthis" jscrollpane="{autoReinitialise:true, autoReinitialiseDelay: 20}">
+                <li ng-repeat="item in notifications">
+                  <a href="#" class="{{item.class}}" ng-class="{active: !item.seen}">
+                    <button tooltip-placement="top" tooltip-append-to-body="true" tooltip="Mark Seen" class="btn-mark-read" ng-if="!item.seen" ng-click="setSeen(item, $event)"><i class="fa fa-circle"></i></button>
+                    <button tooltip-placement="top" tooltip-append-to-body="true" tooltip="Mark Unseen" class="btn-mark-unread" ng-if="item.seen" ng-click="setUnseen(item, $event)"><i class="fa fa-circle-thin"></i></button>
+                    <span class="time">{{item.time}}</span>
+                    <i class="{{item.iconClasses}}"></i>
+                    <span class="msg">{{item.text}}</span>
+                  </a>
+                </li>
+                    </div>
+              <li class="dd-footer"><a href="#">View All Notifications</a></li>
+            </ul>
+          </li>
+            <li ng-click="showHeaderBar($event)">
+                <a href="" id="headerbardropdown"><span><i class="fa fa-level-down"></i></span></a>
+            </li>
+            
+    </ul>
+    </header>
+    <nav class="navbar navbar-default ng-hide" role="navigation" ng-show="style_layoutHorizontal">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+                <i class="fa fa-reorder"></i>
+            </button>
+        </div>
+        
+    </nav>
+<div id="page-container" class="clearfix">
+
+        <!-- BEGIN SIDEBAR -->
+        <nav id="page-leftbar" role="navigation">
+
+            <div>
+              <ul ng-controller="NavigationController" id="sidebar" sticky-scroll="40">
+                  
+                  <li ng-repeat="item in menu"
+                      ng-class="{ hasChild: (item.children!==undefined),
+                                    active: item.selected,
+                                      open: (item.children!==undefined) && item.open }"
+                      ng-include="'templates/nav_renderer.html'"
+                    ></li>
+              </ul>
+            </div>
+            <!-- END SIDEBAR MENU -->
+        </nav>
 
     <div id="page-content" class="clearfix" fit-height>
         <div id="wrap" ng-view="" class="mainview-animation">
@@ -153,8 +402,12 @@
     <script src="../bower_components/angular-route/angular-route.js"></script>
     <script src="../bower_components/angular-animate/angular-animate.js"></script>
     <script src="../bower_components/angular-bootstrap/ui-bootstrap-tpls.js"></script>
+    <script src="../bower_components/moment/moment.js"></script>
     <script src="../bower_components/ng-grid/build/ng-grid.js"></script>
     <script src="../bower_components/jquery-autosize/jquery.autosize.js"></script>
+    <script src="../bower_components/jScrollPane/script/jquery.mousewheel.js"></script>
+    <script src="../bower_components/jScrollPane/script/mwheelIntent.js"></script>
+    <script src="../bower_components/jScrollPane/script/jquery.jscrollpane.min.js"></script>
     <script src="../bower_components/enquire/dist/enquire.js"></script>
     <script src="../bower_components/google-code-prettify/src/prettify.js"></script>
     <script src="../bower_components/select2/select2.js"></script>
@@ -163,21 +416,9 @@
     <script src="../bower_components/jquery-waypoints/waypoints.js"></script>
     <script src="../bower_components/SHA-1/sha1.js"></script>
     <script src="../bower_components/angulartics/src/angulartics.js"></script>
-    <script src="../bower_components/angulartics/src/angulartics-adobe.js"></script>
-    <script src="../bower_components/angulartics/src/angulartics-chartbeat.js"></script>
-    <script src="../bower_components/angulartics/src/angulartics-flurry.js"></script>
-    <script src="../bower_components/angulartics/src/angulartics-ga-cordova.js"></script>
-    <script src="../bower_components/angulartics/src/angulartics-ga.js"></script>
-    <script src="../bower_components/angulartics/src/angulartics-gtm.js"></script>
-    <script src="../bower_components/angulartics/src/angulartics-kissmetrics.js"></script>
-    <script src="../bower_components/angulartics/src/angulartics-mixpanel.js"></script>
-    <script src="../bower_components/angulartics/src/angulartics-piwik.js"></script>
-    <script src="../bower_components/angulartics/src/angulartics-scroll.js"></script>
     <script src="../bower_components/angulartics/src/angulartics-segmentio.js"></script>
-    <script src="../bower_components/angulartics/src/angulartics-splunk.js"></script>
-    <script src="../bower_components/angulartics/src/angulartics-woopra.js"></script>
-    <script src="../bower_components/angulartics/src/angulartics-marketo.js"></script>
     <script src="../bower_components/satellizer/satellizer.js"></script>
+    <script src="../bower_components/pnotify/pnotify.core.js"></script>
     <!-- endbower -->
     <script type='text/javascript' src='assets/plugins/form-multiselect/js/jquery.multi-select.min.js'></script> 
     <script type='text/javascript' src='assets/plugins/progress-skylo/skylo.js'></script> 
@@ -196,6 +437,10 @@
       <script src="scripts/chart/Inline.js"></script>      
       <script src="scripts/templates/templates.js"></script>
       <script src="scripts/templates/overrides.js"></script>
+      <script src="scripts/controllers/Dashboard.js"></script>      
+      <script src="scripts/controllers/Navigation.js"></script>
+      <script src="scripts/controllers/Notifications.js"></script>
+      <script src="scripts/controllers/Messages.js"></script>
       <script src="scripts/app.js"></script>
       <!-- endbuild -->
 

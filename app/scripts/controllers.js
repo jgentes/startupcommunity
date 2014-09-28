@@ -1,16 +1,16 @@
 angular
   .module('appControllers', [])
-  .controller('MainController', ['$scope', '$window', '$global', '$timeout', '$interval', 'progressLoader', '$location', function ($scope, $window, $global, $timeout, $interval, progressLoader, $location) {
-    $scope.style_fullscreen = $global.get('fullscreen');
-    /*
+  .controller('MainController', ['$scope', '$window', '$global', '$timeout', '$interval', 'progressLoader', '$location', '$auth', function ($scope, $window, $global, $timeout, $interval, progressLoader, $location, $auth) {
     $scope.style_fixedHeader = $global.get('fixedHeader');
     $scope.style_headerBarHidden = $global.get('headerBarHidden');
     $scope.style_layoutBoxed = $global.get('layoutBoxed');
+    $scope.style_fullscreen = $global.get('fullscreen');
     $scope.style_leftbarCollapsed = $global.get('leftbarCollapsed');
     $scope.style_leftbarShown = $global.get('leftbarShown');
     $scope.style_rightbarCollapsed = $global.get('rightbarCollapsed');
     $scope.style_isSmallScreen = false;
     $scope.style_showSearchCollapsed = $global.get('showSearchCollapsed');
+    $scope.style_layoutHorizontal = $global.get('layoutHorizontal');
 
     $scope.hideSearchBar = function () {
         $global.set('showSearchCollapsed', false);
@@ -30,12 +30,13 @@ angular
         return $global.set('leftbarShown', !$scope.style_leftbarShown);
       }
       $global.set('leftbarCollapsed', !$scope.style_leftbarCollapsed);
+      console.log($scope);
     };
 
     $scope.toggleRightBar = function () {
       $global.set('rightbarCollapsed', !$scope.style_rightbarCollapsed);
     };
-*/
+
     $scope.$on('globalStyles:changed', function (event, newVal) {
       $scope['style_'+newVal.key] = newVal.value;
     });
@@ -64,10 +65,13 @@ angular
       progressLoader.end();
     });
     
+    $scope.isAuthenticated = function() {
+      return $auth.isAuthenticated();
+    };
     
   }])
   
-  .controller('LoginCtrl', ['$scope', '$auth', '$global', function($scope, $auth, $global) {
+  .controller('LoginCtrl', ['$scope', '$auth', '$global', 'pinesNotifications', function($scope, $auth, $global, pinesNotifications) {
     $global.set('fullscreen', true);    
     $scope.$on('$destroy', function () {
       $global.set('fullscreen', false);
@@ -78,7 +82,12 @@ angular
     $scope.login = function() {
       $auth.login({ email: $scope.email, password: $scope.password })
         .then(function() {
-          // add alert here
+          pinesNotifications.notify({
+            title: 'Successfully logged in!',
+            text: String(success),
+            type: 'info',
+            duration: 3
+          });
           console.log('Logged in!');
         })
         .catch(function(response) {
@@ -88,18 +97,42 @@ angular
     };
     $scope.authenticate = function(provider) {
       $auth.authenticate(provider)
-        .then(function() {
-          // add alert here
+        .then(function(success) {          
+          pinesNotifications.notify({
+            title: 'Successfully logged in!',
+            text: String(success),
+            type: 'success',
+            icon: 'fa fa-check',
+            duration: 5
+          });
           console.log('Logged in!');
         })
         .catch(function(response) {
-          // add alert here
+          pinesNotifications.notify({
+            title: 'There was a problem:',
+            text: String(response.data.message),
+            type: 'error',
+            duration: 15
+          });
           console.log(response.data);
         });
     };
   }])
   
-  .controller('SignupCtrl', ['$scope', '$auth', '$global', function($scope, $auth, $global) {
+  .controller('LogoutCtrl', ['$auth', 'pinesNotifications', function($auth, pinesNotifications) {
+    $auth.logout()
+      .then(function() {
+        pinesNotifications.notify({
+            title: 'You are now logged out.',
+            text: 'Why not go meet up with a friend?',
+            type: 'success',
+            icon: 'fa fa-lock',
+            duration: 5
+          });
+      });
+  }])
+  
+  .controller('SignupCtrl', ['$scope', '$auth', '$global', 'pinesNotifications', function($scope, $auth, $global, pinesNotifications) {
     $global.set('fullscreen', true);    
     $scope.$on('$destroy', function () {
       $global.set('fullscreen', false);
@@ -109,6 +142,14 @@ angular
         name: $scope.name,
         email: $scope.email,
         password: $scope.password
+      })
+      .then(function() {
+        pinesNotifications.notify({
+          title: 'New Thing',
+          text: 'Just to let you know, something happened.',
+          type: 'info',
+          duration: 3
+        });
       });
     };
   }])
@@ -220,6 +261,9 @@ angular
   		}, 500);
   	};
   }])
+  .controller('SocialWidgetsController', ['$scope', function ($scope) {
+
+  }])
   .controller('LaunchformController', ['$scope', '$global', '$http', '$q', 'geocoder', function ($scope, $global, $http, $q, geocoder) {
   	$global.set('fullscreen', true);
   	$scope.formData = {};  	
@@ -299,4 +343,5 @@ angular
         });
       }
     };
-});
+})
+

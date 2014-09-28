@@ -23,7 +23,9 @@
     "angular-ui-select2": "0.0.5",
     "iCheck": "1.0.2",
     "angulartics": "0.16.3",
-    "satellizer": "~0.6.3"
+    "satellizer": "~0.6.3",
+    "pnotify": "sciactive/pnotify#~2.0.1",
+    "moment": "~2.8.3"
   },
   "olddependencies": {
     "seiyria-bootstrap-slider": "~1.9.0",

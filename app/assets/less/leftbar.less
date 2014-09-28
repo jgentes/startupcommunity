@@ -16,7 +16,7 @@
 /* Sidebar Menu */
 
 #sidebar {
-	white-space: normal; margin: 0 0 0 0; padding-left: 0 !important; 
+	white-space: normal; margin: 10px 0 0 0; padding-left: 0 !important; 
 
 	.badge {font-weight: 600; background-color: rgba(21, 22, 26, 0.6); right: 25px !important;}
 	i {color: @sidebar-icon-color; margin-left: 1px; margin-right: 8px; min-width: 18px; text-align: center; display: inline-block;}
@@ -146,7 +146,7 @@ body.collapse-leftbar {
 }
 
 
-/* Search at Left Navigation Sidebar */
+/* Search at Left Navigation Sidebar 
 #search {
 	line-height: 0;
 	margin-bottom: 10px;
@@ -188,6 +188,53 @@ body.collapse-leftbar {
 			border: 0; background: none;
 			padding: 13px 0;margin: 0;min-width: none;
 			i {color:@search-color;.opacity(0.4)}
+		}
+	}
+}
+*/
+/* Search in Header */
+#search {
+	line-height: 0;
+	list-style: none;
+	//margin-bottom: 10px;
+	//margin-top: 10px;
+
+	> a {display: none !important;}
+
+	form {
+		margin: 0px 0px 0px 0px;
+		padding: 0 0px 0px 0px;
+		position: relative;
+		
+		.search-query {
+			background: #394655;
+			
+			color: @navbar-inverse-color;
+
+			padding: 0 10px 0 37px;
+			border-radius:0px;
+			min-height: 40px;
+			line-height: 19px;
+			width: 190px;
+			.placeholder(fade(@navbar-inverse-color,40%));
+		
+			&:focus {
+				 .placeholder(~"transparent");
+				+ button i {.opacity(1);}
+			}
+
+			&, &:active, &:focus {
+				border: none;
+			}
+		}
+		
+		button[type="submit"] {
+			float: left;
+			position: absolute;
+			top: 0;left: 10px;
+			border: 0; background: none;
+			padding: 13px 0;margin: 0;min-width: none;
+			i {color:@navbar-inverse-color;.opacity(0.4)}
 		}
 	}
 }

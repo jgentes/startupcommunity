@@ -1,6 +1,6 @@
 'use strict';
 
-var app = angular.module('themesApp', [
+var app = angular.module('StartupCommunity', [
     'ui.bootstrap',
     'ui.select2',
     'ngGrid',    
@@ -8,9 +8,11 @@ var app = angular.module('themesApp', [
     'theme.form-components',    
     'theme.form-directives',
     'theme.form-validation',
-    'theme.form-inline',   
-    'theme.templates',
-    'theme.template-overrides',
+    'theme.form-inline',       
+    'theme.navigation-controller',
+    'theme.notifications-controller',
+    'theme.messages-controller',
+    'theme.dashboard',
     'ngCookies',
     'ngResource',
     'ngSanitize',
@@ -19,6 +21,8 @@ var app = angular.module('themesApp', [
     'appControllers',
     'appServices',
     'appDirectives',
+    'theme.templates',
+    'theme.template-overrides',
     'angulartics', 
     'angulartics.segment.io',
     'satellizer'
@@ -40,6 +44,14 @@ app
         templateUrl: 'views/launchform.html',
         controller: 'LaunchformController'
       })
+      .when('/alpha/social', {
+        templateUrl: 'views/page_widgets_social.html',
+        controller: 'SocialWidgetsController'
+      })
+      .when('/alpha', {
+        templateUrl: 'views/home.html',
+        controller: 'DashboardController'
+      })
       .when('/login', {
         templateUrl: 'views/login.html',
         controller: 'LoginCtrl'
@@ -47,6 +59,10 @@ app
       .when('/signup', {
         templateUrl: 'views/signup.html',
         controller: 'SignupCtrl'
+      })
+      .when('/logout', {        
+        templateUrl: null,
+        controller: 'LogoutCtrl'
       })
       /*      
       .when('/calendar', {
