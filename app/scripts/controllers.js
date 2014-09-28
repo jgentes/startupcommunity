@@ -1,6 +1,6 @@
 angular
   .module('appControllers', [])
-  .controller('MainController', ['$scope', '$window', '$global', '$timeout', '$interval', 'progressLoader', '$location', '$auth', function ($scope, $window, $global, $timeout, $interval, progressLoader, $location, $auth) {
+  .controller('MainController', ['$scope', '$window', '$global', '$timeout', '$interval', 'progressLoader', '$location', '$auth', 'Account', 'pinesNotifications', function ($scope, $window, $global, $timeout, $interval, progressLoader, $location, $auth, Account, pinesNotifications) {
     $scope.style_fixedHeader = $global.get('fixedHeader');
     $scope.style_headerBarHidden = $global.get('headerBarHidden');
     $scope.style_layoutBoxed = $global.get('layoutBoxed');
@@ -9,12 +9,8 @@ angular
     $scope.style_leftbarShown = $global.get('leftbarShown');
     $scope.style_rightbarCollapsed = $global.get('rightbarCollapsed');
     $scope.style_isSmallScreen = false;
-    $scope.style_showSearchCollapsed = $global.get('showSearchCollapsed');
     $scope.style_layoutHorizontal = $global.get('layoutHorizontal');
 
-    $scope.hideSearchBar = function () {
-        $global.set('showSearchCollapsed', false);
-    };
 
     $scope.hideHeaderBar = function () {
         $global.set('headerBarHidden', true);
@@ -68,6 +64,26 @@ angular
     $scope.isAuthenticated = function() {
       return $auth.isAuthenticated();
     };
+    
+    /**
+     * Get user's profile information.
+     */
+    $scope.getProfile = function() {
+      Account.getProfile()
+        .success(function(data) {
+          $scope.user = data;
+        })
+        .error(function() {
+          pinesNotifications.notify({
+            title: 'Something went wrong.',
+            text: "We weren't able to pull your user profile.",
+            type: 'error',
+            duration: 5
+          });
+        });
+    };
+    
+    $scope.getProfile();
     
   }])
   
@@ -154,26 +170,26 @@ angular
     };
   }])
   
-  .controller('ProfileCtrl', function($scope, $auth, $alert, Account) {
+  .controller('ProfileCtrl', function($scope, $auth, Account, pinesNotifications) {
 
-    /**
+    /** THIS SHOULD NOW BE COVERED BY MAINCONTROLLER
      * Get user's profile information.
-     */
+     
     $scope.getProfile = function() {
       Account.getProfile()
         .success(function(data) {
           $scope.user = data;
         })
         .error(function() {
-          $alert({
-            content: 'Unable to get user information',
-            animation: 'fadeZoomFadeDown',
-            type: 'material',
-            duration: 3
+          pinesNotifications.notify({
+            title: 'Something went wrong.',
+            text: "We weren't able to pull your user profile.",
+            type: 'error',
+            duration: 5
           });
         });
     };
-
+*/
 
     /**
      * Update user's profile information.
@@ -183,11 +199,11 @@ angular
         displayName: $scope.user.displayName,
         email: $scope.user.email
       }).then(function() {
-        $alert({
-          content: 'Profile has been updated',
-          animation: 'fadeZoomFadeDown',
-          type: 'material',
-          duration: 3
+        pinesNotifications.notify({
+          title: 'Great news.',
+          text: "Your profile has been updated.",
+          type: 'success',
+          duration: 5
         });
       });
     };
@@ -198,23 +214,23 @@ angular
     $scope.link = function(provider) {
       $auth.link(provider)
         .then(function() {
-          $alert({
-            content: 'You have successfully linked ' + provider + ' account',
-            animation: 'fadeZoomFadeDown',
-            type: 'material',
-            duration: 3
+          pinesNotifications.notify({
+            title: 'Well done.',
+            text: 'You have successfully linked your ' + provider + ' account',
+            type: 'success',
+            duration: 5
           });
         })
         .then(function() {
           $scope.getProfile();
         })
         .catch(function(response) {
-          $alert({
-            content: response.data.message,
-            animation: 'fadeZoomFadeDown',
-            type: 'material',
-            duration: 3
-          });
+          pinesNotifications.notify({
+            title: 'Aww, shucks.',
+            text: 'Sorry, but we ran into this error: ' + response.data.message,
+            type: 'error',
+            duration: 5
+          });          
         });
     };
 
@@ -224,23 +240,23 @@ angular
     $scope.unlink = function(provider) {
       $auth.unlink(provider)
         .then(function() {
-          $alert({
-            content: 'You have successfully unlinked ' + provider + ' account',
-            animation: 'fadeZoomFadeDown',
-            type: 'material',
-            duration: 3
+          pinesNotifications.notify({
+            title: 'Bam.',
+            text: 'You have successfully unlinked your ' + provider + ' account',
+            type: 'success',
+            duration: 5
           });
         })
         .then(function() {
           $scope.getProfile();
         })
         .catch(function(response) {
-          $alert({
-            content: response.data ? response.data.message : 'Could not unlink ' + provider + ' account',
-            animation: 'fadeZoomFadeDown',
-            type: 'material',
-            duration: 3
-          });
+          pinesNotifications.notify({
+            title: 'Doh!.',
+            text: 'Sorry, but we ran into this error while unlinking your ' + provider + ' account: ' + response.data.message,
+            type: 'error',
+            duration: 5
+          });  
         });
     };
 

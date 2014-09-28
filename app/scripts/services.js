@@ -47,8 +47,7 @@ angular
       fullscreen: false,
       layoutHorizontal: false,
       layoutHorizontalLargeIcons: false,
-      layoutBoxed: false,
-      showSearchCollapsed: false
+      layoutBoxed: false
     };
 
     var brandColors = {

@@ -282,37 +282,5 @@ body.collapse-leftbar {
 		li li li li a {padding-left: 30px;}
 	}
 
-	#search {
-		&:hover {width: 40px !important;}
-		&:hover, &:hover a {background: none !important; box-shadow: none !important;}
-	
-		a {display: block !important; padding: 13px 10px;}
-		form {display: none;}
-		.opacity-control{.opacity(0.5);}
-	
-		&.keep-open {
-			width: 250px !important;
-			> a {
-				background: @search-bg !important;
-				&:hover {background: @search-color;}
-			}
-			form {
-				display: block;
-	
-				width: 220px;
-				position: absolute;
-				top: 0; left: 30px;
-	
-				.search-query {
-					border:0;
-					background: transparent;
-					padding: 0 10px 0 10px;
-					position: relative !important;
-					z-index: @zindex-modal-background+10;
-					width: 100%;
-				}
-				button[type="submit"] {display: none;}
-			}
-		}
-	}
+
 }
