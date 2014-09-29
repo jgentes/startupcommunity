@@ -71,15 +71,9 @@ angular
     $scope.getProfile = function() {
       Account.getProfile()
         .success(function(data) {
+          console.log('user data success:');
+          console.log(data);
           $scope.user = data;
-        })
-        .error(function() {
-          pinesNotifications.notify({
-            title: 'Something went wrong.',
-            text: "We weren't able to pull your user profile.",
-            type: 'error',
-            duration: 5
-          });
         });
     };
     

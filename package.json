@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "private": true,
   "description": "Kickstart the entrpeneurial ecosystem in your city",
-  "main": "index.js",
+  "main": "server.js",
   "dependencies": {
     "bcryptjs": "^0.7.12",
     "body-parser": "^1.6.5",
