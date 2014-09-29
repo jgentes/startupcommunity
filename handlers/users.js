@@ -92,7 +92,8 @@ var searchincity = function(city, state, query){
  */
 function handleEnsureAuthenticated(req, res, next) {
   
-  if (!req.headers.authorization) {    
+  if (!req.headers.authorization) {   
+    console.log('Please make sure your request has an Authorization header');
     return res.status(401).send({ message: 'Please make sure your request has an Authorization header' });
   }
 
@@ -100,9 +101,17 @@ function handleEnsureAuthenticated(req, res, next) {
   var payload = jwt.decode(token, config.token_secret);
 
   if (payload.exp <= Date.now()) {
+    console.log('Token has expired');
     return res.status(401).send({ message: 'Token has expired' });
   }
-
+  
+  if (req.user === undefined) {
+    req.user = {};
+  } else {
+    console.log('Existing user in request:');
+    console.log(req.user);
+  }
+  
   req.user.email = payload.sub;
   next();
 }
@@ -358,12 +367,14 @@ function handleLinkedin(req, res) {
                 });
             })
             .fail(function(err) {
+              console.log('User not found, please logout or clear the local storage in your browser.');
               return res.status(400).send({ message: 'User not found, please logout or clear the local storage in your browser.' });
             });
             
             
           })
           .fail(function(err) {
+            console.log('No existing Linkedin user account found.');
             return res.status(404).send({ message: 'No existing Linkedin user account found.'});
           });
           
@@ -453,7 +464,6 @@ function handleLinkedin(req, res) {
           
           request.get({ url: 'https://api.linkedin.com/v1/people/url=' + querystring.escape(url) + ':(id,first-name,last-name,picture-url;secure=true,headline,summary,public-profile-url)', qs: params, json: true }, 
           function(error, response, body) {
-            console.log(body);
             if (body.id !== undefined) {
               var linkedinuser = {
                 name: body.firstName + ' ' + body.lastName,
@@ -488,12 +498,14 @@ function handleLinkedin(req, res) {
  |--------------------------------------------------------------------------
  */
 
-function handleGetme(req, res) {
-  db.get('users', req.user.email)
+function handleGetme(req, res) { 
+  db.get('users', req.user.email)  
   .then(function(user) {
-    res.send(user);
+    console.log('Authenticated user: ' + user.body.name);
+    res.send(user.body);
   })
   .fail(function(err) {
+    console.log('User not found.');
     return res.status(400).send({ message: 'User not found.' });
   });
 }
@@ -513,6 +525,7 @@ function handlePutme(req, res) {
       res.status(200).end();
     })
     .fail(function(err) {
+      console.log('User not found.');
       return res.status(400).send({ message: 'User not found' });
     });
   });
@@ -529,7 +542,7 @@ function handleUnlink(req, res) {
   db.get('users', req.user.email)
     .then(function(user) {
       user[provider] = undefined;
-      db.put('users', req.user.email, user)
+      db.put('users', req.user.email, user.body)
         .then(function() {          
           res.status(200).end();
         })
@@ -539,6 +552,7 @@ function handleUnlink(req, res) {
         });
     })
     .fail(function(err) {
+      console.log('User not found.');
       return res.status(400).send({ message: 'User not found' });
     });
 }

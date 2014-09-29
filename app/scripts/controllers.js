@@ -25,8 +25,7 @@ angular
       if ($scope.style_isSmallScreen) {
         return $global.set('leftbarShown', !$scope.style_leftbarShown);
       }
-      $global.set('leftbarCollapsed', !$scope.style_leftbarCollapsed);
-      console.log($scope);
+      $global.set('leftbarCollapsed', !$scope.style_leftbarCollapsed);      
     };
 
     $scope.toggleRightBar = function () {
@@ -62,7 +61,7 @@ angular
     });
     
     $scope.isAuthenticated = function() {
-      return $auth.isAuthenticated();
+      return $auth.isAuthenticated(); //returns true or false based on browser local storage token
     };
     
     /**
@@ -70,16 +69,20 @@ angular
      */
     $scope.getProfile = function() {
       Account.getProfile()
-        .success(function(data) {
-          console.log('user data success:');
-          console.log(data);
-          $scope.user = data;
+        .then(function(response) {
+          $scope.user = response.data;
         });
     };
     
     $scope.getProfile();
     
   }])
+  
+  .filter('words', function() {
+    return function(text, wordnum) {
+      return text.split(" ")[wordnum];      
+    };
+  })
   
   .controller('LoginCtrl', ['$scope', '$auth', '$global', 'pinesNotifications', function($scope, $auth, $global, pinesNotifications) {
     $global.set('fullscreen', true);    
@@ -91,14 +94,14 @@ angular
     };
     $scope.login = function() {
       $auth.login({ email: $scope.email, password: $scope.password })
-        .then(function() {
+        .then(function(success) {
           pinesNotifications.notify({
             title: 'Successfully logged in!',
-            text: String(success),
+            text: 'Welcome back, ' + $scope.email + '.',
             type: 'info',
             duration: 3
           });
-          console.log('Logged in!');
+          console.log('Logged in!');          
         })
         .catch(function(response) {
           // add alert here
@@ -110,12 +113,13 @@ angular
         .then(function(success) {          
           pinesNotifications.notify({
             title: 'Successfully logged in!',
-            text: String(success),
+            text: 'You authenticated using ' + provider + '.',
             type: 'success',
             icon: 'fa fa-check',
             duration: 5
           });
           console.log('Logged in!');
+          
         })
         .catch(function(response) {
           pinesNotifications.notify({

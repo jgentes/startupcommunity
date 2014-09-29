@@ -155,85 +155,13 @@
               'show-rightbar': style_rightbarCollapsed,
               'show-leftbar': style_leftbarShown
             }"
-  ng-click="hideSearchBar();hideHeaderBar();"
   ng-cloak
 >
 
-  <div id="headerbar" ng-class="{topNegative1000: style_headerBarHidden, topZero: !style_headerBarHidden}">
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-xs-6 col-sm-2">
-                    <a href="#" class="shortcut-tiles tiles-brown">
-                        <div class="tiles-body">
-                            <div class="pull-left"><i class="fa fa-pencil"></i></div>
-                        </div>
-                        <div class="tiles-footer">
-                            Create Post
-                        </div>
-                    </a>
-                </div>
-                <div class="col-xs-6 col-sm-2">
-                    <a href="#" class="shortcut-tiles tiles-grape">
-                        <div class="tiles-body">
-                            <div class="pull-left"><i class="fa fa-group"></i></div>
-                            <div class="pull-right"><span class="badge">2</span></div>
-                        </div>
-                        <div class="tiles-footer">
-                            Contacts
-                        </div>
-                    </a>
-                </div>
-                <div class="col-xs-6 col-sm-2">
-                    <a href="#" class="shortcut-tiles tiles-primary">
-                        <div class="tiles-body">
-                            <div class="pull-left"><i class="fa fa-envelope-o"></i></div>
-                            <div class="pull-right"><span class="badge">10</span></div>
-                        </div>
-                        <div class="tiles-footer">
-                            Messages
-                        </div>
-                    </a>
-                </div>
-                <div class="col-xs-6 col-sm-2">
-                    <a href="#" class="shortcut-tiles tiles-inverse">
-                        <div class="tiles-body">
-                            <div class="pull-left"><i class="fa fa-camera"></i></div>
-                            <div class="pull-right"><span class="badge">3</span></div>
-                        </div>
-                        <div class="tiles-footer">
-                            Gallery
-                        </div>
-                    </a>
-                </div>
-
-                <div class="col-xs-6 col-sm-2">
-                    <a href="#" class="shortcut-tiles tiles-midnightblue">
-                        <div class="tiles-body">
-                            <div class="pull-left"><i class="fa fa-cog"></i></div>
-                        </div>
-                        <div class="tiles-footer">
-                            Settings
-                        </div>
-                    </a>
-                </div>
-                <div class="col-xs-6 col-sm-2">
-                    <a href="#" class="shortcut-tiles tiles-orange">
-                        <div class="tiles-body">
-                            <div class="pull-left"><i class="fa fa-wrench"></i></div>
-                        </div>
-                        <div class="tiles-footer">
-                            Plugins
-                        </div>
-                    </a>
-                </div>
-                            
-            </div>
-        </div>
-    </div>
+  
 
     <header class="navbar navbar-inverse" ng-class="{'navbar-fixed-top': style_fixedHeader, 'navbar-static-top': !style_fixedHeader}" role="banner">
-        <a id="leftmenu-trigger" tooltip-placement="right" tooltip="Toggle Sidebar" ng-click="toggleLeftBar()"></a>
-        <a id="rightmenu-trigger" tooltip-placement="left" tooltip="Toggle Infobar" ng-click="toggleRightBar()"></a>
+        <a id="leftmenu-trigger" tooltip-placement="right" tooltip="Toggle Sidebar" ng-click="toggleLeftBar()"></a>        
 
         <div class="navbar-header pull-left">
             <li id="search">
@@ -250,26 +178,21 @@
 
         <ul class="nav navbar-nav pull-right toolbar">
           <li class="dropdown" ng-show="!isAuthenticated">
-            <a href="#/extras-login2" style="font-size: 14px"><i class="fa fa-sign-in"></i> Log in</a>
+            <a href="#/login" style="font-size: 14px"><i class="fa fa-sign-in"></i> Log in</a>
           </li>
           <li class="dropdown" ng-show="isAuthenticated">
-            <a href="#" class="dropdown-toggle username"><span class="hidden-xs">Matt Smith</span><img src="assets/demo/avatar/dangerfield.png" alt="Dangerfield" /></a>
+            <a href="#" class="dropdown-toggle username"><span class="hidden-xs" ng-bind-html="user.name"></span><img ng-src="{{user.avatar}}" alt="{{user.name}}" style="margin-right: 11px;"/></a>
             <ul class="dropdown-menu userinfo arrow">
               <li class="userlinks">
                 <ul class="dropdown-menu">
                   <li><a href="#">Edit Profile <i class="pull-right fa fa-fw fa-pencil"></i></a></li>
-                  <li><a href="#">Account <i class="pull-right fa fa-fw fa-user"></i></a></li>
-                  <li><a href="#">Settings <i class="pull-right fa fa-fw fa-cog"></i></a></li>
-                  <li class="divider"></li>
-                  <li><a href="#">Earnings <i class="pull-right fa fa-fw fa-dollar"></i></a></li>
-                  <li><a href="#">Statement <i class="pull-right fa fa-fw fa-bars"></i></a></li>
-                  <li><a href="#">Withdrawals <i class="pull-right fa fa-fw fa-credit-card"></i></a></li>
                   <li class="divider"></li>
                   <li><a href="" class="text-right" ng-click="logOut()">Sign Out</a></li>
                 </ul>
               </li>
             </ul>
           </li>
+          <!--
           <li class="dropdown" ng-controller="MessagesController" ng-show="isAuthenticated"
             data-bootstro
             data-bootstro-step="2"
@@ -328,21 +251,11 @@
                     </div>
               <li class="dd-footer"><a href="#">View All Notifications</a></li>
             </ul>
-          </li>
-            <li ng-click="showHeaderBar($event)">
-                <a href="" id="headerbardropdown"><span><i class="fa fa-level-down"></i></span></a>
-            </li>
-            
+          </li>            
+          -->
     </ul>
     </header>
-    <nav class="navbar navbar-default ng-hide" role="navigation" ng-show="style_layoutHorizontal">
-        <div class="navbar-header">
-            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
-                <i class="fa fa-reorder"></i>
-            </button>
-        </div>
-        
-    </nav>
+    
 <div id="page-container" class="clearfix">
 
         <!-- BEGIN SIDEBAR -->
@@ -360,22 +273,23 @@
               </ul>
             </div>
             <!-- END SIDEBAR MENU -->
+            
         </nav>
 
     <div id="page-content" class="clearfix" fit-height>
-        <div id="wrap" ng-view="" class="mainview-animation">
+        <div id="wrap" ng-view="" class="mainview-animation">        
         </div> <!--wrap -->
-    </div> <!-- page-content -->
-
-    <footer role="contentinfo">
-        <div class="clearfix">
+        <footer role="contentinfo">
+          <div class="clearfix">        
             <ul class="list-unstyled list-inline pull-left">
-                <li>StartupCommunity.org &copy; 2014</li>
-            </ul>
-            <button class="pull-right btn btn-default btn-xs hidden-print" back-to-top style="padding: 1px 10px;"><i class="fa fa-angle-up"></i></button>
-        </div>
-    </footer>
-
+              <li>StartupCommunity.org &copy; 2014</li>
+            </ul>        
+            <button class="pull-right btn btn-default btn-xs hidden-print" back-to-top style="padding: 1px 10px;"><i class="fa fa-angle-up"></i></button>        
+          </div>
+        </footer>
+    </div> <!-- page-content -->   
+     
+    
 </div> <!-- page-container -->
 
     <!--[if lt IE 9]>
