@@ -84,6 +84,19 @@ angular
     };
   })
   
+  .controller('UsersController', ['$scope', 'Users', 'Account', function ($scope, Users, Account) {
+    
+    $scope.getUsers = function() {
+      Users.getUsers()
+        .then(function(response) {
+          $scope.users = response.data;
+        });
+    };
+    
+    $scope.getUsers();
+    
+  }])
+  
   .controller('LoginCtrl', ['$scope', '$auth', '$global', 'pinesNotifications', function($scope, $auth, $global, pinesNotifications) {
     $global.set('fullscreen', true);    
     $scope.$on('$destroy', function () {
@@ -275,9 +288,7 @@ angular
   		}, 500);
   	};
   }])
-  .controller('SocialWidgetsController', ['$scope', function ($scope) {
-
-  }])
+  
   .controller('LaunchformController', ['$scope', '$global', '$http', '$q', 'geocoder', function ($scope, $global, $http, $q, geocoder) {
   	$global.set('fullscreen', true);
   	$scope.formData = {};  	

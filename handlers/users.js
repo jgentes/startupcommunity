@@ -506,7 +506,7 @@ function handleGetme(req, res) {
   })
   .fail(function(err) {
     console.log('User not found.');
-    return res.status(400).send({ message: 'User not found.' });
+    return res.status(200).send({ message: 'User not found.' });
   });
 }
 

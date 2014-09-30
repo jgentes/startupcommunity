@@ -12,6 +12,14 @@ angular
     };
   })
   
+  .factory('Users', function($http, $auth) {
+    return {
+      getUsers: function() {
+        return $http.get('/api/bend-or/users');
+      }
+    };
+  })        
+  
   .service('geocoder',function() {
     this.geocode = function(georequest, outerCallback) {
       var geocoder = new google.maps.Geocoder();

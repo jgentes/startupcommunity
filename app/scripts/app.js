@@ -46,7 +46,7 @@ app
       })
       .when('/alpha/social', {
         templateUrl: 'views/page_widgets_social.html',
-        controller: 'SocialWidgetsController'
+        controller: 'UsersController'
       })
       .when('/alpha', {
         templateUrl: 'views/home.html',
