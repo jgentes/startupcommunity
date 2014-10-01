@@ -181,7 +181,8 @@
             <a href="#/login" style="font-size: 14px"><i class="fa fa-sign-in"></i> Log in</a>
           </li>
           <li class="dropdown" ng-show="isAuthenticated">
-            <a href="#" class="dropdown-toggle username"><span class="hidden-xs" ng-bind-html="user.name"></span><img ng-src="{{user.avatar}}" alt="{{user.name}}" style="margin-right: 11px;"/></a>
+          
+            <a href="#" class="dropdown-toggle username"><span class="hidden-xs">{{user.name}}</span><img ng-src="{{user.avatar}}" alt="{{user.name}}" style="margin-right: 11px;"/></a>
             <ul class="dropdown-menu userinfo arrow">
               <li class="userlinks">
                 <ul class="dropdown-menu">

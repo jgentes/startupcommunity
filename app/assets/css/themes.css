@@ -12,27 +12,27 @@ THEME DEFAULT
 =================================================================
 */
 
-.themed-color-default {
+.themed-color {
     color: #1bbae1 !important;
 }
 
-.themed-border-default {
+.themed-border {
     border-color: #1bbae1 !important;
 }
 
-.themed-background-default {
+.themed-background {
     background-color: #1bbae1 !important;
 }
 
-.themed-color-dark-default {
+.themed-color-dark {
     color: #394263 !important;
 }
 
-.themed-border-dark-default {
+.themed-border-dark {
     border-color: #394263 !important;
 }
 
-.themed-background-dark-default {
+.themed-background-dark {
     background-color: #394263 !important;
 }
 

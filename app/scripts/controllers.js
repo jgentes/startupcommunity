@@ -78,15 +78,23 @@ angular
     
   }])
   
-  .filter('words', function() {
+  .filter('words', function() {    
     return function(text, wordnum) {
-      return text.split(" ")[wordnum];      
+      if (text) {     
+        return text.split(" ")[wordnum];
+      }
     };
   })
-  
+        
   .controller('UsersController', ['$scope', 'Users', 'Account', function ($scope, Users, Account) {
     
-    $scope.getUsers = function() {
+    $scope.rotateWidgetClass = function() {
+      var arr = ["'themed-background-dark'",'themed-background-dark-night','themed-background-dark-amethyst', 'themed-background-dark-modern', 'themed-background-dark-autumn', 'themed-background-dark-flatie', 'themed-background-dark-spring', 'themed-background-dark-fancy', 'themed-background-dark-fire'];
+      var idx = Math.floor(Math.random() * arr.length);
+      return arr[idx];
+    };
+    
+    $scope.getUsers = function() {      
       Users.getUsers()
         .then(function(response) {
           $scope.users = response.data;

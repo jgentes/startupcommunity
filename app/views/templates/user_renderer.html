@@ -1,0 +1,21 @@
+<div class="widget">
+    <div class="widget-simple" ng-class="['themed-background-dark','themed-background-dark-night','themed-background-dark-amethyst', 'themed-background-dark-modern', 'themed-background-dark-autumn', 'themed-background-dark-flatie', 'themed-background-dark-spring', 'themed-background-dark-fancy', 'themed-background-dark-fire'][$index % 9]">
+        <div>
+            <img ng-src="{{item.value.avatar || '/public/blank_avatar.png'}}" alt="{{item.value.name}}" class="widget-image img-circle pull-left">
+        </div>
+        <h4 class="widget-content widget-content-light">
+            <div ng-class="['themed-color','themed-color-night','themed-color-amethyst', 'themed-color-modern', 'themed-color-autumn', 'themed-color-flatie', 'themed-color-spring', 'themed-color-fancy', 'themed-color-fire'][$index % 9]">
+                <strong>{{item.value.name}}</strong>
+                <a ng-show="{{(item.value.linkedin.summary).length > 0}}" ng-click="showSummary = !showSummary" class="btn btn-xs" ng-class="['themed-color','themed-color-night','themed-color-amethyst', 'themed-color-modern', 'themed-color-autumn', 'themed-color-flatie', 'themed-color-spring', 'themed-color-fancy', 'themed-color-fire'][$index % 9]" style="float:right">
+                    <i class="fa fa-chevron-down fa-fw"></i>
+                </a>
+            </div>
+            <small>{{item.value.linkedin.headline}}</small>
+        </h4>
+        
+    </div>
+    <div class="widget-extra" ng-show="showSummary">
+        <h4 class="sub-header">Summary</h4>
+        <p>{{item.value.linkedin.summary}}</p>
+    </div>
+</div>

@@ -413,13 +413,7 @@ angular
     });
 
     // searchbar
-    $scope.showSearchBar = function ($e) {
-        $e.stopPropagation();
-        $global.set('showSearchCollapsed', true);
-    }
-    $scope.$on('globalStyles:changed:showSearchCollapsed', function (event, newVal) {
-      $scope.style_showSearchCollapsed = newVal;
-    });
+
     $scope.goToSearch = function () {
         $location.path('/extras-search')
     };
