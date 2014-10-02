@@ -19,8 +19,8 @@
 	white-space: normal; margin: 10px 0 0 0; padding-left: 0 !important; 
 
 	.badge {font-weight: 600; background-color: rgba(21, 22, 26, 0.6); right: 25px !important;}
-	i {color: @sidebar-icon-color; margin-left: 1px; margin-right: 8px; min-width: 18px; text-align: center; display: inline-block;}
-
+	i {color: @sidebar-icon-color; margin-left: 1px; margin-right: 8px; min-width: 18px; text-align: center; display: inline-block; opacity: .5;}
+	
 	.divider {
 		height: 1px; width: 100%; 
 		margin: 10px 0px; overflow: hidden; 
@@ -38,7 +38,7 @@
 	li.active i, li.active a:hover i {color: @sidebar-active-color;}
 	li a {color: @sidebar-menu-color;display: block;padding: 11px 10px;position: relative; font-weight: 400; .transition(~"all 0.3s ease");}
 	a:hover {background-color: @sidebar-hover-bg; color: @sidebar-hover-color; 
-		i {color: @sidebar-hover-color;}
+		i {color: @sidebar-hover-color; opacity: 1;}
 	}
 	>li.active>a {background: @sidebar-active-bg; color: @sidebar-active-color; 
 		&:after {
