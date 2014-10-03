@@ -21,6 +21,10 @@
 	.badge {font-weight: 600; background-color: rgba(21, 22, 26, 0.6); right: 25px !important;}
 	i {color: @sidebar-icon-color; margin-left: 1px; margin-right: 8px; min-width: 18px; text-align: center; display: inline-block; opacity: .5;}
 	
+	.heading {
+		opacity: .5;
+	}
+	
 	.divider {
 		height: 1px; width: 100%; 
 		margin: 10px 0px; overflow: hidden; 
@@ -35,23 +39,12 @@
 	ul, ul li a {background: @sidebar-submenu-bg; color: @sidebar-submenu-color; }
 	
 	//Main Menu Styles - Level 1
-	li.active i, li.active a:hover i {color: @sidebar-active-color;}
+	li.active i, li.active a:hover i {color: @sidebar-active-color; opacity: 1;}
 	li a {color: @sidebar-menu-color;display: block;padding: 11px 10px;position: relative; font-weight: 400; .transition(~"all 0.3s ease");}
 	a:hover {background-color: @sidebar-hover-bg; color: @sidebar-hover-color; 
 		i {color: @sidebar-hover-color; opacity: 1;}
 	}
-	>li.active>a {background: @sidebar-active-bg; color: @sidebar-active-color; 
-		&:after {
-			width: 0px; height: 0px;
-			border-style: solid;
-			border-width: 9px 9px 9px 0;
-			border-color: transparent @body-bg transparent transparent;
-
-			content: "";
-			position: absolute;
-			top: 50%; margin-top: -9px;right: 0px;
-		}
-	}
+	>li.active>a {background: @sidebar-submenu-bg; color: @sidebar-active-color; padding-left: 8px; border-left: 2px solid @brand-primary;}
 	
 	// Submenu Styles - Level 2
 	ul li.active>a { color: @sidebar-submenu-active-color !important;} 
@@ -113,8 +106,8 @@ body.collapse-leftbar {
 
 /* Sidebar Layout + Responsive */
 
-#page-leftbar 	{width: 230px;}
-#page-content 	{margin-left: 230px;}
+#page-leftbar 	{width: 200px;}
+#page-content 	{margin-left: 200px;}
 #wrap 			{overflow: hidden;}
 
 
@@ -127,7 +120,7 @@ body.collapse-leftbar {
 		z-index: @zindex-navbar-fixed - 1;
 	}
 
-	#page-content, #sidebar {.transition(~"250ms ease"); }
+	#page-content, #sidebar {.transition(~"220ms ease"); }
 
 	#sidebar {white-space: nowrap;}
 
@@ -139,9 +132,9 @@ body.collapse-leftbar {
 	footer {margin-left: 0;}
 
 	body.show-leftbar {
-		#page-leftbar 	{width: 230px;}
-		#page-content 	{margin-left: 230px;}
-		footer 			{.translate(230px,0);}
+		#page-leftbar 	{width: 200px;}
+		#page-content 	{margin-left: 200px;}
+		footer 			{.translate(200px,0);}
 	}
 }
 
@@ -192,52 +185,7 @@ body.collapse-leftbar {
 	}
 }
 */
-/* Search in Header */
-#search {
-	line-height: 0;
-	list-style: none;
-	//margin-bottom: 10px;
-	//margin-top: 10px;
 
-	> a {display: none !important;}
-
-	form {
-		margin: 0px 0px 0px 0px;
-		padding: 0 0px 0px 0px;
-		position: relative;
-		
-		.search-query {
-			background: #394655;
-			
-			color: @navbar-inverse-color;
-
-			padding: 0 10px 0 37px;
-			border-radius:0px;
-			min-height: 40px;
-			line-height: 19px;
-			width: 190px;
-			.placeholder(fade(@navbar-inverse-color,40%));
-		
-			&:focus {
-				 .placeholder(~"transparent");
-				+ button i {.opacity(1);}
-			}
-
-			&, &:active, &:focus {
-				border: none;
-			}
-		}
-		
-		button[type="submit"] {
-			float: left;
-			position: absolute;
-			top: 0;left: 10px;
-			border: 0; background: none;
-			padding: 13px 0;margin: 0;min-width: none;
-			i {color:@navbar-inverse-color;.opacity(0.4)}
-		}
-	}
-}
 
 // Collapse Sidebar
 

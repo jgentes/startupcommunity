@@ -1,7 +1,8 @@
-<a ng-click="select(item)" ng-href="{{item.url}}">
+<a ng-if="item.url" ng-click="select(item)" ng-href="{{item.url}}">
 	<i ng-if="item.iconClasses" class="{{item.iconClasses}}"></i><span>{{item.label}}</span>
 	<span ng-bind-html="item.html"></span>
 </a>
+<h5 ng-if="item.heading" class="heading">{{item.label}}</h5>
 <ul ng-if="item.children.length" data-slide-out-nav="item.open">
     <li ng-repeat="item in item.children"
 	    ng-class="{ hasChild: (item.children!==undefined),

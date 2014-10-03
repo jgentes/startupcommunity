@@ -44,9 +44,8 @@ var showallusers = function(city, state){
       delete result.body.results[i].path.collection;
       delete result.body.results[i].path.key;
       delete result.body.results[i].value.email;
-      delete result.body.results[i].value.username;
       delete result.body.results[i].value.password;
-      delete result.body.results[i].value.emailAddress;
+      delete result.body.results[i].value.linkedin.emailAddress;
     }
     deferred.resolve(result.body);
   })
@@ -69,9 +68,8 @@ var searchincity = function(city, state, query){
       delete result.body.results[i].path.collection;
       delete result.body.results[i].path.key;
       delete result.body.results[i].value.email;
-      delete result.body.results[i].value.username;
       delete result.body.results[i].value.password;
-      delete result.body.results[i].value.emailAddress;
+      delete result.body.results[i].value.linkedin.emailAddress;
     }
     deferred.resolve(result.body);
   })

@@ -161,7 +161,7 @@
   
 
     <header class="navbar navbar-inverse" ng-class="{'navbar-fixed-top': style_fixedHeader, 'navbar-static-top': !style_fixedHeader}" role="banner">
-        <a id="leftmenu-trigger" tooltip-placement="right" tooltip="Toggle Sidebar" ng-click="toggleLeftBar()"></a>        
+        <a id="leftmenu-trigger" tooltip-placement="right" tooltip="Toggle Sidebar" ng-click="toggleLeftBar()"><i class="fa fa-bars"></i></a>        
 
         <div class="navbar-header pull-left">
             <li id="search">
@@ -268,7 +268,8 @@
                   <li ng-repeat="item in menu"
                       ng-class="{ hasChild: (item.children!==undefined),
                                     active: item.selected,
-                                      open: (item.children!==undefined) && item.open }"
+                                      open: (item.children!==undefined) && item.open,
+                                   heading: item.heading }"
                       ng-include="'templates/nav_renderer.html'"
                     ></li>
               </ul>
