@@ -10,8 +10,7 @@ angular
             url: '#/alpha/social'
         },
         {
-            label: 'COMMUNITY',
-            heading: true
+            heading: 'COMMUNITY'
         },
         {
             label: 'Leaders',
@@ -34,8 +33,7 @@ angular
             iconClasses: 'fa fa-rocket'            
         },
         {
-            label: 'CLUSTERS',
-            heading: true
+            heading: 'CLUSTERS'            
         },
         {
             label: 'Tech',
