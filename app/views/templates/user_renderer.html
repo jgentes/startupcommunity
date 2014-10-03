@@ -1,7 +1,7 @@
 <div class="widget">
     <div class="widget-simple" ng-class="['themed-background-dark','themed-background-dark-night','themed-background-dark-amethyst', 'themed-background-dark-modern', 'themed-background-dark-autumn', 'themed-background-dark-flatie', 'themed-background-dark-spring', 'themed-background-dark-fancy', 'themed-background-dark-fire'][$index % 9]">
         <div>
-            <img ng-src="{{item.value.avatar || '/public/blank_avatar.png'}}" alt="{{item.value.name}}" class="widget-image img-circle pull-left">
+            <img ng-src="{{item.value.avatar || item.value.linkedin.pictureUrl || '/public/blank_avatar.png'}}" alt="{{item.value.name}}" class="widget-image img-circle pull-left">
         </div>
         <h4 class="widget-content widget-content-light">
             <div ng-class="['themed-color','themed-color-night','themed-color-amethyst', 'themed-color-modern', 'themed-color-autumn', 'themed-color-flatie', 'themed-color-spring', 'themed-color-fancy', 'themed-color-fire'][$index % 9]">

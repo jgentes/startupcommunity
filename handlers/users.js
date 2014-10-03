@@ -132,6 +132,8 @@ function handleEnsureAuthenticated(req, res, next) {
   }
 
   var token = req.headers.authorization.split(' ')[1];
+  console.log(req.headers.authorization);
+  console.log(token);
   var payload = jwt.decode(token, config.token_secret);
 
   if (payload.exp <= Date.now()) {
@@ -226,7 +228,7 @@ function handleSignup(req, res) {
     "name": req.body.name,
     "email": req.body.email,
     "password": hash,
-    "avatar": "/public/blank_avatar.png"
+    "avatar": ''
   };
   //check if email is already assigned in our database
   
