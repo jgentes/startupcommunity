@@ -103,6 +103,10 @@ angular
     
     $scope.getUsers();
     
+    $scope.autofit = function() {
+      return autofit;
+    };
+    
   }])
   
   .controller('LoginCtrl', ['$scope', '$auth', '$global', 'pinesNotifications', function($scope, $auth, $global, pinesNotifications) {
@@ -180,10 +184,10 @@ angular
       })
       .then(function() {
         pinesNotifications.notify({
-          title: 'New Thing',
-          text: 'Just to let you know, something happened.',
-          type: 'info',
-          duration: 3
+          title: "You're in!",
+          text: 'Registration was successful - welcome aboard!',
+          type: 'success',
+          duration: 5
         });
       });
     };

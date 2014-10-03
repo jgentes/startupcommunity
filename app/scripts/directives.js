@@ -10,6 +10,7 @@ angular
         }
     };
   }])
+  
   .directive('slideOut', function() {
     return {
       restrict: 'A',

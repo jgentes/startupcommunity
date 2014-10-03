@@ -16,7 +16,6 @@ var UserHandler = function() {
   this.loginRoute = handleLoginRoute;
   this.userSearch = handleUserSearch;
   this.subscribeUser = handleSubscribeUser;
-  this.updateUsers = handleUpdateUsers;
   this.createToken = handleCreateToken;
   this.linkedin = handleLinkedin;
   this.getMe = handleGetme;
@@ -42,7 +41,7 @@ var showallusers = function(city, state){
   .then(function(result){
     for (var i=0; i < result.body.results.length; i++) {
       delete result.body.results[i].path.collection;
-      delete result.body.results[i].path.key;
+      delete result.body.results[i].path.ref;
       delete result.body.results[i].value.email;
       delete result.body.results[i].value.password;
       delete result.body.results[i].value.linkedin.emailAddress;
@@ -66,7 +65,7 @@ var searchincity = function(city, state, query){
   .then(function(result){
     for (var i=0; i < result.body.results.length; i++) {
       delete result.body.results[i].path.collection;
-      delete result.body.results[i].path.key;
+      delete result.body.results[i].path.ref;
       delete result.body.results[i].value.email;
       delete result.body.results[i].value.password;
       delete result.body.results[i].value.linkedin.emailAddress;
@@ -164,46 +163,6 @@ function handleSubscribeUser(req, res){
     });
 }
 
-function handleUpdateUsers(req, res){
-  console.log("update triggered!");
-  var thiskey = '';
-  var thisrecord = '';
-  console.log('bendupdate initiated!');
-  db.list('users', {limit:100})
-    .then(function(result){    
-      console.log('entering for loop with: ' + result.body.results.length + ' items.');    
-      for (var i=0; i <= result.body.results.length; i++) {      
-        thiskey = result.body.results[i].path.key;
-        console.log('processing ' + thiskey);
-        thisrecord = result.body.results[i].value;
-        //thisrecord["cities"] = { "OR": "Bend" };
-        
-        db.put('users', thisrecord.email, thisrecord)
-          .then(function (res) {
-            console.log('New record created, deleting old record');
-            db.remove('users', thiskey, true)
-            .then( function(res) {     
-              console.log('completed user update: ' + res.statusCode);
-              res.send(res.statusCode).end();         
-            });
-          })
-          .fail(function(err) {
-            console.log('something went wrong:' );
-            console.log(err);
-            res.send(err);
-          });              
-      }    
-    })
-    .fail(function(err) {
-      console.log('something went wrong:' );
-      console.log(err);
-      res.send(err);
-    });      
-}
-  
-
-
-
 /*
  |--------------------------------------------------------------------------
  | Generate JSON Web Token
@@ -233,29 +192,33 @@ function handleSignup(req, res) {
     "avatar": "/public/blank_avatar.png"
   };
   //check if email is already assigned in our database
-  db.get('users', req.body.email)
-  .then(function (result){ //case in which user already exists in db
-    console.log('User already exists');
-    res.status(401).send('That email address is already registered to a user.'); //username already exists
-  })
-  .fail(function (result) {//case in which user does not already exist in db
-      console.log(result.body);
-      if (result.body.message == 'The requested items could not be found.'){
-        console.log('Email is free for use');
-        db.put('users', req.body.email, user)
-        .then(function () {
-          console.log("USER:");
-          console.log(user);
-          res.send({ token: handleCreateToken(req, user) });
-        })
-        .fail(function (err) {
-          console.log("PUT FAIL:" + err.body);
-          res.status(401).send('Something went wrong: ' + err);
-        });
+  
+  db.newSearchBuilder()
+    .collection('users')
+    .limit(1)
+    .query('value.email: "' + req.body.email + '"')
+    .then(function(result){
+      if (result.body.results.length > 0) {
+        console.log('User already exists');
+        res.status(401).send('That email address is already registered to a user.'); //username already exists
       } else {
-        res.status(401).send('Something went wrong!');
+        console.log('Email is free for use');
+        db.post('users', user)
+          .then(function () {
+            console.log("USER:");
+            console.log(user);
+            res.send({ token: handleCreateToken(req, user) });
+          })
+          .fail(function (err) {
+            console.log("POST FAIL:" + err.body);
+            res.status(401).send('Something went wrong: ' + err);
+          });
       }
-  });    
+    })
+    .fail(function(err){
+      console.log("SEARCH FAIL:" + err);
+      res.status(401).send('Something went wrong: ' + err);
+    });  
 }
 
 
@@ -265,25 +228,30 @@ function handleSignup(req, res) {
  |--------------------------------------------------------------------------
  */
 
-function handleLogin(req, res) {  
- db.get('users', req.body.email)
-  .then(function (result){
-    console.log("FOUND USER");
-    var hash = result.body.password;
-    if (bcrypt.compareSync(req.body.password, hash)) {
-      res.send({ token: handleCreateToken(req, result.body) });
-    } else {
-      console.log("PASSWORDS DO NOT MATCH");
-      return res.status(401).send({ message: 'Wrong email and/or password' });
-    }
-  }).fail(function (err){
-    if (err.body.message == 'The requested items could not be found.'){
-          console.log("COULD NOT FIND USER IN DB FOR SIGNIN");
+function handleLogin(req, res) {
+  db.newSearchBuilder()
+    .collection('users')
+    .limit(1)
+    .query('value.email: "' + req.body.email + '"')
+    .then(function(result){
+      if (result.body.results.length > 0) {
+        console.log("FOUND USER");
+        var hash = result.body.results[0].value.password;
+        if (bcrypt.compareSync(req.body.password, hash)) {
+          res.send({ token: handleCreateToken(req, result.body.results[0].value) });
+        } else {
+          console.log("PASSWORDS DO NOT MATCH");
           return res.status(401).send({ message: 'Wrong email and/or password' });
-    } else {
-      return res.status(401).send({ message: 'Something went wrong!' });
-    }
-  });
+        }
+      } else {
+        console.log("COULD NOT FIND USER IN DB FOR SIGNIN");
+        return res.status(401).send({ message: 'Wrong email and/or password' });
+      }
+    })
+    .fail(function(err){
+      console.log("SEARCH FAIL:" + err);
+      res.status(401).send('Something went wrong: ' + err);
+    });
 }
   
   
@@ -326,7 +294,7 @@ function handleLinkedin(req, res) {
       var userprofile = {
         name: profile.firstName + ' ' + profile.lastName,
         email: profile.emailAddress,
-        cities: { "OR": "Bend" },
+        cities: { "Oregon": "Bend" },
         linkedin: profile,
         avatar: profile.pictureUrl || ''     
       };              
@@ -334,49 +302,58 @@ function handleLinkedin(req, res) {
         // Step 3a. Link user accounts.
         if (req.headers.authorization) {
           
-          db.search('users', 'value.linkedin.id: "' + profile.id + '"')
-          .then(function (result){
-            console.log('Result of db search:');
-            console.log(result.body.results);
-            if (result.body.results.length > 0){
-              if (result.body.results[0].value.linkedin.id == profile.id){
-                console.log("FOUND USER: " + profile.firstName + ' ' + profile.lastName);
-                return res.status(200).send({ message: 'Linkedin account found!' });
+          db.newSearchBuilder()
+            .collection('users')
+            .limit(1)
+            .query('value.linkedin.id: "' + profile.id + '"')
+            .then(function (result){
+              console.log('Result of db search:');
+              console.log(result.body.results);
+              if (result.body.results.length > 0){
+                if (result.body.results[0].value.linkedin.id == profile.id){
+                  console.log("FOUND USER: " + profile.firstName + ' ' + profile.lastName);
+                  return res.status(200).send({ message: 'Linkedin account found!' });
+                }
+                console.log("Found a profile, but couldn't match a linkedin id: " + profile.firstName + ' ' + profile.lastName);
+                return res.status(409).send({ message: 'This Linkedin account is already in the system, but is connected to a different user.' });
               }
-              console.log("Found a profile, but couldn't match a linkedin id: " + profile.firstName + ' ' + profile.lastName);
-              return res.status(409).send({ message: 'There appears to be an existing Linkedin account, but something is wrong.' });
-            }
-            
-            var token = req.headers.authorization.split(' ')[1];
-            var payload = jwt.decode(token, config.token_secret);
-            
-            db.get('users', payload.sub)
-            .then(function(result) {
-              result.body["linkedin"] = profile;// get user account and re-upload with linkedin data
-              db.put('users', payload.sub, result.body)
-                .then(function () {
-                  console.log("PROFILE UPDATED: " + userprofile.email);
-                  res.send({ token: handleCreateToken(req, result.body) });         
+              
+              console.log('No Linkedin user in the system with that id; ok to add it.');
+              var token = req.headers.authorization.split(' ')[1];
+              var payload = jwt.decode(token, config.token_secret);
+              
+              db.newSearchBuilder()
+                .collection('users')
+                .limit(1)
+                .query('value.email: "' + payload.sub + '"')
+                .then(function(result){
+                  if (result.body.results.length > 0) {
+                    console.log('Matching user found.');
+                    result.body.results[0].value["linkedin"] = profile; // get user account and re-upload with linkedin data
+                    db.put('users', result.body.results[0].path.key, result.body.results[0].value)
+                      .then(function () {
+                        console.log("PROFILE UPDATED: " + userprofile.email);
+                        res.send({ token: handleCreateToken(req, result.body.results[0].value) });         
+                      })
+                      .fail(function (err) {
+                        console.log("PUT FAIL:");
+                        console.log(err.body);
+                        res.send(err.body);          
+                      });
+                  } else {
+                    console.log('User not found, please logout or clear the local storage in your browser.');
+                    return res.status(400).send({ message: 'User not found, please logout or clear the local storage in your browser.' });                       
+                  }
                 })
-                .fail(function (err) {
-                  console.log("PUT FAIL:");
-                  console.log(err.body);
-                  res.send(err.body);          
+                .fail(function(err){
+                  console.log("SEARCH FAIL:" + err);
+                  res.status(401).send('Something went wrong: ' + err);
                 });
             })
-            .fail(function(err) {
-              console.log('User not found, please logout or clear the local storage in your browser.');
-              return res.status(400).send({ message: 'User not found, please logout or clear the local storage in your browser.' });
-            });
-            
-            
-          })
-          .fail(function(err) {
-            console.log('No existing Linkedin user account found.');
-            return res.status(404).send({ message: 'No existing Linkedin user account found.'});
-          });
-          
-        
+            .fail(function(err){
+              console.log("SEARCH FAIL:" + err);
+              res.status(401).send('Something went wrong: ' + err);
+            });  
         } else {
           // Step 3b. Create a new user account or return an existing one.        
           
@@ -391,7 +368,7 @@ function handleLinkedin(req, res) {
               }
             } else {
               
-              db.put('users', userprofile.email, userprofile)
+              db.post('users', userprofile)
               .then(function () {
                 console.log("PROFILE CREATED: " + JSON.stringify(userprofile));
                 res.send({ token: handleCreateToken(req, userprofile) });          
@@ -403,10 +380,10 @@ function handleLinkedin(req, res) {
               });                
             }          
           })
-          .fail(function (err){
-            console.log('SEARCH FAILED');
-            res.send(err.body); 
-          });
+          .fail(function(err){
+            console.log("SEARCH FAIL:" + err);
+            res.status(401).send('Something went wrong: ' + err);
+          });  
         }
       });
     } else {  
@@ -498,15 +475,23 @@ function handleLinkedin(req, res) {
  */
 
 function handleGetme(req, res) { 
-  db.get('users', req.user.email)  
-  .then(function(user) {
-    console.log('Authenticated user: ' + user.body.name);
-    res.send(user.body);
-  })
-  .fail(function(err) {
-    console.log('User not found.');
-    return res.status(200).send({ message: 'User not found.' });
-  });
+  db.newSearchBuilder()
+    .collection('users')
+    .limit(1)
+    .query('value.email: "' + req.user.email + '"')
+    .then(function(user){
+      if (user.body.results.length > 0) {
+        console.log('Authenticated user: ' + user.body.results[0].value.name);
+        res.send(user.body.results[0].value);
+      } else {
+        console.log('User not found.');
+        return res.status(200).send({ message: 'User not found.' });
+      }
+    })
+    .fail(function(err){
+      console.log("SEARCH FAIL:" + err);
+      res.status(401).send('Something went wrong: ' + err);
+    }); 
 }
 
 /*
@@ -516,18 +501,22 @@ function handleGetme(req, res) {
  */
 
 function handlePutme(req, res) {
-  db.get('users', req.user.email)
-    .then(function(user) {      
-      user.displayName = req.body.displayName || user.displayName;
-      user.email = req.body.email || user.email;
-      user.save(function(err) {
-      res.status(200).end();
+  db.newSearchBuilder()
+    .collection('users')
+    .limit(1)
+    .query('value.email: "' + req.user.email + '"')
+    .then(function(user){
+      if (user.body.results.length > 0) {
+       //NOTHING HERE! NEED PUT STATEMENT
+      } else {
+        console.log('User not found.');
+        return res.status(400).send({ message: 'User not found' });
+      }
     })
-    .fail(function(err) {
-      console.log('User not found.');
-      return res.status(400).send({ message: 'User not found' });
-    });
-  });
+    .fail(function(err){
+      console.log("SEARCH FAIL:" + err);
+      res.status(401).send('Something went wrong: ' + err);
+    }); 
 }
 
 /*
@@ -538,22 +527,31 @@ function handlePutme(req, res) {
 
 function handleUnlink(req, res) {
   var provider = req.params.provider;  
-  db.get('users', req.user.email)
-    .then(function(user) {
-      user[provider] = undefined;
-      db.put('users', req.user.email, user.body)
-        .then(function() {          
-          res.status(200).end();
-        })
-        .fail(function(err) {
-          console.log('user update failed');
-          res.status(400).send({ message: 'Something went wrong! ' + err });
-        });
+  db.newSearchBuilder()
+    .collection('users')
+    .limit(1)
+    .query('value.email: "' + req.user.email + '"')
+    .then(function(user){
+      if (user.body.results.length > 0) {
+        user[provider] = undefined;
+        db.put('users', user.body.results[0].path.key, user.body.results[0].value)
+          .then(function() {         
+            console.log('Successfully unlinked provider!');
+            res.status(200).end();
+          })
+          .fail(function(err) {
+            console.log('user update failed');
+            res.status(400).send({ message: 'Something went wrong! ' + err });
+          });
+      } else {
+        console.log('User not found.');
+        return res.status(400).send({ message: 'User not found' });
+      }
     })
-    .fail(function(err) {
-      console.log('User not found.');
-      return res.status(400).send({ message: 'User not found' });
-    });
+    .fail(function(err){
+      console.log("SEARCH FAIL:" + err);
+      res.status(401).send('Something went wrong: ' + err);
+    });         
 }
 
 
