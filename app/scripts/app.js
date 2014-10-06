@@ -41,27 +41,28 @@ app
   .config(['$provide', '$routeProvider', function ($provide, $routeProvider) {
     $routeProvider
       .when('/', {
-        templateUrl: 'views/launchform.html',
-        controller: 'LaunchformController'
+        templateUrl: 'views/launchform.html'
       })
-      .when('/alpha/social', {
-        templateUrl: 'views/page_widgets_social.html',
-        controller: 'UsersController'
+      .when('/mentors', {
+        templateUrl: 'views/mentors.html',
+        resolve: {
+          authenticated: ['$location', '$auth', function($location, $auth) {
+            if (!$auth.isAuthenticated()) {
+              return $location.path('/login');
+            }
+          }]
+        }
       })
       .when('/alpha', {
-        templateUrl: 'views/home.html',
-        controller: 'DashboardController'
+        templateUrl: 'views/home.html'
       })
       .when('/login', {
-        templateUrl: 'views/login.html',
-        controller: 'LoginCtrl'
+        templateUrl: 'views/login.html'
       })
       .when('/signup', {
-        templateUrl: 'views/signup.html',
-        controller: 'SignupCtrl'
+        templateUrl: 'views/signup.html'
       })
-      .when('/logout', {        
-        templateUrl: null,
+      .when('/logout', {
         controller: 'LogoutCtrl'
       })
       /*      

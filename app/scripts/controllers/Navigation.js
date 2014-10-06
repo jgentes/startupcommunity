@@ -7,7 +7,7 @@ angular
         {
             label: 'Bend',
             iconClasses: 'fa fa-globe',
-            url: '#/alpha/social'
+            url: '#/'
         },
         {
             heading: 'COMMUNITY'
@@ -19,8 +19,7 @@ angular
         {
             label: 'Mentors',
             iconClasses: 'fa fa-graduation-cap',
-            html: '<span class="badge badge-info">100</span>',
-            url: '#/alpha/social',
+            url: '#/mentors',
             children: [
                 {
                     label:"Add a Mentor",
@@ -95,20 +94,20 @@ angular
             parentRef = parentRef.parent;
         }
 
-        // handle leaf nodes
-        if (!item.children || (item.children && item.children.length<1)) {
-            $scope.selectedFromNavMenu = true;
-            for (var j = $scope.selectedItems.length - 1; j >= 0; j--) {
-                $scope.selectedItems[j].selected = false;
-            };
-            $scope.selectedItems = [];
-            var parentRef = item;
-            while (parentRef !== null) {
-                parentRef.selected = true;
-                $scope.selectedItems.push(parentRef);
-                parentRef = parentRef.parent;
-            }
+        // handle leaf nodes // !! removed if no children statement here
+        
+        $scope.selectedFromNavMenu = true;
+        for (var j = $scope.selectedItems.length - 1; j >= 0; j--) {
+            $scope.selectedItems[j].selected = false;
         };
+        $scope.selectedItems = [];
+        var parentRef = item;
+        while (parentRef !== null) {
+            parentRef.selected = true;
+            $scope.selectedItems.push(parentRef);
+            parentRef = parentRef.parent;
+        }
+        
     };
 
     $scope.$watch(function () {

@@ -132,8 +132,6 @@ function handleEnsureAuthenticated(req, res, next) {
   }
 
   var token = req.headers.authorization.split(' ')[1];
-  console.log(req.headers.authorization);
-  console.log(token);
   var payload = jwt.decode(token, config.token_secret);
 
   if (payload.exp <= Date.now()) {

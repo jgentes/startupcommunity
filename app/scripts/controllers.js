@@ -67,6 +67,21 @@ angular
     /**
      * Get user's profile information.
      */
+    
+    $scope.logOut = function() {
+      $auth.logout()
+        .then(function() {
+          pinesNotifications.notify({
+              title: 'You are now logged out.',
+              text: 'Why not go meet up with a friend?',
+              type: 'info',
+              icon: 'fa fa-lock',
+              duration: 5
+            });
+        });
+    };
+    
+     
     $scope.getProfile = function() {
       Account.getProfile()
         .then(function(response) {
@@ -86,7 +101,7 @@ angular
     };
   })
         
-  .controller('UsersController', ['$scope', 'Users', 'Account', function ($scope, Users, Account) {
+  .controller('PeopleController', ['$scope', 'Users', 'Account', function ($scope, Users, Account) {
     
     $scope.rotateWidgetClass = function() {
       var arr = ["'themed-background-dark'",'themed-background-dark-night','themed-background-dark-amethyst', 'themed-background-dark-modern', 'themed-background-dark-autumn', 'themed-background-dark-flatie', 'themed-background-dark-spring', 'themed-background-dark-fancy', 'themed-background-dark-fire'];
@@ -102,10 +117,6 @@ angular
     };
     
     $scope.getUsers();
-    
-    $scope.autofit = function() {
-      return autofit;
-    };
     
   }])
   
@@ -156,19 +167,6 @@ angular
           console.log(response.data);
         });
     };
-  }])
-  
-  .controller('LogoutCtrl', ['$auth', 'pinesNotifications', function($auth, pinesNotifications) {
-    $auth.logout()
-      .then(function() {
-        pinesNotifications.notify({
-            title: 'You are now logged out.',
-            text: 'Why not go meet up with a friend?',
-            type: 'success',
-            icon: 'fa fa-lock',
-            duration: 5
-          });
-      });
   }])
   
   .controller('SignupCtrl', ['$scope', '$auth', '$global', 'pinesNotifications', function($scope, $auth, $global, pinesNotifications) {
