@@ -109,9 +109,9 @@ angular
       return arr[idx];
     };
     
-    $scope.getUsers = function() {      
-      Users.getUsers()
-        .then(function(response) {
+    $scope.getUsers = function(alturl) {
+      Users.getUsers(alturl)
+        .then(function(response) {          
           $scope.users = response.data;
         });
     };

@@ -14,8 +14,8 @@ angular
   
   .factory('Users', function($http, $auth) {
     return {
-      getUsers: function() {
-        return $http.get('/api/bend-or/users');
+      getUsers: function(alturl) {
+        return $http.get(alturl || '/api/bend-or/users');
       }
     };
   })        

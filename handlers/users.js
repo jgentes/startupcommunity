@@ -70,7 +70,7 @@ var convert_state = function(name, to) {
     return returnthis;
 };
 
-var showallusers = function(city, state, limit, offset){
+var showallusers = function(city, state, limit, offset){  
   var deferred = Q.defer();
   var newstate = convert_state(state, 'name');
   db.newSearchBuilder()
@@ -78,7 +78,7 @@ var showallusers = function(city, state, limit, offset){
   .limit(Number(limit) || 100)
   .offset(Number(offset) || 0)
   .query('value.cities.' + newstate + ': "' + city + '"')
-  .then(function(result){
+  .then(function(result){    
     for (var i=0; i < result.body.results.length; i++) {
       delete result.body.results[i].path.collection;
       delete result.body.results[i].path.ref;
@@ -88,11 +88,11 @@ var showallusers = function(city, state, limit, offset){
     }
     if (result.body.next) {      
       var getnext = url.parse(result.body.next, true);      
-      result.body.next = '/api/' + city + '-' + state + '/users?limit=' + getnext.query.limit + '&search=' + query + '&offset=' + getnext.query.offset;      
+      result.body.next = '/api/' + city + '-' + state + '/users?limit=' + getnext.query.limit + '&offset=' + getnext.query.offset;      
     }
     if (result.body.prev) {
       var getprev = url.parse(result.body.prev, true);
-      result.body.prev = '/api/' + city + '-' + state + '/users?limit=' + getprev.query.limit + '&search=' + query + '&offset=' + getprev.query.offset;
+      result.body.prev = '/api/' + city + '-' + state + '/users?limit=' + getprev.query.limit + '&offset=' + getprev.query.offset;
     }
     deferred.resolve(result.body);
   })
