@@ -1,6 +1,7 @@
 var bcrypt = require('bcryptjs'),
     Q = require('q'),
     request = require('request'),
+    url = require('url'),
     jwt = require('jwt-simple'),
     moment = require('moment'),
     config = require('../config.json')[process.env.NODE_ENV || 'development'],
@@ -69,13 +70,14 @@ var convert_state = function(name, to) {
     return returnthis;
 };
 
-var showallusers = function(city, state){
+var showallusers = function(city, state, limit, offset){
   var deferred = Q.defer();
-  state = convert_state(state, 'name');
+  var newstate = convert_state(state, 'name');
   db.newSearchBuilder()
   .collection('users')
-  .limit(100)
-  .query('value.cities.' + state + ': "' + city + '"')
+  .limit(Number(limit) || 100)
+  .offset(Number(offset) || 0)
+  .query('value.cities.' + newstate + ': "' + city + '"')
   .then(function(result){
     for (var i=0; i < result.body.results.length; i++) {
       delete result.body.results[i].path.collection;
@@ -83,6 +85,14 @@ var showallusers = function(city, state){
       delete result.body.results[i].value.email;
       delete result.body.results[i].value.password;
       delete result.body.results[i].value.linkedin.emailAddress;
+    }
+    if (result.body.next) {      
+      var getnext = url.parse(result.body.next, true);      
+      result.body.next = '/api/' + city + '-' + state + '/users?limit=' + getnext.query.limit + '&search=' + query + '&offset=' + getnext.query.offset;      
+    }
+    if (result.body.prev) {
+      var getprev = url.parse(result.body.prev, true);
+      result.body.prev = '/api/' + city + '-' + state + '/users?limit=' + getprev.query.limit + '&search=' + query + '&offset=' + getprev.query.offset;
     }
     deferred.resolve(result.body);
   })
@@ -94,13 +104,14 @@ var showallusers = function(city, state){
   
 };
 
-var searchincity = function(city, state, query){
-  var deferred = Q.defer(); 
-  state = convert_state(state, 'name');
+var searchincity = function(city, state, query, limit, offset){  
+  var deferred = Q.defer();
+  var newstate = convert_state(state, 'name');
   db.newSearchBuilder()
   .collection('users')
-  .limit(100)
-  .query('value.cities.' + state + ': "' + city + '" AND ' + query)
+  .limit(Number(limit) || 100)
+  .offset(Number(offset) || 0)
+  .query('value.cities.' + newstate + ': "' + city + '" AND ' + query)
   .then(function(result){
     for (var i=0; i < result.body.results.length; i++) {
       delete result.body.results[i].path.collection;
@@ -108,6 +119,14 @@ var searchincity = function(city, state, query){
       delete result.body.results[i].value.email;
       delete result.body.results[i].value.password;
       delete result.body.results[i].value.linkedin.emailAddress;
+    }
+    if (result.body.next) {      
+      var getnext = url.parse(result.body.next, true);      
+      result.body.next = '/api/' + city + '-' + state + '/users?limit=' + getnext.query.limit + '&search=' + query + '&offset=' + getnext.query.offset;      
+    }
+    if (result.body.prev) {
+      var getprev = url.parse(result.body.prev, true);
+      result.body.prev = '/api/' + city + '-' + state + '/users?limit=' + getprev.query.limit + '&search=' + query + '&offset=' + getprev.query.offset;
     }
     deferred.resolve(result.body);
   })
@@ -163,12 +182,14 @@ function handleLoginRoute(req, res){ res.redirect('#/login'); }
 function handleUserSearch(req, res){  
   var citystate = req.params.citystate;
   var query = req.query.search;
+  var limit = req.query.limit;
+  var offset = req.query.offset;
   var city = citystate.substr(0, citystate.length - 3);
   var state = citystate.substr(citystate.length - 2, 2);
   console.log("City, State, Search: " + city + ', ' + state.toUpperCase() + ', ' + query);
 
   if (query !== undefined){
-    searchincity(city, state, query)
+    searchincity(city, state, query, limit, offset)
     .then(function(userlist){
       res.send(userlist);
     })
@@ -176,7 +197,7 @@ function handleUserSearch(req, res){
       res.send(err);
     });
   } else {
-    showallusers(city, state)
+    showallusers(city, state, limit, offset)
     .then(function(userlist){
       res.send(userlist);
     })
