@@ -1,14 +1,14 @@
 var express = require('express'),
     config = require('./config.json')[process.env.NODE_ENV || 'development'],
-    routes = require('./routes'),
+    api = require('./api/routes'),
     bodyParser = require('body-parser'),
     methodOverride = require('method-override'),
     logger = require('morgan'),
-    UserHandler = require('./handlers/users.js');    
+    UserApi = require('./api/userApi.js');    
 
 // for console log debugging
-require('debug-trace')({ always: true });
-console.format = function(c) { return c.method + " [" + c.filename + ":" + c.getLineNumber() + "] " + c.functionName; };
+require('debug-trace')({ always: true, colors: { log: '32' } });
+console.format = function(c) { return "[" + c.filename + ":" + c.getLineNumber() + "]"; };
 
 var app = express();
 
@@ -42,11 +42,11 @@ if (process.env.NODE_ENV !== "production") {
   });
 } 
 
-var handlers = {
-	users: new UserHandler()
+var routes = {
+	userApi: new UserApi()
 };
 
-routes.setup(app,handlers);
+api.setup(app,routes);
 
 var port = process.env.PORT || 5000;
 app.listen(port);

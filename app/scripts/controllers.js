@@ -123,10 +123,9 @@ angular
   .controller('AddMentorController', ['$scope', '$auth', 'userService', 'pinesNotifications', function ($scope, $auth, userService, pinesNotifications) {
       
     $scope.addMentor = function(url, email, userid) {                  
-        userService.addMentor(url, email, userid, function(response) {          
+        userService.addMentor(url, email, userid, function(response) {  
           console.log(response);
-          if (response.status === 200) {            
-            console.log('bad rsponse');          
+          if (response.status !== 200) {          
             pinesNotifications.notify({
               title: 'Sorry, we had a problem with Linkedin.',
               text: "We couldn't find a profile using that URL. Here's more detail: " + response.data.message,
@@ -134,12 +133,10 @@ angular
               duration: 30
             });
           } else {
-            console.log('good rsponse');
             $scope.users = response.data;
-            console.log(response);
             pinesNotifications.notify({
               title: 'Mentor Imported!',
-              text: 'Everything looks good for ' + response.data.name,
+              text: response.data.name + ' is good to go.',
               type: 'success',
               duration: 5
             });
@@ -188,11 +185,11 @@ angular
         .catch(function(response) {
           pinesNotifications.notify({
             title: 'There was a problem:',
-            text: String(response.data),
+            text: String(response.data.message),
             type: 'error',
             duration: 15
           });
-          console.log(response.data);
+          console.log(response.data.message);
         });
     };
   }])

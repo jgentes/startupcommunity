@@ -9,9 +9,9 @@ var bcrypt = require('bcryptjs'),
     mcapi = require('mailchimp-api/mailchimp'),
     mc = new mcapi.Mailchimp(config.mailchimp);
 
-//require('request-debug')(request); // Very useful for debugging oauth and api req/res
+require('request-debug')(request); // Very useful for debugging oauth and api req/res
 
-var UserHandler = function() {
+var UserApi = function() {
   this.ensureAuthenticated = handleEnsureAuthenticated;
   this.rootRoute = handleRootRoute;
   this.loginRoute = handleLoginRoute;
@@ -362,7 +362,7 @@ function handleAddMentor(req, res) {
     gettoken(addMentor, function(access_token) {    
             
       getlinkedinprofile(addMentor.url, addMentor.email, access_token, function(result) {                
-        res.send(result);
+        res.status(result.status).send(result);
       });
       
     });
@@ -410,6 +410,9 @@ var linkedinPull = function (linkedinuser, pullcallback) {
     if (result.body.results.length > 0){
       if (result.body.results[0].value.linkedin.id == linkedinuser.linkedin.id){
         console.log("FOUND USER: " + linkedinuser.name);
+        if (result.body.results[0].value.linkedin.access_token) {
+          linkedinuser.linkedin['access_token'] = result.body.results[0].value.linkedin.access_token; // Avoid losing the access token on update
+        }
         db.put('users', result.body.results[0].path.key, linkedinuser, result.body.results[0].path.ref)
         .then(function () {
           console.log("PROFILE UPDATED: " + linkedinuser.email);
@@ -447,8 +450,8 @@ function handleLinkedin(req, res) {
   var accessTokenUrl = 'https://www.linkedin.com/uas/oauth2/accessToken';
   var peopleApiUrl = 'https://api.linkedin.com/v1/people/~:(id,first-name,last-name,email-address,skills,picture-url;secure=true,headline,summary,public-profile-url)';    
   
-  var config_params = {
-    client_id: req.body.clientId,
+  var params = {
+    client_id: config.linkedin.clientID,
     redirect_uri: req.body.redirectUri,
     client_secret: config.linkedin.clientSecret,
     code: req.body.code,
@@ -456,7 +459,7 @@ function handleLinkedin(req, res) {
     scope: ['r_fullprofile r_emailaddress']
   };
   // Step 1. Exchange authorization code for access token.
-  request.post(accessTokenUrl, { form: config_params, json: true }, function(err, response, body) {
+  request.post(accessTokenUrl, { form: params, json: true }, function(err, response, body) {
     
     if (response.statusCode !== 200) {
       return res.status(response.statusCode).send({ message: body.error_description });
@@ -484,102 +487,74 @@ function handleLinkedin(req, res) {
       };              
         
         // Step 3a. Link user accounts.
-        if (req.headers.authorization) {
+        //if (req.headers.authorization) {
           
-          db.newSearchBuilder()
-            .collection('users')
-            .limit(1)
-            .query('value.linkedin.id: "' + profile.id + '"')
-            .then(function (result){
-              console.log('Result of db search: ' + result.body.total_count);              
-              if (result.body.results.length > 0){
-                if (result.body.results[0].value.linkedin.id == profile.id){
-                  console.log("FOUND USER: " + profile.firstName + ' ' + profile.lastName);
-                  result.body.results[0].value["linkedin"] = profile; // get user account and re-upload with linkedin data                  
-                  db.put('users', result.body.results[0].path.key, result.body.results[0].value)
-                    .then(function () {
-                      console.log("PROFILE UPDATED: " + userprofile.email);
-                      res.send({ token: handleCreateToken(req, result.body.results[0].value) });         
-                    })
-                    .fail(function (err) {
-                      console.log("PUT FAIL:");
-                      console.log(err);
-                      res.send(err);          
-                    });
-                } else {
-                  console.log("Found a profile, but couldn't match a linkedin id: " + profile.firstName + ' ' + profile.lastName);
-                  return res.status(409).send({ message: 'This Linkedin account is already in the system, but is connected to a different user.' });
-                }
-              } else {
-              
-                console.log('No Linkedin user in the system with that id; ok to add it.');
-                var token = req.headers.authorization.split(' ')[1];
-                var payload = jwt.decode(token, config.token_secret);
-                
-                db.newSearchBuilder()
-                  .collection('users')
-                  .limit(1)
-                  .query('value.email: "' + payload.sub + '"')
-                  .then(function(result){
-                    if (result.body.results.length > 0) {
-                      console.log('Matching user found.');
-                      result.body.results[0].value["linkedin"] = profile; // get user account and re-upload with linkedin data
-                      db.put('users', result.body.results[0].path.key, result.body.results[0].value)
-                        .then(function () {
-                          console.log("PROFILE UPDATED: " + userprofile.email);
-                          res.send({ token: handleCreateToken(req, result.body.results[0].value) });         
-                        })
-                        .fail(function (err) {
-                          console.log("PUT FAIL:");
-                          console.log(err.body);
-                          res.send(err.body);          
-                        });
-                    } else {
-                      console.log('User not found, please logout or clear the local storage in your browser.');
-                      return res.status(400).send({ message: 'User not found, please logout or clear the local storage in your browser.' });                       
-                    }
-                  })
-                  .fail(function(err){
-                    console.log("SEARCH FAIL:" + err);
-                    res.status(401).send('Something went wrong: ' + err);
-                  });
-              }
-            })
-            .fail(function(err){
-              console.log("SEARCH FAIL:" + err);
-              res.status(401).send('Something went wrong: ' + err);
-            });
-            
-        } else {
-          // Step 3b. Create a new user account or return an existing one.        
-          
-          db.search('users', 'value.linkedin.id: "' + profile.id + '"')
-          .then(function (result){
-            console.log('Result of db search: ' + result.body.total_count);            
-            if (result.body.results.length > 0){
-              if (result.body.results[0].value.linkedin.id == profile.id){
-                console.log("FOUND USER: " + profile.firstName + ' ' + profile.lastName);
-                res.send({ token: handleCreateToken(req, result.body.results[0].value) });
-              }
-            } else {
-              
-              db.post('users', userprofile)
+      db.newSearchBuilder()
+        .collection('users')
+        .limit(1)
+        .query('value.linkedin.id: "' + profile.id + '"')
+        .then(function (result){
+          console.log('Result of db search: ' + result.body.total_count);              
+          if (result.body.results.length > 0){                
+            console.log("Found user: " + profile.firstName + ' ' + profile.lastName);
+            result.body.results[0].value["linkedin"] = profile; // get user account and re-upload with linkedin data                  
+            db.put('users', result.body.results[0].path.key, result.body.results[0].value)
               .then(function () {
-                console.log("PROFILE CREATED: " + JSON.stringify(userprofile));
-                res.send({ token: handleCreateToken(req, userprofile) });          
+                console.log("Profile updated: " + userprofile.email);                    
               })
               .fail(function (err) {
-                console.log("PUT FAIL:");
-                console.log(err.body);
-                res.send(err.body);          
+                console.error("Profile update failed:");
+                console.error(err);
               });                
-            }          
-          })
-          .fail(function(err){
-            console.log("SEARCH FAIL:" + err);
-            res.status(401).send('Something went wrong: ' + err);
-          });  
-        }
+            res.send({ token: handleCreateToken(req, result.body.results[0].value) });         
+          } else {
+          
+            console.log('No Linkedin user in the system with that id; ok to add it.');
+            var token = req.headers.authorization.split(' ')[1];
+            var payload = jwt.decode(token, config.token_secret);
+            
+            db.newSearchBuilder()
+              .collection('users')
+              .limit(1)
+              .query('value.email: "' + payload.sub + '"')
+              .then(function(result){
+                if (result.body.results.length > 0) {
+                  console.log('Matching user found.');
+                  result.body.results[0].value["linkedin"] = profile; // get user account and re-upload with linkedin data
+                  db.put('users', result.body.results[0].path.key, result.body.results[0].value)
+                    .then(function () {
+                      console.log("Profile updated: " + userprofile.email);                          
+                    })
+                    .fail(function (err) {
+                      console.error("Profile update failed:");
+                      console.error(err.body);                          
+                    });
+                  res.send({ token: handleCreateToken(req, result.body.results[0].value) });
+                } else {
+                  db.post('users', userprofile)
+                    .then(function () {
+                      console.log("PROFILE CREATED: " + JSON.stringify(userprofile));                        
+                    })
+                    .fail(function (err) {
+                      console.error("PUT FAIL:");
+                      console.error(err.body);                      
+                    });                            
+                  res.send({ token: handleCreateToken(req, userprofile) });
+                }
+              })
+              .fail(function(err){
+                console.log("SEARCH FAIL:" + err);
+                res.status(401).send('Something went wrong: ' + err);
+              });
+          }
+        })
+        .fail(function(err){
+          console.log("SEARCH FAIL:" + err);
+          res.status(401).send('Something went wrong: ' + err);
+        });
+        
+        
+        //}
       });
     } else {                
                         
@@ -684,4 +659,4 @@ function handleUnlink(req, res) {
 }
 
 
-module.exports = UserHandler;
+module.exports = UserApi;
