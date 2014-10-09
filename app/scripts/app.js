@@ -53,6 +53,22 @@ app
           }]
         }
       })
+      .when('/mentors/add', {
+        templateUrl: 'views/add_mentors.html',
+        resolve: {
+          authenticated: ['$location', '$auth', function($location, $auth) {
+            if (!$auth.isAuthenticated()) {
+              return $location.path('/login');
+            }
+          }],
+          lazyLoad: ['lazyLoad', function (lazyLoad) {
+            return lazyLoad.load([
+              'bower_components/jquery-validation/dist/jquery.validate.js',
+              'bower_components/stepy/lib/jquery.stepy.js'
+            ]);
+          }]
+        }
+      })
       .when('/alpha', {
         templateUrl: 'views/home.html'
       })

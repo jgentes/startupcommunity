@@ -22,8 +22,8 @@ angular
             url: '#/mentors',
             children: [
                 {
-                    label:"Add a Mentor",
-                    url:"#/notsure"
+                    label: 'Add Mentors',
+                    url: '#/mentors/add'
                 }
             ]
         },
@@ -53,12 +53,12 @@ angular
     ];
     
     var setParent = function (children, parent) {
-        angular.forEach(children, function (child) {
-            child.parent = parent;
-            if (child.children !== undefined) {
-                setParent (child.children, child);
-            }
-        });
+      angular.forEach(children, function (child) {
+          child.parent = parent;
+          if (child.children !== undefined) {
+              setParent (child.children, child);
+          }
+      });
     };
 
     $scope.findItemByUrl = function (children, url) {

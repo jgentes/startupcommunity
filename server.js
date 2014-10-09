@@ -4,7 +4,11 @@ var express = require('express'),
     bodyParser = require('body-parser'),
     methodOverride = require('method-override'),
     logger = require('morgan'),
-    UserHandler = require('./handlers/users.js');
+    UserHandler = require('./handlers/users.js');    
+
+// for console log debugging
+require('debug-trace')({ always: true });
+console.format = function(c) { return c.method + " [" + c.filename + ":" + c.getLineNumber() + "] " + c.functionName; };
 
 var app = express();
 
@@ -30,7 +34,7 @@ var allowCrossDomain = function(req, res, next) {
     }
 }; 
 */
-if (process.env.NODE_ENV !== "production") {  
+if (process.env.NODE_ENV !== "production") {    
   app.use("/bower_components", express.static(__dirname + "/bower_components"));
   app.use(function(req, res, next) { // Force HTTPS
     var protocol = req.get('x-forwarded-proto');

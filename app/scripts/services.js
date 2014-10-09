@@ -1,7 +1,7 @@
 angular
   .module('appServices', [])
 
-  .factory('Account', function($http, $auth) {
+  .factory('accountService', function($http) {
     return {
       getProfile: function() {
         return $http.get('/api/me');
@@ -12,13 +12,19 @@ angular
     };
   })
   
-  .factory('Users', function($http, $auth) {
+  .factory('userService', function($http) {
     return {
       getUsers: function(alturl) {
         return $http.get(alturl || '/api/bend-or/users');
+      },
+      addMentor: function(url, email, userid, callback) {        
+        $http.get('/api/addMentor?user={"url":"' + url + '","email":"' + email + '","userid":"' + userid + '"}')
+        .then( function(response) {
+          callback(response);
+        });
       }
     };
-  })        
+  })    
   
   .service('geocoder',function() {
     this.geocode = function(georequest, outerCallback) {

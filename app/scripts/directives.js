@@ -70,7 +70,7 @@ angular
         heading: '@',
         panelIcon: '@'
       },
-      templateUrl: 'templates/panel.html',
+      templateUrl: '../views/templates/panel.html',
     };
   })
   .directive('pulsate', function () {
@@ -222,7 +222,7 @@ angular
       scope: {
         item: '=data'
       },
-      templateUrl: 'templates/tile-large.html',
+      templateUrl: '../views/templates/tile-large.html',
       transclude: true
     };
   })
@@ -232,7 +232,7 @@ angular
       scope: {
         item: '=data'
       },
-      templateUrl: 'templates/tile-mini.html'
+      templateUrl: '../views/templates/tile-mini.html'
     };
   })
   .directive('tile', function() {
@@ -243,7 +243,7 @@ angular
         type: '@'
       },
       transclude: true,
-      templateUrl: 'templates/tile-generic.html',
+      templateUrl: '../views/templates/tile-generic.html',
       link: function (scope, element, attr) {
         var heading = element.find('tile-heading');
         if (heading.length) {

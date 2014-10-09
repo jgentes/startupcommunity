@@ -1,6 +1,6 @@
 angular
   .module('appControllers', [])
-  .controller('MainController', ['$scope', '$window', '$global', '$timeout', '$interval', 'progressLoader', '$location', '$auth', 'Account', 'pinesNotifications', function ($scope, $window, $global, $timeout, $interval, progressLoader, $location, $auth, Account, pinesNotifications) {
+  .controller('MainController', ['$scope', '$window', '$global', '$timeout', '$interval', 'progressLoader', '$location', '$auth', 'accountService', 'pinesNotifications', function ($scope, $window, $global, $timeout, $interval, progressLoader, $location, $auth, accountService, pinesNotifications) {
     $scope.style_fixedHeader = $global.get('fixedHeader');
     $scope.style_headerBarHidden = $global.get('headerBarHidden');
     $scope.style_layoutBoxed = $global.get('layoutBoxed');
@@ -83,7 +83,7 @@ angular
     
      
     $scope.getProfile = function() {
-      Account.getProfile()
+      accountService.getProfile()
         .then(function(response) {
           $scope.user = response.data;
         });
@@ -101,7 +101,7 @@ angular
     };
   })
         
-  .controller('PeopleController', ['$scope', 'Users', 'Account', function ($scope, Users, Account) {
+  .controller('PeopleController', ['$scope', 'userService', 'accountService', function ($scope, userService, accountService) {
     
     $scope.rotateWidgetClass = function() {
       var arr = ["'themed-background-dark'",'themed-background-dark-night','themed-background-dark-amethyst', 'themed-background-dark-modern', 'themed-background-dark-autumn', 'themed-background-dark-flatie', 'themed-background-dark-spring', 'themed-background-dark-fancy', 'themed-background-dark-fire'];
@@ -110,7 +110,7 @@ angular
     };
     
     $scope.getUsers = function(alturl) {
-      Users.getUsers(alturl)
+      userService.getUsers(alturl)
         .then(function(response) {          
           $scope.users = response.data;
         });
@@ -118,6 +118,34 @@ angular
     
     $scope.getUsers();
     
+  }])
+  
+  .controller('AddMentorController', ['$scope', '$auth', 'userService', 'pinesNotifications', function ($scope, $auth, userService, pinesNotifications) {
+      
+    $scope.addMentor = function(url, email, userid) {                  
+        userService.addMentor(url, email, userid, function(response) {          
+          console.log(response);
+          if (response.status === 200) {            
+            console.log('bad rsponse');          
+            pinesNotifications.notify({
+              title: 'Sorry, we had a problem with Linkedin.',
+              text: "We couldn't find a profile using that URL. Here's more detail: " + response.data.message,
+              type: 'error',            
+              duration: 30
+            });
+          } else {
+            console.log('good rsponse');
+            $scope.users = response.data;
+            console.log(response);
+            pinesNotifications.notify({
+              title: 'Mentor Imported!',
+              text: 'Everything looks good for ' + response.data.name,
+              type: 'success',
+              duration: 5
+            });
+          }
+        });
+      };    
   }])
   
   .controller('LoginCtrl', ['$scope', '$auth', '$global', 'pinesNotifications', function($scope, $auth, $global, pinesNotifications) {
@@ -160,7 +188,7 @@ angular
         .catch(function(response) {
           pinesNotifications.notify({
             title: 'There was a problem:',
-            text: String(response.data.message),
+            text: String(response.data),
             type: 'error',
             duration: 15
           });
@@ -191,13 +219,13 @@ angular
     };
   }])
   
-  .controller('ProfileCtrl', function($scope, $auth, Account, pinesNotifications) {
+  .controller('ProfileCtrl', function($scope, $auth, accountService, pinesNotifications) {
 
     /** THIS SHOULD NOW BE COVERED BY MAINCONTROLLER
      * Get user's profile information.
      
     $scope.getProfile = function() {
-      Account.getProfile()
+      accountService.getProfile()
         .success(function(data) {
           $scope.user = data;
         })
@@ -216,7 +244,7 @@ angular
      * Update user's profile information.
      */
     $scope.updateProfile = function() {
-      Account.updateProfile({
+      accountService.updateProfile({
         displayName: $scope.user.displayName,
         email: $scope.user.email
       }).then(function() {
@@ -301,6 +329,9 @@ angular
   
   .controller('LaunchformController', ['$scope', '$global', '$http', '$q', 'geocoder', function ($scope, $global, $http, $q, geocoder) {
   	$global.set('fullscreen', true);
+  	$scope.$on('$destroy', function () {
+      $global.set('fullscreen', false);
+    });
   	$scope.formData = {};  	
   	$scope.subscribe = function() { 
       $http({

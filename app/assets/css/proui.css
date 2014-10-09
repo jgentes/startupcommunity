@@ -181,7 +181,7 @@ blockquote.pull-right:before {
 /* Content Header */
 .content-header {
     background-color: #ffffff;
-    border-top: 1px solid #eaedf1;
+    border-top: 1px solid #e4e7eb;
     border-bottom: 1px solid #dbe1e8;
 }
 
@@ -198,7 +198,7 @@ blockquote.pull-right:before {
 }
 
 .header-section h1, h2 {
-    color: #fff;
+    color: inherit;
 }
 
 .header-section h1 i {
@@ -216,7 +216,7 @@ blockquote.pull-right:before {
 
 .content-header,
 .content-top {
-    margin: -10px -5px 20px;
+    margin: 2px -5px 20px;
 }
 
 .content-top {
