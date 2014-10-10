@@ -1,6 +1,6 @@
 {
   "name": "startupcommunity.org",
-  "version": "0.0.1",
+  "version": "0.1",
   "appPath": "app",
   "dependencies": {
     "underscore": "~1.5.2",

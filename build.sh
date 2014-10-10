@@ -1,1 +1,1 @@
-echo "Starting build process!"; grunt; git add .; git commit -am "commit for heroku push"
+echo "Starting build process!"; grunt; git add . -A; git commit -am "commit for heroku push"
