@@ -19,7 +19,10 @@ angular
       },
       addMentor: function(url, email, userid, callback) {        
         $http.get('/api/addMentor?user={"url":"' + url + '","email":"' + email + '","userid":"' + userid + '"}')
-        .then( function(response) {
+        .success( function(response) {
+          callback(response);
+        })
+        .error( function(response) {
           callback(response);
         });
       }

@@ -54,6 +54,9 @@ angular
       // console.log('start: ', $location.path());
       progressLoader.start();
       progressLoader.set(50);
+      if (!$scope.user) {
+        $scope.getProfile();
+      }
     });
     $scope.$on('$routeChangeSuccess', function (e) {
       // console.log('success: ', $location.path());
@@ -68,9 +71,10 @@ angular
      * Get user's profile information.
      */
     
-    $scope.logOut = function() {
+    $scope.logOut = function() {      
       $auth.logout()
         .then(function() {
+          $scope.user = null;
           pinesNotifications.notify({
               title: 'You are now logged out.',
               text: 'Why not go meet up with a friend?',
@@ -123,14 +127,14 @@ angular
   .controller('AddMentorController', ['$scope', '$auth', 'userService', 'pinesNotifications', function ($scope, $auth, userService, pinesNotifications) {
       
     $scope.addMentor = function(url, email, userid) {                  
-        userService.addMentor(url, email, userid, function(response) {  
-          console.log(response);
+        userService.addMentor(url, email, userid, function(response) {            
           if (response.status !== 200) {          
             pinesNotifications.notify({
-              title: 'Sorry, we had a problem with Linkedin.',
-              text: "We couldn't find a profile using that URL. Here's more detail: " + response.data.message,
-              type: 'error',            
-              duration: 30
+              title: 'Sorry, there was a problem.',
+              text: response.message,
+              type: 'error',                        
+              duration: 30,
+              shadow: false
             });
           } else {
             $scope.users = response.data;
@@ -138,7 +142,8 @@ angular
               title: 'Mentor Imported!',
               text: response.data.name + ' is good to go.',
               type: 'success',
-              duration: 5
+              duration: 5,
+              shadow: false
             });
           }
         });
@@ -160,7 +165,8 @@ angular
             title: 'Successfully logged in!',
             text: 'Welcome back, ' + $scope.email + '.',
             type: 'info',
-            duration: 3
+            duration: 3,
+            shadow: false
           });
           console.log('Logged in!');          
         })
@@ -187,7 +193,8 @@ angular
             title: 'There was a problem:',
             text: String(response.data.message),
             type: 'error',
-            duration: 15
+            duration: 15,
+            shadow: false
           });
           console.log(response.data.message);
         });
@@ -210,7 +217,8 @@ angular
           title: "You're in!",
           text: 'Registration was successful - welcome aboard!',
           type: 'success',
-          duration: 5
+          duration: 5,
+          shadow: false
         });
       });
     };
@@ -249,7 +257,8 @@ angular
           title: 'Great news.',
           text: "Your profile has been updated.",
           type: 'success',
-          duration: 5
+          duration: 5,
+          shadow: false
         });
       });
     };
@@ -264,7 +273,8 @@ angular
             title: 'Well done.',
             text: 'You have successfully linked your ' + provider + ' account',
             type: 'success',
-            duration: 5
+            duration: 5,
+            shadow: false
           });
         })
         .then(function() {
@@ -275,7 +285,8 @@ angular
             title: 'Aww, shucks.',
             text: 'Sorry, but we ran into this error: ' + response.data.message,
             type: 'error',
-            duration: 5
+            duration: 5,
+            shadow: false
           });          
         });
     };
@@ -290,7 +301,8 @@ angular
             title: 'Bam.',
             text: 'You have successfully unlinked your ' + provider + ' account',
             type: 'success',
-            duration: 5
+            duration: 5,
+            shadow: false
           });
         })
         .then(function() {
@@ -301,7 +313,8 @@ angular
             title: 'Doh!.',
             text: 'Sorry, but we ran into this error while unlinking your ' + provider + ' account: ' + response.data.message,
             type: 'error',
-            duration: 5
+            duration: 5,
+            shadow: false
           });  
         });
     };

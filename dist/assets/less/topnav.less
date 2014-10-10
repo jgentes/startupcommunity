@@ -208,7 +208,7 @@ a.username {
 	&:hover {text-decoration: none;background: none;}
 }
 
-header.navbar {margin-bottom:0px; border:none;}
+header.navbar {margin-bottom:0px; border-top: 2px solid #569833;}
 
 /* Nav and Sidebar Badges
 // ------------------------*/
@@ -234,6 +234,60 @@ header.navbar {margin-bottom:0px; border:none;}
   	right: 30px;
 }
 
+#brand_logo {
+	background: #f3f4f6 url('/public/plant_40h.png') no-repeat fixed;
+	width: 40px;
+	height: 40px;
+	float: left;
+}
+
+/* Search in Header */
+#search {
+	line-height: 0;
+	list-style: none;
+	//margin-bottom: 10px;
+	//margin-top: 10px;
+
+	> a {display: none !important;}
+
+	form {
+		margin: 0px 0px 0px 0px;
+		padding: 0 0px 0px 0px;
+		position: relative;
+		
+		.search-query {
+			background: #f3f4f6;
+			
+			color: @navbar-default-link-color;
+
+			padding: 0 10px 0 37px;
+			border-radius:0px;
+			min-height: 40px;
+			line-height: 19px;
+			width: 200%;
+			.placeholder(fade(@navbar-default-link-hover-color,40%));
+		
+			&:focus {
+				 .placeholder(~"transparent");
+				+ button i {.opacity(1);}
+			}
+
+			&, &:active, &:focus {
+				border: none;
+			}
+		}
+		
+		button[type="submit"] {
+			float: left;
+			position: absolute;
+			top: 0;left: 10px;
+			border: 0; background: none;
+			padding: 13px 0;margin: 0;min-width: none;
+			i {color:@navbar-default-link-hover-color;.opacity(0.4)}
+		}
+	}
+}
+
 /* The toggle links for left/right sidebar */
 .navbar .btn {font-size: 1em; padding: 5px;}
 .navbar .btn.pull-left {border-right: 1px solid #555; margin-right: 10px;}
@@ -241,13 +295,11 @@ header.navbar {margin-bottom:0px; border:none;}
 
 
 /* Menu Triggers */
-#leftmenu-trigger, #rightmenu-trigger {
+
+#leftmenu-trigger, #rightmenu-trigger, #leftmenu-trigger i {
 	height: 40px; width: 40px; cursor: pointer;
-	background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFAAAABQCAYAAACOEfKtAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyJpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMy1jMDExIDY2LjE0NTY2MSwgMjAxMi8wMi8wNi0xNDo1NjoyNyAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wTU09Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9tbS8iIHhtbG5zOnN0UmVmPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvc1R5cGUvUmVzb3VyY2VSZWYjIiB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iIHhtcE1NOkRvY3VtZW50SUQ9InhtcC5kaWQ6RjI5OTJEN0UxMDdFMTFFMzk1QjZBODRFMTJGRERFNzMiIHhtcE1NOkluc3RhbmNlSUQ9InhtcC5paWQ6RjI5OTJEN0QxMDdFMTFFMzk1QjZBODRFMTJGRERFNzMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNiAoV2luZG93cykiPiA8eG1wTU06RGVyaXZlZEZyb20gc3RSZWY6aW5zdGFuY2VJRD0ieG1wLmRpZDo4QzE3NEM1ODdCMTBFMzExQTBDOEVEREIyRENFMUU0QSIgc3RSZWY6ZG9jdW1lbnRJRD0ieG1wLmRpZDo4QzE3NEM1ODdCMTBFMzExQTBDOEVEREIyRENFMUU0QSIvPiA8L3JkZjpEZXNjcmlwdGlvbj4gPC9yZGY6UkRGPiA8L3g6eG1wbWV0YT4gPD94cGFja2V0IGVuZD0iciI/PmxMBE8AAADNSURBVHja7NpBCoAwDARAIz7cn9cvaGhqW2bPCnEwSxGjtXZIPicCgAABAhSAAAECFIAAAQIUgADXyZW45+583aiUzB0+qFphgDpw7P1TzacDrTBAHTjxmbB8Vh1ohQECBCgAAQIEKAABAgQoAAECBCgAAQIEKAABAgQoAAECBCgAAU6YzP+Bb/+Hi8metWTuDGAs+rKEFdaBOvBLl/xVAUPn27EDwwrrQB3Yu2P+WvvyWXc/B4YV1oEABSBAgAAFIECAAAUgQIA75RFgAGBMGKmai6EfAAAAAElFTkSuQmCC);
-}
-#leftmenu-trigger {
-	background-position: 0 0; float: left;
-	&:hover {background-position: 0 40px;}
+	padding: 6px 0 0 6px; float: left; color: #394263; font-size: 17px;
+	i:hover {color: #000;}
 }
 #rightmenu-trigger {
 	background-position: 39px 0; float: right;

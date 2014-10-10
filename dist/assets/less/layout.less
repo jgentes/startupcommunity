@@ -10,7 +10,7 @@ body {
 #page-container {background: @sidebar-background; overflow: hidden}
 #page-content 	{min-height: @sidebar-minimum-height;background: @body-bg; height: 100%;}
 
-#wrap>.container {padding:20px}
+#wrap>.container-fluid {padding:20px}
 
 :focus {outline:none;}
 ::-moz-focus-inner {border:none;}
@@ -43,19 +43,19 @@ body {
 
 /* Footer */
 
-#page-content {padding-bottom: 30px;}
+//#page-content {padding-bottom: 30px;}
 
 footer {
 	//border-top: 1px solid @border-darker;
 	background: @body-bg;
-	margin-left: 230px;
+	//margin-left: 230px;
 	color: @gray;
 	height: 30px;
-	margin-top: -30px;
+	//margin-top: -20px;
 	overflow: hidden;
 
 	>div.clearfix {
-		margin: 6px 20px 0;
+		margin: 6px 10px 0;
 		font-size: @font-size-small;
 		color: @gray-darker;
 		a {
@@ -69,6 +69,7 @@ footer {
 	}
 
 	#back-to-top {margin-top: -1px;}
+	
 }
 
 /* Breadcrumb Mod */
@@ -108,9 +109,9 @@ footer {
 
 .focusedform {
 	height: 100%;
-	background: white;
+	background: @sidebar-background;
 	padding: 0;
-	
+
 	#page-rightbar, header {display: none;}
 
 	.panel {width: 400px;}
@@ -132,6 +133,7 @@ footer {
 	#page-container {
   		height: 100%;
 	}
+	
 	#page-content {
   		margin-left: 0px !important;
   		height: 100%;
@@ -156,127 +158,11 @@ footer {
 
 
 
-/*Horizontal Navigation*/
-
-.navbar {box-shadow: none; }
-
-.layout-horizontal {
-	footer {
-		margin-left: 0px;
-		margin-top: 0px;
-		overflow: hidden;
-	}
-	#page-content {margin-left: 0; }
-
-	nav.navbar {
-		z-index: @zindex-navbar-fixed - 1; //supporting multiple navbar
-	}
-
-
-	#page-leftbar,#leftmenu-trigger {
-  		display: none;
-	}
-	#page-content {
-  		margin-left: 0px !important;
-	}
-}
-
-#horizontal-navbar {
-	.navbar-nav {
-		> .open > a {
-			background: @horizontal-hover-bg;
-			//box-shadow: inset 0px -1px 0px 0 rgba(0, 0, 0, 0.1);
-			i {background: transparent;}
-		}
-		ul {
-			background-color: @horizontal-submenu-background;
-			border: none;
-			border-radius: 0px;
-			li a {
-				color: @horizontal-submenu-item-color;
-				&:hover {
-					background: @horizontal-submenu-item-hover-background;
-					color: @horizontal-submenu-item-hover-color;
-					//box-shadow: inset 0 0 0 0 rgba(0, 0, 0, 0) !important;
-				}
-			}
-		}
-		li {
-			a {
-				color: 				@horizontal-menu-color;
-				i {color: 			@horizontal-icon-color;}
-			}
-			&.active a, &.active a i, &.active a:hover, &.active a:hover i {
-				background-color: 	@horizontal-active-bg;
-				color: 				@horizontal-active-color;
-			}
-			&.active a:before {
-				width: 0px; height: 0px;
-				border-style: solid;
-				border-width: 0 9px 9px 9px;
-				border-color: transparent transparent @body-bg transparent;
-				
-				content: "";
-				position: absolute;
-				bottom: 0px; left: 50%; margin-left: -9px;
-			}
-			a:hover, a:hover i {
-				background: 		@horizontal-hover-bg;
-				color: 				@horizontal-hover-color;
-			}
-			a:hover {}
-		}
-		i {margin-right: 2px;}
-	}
-}
-
-
-@media (max-width: @screen-xs-max) {
-	#horizontal-navbar .navbar-nav li {
-		&.active a:before {border-color: transparent !important;} // Removes arrow in small screen
-	}
-}
-
-nav.navbar {
-	background: @horizontal-background;
-	.navbar-toggle {
-		&, &:hover, &:focus {
-			background: transparent;
-			color: @horizontal-active-color;
-			border:none;
-		}
-	} 
-}
-
-@media (min-width: @screen-sm) {
-	// Large Icon Nav
-	#horizontal-navbar.large-icons-nav .navbar-nav {
-		margin-bottom: 0;
-		li {
-			min-width: 120px;
-			a>i {
-				font-size: 28px;
-				display: block;
-				text-align: center;
-				margin-top: 5px;
-				margin-right: 0;
-			}
-			span {
-				display: block;
-				text-align: center;
-				margin-top: 8px;
-				text-transform: uppercase;
-				letter-spacing: 0.1em;
-				font-size: @font-size-mini;
-			}
-		}
-	}
-}
 
 /*Fixed*/
 .fixed-layout {
 	background: @boxed-background;
-	#page-container, header {
+	#page-container, header, header + .navbar {
 		max-width: none !important;
 		width: @boxed-width;
 		margin: 0 auto;

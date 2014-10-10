@@ -370,13 +370,13 @@
 //
 // Reset inverted navbar basics
 @navbar-inverse-color:                      @gray-light;
-@navbar-inverse-bg:                         #202731;
+@navbar-inverse-bg:                         #f3f4f6;
 @navbar-inverse-border:                     darken(@navbar-inverse-bg, 5%);
 
 // Inverted navbar links
-@navbar-inverse-link-color:                 rgba(255,255,255,0.5);
-@navbar-inverse-fallback-color:             #888; //ie8 has no support for opacity
-@navbar-inverse-link-hover-color:           #fff;
+@navbar-inverse-link-color:                 #394263;
+@navbar-inverse-fallback-color:             #394263; //ie8 has no support for opacity
+@navbar-inverse-link-hover-color:           #000;
 @navbar-inverse-link-hover-bg:              transparent;
 @navbar-inverse-link-active-color:          @navbar-inverse-link-hover-color;
 @navbar-inverse-link-active-bg:             @navbar-vertical-separator;
@@ -385,7 +385,7 @@
 
 // Inverted navbar brand label
 @navbar-inverse-brand-color:                @navbar-inverse-link-color;
-@navbar-inverse-brand-hover-color:          #fff;
+@navbar-inverse-brand-hover-color:          #000;
 @navbar-inverse-brand-hover-bg:             transparent;
 
 // Inverted navbar search
@@ -397,11 +397,48 @@
 
 // Inverted navbar toggle
 @navbar-inverse-toggle-hover-bg:            #333;
-@navbar-inverse-toggle-icon-bar-bg:         #fff;
+@navbar-inverse-toggle-icon-bar-bg:         #000;
 @navbar-inverse-toggle-border-color:        #333;
 
 //Forza Extended
-@navbar-vertical-separator: 				#0e1216;
+@navbar-vertical-separator: 				#e4e7eb;
+
+// Original Midnight Blue Inverted navbar
+//
+// Reset inverted navbar basics
+//@navbar-inverse-color:                      @gray-light;
+//@navbar-inverse-bg:                         #2b3d51;
+//@navbar-inverse-border:                     darken(@navbar-inverse-bg, 5%);
+
+// Inverted navbar links
+//@navbar-inverse-link-color:                 rgba(255,255,255,0.5);
+//@navbar-inverse-fallback-color:             #888; //ie8 has no support for opacity
+//@navbar-inverse-link-hover-color:           #fff;
+//@navbar-inverse-link-hover-bg:              transparent;
+//@navbar-inverse-link-active-color:          @navbar-inverse-link-hover-color;
+//@navbar-inverse-link-active-bg:             @navbar-vertical-separator;
+//@navbar-inverse-link-disabled-color:        #444;
+//@navbar-inverse-link-disabled-bg:           transparent;
+
+// Inverted navbar brand label
+//@navbar-inverse-brand-color:                @navbar-inverse-link-color;
+//@navbar-inverse-brand-hover-color:          #fff;
+//@navbar-inverse-brand-hover-bg:             transparent;
+
+// Inverted navbar search
+// Normal navbar needs no special styles or vars
+//@navbar-inverse-search-bg:                  lighten(@navbar-inverse-bg, 25%);
+//@navbar-inverse-search-bg-focus:            #fff;
+//@navbar-inverse-search-border:              @navbar-inverse-bg;
+//@navbar-inverse-search-placeholder-color:   #ccc;
+
+// Inverted navbar toggle
+//@navbar-inverse-toggle-hover-bg:            #333;
+//@navbar-inverse-toggle-icon-bar-bg:         #fff;
+//@navbar-inverse-toggle-border-color:        #333;
+
+//Forza Extended
+//@navbar-vertical-separator: 				#2d343d;
 
 
 //== Navs
@@ -911,48 +948,48 @@
 
 
 //(defaulttheme)brand - midnightblue
-@sidebar-divider:					#2d343d;
-@sidebar-minimum-height:			650px;
+//@sidebar-divider:					#2d343d;
+//@sidebar-minimum-height:			650px;
 
-@sidebar-background:				#353e49;
-@sidebar-menu-color:				#8e9eab;
-@sidebar-icon-color:				@sidebar-menu-color;
+//@sidebar-background:				#353e49;
+//@sidebar-menu-color:				#8e9eab;
+//@sidebar-icon-color:				@sidebar-menu-color;
 
-@sidebar-active-bg:					@brand-success;
-@sidebar-active-color:				#fff;
+//@sidebar-active-bg:					@brand-success;
+//@sidebar-active-color:				#fff;
 
-@sidebar-hover-bg:					#3d4854;
-@sidebar-hover-color:				#c1cfde;
+//@sidebar-hover-bg:					#3d4854;
+//@sidebar-hover-color:				#c1cfde;
 
 
-@sidebar-submenu-active-color:      @sidebar-active-color;
-@sidebar-submenu-bg:				@sidebar-divider;
-@sidebar-submenu-color:				#8797a3;
+//@sidebar-submenu-active-color:      @sidebar-active-color;
+//@sidebar-submenu-bg:				@sidebar-divider;
+//@sidebar-submenu-color:				#8797a3;
 
-@search-bg:							@sidebar-divider;
-@search-color:						@sidebar-menu-color;
+//@search-bg:							@sidebar-divider;
+//@search-color:						@sidebar-menu-color;
 
 
 //brand - inverse
-// @sidebar-divider:					#43464d;
+@sidebar-divider:					#43464d;
+@sidebar-minimum-height:			650px;
 
-// @sidebar-background:				#4f5259;
-// @sidebar-menu-color:				#a1a4ab;
-// @sidebar-icon-color:				@sidebar-menu-color;
+@sidebar-background:				#32323a;
+@sidebar-menu-color:				#ebf2f2;
+@sidebar-icon-color:				@sidebar-menu-color;
 
-// @sidebar-active-bg:					@brand-danger;
-// @sidebar-active-color:				#fff;
+@sidebar-active-bg:					#222228;
+@sidebar-active-color:				#fff;
 
-// @sidebar-hover-bg:					#5c5f66;
-// @sidebar-hover-color:				#c6c9cf;
+@sidebar-hover-bg:					#2A2A31;
+@sidebar-hover-color:				#ffffff;
 
+@sidebar-submenu-active-color:      @sidebar-active-color;
+@sidebar-submenu-bg:				#2A2A31;
+@sidebar-submenu-color:				#ebf2f2;
 
-// @sidebar-submenu-active-color:      @sidebar-active-color;
-// @sidebar-submenu-bg:				@sidebar-divider;
-// @sidebar-submenu-color:				#8e9399;
-
-// @search-bg:							@sidebar-divider;
-// @search-color:						@sidebar-menu-color;
+@search-bg:							@sidebar-divider;
+@search-color:						@sidebar-menu-color;
 //--------------------
 
 // brand - primary
@@ -978,25 +1015,26 @@
 //--------------------
 
 //brand - (gray) defaultcolor
-// @sidebar-divider:					@gray-light;
+//@sidebar-divider:					@gray-light;
+//@sidebar-minimum-height:			650px;
 
-// @sidebar-background:				#e6e9ee;
-// @sidebar-menu-color:				@gray-dark;
-// @sidebar-icon-color:				@sidebar-menu-color;
+//@sidebar-background:				#e6e9ee;
+//@sidebar-menu-color:				@gray-dark;
+//@sidebar-icon-color:				@sidebar-menu-color;
 
-// @sidebar-active-bg:					@brand-primary;
-// @sidebar-active-color:				#fff;
+//@sidebar-active-bg:					@brand-primary;
+//@sidebar-active-color:				#fff;
 
-// @sidebar-hover-bg:					rgba(255, 255, 255, 0.4);
-// @sidebar-hover-color:				@gray-darker;
+//@sidebar-hover-bg:					rgba(255, 255, 255, 0.4);
+//@sidebar-hover-color:				@gray-darker;
 
 
-// @sidebar-submenu-active-color: 		@gray-darker;
-// @sidebar-submenu-bg:				@sidebar-divider;
-// @sidebar-submenu-color:				@gray-dark;
+//@sidebar-submenu-active-color: 		@gray-darker;
+//@sidebar-submenu-bg:				@sidebar-divider;
+//@sidebar-submenu-color:				@gray-dark;
 
-// @search-bg:							@sidebar-divider;
-// @search-color:						@sidebar-menu-color;
+//@search-bg:							@sidebar-divider;
+//@search-color:						@sidebar-menu-color;
 //--------------------
 
 //brand - indigo

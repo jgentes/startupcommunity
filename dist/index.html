@@ -22,67 +22,105 @@
   <![endif]-->
 
 
-    <link rel="stylesheet" href="assets/css/d986a7cc.vendor.css"/>
+    <link rel="stylesheet" href="assets/css/d1c41d76.vendor.css"/>
     
 
-    <link rel="stylesheet" href="assets/css/04124c72.main.css"/>
+    <link rel="stylesheet" href="assets/css/e10b6d0e.main.css"/>
 
-<style type="text/css">
-[ng-cloak] {
-  display: none;
-}
-.topNegative1000 {
-  top: -1000px !important;
-}
-.topZero {
-  top: 0 !important;
-}
-  
-.mainview-animation {
-  position: relative;
-}
-.mainview-animation.ng-enter {
-  -webkit-transition: .3s linear all; /* Safari/Chrome */
-  -moz-transition: .3s linear all; /* Firefox */
-  -o-transition: .3s linear all; /* Opera */
-  transition: .3s linear all; /* IE10+ and Future Browsers */
-}
-
-/**
- * Pre animation -> enter
- */
-.mainview-animation.ng-enter{
-  /* The animation preparation code */
-  opacity: 0;
-}
-
-/**
- * Post animation -> enter
- */
-.mainview-animation.ng-enter.ng-enter-active { 
-  /* The animation code itself */
-  opacity: 1;
-}
-
-.angular-google-map-container { height: 300px; }
-.navbar.navbar-default.ng-hide {
-  display: none;
-}
-#page-rightbar .jspHorizontalBar {
-  /*display: none !important;*/
-}
-.fc-grid .fc-day-number {
-  padding: 5px 6px;
-}
-</style>
-<script type="text/javascript">
-  window.analytics=window.analytics||[],window.analytics.methods=["identify","group","track","page","pageview","alias","ready","on","once","off","trackLink","trackForm","trackClick","trackSubmit"],window.analytics.factory=function(t){return function(){var a=Array.prototype.slice.call(arguments);return a.unshift(t),window.analytics.push(a),window.analytics}};for(var i=0;i<window.analytics.methods.length;i++){var key=window.analytics.methods[i];window.analytics[key]=window.analytics.factory(key)}window.analytics.load=function(t){if(!document.getElementById("analytics-js")){var a=document.createElement("script");a.type="text/javascript",a.id="analytics-js",a.async=!0,a.src=("https:"===document.location.protocol?"https://":"http://")+"cdn.segment.io/analytics.js/v1/"+t+"/analytics.min.js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n)}},window.analytics.SNIPPET_VERSION="2.0.9",
-  window.analytics.load("fn0wc8wvqu");
-</script>
+  <style type="text/css">
+    [ng-cloak] {
+      display: none;
+    }
+    .topNegative1000 {
+      top: -1000px !important;
+    }
+    .topZero {
+      top: 0 !important;
+    }
+      
+    .mainview-animation {
+      position: relative;
+    }
+    .mainview-animation.ng-enter {
+      -webkit-transition: .3s linear all; /* Safari/Chrome */
+      -moz-transition: .3s linear all; /* Firefox */
+      -o-transition: .3s linear all; /* Opera */
+      transition: .3s linear all; /* IE10+ and Future Browsers */
+    }
+    
+    /**
+     * Pre animation -> enter
+     */
+    .mainview-animation.ng-enter{
+      /* The animation preparation code */
+      opacity: 0;
+    }
+    
+    /**
+     * Post animation -> enter
+     */
+    .mainview-animation.ng-enter.ng-enter-active { 
+      /* The animation code itself */
+      opacity: 1;
+    }
+    
+    .angular-google-map-container { height: 300px; }
+    .navbar.navbar-default.ng-hide {
+      display: none;
+    }
+    #page-rightbar .jspHorizontalBar {
+      /*display: none !important;*/
+    }
+    .fc-grid .fc-day-number {
+      padding: 5px 6px;
+    }
+    
+    .large-icons-nav #top-nav > li > ul {
+            top: 85px;
+    }
+    #top-nav li > ul {
+      display: none;
+      position: absolute;
+      top: 40px;
+      left: 0;
+      padding-left: 0;
+      min-width: 200px;
+    }
+    @media (max-width: 768px) {
+      #top-nav li > ul {
+        position: inherit !important;
+        top: 0px !important;
+        padding-left: 20px !important;
+      }
+    }
+    #top-nav li > ul li {
+      list-style-type: none;
+    }
+    #top-nav li > ul li ul{
+      left: 100%;
+    }
+    #top-nav li > ul li a {
+      width: 100%;
+      display: inline-block;
+    }
+    #top-nav li > ul li a:hover {
+      text-decoration: none;
+    }
+    #top-nav li:hover > ul {
+      display: block;
+    }
+    #horizontal-navbar .navbar-nav li.active a:before {
+      display: none;
+    }
+  </style>
+  <script type="text/javascript">
+    window.analytics=window.analytics||[],window.analytics.methods=["identify","group","track","page","pageview","alias","ready","on","once","off","trackLink","trackForm","trackClick","trackSubmit"],window.analytics.factory=function(t){return function(){var a=Array.prototype.slice.call(arguments);return a.unshift(t),window.analytics.push(a),window.analytics}};for(var i=0;i<window.analytics.methods.length;i++){var key=window.analytics.methods[i];window.analytics[key]=window.analytics.factory(key)}window.analytics.load=function(t){if(!document.getElementById("analytics-js")){var a=document.createElement("script");a.type="text/javascript",a.id="analytics-js",a.async=!0,a.src=("https:"===document.location.protocol?"https://":"http://")+"cdn.segment.io/analytics.js/v1/"+t+"/analytics.min.js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n)}},window.analytics.SNIPPET_VERSION="2.0.9",
+    window.analytics.load("fn0wc8wvqu");
+  </script>
 </head>
 
 <body class=""
-  ng-app="themesApp"
+  ng-app="StartupCommunity"
   ng-controller="MainController"
   ng-class="{
               'static-header': !style_fixedHeader,
@@ -93,24 +131,143 @@
               'show-rightbar': style_rightbarCollapsed,
               'show-leftbar': style_leftbarShown
             }"
-  ng-click="hideSearchBar();hideHeaderBar();"
   ng-cloak
 >
 
-    <div id="page-content" class="clearfix" fit-height>
-        <div id="wrap" ng-view="" class="mainview-animation">
-        </div> <!--wrap -->
-    </div> <!-- page-content -->
+  
 
-    <footer role="contentinfo">
-        <div class="clearfix">
-            <ul class="list-unstyled list-inline pull-left">
-                <li>StartupCommunity.org &copy; 2014</li>
-            </ul>
-            <button class="pull-right btn btn-default btn-xs hidden-print" back-to-top style="padding: 1px 10px;"><i class="fa fa-angle-up"></i></button>
+    <header class="navbar navbar-inverse" ng-class="{'navbar-fixed-top': style_fixedHeader, 'navbar-static-top': !style_fixedHeader}" role="banner">
+        <a id="leftmenu-trigger" tooltip-placement="right" tooltip="Toggle Sidebar" ng-click="toggleLeftBar()"><i class="fa fa-bars"></i></a>        
+
+        <div class="navbar-header pull-left">
+            <li id="search">
+                 <form 
+                  ng-click="$event.stopPropagation()"
+                  ng-submit="goToSearch()"
+                 >
+                    <input type="text" ng-model="searchQuery" class="search-query" placeholder="Search..."
+                    >
+                    <button type="submit" ng-click="goToSearch()"><i class="fa fa-search"></i></button>
+                </form>
+            </li>
         </div>
-    </footer>
 
+        <ul class="nav navbar-nav pull-right toolbar">
+          <li class="dropdown" ng-show="!isAuthenticated">
+            <a href="#/login" style="font-size: 14px"><i class="fa fa-sign-in"></i> Log in</a>
+          </li>
+          <li class="dropdown" ng-show="isAuthenticated">
+          
+            <a href="#" class="dropdown-toggle username"><span class="hidden-xs">{{user.name}}</span><img ng-src="{{user.avatar}}" alt="{{user.name}}" style="margin-right: 11px;"/></a>
+            <ul class="dropdown-menu userinfo arrow">
+              <li class="userlinks">
+                <ul class="dropdown-menu">
+                  <li><a href="#">Edit Profile <i class="pull-right fa fa-fw fa-pencil"></i></a></li>
+                  <li class="divider"></li>
+                  <li><a class="text-right" ng-click="logOut()">Sign Out</a></li>
+                </ul>
+              </li>
+            </ul>
+          </li>
+          <!--
+          <li class="dropdown" ng-controller="MessagesController" ng-show="isAuthenticated"
+            data-bootstro
+            data-bootstro-step="2"
+            data-bootstro-placement='bottom'
+            data-bootstro-content="Click to mark messages as read."
+            >
+            <a href="#" class="dropdown-toggle">
+              <i class="fa fa-envelope"></i><span class="badge badge-danger" ng-if="unseenCount>0" ng-bind="unseenCount"></span>
+            </a>
+            <ul class="dropdown-menu messages arrow">
+              <li class="dd-header">
+                <span>You have {{unseenCount}} new message(s)</span>
+                <span><a href="#" ng-click="setReadAll($event)">Mark all Read</a></span>
+              </li>
+                  <div class="scrollthis" jscrollpane="{autoReinitialise:true, autoReinitialiseDelay: 20}">
+                    <li ng-repeat="item in messages">
+                      <a href="#/extras-chatroom" ng-class="{active: !item.read}">
+                        <button tooltip-placement="top" tooltip-append-to-body="true" tooltip="Mark Read" class="btn-mark-read" ng-if="!item.read" ng-click="setRead(item, $event)"><i class="fa fa-circle"></i></button>
+                        <button tooltip-placement="top" tooltip-append-to-body="true" tooltip="Mark Unread" class="btn-mark-unread" ng-if="item.read" ng-click="setUnread(item, $event)"><i class="fa fa-circle-thin"></i></button>
+                        <span class="time">{{item.time}}</span>
+                        <img ng-src="{{item.thumb}}" alt="avatar" />
+                        <div>
+                          <span class="name">{{item.name}}</span>
+                          <span class="msg">{{item.message}}</span>
+                        </div>
+                      </a>
+                    </li>
+                  </div>
+              <li class="dd-footer"><a href="#">View All Messages</a></li>
+            </ul>
+          </li>
+          <li class="dropdown" ng-controller="NotificationsController" ng-show="isAuthenticated"
+            data-bootstro
+            data-bootstro-step="1"
+            data-bootstro-placement='bottom'
+            data-bootstro-content="Click here to check out the dynamic notifications section. You can mark items as read and see the changes in real time."
+            >
+            <a href="#" class="dropdown-toggle">
+              <i class="fa fa-bell"></i><span class="badge badge-orange" ng-if="unseenCount>0" ng-bind="unseenCount"></span>
+            </a>
+            <ul class="dropdown-menu notifications arrow">
+              <li class="dd-header">
+                <span>You have {{unseenCount}} new notification(s)</span>
+                <span><a href="javascript:;" ng-click="setSeenAll($event)">Mark all Seen</a></span>
+              </li>
+                    <div class="scrollthis" jscrollpane="{autoReinitialise:true, autoReinitialiseDelay: 20}">
+                <li ng-repeat="item in notifications">
+                  <a href="#" class="{{item.class}}" ng-class="{active: !item.seen}">
+                    <button tooltip-placement="top" tooltip-append-to-body="true" tooltip="Mark Seen" class="btn-mark-read" ng-if="!item.seen" ng-click="setSeen(item, $event)"><i class="fa fa-circle"></i></button>
+                    <button tooltip-placement="top" tooltip-append-to-body="true" tooltip="Mark Unseen" class="btn-mark-unread" ng-if="item.seen" ng-click="setUnseen(item, $event)"><i class="fa fa-circle-thin"></i></button>
+                    <span class="time">{{item.time}}</span>
+                    <i class="{{item.iconClasses}}"></i>
+                    <span class="msg">{{item.text}}</span>
+                  </a>
+                </li>
+                    </div>
+              <li class="dd-footer"><a href="#">View All Notifications</a></li>
+            </ul>
+          </li>            
+          -->
+    </ul>
+    </header>
+    
+<div id="page-container" class="clearfix">
+
+        <!-- BEGIN SIDEBAR -->
+        <nav id="page-leftbar" role="navigation">
+
+            <div>
+              <ul ng-controller="NavigationController" id="sidebar" sticky-scroll="40">
+                  
+                  <li ng-repeat="item in menu"
+                      ng-class="{ hasChild: (item.children!==undefined),
+                                    active: item.selected,
+                                      open: (item.children!==undefined) && item.open,
+                                   heading: item.heading }"
+                      ng-include="'views/templates/nav_renderer.html'"
+                    ></li>
+              </ul>
+            </div>
+            <!-- END SIDEBAR MENU -->
+            
+        </nav>
+
+    <div id="page-content" class="clearfix" fit-height>
+        <div id="wrap" ng-view="" class="mainview-animation">        
+        </div> <!--wrap -->
+        <footer role="contentinfo" style="margin: 1%;">
+          <div class="clearfix">        
+            <ul class="list-unstyled list-inline pull-left">
+              <li>StartupCommunity.org &copy; 2014</li>
+            </ul>        
+            <button class="pull-right btn btn-default btn-xs hidden-print" back-to-top><i class="fa fa-angle-up"></i></button>        
+          </div>
+        </footer>
+    </div> <!-- page-content -->   
+     
+    
 </div> <!-- page-container -->
 
     <!--[if lt IE 9]>
@@ -120,10 +277,10 @@
     
     <script type='text/javascript' src='https://maps.google.com/maps/api/js?sensor=true'></script> 
 
-    <script src="scripts/70089fcb.vendor.js"></script>
+    <script src="scripts/45151d2a.vendor.js"></script>
     
 
-      <script src="scripts/541496eb.scripts.js"></script>
+      <script src="scripts/0f7d70a5.scripts.js"></script>
 
 </body>
 </html>

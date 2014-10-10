@@ -16,11 +16,17 @@
 /* Sidebar Menu */
 
 #sidebar {
-	white-space: normal; margin: 0 0 0 0; padding-left: 0 !important; 
+	white-space: normal; margin: 10px 0 0 0; padding-left: 0 !important; 
 
 	.badge {font-weight: 600; background-color: rgba(21, 22, 26, 0.6); right: 25px !important;}
-	i {color: @sidebar-icon-color; margin-left: 1px; margin-right: 8px; min-width: 18px; text-align: center; display: inline-block;}
-
+	i {color: @sidebar-icon-color; margin-left: 1px; margin-right: 8px; min-width: 18px; text-align: center; display: inline-block; opacity: .5;}
+	
+	.heading {
+		color: @sidebar-icon-color;
+		opacity: .75;
+		padding-left: 5px;
+	}
+	
 	.divider {
 		height: 1px; width: 100%; 
 		margin: 10px 0px; overflow: hidden; 
@@ -35,26 +41,15 @@
 	ul, ul li a {background: @sidebar-submenu-bg; color: @sidebar-submenu-color; }
 	
 	//Main Menu Styles - Level 1
-	li.active i, li.active a:hover i {color: @sidebar-active-color;}
-	li a {color: @sidebar-menu-color;display: block;padding: 11px 10px;position: relative; font-weight: 400; .transition(~"all 0.3s ease");}
+	li.active i, li.active a:hover i {color: @sidebar-active-color; opacity: 1;}
+	li a {color: @sidebar-menu-color;display: block;padding: 11px 10px;position: relative; font-weight: 400; }
 	a:hover {background-color: @sidebar-hover-bg; color: @sidebar-hover-color; 
-		i {color: @sidebar-hover-color;}
+		i {color: @sidebar-hover-color; opacity: 1;}
 	}
-	>li.active>a {background: @sidebar-active-bg; color: @sidebar-active-color; 
-		&:after {
-			width: 0px; height: 0px;
-			border-style: solid;
-			border-width: 9px 9px 9px 0;
-			border-color: transparent @body-bg transparent transparent;
-
-			content: "";
-			position: absolute;
-			top: 50%; margin-top: -9px;right: 0px;
-		}
-	}
+	>li.active>a {background: @sidebar-active-bg; color: @sidebar-active-color; padding-left: 8px; border-left: 2px solid @brand-primary;}
 	
 	// Submenu Styles - Level 2
-	ul li.active>a { color: @sidebar-submenu-active-color !important;} 
+	ul li.active>a { background: @sidebar-submenu-bg; color: @sidebar-submenu-active-color !important;} 
 	ul li a {padding: 5px 10px 5px 37px;}
 	ul li.active:not(.open)>a {font-weight: 600; color: #fff;}
 	   li ul {display: none;}
@@ -113,8 +108,8 @@ body.collapse-leftbar {
 
 /* Sidebar Layout + Responsive */
 
-#page-leftbar 	{width: 230px;}
-#page-content 	{margin-left: 230px;}
+#page-leftbar 	{width: 200px;}
+#page-content 	{margin-left: 200px;}
 #wrap 			{overflow: hidden;}
 
 
@@ -127,7 +122,7 @@ body.collapse-leftbar {
 		z-index: @zindex-navbar-fixed - 1;
 	}
 
-	#page-content, #sidebar {.transition(~"250ms ease"); }
+	#page-content, #sidebar {.transition(~"220ms ease"); }
 
 	#sidebar {white-space: nowrap;}
 
@@ -139,14 +134,14 @@ body.collapse-leftbar {
 	footer {margin-left: 0;}
 
 	body.show-leftbar {
-		#page-leftbar 	{width: 230px;}
-		#page-content 	{margin-left: 230px;}
-		footer 			{.translate(230px,0);}
+		#page-leftbar 	{width: 200px;}
+		#page-content 	{margin-left: 200px;}
+		footer 			{.translate(200px,0);}
 	}
 }
 
 
-/* Search at Left Navigation Sidebar */
+/* Search at Left Navigation Sidebar 
 #search {
 	line-height: 0;
 	margin-bottom: 10px;
@@ -191,6 +186,8 @@ body.collapse-leftbar {
 		}
 	}
 }
+*/
+
 
 // Collapse Sidebar
 
@@ -235,37 +232,5 @@ body.collapse-leftbar {
 		li li li li a {padding-left: 30px;}
 	}
 
-	#search {
-		&:hover {width: 40px !important;}
-		&:hover, &:hover a {background: none !important; box-shadow: none !important;}
-	
-		a {display: block !important; padding: 13px 10px;}
-		form {display: none;}
-		.opacity-control{.opacity(0.5);}
-	
-		&.keep-open {
-			width: 250px !important;
-			> a {
-				background: @search-bg !important;
-				&:hover {background: @search-color;}
-			}
-			form {
-				display: block;
-	
-				width: 220px;
-				position: absolute;
-				top: 0; left: 30px;
-	
-				.search-query {
-					border:0;
-					background: transparent;
-					padding: 0 10px 0 10px;
-					position: relative !important;
-					z-index: @zindex-modal-background+10;
-					width: 100%;
-				}
-				button[type="submit"] {display: none;}
-			}
-		}
-	}
+
 }

@@ -1,4 +1,4 @@
-<div class="verticalcenter">
+<div class="verticalcenter" ng-controller="LoginCtrl">
 	<a href="#/"><img src="assets/img/logo-big.png" alt="Logo" class="brand" style="margin-bottom: -50px; width: 100%;"/></a>
 	<h4 class="text-center" style="margin-bottom: 20px; color: #5A5A5A;">Kickstart your city's entrepreneurial ecosystem</h4>
 	<div class="panel panel-primary">
@@ -26,7 +26,7 @@
 					</div>
 					<alert ng-hide="!alert.msg" class="ng-hide" style="margin-bottom: 0;"><span ng-bind-html="alert.msg | safe_html"></span></alert>
 					<div class="panel-footer">
-						<a href="#/" class="pull-left btn btn-link" style="padding-left:0">Forgot password?</a><p ng-if="isAuthenticated()">Logged in!</p>
+						<a href="#/" class="pull-left btn btn-link" style="padding-left:0">Forgot password?</a>
 						
 						<div class="pull-right">					
 							<a class="btn btn-sky" ng-click="authenticate('linkedin')">Linkedin</a>
