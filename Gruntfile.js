@@ -298,15 +298,15 @@ module.exports = function (grunt) {
             'images/{,*/}*.{webp}',
             'fonts/*',
             'assets/**',
-            '../bower_components/jquery.inputmask/dist/jquery.inputmask.bundle.js',
-            '../bower_components/jquery-validation/dist/jquery.validate.js'
+            'bower_components/jquery.inputmask/dist/jquery.inputmask.bundle.js',
+            'bower_components/jquery-validation/dist/jquery.validate.js'
             /*
-            '../bower_components/jqvmap/jqvmap/maps/jquery.vmap.europe.js',
-            '../bower_components/jqvmap/jqvmap/maps/jquery.vmap.usa.js',
-            '../bower_components/stepy/lib/jquery.stepy.js',
-            '../bower_components/Chart.js/Chart.min.js',
-            '../bower_components/raphael/raphael.js',
-            '../bower_components/morris.js/morris.js'
+            'bower_components/jqvmap/jqvmap/maps/jquery.vmap.europe.js',
+            'bower_components/jqvmap/jqvmap/maps/jquery.vmap.usa.js',
+            'bower_components/stepy/lib/jquery.stepy.js',
+            'bower_components/Chart.js/Chart.min.js',
+            'bower_components/raphael/raphael.js',
+            'bower_components/morris.js/morris.js'
             */
           ]
         }, {
@@ -354,7 +354,7 @@ module.exports = function (grunt) {
     less: {
       server: {
         options: {
-          strictMath: true,
+          //strictMath: true,
           dumpLineNumbers: true,
           sourceMap: true,
           sourceMapRootpath: "",
@@ -390,7 +390,7 @@ module.exports = function (grunt) {
     // By default, your `index.html`'s <!-- Usemin block --> will take care of
     // minification. These next options are pre-configured if you do not wish
     // to use the Usemin blocks.
-    // cssmin: {
+    //cssmin: {
     //   dist: {
     //     files: {
     //       '<%= yeoman.dist %>/styles/main.css': [
