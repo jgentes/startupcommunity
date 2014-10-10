@@ -133,7 +133,7 @@ angular
               title: 'Sorry, there was a problem.',
               text: response.message,
               type: 'error',                        
-              duration: 30,
+              duration: 20,
               shadow: false
             });
           } else {
