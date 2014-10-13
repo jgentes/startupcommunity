@@ -69,6 +69,16 @@ app
           }]
         }
       })
+      .when('/profile', {
+        templateUrl: 'views/user_profile.html',
+        resolve: {
+          authenticated: ['$location', '$auth', function($location, $auth) {
+            if (!$auth.isAuthenticated()) {
+              return $location.path('/login');
+            }
+          }]
+        }
+      })
       .when('/alpha', {
         templateUrl: 'views/home.html'
       })

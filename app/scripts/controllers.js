@@ -105,7 +105,7 @@ angular
     };
   })
         
-  .controller('PeopleController', ['$scope', 'userService', 'accountService', function ($scope, userService, accountService) {
+  .controller('PeopleController', ['$scope', '$location', 'userService', function ($scope, $location, userService) {
     
     $scope.rotateWidgetClass = function() {
       var arr = ["'themed-background-dark'",'themed-background-dark-night','themed-background-dark-amethyst', 'themed-background-dark-modern', 'themed-background-dark-autumn', 'themed-background-dark-flatie', 'themed-background-dark-spring', 'themed-background-dark-fancy', 'themed-background-dark-fire'];
@@ -121,6 +121,47 @@ angular
     };
     
     $scope.getUsers();
+    
+    $scope.viewUser = function(userindex) {
+      $scope.profile = $scope.users.userindex;
+      $location.set('/profile');
+    };
+    
+  }])
+  
+  .controller('UserProfileController', ['$scope', 'userService', 'pinesNotifications', function ($scope, userService, pinesNotifications) {
+    
+    $scope.getUser = function(userid) {
+      userService.getUser(userid)
+        .then(function(response) {          
+          $scope.profile = response.data;
+        });
+    };
+    
+    $scope.getUser($scope.profile.path.key);    
+    
+    $scope.putUser = function(userid, profile) {
+      userService.putUser(userid, profile, function(response) {
+        if (response.status !== 200) {          
+            pinesNotifications.notify({
+              title: 'Sorry, there was a problem.',
+              text: response.message,
+              type: 'error',                        
+              duration: 20,
+              shadow: false
+            });
+          } else {
+            $scope.profile = response.data; // may need to tell angular to refresh view
+            pinesNotifications.notify({
+              title: 'Mentor Updated!',
+              text: response.data.name + ' is good to go.',
+              type: 'success',
+              duration: 5,
+              shadow: false
+            });
+          }
+        });
+    };  
     
   }])
   

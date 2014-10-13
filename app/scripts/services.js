@@ -14,8 +14,20 @@ angular
   
   .factory('userService', function($http) {
     return {
+      getUser: function(userid) {
+        return $http.get('/api/user/' + userid);
+      },
       getUsers: function(alturl) {
         return $http.get(alturl || '/api/bend-or/users');
+      },
+      putUser: function(userid, profile, callback) {
+        $http.put('/api/user/' + userid + '?profile=' + profile)
+        .success( function(response) {
+          callback(response);
+        })
+        .error( function(response) {
+          callback(response);
+        });
       },
       addMentor: function(url, email, userid, callback) {        
         $http.get('/api/addMentor?user={"url":"' + url + '","email":"' + email + '","userid":"' + userid + '"}')
