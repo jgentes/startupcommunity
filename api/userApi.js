@@ -20,8 +20,8 @@ var UserApi = function() {
   this.createToken = handleCreateToken;  
   this.addMentor = handleAddMentor;
   this.linkedin = handleLinkedin;
-  this.getMe = handleGetme;
-  this.putMe = handlePutme;
+  this.getProfile = handleGetProfile;
+  this.putProfile = handlePutProfile;
   this.unlink = handleUnlink;
   this.signup = handleSignup;
   this.login = handleLogin;
@@ -596,11 +596,13 @@ function handleLinkedin(req, res) {
 
 /*
  |--------------------------------------------------------------------------
- | Get Me
+ | Get Profile
  |--------------------------------------------------------------------------
  */
 
-function handleGetme(req, res) { 
+function handleGetProfile(req, res) {
+  var userid = req.param.userid;
+  if (!userid) {
   db.newSearchBuilder()
     .collection('users')
     .limit(1)
@@ -618,15 +620,18 @@ function handleGetme(req, res) {
       console.log("SEARCH FAIL:" + err);
       res.status(401).send('Something went wrong: ' + err);
     }); 
+  } else {
+    console.log('you need to define how to handle userid in /profile GET');
+  }
 }
 
 /*
  |--------------------------------------------------------------------------
- | Put Me
+ | Put Profile
  |--------------------------------------------------------------------------
  */
 
-function handlePutme(req, res) {
+function handlePutProfile(req, res) {
   db.newSearchBuilder()
     .collection('users')
     .limit(1)

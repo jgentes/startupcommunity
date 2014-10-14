@@ -1,22 +1,31 @@
 angular
   .module('appServices', [])
 
-  .factory('accountService', function($http) {
+  .factory('profileService', function($http) {
+    var profile = {};
+        
     return {
-      getProfile: function() {
-        return $http.get('/api/me');
+      getProfileScope: function(callback) {
+        console.log('getprofilescope:');
+        console.log(profile);
+        callback(profile);
       },
-      updateProfile: function(profileData) {
-        return $http.put('/api/me', profileData);
+      setProfileScope: function(profiledata) {
+        console.log('setprofilescope:');
+        console.log(profiledata);
+        profile = profiledata;
+      },
+      getProfile: function(userid) {
+        return $http.get(userid ? '/api/profile/' + userid : '/api/profile');
+      },
+      putProfile: function(profileData) {
+        return $http.put('/api/profile', profileData);
       }
     };
   })
   
   .factory('userService', function($http) {
     return {
-      getUser: function(userid) {
-        return $http.get('/api/user/' + userid);
-      },
       getUsers: function(alturl) {
         return $http.get(alturl || '/api/bend-or/users');
       },

@@ -1,6 +1,6 @@
 angular
   .module('appControllers', [])
-  .controller('MainController', ['$scope', '$window', '$global', '$timeout', '$interval', 'progressLoader', '$location', '$auth', 'accountService', 'pinesNotifications', function ($scope, $window, $global, $timeout, $interval, progressLoader, $location, $auth, accountService, pinesNotifications) {
+  .controller('MainController', ['$scope', '$window', '$global', '$timeout', '$interval', 'progressLoader', '$location', '$auth', 'profileService', 'pinesNotifications', function ($scope, $window, $global, $timeout, $interval, progressLoader, $location, $auth, profileService, pinesNotifications) {
     $scope.style_fixedHeader = $global.get('fixedHeader');
     $scope.style_headerBarHidden = $global.get('headerBarHidden');
     $scope.style_layoutBoxed = $global.get('layoutBoxed');
@@ -85,9 +85,9 @@ angular
         });
     };
     
-     
+    // used to display user data in header    
     $scope.getProfile = function() {
-      accountService.getProfile()
+      profileService.getProfile()
         .then(function(response) {
           $scope.user = response.data;
         });
@@ -105,7 +105,7 @@ angular
     };
   })
         
-  .controller('PeopleController', ['$scope', '$location', 'userService', function ($scope, $location, userService) {
+  .controller('PeopleController', ['$scope', '$location', 'userService', 'profileService', function ($scope, $location, userService, profileService) {
     
     $scope.rotateWidgetClass = function() {
       var arr = ["'themed-background-dark'",'themed-background-dark-night','themed-background-dark-amethyst', 'themed-background-dark-modern', 'themed-background-dark-autumn', 'themed-background-dark-flatie', 'themed-background-dark-spring', 'themed-background-dark-fancy', 'themed-background-dark-fire'];
@@ -123,25 +123,30 @@ angular
     $scope.getUsers();
     
     $scope.viewUser = function(userindex) {
-      $scope.profile = $scope.users.userindex;
-      $location.set('/profile');
+      console.log('viewuser:');
+      console.log($scope.users.results[userindex]);
+      profileService.setProfileScope($scope.users.results[userindex]);
+      $location.path('/profile');
     };
     
   }])
   
-  .controller('UserProfileController', ['$scope', 'userService', 'pinesNotifications', function ($scope, userService, pinesNotifications) {
+  .controller('ProfileController', ['$scope', 'profileService', 'pinesNotifications', function ($scope, profileService, pinesNotifications) {
     
-    $scope.getUser = function(userid) {
-      userService.getUser(userid)
+    
+    $scope.getProfile = function(userid) {
+      profileService.getProfile(userid)
         .then(function(response) {          
           $scope.profile = response.data;
         });
     };
     
-    $scope.getUser($scope.profile.path.key);    
+    profileService.getProfileScope(function(profile) {
+      $scope.profile = profile;
+    });
     
-    $scope.putUser = function(userid, profile) {
-      userService.putUser(userid, profile, function(response) {
+    $scope.putProfile = function(userid, profile) {
+      profileService.putProfile(userid, profile, function(response) {
         if (response.status !== 200) {          
             pinesNotifications.notify({
               title: 'Sorry, there was a problem.',
@@ -265,13 +270,13 @@ angular
     };
   }])
   
-  .controller('ProfileCtrl', function($scope, $auth, accountService, pinesNotifications) {
+  .controller('ProfileCtrl', function($scope, $auth, profileService, pinesNotifications) {
 
     /** THIS SHOULD NOW BE COVERED BY MAINCONTROLLER
      * Get user's profile information.
      
     $scope.getProfile = function() {
-      accountService.getProfile()
+      profileService.getProfile()
         .success(function(data) {
           $scope.user = data;
         })
@@ -290,7 +295,7 @@ angular
      * Update user's profile information.
      */
     $scope.updateProfile = function() {
-      accountService.updateProfile({
+      profileService.updateProfile({
         displayName: $scope.user.displayName,
         email: $scope.user.email
       }).then(function() {
