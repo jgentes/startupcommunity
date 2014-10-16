@@ -1,6 +1,17 @@
 angular
   .module('appControllers', [])
-  .controller('MainController', ['$scope', '$window', '$global', '$timeout', '$interval', 'progressLoader', '$location', '$auth', 'profileService', 'pinesNotifications', function ($scope, $window, $global, $timeout, $interval, progressLoader, $location, $auth, profileService, pinesNotifications) {
+  .run(function($rootScope, $q, profileService) {
+    
+    $rootScope.deferred = $q.defer();
+      
+    profileService.getProfile()
+        .then(function(response) {
+          $rootScope.user = response.data;
+          profileService.setProfileScope(response.data);
+          $rootScope.deferred.resolve();
+        });
+  })
+  .controller('MainController', ['$scope','$window', '$global', '$timeout', '$interval', 'progressLoader', '$location', '$auth', 'profileService', 'pinesNotifications', function ($scope, $window, $global, $timeout, $interval, progressLoader, $location, $auth, profileService, pinesNotifications) {
     $scope.style_fixedHeader = $global.get('fixedHeader');
     $scope.style_headerBarHidden = $global.get('headerBarHidden');
     $scope.style_layoutBoxed = $global.get('layoutBoxed');
@@ -55,7 +66,10 @@ angular
       progressLoader.start();
       progressLoader.set(50);
       if (!$scope.user) {
-        $scope.getProfile();
+        profileService.getProfile()
+        .then(function(response) {
+          $scope.user = response.data;          
+        });
       }
     });
     $scope.$on('$routeChangeSuccess', function (e) {
@@ -84,17 +98,7 @@ angular
             });
         });
     };
-    
-    // used to display user data in header    
-    $scope.getProfile = function() {
-      profileService.getProfile()
-        .then(function(response) {
-          $scope.user = response.data;
-        });
-    };
-    
-    $scope.getProfile();
-    
+  
   }])
   
   .filter('words', function() {    
@@ -122,9 +126,7 @@ angular
     
     $scope.getUsers();
     
-    $scope.viewUser = function(userindex) {
-      console.log('viewuser:');
-      console.log($scope.users.results[userindex]);
+    $scope.viewUser = function(userindex) {      
       profileService.setProfileScope($scope.users.results[userindex]);
       $location.path('/profile');
     };
@@ -133,16 +135,10 @@ angular
   
   .controller('ProfileController', ['$scope', 'profileService', 'pinesNotifications', function ($scope, profileService, pinesNotifications) {
     
-    
-    $scope.getProfile = function(userid) {
-      profileService.getProfile(userid)
-        .then(function(response) {          
-          $scope.profile = response.data;
-        });
-    };
-    
-    profileService.getProfileScope(function(profile) {
-      $scope.profile = profile;
+    $scope.deferred.promise.then(function() {    
+      profileService.getProfileScope(function(profile) {
+        $scope.profile = profile;
+      });
     });
     
     $scope.putProfile = function(userid, profile) {
@@ -271,26 +267,7 @@ angular
   }])
   
   .controller('ProfileCtrl', function($scope, $auth, profileService, pinesNotifications) {
-
-    /** THIS SHOULD NOW BE COVERED BY MAINCONTROLLER
-     * Get user's profile information.
-     
-    $scope.getProfile = function() {
-      profileService.getProfile()
-        .success(function(data) {
-          $scope.user = data;
-        })
-        .error(function() {
-          pinesNotifications.notify({
-            title: 'Something went wrong.',
-            text: "We weren't able to pull your user profile.",
-            type: 'error',
-            duration: 5
-          });
-        });
-    };
-*/
-
+   // Clearly need to combine this and ProfileController.. whoops.
     /**
      * Update user's profile information.
      */

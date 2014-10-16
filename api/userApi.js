@@ -610,7 +610,7 @@ function handleGetProfile(req, res) {
     .then(function(user){
       if (user.body.results.length > 0) {
         console.log('Authenticated user: ' + user.body.results[0].value.name);
-        res.send(user.body.results[0].value);
+        res.send(user.body.results[0]);
       } else {
         console.log('User not found.');
         return res.status(200).send({ message: 'User not found.' });

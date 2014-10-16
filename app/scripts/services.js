@@ -11,8 +11,7 @@ angular
         callback(profile);
       },
       setProfileScope: function(profiledata) {
-        console.log('setprofilescope:');
-        console.log(profiledata);
+        console.log('set scope to: ' + profiledata);
         profile = profiledata;
       },
       getProfile: function(userid) {
