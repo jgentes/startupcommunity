@@ -5,17 +5,14 @@ angular
     var profile = {};
         
     return {
-      getProfileScope: function(callback) {
-        console.log('getprofilescope:');
-        console.log(profile);
+      getProfileScope: function(callback) {        
         callback(profile);
       },
-      setProfileScope: function(profiledata) {
-        console.log('set scope to: ' + profiledata);
+      setProfileScope: function(profiledata) {        
         profile = profiledata;
       },
       getProfile: function(userid) {
-        return $http.get(userid ? '/api/profile/' + userid : '/api/profile');
+        return $http.get(userid ? '/api/profile/' + userid : '/api/profile'); // return me if no userid is provided
       },
       putProfile: function(profileData) {
         return $http.put('/api/profile', profileData);

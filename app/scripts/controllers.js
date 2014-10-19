@@ -2,10 +2,10 @@ angular
   .module('appControllers', [])
   .run(function($rootScope, $q, profileService) {
     
-    $rootScope.deferred = $q.defer();
+    $rootScope.deferred = $q.defer(); // the .deferred function is placed in rootscope to be executed by the controller
       
     profileService.getProfile()
-        .then(function(response) {
+        .then(function(response) {          
           $rootScope.user = response.data;
           profileService.setProfileScope(response.data);
           $rootScope.deferred.resolve();
@@ -64,13 +64,7 @@ angular
     $scope.$on('$routeChangeStart', function (e) {
       // console.log('start: ', $location.path());
       progressLoader.start();
-      progressLoader.set(50);
-      if (!$scope.user) {
-        profileService.getProfile()
-        .then(function(response) {
-          $scope.user = response.data;          
-        });
-      }
+      progressLoader.set(50);      
     });
     $scope.$on('$routeChangeSuccess', function (e) {
       // console.log('success: ', $location.path());
@@ -81,9 +75,11 @@ angular
       return $auth.isAuthenticated(); //returns true or false based on browser local storage token
     };
     
-    /**
-     * Get user's profile information.
-     */
+    // Get and set user scope
+    
+    if (!$scope.user) {
+        $scope.deferred.promise;
+    }
     
     $scope.logOut = function() {      
       $auth.logout()
@@ -136,7 +132,7 @@ angular
   .controller('ProfileController', ['$scope', 'profileService', 'pinesNotifications', function ($scope, profileService, pinesNotifications) {
     
     $scope.deferred.promise.then(function() {    
-      profileService.getProfileScope(function(profile) {
+      profileService.getProfileScope(function(profile) {        
         $scope.profile = profile;
       });
     });
