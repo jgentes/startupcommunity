@@ -180,7 +180,7 @@ function handleEnsureAuthenticated(req, res, next) {
 
 
 function handleRootRoute(req, res) { res.sendFile('index.html', { root: __dirname + config.path }); }
-function handleLoginRoute(req, res){ res.redirect('#/login'); }
+function handleLoginRoute(req, res){ res.redirect('/login'); }
 
 /*
  |--------------------------------------------------------------------------

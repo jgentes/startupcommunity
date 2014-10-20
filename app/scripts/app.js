@@ -38,7 +38,7 @@ app
 
   })
   
-  .config(['$provide', '$routeProvider', function ($provide, $routeProvider) {
+  .config(['$provide', '$routeProvider', '$locationProvider', function ($provide, $routeProvider, $locationProvider) {
     $routeProvider
       .when('/', {
         templateUrl: 'views/launchform.html'
@@ -183,6 +183,8 @@ app
       .otherwise({
         redirectTo: '/'
       });
+      $locationProvider
+        .html5Mode(true);
   }]);
 
  

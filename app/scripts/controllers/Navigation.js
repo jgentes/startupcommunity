@@ -7,7 +7,7 @@ angular
         {
             label: 'Bend',
             iconClasses: 'fa fa-globe',
-            url: '#/'
+            url: '/'
         },
         {
             heading: 'COMMUNITY'
@@ -19,11 +19,11 @@ angular
         {
             label: 'Mentors',
             iconClasses: 'fa fa-graduation-cap',
-            url: '#/mentors',
+            url: '/mentors',
             children: [
                 {
                     label: 'Add Mentors',
-                    url: '#/mentors/add'
+                    url: '/mentors/add'
                 }
             ]
         },

@@ -11,7 +11,7 @@ angular
           $rootScope.deferred.resolve();
         });
   })
-  .controller('MainController', ['$scope','$window', '$global', '$timeout', '$interval', 'progressLoader', '$location', '$auth', 'profileService', 'pinesNotifications', function ($scope, $window, $global, $timeout, $interval, progressLoader, $location, $auth, profileService, pinesNotifications) {
+  .controller('MainController', ['$scope','$window', '$global', '$route', '$timeout', '$interval', 'progressLoader', '$location', '$auth', 'profileService', 'pinesNotifications', function ($scope, $window, $global, $route, $timeout, $interval, progressLoader, $location, $auth, profileService, pinesNotifications) {
     $scope.style_fixedHeader = $global.get('fixedHeader');
     $scope.style_headerBarHidden = $global.get('headerBarHidden');
     $scope.style_layoutBoxed = $global.get('layoutBoxed');
@@ -80,6 +80,12 @@ angular
     if (!$scope.user) {
         $scope.deferred.promise;
     }
+    
+    $scope.editProfile = function() {      
+      profileService.setProfileScope($scope.user);            
+      $location.path('/profile');
+      $route.reload();
+    };
     
     $scope.logOut = function() {      
       $auth.logout()

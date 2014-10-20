@@ -7,7 +7,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="StartupCommunity.org">
   <meta name="author" content="James Gentes">
-
+  <base href="/">
   <link rel="icon" type="image/png" href="/public/favicon.png">
 
   <!-- prochtml:remove:dist -->
@@ -186,7 +186,7 @@
             <ul class="dropdown-menu userinfo arrow">
               <li class="userlinks">
                 <ul class="dropdown-menu">
-                  <li><a href="#">Edit Profile <i class="pull-right fa fa-fw fa-pencil"></i></a></li>
+                  <li><a ng-click="editProfile()">Edit Profile <i class="pull-right fa fa-fw fa-pencil"></i></a></li>
                   <li class="divider"></li>
                   <li><a class="text-right" ng-click="logOut()">Sign Out</a></li>
                 </ul>
