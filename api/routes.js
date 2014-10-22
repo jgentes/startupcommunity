@@ -1,6 +1,4 @@
 function setup(app,routes) {    
-    app.get('/', routes.userApi.rootRoute);
-    //app.get('/login', routes.userApi.loginRoute);
     app.get('/api/:citystate/users', routes.userApi.userSearch);                  
     app.get('/api/profile', routes.userApi.ensureAuthenticated, routes.userApi.getProfile);    
     app.put('/api/profile', routes.userApi.ensureAuthenticated, routes.userApi.putProfile);

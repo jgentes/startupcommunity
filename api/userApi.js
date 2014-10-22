@@ -13,8 +13,6 @@ var bcrypt = require('bcryptjs'),
 
 var UserApi = function() {
   this.ensureAuthenticated = handleEnsureAuthenticated;
-  this.rootRoute = handleRootRoute;
-  this.loginRoute = handleLoginRoute;
   this.userSearch = handleUserSearch;
   this.subscribeUser = handleSubscribeUser;
   this.createToken = handleCreateToken;  
@@ -179,8 +177,8 @@ function handleEnsureAuthenticated(req, res, next) {
 }
 
 
-function handleRootRoute(req, res) { res.sendFile('index.html', { root: __dirname + config.path }); }
-function handleLoginRoute(req, res){ res.redirect('/login'); }
+//function handleRootRoute(req, res) { res.sendFile('index.html', { root: __dirname + config.path }); }
+//function handleLoginRoute(req, res){ res.redirect('/login'); }
 
 /*
  |--------------------------------------------------------------------------
