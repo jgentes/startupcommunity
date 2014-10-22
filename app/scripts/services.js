@@ -16,6 +16,9 @@ angular
       },
       putProfile: function(profileData) {
         return $http.put('/api/profile', profileData);
+      },
+      deleteProfile: function(userid) {
+        return $http.post('/api/profile/delete/' + userid);
       }
     };
   })

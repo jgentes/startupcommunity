@@ -20,6 +20,7 @@ var UserApi = function() {
   this.linkedin = handleLinkedin;
   this.getProfile = handleGetProfile;
   this.putProfile = handlePutProfile;
+  this.deleteProfile = handleDeleteProfile;
   this.unlink = handleUnlink;
   this.signup = handleSignup;
   this.login = handleLogin;
@@ -630,6 +631,31 @@ function handleGetProfile(req, res) {
  */
 
 function handlePutProfile(req, res) {
+  db.newSearchBuilder()
+    .collection('users')
+    .limit(1)
+    .query('value.email: "' + req.user.email + '"')
+    .then(function(user){
+      if (user.body.results.length > 0) {
+       //NOTHING HERE! NEED PUT STATEMENT
+      } else {
+        console.log('User not found.');
+        return res.status(400).send({ message: 'User not found' });
+      }
+    })
+    .fail(function(err){
+      console.log("SEARCH FAIL:" + err);
+      res.status(401).send('Something went wrong: ' + err);
+    }); 
+}
+
+/*
+ |--------------------------------------------------------------------------
+ | Delete Profile
+ |--------------------------------------------------------------------------
+ */
+
+function handleDeleteProfile(req, res) {
   db.newSearchBuilder()
     .collection('users')
     .limit(1)
