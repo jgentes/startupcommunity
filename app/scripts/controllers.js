@@ -135,7 +135,7 @@ angular
     
   }])
   
-  .controller('ProfileController', ['$scope', 'profileService', 'pinesNotifications', function ($scope, profileService, pinesNotifications) {
+  .controller('ProfileController', ['$scope', 'profileService', 'pinesNotifications', '$location', function ($scope, profileService, pinesNotifications, $location) {
     
     $scope.deferred.promise.then(function() {    
       profileService.getProfileScope(function(profile) {        
@@ -156,7 +156,7 @@ angular
           } else {
             $scope.profile = response.data; // may need to tell angular to refresh view
             pinesNotifications.notify({
-              title: 'Mentor Updated!',
+              title: 'Mentor updated!',
               text: response.data.name + ' is good to go.',
               type: 'success',
               duration: 5,
@@ -164,6 +164,19 @@ angular
             });
           }
         });
+    };  
+    
+    $scope.removeProfile = function(userid) {
+      profileService.removeProfile(userid, function(response) {        
+        $location.path('/mentors');
+        pinesNotifications.notify({
+          title: 'Mentor removed.',
+          text: "Hopefully they'll return some day.",
+          type: 'success',
+          duration: 5,
+          shadow: false
+        });          
+      });
     };  
     
   }])

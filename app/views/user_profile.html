@@ -7,7 +7,7 @@
 		                <div class="btn-group hidden-xs" data-dropdown>
 		                    <button class="btn btn-default dropdown-toggle" data-toggle='dropdown'><span class="hidden-sm"> Edit </span><span class="caret"></span></button>
 		                    <ul class="dropdown-menu">
-		                        <li><a href="deleteProfile(profile.path.key)">Delete Profile</a></li>
+		                        <li><a ng-click="removeProfile(profile.path.key)">Delete Profile</a></li>
 		                    </ul>
 		                </div>
 		                
@@ -55,8 +55,8 @@
 												<tr>
 													<td>Social</td>
 													<td>
-														<a href="#" class="btn btn-xs"><i class="fa fa-twitter"></i></a>
-														<a href="{{profile.value.linkedin.publicProfileUrl}}" class="btn btn-xs"><i class="fa fa-linkedin"></i></a>
+														<a href="#" class="btn btn-social btn-twitter"><i class="fa fa-twitter"></i></a>
+														<a href="{{profile.value.linkedin.publicProfileUrl}}" class="btn btn-social btn-linkedin"><i class="fa fa-linkedin"></i></a>
 													</td>
 												</tr>
 											</tbody>

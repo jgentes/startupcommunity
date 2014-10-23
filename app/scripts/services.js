@@ -8,17 +8,23 @@ angular
       getProfileScope: function(callback) {        
         callback(profile);
       },
-      setProfileScope: function(profiledata) {        
+      setProfileScope: function(profiledata) {  
         profile = profiledata;
       },
       getProfile: function(userid) {
         return $http.get(userid ? '/api/profile/' + userid : '/api/profile'); // return me if no userid is provided
       },
-      putProfile: function(profileData) {
+      putProfile: function(profileData) { // addcallback!
         return $http.put('/api/profile', profileData);
       },
-      deleteProfile: function(userid) {
-        return $http.post('/api/profile/delete/' + userid);
+      removeProfile: function(userid, callback) {
+        $http.post('/api/profile/remove/' + userid)
+        .success( function(response) {
+          callback(response);
+        })
+        .error( function(response) {
+          callback(response);
+        });
       }
     };
   })

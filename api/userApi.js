@@ -20,7 +20,7 @@ var UserApi = function() {
   this.linkedin = handleLinkedin;
   this.getProfile = handleGetProfile;
   this.putProfile = handlePutProfile;
-  this.deleteProfile = handleDeleteProfile;
+  this.removeProfile = handleRemoveProfile;
   this.unlink = handleUnlink;
   this.signup = handleSignup;
   this.login = handleLogin;
@@ -655,21 +655,15 @@ function handlePutProfile(req, res) {
  |--------------------------------------------------------------------------
  */
 
-function handleDeleteProfile(req, res) {
-  db.newSearchBuilder()
-    .collection('users')
-    .limit(1)
-    .query('value.email: "' + req.user.email + '"')
-    .then(function(user){
-      if (user.body.results.length > 0) {
-       //NOTHING HERE! NEED PUT STATEMENT
-      } else {
-        console.log('User not found.');
-        return res.status(400).send({ message: 'User not found' });
-      }
+function handleRemoveProfile(req, res) {
+  var userid = req.params.userid;
+  db.remove('users', userid) // ideally I should store an undo option
+    .then(function(result){      
+        console.log('User removed.');
+        res.status(200).send({ message: 'User removed' });
     })
     .fail(function(err){
-      console.log("SEARCH FAIL:" + err);
+      console.log("Remove FAIL:" + err);
       res.status(401).send('Something went wrong: ' + err);
     }); 
 }
