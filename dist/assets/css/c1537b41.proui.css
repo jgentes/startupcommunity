@@ -746,7 +746,6 @@ a.widget.widget-hover-effect4:active {
 .popover,
 .progress,
 .progress-bar,
-.btn.active,
 .open .btn.dropdown-toggle,
 .panel {
     -webkit-box-shadow: none;
@@ -826,11 +825,11 @@ a.widget.widget-hover-effect4:active {
 .lt-ie10 .visible-lt-ie10 {
     display: block;
 }
-
+/*
 :focus {
     outline: 0 !important;
 }
-
+*/
 
 /*
 =================================================================

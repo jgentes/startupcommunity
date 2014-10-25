@@ -7,7 +7,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="StartupCommunity.org">
   <meta name="author" content="James Gentes">
-
+  <base href="/">
   <link rel="icon" type="image/png" href="/public/favicon.png">
 
   <link href='https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700' rel='stylesheet' type='text/css'>
@@ -22,10 +22,10 @@
   <![endif]-->
 
 
-    <link rel="stylesheet" href="assets/css/d1c41d76.vendor.css"/>
+    <link rel="stylesheet" href="assets/css/ac05a71a.vendor.css"/>
     
 
-    <link rel="stylesheet" href="assets/css/c87afb21.main.css"/>
+    <link rel="stylesheet" href="assets/css/c678599e.main.css"/>
 
   <style type="text/css">
     [ng-cloak] {
@@ -156,11 +156,11 @@
           </li>
           <li class="dropdown" ng-show="isAuthenticated">
           
-            <a href="#" class="dropdown-toggle username"><span class="hidden-xs">{{user.name}}</span><img ng-src="{{user.avatar}}" alt="{{user.name}}" style="margin-right: 11px;"/></a>
+            <a href="#" class="dropdown-toggle username"><span class="hidden-xs">{{user.value.name}}</span><img ng-src="{{user.value.avatar}}" alt="{{user.value.name}}" style="margin-right: 11px;"/></a>
             <ul class="dropdown-menu userinfo arrow">
               <li class="userlinks">
                 <ul class="dropdown-menu">
-                  <li><a href="#">Edit Profile <i class="pull-right fa fa-fw fa-pencil"></i></a></li>
+                  <li><a ng-click="editProfile()">Edit Profile <i class="pull-right fa fa-fw fa-pencil"></i></a></li>
                   <li class="divider"></li>
                   <li><a class="text-right" ng-click="logOut()">Sign Out</a></li>
                 </ul>
@@ -258,7 +258,7 @@
         <footer role="contentinfo" style="margin: 1%;">
           <div class="clearfix">        
             <ul class="list-unstyled list-inline pull-left">
-              <li>StartupCommunity.org &copy; 2014</li>
+              <li style="color: #bbb;">StartupCommunity.org &copy; 2014</li>
             </ul>        
             <button class="pull-right btn btn-default btn-xs hidden-print" back-to-top><i class="fa fa-angle-up"></i></button>        
           </div>
@@ -278,7 +278,7 @@
     <script src="scripts/45151d2a.vendor.js"></script>
     
 
-      <script src="scripts/0f7d70a5.scripts.js"></script>
+      <script src="scripts/c73663fa.scripts.js"></script>
 
 </body>
 </html>
