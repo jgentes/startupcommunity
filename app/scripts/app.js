@@ -84,14 +84,11 @@ app
       })
       .when('/login', {
         templateUrl: 'views/login.html'
-      })
-      .when('/signup', {
-        templateUrl: 'views/signup.html'
-      })
+      })      
       .when('/logout', {
         controller: 'LogoutCtrl'
       })
-      /*      
+      /*
       .when('/calendar', {
         templateUrl: 'views/calendar.html',
         resolve: {
@@ -177,11 +174,11 @@ app
         }
       })
       */
-      .when('/:templateFile', {
+      .when('/:templateFile', { // this could be dangerous because it could expose hidden views
         templateUrl: function (param) { return 'views/'+param.templateFile+'.html' }
       })
       .otherwise({
-        redirectTo: '/'
+        redirectTo: '/' // this needs to be a 404 page
       });
       $locationProvider
         .html5Mode(true);

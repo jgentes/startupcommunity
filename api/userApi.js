@@ -475,7 +475,7 @@ function handleLinkedin(req, res) {
       };              
         
         // Step 3a. Link user accounts.
-      if (req.headers.authorization) {
+      if (req.headers.authorization) { // isloggedin already?
           
         db.newSearchBuilder()
           .collection('users')
@@ -511,7 +511,7 @@ function handleLinkedin(req, res) {
                       });
                     res.send({ token: handleCreateToken(req, result.body.results[0].value) });
                   } else {
-                    res.status(400).send({ message: "Sorry, we couldn't find you in our system. Please try logging out and back in." });                    
+                    res.status(400).send({ message: "Sorry, we couldn't find you in our system." });                    
                   }
                 })
                 .fail(function(err){
@@ -547,7 +547,35 @@ function handleLinkedin(req, res) {
                 }); 
               res.send({ token: handleCreateToken(req, result.body.results[0].value) }); 
             } else {
+              db.newSearchBuilder()
+                .collection('users')
+                .limit(1)
+                .query('value.email: "' + profile.emailAddress + '"')
+                .then(function(result){
+                  if (result.body.results.length > 0) {
+                    console.log("Found user: " + profile.firstName + ' ' + profile.lastName);
+                    result.body.results[0].value["linkedin"] = profile; // get user account and re-upload with linkedin data            
+                    db.put('users', result.body.results[0].path.key, result.body.results[0].value)
+                      .then(function () {
+                        console.log("Profile updated: " + userprofile.email);                    
+                      })
+                      .fail(function (err) {
+                        console.error("Profile update failed:");
+                        console.error(err);
+                      }); 
+                    res.send({ token: handleCreateToken(req, result.body.results[0].value) });      
+                    
+                  } else {
+                    console.log('No existing user found.');
+                    res.status(400).send({ message: "Sorry, we couldn't find you in our system." }); 
+                  }
+                })
+                .fail(function(err){
+                  console.log("SEARCH FAIL:" + err);
+                  res.status(401).send('Something went wrong: ' + err);
+                });
               
+              /* Do this to create a user account if no user exists
               db.newSearchBuilder()
                 .collection('users')
                 .limit(1)
@@ -572,7 +600,8 @@ function handleLinkedin(req, res) {
                 .fail(function(err){
                   console.log("SEARCH FAIL:" + err);
                   res.status(401).send('Something went wrong: ' + err);
-                });                               
+                });
+                */
             }
           });
         }

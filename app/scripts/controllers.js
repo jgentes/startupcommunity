@@ -207,7 +207,7 @@ angular
       };    
   }])
   
-  .controller('LoginCtrl', ['$scope', '$auth', '$global', 'pinesNotifications', function($scope, $auth, $global, pinesNotifications) {
+  .controller('LoginCtrl', ['$scope', '$auth', '$global', 'pinesNotifications', '$location', function($scope, $auth, $global, pinesNotifications, $location) {
     $global.set('fullscreen', true);    
     $scope.$on('$destroy', function () {
       $global.set('fullscreen', false);
@@ -226,9 +226,16 @@ angular
             shadow: false
           });
           console.log('Logged in!');          
+          $location.path('/mentors');
         })
         .catch(function(response) {
-          // add alert here
+          pinesNotifications.notify({
+            title: 'There was a problem:',
+            text: String(response.data.message),
+            type: 'error',
+            duration: 15,
+            shadow: false
+          });
           console.log(response.data.message);
         });
     };
@@ -243,7 +250,7 @@ angular
             duration: 5
           });
           console.log('Logged in!');
-          
+          $location.path('/mentors');
         })
         .catch(function(response) {
           pinesNotifications.notify({
@@ -258,7 +265,7 @@ angular
     };
   }])
   
-  .controller('SignupCtrl', ['$scope', '$auth', '$global', 'pinesNotifications', function($scope, $auth, $global, pinesNotifications) {
+  .controller('SignupCtrl', ['$scope', '$auth', '$global', 'pinesNotifications', '$location', function($scope, $auth, $global, pinesNotifications, $location) {
     $global.set('fullscreen', true);    
     $scope.$on('$destroy', function () {
       $global.set('fullscreen', false);
@@ -277,6 +284,7 @@ angular
           duration: 5,
           shadow: false
         });
+        $location.path('/login');
       });
     };
   }])
