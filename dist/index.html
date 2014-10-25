@@ -28,8 +28,8 @@
     <link rel="stylesheet" href="assets/css/ce6d1d26.main.css"/>
 
   <style type="text/css">
-    [ng-cloak] {
-      display: none;
+    [ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak {
+    display: none !important;
     }
     
     .topNegative1000 {
@@ -231,13 +231,13 @@
     </ul>
     </header>
     
-<div id="page-container" class="clearfix" ng-cloak>
+<div id="page-container" class="clearfix">
 
         <!-- BEGIN SIDEBAR -->
         <nav id="page-leftbar" role="navigation">
 
             <div>
-              <ul ng-controller="NavigationController" id="sidebar" sticky-scroll="40" ng-cloak>
+              <ul ng-controller="NavigationController" id="sidebar" sticky-scroll="40">
                   
                   <li ng-repeat="item in menu"
                       ng-class="{ hasChild: (item.children!==undefined),
