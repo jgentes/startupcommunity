@@ -264,7 +264,7 @@
         <nav id="page-leftbar" role="navigation">
 
             <div>
-              <ul ng-controller="NavigationController" id="sidebar" sticky-scroll="40">
+              <ul ng-controller="NavigationController" id="sidebar" sticky-scroll="40" ng-cloak>
                   
                   <li ng-repeat="item in menu"
                       ng-class="{ hasChild: (item.children!==undefined),

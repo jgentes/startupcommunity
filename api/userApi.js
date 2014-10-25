@@ -484,9 +484,8 @@ function handleLinkedin(req, res) {
           .then(function (result){
             console.log('Result of db search: ' + result.body.total_count);              
             if (result.body.results.length > 0){            
-              console.log("Found user: " + profile.firstName + ' ' + profile.lastName);                                                                               
-              res.status(409).send({ message: "There is already a Linkedin account that belongs to you." });
-            
+              console.log("Found user: " + profile.firstName + ' ' + profile.lastName);                                                                                             
+              res.send({ token: handleCreateToken(req, result.body.results[0].value) });
             } else {
             
               console.log('No Linkedin user in the system with that id; ok to add it.');
