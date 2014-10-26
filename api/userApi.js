@@ -459,7 +459,7 @@ function handleLinkedin(req, res) {
       format: 'json'
     };    
     
-    var uploadcheck = 1;
+    var uploadcheck = 0;
       
     if (uploadcheck === 0) {
     // Step 2. Retrieve profile information about the current user.
