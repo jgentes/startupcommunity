@@ -254,7 +254,8 @@ function handleSignup(req, res) {
   var user = {
     "name": req.body.name,
     "email": req.body.email,
-    "password": hash,
+    "password": hash,    
+    "cities": { "Oregon": "Bend" },
     "avatar": ''
   };
   //check if email is already assigned in our database

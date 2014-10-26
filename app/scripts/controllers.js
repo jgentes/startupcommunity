@@ -59,17 +59,20 @@ angular
     
     $scope.$on('$routeChangeStart', function (e) {      
       progressLoader.start();
-      progressLoader.set(50);      
+      progressLoader.set(50);   
       if (!$scope.user) {        // Get and set user scope          
         profileService.getProfile()
-        .then(function(response) {     
-          $scope.user = response.data;          
+        .then(function(response) {
+          if (response.data.value) {
+            $scope.user = response.data;
+          }
         });
       }
     });
     
     $scope.$on('$routeChangeSuccess', function (e) {      
       progressLoader.end();
+      
     });
             
     $scope.isAuthenticated = function() {
