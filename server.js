@@ -6,10 +6,6 @@ var express = require('express'),
     logger = require('morgan'),
     UserApi = require('./api/userApi.js');    
 
-// for console log debugging
-require('debug-trace')({ always: true, colors: { log: '32' } });
-console.format = function(c) { return "[" + c.filename + ":" + c.getLineNumber() + "]"; };
-
 var app = express();
 
 // Order really matters here..!
@@ -22,6 +18,10 @@ app.use("/", express.static(__dirname + config.path));
 app.use("/public", express.static(__dirname + '/public'));
 
 if (process.env.NODE_ENV !== "production") {    
+  // for console log debugging
+  require('debug-trace')({ always: true, colors: { log: '32' } });
+  console.format = function(c) { return "[" + c.filename + ":" + c.getLineNumber() + "]"; };
+  
   app.use("/bower_components", express.static(__dirname + "/bower_components"));
   app.use(function(req, res, next) { // Force HTTPS
     var protocol = req.get('x-forwarded-proto');
