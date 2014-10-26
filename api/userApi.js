@@ -485,7 +485,7 @@ function handleLinkedin(req, res) {
             console.log('Result of db search: ' + result.body.total_count);              
             if (result.body.results.length > 0){            
               console.log("Found user: " + profile.firstName + ' ' + profile.lastName);                                                                                             
-              res.send({ token: handleCreateToken(req, result.body.results[0].value) });
+              return res.status(409).send({ message: 'Your account is already associated with Linkedin.' });
             } else {
             
               console.log('No Linkedin user in the system with that id; ok to add it.');
@@ -508,9 +508,9 @@ function handleLinkedin(req, res) {
                         console.error("Profile update failed:");
                         console.error(err.body);                          
                       });
-                    res.send({ token: handleCreateToken(req, result.body.results[0].value) });
+                    return res.send({ token: handleCreateToken(req, result.body.results[0].value) });
                   } else {
-                    res.status(400).send({ message: "Sorry, we couldn't find you in our system." });                    
+                    return res.status(400).send({ message: "Sorry, we couldn't find you in our system." });                    
                   }
                 })
                 .fail(function(err){
@@ -544,7 +544,7 @@ function handleLinkedin(req, res) {
                   console.error("Profile update failed:");
                   console.error(err);
                 }); 
-              res.send({ token: handleCreateToken(req, result.body.results[0].value) }); 
+              return res.send({ token: handleCreateToken(req, result.body.results[0].value) }); 
             } else {
               db.newSearchBuilder()
                 .collection('users')
@@ -562,7 +562,7 @@ function handleLinkedin(req, res) {
                         console.error("Profile update failed:");
                         console.error(err);
                       }); 
-                    res.send({ token: handleCreateToken(req, result.body.results[0].value) });      
+                    return res.send({ token: handleCreateToken(req, result.body.results[0].value) });      
                     
                   } else {
                     console.log('No existing user found.');

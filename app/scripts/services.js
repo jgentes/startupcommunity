@@ -8,10 +8,10 @@ angular
       getProfileScope: function(callback) {        
         callback(profile);
       },
-      setProfileScope: function(profiledata) {  
+      setProfileScope: function(profiledata) {
         profile = profiledata;
       },
-      getProfile: function(userid) {
+      getProfile: function(userid) {        
         return $http.get(userid ? '/api/profile/' + userid : '/api/profile'); // return me if no userid is provided
       },
       putProfile: function(profileData) { // addcallback!

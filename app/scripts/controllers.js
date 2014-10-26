@@ -5,7 +5,7 @@ angular
     $rootScope.deferred = $q.defer(); // the .deferred function is placed in rootscope to be executed by the controller
       
     profileService.getProfile()
-        .then(function(response) {          
+        .then(function(response) {     
           $rootScope.user = response.data;
           profileService.setProfileScope(response.data);
           $rootScope.deferred.resolve();
@@ -57,29 +57,24 @@ angular
       });
     });    
     
-/*
-    $scope.rightbarAccordionsShowOne = false;
-    $scope.rightbarAccordions = [{open:true},{open:true},{open:true},{open:true},{open:true},{open:true},{open:true}];
-*/
-    $scope.$on('$routeChangeStart', function (e) {
-      // console.log('start: ', $location.path());
+    $scope.$on('$routeChangeStart', function (e) {      
       progressLoader.start();
       progressLoader.set(50);      
+      if (!$scope.user) {        // Get and set user scope          
+        profileService.getProfile()
+        .then(function(response) {     
+          $scope.user = response.data;          
+        });
+      }
     });
-    $scope.$on('$routeChangeSuccess', function (e) {
-      // console.log('success: ', $location.path());
+    
+    $scope.$on('$routeChangeSuccess', function (e) {      
       progressLoader.end();
     });
-    
+            
     $scope.isAuthenticated = function() {
       return $auth.isAuthenticated(); //returns true or false based on browser local storage token
-    };
-    
-    // Get and set user scope
-    
-    if (!$scope.user) {
-        $scope.deferred.promise;
-    }
+    };  
     
     $scope.editProfile = function() {      
       profileService.setProfileScope($scope.user);            
@@ -90,15 +85,17 @@ angular
     $scope.logOut = function() {      
       $auth.logout()
         .then(function() {
-          $scope.user = null;
+          $scope.user = null;          
           pinesNotifications.notify({
               title: 'You are now logged out.',
               text: 'Why not go meet up with a friend?',
               type: 'info',
               icon: 'fa fa-lock',
-              duration: 5
+              duration: 3,
+              styling: "bootstrap3"
             });
-        });
+          $route.reload();
+          });
     };
   
   }])
@@ -136,13 +133,11 @@ angular
   }])
   
   .controller('ProfileController', ['$scope', 'profileService', 'pinesNotifications', '$location', function ($scope, profileService, pinesNotifications, $location) {
-    
-    $scope.deferred.promise.then(function() {    
-      profileService.getProfileScope(function(profile) {        
-        $scope.profile = profile;
-      });
+        
+    profileService.getProfileScope(function(profile) {        
+      $scope.profile = profile;
     });
-    
+        
     $scope.putProfile = function(userid, profile) {
       profileService.putProfile(userid, profile, function(response) {
         if (response.status !== 200) {          
@@ -207,7 +202,7 @@ angular
       };    
   }])
   
-  .controller('LoginCtrl', ['$scope', '$auth', '$global', 'pinesNotifications', '$location', function($scope, $auth, $global, pinesNotifications, $location) {
+  .controller('LoginCtrl', ['$scope', '$auth', '$global', 'pinesNotifications', '$location', '$route', function($scope, $auth, $global, pinesNotifications, $location, $route) {
     $global.set('fullscreen', true);    
     $scope.$on('$destroy', function () {
       $global.set('fullscreen', false);
@@ -218,15 +213,7 @@ angular
     $scope.login = function() {
       $auth.login({ email: $scope.email, password: $scope.password })
         .then(function(success) {
-          pinesNotifications.notify({
-            title: 'Successfully logged in!',
-            text: 'Welcome back, ' + $scope.email + '.',
-            type: 'info',
-            duration: 3,
-            shadow: false
-          });
-          console.log('Logged in!');          
-          $location.path('/mentors');
+          console.log('Logged in!');                    
         })
         .catch(function(response) {
           pinesNotifications.notify({
@@ -242,15 +229,7 @@ angular
     $scope.authenticate = function(provider) {
       $auth.authenticate(provider)
         .then(function(success) {          
-          pinesNotifications.notify({
-            title: 'Successfully logged in!',
-            text: 'You authenticated using ' + provider + '.',
-            type: 'success',
-            icon: 'fa fa-check',
-            duration: 5
-          });
           console.log('Logged in!');
-          $location.path('/mentors');
         })
         .catch(function(response) {
           pinesNotifications.notify({

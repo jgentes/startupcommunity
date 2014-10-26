@@ -41,14 +41,21 @@ app
   .config(['$provide', '$routeProvider', '$locationProvider', function ($provide, $routeProvider, $locationProvider) {
     $routeProvider
       .when('/', {
-        templateUrl: 'views/launchform.html'
+        templateUrl: 'views/mentors.html',
+        resolve: {
+          authenticated: ['$location', '$auth', function($location, $auth) {
+            if (!$auth.isAuthenticated()) {
+              return $location.path('/launchform');
+            }
+          }]
+        }
       })
       .when('/mentors', {
         templateUrl: 'views/mentors.html',
         resolve: {
           authenticated: ['$location', '$auth', function($location, $auth) {
             if (!$auth.isAuthenticated()) {
-              return $location.path('/login');
+              return $location.path('/launchform');
             }
           }]
         }
@@ -58,7 +65,7 @@ app
         resolve: {
           authenticated: ['$location', '$auth', function($location, $auth) {
             if (!$auth.isAuthenticated()) {
-              return $location.path('/login');
+              return $location.path('/launchform');
             }
           }],
           lazyLoad: ['lazyLoad', function (lazyLoad) {
@@ -74,7 +81,7 @@ app
         resolve: {
           authenticated: ['$location', '$auth', function($location, $auth) {
             if (!$auth.isAuthenticated()) {
-              return $location.path('/login');
+              return $location.path('/launchform');
             }
           }]
         }

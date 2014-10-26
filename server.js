@@ -37,7 +37,7 @@ api.setup(app,routes);
 
 app.all('/*', function(req, res, next) {
     // Just send the index.html for other files to support HTML5Mode
-    res.sendfile('index.html', { root: __dirname + config.path });
+    res.sendFile('index.html', { root: __dirname + config.path });
 });
 
 var port = process.env.PORT || 5000;
