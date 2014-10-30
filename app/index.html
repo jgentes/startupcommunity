@@ -30,9 +30,6 @@
     <!-- bower:css -->
     <link rel="stylesheet" href="../bower_components/ng-grid/ng-grid.css" />
     <link rel="stylesheet" href="../bower_components/select2/select2.css" />
-    <link rel="stylesheet" href="../bower_components/pnotify/pnotify.core.css" />
-    <link rel="stylesheet" href="../bower_components/pnotify/pnotify.buttons.css" />
-    <link rel="stylesheet" href="../bower_components/pnotify/pnotify.history.css" />
     <!-- endbower -->    
     <link rel='stylesheet' type='text/css' href='assets/plugins/icheck/all.css' /> 
     <link rel='stylesheet' type='text/css' href='assets/plugins/form-multiselect/css/multi-select.css' />     
@@ -160,10 +157,10 @@
             }"
   ng-cloak
 >
-
+    
     <header class="navbar navbar-inverse" ng-class="{'navbar-fixed-top': style_fixedHeader, 'navbar-static-top': !style_fixedHeader}" role="banner">
         <a id="leftmenu-trigger" tooltip-placement="right" tooltip="Toggle Sidebar" ng-click="toggleLeftBar()"><i class="fa fa-bars"></i></a>        
-
+  
         <div class="navbar-header pull-left">
             <li id="search">
                  <form 
@@ -194,67 +191,7 @@
               </li>
             </ul>
           </li>
-          <!--
-          <li class="dropdown" ng-controller="MessagesController" ng-show="isAuthenticated"
-            data-bootstro
-            data-bootstro-step="2"
-            data-bootstro-placement='bottom'
-            data-bootstro-content="Click to mark messages as read."
-            >
-            <a href="#" class="dropdown-toggle">
-              <i class="fa fa-envelope"></i><span class="badge badge-danger" ng-if="unseenCount>0" ng-bind="unseenCount"></span>
-            </a>
-            <ul class="dropdown-menu messages arrow">
-              <li class="dd-header">
-                <span>You have {{unseenCount}} new message(s)</span>
-                <span><a href="#" ng-click="setReadAll($event)">Mark all Read</a></span>
-              </li>
-                  <div class="scrollthis" jscrollpane="{autoReinitialise:true, autoReinitialiseDelay: 20}">
-                    <li ng-repeat="item in messages">
-                      <a href="#/extras-chatroom" ng-class="{active: !item.read}">
-                        <button tooltip-placement="top" tooltip-append-to-body="true" tooltip="Mark Read" class="btn-mark-read" ng-if="!item.read" ng-click="setRead(item, $event)"><i class="fa fa-circle"></i></button>
-                        <button tooltip-placement="top" tooltip-append-to-body="true" tooltip="Mark Unread" class="btn-mark-unread" ng-if="item.read" ng-click="setUnread(item, $event)"><i class="fa fa-circle-thin"></i></button>
-                        <span class="time">{{item.time}}</span>
-                        <img ng-src="{{item.thumb}}" alt="avatar" />
-                        <div>
-                          <span class="name">{{item.name}}</span>
-                          <span class="msg">{{item.message}}</span>
-                        </div>
-                      </a>
-                    </li>
-                  </div>
-              <li class="dd-footer"><a href="#">View All Messages</a></li>
-            </ul>
-          </li>
-          <li class="dropdown" ng-controller="NotificationsController" ng-show="isAuthenticated"
-            data-bootstro
-            data-bootstro-step="1"
-            data-bootstro-placement='bottom'
-            data-bootstro-content="Click here to check out the dynamic notifications section. You can mark items as read and see the changes in real time."
-            >
-            <a href="#" class="dropdown-toggle">
-              <i class="fa fa-bell"></i><span class="badge badge-orange" ng-if="unseenCount>0" ng-bind="unseenCount"></span>
-            </a>
-            <ul class="dropdown-menu notifications arrow">
-              <li class="dd-header">
-                <span>You have {{unseenCount}} new notification(s)</span>
-                <span><a href="javascript:;" ng-click="setSeenAll($event)">Mark all Seen</a></span>
-              </li>
-                    <div class="scrollthis" jscrollpane="{autoReinitialise:true, autoReinitialiseDelay: 20}">
-                <li ng-repeat="item in notifications">
-                  <a href="#" class="{{item.class}}" ng-class="{active: !item.seen}">
-                    <button tooltip-placement="top" tooltip-append-to-body="true" tooltip="Mark Seen" class="btn-mark-read" ng-if="!item.seen" ng-click="setSeen(item, $event)"><i class="fa fa-circle"></i></button>
-                    <button tooltip-placement="top" tooltip-append-to-body="true" tooltip="Mark Unseen" class="btn-mark-unread" ng-if="item.seen" ng-click="setUnseen(item, $event)"><i class="fa fa-circle-thin"></i></button>
-                    <span class="time">{{item.time}}</span>
-                    <i class="{{item.iconClasses}}"></i>
-                    <span class="msg">{{item.text}}</span>
-                  </a>
-                </li>
-                    </div>
-              <li class="dd-footer"><a href="#">View All Notifications</a></li>
-            </ul>
-          </li>            
-          -->
+        
     </ul>
     </header>
     
@@ -280,7 +217,8 @@
         </nav>
 
     <div id="page-content" class="clearfix" fit-height>
-        <div id="wrap" ng-view="" class="mainview-animation">        
+      <alert type="{{alert.global.type}}" style="margin: 2px;" close="closeAlert($index)" ng-show="alert.global && !style_fullscreen"><span ng-bind-html="alert.global.msg | safe_html"></alert>
+        <div id="wrap" ng-view="" class="mainview-animation">                
         </div> <!--wrap -->
         <footer role="contentinfo" style="margin: 1%;">
           <div class="clearfix">        
@@ -323,28 +261,8 @@
     <script src="../bower_components/jquery-waypoints/waypoints.js"></script>
     <script src="../bower_components/SHA-1/sha1.js"></script>
     <script src="../bower_components/angulartics/src/angulartics.js"></script>
-    <script src="../bower_components/angulartics/src/angulartics-adobe.js"></script>
-    <script src="../bower_components/angulartics/src/angulartics-chartbeat.js"></script>
-    <script src="../bower_components/angulartics/src/angulartics-flurry.js"></script>
-    <script src="../bower_components/angulartics/src/angulartics-ga-cordova.js"></script>
-    <script src="../bower_components/angulartics/src/angulartics-ga.js"></script>
-    <script src="../bower_components/angulartics/src/angulartics-gtm.js"></script>
-    <script src="../bower_components/angulartics/src/angulartics-kissmetrics.js"></script>
-    <script src="../bower_components/angulartics/src/angulartics-mixpanel.js"></script>
-    <script src="../bower_components/angulartics/src/angulartics-piwik.js"></script>
-    <script src="../bower_components/angulartics/src/angulartics-scroll.js"></script>
     <script src="../bower_components/angulartics/src/angulartics-segmentio.js"></script>
-    <script src="../bower_components/angulartics/src/angulartics-splunk.js"></script>
-    <script src="../bower_components/angulartics/src/angulartics-woopra.js"></script>
-    <script src="../bower_components/angulartics/src/angulartics-marketo.js"></script>
     <script src="../bower_components/satellizer/satellizer.js"></script>
-    <script src="../bower_components/pnotify/pnotify.core.js"></script>
-    <script src="../bower_components/pnotify/pnotify.buttons.js"></script>
-    <script src="../bower_components/pnotify/pnotify.callbacks.js"></script>
-    <script src="../bower_components/pnotify/pnotify.confirm.js"></script>
-    <script src="../bower_components/pnotify/pnotify.desktop.js"></script>
-    <script src="../bower_components/pnotify/pnotify.history.js"></script>
-    <script src="../bower_components/pnotify/pnotify.nonblock.js"></script>
     <script src="../bower_components/moment/moment.js"></script>
     <!-- endbower -->
     <script type='text/javascript' src='assets/plugins/form-multiselect/js/jquery.multi-select.min.js'></script> 
@@ -356,18 +274,10 @@
       <script src="scripts/services.js"></script>
       <script src="scripts/directives.js"></script>
       <script src="scripts/controllers.js"></script>
-      <script src="scripts/form/Components.js"></script>
       <script src="scripts/form/Directives.js"></script>
-      <script src="scripts/form/Validation.js"></script>
-      <script src="scripts/form/Inline.js"></script>
-      <script src="scripts/table/ngGrid.js"></script>
-      <script src="scripts/chart/Inline.js"></script>      
       <script src="scripts/templates/templates.js"></script>
-      <script src="scripts/templates/overrides.js"></script>
-      <script src="scripts/controllers/Dashboard.js"></script>      
+      <script src="scripts/templates/overrides.js"></script> 
       <script src="scripts/controllers/Navigation.js"></script>
-      <script src="scripts/controllers/Notifications.js"></script>
-      <script src="scripts/controllers/Messages.js"></script>
       <script src="scripts/app.js"></script>
       <!-- endbuild -->
 

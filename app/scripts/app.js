@@ -2,17 +2,9 @@
 
 var app = angular.module('StartupCommunity', [
     'ui.bootstrap',
-    'ui.select2',
-    'ngGrid',    
-    'theme.tables-ng-grid',
-    'theme.form-components',    
+    'ui.select2', 
     'theme.form-directives',
-    'theme.form-validation',
-    'theme.form-inline',       
     'theme.navigation-controller',
-    'theme.notifications-controller',
-    'theme.messages-controller',
-    'theme.dashboard',
     'ngCookies',
     'ngResource',
     'ngSanitize',
@@ -41,14 +33,7 @@ app
   .config(['$provide', '$routeProvider', '$locationProvider', function ($provide, $routeProvider, $locationProvider) {
     $routeProvider
       .when('/', {
-        templateUrl: 'views/mentors.html',
-        resolve: {
-          authenticated: ['$location', '$auth', function($location, $auth) {
-            if (!$auth.isAuthenticated()) {
-              return $location.path('/launchform');
-            }
-          }]
-        }
+        redirectTo: '/mentors'
       })
       .when('/mentors', {
         templateUrl: 'views/mentors.html',
