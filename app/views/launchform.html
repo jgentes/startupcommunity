@@ -27,8 +27,8 @@
 								
 							</div>
 						</div>	
-						<div ng-show="alert">
-							<alert type="{{alert.type}}" style="margin: 2px;" close="closeAlert($index)"><span ng-bind-html="alert.msg | safe_html"></alert>
+						<div ng-show="alert.global">
+							<alert type="{{alert.global.type}}" style="margin: 2px;" close="closeAlert($index)"><span ng-bind-html="alert.global.msg | safe_html"></alert>
 						</div>
 					</form>
 				<h5 class="text-center" style="margin-bottom: 5px;">Already have an account? <a href="/login">Log in</a></h5>

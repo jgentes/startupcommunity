@@ -20,7 +20,8 @@ angular
     $scope.style_leftbarShown = $global.get('leftbarShown');
     $scope.style_rightbarCollapsed = $global.get('rightbarCollapsed');
     $scope.style_isSmallScreen = false;
-    $scope.style_layoutHorizontal = $global.get('layoutHorizontal');    
+    $scope.style_layoutHorizontal = $global.get('layoutHorizontal');
+    $scope.alert = { global: undefined };
 
     $scope.hideHeaderBar = function () {
         $global.set('headerBarHidden', true);
@@ -87,18 +88,14 @@ angular
       $auth.logout()
         .then(function() {
           $scope.user = undefined;
-          $scope.alert = undefined;
+          $scope.alert.global = undefined;
           $route.reload();
           });
     };      
   
     $scope.closeAlert = function() {
-      $scope.alert = undefined;
+      $scope.alert.global = undefined;
     };  
-    
-    $scope.$on('alert', function(event, alert) {
-      $scope.alert = alert;
-    });
     
   }])
   
@@ -168,11 +165,11 @@ angular
     $scope.addMentor = function(url, email, userid) {                  
         userService.addMentor(url, email, userid, function(response) {            
           if (response.status !== 200) {          
-            $scope.$emit('alert', { type: 'danger', msg: 'There was a problem: ' + String(response.message) });  
+            $scope.alert.global = { type: 'danger', msg: 'There was a problem: ' + String(response.message) };  
             console.warn(response.message);
           } else {
             $scope.users = response.data;
-            $scope.$emit('alert', { type: 'success', msg: 'Mentor imported! ' + response.data.name + ' is good to go.' });     
+            $scope.alert.global = { type: 'success', msg: 'Mentor imported! ' + response.data.name + ' is good to go.' };     
           }
         });
       };    
@@ -189,22 +186,22 @@ angular
     $scope.login = function() {
       $auth.login({ email: $scope.email, password: $scope.password })
         .then(function(success) {
-          $scope.$emit('alert', undefined);
+          $scope.alert.global = undefined;
           console.log('Logged in!');                    
         })
         .catch(function(response) {
-          $scope.$emit('alert', { type: 'danger', msg: 'There was a problem: ' + String(response.data.message) });          
+          $scope.alert.global = { type: 'danger', msg: 'There was a problem: ' + String(response.data.message) };          
           console.warn(response.data.message);
         });
     };
     $scope.authenticate = function(provider) {
       $auth.authenticate(provider)
         .then(function(success) {
-          $scope.$emit('alert', undefined);
+          $scope.alert.global = undefined;
           console.log('Logged in!');
         })
         .catch(function(response) {
-          $scope.$emit('alert', { type: 'danger', msg: 'There was a problem: ' + String(response.data.message) });     
+          $scope.alert.global = { type: 'danger', msg: 'There was a problem: ' + String(response.data.message) };     
           console.warn(response.data.message);
         });
     };
@@ -222,7 +219,7 @@ angular
         password: $scope.password
       })
       .then(function() {
-        $scope.$emit('alert', { type: 'success', msg: "You're in! Registration was successful - welcome aboard."});        
+        $scope.alert.global = { type: 'success', msg: "You're in! Registration was successful - welcome aboard."};        
         $location.path('/login');
       });
     };
@@ -238,7 +235,7 @@ angular
         displayName: $scope.user.displayName,
         email: $scope.user.email
       }).then(function() {
-        $scope.$emit('alert', { type: 'success', msg: "Great news. Your profile has been updated."});        
+        $scope.alert.global = { type: 'success', msg: "Great news. Your profile has been updated."};        
       });
     };
 
@@ -248,13 +245,13 @@ angular
     $scope.link = function(provider) {
       $auth.link(provider)
         .then(function() {
-          $scope.$emit('alert', { type: 'success', msg: 'Well done. You have successfully linked your ' + provider + ' account'});    
+          $scope.alert.global ={ type: 'success', msg: 'Well done. You have successfully linked your ' + provider + ' account'};    
         })
         .then(function() {
           $scope.getProfile();
         })
         .catch(function(response) {          
-          $scope.$emit('alert', { type: 'danger', msg: 'Sorry, but we ran into this error: ' + response.data.message});                 
+          $scope.alert.global ={ type: 'danger', msg: 'Sorry, but we ran into this error: ' + response.data.message};                 
         });
     };
 
@@ -264,13 +261,13 @@ angular
     $scope.unlink = function(provider) {
       $auth.unlink(provider)
         .then(function() {
-          $scope.$emit('alert', { type: 'success', msg: 'Bam. You have successfully unlinked your ' + provider + ' account'});          
+          $scope.alert.global = { type: 'success', msg: 'Bam. You have successfully unlinked your ' + provider + ' account'};          
         })
         .then(function() {
           $scope.getProfile();
         })
         .catch(function(response) {
-          $scope.$emit('alert', { type: 'danger', msg: 'Aww, shucks. We ran into this error while unlinking your ' + provider + ' account: ' + response.data.message});     
+          $scope.alert.global = { type: 'danger', msg: 'Aww, shucks. We ran into this error while unlinking your ' + provider + ' account: ' + response.data.message};     
         });
     };
 
@@ -306,11 +303,11 @@ angular
   	        headers : { 'Content-Type': 'application/x-www-form-urlencoded' }  // set the headers so angular passing info as form data (not request payload)
   	    }).success(function(data, status, headers) {
           if(data.success){
-            $scope.alert = { type: 'success', msg: 'Thanks, we look forward to helping you build a vibrant startup community in <strong>' + $scope.formData.city.substr(0, $scope.formData.city.length - 4) + '</strong>!  We\'ll be in touch soon.'}; 
+            $scope.alert.global = { type: 'success', msg: 'Thanks, we look forward to helping you build a vibrant startup community in <strong>' + $scope.formData.city.substr(0, $scope.formData.city.length - 4) + '</strong>!  We\'ll be in touch soon.'}; 
             $scope.formData = {};
             
           }else {
-            $scope.alert = {type: 'danger', msg: 'Something went wrong!'}; 
+            $scope.alert.global = {type: 'danger', msg: 'Something went wrong!'}; 
           }
       });
     };
