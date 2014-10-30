@@ -1,5 +1,5 @@
 <div class="verticalcenter" ng-controller="LaunchformController">
-	<a href="#/"><img src="assets/img/logo-big.png" alt="Logo" class="brand" style="margin-bottom: -50px; width: 100%;"/></a>
+	<a href="/"><img src="assets/img/logo-big.png" alt="Logo" class="brand" style="margin-bottom: -50px; width: 100%;"/></a>
 	<h4 class="text-center" style="margin-bottom: 20px; color: #5A5A5A;">Kickstart your city's entrepreneurial ecosystem</h4>
 	<div class="panel panel-primary">
 		<div class="panel-body" style="border-right: 1px solid #e1e3e8; border-bottom: 1px solid #e1e3e8; border-left: 1px solid #e1e3e8;">
@@ -27,7 +27,7 @@
 								
 							</div>
 						</div>	
-						<alert ng-hide="!alert.msg" class="ng-hide" type="success" style="margin-bottom: 0;"><span ng-bind-html="alert.msg | safe_html"></span></alert>
+						<alert type="{{alert.global.type}}" style="margin: 2px;" close="closeAlert($index)" ng-show="alert.global"><span ng-bind-html="alert.global.msg | safe_html"></alert>
 					</form>
 				<h5 class="text-center" style="margin-bottom: 5px;">Already have an account? <a href="/login">Log in</a></h5>
 		</div>

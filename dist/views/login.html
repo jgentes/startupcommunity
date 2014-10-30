@@ -1,5 +1,5 @@
 <div class="verticalcenter" ng-controller="LoginCtrl">
-	<a href="#/"><img src="assets/img/logo-big.png" alt="Logo" class="brand" style="margin-bottom: -50px; width: 100%;"/></a>
+	<a href="/"><img src="assets/img/logo-big.png" alt="Logo" class="brand" style="margin-bottom: -50px; width: 100%;"/></a>
 	<h4 class="text-center" style="margin-bottom: 20px; color: #5A5A5A;">Kickstart your city's entrepreneurial ecosystem</h4>
 	<div class="panel panel-primary">
 		<div class="panel-body">
@@ -21,9 +21,9 @@
 							</div>
 						</div>
 					</div>
-					<alert ng-hide="!alert.msg" class="ng-hide" style="margin-bottom: 0;"><span ng-bind-html="alert.msg | safe_html"></span></alert>
+					<alert type="{{alert.global.type}}" style="margin: 2px;" close="closeAlert($index)" ng-show="alert.global"><span ng-bind-html="alert.global.msg | safe_html"></alert>
 					<div class="panel-footer">
-						<a href="#/" class="pull-left btn btn-link" style="padding-left:0">Forgot password?</a>
+						<a class="pull-left btn btn-link" style="padding-left:0">Forgot password?</a>
 						
 						<div class="pull-right">												
 							<button type="submit" class="btn btn-primary">Log In</button>
