@@ -1,6 +1,6 @@
 angular
   .module('appServices', [])
-
+  
   .factory('profileService', function($http) {
     var profile = {};
         

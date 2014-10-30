@@ -20,8 +20,7 @@ angular
     $scope.style_leftbarShown = $global.get('leftbarShown');
     $scope.style_rightbarCollapsed = $global.get('rightbarCollapsed');
     $scope.style_isSmallScreen = false;
-    $scope.style_layoutHorizontal = $global.get('layoutHorizontal');
-    $scope.alert = { global: undefined };
+    $scope.style_layoutHorizontal = $global.get('layoutHorizontal');    
 
     $scope.hideHeaderBar = function () {
         $global.set('headerBarHidden', true);
@@ -71,8 +70,7 @@ angular
     });
     
     $scope.$on('$routeChangeSuccess', function (e) {      
-      progressLoader.end();
-      
+      progressLoader.end();      
     });
             
     $scope.isAuthenticated = function() {
@@ -89,14 +87,18 @@ angular
       $auth.logout()
         .then(function() {
           $scope.user = undefined;
-          $scope.alert.global = undefined;
+          $scope.alert = undefined;
           $route.reload();
           });
     };      
   
     $scope.closeAlert = function() {
-      $scope.alert.global = undefined;
+      $scope.alert = undefined;
     };  
+    
+    $scope.$on('alert', function(event, alert) {
+      $scope.alert = alert;
+    });
     
   }])
   
@@ -143,11 +145,11 @@ angular
     $scope.putProfile = function(userid, profile) {
       profileService.putProfile(userid, profile, function(response) {
         if (response.status !== 200) {          
-            $scope.alert.global = { type: 'danger', msg: 'There was a problem: ' + String(response.message) }; 
+            $scope.$emit('alert', { type: 'danger', msg: 'There was a problem: ' + String(response.message) }); 
             console.warn(response.message);
           } else {
             $scope.profile = response.data; // may need to tell angular to refresh view
-            $scope.alert.global = { type: 'success', msg: 'Mentor updated! ' + response.data.name + ' is good to go.' };  
+            $scope.$emit('alert', { type: 'success', msg: 'Mentor updated! ' + response.data.name + ' is good to go.' });  
           }
         });
     };  
@@ -155,7 +157,7 @@ angular
     $scope.removeProfile = function(userid) {
       profileService.removeProfile(userid, function(response) {        
         $location.path('/mentors');
-        $scope.alert.global = { type: 'success', msg: "Mentor removed. Hopefully they'll return some day." };             
+        $scope.$emit('alert', { type: 'success', msg: "Mentor removed. Hopefully they'll return some day." });             
       });
     };  
     
@@ -166,11 +168,11 @@ angular
     $scope.addMentor = function(url, email, userid) {                  
         userService.addMentor(url, email, userid, function(response) {            
           if (response.status !== 200) {          
-            $scope.alert.global = { type: 'danger', msg: 'There was a problem: ' + String(response.message) };  
+            $scope.$emit('alert', { type: 'danger', msg: 'There was a problem: ' + String(response.message) });  
             console.warn(response.message);
           } else {
             $scope.users = response.data;
-            $scope.alert.global = { type: 'success', msg: 'Mentor imported! ' + response.data.name + ' is good to go.' };     
+            $scope.$emit('alert', { type: 'success', msg: 'Mentor imported! ' + response.data.name + ' is good to go.' });     
           }
         });
       };    
@@ -187,22 +189,22 @@ angular
     $scope.login = function() {
       $auth.login({ email: $scope.email, password: $scope.password })
         .then(function(success) {
-          $scope.alert.global = undefined;
+          $scope.$emit('alert', undefined);
           console.log('Logged in!');                    
         })
         .catch(function(response) {
-          $scope.alert.global = { type: 'danger', msg: 'There was a problem: ' + String(response.data.message) };          
+          $scope.$emit('alert', { type: 'danger', msg: 'There was a problem: ' + String(response.data.message) });          
           console.warn(response.data.message);
         });
     };
     $scope.authenticate = function(provider) {
       $auth.authenticate(provider)
         .then(function(success) {
-          $scope.alert.global = undefined;
+          $scope.$emit('alert', undefined);
           console.log('Logged in!');
         })
         .catch(function(response) {
-          $scope.alert.global = { type: 'danger', msg: 'There was a problem: ' + String(response.data.message) };     
+          $scope.$emit('alert', { type: 'danger', msg: 'There was a problem: ' + String(response.data.message) });     
           console.warn(response.data.message);
         });
     };
@@ -220,7 +222,7 @@ angular
         password: $scope.password
       })
       .then(function() {
-        $scope.alert.global = { type: 'success', msg: "You're in! Registration was successful - welcome aboard."};        
+        $scope.$emit('alert', { type: 'success', msg: "You're in! Registration was successful - welcome aboard."});        
         $location.path('/login');
       });
     };
@@ -236,7 +238,7 @@ angular
         displayName: $scope.user.displayName,
         email: $scope.user.email
       }).then(function() {
-        $scope.alert.global = { type: 'success', msg: "Great news. Your profile has been updated."};        
+        $scope.$emit('alert', { type: 'success', msg: "Great news. Your profile has been updated."});        
       });
     };
 
@@ -246,13 +248,13 @@ angular
     $scope.link = function(provider) {
       $auth.link(provider)
         .then(function() {
-          $scope.alert.global = { type: 'success', msg: 'Well done. You have successfully linked your ' + provider + ' account'};    
+          $scope.$emit('alert', { type: 'success', msg: 'Well done. You have successfully linked your ' + provider + ' account'});    
         })
         .then(function() {
           $scope.getProfile();
         })
         .catch(function(response) {          
-            $scope.alert.global = { type: 'danger', msg: 'Sorry, but we ran into this error: ' + response.data.message};                 
+          $scope.$emit('alert', { type: 'danger', msg: 'Sorry, but we ran into this error: ' + response.data.message});                 
         });
     };
 
@@ -262,13 +264,13 @@ angular
     $scope.unlink = function(provider) {
       $auth.unlink(provider)
         .then(function() {
-          $scope.alert.global = { type: 'success', msg: 'Bam. You have successfully unlinked your ' + provider + ' account'};          
+          $scope.$emit('alert', { type: 'success', msg: 'Bam. You have successfully unlinked your ' + provider + ' account'});          
         })
         .then(function() {
           $scope.getProfile();
         })
         .catch(function(response) {
-          $scope.alert.global = { type: 'danger', msg: 'Aww, shucks. We ran into this error while unlinking your ' + provider + ' account: ' + response.data.message};     
+          $scope.$emit('alert', { type: 'danger', msg: 'Aww, shucks. We ran into this error while unlinking your ' + provider + ' account: ' + response.data.message});     
         });
     };
 
@@ -304,11 +306,11 @@ angular
   	        headers : { 'Content-Type': 'application/x-www-form-urlencoded' }  // set the headers so angular passing info as form data (not request payload)
   	    }).success(function(data, status, headers) {
           if(data.success){
-            $scope.alert.global = {msg: 'Thanks, we look forward to helping you build a vibrant startup community in <strong>' + $scope.formData.city.substr(0, $scope.formData.city.length - 4) + '</strong>!  We\'ll be in touch soon.'}; 
+            $scope.alert = { type: 'success', msg: 'Thanks, we look forward to helping you build a vibrant startup community in <strong>' + $scope.formData.city.substr(0, $scope.formData.city.length - 4) + '</strong>!  We\'ll be in touch soon.'}; 
             $scope.formData = {};
             
           }else {
-            $scope.alert.global = {type: 'error', msg: 'Something went wrong!'}; 
+            $scope.alert = {type: 'danger', msg: 'Something went wrong!'}; 
           }
       });
     };
@@ -324,40 +326,7 @@ angular
     };
   }])
   
-  .controller('ChatRoomController', ['$scope', '$timeout', function ($scope, $t) {
-    var eliza = new ElizaBot();
-    var avatars = ['potter.png', 'tennant.png', 'johansson.png', 'jackson.png', 'jobs.png'];
-    $scope.messages = [];
-    $scope.userText = '';
-    $scope.elizaTyping = false;
-    $scope.elizaAvatar = 'johansson.png';
-
-    $scope.sendMessage = function (msg) {
-      var im = {
-        class: 'me',
-        avatar: 'jackson.png',
-        text: msg
-      };
-      this.messages.push(im);
-      this.userText = '';
-
-      $t( function () {
-        $scope.elizaAvatar = _.shuffle(avatars).shift();
-        $scope.elizaTyping = true;
-      }, 500);
-
-      $t( function () {
-        var reply = eliza.transform(msg);
-        var im = {
-          class: 'chat-success',
-          avatar: $scope.elizaAvatar,
-          text: reply
-        };
-        $scope.elizaTyping = false;
-        $scope.messages.push(im);
-      }, 1200);
-    };
-  }])
+ 
   .directive('scrollToBottom', function () {
     return {
       restrict: 'A',
@@ -372,5 +341,5 @@ angular
         });
       }
     };
-})
+});
 

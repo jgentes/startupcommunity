@@ -30,9 +30,6 @@
     <!-- bower:css -->
     <link rel="stylesheet" href="../bower_components/ng-grid/ng-grid.css" />
     <link rel="stylesheet" href="../bower_components/select2/select2.css" />
-    <link rel="stylesheet" href="../bower_components/pnotify/pnotify.core.css" />
-    <link rel="stylesheet" href="../bower_components/pnotify/pnotify.buttons.css" />
-    <link rel="stylesheet" href="../bower_components/pnotify/pnotify.history.css" />
     <!-- endbower -->    
     <link rel='stylesheet' type='text/css' href='assets/plugins/icheck/all.css' /> 
     <link rel='stylesheet' type='text/css' href='assets/plugins/form-multiselect/css/multi-select.css' />     
@@ -220,7 +217,9 @@
         </nav>
 
     <div id="page-content" class="clearfix" fit-height>
-      <alert type="{{alert.global.type}}" style="margin: 2px;" close="closeAlert($index)" ng-show="alert.global && !style_fullscreen"><span ng-bind-html="alert.global.msg | safe_html"></alert>
+        <div ng-show="alert && !style_fullscreen">
+          <alert type="{{alert.type}}" style="margin: 2px;" close="closeAlert($index)"><span ng-bind-html="alert.msg | safe_html"></alert>
+        </div>
         <div id="wrap" ng-view="" class="mainview-animation">                
         </div> <!--wrap -->
         <footer role="contentinfo" style="margin: 1%;">
@@ -257,35 +256,14 @@
     <script src="../bower_components/ng-grid/build/ng-grid.js"></script>
     <script src="../bower_components/jquery-autosize/jquery.autosize.js"></script>
     <script src="../bower_components/enquire/dist/enquire.js"></script>
-    <script src="../bower_components/google-code-prettify/src/prettify.js"></script>
     <script src="../bower_components/select2/select2.js"></script>
     <script src="../bower_components/angular-ui-select2/src/select2.js"></script>
     <script src="../bower_components/iCheck/icheck.min.js"></script>
     <script src="../bower_components/jquery-waypoints/waypoints.js"></script>
     <script src="../bower_components/SHA-1/sha1.js"></script>
     <script src="../bower_components/angulartics/src/angulartics.js"></script>
-    <script src="../bower_components/angulartics/src/angulartics-adobe.js"></script>
-    <script src="../bower_components/angulartics/src/angulartics-chartbeat.js"></script>
-    <script src="../bower_components/angulartics/src/angulartics-flurry.js"></script>
-    <script src="../bower_components/angulartics/src/angulartics-ga-cordova.js"></script>
-    <script src="../bower_components/angulartics/src/angulartics-ga.js"></script>
-    <script src="../bower_components/angulartics/src/angulartics-gtm.js"></script>
-    <script src="../bower_components/angulartics/src/angulartics-kissmetrics.js"></script>
-    <script src="../bower_components/angulartics/src/angulartics-mixpanel.js"></script>
-    <script src="../bower_components/angulartics/src/angulartics-piwik.js"></script>
-    <script src="../bower_components/angulartics/src/angulartics-scroll.js"></script>
     <script src="../bower_components/angulartics/src/angulartics-segmentio.js"></script>
-    <script src="../bower_components/angulartics/src/angulartics-splunk.js"></script>
-    <script src="../bower_components/angulartics/src/angulartics-woopra.js"></script>
-    <script src="../bower_components/angulartics/src/angulartics-marketo.js"></script>
     <script src="../bower_components/satellizer/satellizer.js"></script>
-    <script src="../bower_components/pnotify/pnotify.core.js"></script>
-    <script src="../bower_components/pnotify/pnotify.buttons.js"></script>
-    <script src="../bower_components/pnotify/pnotify.callbacks.js"></script>
-    <script src="../bower_components/pnotify/pnotify.confirm.js"></script>
-    <script src="../bower_components/pnotify/pnotify.desktop.js"></script>
-    <script src="../bower_components/pnotify/pnotify.history.js"></script>
-    <script src="../bower_components/pnotify/pnotify.nonblock.js"></script>
     <script src="../bower_components/moment/moment.js"></script>
     <!-- endbower -->
     <script type='text/javascript' src='assets/plugins/form-multiselect/js/jquery.multi-select.min.js'></script> 
