@@ -180,7 +180,7 @@
           </li>
           <li class="dropdown" ng-show="isAuthenticated">
           
-            <a class="dropdown-toggle username"><span class="hidden-xs">{{user.value.name}}</span><img ng-src="{{user.value.avatar || user.value.linkedin.pictureUrl || '/public/blank_avatar.png'}}" alt="{{user.value.name}}" style="margin-right: 11px;"/></a>
+            <a class="dropdown-toggle username"><span class="hidden-xs">{{global.user.value.name}}</span><img ng-src="{{global.user.value.avatar || global.user.value.linkedin.pictureUrl || '/public/blank_avatar.png'}}" alt="{{global.user.value.name}}" style="margin-right: 11px;"/></a>
             <ul class="dropdown-menu userinfo arrow">
               <li class="userlinks">
                 <ul class="dropdown-menu">
@@ -217,8 +217,8 @@
         </nav>
 
     <div id="page-content" class="clearfix" fit-height>
-        <div ng-show="alert.global && !style_fullscreen">
-          <alert type="{{alert.global.type}}" style="margin: 2px;" close="closeAlert($index)"><span ng-bind-html="alert.global.msg | safe_html"></alert>
+        <div ng-show="global.alert && !style_fullscreen">
+          <alert type="{{global.alert.type}}" style="margin: 2px;" close="closeAlert($index)"><span ng-bind-html="global.alert.msg | safe_html"></alert>
         </div>
         <div id="wrap" ng-view="" class="mainview-animation">                
         </div> <!--wrap -->

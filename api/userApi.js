@@ -167,7 +167,7 @@ function handleEnsureAuthenticated(req, res, next) {
       console.log(req.user);
     }
     
-    req.user.email = payload.sub;
+    req.user.email = payload.sub;    
     next();
   }
   catch (e) {
@@ -176,10 +176,6 @@ function handleEnsureAuthenticated(req, res, next) {
     return res.status(401).send({ message: 'Please logout or clear your local browser storage and try again' });
   }  
 }
-
-
-//function handleRootRoute(req, res) { res.sendFile('index.html', { root: __dirname + config.path }); }
-//function handleLoginRoute(req, res){ res.redirect('/login'); }
 
 /*
  |--------------------------------------------------------------------------
@@ -274,7 +270,7 @@ function handleSignup(req, res) {
           .then(function () {
             console.log("USER:");
             console.log(user);
-            res.send({ token: handleCreateToken(req, user) });
+            res.send({ token: handleCreateToken(req, user), user: user });
           })
           .fail(function (err) {
             console.log("POST FAIL:" + err.body);
@@ -305,7 +301,7 @@ function handleLogin(req, res) {
         console.log("FOUND USER");
         var hash = result.body.results[0].value.password;
         if (bcrypt.compareSync(req.body.password, hash)) {
-          res.send({ token: handleCreateToken(req, result.body.results[0].value) });
+          res.send({ token: handleCreateToken(req, result.body.results[0].value), user: result.body.results[0] });
         } else {
           console.log("PASSWORDS DO NOT MATCH");
           return res.status(401).send({ message: 'Wrong email and/or password' });
@@ -509,7 +505,7 @@ function handleLinkedin(req, res) {
                         console.error("Profile update failed:");
                         console.error(err.body);                          
                       });
-                    return res.send({ token: handleCreateToken(req, result.body.results[0].value) });
+                    res.send({ token: handleCreateToken(req, result.body.results[0].value), user: result.body.results[0] });
                   } else {
                     return res.status(400).send({ message: "Sorry, we couldn't find you in our system." });                    
                   }
@@ -545,7 +541,7 @@ function handleLinkedin(req, res) {
                   console.error("Profile update failed:");
                   console.error(err);
                 }); 
-              return res.send({ token: handleCreateToken(req, result.body.results[0].value) }); 
+              res.send({ token: handleCreateToken(req, result.body.results[0].value), user: result.body.results[0] }); 
             } else {
               db.newSearchBuilder()
                 .collection('users')
@@ -563,7 +559,7 @@ function handleLinkedin(req, res) {
                         console.error("Profile update failed:");
                         console.error(err);
                       }); 
-                    return res.send({ token: handleCreateToken(req, result.body.results[0].value) });      
+                    res.send({ token: handleCreateToken(req, result.body.results[0].value), user: result.body.results[0] });     
                     
                   } else {
                     console.log('No existing user found.');

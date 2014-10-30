@@ -1,16 +1,5 @@
 angular
   .module('appControllers', [])
-  .run(function($rootScope, $q, profileService) {
-    
-    $rootScope.deferred = $q.defer(); // the .deferred function is placed in rootscope to be executed by the controller
-      
-    profileService.getProfile()
-        .then(function(response) {     
-          $rootScope.user = response.data;
-          profileService.setProfileScope(response.data);
-          $rootScope.deferred.resolve();
-        });
-  })
   .controller('MainController', ['$scope','$window', '$global', '$route', '$timeout', '$interval', 'progressLoader', '$location', '$auth', 'profileService', function ($scope, $window, $global, $route, $timeout, $interval, progressLoader, $location, $auth, profileService) {
     $scope.style_fixedHeader = $global.get('fixedHeader');
     $scope.style_headerBarHidden = $global.get('headerBarHidden');
@@ -21,7 +10,8 @@ angular
     $scope.style_rightbarCollapsed = $global.get('rightbarCollapsed');
     $scope.style_isSmallScreen = false;
     $scope.style_layoutHorizontal = $global.get('layoutHorizontal');
-    $scope.alert = { global: undefined };
+    $scope.global = { alert: undefined };
+    
 
     $scope.hideHeaderBar = function () {
         $global.set('headerBarHidden', true);
@@ -59,15 +49,7 @@ angular
     
     $scope.$on('$routeChangeStart', function (e) {      
       progressLoader.start();
-      progressLoader.set(50);   
-      if (!$scope.user) {        // Get and set user scope          
-        profileService.getProfile()
-        .then(function(response) {
-          if (response.data.value) {
-            $scope.user = response.data;
-          }
-        });
-      }
+      progressLoader.set(50);         
     });
     
     $scope.$on('$routeChangeSuccess', function (e) {      
@@ -79,7 +61,7 @@ angular
     };  
     
     $scope.editProfile = function() {      
-      profileService.setProfileScope($scope.user);            
+      $scope.global.profile = $scope.global.user;            
       $location.path('/profile');
       $route.reload();
     };
@@ -87,15 +69,27 @@ angular
     $scope.logOut = function() {      
       $auth.logout()
         .then(function() {
-          $scope.user = undefined;
-          $scope.alert.global = undefined;
-          $route.reload();
+          $scope.global.user = undefined;
+          $scope.global.alert = undefined;
+          $location.path('/login');
           });
     };      
   
     $scope.closeAlert = function() {
-      $scope.alert.global = undefined;
-    };  
+      $scope.global.alert = undefined;
+    };
+    
+    if (!$scope.global.user) {        // Get and set user scope          
+        profileService.getProfile()
+        .then(function(response) {
+          if (response.data.value) {
+            $scope.global.user = response.data;
+            if (!$scope.global.profile) {
+              $scope.global.profile = response.data;
+            }
+          }
+        });
+      }
     
   }])
   
@@ -125,28 +119,22 @@ angular
     $scope.getUsers();
     
     $scope.viewUser = function(userindex) {      
-      profileService.setProfileScope($scope.users.results[userindex]);
+      $scope.global.profile = $scope.users.results[userindex];
       $location.path('/profile');
     };
     
   }])
   
   .controller('ProfileController', ['$scope', 'profileService', '$location', function ($scope, profileService, $location) {
-        
-    $scope.deferred.promise.then(function() {    
-      profileService.getProfileScope(function(profile) {        
-        $scope.profile = profile;
-      });
-    });
-        
+
     $scope.putProfile = function(userid, profile) {
       profileService.putProfile(userid, profile, function(response) {
         if (response.status !== 200) {          
-            $scope.$emit('alert', { type: 'danger', msg: 'There was a problem: ' + String(response.message) }); 
+            $scope.global.alert = { type: 'danger', msg: 'There was a problem: ' + String(response.message) }; 
             console.warn(response.message);
           } else {
             $scope.profile = response.data; // may need to tell angular to refresh view
-            $scope.$emit('alert', { type: 'success', msg: 'Mentor updated! ' + response.data.name + ' is good to go.' });  
+            $scope.global.alert = { type: 'success', msg: 'Mentor updated! ' + response.data.name + ' is good to go.' };  
           }
         });
     };  
@@ -154,7 +142,7 @@ angular
     $scope.removeProfile = function(userid) {
       profileService.removeProfile(userid, function(response) {        
         $location.path('/mentors');
-        $scope.$emit('alert', { type: 'success', msg: "Mentor removed. Hopefully they'll return some day." });             
+        $scope.global.alert = { type: 'success', msg: "Mentor removed. Hopefully they'll return some day." };             
       });
     };  
     
@@ -165,11 +153,11 @@ angular
     $scope.addMentor = function(url, email, userid) {                  
         userService.addMentor(url, email, userid, function(response) {            
           if (response.status !== 200) {          
-            $scope.alert.global = { type: 'danger', msg: 'There was a problem: ' + String(response.message) };  
+            $scope.global.alert = { type: 'danger', msg: 'There was a problem: ' + String(response.message) };  
             console.warn(response.message);
           } else {
             $scope.users = response.data;
-            $scope.alert.global = { type: 'success', msg: 'Mentor imported! ' + response.data.name + ' is good to go.' };     
+            $scope.global.alert = { type: 'success', msg: 'Mentor imported! ' + response.data.name + ' is good to go.' };     
           }
         });
       };    
@@ -185,23 +173,26 @@ angular
     };
     $scope.login = function() {
       $auth.login({ email: $scope.email, password: $scope.password })
-        .then(function(success) {
-          $scope.alert.global = undefined;
+        .then(function(response) {
+          $scope.global.user = response.data.user;
+          $scope.global.alert = undefined;
           console.log('Logged in!');                    
         })
         .catch(function(response) {
-          $scope.alert.global = { type: 'danger', msg: 'There was a problem: ' + String(response.data.message) };          
+          $scope.global.alert = { type: 'danger', msg: 'There was a problem: ' + String(response.data.message) };          
           console.warn(response.data.message);
         });
     };
     $scope.authenticate = function(provider) {
       $auth.authenticate(provider)
-        .then(function(success) {
-          $scope.alert.global = undefined;
-          console.log('Logged in!');
+        .then(function(response) {
+          $scope.global.user = response.data.user;
+          $scope.global.alert = undefined;
+          console.log('Logged in!');          
+          $route.reload();          
         })
         .catch(function(response) {
-          $scope.alert.global = { type: 'danger', msg: 'There was a problem: ' + String(response.data.message) };     
+          $scope.global.alert = { type: 'danger', msg: 'There was a problem: ' + String(response.data.message) };     
           console.warn(response.data.message);
         });
     };
@@ -219,7 +210,7 @@ angular
         password: $scope.password
       })
       .then(function() {
-        $scope.alert.global = { type: 'success', msg: "You're in! Registration was successful - welcome aboard."};        
+        $scope.global.alert = { type: 'success', msg: "You're in! Registration was successful - welcome aboard."};        
         $location.path('/login');
       });
     };
@@ -232,10 +223,10 @@ angular
      */
     $scope.updateProfile = function() {
       profileService.updateProfile({
-        displayName: $scope.user.displayName,
-        email: $scope.user.email
+        displayName: $scope.global.user.displayName,
+        email: $scope.global.user.email
       }).then(function() {
-        $scope.alert.global = { type: 'success', msg: "Great news. Your profile has been updated."};        
+        $scope.global.alert = { type: 'success', msg: "Great news. Your profile has been updated."};        
       });
     };
 
@@ -245,13 +236,13 @@ angular
     $scope.link = function(provider) {
       $auth.link(provider)
         .then(function() {
-          $scope.alert.global ={ type: 'success', msg: 'Well done. You have successfully linked your ' + provider + ' account'};    
+          $scope.global.alert ={ type: 'success', msg: 'Well done. You have successfully linked your ' + provider + ' account'};    
         })
         .then(function() {
           $scope.getProfile();
         })
         .catch(function(response) {          
-          $scope.alert.global ={ type: 'danger', msg: 'Sorry, but we ran into this error: ' + response.data.message};                 
+          $scope.global.alert ={ type: 'danger', msg: 'Sorry, but we ran into this error: ' + response.data.message};                 
         });
     };
 
@@ -261,13 +252,13 @@ angular
     $scope.unlink = function(provider) {
       $auth.unlink(provider)
         .then(function() {
-          $scope.alert.global = { type: 'success', msg: 'Bam. You have successfully unlinked your ' + provider + ' account'};          
+          $scope.global.alert = { type: 'success', msg: 'Bam. You have successfully unlinked your ' + provider + ' account'};          
         })
         .then(function() {
           $scope.getProfile();
         })
         .catch(function(response) {
-          $scope.alert.global = { type: 'danger', msg: 'Aww, shucks. We ran into this error while unlinking your ' + provider + ' account: ' + response.data.message};     
+          $scope.global.alert = { type: 'danger', msg: 'Aww, shucks. We ran into this error while unlinking your ' + provider + ' account: ' + response.data.message};     
         });
     };
 
@@ -303,11 +294,11 @@ angular
   	        headers : { 'Content-Type': 'application/x-www-form-urlencoded' }  // set the headers so angular passing info as form data (not request payload)
   	    }).success(function(data, status, headers) {
           if(data.success){
-            $scope.alert.global = { type: 'success', msg: 'Thanks, we look forward to helping you build a vibrant startup community in <strong>' + $scope.formData.city.substr(0, $scope.formData.city.length - 4) + '</strong>!  We\'ll be in touch soon.'}; 
+            $scope.global.alert = { type: 'success', msg: 'Thanks, we look forward to helping you build a vibrant startup community in <strong>' + $scope.formData.city.substr(0, $scope.formData.city.length - 4) + '</strong>!  We\'ll be in touch soon.'}; 
             $scope.formData = {};
             
           }else {
-            $scope.alert.global = {type: 'danger', msg: 'Something went wrong!'}; 
+            $scope.global.alert = {type: 'danger', msg: 'Something went wrong!'}; 
           }
       });
     };

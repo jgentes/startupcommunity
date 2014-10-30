@@ -2,15 +2,8 @@ angular
   .module('appServices', [])
   
   .factory('profileService', function($http) {
-    var profile = {};
         
     return {
-      getProfileScope: function(callback) {        
-        callback(profile);
-      },
-      setProfileScope: function(profiledata) {
-        profile = profiledata;
-      },
       getProfile: function(userid) {        
         return $http.get(userid ? '/api/profile/' + userid : '/api/profile'); // return me if no userid is provided
       },
