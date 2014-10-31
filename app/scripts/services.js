@@ -1,9 +1,23 @@
 angular
   .module('appServices', [])
   
-  .factory('profileService', function($http) {
-        
+  .factory('userService', function($http) {
     return {
+      search: function(query) {
+        return $http.get('/api/bend-or/users?search=' + query);
+      },
+      getUsers: function(alturl) {
+        return $http.get(alturl || '/api/bend-or/users');
+      },
+      putUser: function(userid, profile, callback) {
+        $http.put('/api/user/' + userid + '?profile=' + profile)
+        .success( function(response) {
+          callback(response);
+        })
+        .error( function(response) {
+          callback(response);
+        });
+      },
       getProfile: function(userid) {        
         return $http.get(userid ? '/api/profile/' + userid : '/api/profile'); // return me if no userid is provided
       },
@@ -12,23 +26,6 @@ angular
       },
       removeProfile: function(userid, callback) {
         $http.post('/api/profile/remove/' + userid)
-        .success( function(response) {
-          callback(response);
-        })
-        .error( function(response) {
-          callback(response);
-        });
-      }
-    };
-  })
-  
-  .factory('userService', function($http) {
-    return {
-      getUsers: function(alturl) {
-        return $http.get(alturl || '/api/bend-or/users');
-      },
-      putUser: function(userid, profile, callback) {
-        $http.put('/api/user/' + userid + '?profile=' + profile)
         .success( function(response) {
           callback(response);
         })

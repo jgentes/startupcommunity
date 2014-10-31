@@ -1,6 +1,6 @@
 angular
   .module('appControllers', [])
-  .controller('MainController', ['$scope','$window', '$global', '$route', '$timeout', '$interval', 'progressLoader', '$location', '$auth', 'profileService', function ($scope, $window, $global, $route, $timeout, $interval, progressLoader, $location, $auth, profileService) {
+  .controller('MainController', ['$scope','$window', '$global', '$route', '$timeout', '$interval', 'progressLoader', '$location', '$auth', 'userService', function ($scope, $window, $global, $route, $timeout, $interval, progressLoader, $location, $auth, userService) {
     $scope.style_fixedHeader = $global.get('fixedHeader');
     $scope.style_headerBarHidden = $global.get('headerBarHidden');
     $scope.style_layoutBoxed = $global.get('layoutBoxed');
@@ -60,6 +60,14 @@ angular
       return $auth.isAuthenticated(); //returns true or false based on browser local storage token
     };  
     
+    $scope.search = function(query) {
+      userService.search(query)
+        .then(function(results) {
+          $scope.global.search = results.data;
+          $location.path('/search');
+        });
+    };
+    
     $scope.editProfile = function() {      
       $scope.global.profile = $scope.global.user;            
       $location.path('/profile');
@@ -80,7 +88,7 @@ angular
     };
     
     if (!$scope.global.user) {        // Get and set user scope          
-        profileService.getProfile()
+        userService.getProfile()
         .then(function(response) {
           if (response.data.value) {
             $scope.global.user = response.data;
@@ -101,7 +109,7 @@ angular
     };
   })
         
-  .controller('PeopleController', ['$scope', '$location', 'userService', 'profileService', function ($scope, $location, userService, profileService) {
+  .controller('PeopleController', ['$scope', '$location', 'userService', function ($scope, $location, userService) {
     
     $scope.rotateWidgetClass = function() {
       var arr = ["'themed-background-dark'",'themed-background-dark-night','themed-background-dark-amethyst', 'themed-background-dark-modern', 'themed-background-dark-autumn', 'themed-background-dark-flatie', 'themed-background-dark-spring', 'themed-background-dark-fancy', 'themed-background-dark-fire'];
@@ -118,17 +126,17 @@ angular
     
     $scope.getUsers();
     
-    $scope.viewUser = function(userindex) {      
-      $scope.global.profile = $scope.users.results[userindex];
+    $scope.viewUser = function(userindex) {            
+      $scope.global.profile = ($location.$$path == '/search') ? $scope.global.search.results[userindex] : $scope.users.results[userindex];
       $location.path('/profile');
     };
     
   }])
   
-  .controller('ProfileController', ['$scope', 'profileService', '$location', function ($scope, profileService, $location) {
+  .controller('ProfileController', ['$scope', 'userService', '$location', '$auth', function ($scope, userService, $location, $auth) {
 
     $scope.putProfile = function(userid, profile) {
-      profileService.putProfile(userid, profile, function(response) {
+      userService.putProfile(userid, profile, function(response) {
         if (response.status !== 200) {          
             $scope.global.alert = { type: 'danger', msg: 'There was a problem: ' + String(response.message) }; 
             console.warn(response.message);
@@ -140,11 +148,52 @@ angular
     };  
     
     $scope.removeProfile = function(userid) {
-      profileService.removeProfile(userid, function(response) {        
+      userService.removeProfile(userid, function(response) {        
         $location.path('/mentors');
         $scope.global.alert = { type: 'success', msg: "Mentor removed. Hopefully they'll return some day." };             
       });
     };  
+    
+    $scope.updateProfile = function() {
+      userService.updateProfile({
+        displayName: $scope.global.user.displayName,
+        email: $scope.global.user.email
+      }).then(function() {
+        $scope.global.alert = { type: 'success', msg: "Great news. Your profile has been updated."};        
+      });
+    };
+
+    /**
+     * Link third-party provider.
+     */
+    $scope.link = function(provider) {
+      $auth.link(provider)
+        .then(function() {
+          $scope.global.alert ={ type: 'success', msg: 'Well done. You have successfully linked your ' + provider + ' account'};    
+        })
+        .then(function() {
+          $scope.getProfile();
+        })
+        .catch(function(response) {          
+          $scope.global.alert ={ type: 'danger', msg: 'Sorry, but we ran into this error: ' + response.data.message};                 
+        });
+    };
+
+    /**
+     * Unlink third-party provider.
+     */
+    $scope.unlink = function(provider) {
+      $auth.unlink(provider)
+        .then(function() {
+          $scope.global.alert = { type: 'success', msg: 'Bam. You have successfully unlinked your ' + provider + ' account'};          
+        })
+        .then(function() {
+          $scope.getProfile();
+        })
+        .catch(function(response) {
+          $scope.global.alert = { type: 'danger', msg: 'Aww, shucks. We ran into this error while unlinking your ' + provider + ' account: ' + response.data.message};     
+        });
+    };
     
   }])
   
@@ -155,8 +204,7 @@ angular
           if (response.status !== 200) {          
             $scope.global.alert = { type: 'danger', msg: 'There was a problem: ' + String(response.message) };  
             console.warn(response.message);
-          } else {
-            $scope.users = response.data;
+          } else {            
             $scope.global.alert = { type: 'success', msg: 'Mentor imported! ' + response.data.name + ' is good to go.' };     
           }
         });
@@ -215,56 +263,6 @@ angular
       });
     };
   }])
-  
-  .controller('ProfileCtrl', function($scope, $auth, profileService) {
-   // Clearly need to combine this and ProfileController.. whoops.
-    /**
-     * Update user's profile information.
-     */
-    $scope.updateProfile = function() {
-      profileService.updateProfile({
-        displayName: $scope.global.user.displayName,
-        email: $scope.global.user.email
-      }).then(function() {
-        $scope.global.alert = { type: 'success', msg: "Great news. Your profile has been updated."};        
-      });
-    };
-
-    /**
-     * Link third-party provider.
-     */
-    $scope.link = function(provider) {
-      $auth.link(provider)
-        .then(function() {
-          $scope.global.alert ={ type: 'success', msg: 'Well done. You have successfully linked your ' + provider + ' account'};    
-        })
-        .then(function() {
-          $scope.getProfile();
-        })
-        .catch(function(response) {          
-          $scope.global.alert ={ type: 'danger', msg: 'Sorry, but we ran into this error: ' + response.data.message};                 
-        });
-    };
-
-    /**
-     * Unlink third-party provider.
-     */
-    $scope.unlink = function(provider) {
-      $auth.unlink(provider)
-        .then(function() {
-          $scope.global.alert = { type: 'success', msg: 'Bam. You have successfully unlinked your ' + provider + ' account'};          
-        })
-        .then(function() {
-          $scope.getProfile();
-        })
-        .catch(function(response) {
-          $scope.global.alert = { type: 'danger', msg: 'Aww, shucks. We ran into this error while unlinking your ' + provider + ' account: ' + response.data.message};     
-        });
-    };
-
-    $scope.getProfile();
-
-  })
   
  
   .controller('RegistrationPageController', ['$scope', '$timeout', function ($scope, $timeout) {
