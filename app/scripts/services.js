@@ -4,7 +4,7 @@ angular
   .factory('userService', function($http) {
     return {
       search: function(query) {
-        return $http.get('/api/bend-or/users?search=' + query);
+        return $http.get('/api/bend-or/users' + (query ? ('?search=' + query) : ''));
       },
       getUsers: function(alturl) {
         return $http.get(alturl || '/api/bend-or/users');
