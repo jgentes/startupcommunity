@@ -124,7 +124,7 @@ angular
         });
     };
     
-    $scope.getUsers();
+    $scope.getUsers('/api/bend-or/users?limit=32');
     
     $scope.viewUser = function(userindex) {            
       $scope.global.profile = ($location.$$path == '/search') ? $scope.global.search.results[userindex] : $scope.users.results[userindex];
