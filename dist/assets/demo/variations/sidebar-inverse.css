@@ -4,17 +4,11 @@
 .focusedform {
   background-color: #4f5259;
 }
-#sidebar i {
-  color: #a1a4ab;
-}
-#sidebar > li.active > a,
-#sidebar li.active i,
-#sidebar li.active a:hover i {
+#sidebar > li.active > a {
   background-color: #e75a5a;
 }
 #sidebar > li.active > a,
-body.collapse-leftbar #sidebar > li.active:hover > a,
-body.collapse-leftbar #sidebar > li.active:hover > a i {
+body.collapse-leftbar #sidebar > li.active:hover > a {
   color: #ffffff;
 }
 #sidebar a:hover,
@@ -98,10 +92,10 @@ body.collapse-leftbar #search.keep-open > a:hover {
 #horizontal-navbar .navbar-nav li a i {
   color: #8e9399;
 }
-#horizontal-navbar .navbar-nav li.active a,
-#horizontal-navbar .navbar-nav li.active a i,
-#horizontal-navbar .navbar-nav li.active a:hover,
-#horizontal-navbar .navbar-nav li.active a:hover i {
+#horizontal-navbar .navbar-nav li.active > a,
+#horizontal-navbar .navbar-nav li.active > a i,
+#horizontal-navbar .navbar-nav li.active > a:hover,
+#horizontal-navbar .navbar-nav li.active > a:hover i {
   background-color: #e75a5a;
   color: #ffffff;
 }
