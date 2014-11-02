@@ -61,18 +61,6 @@ angular
       }
     };
   }])
-  .directive('panel', function(){
-    return {
-      restrict: 'E',
-      transclude: true,
-      scope: {
-        panelClass: '@',
-        heading: '@',
-        panelIcon: '@'
-      },
-      templateUrl: '../views/templates/panel.html',
-    };
-  })
   .directive('pulsate', function () {
     return {
       scope: {
@@ -216,43 +204,7 @@ angular
       }
     };
   }])
-  .directive('tileLarge', function() {
-    return {
-      restrict: 'E',
-      scope: {
-        item: '=data'
-      },
-      templateUrl: '../views/templates/tile-large.html',
-      transclude: true
-    };
-  })
-  .directive('tileMini', function() {
-    return {
-      restrict: 'E',
-      scope: {
-        item: '=data'
-      },
-      templateUrl: '../views/templates/tile-mini.html'
-    };
-  })
-  .directive('tile', function() {
-    return {
-      restrict: 'E',
-      scope: {
-        heading: '@',
-        type: '@'
-      },
-      transclude: true,
-      templateUrl: '../views/templates/tile-generic.html',
-      link: function (scope, element, attr) {
-        var heading = element.find('tile-heading');
-        if (heading.length) {
-          heading.appendTo(element.find('.tiles-heading'));
-        }
-      },
-      replace: true
-    };
-  })
+
   .directive('jscrollpane', ['$timeout', function ($timeout) {
     return {
       restrict: 'A',

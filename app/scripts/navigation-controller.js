@@ -1,7 +1,7 @@
 'use strict'
 
 angular
-  .module('theme.navigation-controller', [])
+  .module('navigation-controller', [])
   .controller('NavigationController', ['$scope', '$location', '$timeout', '$global', function ($scope, $location, $timeout, $global) {
     $scope.menu = [
         {
@@ -121,11 +121,6 @@ angular
       $scope.selectedFromNavMenu = false;
     });
 
-    // searchbar
-
-    $scope.goToSearch = function () {
-        $location.path('/extras-search')
-    };
   }])
 
 

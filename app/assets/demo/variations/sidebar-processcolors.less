@@ -1,10 +1,16 @@
 #page-container,#page-leftbar,.focusedform {background-color: @sidebarbackground;}
 
-#sidebar i {color: @sidebariconcolor;}
+// #sidebar i {color: @sidebariconcolor;}
 
 
-#sidebar>li.active>a, #sidebar li.active i, #sidebar li.active a:hover i {background-color: @sidebaractivebg;}
-#sidebar>li.active>a, body.collapse-leftbar #sidebar>li.active:hover>a, body.collapse-leftbar #sidebar>li.active:hover>a i {color: @sidebaractivecolor;}
+// #sidebar>li.active>a, #sidebar>li.active>i, #sidebar>li.active>a:hover>i {background-color: @sidebaractivebg;}
+// #sidebar>li.active>a, body.collapse-leftbar #sidebar>li.active:hover>a, body.collapse-leftbar #sidebar>li.active:hover>a i {color: @sidebaractivecolor;}
+
+// #sidebar li.active>a>i, #sidebar li.active:hover>a>i{color: @sidebaractivecolor;}
+
+#sidebar>li.active>a {background-color: @sidebaractivebg;}
+#sidebar>li.active>a, body.collapse-leftbar #sidebar>li.active:hover>a {color: @sidebaractivecolor;}
+
 
 
 #sidebar a:hover,
@@ -82,7 +88,7 @@ body.collapse-leftbar #search.keep-open > a {
 				color: @horizontalmenucolor;
 				i {color: @horizontaliconcolor;}
 			}
-			&.active a, &.active a i, &.active a:hover, &.active a:hover i {
+			&.active > a, &.active > a i, &.active > a:hover, &.active > a:hover i {
 				background-color: 	@horizontalactivebg;
 				color: 				@horizontalactivecolor;
 			}

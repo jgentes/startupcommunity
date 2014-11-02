@@ -2,37 +2,9 @@
 
 angular.module('theme.template-overrides', [])
   .config(['$provide', function ($provide) {
-    $provide.decorator('tabsetDirective', function($delegate) {
-        $delegate[0].templateUrl = function (element, attr) {
-          if (attr.tabPosition || attr.tabTheme) {
-            if (attr.tabPosition && (attr.tabPosition == "'bottom'" || attr.tabPosition == "bottom"))
-              return 'templates/themed-tabs-bottom.html';
-            return 'templates/themed-tabs.html';
-          } else if (attr.panelTabs && attr.heading !== undefined) {
-            return 'templates/panel-tabs.html';
-          } else if (attr.panelTabs && attr.heading == undefined) {
-            return 'templates/panel-tabs-without-heading.html';
-          } else {
-            return 'templates/themed-tabs.html';
-          }
-        };
-
-        angular.extend($delegate[0].scope, {
-          heading: '@',
-          panelClass: '@',
-          panelIcon: '@',
-          theme: '@tabTheme',
-          position: '@tabPosition'
-        });
-
-        return $delegate;
-    });
+    
     $provide.decorator('progressbarDirective', function ($delegate) {
       $delegate[0].templateUrl = function (element, attr) {
-        if (attr.contextual && attr.contextual == 'true') {
-          return 'templates/contextual-progressbar.html';
-        }
-
         return 'template/progressbar/progressbar.html';
       };
 

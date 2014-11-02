@@ -49,7 +49,8 @@
     "shufflejs": "2.1.1"
   },
   "resolutions": {
-    "jquery": "~1.11.0"
+    "jquery": "~1.11.0",
+    "angulartics": "~0.17.1"
   },
   "devDependencies": {
     "twbs-bootstrap-sass": "~3.1.1",

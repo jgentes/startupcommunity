@@ -3,8 +3,8 @@
 var app = angular.module('StartupCommunity', [
     'ui.bootstrap',
     'ui.select2', 
-    'theme.form-directives',
-    'theme.navigation-controller',
+    'form-directives',
+    'navigation-controller',
     'ngCookies',
     'ngResource',
     'ngSanitize',

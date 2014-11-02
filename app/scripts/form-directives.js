@@ -1,7 +1,7 @@
 'use strict'
 
 angular
-  .module('theme.form-directives', [])
+  .module('form-directives', [])
   .directive('autosize', function () {
     return {
       restrict: 'AC',
