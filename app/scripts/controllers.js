@@ -224,6 +224,7 @@ angular
         .then(function(response) {
           $scope.global.user = response.data.user;
           $scope.global.alert = undefined;
+          $location.path('/');
           console.log('Logged in!');                    
         })
         .catch(function(response) {
@@ -236,7 +237,8 @@ angular
         .then(function(response) {
           $scope.global.user = response.data.user;
           $scope.global.alert = undefined;
-          console.log('Logged in!');          
+          console.log('Logged in!');
+          $location.path('/');
           $route.reload();          
         })
         .catch(function(response) {
