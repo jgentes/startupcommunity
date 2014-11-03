@@ -33,6 +33,28 @@ var UserApi = function() {
  |--------------------------------------------------------------------------
  */
 
+var schema = {
+  linkedin: function(profile, email) {
+    return {
+      name: profile.firstName + ' ' + profile.lastName,
+      email: email || profile.emailAddress,
+      cities: [ "Bend, OR" ],
+      linkedin: profile,
+      avatar: profile.pictureUrl || ''        
+    };
+  },
+  signupform: function(formdata) {
+    var hash = bcrypt.hashSync(formdata.password, 8);
+    return {  
+      "name": formdata.name,
+      "email": formdata.email,
+      "password": hash,    
+      "cities": [ "Bend, OR" ],
+      "avatar": ''
+    };
+  } 
+};
+
 var convert_state = function(name, to) {
     name = name.toUpperCase();
     var states = new Array(                         {'name':'Alabama', 'abbrev':'AL'},          {'name':'Alaska', 'abbrev':'AK'},
@@ -246,15 +268,7 @@ function handleCreateToken(req, user) {
  |--------------------------------------------------------------------------
  */
 function handleSignup(req, res) {
-  var hash = bcrypt.hashSync(req.body.password, 8);
-  var user = {
-    "name": req.body.name,
-    "email": req.body.email,
-    "password": hash,    
-    "cities": { "Oregon": "Bend" },
-    "avatar": ''
-  };
-  //check if email is already assigned in our database
+  var user = schema.signupform(req.body);
   
   db.newSearchBuilder()
     .collection('users')
@@ -377,13 +391,7 @@ var getlinkedinprofile = function(url, email, access_token, profilecallback) {
   function(error, response, body) {
     if (!body.status || body.status === 200) {
       if (body.id !== undefined) {
-        var linkedinuser = {
-          name: body.firstName + ' ' + body.lastName,
-          email: email || body.id,
-          cities: { 'Oregon': 'Bend' },
-          linkedin: body,
-          avatar: body.pictureUrl || ''
-        };
+        var linkedinuser = schema.linkedin(body, email);
         console.log('LINKEDIN USER:');
         console.log(linkedinuser);
         linkedinPull(linkedinuser, profilecallback);            
@@ -463,13 +471,7 @@ function handleLinkedin(req, res) {
       
       profile['access_token'] = params.oauth2_access_token;
       
-      var userprofile = {
-        name: profile.firstName + ' ' + profile.lastName,
-        email: profile.emailAddress,
-        cities: { "Oregon": "Bend" },
-        linkedin: profile,
-        avatar: profile.pictureUrl || ''        
-      };              
+      var userprofile = schema.linkedin(profile);              
         
         // Step 3a. Link user accounts.
       if (req.headers.authorization) { // isloggedin already?

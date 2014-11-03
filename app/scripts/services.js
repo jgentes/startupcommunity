@@ -41,7 +41,8 @@ angular
         .error( function(response) {
           callback(response);
         });
-      }
+      } 
+      
     };
   })    
   

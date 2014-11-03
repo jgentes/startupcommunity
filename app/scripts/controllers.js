@@ -162,6 +162,20 @@ angular
         $scope.global.alert = { type: 'success', msg: "Great news. Your profile has been updated."};        
       });
     };
+    
+    $scope.isLeader = function() {
+      $scope.global.user
+      return 
+    };
+    
+    $scope.setRoles = function() {
+      userService.setRoles({
+        user: something,
+        roles: something
+      }).then(function() {
+        $scope.global.alert = { type: 'success', msg: "Bravo. You've updated the roles for " + user + "."};        
+      });
+    };
 
     /**
      * Link third-party provider.
