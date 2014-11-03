@@ -19,7 +19,7 @@
 	white-space: normal; margin: 10px 0 0 0; padding-left: 0 !important; 
 
 	.badge {font-weight: 600; background-color: rgba(21, 22, 26, 0.6); right: 25px !important;}
-	i {color: @sidebar-icon-color; margin-left: 1px; margin-right: 8px; min-width: 18px; text-align: center; display: inline-block; opacity: .5;}
+	i {margin-left: 1px; margin-right: 8px; min-width: 18px; text-align: center; display: inline-block; opacity: .5;} //color: @sidebar-icon-color;
 	
 	.heading {
 		color: @sidebar-icon-color;
@@ -40,8 +40,8 @@
 	ul {padding-left: 0 !important}
 	ul, ul li a {background: @sidebar-submenu-bg; color: @sidebar-submenu-color; }
 	
-	//Main Menu Styles - Level 1
-	li.active i, li.active a:hover i {color: @sidebar-active-color; opacity: 1;}
+	//Main Menu Styles - Level 1	
+	>li.active>a>i, >li.active>a:hover>i {color: @sidebar-active-color; opacity: 1;}
 	li a {color: @sidebar-menu-color;display: block;padding: 11px 10px;position: relative; font-weight: 400; }
 	a:hover {background-color: @sidebar-hover-bg; color: @sidebar-hover-color; 
 		i {color: @sidebar-hover-color; opacity: 1;}

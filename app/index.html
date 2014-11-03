@@ -25,6 +25,9 @@
     <script type='text/javascript' src='assets/plugins/misc/placeholdr.js'></script>
   <![endif]-->
 
+  <!--[if IE 9]>
+    <script type="text/javascript" src="assets/plugins/misc/media.match.min.js"></script>
+  <![endif]-->
 
     <!-- build:css assets/css/vendor.css -->
     <!-- bower:css -->
@@ -93,48 +96,10 @@
     .navbar.navbar-default.ng-hide {
       display: none;
     }
-    #page-rightbar .jspHorizontalBar {
-      /*display: none !important;*/
-    }
+
     .fc-grid .fc-day-number {
       padding: 5px 6px;
-    }
-    
-    .large-icons-nav #top-nav > li > ul {
-            top: 85px;
-    }
-    #top-nav li > ul {
-      display: none;
-      position: absolute;
-      top: 40px;
-      left: 0;
-      padding-left: 0;
-      min-width: 200px;
-    }
-    @media (max-width: 768px) {
-      #top-nav li > ul {
-        position: inherit !important;
-        top: 0px !important;
-        padding-left: 20px !important;
-      }
-    }
-    #top-nav li > ul li {
-      list-style-type: none;
-    }
-    #top-nav li > ul li ul{
-      left: 100%;
-    }
-    #top-nav li > ul li a {
-      width: 100%;
-      display: inline-block;
-    }
-    #top-nav li > ul li a:hover {
-      text-decoration: none;
-    }
-    #top-nav li:hover > ul {
-      display: block;
-    }
-  
+    } 
 
   </style>
   <script type="text/javascript">
@@ -257,6 +222,7 @@
     <script src="../bower_components/jquery.ui/ui/jquery.ui.widget.js"></script>
     <script src="../bower_components/jquery.ui/ui/jquery.ui.mouse.js"></script>
     <script src="../bower_components/jquery.ui/ui/jquery.ui.draggable.js"></script>
+    <script src="../bower_components/jquery.ui/ui/jquery.ui.resizable.js"></script>
     <script src="../bower_components/ng-grid/build/ng-grid.js"></script>
     <script src="../bower_components/jquery-autosize/jquery.autosize.js"></script>
     <script src="../bower_components/enquire/dist/enquire.js"></script>

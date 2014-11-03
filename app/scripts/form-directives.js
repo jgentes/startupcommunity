@@ -41,16 +41,18 @@ angular
           scope.$apply();
         });
       }
-    }
+    };
   })
-  .directive('multiselect', function () {
+  .directive('multiselect', ['$timeout', function ($t) {
     return {
       restrict: 'A',
       link: function (scope, element, attr) {
-        element.multiSelect();
+        $t( function () {
+          element.multiSelect();
+        });
       }
-    }
-  })
+    };
+  }])
   .directive('wizard', function () {
     return {
       restrict: 'A',
@@ -79,7 +81,7 @@ angular
           //Add Wizard Compability - see docs
           element.find('.stepy-navigator').wrapInner('<div class="pull-right"></div>');
       }
-    }
+    };
   })
   .directive('maskinput', function () {
     return {
@@ -87,7 +89,7 @@ angular
       link: function (scope, element, attr) {
         element.inputmask();
       }
-    }
+    };
   })
   .directive('wysiwygCkeditor', function () {
     return {
