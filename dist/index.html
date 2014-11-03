@@ -10,15 +10,11 @@
   <base href="/">
   <link rel="icon" type="image/png" href="/public/favicon.png">
 
-  <!-- prochtml:remove:dist -->
-  <link href="assets/less/styles.less" rel="stylesheet/less" media="all"> 
-  <!-- /prochtml -->
-
   <link href='https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700' rel='stylesheet' type='text/css'>
     
   <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries. Placeholdr.js enables the placeholder attribute -->
   <!--[if lt IE 9]>
-    <link rel="stylesheet" href="assets/css/ie8.css">
+    <link rel="stylesheet" href="assets/css/668b0601.ie8.css">
     <script type="text/javascript" src="https://html5shim.googlecode.com/svn/trunk/html5.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/respond.js/1.1.0/respond.min.js"></script>
     <script type="text/javascript" src="assets/plugins/charts-flot/excanvas.min.js"></script>
@@ -29,30 +25,10 @@
     <script type="text/javascript" src="assets/plugins/misc/media.match.min.js"></script>
   <![endif]-->
 
-    <!-- build:css assets/css/vendor.css -->
-    <!-- bower:css -->
-    <link rel="stylesheet" href="../bower_components/ng-grid/ng-grid.css" />
-    <link rel="stylesheet" href="../bower_components/select2/select2.css" />
-    <!-- endbower -->    
-    <link rel='stylesheet' type='text/css' href='assets/plugins/icheck/all.css' /> 
-    <link rel='stylesheet' type='text/css' href='assets/plugins/form-multiselect/css/multi-select.css' />     
-    <link rel='stylesheet' type='text/css' href='assets/plugins/progress-skylo/skylo.css' /> 
-    <link rel='stylesheet' type='text/css' href='assets/plugins/jcrop/css/jquery.Jcrop.min.css' />
-    <link rel='stylesheet' type='text/css' href='assets/plugins/form-select2/select2.css' />    
-    <!-- endbuild -->
+    <link rel="stylesheet" href="assets/css/1d5dfcaa.vendor.css"/>
     
 
-    <!-- build:css({.tmp,app}) assets/css/main.css -->
-    <link rel="stylesheet" href="assets/css/proui.css">
-    <link rel="stylesheet" href="assets/css/themes.css">    
-    <link rel="stylesheet" href="assets/css/main.css">
-    <link rel="stylesheet" href="assets/css/styles.css">
-    <!-- endbuild -->
-
-    <!-- prochtml:remove:dist -->
-    <script type="text/javascript">less = {}; less.env = 'development';</script>
-    <script type="text/javascript" src="assets/plugins/misc/less.js"></script>
-    <!-- /prochtml -->
+    <link rel="stylesheet" href="assets/css/d949cf9a.main.css"/>
 
   <style type="text/css">
     [ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak {
@@ -207,65 +183,10 @@
     
     <script type='text/javascript' src='https://maps.google.com/maps/api/js?sensor=true'></script> 
 
-    <!-- build:js scripts/vendor.js -->
-    <!-- bower:js -->
-    <script src="../bower_components/jquery/dist/jquery.js"></script>
-    <script src="../bower_components/underscore/underscore.js"></script>
-    <script src="../bower_components/angular/angular.js"></script>
-    <script src="../bower_components/angular-resource/angular-resource.js"></script>
-    <script src="../bower_components/angular-cookies/angular-cookies.js"></script>
-    <script src="../bower_components/angular-sanitize/angular-sanitize.js"></script>
-    <script src="../bower_components/angular-route/angular-route.js"></script>
-    <script src="../bower_components/angular-animate/angular-animate.js"></script>
-    <script src="../bower_components/angular-bootstrap/ui-bootstrap-tpls.js"></script>
-    <script src="../bower_components/jquery.ui/ui/jquery.ui.core.js"></script>
-    <script src="../bower_components/jquery.ui/ui/jquery.ui.widget.js"></script>
-    <script src="../bower_components/jquery.ui/ui/jquery.ui.mouse.js"></script>
-    <script src="../bower_components/jquery.ui/ui/jquery.ui.draggable.js"></script>
-    <script src="../bower_components/jquery.ui/ui/jquery.ui.resizable.js"></script>
-    <script src="../bower_components/ng-grid/build/ng-grid.js"></script>
-    <script src="../bower_components/jquery-autosize/jquery.autosize.js"></script>
-    <script src="../bower_components/enquire/dist/enquire.js"></script>
-    <script src="../bower_components/select2/select2.js"></script>
-    <script src="../bower_components/angular-ui-select2/src/select2.js"></script>
-    <script src="../bower_components/iCheck/icheck.min.js"></script>
-    <script src="../bower_components/jquery-waypoints/waypoints.js"></script>
-    <script src="../bower_components/SHA-1/sha1.js"></script>
-    <script src="../bower_components/angulartics/src/angulartics.js"></script>
-    <script src="../bower_components/angulartics/src/angulartics-segmentio.js"></script>
-    <script src="../bower_components/angulartics/src/angulartics-chartbeat.js"></script>
-    <script src="../bower_components/angulartics/src/angulartics-cnzz.js"></script>
-    <script src="../bower_components/angulartics/src/angulartics-flurry.js"></script>
-    <script src="../bower_components/angulartics/src/angulartics-ga-cordova.js"></script>
-    <script src="../bower_components/angulartics/src/angulartics-ga.js"></script>
-    <script src="../bower_components/angulartics/src/angulartics-gtm.js"></script>
-    <script src="../bower_components/angulartics/src/angulartics-kissmetrics.js"></script>
-    <script src="../bower_components/angulartics/src/angulartics-mixpanel.js"></script>
-    <script src="../bower_components/angulartics/src/angulartics-piwik.js"></script>
-    <script src="../bower_components/angulartics/src/angulartics-scroll.js"></script>
-    <script src="../bower_components/angulartics/src/angulartics-segmentio.js"></script>
-    <script src="../bower_components/angulartics/src/angulartics-splunk.js"></script>
-    <script src="../bower_components/angulartics/src/angulartics-woopra.js"></script>
-    <script src="../bower_components/angulartics/src/angulartics-marketo.js"></script>
-    <script src="../bower_components/angulartics/src/angulartics-intercom.js"></script>
-    <script src="../bower_components/satellizer/satellizer.js"></script>
-    <script src="../bower_components/moment/moment.js"></script>
-    <!-- endbower -->
-    <script type='text/javascript' src='assets/plugins/form-multiselect/js/jquery.multi-select.min.js'></script> 
-    <script type='text/javascript' src='assets/plugins/progress-skylo/skylo.js'></script> 
-    <!-- endbuild -->
+    <script src="scripts/77195c1b.vendor.js"></script>
     
 
-      <!-- build:js({.tmp,app}) scripts/scripts.js -->
-      <script src="scripts/services.js"></script>
-      <script src="scripts/directives.js"></script>
-      <script src="scripts/controllers.js"></script>
-      <script src="scripts/form-directives.js"></script>
-      <script src="scripts/templates/templates.js"></script>
-      <script src="scripts/templates/overrides.js"></script>
-      <script src="scripts/navigation-controller.js"></script>
-      <script src="scripts/app.js"></script>
-      <!-- endbuild -->
+      <script src="scripts/b66b6aa8.scripts.js"></script>
 
 </body>
 </html>
