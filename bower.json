@@ -16,6 +16,7 @@
     "jquery.ui": "~1.10.4",
     "ng-grid": "2.0.11",
     "jquery-autosize": "1.18.9",
+    "angular-toggle-switch": "0.3.2",
     "enquire": "2.1.1",
     "jquery-validation": "*",
     "jquery.inputmask": "3.0.0",
@@ -35,7 +36,6 @@
     "flot.tooltip": "*",
     "angular-ui-tree": "~2.0.3",
     "jqvmap": "*",
-    "angular-toggle-switch": "~0.3.0",
     "angular-xeditable": "0.1.8",
     "bootbox.js": "https://github.com/makeusabrew/bootbox.git#4.2.0",
     "gmaps": "0.4.13",
@@ -50,7 +50,8 @@
   },
   "resolutions": {
     "jquery": "~1.11.0",
-    "angulartics": "~0.17.1"
+    "angulartics": "~0.17.1",
+    "angular-toggle-switch": "0.3.2"
   },
   "devDependencies": {
     "twbs-bootstrap-sass": "~3.1.1",
@@ -93,6 +94,12 @@
         "angular": ">= 1.1.5",
         "SHA-1": "*"
       }
+    },
+    "angular-toggle-switch": {
+      "main": [
+        "angular-toggle-switch.min.js",
+        "angular-toggle-switch.css"
+      ]
     }
   },
   "oldoverrides": {
@@ -120,12 +127,6 @@
       "main": [
         "js/bootstrap-slider.js",
         "dist/css/bootstrap-slider.min.css"
-      ]
-    },
-    "angular-toggle-switch": {
-      "main": [
-        "angular-toggle-switch.min.js",
-        "angular-toggle-switch.css"
       ]
     },
     "jScrollPane": {

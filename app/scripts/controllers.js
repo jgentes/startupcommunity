@@ -10,27 +10,14 @@ angular
     $scope.style_rightbarCollapsed = $global.get('rightbarCollapsed');
     $scope.style_isSmallScreen = false;
     $scope.style_layoutHorizontal = $global.get('layoutHorizontal');
-    $scope.global = { alert: undefined };
+    $scope.global = { alert: undefined, citystate: 'Bend, OR' };
     
-
-    $scope.hideHeaderBar = function () {
-        $global.set('headerBarHidden', true);
-    };
-
-    $scope.showHeaderBar = function ($event) {
-      $event.stopPropagation();
-      $global.set('headerBarHidden', false);
-    };
 
     $scope.toggleLeftBar = function () {
       if ($scope.style_isSmallScreen) {
         return $global.set('leftbarShown', !$scope.style_leftbarShown);
       }
       $global.set('leftbarCollapsed', !$scope.style_leftbarCollapsed);      
-    };
-
-    $scope.toggleRightBar = function () {
-      $global.set('rightbarCollapsed', !$scope.style_rightbarCollapsed);
     };
 
     $scope.$on('globalStyles:changed', function (event, newVal) {
@@ -53,7 +40,7 @@ angular
     });
     
     $scope.$on('$routeChangeSuccess', function (e) {      
-      progressLoader.end();      
+      progressLoader.end();
     });
             
     $scope.isAuthenticated = function() {
@@ -163,9 +150,20 @@ angular
       });
     };
     
-    $scope.isLeader = function() {
-      $scope.global.user
-      return 
+    $scope.isLeader = function(cluster) {
+      if ($scope.isAdmin) { return true; }
+      var city = $scope.global.user.value.cities[$scope.global.citystate]; //get current city from user profile
+      if (city.clusters[cluster]) {
+        if (city.clusters[cluster].roles.indexOf("Leader") >= 0) {
+          return true;
+        }
+      }
+      return false;
+    };
+    
+    $scope.isAdmin = function() {
+      var city = $scope.global.user.value.cities[$scope.global.citystate];      
+      return city.admin || false;      
     };
     
     $scope.setRoles = function() {

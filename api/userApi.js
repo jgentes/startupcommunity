@@ -38,7 +38,12 @@ var schema = {
     return {
       name: profile.firstName + ' ' + profile.lastName,
       email: email || profile.emailAddress,
-      cities: [ "Bend, OR" ],
+      cities: {
+        "Bend, OR": {
+          admin: false,
+          clusters: {}
+        }
+      },
       linkedin: profile,
       avatar: profile.pictureUrl || ''        
     };
@@ -49,7 +54,9 @@ var schema = {
       "name": formdata.name,
       "email": formdata.email,
       "password": hash,    
-      "cities": [ "Bend, OR" ],
+      "cities": {
+        "Bend, OR": {}
+      },
       "avatar": ''
     };
   } 

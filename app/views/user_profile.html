@@ -5,12 +5,10 @@
                 <div class="options">
 		            <div class="btn-toolbar pull-right">
 		                <div class="btn-group hidden-xs" data-dropdown>
-		                    <button class="btn btn-default dropdown-toggle" data-toggle='dropdown'><span class="hidden-sm"> Edit </span><span class="caret"></span></button>
+		                    <button class="btn btn-default dropdown-toggle" data-toggle='dropdown'><span class="hidden-sm"> Edit Profile </span><span class="caret"></span></button>
 		                    <ul class="dropdown-menu">
-		                        <li><a ng-if="isLeader" ng-click="viewRoles()">Assign Roles</a></li>
-		                    </ul>
-		                    <ul class="dropdown-menu">
-		                        <li><a ng-click="removeProfile(global.profile.path.key)">Delete Profile</a></li>
+		                        <li><a class="dropdown-toggle" ng-if="isLeader()" ng-click="global.assignRoles = !global.assignRoles" data-toggle='dropdown'>Assign Roles</a></li>
+		                        <li><a class="dropdown-toggle" ng-click="removeProfile(global.profile.path.key)">Delete Profile</a></li>
 		                    </ul>
 		                </div>
 		                
@@ -25,16 +23,58 @@
         </div>
 	
 		
-		
 		<div class="container-fluid">	
-            
 			
-		
 			<div class="row">
 				<div class="col-md-12">
 					<div class="panel panel-gray">
 						<div class="panel-body">
-
+							<div class="row" ng-show="global.assignRoles">
+				                <div class="col-md-12">
+				
+				                    <panel panel-class="panel-primary" data-heading="Editable Rows">
+				                       
+				                          <table class="table table-bordered table-condensed">
+				                            <tr style="font-weight: bold">
+				                              <td style="width:20%; padding-left: 15px;"><h4><strong>Cluster</strong></h4></td>
+				                              <td style="width:80%; padding-left: 15px;"><h4><strong>Roles</strong></h4></td>
+				                            </tr>
+				                            <tr ng-repeat="(cluster, roles) in global.user.value.cities[global.citystate].clusters">
+				                              <td style="padding-top: 10px; padding-left: 15px;">				                                
+				                                <span editable-text="cluster.name" e-name="name" e-form="rowform" e-required>
+				                                  <h2>{{ cluster || 'empty' }}</h2>
+				                                </span>
+				                              </td>
+				                              <td style="padding-top: 15px; text-align: center;">				                                
+				                                <div class="col-md-3" ng-if="isAdmin">				        
+							                        <label class="control-label" style="display: block; margin-bottom: -5px;"><h3>Admin</h3></label>
+							                        <toggle-switch data-model="adminStatus" style="margin-bottom: 5px;" class="danger" on-label="Yes" off-label="No"><toggle-switch>
+							
+							                    </div>
+							                    <div class="col-md-3" ng-if="isAdmin">
+							                        <label class="control-label" style="display: block; margin-bottom: -5px;"><h3>Leader</h3></label>
+							                        <toggle-switch data-model="leaderStatus" style="margin-bottom: 5px;" class="danger" on-label="Yes" off-label="No"><toggle-switch>
+							
+							                    </div>
+							                    <div class="col-md-3" ng-if="isLeader">
+							                        <label class="control-label" style="display: block; margin-bottom: -5px;"><h3>Advisor</h3></label>
+							                        <toggle-switch data-model="advisorStatus" style="margin-bottom: 5px;" class="info" on-label="Yes" off-label="No"><toggle-switch>
+							
+							                    </div>
+							                    <div class="col-md-3">
+							                        <label class="control-label" style="display: block; margin-bottom: -5px;"><h3>Member</h3></label>
+							                        <toggle-switch data-model="memberStatus" style="margin-bottom: 5px;" class="success" on-label="Yes" off-label="No"><toggle-switch>
+							
+							                    </div>
+				                              </td>
+				                             
+				                              
+				                            </tr>
+				                          </table>
+				                    </panel>
+				                </div>
+				            </div>
+														
 							<div class="row">
 							
 								<div class="col-md-6">									
@@ -58,8 +98,8 @@
 												<tr>
 													<td>Social</td>
 													<td>
-														<a href="#" class="btn btn-social btn-twitter-alt" target="_blank"><i class="fa fa-twitter"></i></a>
-														<a href="{{global.profile.value.linkedin.publicProfileUrl}}" class="btn btn-social btn-linkedin-alt" target="_blank"><i class="fa fa-linkedin"></i></a>
+														<a href="#" class="btn btn-social btn-twitter" target="_blank"><i class="fa fa-twitter"></i></a>
+														<a href="{{global.profile.value.linkedin.publicProfileUrl}}" class="btn btn-social btn-linkedin" target="_blank"><i class="fa fa-linkedin"></i></a>
 													</td>
 												</tr>
 											</tbody>
@@ -72,9 +112,6 @@
 								</div>
 							</div>
 							<hr>
-							
-
-
 						</div>
 					</div>
 				</div>

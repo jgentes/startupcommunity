@@ -1,8 +1,9 @@
 'use strict';
 
-var app = angular.module('StartupCommunity', [
+var app = angular.module('StartupCommunity', [    
     'ui.bootstrap',
-    'ui.select2', 
+    'ui.select2',     
+    'toggle-switch',
     'form-directives',
     'navigation-controller',
     'ngCookies',
