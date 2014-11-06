@@ -35,35 +35,32 @@
 				                    <panel panel-class="panel-primary" data-heading="Editable Rows">
 				                       
 				                          <table class="table table-bordered table-condensed">
-				                            <tr style="font-weight: bold">
-				                              <td style="width:20%; padding-left: 15px;"><h4><strong>Cluster</strong></h4></td>
-				                              <td style="width:80%; padding-left: 15px;"><h4><strong>Roles</strong></h4></td>
-				                            </tr>
+	
 				                            <tr ng-repeat="(cluster, roles) in global.user.value.cities[global.citystate].clusters">
-				                              <td style="padding-top: 10px; padding-left: 15px;">				                                
+				                              <td style="padding-top: 10px; padding-left: 15px; border: none;">				                                
 				                                <span editable-text="cluster.name" e-name="name" e-form="rowform" e-required>
-				                                  <h2>{{ cluster || 'empty' }}</h2>
+				                                  <h2>{{ cluster || 'empty' }} Cluster</h2>
 				                                </span>
 				                              </td>
-				                              <td style="padding-top: 15px; text-align: center;">				                                
-				                                <div class="col-md-3" ng-if="isAdmin">				        
+				                              <td style="padding-top: 15px; text-align: center; border: none;">				                                
+				                                <div class="col-md-3" ng-class="{ 'switch-on' : isAdmin }" id="AdminToggle">				        
 							                        <label class="control-label" style="display: block; margin-bottom: -5px;"><h3>Admin</h3></label>
-							                        <toggle-switch data-model="adminStatus" style="margin-bottom: 5px;" class="danger" on-label="Yes" off-label="No"><toggle-switch>
+							                        <toggle-switch data-model="adminStatus" ng-class="AdminToggle" style="margin-bottom: 5px;" class="danger" on-label="Yes" off-label="No"><toggle-switch>
 							
 							                    </div>
-							                    <div class="col-md-3" ng-if="isAdmin">
+							                    <div class="col-md-3">
 							                        <label class="control-label" style="display: block; margin-bottom: -5px;"><h3>Leader</h3></label>
-							                        <toggle-switch data-model="leaderStatus" style="margin-bottom: 5px;" class="danger" on-label="Yes" off-label="No"><toggle-switch>
+							                        <toggle-switch data-model="leaderStatus" ng-class="{ 'disabled' : isAdmin, 'switch-on' : isLeader };" style="margin-bottom: 5px;" class="danger" on-label="Yes" off-label="No"><toggle-switch>
 							
 							                    </div>
-							                    <div class="col-md-3" ng-if="isLeader">
+							                    <div class="col-md-3">
 							                        <label class="control-label" style="display: block; margin-bottom: -5px;"><h3>Advisor</h3></label>
-							                        <toggle-switch data-model="advisorStatus" style="margin-bottom: 5px;" class="info" on-label="Yes" off-label="No"><toggle-switch>
+							                        <toggle-switch data-model="advisorStatus" ng-class="{ 'disabled' : !isLeader, 'switch-on' : isAdvisor };" style="margin-bottom: 5px;" class="info" on-label="Yes" off-label="No"><toggle-switch>
 							
 							                    </div>
 							                    <div class="col-md-3">
 							                        <label class="control-label" style="display: block; margin-bottom: -5px;"><h3>Member</h3></label>
-							                        <toggle-switch data-model="memberStatus" style="margin-bottom: 5px;" class="success" on-label="Yes" off-label="No"><toggle-switch>
+							                        <toggle-switch data-model="memberStatus" ng-class="{ 'switch-on' : isMember };" style="margin-bottom: 5px;" class="success" on-label="Yes" off-label="No"><toggle-switch>
 							
 							                    </div>
 				                              </td>
@@ -73,6 +70,7 @@
 				                          </table>
 				                    </panel>
 				                </div>
+				            <hr>
 				            </div>
 														
 							<div class="row">
