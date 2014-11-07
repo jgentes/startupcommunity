@@ -10,7 +10,7 @@ angular
     $scope.style_rightbarCollapsed = $global.get('rightbarCollapsed');
     $scope.style_isSmallScreen = false;
     $scope.style_layoutHorizontal = $global.get('layoutHorizontal');
-    $scope.global = { alert: undefined, citystate: 'Bend, OR' };
+    $scope.global = { alert: undefined, citystate: 'Bend, OR', clusters: {} };
     
 
     $scope.toggleLeftBar = function () {
@@ -85,7 +85,16 @@ angular
           }
         });
       }
-    
+    /*
+    if (!$scope.global.city) {
+      cityService.getCity()
+      .then(function(response) {
+        if (response.data.value) {
+          $scope.global.city = response.data;
+        }
+      });
+    }
+    */
   }])
   
   .filter('words', function() {    
@@ -129,15 +138,15 @@ angular
             console.warn(response.message);
           } else {
             $scope.profile = response.data; // may need to tell angular to refresh view
-            $scope.global.alert = { type: 'success', msg: 'Mentor updated! ' + response.data.name + ' is good to go.' };  
+            $scope.global.alert = { type: 'success', msg: 'Advisor updated! ' + response.data.name + ' is good to go.' };  
           }
         });
     };  
     
     $scope.removeProfile = function(userid) {
       userService.removeProfile(userid, function(response) {        
-        $location.path('/mentors');
-        $scope.global.alert = { type: 'success', msg: "Mentor removed. Hopefully they'll return some day." };             
+        $location.path('/advisors');
+        $scope.global.alert = { type: 'success', msg: "Advisor removed. Hopefully they'll return some day." };             
       });
     };  
     
@@ -148,10 +157,15 @@ angular
       }).then(function() {
         $scope.global.alert = { type: 'success', msg: "Great news. Your profile has been updated."};        
       });
+    };    
+        
+    $scope.isAdmin = function() {
+      var city = $scope.global.user.value.cities[$scope.global.citystate];      
+      return city.admin || false;      
     };
     
-    $scope.isLeader = function(cluster) {
-      if ($scope.isAdmin) { return true; }
+    $scope.isLeader = function(cluster) {      
+      if ($scope.isAdmin()) { return true; }      
       var city = $scope.global.user.value.cities[$scope.global.citystate]; //get current city from user profile
       if (city.clusters[cluster]) {
         if (city.clusters[cluster].roles.indexOf("Leader") >= 0) {
@@ -159,11 +173,6 @@ angular
         }
       }
       return false;
-    };
-    
-    $scope.isAdmin = function() {
-      var city = $scope.global.user.value.cities[$scope.global.citystate];      
-      return city.admin || false;      
     };
     
     $scope.setRoles = function() {
@@ -209,15 +218,15 @@ angular
     
   }])
   
-  .controller('AddMentorController', ['$scope', '$auth', 'userService', function ($scope, $auth, userService) {
+  .controller('AddAdvisorController', ['$scope', '$auth', 'userService', function ($scope, $auth, userService) {
       
-    $scope.addMentor = function(url, email, userid) {                  
-        userService.addMentor(url, email, userid, function(response) {            
+    $scope.addAdvisor = function(url, email, userid) {                  
+        userService.addAdvisor(url, email, userid, function(response) {            
           if (response.status !== 200) {          
             $scope.global.alert = { type: 'danger', msg: 'There was a problem: ' + String(response.message) };  
             console.warn(response.message);
           } else {            
-            $scope.global.alert = { type: 'success', msg: 'Mentor imported! ' + response.data.name + ' is good to go.' };     
+            $scope.global.alert = { type: 'success', msg: 'Advisor imported! ' + response.data.name + ' is good to go.' };     
           }
         });
       };    

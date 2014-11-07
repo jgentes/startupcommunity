@@ -17,13 +17,13 @@ angular
             iconClasses: 'fa fa-flag-o'            
         },
         {
-            label: 'Mentors',
+            label: 'Advisors',
             iconClasses: 'fa fa-graduation-cap',
-            url: '/mentors',
+            url: '/advisors',
             children: [
                 {
-                    label: 'Add Mentors',
-                    url: '/mentors/add'
+                    label: 'Add Advisors',
+                    url: '/advisors/add'
                 }
             ]
         },

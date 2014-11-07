@@ -16,7 +16,7 @@
     "jquery.ui": "~1.10.4",
     "ng-grid": "2.0.11",
     "jquery-autosize": "1.18.9",
-    "angular-toggle-switch": "0.3.2",
+    "angular-toggle-switch": "1.0.0",
     "enquire": "2.1.1",
     "jquery-validation": "*",
     "jquery.inputmask": "3.0.0",
@@ -51,7 +51,7 @@
   "resolutions": {
     "jquery": "~1.11.0",
     "angulartics": "~0.17.1",
-    "angular-toggle-switch": "0.3.2"
+    "angular-toggle-switch": "1.0.0"
   },
   "devDependencies": {
     "twbs-bootstrap-sass": "~3.1.1",

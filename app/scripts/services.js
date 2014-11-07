@@ -33,8 +33,8 @@ angular
           callback(response);
         });
       },
-      addMentor: function(url, email, userid, callback) {        
-        $http.get('/api/addMentor?user={"url":"' + url + '","email":"' + email + '","userid":"' + userid + '"}')
+      addAdvisor: function(url, email, userid, callback) {        
+        $http.get('/api/addAdvisor?user={"url":"' + url + '","email":"' + email + '","userid":"' + userid + '"}')
         .success( function(response) {
           callback(response);
         })
