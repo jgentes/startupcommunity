@@ -74,7 +74,7 @@ angular
       $scope.global.alert = undefined;
     };
     
-    if (!$scope.global.user) {        // Get and set user scope          
+    if (!$scope.global.user) {        // Get and set user and city and city scope          
         userService.getProfile()
         .then(function(response) {
           if (response.data.value) {
@@ -82,6 +82,7 @@ angular
             if (!$scope.global.profile) {
               $scope.global.profile = response.data;
             }
+            $scope.global.user.clusters = $scope.global.user.value.cities[$scope.global.citystate].clusters;
           }
         });
       }
@@ -158,9 +159,11 @@ angular
         $scope.global.alert = { type: 'success', msg: "Great news. Your profile has been updated."};        
       });
     };    
-        
+    /*
     $scope.isAdmin = function() {
+      console.log('isadmin ran!');      
       var city = $scope.global.user.value.cities[$scope.global.citystate];      
+      $scope.isAdminCheck = city.admin || false;
       return city.admin || false;      
     };
     
@@ -173,8 +176,10 @@ angular
         }
       }
       return false;
-    };
+    };    
     
+    $scope.isAdmin();
+    */
     $scope.setRoles = function() {
       userService.setRoles({
         user: something,
