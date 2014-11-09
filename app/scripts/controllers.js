@@ -1,6 +1,6 @@
 angular
   .module('appControllers', [])
-  .controller('MainController', ['$scope','$window', '$global', '$route', '$timeout', '$interval', 'progressLoader', '$location', '$auth', 'userService', function ($scope, $window, $global, $route, $timeout, $interval, progressLoader, $location, $auth, userService) {
+  .controller('MainController', ['$scope','$window', '$global', '$route', '$timeout', '$interval', 'progressLoader', '$location', '$auth', 'userService', 'cityService', function ($scope, $window, $global, $route, $timeout, $interval, progressLoader, $location, $auth, userService, cityService) {
     $scope.style_fixedHeader = $global.get('fixedHeader');
     $scope.style_headerBarHidden = $global.get('headerBarHidden');
     $scope.style_layoutBoxed = $global.get('layoutBoxed');
@@ -10,7 +10,7 @@ angular
     $scope.style_rightbarCollapsed = $global.get('rightbarCollapsed');
     $scope.style_isSmallScreen = false;
     $scope.style_layoutHorizontal = $global.get('layoutHorizontal');
-    $scope.global = { alert: undefined, citystate: 'Bend, OR', clusters: {} };
+    $scope.global = { alert: undefined };
     
     $scope.toggleLeftBar = function () {
       if ($scope.style_isSmallScreen) {
@@ -47,11 +47,11 @@ angular
     };  
     
     $scope.search = function(query) {
-      userService.search(query)
-        .then(function(results) {
-          $scope.global.search = results.data;
-          $location.path('/search');
-        });
+      userService.search($scope.global.city.path.key, query)
+      .then(function(results) {
+        $scope.global.search = results.data;
+        $location.path('/search');
+      });
     };
     
     $scope.editProfile = function() {            
@@ -62,18 +62,18 @@ angular
     
     $scope.logOut = function() {      
       $auth.logout()
-        .then(function() {
-          $scope.global.user = undefined;
-          $scope.global.alert = undefined;
-          $location.path('/login');
-          });
+      .then(function() {
+        $scope.global.user = undefined;
+        $scope.global.alert = undefined;
+        $location.path('/login');
+        });
     };      
   
     $scope.closeAlert = function() {
       $scope.global.alert = undefined;
     };
     
-    // Get and set user and city and city scope           
+    // Get and set user and city data         
     userService.getProfile()
     .then(function(response) {
       if (response.data) {
@@ -81,20 +81,18 @@ angular
         if (!$scope.global.profile) {
           $scope.global.profile = response.data;
         }
-        $scope.global.user.value.clusters = $scope.global.user.value.cities[$scope.global.citystate].clusters;
+        for (var citystate in $scope.global.user.value.cities) break; // grab first city
+        var city = (citystate.substr(0, citystate.length - 4) + '-' + citystate.substr(citystate.length - 2, 2)).toLowerCase();
+        cityService.getCity(city)
+        .then(function(response) {
+          if (response.data) {            
+            $scope.global.city = response.data;  
+            $scope.$broadcast('sessionReady', true);
+          }
+        });        
       }
     });
-    
-    /*
-    if (!$scope.global.city) {
-      cityService.getCity()
-      .then(function(response) {
-        if (response.data.value) {
-          $scope.global.city = response.data;
-        }
-      });
-    }
-    */
+      
   }])
   
   .filter('words', function() {    
@@ -114,20 +112,25 @@ angular
     };
     
     $scope.getUsers = function(alturl) {
-      userService.getUsers(alturl)
-        .then(function(response) {          
-          $scope.users = response.data;
-        });
+      userService.getUsers($scope.global.city.path.key, alturl)
+      .then(function(response) {          
+        $scope.users = response.data;
+      });
     };
     
-    $scope.getUsers('/api/bend-or/users?limit=32');
+    $scope.$on('sessionReady', function(event, status) {
+      console.log('event emitted!: ' + status);
+      if (status) {
+        $scope.getUsers('/api/' + $scope.global.city.path.key + '/users?limit=32');
+      }
+    });
     
     $scope.viewUser = function(userindex) {            
       $scope.global.profile = ($location.$$path == '/search') ? $scope.global.search.results[userindex] : $scope.users.results[userindex];
       $location.path('/profile');
     };
     
-  }])
+  }])    
   
   .controller('ProfileController', ['$scope', 'userService', '$location', '$auth', function ($scope, userService, $location, $auth) {
 

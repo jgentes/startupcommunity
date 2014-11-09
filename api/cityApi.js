@@ -7,43 +7,29 @@ var CityApi = function() {
   this.getCity = handleGetCity;
 };
   
-
-/*
- |--------------------------------------------------------------------------
- | Internal functions
- |--------------------------------------------------------------------------
- */
-
-var schema = {
-  city: function() {
-    return {
-      "citystate": "Bend, OR",
-    	"uri": "bend",
-    	"clusters": [
-    		"Tech"
-    	]
-    };
-  }
-};
-
 function handleGetCity(req, res) {
-  db.newSearchBuilder()
-    .collection('cities')
-    .limit(1)
-    .query('value.citystate: "' + req.param.citystate + '"')
-    .then(function(city){
-      if (city.body.results.length > 0) {
-        console.log('Found city: ' + city.body.results[0].value.citystate);
-        res.send(city.body.results[0]);
-      } else {
-        console.log('City not found.');
-        return res.status(200).send({ message: 'City not found.' });
-      }
-    })
-    .fail(function(err){
-      console.log("SEARCH FAIL:" + err);
-      res.status(401).send('Something went wrong: ' + err);
-    }); 
+  var city = req.params.city;
+  db.get('cities', city)
+  .then(function(response){    
+    if (response.body.code !== "items_not_found") {
+      console.log('Found city: ' + response.body.citystate);
+      var newresponse = {
+        "path": {
+          "key": city
+        },
+        "value": response.body
+      };
+      res.status(200).send(newresponse);
+    } else {
+      console.warn('City not found!');
+      res.status(401).send({ message: 'City not found.' });
+    }
+  })
+  .fail(function(err){
+    console.warn("SEARCH FAIL:");
+    console.warn(err);
+    res.status(401).send('Something went wrong: ' + err);
+  }); 
 }
 
 module.exports = CityApi;

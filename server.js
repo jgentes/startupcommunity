@@ -4,7 +4,8 @@ var express = require('express'),
     bodyParser = require('body-parser'),
     methodOverride = require('method-override'),
     logger = require('morgan'),
-    UserApi = require('./api/userApi.js');    
+    UserApi = require('./api/userApi.js'),
+    CityApi = require('./api/cityApi.js');
 
 var app = express();
 
@@ -37,7 +38,8 @@ if (process.env.NODE_ENV !== "production") {
 } 
 
 var routes = {
-	userApi: new UserApi()
+	userApi: new UserApi(),
+	cityApi: new CityApi()
 };
 
 api.setup(app,routes);

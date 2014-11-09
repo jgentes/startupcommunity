@@ -24,6 +24,7 @@ var UserApi = function() {
   this.unlink = handleUnlink;
   this.signup = handleSignup;
   this.login = handleLogin;
+  this.maintenance = handleMaintenance;
 };
   
 
@@ -62,86 +63,14 @@ var schema = {
   } 
 };
 
-var convert_state = function(name, to) {
-    name = name.toUpperCase();
-    var states = new Array(                         {'name':'Alabama', 'abbrev':'AL'},          {'name':'Alaska', 'abbrev':'AK'},
-        {'name':'Arizona', 'abbrev':'AZ'},          {'name':'Arkansas', 'abbrev':'AR'},         {'name':'California', 'abbrev':'CA'},
-        {'name':'Colorado', 'abbrev':'CO'},         {'name':'Connecticut', 'abbrev':'CT'},      {'name':'Delaware', 'abbrev':'DE'},
-        {'name':'Florida', 'abbrev':'FL'},          {'name':'Georgia', 'abbrev':'GA'},          {'name':'Hawaii', 'abbrev':'HI'},
-        {'name':'Idaho', 'abbrev':'ID'},            {'name':'Illinois', 'abbrev':'IL'},         {'name':'Indiana', 'abbrev':'IN'},
-        {'name':'Iowa', 'abbrev':'IA'},             {'name':'Kansas', 'abbrev':'KS'},           {'name':'Kentucky', 'abbrev':'KY'},
-        {'name':'Louisiana', 'abbrev':'LA'},        {'name':'Maine', 'abbrev':'ME'},            {'name':'Maryland', 'abbrev':'MD'},
-        {'name':'Massachusetts', 'abbrev':'MA'},    {'name':'Michigan', 'abbrev':'MI'},         {'name':'Minnesota', 'abbrev':'MN'},
-        {'name':'Mississippi', 'abbrev':'MS'},      {'name':'Missouri', 'abbrev':'MO'},         {'name':'Montana', 'abbrev':'MT'},
-        {'name':'Nebraska', 'abbrev':'NE'},         {'name':'Nevada', 'abbrev':'NV'},           {'name':'New Hampshire', 'abbrev':'NH'},
-        {'name':'New Jersey', 'abbrev':'NJ'},       {'name':'New Mexico', 'abbrev':'NM'},       {'name':'New York', 'abbrev':'NY'},
-        {'name':'North Carolina', 'abbrev':'NC'},   {'name':'North Dakota', 'abbrev':'ND'},     {'name':'Ohio', 'abbrev':'OH'},
-        {'name':'Oklahoma', 'abbrev':'OK'},         {'name':'Oregon', 'abbrev':'OR'},           {'name':'Pennsylvania', 'abbrev':'PA'},
-        {'name':'Rhode Island', 'abbrev':'RI'},     {'name':'South Carolina', 'abbrev':'SC'},   {'name':'South Dakota', 'abbrev':'SD'},
-        {'name':'Tennessee', 'abbrev':'TN'},        {'name':'Texas', 'abbrev':'TX'},            {'name':'Utah', 'abbrev':'UT'},
-        {'name':'Vermont', 'abbrev':'VT'},          {'name':'Virginia', 'abbrev':'VA'},         {'name':'Washington', 'abbrev':'WA'},
-        {'name':'West Virginia', 'abbrev':'WV'},    {'name':'Wisconsin', 'abbrev':'WI'},        {'name':'Wyoming', 'abbrev':'WY'}
-        );
-    var returnthis = false;
-    for (var i=0; i < states.length; i++) {       
-        if (to == 'name') {
-            if (states[i].abbrev == name){
-                returnthis = states[i].name;
-                break;
-            }
-        } else if (to == 'abbrev') {
-            if (states[i].name.toUpperCase() == name){
-                returnthis = states[i].abbrev;
-                break;
-            }
-        }
-    }
-    return returnthis;
-};
 
-var showallusers = function(city, state, limit, offset){  
+var searchincity = function(city, citystate, limit, offset, query){  
   var deferred = Q.defer();
-  var newstate = convert_state(state, 'name');
   db.newSearchBuilder()
   .collection('users')
   .limit(Number(limit) || 100)
   .offset(Number(offset) || 0)
-  .query('value.cities.' + newstate + ': "' + city + '"')
-  .then(function(result){    
-    for (var i=0; i < result.body.results.length; i++) {
-      delete result.body.results[i].path.collection;
-      delete result.body.results[i].path.ref;
-      delete result.body.results[i].value.email;
-      delete result.body.results[i].value.password;
-      delete result.body.results[i].value.linkedin.emailAddress;
-      delete result.body.results[i].value.linkedin.access_token;
-    }
-    if (result.body.next) {      
-      var getnext = url.parse(result.body.next, true);      
-      result.body.next = '/api/' + city + '-' + state + '/users?limit=' + getnext.query.limit + '&offset=' + getnext.query.offset;      
-    }
-    if (result.body.prev) {
-      var getprev = url.parse(result.body.prev, true);
-      result.body.prev = '/api/' + city + '-' + state + '/users?limit=' + getprev.query.limit + '&offset=' + getprev.query.offset;
-    }
-    deferred.resolve(result.body);
-  })
-  .fail(function(err){
-    deferred.reject(new Error(err.body));
-  });
- 
-  return deferred.promise;
-  
-};
-
-var searchincity = function(city, state, query, limit, offset){  
-  var deferred = Q.defer();
-  var newstate = convert_state(state, 'name');
-  db.newSearchBuilder()
-  .collection('users')
-  .limit(Number(limit) || 100)
-  .offset(Number(offset) || 0)
-  .query('value.cities.' + newstate + ': "' + city + '" AND ' + query)
+  .query('value.cities: "' + citystate + (query ? '" AND ' + query : '"'))
   .then(function(result){
     for (var i=0; i < result.body.results.length; i++) {
       delete result.body.results[i].path.collection;
@@ -153,11 +82,11 @@ var searchincity = function(city, state, query, limit, offset){
     }
     if (result.body.next) {      
       var getnext = url.parse(result.body.next, true);      
-      result.body.next = '/api/' + city + '-' + state + '/users?limit=' + getnext.query.limit + '&search=' + query + '&offset=' + getnext.query.offset;      
+      result.body.next = '/api/' + city + '/users?limit=' + getnext.query.limit + '&search=' + query + '&offset=' + getnext.query.offset;      
     }
     if (result.body.prev) {
       var getprev = url.parse(result.body.prev, true);
-      result.body.prev = '/api/' + city + '-' + state + '/users?limit=' + getprev.query.limit + '&search=' + query + '&offset=' + getprev.query.offset;
+      result.body.prev = '/api/' + city + '/users?limit=' + getprev.query.limit + '&search=' + query + '&offset=' + getprev.query.offset;
     }
     deferred.resolve(result.body);
   })
@@ -227,32 +156,19 @@ function handleCreateToken(req, user) {
  */
 
 function handleUserSearch(req, res){  
-  var citystate = req.params.citystate,
+  var city = req.params.city,
       query = req.query.search,
       limit = req.query.limit,
       offset = req.query.offset,
-      city = citystate.substr(0, citystate.length - 3),
-      state = citystate.substr(citystate.length - 2, 2);
-      
-  console.log("City, State, Search: " + city + ', ' + state.toUpperCase() + ', ' + query);
-
-  if (query !== undefined){
-    searchincity(city, state, query, limit, offset)
+      citystate = city.substr(0, city.length - 3) + ', ' + city.substr(city.length - 2, 2);
+  
+    searchincity(city, citystate, limit, offset, query)
     .then(function(userlist){
       res.send(userlist);
     })
     .fail(function(err){
       res.send({ message: err});
     });
-  } else {
-    showallusers(city, state, limit, offset)
-    .then(function(userlist){
-      res.send(userlist);
-    })
-    .fail(function(err){
-      res.send({ message: err});
-    });
-  }
 }
 
 function handleSubscribeUser(req, res){  
@@ -654,14 +570,14 @@ function handleGetProfile(req, res) {
       };
       res.status(200).send(response);
     } else {
-      console.log('User not found.');
+      console.warn('User not found.');
       return res.status(200).send({ message: 'User not found.' });
     }
   })
   
   .fail(function(err){
-    console.log("SEARCH FAIL:");
-    console.log(err);
+    console.warn("SEARCH FAIL:");
+    console.warn(err);
     res.status(401).send({ message: 'Something went wrong: ' + err});
   }); 
 
@@ -780,5 +696,23 @@ function handleUnlink(req, res) {
     });         
 }
 
+/*
+ |--------------------------------------------------------------------------
+ | Maintenance Tasks
+ |--------------------------------------------------------------------------
+ */
+
+
+function handleMaintenance(req, res) {
+  var enabled = true;
+  
+  if (enabled) {
+    searchincity("bend-or", "Bend, OR")
+    .then( function(data) {
+      console.log(data);
+    });
+  }
+  
+}
 
 module.exports = UserApi;
