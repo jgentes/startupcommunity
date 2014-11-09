@@ -41,10 +41,18 @@ angular
         .error( function(response) {
           callback(response);
         });
-      } 
-      
+      },
+      setRole: function(userkey, citystate, cluster, role, status, callback) {
+        $http.put('/api/profile/role?userkey=' + userkey + '&citystate=' + citystate + '&cluster=' + cluster + '&role=' + role + '&status=' + status)
+        .success( function(data, status) {
+          callback(data, status);
+        })
+        .error( function(data, status) {
+          callback(data, status);
+        });
+      }
     };
-  })    
+  }) 
   
   .service('geocoder',function() {
     this.geocode = function(georequest, outerCallback) {

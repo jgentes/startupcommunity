@@ -12,7 +12,6 @@ angular
     $scope.style_layoutHorizontal = $global.get('layoutHorizontal');
     $scope.global = { alert: undefined, citystate: 'Bend, OR', clusters: {} };
     
-
     $scope.toggleLeftBar = function () {
       if ($scope.style_isSmallScreen) {
         return $global.set('leftbarShown', !$scope.style_leftbarShown);
@@ -55,7 +54,7 @@ angular
         });
     };
     
-    $scope.editProfile = function() {      
+    $scope.editProfile = function() {            
       $scope.global.profile = $scope.global.user;            
       $location.path('/profile');
       $route.reload();
@@ -74,18 +73,18 @@ angular
       $scope.global.alert = undefined;
     };
     
-    if (!$scope.global.user) {        // Get and set user and city and city scope          
-        userService.getProfile()
-        .then(function(response) {
-          if (response.data.value) {
-            $scope.global.user = response.data;
-            if (!$scope.global.profile) {
-              $scope.global.profile = response.data;
-            }
-            $scope.global.user.clusters = $scope.global.user.value.cities[$scope.global.citystate].clusters;
-          }
-        });
+    // Get and set user and city and city scope           
+    userService.getProfile()
+    .then(function(response) {
+      if (response.data) {
+        $scope.global.user = response.data;
+        if (!$scope.global.profile) {
+          $scope.global.profile = response.data;
+        }
+        $scope.global.user.value.clusters = $scope.global.user.value.cities[$scope.global.citystate].clusters;
       }
+    });
+    
     /*
     if (!$scope.global.city) {
       cityService.getCity()
@@ -153,39 +152,33 @@ angular
     
     $scope.updateProfile = function() {
       userService.updateProfile({
-        displayName: $scope.global.user.displayName,
-        email: $scope.global.user.email
+        displayName: $scope.global.user.value.displayName,
+        email: $scope.global.user.value.email
       }).then(function() {
         $scope.global.alert = { type: 'success', msg: "Great news. Your profile has been updated."};        
       });
-    };    
-    /*
-    $scope.isAdmin = function() {
-      console.log('isadmin ran!');      
-      var city = $scope.global.user.value.cities[$scope.global.citystate];      
-      $scope.isAdminCheck = city.admin || false;
-      return city.admin || false;      
-    };
+    };      
     
-    $scope.isLeader = function(cluster) {      
-      if ($scope.isAdmin()) { return true; }      
-      var city = $scope.global.user.value.cities[$scope.global.citystate]; //get current city from user profile
-      if (city.clusters[cluster]) {
-        if (city.clusters[cluster].roles.indexOf("Leader") >= 0) {
-          return true;
-        }
-      }
-      return false;
-    };    
-    
-    $scope.isAdmin();
-    */
-    $scope.setRoles = function() {
-      userService.setRoles({
-        user: something,
-        roles: something
-      }).then(function() {
-        $scope.global.alert = { type: 'success', msg: "Bravo. You've updated the roles for " + user + "."};        
+    $scope.setRole = function(cluster, role, status) {
+      userService.setRole($scope.global.profile.path.key, $scope.global.citystate, cluster, role, status, function(response, status) {        
+        if (status !== 201) {          
+            $scope.global.alert = { type: 'danger', msg: 'There was a problem: ' + String(response.message) }; 
+            console.warn(response.message);
+          } else {
+            
+            /*
+            var thiscluster = $scope.global.user.value.profile.cities[$scope.global.citystate].clusters[cluster];
+            if (status === true) {
+              if (thiscluster.roles.indexOf(role) < 0) {
+                thiscluster.roles.push(role);
+              } // else they already have the role, no action needed
+            } else {
+              if (thiscluster.roles.indexOf(role) >= 0) {
+                thiscluster.roles.splice(role);
+              } // else they do not have the role, no action needed
+            }
+            */
+          }
       });
     };
 

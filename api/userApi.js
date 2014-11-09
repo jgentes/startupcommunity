@@ -9,7 +9,7 @@ var bcrypt = require('bcryptjs'),
     mcapi = require('mailchimp-api/mailchimp'),
     mc = new mcapi.Mailchimp(config.mailchimp);
 
-//require('request-debug')(request); // Very useful for debugging oauth and api req/res
+require('request-debug')(request); // Very useful for debugging oauth and api req/res
 
 var UserApi = function() {
   this.ensureAuthenticated = handleEnsureAuthenticated;
@@ -19,7 +19,7 @@ var UserApi = function() {
   this.addMentor = handleAddMentor;
   this.linkedin = handleLinkedin;
   this.getProfile = handleGetProfile;
-  this.putProfile = handlePutProfile;
+  this.setRole = handleSetRole;
   this.removeProfile = handleRemoveProfile;
   this.unlink = handleUnlink;
   this.signup = handleSignup;
@@ -183,27 +183,41 @@ function handleEnsureAuthenticated(req, res, next) {
   try {
     var token = req.headers.authorization.split(' ')[1];
     var payload = jwt.decode(token, config.token_secret);
-    
+
     if (payload.exp <= Date.now()) {
       console.log('Token has expired');
       return res.status(401).send({ message: 'Token has expired' });
     }
-  
-    if (req.user === undefined) {
-      req.user = {};
+    
+    if (req.user === undefined) {      
+      req.user = {}; //required step to pursue auth through refresh  
     } else {
       console.log('Existing user in request:');
-      console.log(req.user);
     }
     
-    req.user.email = payload.sub;    
+    req.user = payload.sub;    
     next();
   }
   catch (e) {
-    console.log('JWT failure: ');
+    console.log('EnsureAuth failure: ');
     console.log(e);
     return res.status(401).send({ message: 'Please logout or clear your local browser storage and try again' });
   }  
+}
+
+/*
+ |--------------------------------------------------------------------------
+ | Generate JSON Web Token
+ |--------------------------------------------------------------------------
+ */
+function handleCreateToken(req, user) {       
+  var payload = {
+    iss: req.hostname,
+    sub: user.path.key,
+    iat: moment().valueOf(),
+    exp: moment().add(14, 'days').valueOf()
+  };
+  return jwt.encode(payload, config.token_secret);
 }
 
 /*
@@ -213,12 +227,13 @@ function handleEnsureAuthenticated(req, res, next) {
  */
 
 function handleUserSearch(req, res){  
-  var citystate = req.params.citystate;
-  var query = req.query.search;
-  var limit = req.query.limit;
-  var offset = req.query.offset;
-  var city = citystate.substr(0, citystate.length - 3);
-  var state = citystate.substr(citystate.length - 2, 2);
+  var citystate = req.params.citystate,
+      query = req.query.search,
+      limit = req.query.limit,
+      offset = req.query.offset,
+      city = citystate.substr(0, citystate.length - 3),
+      state = citystate.substr(citystate.length - 2, 2);
+      
   console.log("City, State, Search: " + city + ', ' + state.toUpperCase() + ', ' + query);
 
   if (query !== undefined){
@@ -227,7 +242,7 @@ function handleUserSearch(req, res){
       res.send(userlist);
     })
     .fail(function(err){
-      res.send(err);
+      res.send({ message: err});
     });
   } else {
     showallusers(city, state, limit, offset)
@@ -235,7 +250,7 @@ function handleUserSearch(req, res){
       res.send(userlist);
     })
     .fail(function(err){
-      res.send(err);
+      res.send({ message: err});
     });
   }
 }
@@ -256,21 +271,6 @@ function handleSubscribeUser(req, res){
 
 /*
  |--------------------------------------------------------------------------
- | Generate JSON Web Token
- |--------------------------------------------------------------------------
- */
-function handleCreateToken(req, user) {
-  var payload = {
-    iss: req.hostname,
-    sub: user.email,
-    iat: moment().valueOf(),
-    exp: moment().add(14, 'days').valueOf()
-  };
-  return jwt.encode(payload, config.token_secret);
-}
-
-/*
- |--------------------------------------------------------------------------
  | Create Email and Password Account
  |--------------------------------------------------------------------------
  */
@@ -278,31 +278,46 @@ function handleSignup(req, res) {
   var user = schema.signupform(req.body);
   
   db.newSearchBuilder()
-    .collection('users')
-    .limit(1)
-    .query('value.email: "' + req.body.email + '"')
-    .then(function(result){
-      if (result.body.results.length > 0) {
-        console.log('User already exists');
-        res.status(401).send('That email address is already registered to a user.'); //username already exists
-      } else {
-        console.log('Email is free for use');
-        db.post('users', user)
-          .then(function () {
+  .collection('users')
+  .limit(1)
+  .query('value.email: "' + req.body.email + '"')
+  .then(function(result){
+    if (result.body.results.length > 0) {
+      console.log('User already exists');
+      res.status(401).send({ message: 'That email address is already registered to a user.'}); //username already exists
+    } else {
+      console.log('Email is free for use');
+      db.post('users', user)
+      .then(function () {
+        db.newSearchBuilder()
+        .collection('users')
+        .limit(1)
+        .query('value.email: "' + req.body.email + '"')
+        .then(function(result){
+          if (result.body.results.length > 0) {
             console.log("USER:");
             console.log(user);
-            res.send({ token: handleCreateToken(req, user), user: user });
-          })
-          .fail(function (err) {
-            console.log("POST FAIL:" + err.body);
-            res.status(401).send('Something went wrong: ' + err);
-          });
-      }
-    })
-    .fail(function(err){
-      console.log("SEARCH FAIL:" + err);
-      res.status(401).send('Something went wrong: ' + err);
-    });  
+            res.send({ token: handleCreateToken(req, result.body.results[0]), user: result.body.results[0] });
+          } else {
+            console.warn("Search couldn't find user after posting new user!");
+            res.status(401).send({ message: 'Something went wrong!'});
+          }
+        })
+        .fail(function(err){
+          console.log("SEARCH FAIL:" + err);
+          res.status(401).send({ message: 'Something went wrong: ' + err});
+        })
+      .fail(function (err) {
+        console.log("POST FAIL:" + err.body);
+        res.status(401).send({ message: 'Something went wrong: ' + err});
+      });
+    });
+    }
+  })
+  .fail(function(err){
+    console.log("SEARCH FAIL:" + err);
+    res.status(401).send({ message: 'Something went wrong: ' + err});
+  });  
 }
 
 
@@ -322,7 +337,7 @@ function handleLogin(req, res) {
         console.log("FOUND USER");
         var hash = result.body.results[0].value.password;
         if (bcrypt.compareSync(req.body.password, hash)) {
-          res.send({ token: handleCreateToken(req, result.body.results[0].value), user: result.body.results[0] });
+          res.send({ token: handleCreateToken(req, result.body.results[0]), user: result.body.results[0] });
         } else {
           console.log("PASSWORDS DO NOT MATCH");
           return res.status(401).send({ message: 'Wrong email and/or password' });
@@ -370,7 +385,7 @@ function handleAddMentor(req, res) {
         })
         .fail(function(err){
           console.log("SEARCH FAIL:" + err);
-          res.status(401).send('Something went wrong: ' + err);
+          res.status(401).send({ message: 'Something went wrong: ' + err});
         });
               
           
@@ -487,8 +502,7 @@ function handleLinkedin(req, res) {
           .collection('users')
           .limit(1)
           .query('value.linkedin.id: "' + profile.id + '"')
-          .then(function (result){
-            console.log('Result of db search: ' + result.body.total_count);              
+          .then(function (result){     
             if (result.body.results.length > 0){            
               console.log("Found user: " + profile.firstName + ' ' + profile.lastName);                                                                                             
               return res.status(409).send({ message: 'Your account is already associated with Linkedin.' });
@@ -498,15 +512,12 @@ function handleLinkedin(req, res) {
               var token = req.headers.authorization.split(' ')[1];
               var payload = jwt.decode(token, config.token_secret);
               
-              db.newSearchBuilder()
-                .collection('users')
-                .limit(1)
-                .query('value.email: "' + payload.sub + '"')
-                .then(function(result){
-                  if (result.body.results.length > 0) {
+              db.get("users", payload.sub)
+                .then(function(response){
+                  if (response.body.code !== "items_not_found") {
                     console.log('Matching user found.');
-                    result.body.results[0].value["linkedin"] = profile; // get user account and re-upload with linkedin data
-                    db.put('users', result.body.results[0].path.key, result.body.results[0].value)
+                    response.body["linkedin"] = profile; // get user account and re-upload with linkedin data
+                    db.put('users', payload.sub, response.body)
                       .then(function () {
                         console.log("Profile updated: " + userprofile.email);                          
                       })
@@ -514,20 +525,20 @@ function handleLinkedin(req, res) {
                         console.error("Profile update failed:");
                         console.error(err.body);                          
                       });
-                    res.send({ token: handleCreateToken(req, result.body.results[0].value), user: result.body.results[0] });
+                    res.send({ token: handleCreateToken(req, response.body), user: response.body });
                   } else {
                     return res.status(400).send({ message: "Sorry, we couldn't find you in our system." });                    
                   }
                 })
                 .fail(function(err){
                   console.log("SEARCH FAIL:" + err);
-                  res.status(401).send('Something went wrong: ' + err);
+                  res.status(401).send({ message: 'Something went wrong: ' + err});
                 });
             }
           })
           .fail(function(err){
             console.log("SEARCH FAIL:" + err);
-            res.status(401).send('Something went wrong: ' + err);
+            res.status(401).send({ message: 'Something went wrong: ' + err});
           });
         
         
@@ -537,8 +548,7 @@ function handleLinkedin(req, res) {
           .collection('users')
           .limit(1)
           .query('value.linkedin.id: "' + profile.id + '"')
-          .then(function (result){
-            console.log('Result of db search: ' + result.body.total_count);              
+          .then(function (result){                    
             if (result.body.results.length > 0){            
               console.log("Found user: " + profile.firstName + ' ' + profile.lastName);
               result.body.results[0].value["linkedin"] = profile; // get user account and re-upload with linkedin data            
@@ -550,7 +560,7 @@ function handleLinkedin(req, res) {
                   console.error("Profile update failed:");
                   console.error(err);
                 }); 
-              res.send({ token: handleCreateToken(req, result.body.results[0].value), user: result.body.results[0] }); 
+              res.send({ token: handleCreateToken(req, result.body.results[0]), user: result.body.results[0] }); 
             } else {
               db.newSearchBuilder()
                 .collection('users')
@@ -568,7 +578,7 @@ function handleLinkedin(req, res) {
                         console.error("Profile update failed:");
                         console.error(err);
                       }); 
-                    res.send({ token: handleCreateToken(req, result.body.results[0].value), user: result.body.results[0] });     
+                    res.send({ token: handleCreateToken(req, result.body.results[0]), user: result.body.results[0] });     
                     
                   } else {
                     console.log('No existing user found.');
@@ -577,7 +587,7 @@ function handleLinkedin(req, res) {
                 })
                 .fail(function(err){
                   console.log("SEARCH FAIL:" + err);
-                  res.status(401).send('Something went wrong: ' + err);
+                  res.status(401).send({ message: 'Something went wrong: ' + err});
                 });
               
               /* Do this to create a user account if no user exists
@@ -604,7 +614,7 @@ function handleLinkedin(req, res) {
                 })
                 .fail(function(err){
                   console.log("SEARCH FAIL:" + err);
-                  res.status(401).send('Something went wrong: ' + err);
+                  res.status(401).send({ message: 'Something went wrong: ' + err});
                 });
                 */
             }
@@ -613,8 +623,7 @@ function handleLinkedin(req, res) {
       });
     } else {                
                         
-        var userlist = [{url: 'http://www.linkedin.com/in/pcallicott', email: 'preston.callicott@fivetalent.com'},{url: 'http://www.linkedin.com/in/stevenbahr', email: 'sbahr.golfer@gmail.com'},{url: 'http://www.linkedin.com/pub/lee-kissinger/11/478/a1b', email: 'lkissinger@pccstructurals.com' },{ url: 'http://www.linkedin.com/pub/j-corey-schmid-mba/2/b5/65b', email: 'corey@sevenpeaksventures.com' },{ url: 'http://www.linkedin.com/pub/paul-abbott/2/3a5/4b1', email: 'Paulabbott9@hotmail.com' },{ url: 'http://www.linkedin.com/in/scottallan', email: 'scott@hydroflask.com' },{ url: 'http://www.linkedin.com/in/dianegallen', email: '' },{ url: 'http://www.linkedin.com/in/jeffarker', email: 'jeff@globaltradingpartners.com' },{ url: 'http://www.linkedin.com/pub/david-asson/86/540/5b9', email: 'dasson@ci.sisters.or.us' },{ url: 'http://www.linkedin.com/pub/john-barberich/64/582/994', email: 'barberichj@aol.com' },{ url: 'http://www.linkedin.com/pub/mark-beardsley/21/8a4/bb5', email: 'mark.beardsley@wellsfargo.com' },{ url: 'http://www.linkedin.com/pub/jay-bennett/8/1a9/9b8', email: '' },{ url: 'http://www.linkedin.com/pub/james-boeddeker/19/106/100', email: 'jimbo@bendbroadband.com' },{ url: 'http://www.linkedin.com/pub/brian-bouma/90/451/641', email: 'bbouma@me.com' },{ url: 'http://www.linkedin.com/pub/john-bradshaw/12/a2a/4b3', email: 'john.bradshaw@focusbankers.com' },{ url: 'http://www.linkedin.com/pub/jim-brennan/12/730/879', email: 'jbrennan353@gmail.com' },{ url: 'https://www.linkedin.com/pub/yvonne-burgess/b/70/1ba', email: 'yvonne@yburgess.com' },{ url: 'http://www.linkedin.com/in/patrickjburns', email: 'pburns@neoconassoc.com' },{ url: 'http://www.linkedin.com/pub/moe-carrick/2/88a/aa6', email: 'mcarrick@moementum.com' },{ url: 'http://www.linkedin.com/pub/bob-chamberlain/1/a31/439', email: 'bobchamberlain40@icloud.com' },{ url: 'http://www.linkedin.com/in/drewchild', email: 'drew.child@gmail.com' },{ url: 'http://www.linkedin.com/in/brucechurchill', email: '' },{ url: 'http://www.linkedin.com/pub/jim-coonan/3a/4b5/995', email: 'jcoonan@audiosource.net' },{ url: 'https://www.linkedin.com/in/stevecurley', email: 'steve@bluespacemarkets.com' },{ url: 'http://www.linkedin.com/in/evandickens', email: 'edickens@jrcpa.com' },{ url: 'http://www.linkedin.com/pub/sonja-donohue/a/222/582', email: 'sdonohue@bendbroadband.net' },{ url: 'http://www.linkedin.com/in/jerrydruliner', email: 'jdruliner@highdesertbeverage.com' },{ url: 'http://www.linkedin.com/in/lavoci', email: 'rob@finchamfinancial.com' },{ url: 'http://www.linkedin.com/pub/joe-franzi/0/920/395', email: 'jdfranzi@gmail.com' },{ url: 'http://www.linkedin.com/in/johnfurgurson', email: 'johnf@bnbranding.com' },{ url: 'http://www.linkedin.com/in/frankgoov', email: 'frank.h.goovaerts@gmail.com' },{ url: 'http://www.linkedin.com/pub/sandra-green/9/31/b35', email: 'sgreen@n-link.net' },{ url: 'http://au.linkedin.com/pub/ivan-hamilton/71/bb3/175', email: 'ivan@merisier-hamilton.com' },{ url: 'http://www.linkedin.com/in/samhandelman', email: 'sam@scsbend.com' },{ url: 'http://www.linkedin.com/pub/rita-hansen/5/72a/67', email: 'ritahansen@bendbroadband.com' },{ url: 'http://www.linkedin.com/in/lorieharrishancock', email: 'lorie@harrishancock.com' },{ url: 'http://www.linkedin.com/pub/heather-hepburn-hansen/52/b24/552', email: 'hepburn@bljlawyers.com' },{ url: 'http://www.linkedin.com/in/jherrick', email: 'john@herrickprodev.com' },{ url: 'http://www.linkedin.com/in/sheilinh', email: 'sheilin.herrick@gmail.com' },{ url: 'http://www.linkedin.com/pub/durlin-hickok/3/812/b42', email: 'dhickok@gmail.com' },{ url: 'http://www.linkedin.com/in/tonyhnyp', email: 'tonyh@ztllc.com' },{ url: 'http://www.linkedin.com/pub/steve-hockman/2b/5b0/6aa', email: 'shockman@steele-arch.com' },{ url: 'http://www.linkedin.com/pub/robert-hoffman-aia/26/583/213', email: 'bhoffman@inflectionpointadvisors.net' },{ url: 'http://www.linkedin.com/pub/alan-holzman/0/840/111', email: 'alan.holzman@gmail.com' },{ url: 'http://www.linkedin.com/pub/andrew-hunzicker/17/969/ba8', email: 'ahunzicker@me.com' },{ url: 'http://www.linkedin.com/in/execufeed', email: 'nextstep11@gmail.com' },{ url: 'http://www.linkedin.com/in/erknoc', email: 'erik@branderik.com' },{ url: 'http://www.linkedin.com/pub/simon-johnson/11/b87/980', email: 'smjones30@me.com' },{ url: 'http://www.linkedin.com/pub/sue-jones/38/81/455', email: '' },{ url: 'http://www.linkedin.com/in/brucejuhola', email: 'bruce.juhola@vistagechair.com' },{ url: 'http://www.linkedin.com/pub/karnopp-dennis/4/333/846', email: 'dck@karnopp.com' },{ url: 'http://www.linkedin.com/in/tocara', email: 'carakling@steppingstoneresources.com' },{ url: 'http://www.linkedin.com/pub/craig-ladkin/16/541/ab5', email: 'craig.ladkin@focusbankers.com' },{ url: 'http://www.linkedin.com/pub/greg-lambert/20/250/631', email: 'greg@midoregonpersonnel.com' },{ url: 'http://www.linkedin.com/in/robliv', email: 'robliv@gmail.com' },{ url: 'http://www.linkedin.com/pub/tom-loder/6/171/544', email: 'tloder@lodestartechnical.com' },{ url: 'http://www.linkedin.com/in/rluebke', email: 'rluebke@gmail.com' },{ url: 'http://www.linkedin.com/pub/les-mace/0/681/a53', email: 'les_mace@bendcable.com' },{ url: 'http://www.linkedin.com/pub/frank-maione/16/3b0/775', email: 'fmaione955@gmail.com' },{ url: 'https://www.linkedin.com/pub/mike-maloney/3/82a/a15', email: 'mcmaloney@interox.com' },{ url: 'http://www.linkedin.com/pub/kirk-mansberger/a/467/5b1', email: 'berger@bendbroadband.com' },{ url: 'https://www.linkedin.com/in/chrismaskill', email: 'chrismaskill@gmail.com' },{ url: 'http://www.linkedin.com/pub/susan-mcintosh/17/531/544', email: 'smcintosh@ykwc.net' },{ url: 'http://www.linkedin.com/pub/eric-meade/b/a6a/532', email: 'ericm@epusa.com' },{ url: 'http://www.linkedin.com/in/suemeyer', email: 'suemeyer@bendcable.com' },{ url: 'http://www.linkedin.com/pub/don-miller/33/a56/b72', email: 'jayhawkmiller@sbcglobal.net' },{ url: 'http://www.linkedin.com/pub/glenn-miller/60/284/a74', email: 'miller66@bendcable.com' },{ url: 'http://www.linkedin.com/pub/bill-montgomery/9/744/abb', email: 'williamd41@gmail.com' },{ url: 'http://www.linkedin.com/pub/bill-mooney/76/27a/a92', email: 'Mooney.bill@gmail.com' },{ url: 'http://www.linkedin.com/in/merryannmoore', email: 'merryannmoore@gmail.com' },{ url: 'http://www.linkedin.com/pub/jason-moyer/2/4b2/504', email: 'jason.moyer@cascadiangroup.us' },{ url: 'http://www.linkedin.com/pub/jon-napier/13/267/113', email: 'JJN@karnopp.com' },{ url: 'http://www.linkedin.com/pub/jim-ouchi/12/1a3/521', email: 'jouchi@esourcecoach.com' },{ url: 'http://www.linkedin.com/in/kathyoxborrow', email: 'kathy@oxborrowconsulting.com' },{ url: 'http://www.linkedin.com/pub/debbie-parigian-cpa/8/601/117', email: 'debbie@corporategrowthassoc.com' },{ url: 'http://www.linkedin.com/pub/alistair-paterson/13/946/a0b', email: 'alistair@alistairpaterson.com' },{ url: 'http://www.linkedin.com/in/louispepper', email: '' },{ url: 'https://www.linkedin.com/pub/anya-petersen-frey/9/913/882', email: 'anyafrey@gmail.com' },{ url: 'http://www.linkedin.com/pub/kathrin-platt/1a/252/929', email: 'kplatt@spencercrest.com' },{ url: 'http://www.linkedin.com/pub/jay-riker/5/65a/678', email: 'jariker@attglobal.net' },{ url: 'https://www.linkedin.com/pub/kate-ryan/6/291/b9', email: 'kate.ryanconsultinggroup@gmail.com' },{ url: 'http://www.linkedin.com/pub/jim-schell/10/17/a1b', email: 'smallbiz5@aol.com' },{ url: 'http://www.linkedin.com/pub/scott-schroeder/10/60b/586', email: 'scott@reliancecm.com' },{ url: 'http://www.linkedin.com/pub/andrea-sigetich/0/b0/490', email: 'andrea@sagecoach.com' },{ url: 'http://www.linkedin.com/pub/rick-silver/53/206/295', email: 'Silver4250@yahoo.com' },{ url: 'http://www.linkedin.com/pub/dave-slavensky/b/363/996', email: 'dave@earthcruiserusa.com' },{ url: 'http://www.linkedin.com/pub/caleb-stoddart/5/1b3/bb4', email: 'caleb@bendaccountants.com' },{ url: 'http://www.linkedin.com/pub/michael-story/7/686/955', email: 'story.mike@gmail.com' },{ url: 'http://www.linkedin.com/pub/dave-stowe/0/b61/71b', email: 'dave@ardellgroup.com' },{ url: 'http://www.linkedin.com/pub/david-svendsen/6a/b2/946', email: 'paul@axiavaluation.com' },{ url: 'http://www.linkedin.com/in/mtaus', email: 'michaeltaus@gmail.com' },{ url: 'http://www.linkedin.com/pub/mike-taylor/30/b70/7b2', email: 'miket@knccbend.com' },{ url: 'http://www.linkedin.com/pub/robert-thompson/4/804/887', email: 'robcthompson@live.com' },{ url: 'http://www.linkedin.com/in/jtompkin', email: 'jtompkin@pacbell.net' },{ url: 'https://www.linkedin.com/in/karenturnersrg', email: 'karen.turner@expresspros.com' },{ url: 'http://www.linkedin.com/pub/bill-valenti/1/5b3/38', email: 'valenti@bendbroadband.com' },{ url: 'http://www.linkedin.com/pub/jack-walker/38/2a5/876', email: 'walker@penfund.net' },{ url: 'http://www.linkedin.com/pub/scott-walley/10/2b4/b40', email: 'swalley@cwc-llp.com' },{ url: 'http://www.linkedin.com/pub/steven-webb/6/709/968', email: '' },{ url: 'http://www.linkedin.com/pub/steve-westberg-cpa-mba/11/67b/936', email: 'stevecpa@ymail.com' },{ url: 'http://www.linkedin.com/pub/bruce-willhite/84/729/795', email: 'bruce@unique-wire.com' },{ url: 'http://www.linkedin.com/in/jeffwitwer', email: 'jeffwitwer@yahoo.com' },{ url: 'http://www.linkedin.com/pub/jeff-wolfstone/9/3b4/520', email: 'WolfstoneJ@LanePowell.com' },{ url: 'http://www.linkedin.com/in/kermityensen', email: 'kermit.yensen@gmail.com' },{ url: 'http://www.linkedin.com/pub/jim-bednark/4/a24/99b', email: 'jrbednark@gmail.com' }
-];
+       var userlist = {};
         
         for (var i=0; i < userlist.length; i++) {          
           getlinkedinprofile(userlist[i].url, userlist[i].email, params.oauth2_access_token, function(response) { console.log('User: ' + response.data); });
@@ -624,9 +633,6 @@ function handleLinkedin(req, res) {
   });
 }
 
-
-
-
 /*
  |--------------------------------------------------------------------------
  | Get Profile
@@ -634,28 +640,31 @@ function handleLinkedin(req, res) {
  */
 
 function handleGetProfile(req, res) {
-  var userid = req.param.userid;
-  if (!userid) {
-  db.newSearchBuilder()
-    .collection('users')
-    .limit(1)
-    .query('value.email: "' + req.user.email + '"')
-    .then(function(user){
-      if (user.body.results.length > 0) {
-        console.log('Authenticated user: ' + user.body.results[0].value.name);
-        res.send(user.body.results[0]);
-      } else {
-        console.log('User not found.');
-        return res.status(200).send({ message: 'User not found.' });
-      }
-    })
-    .fail(function(err){
-      console.log("SEARCH FAIL:" + err);
-      res.status(401).send('Something went wrong: ' + err);
-    }); 
-  } else {
-    console.log('you need to define how to handle userid in /profile GET');
-  }
+  var userid = req.param.userid || req.user;
+  
+  db.get("users", userid)
+  .then(function(response){
+    if (response.body.code !== "items_not_found") {
+      console.log('Authenticated user: ' + response.body.name);
+      response = {
+        "path": {
+          "key": userid
+        },
+        "value": response.body
+      };
+      res.status(200).send(response);
+    } else {
+      console.log('User not found.');
+      return res.status(200).send({ message: 'User not found.' });
+    }
+  })
+  
+  .fail(function(err){
+    console.log("SEARCH FAIL:");
+    console.log(err);
+    res.status(401).send({ message: 'Something went wrong: ' + err});
+  }); 
+
 }
 
 /*
@@ -664,23 +673,60 @@ function handleGetProfile(req, res) {
  |--------------------------------------------------------------------------
  */
 
-function handlePutProfile(req, res) {
-  db.newSearchBuilder()
-    .collection('users')
-    .limit(1)
-    .query('value.email: "' + req.user.email + '"')
-    .then(function(user){
-      if (user.body.results.length > 0) {
-       //NOTHING HERE! NEED PUT STATEMENT
-      } else {
-        console.log('User not found.');
-        return res.status(400).send({ message: 'User not found' });
+function handleSetRole(req, res) {
+  var userkey = req.query.userkey,
+      citystate = req.query.citystate,
+      cluster = req.query.cluster,
+      role = req.query.role,
+      status = req.query.status,
+      allowed = false;
+      
+  //check perms!
+  if (userkey !== req.user) {
+    db.get("users", req.user)
+    .then(function (response) {      
+      try {
+        allowed = (response.body.cities[citystate].clusters[cluster].roles.indexOf("Leader") >= 0);
+      } catch (err) {
+        console.warn('Lookup of city or cluster failed.. that should not happen: ' + err);        
       }
     })
     .fail(function(err){
-      console.log("SEARCH FAIL:" + err);
-      res.status(401).send('Something went wrong: ' + err);
-    }); 
+      console.warn("SEARCH FAIL:" + err);
+      res.status(401).send({ message: 'Something went wrong: ' + err});
+    });
+  } else allowed = true;
+  
+  if (allowed) {
+    db.get("users", userkey)
+    .then(function (response) {
+      var thiscluster = response.body.cities[citystate].clusters[cluster];
+      if (status === "true") {
+        if (thiscluster.roles.indexOf(role) < 0) {
+          thiscluster.roles.push(role);
+        } // else they already have the role, no action needed
+      } else if (status === "false") {        
+        if (thiscluster.roles.indexOf(role) >= 0) {          
+          thiscluster.roles.splice(thiscluster.roles.indexOf(role), 1);          
+        } // else they do not have the role, no action needed
+      }
+      response.body.cities[citystate].clusters[cluster] = thiscluster;
+      db.put('users', userkey, response.body)
+      .then(function (finalres) {
+        res.status(201).send({ message: 'Profile updated.'});
+      })
+      .fail(function (err) {
+        console.warn('Problem with put: ' + err);
+        res.status(400).send({ message: 'Something went wrong: ' + err});
+      });
+    })
+    .fail(function (err) {
+      console.warn('Problem with get: ' + err);
+      res.status(400).send({ message: 'Something went wrong: ' + err});
+    });
+  } else { 
+    res.status(401).send({ message: 'You do not have permission to change this role.'}); 
+  }
 }
 
 /*
@@ -698,7 +744,7 @@ function handleRemoveProfile(req, res) {
     })
     .fail(function(err){
       console.log("Remove FAIL:" + err);
-      res.status(401).send('Something went wrong: ' + err);
+      res.status(401).send({ message: 'Something went wrong: ' + err });
     }); 
 }
 
@@ -710,14 +756,11 @@ function handleRemoveProfile(req, res) {
 
 function handleUnlink(req, res) {
   var provider = req.params.provider;  
-  db.newSearchBuilder()
-    .collection('users')
-    .limit(1)
-    .query('value.email: "' + req.user.email + '"')
-    .then(function(user){
-      if (user.body.results.length > 0) {
-        user[provider] = undefined;
-        db.put('users', user.body.results[0].path.key, user.body.results[0].value)
+  db.get("users", req.user)
+    .then(function(response){
+      if (response.body.code !== "items_not_found") {
+        response.body[provider] = undefined;
+        db.put('users', req.user, response.body)
           .then(function() {         
             console.log('Successfully unlinked provider!');
             res.status(200).end();
@@ -733,7 +776,7 @@ function handleUnlink(req, res) {
     })
     .fail(function(err){
       console.log("SEARCH FAIL:" + err);
-      res.status(401).send('Something went wrong: ' + err);
+      res.status(401).send({ message: 'Something went wrong: ' + err});
     });         
 }
 
