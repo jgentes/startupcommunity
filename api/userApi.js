@@ -9,7 +9,7 @@ var bcrypt = require('bcryptjs'),
     mcapi = require('mailchimp-api/mailchimp'),
     mc = new mcapi.Mailchimp(config.mailchimp);
 
-require('request-debug')(request); // Very useful for debugging oauth and api req/res
+//require('request-debug')(request); // Very useful for debugging oauth and api req/res
 
 var UserApi = function() {
   this.ensureAuthenticated = handleEnsureAuthenticated;
@@ -40,9 +40,8 @@ var schema = {
       name: profile.firstName + ' ' + profile.lastName,
       email: email || profile.emailAddress,
       cities: {
-        "Bend, OR": {
-          admin: false,
-          clusters: {}
+        "bend-or": {
+          admin: false
         }
       },
       linkedin: profile,
@@ -56,7 +55,9 @@ var schema = {
       "email": formdata.email,
       "password": hash,    
       "cities": {
-        "Bend, OR": {}
+        "bend-or": {
+          "admin": false
+        }
       },
       "avatar": ''
     };
@@ -70,7 +71,7 @@ var searchincity = function(city, citystate, limit, offset, query){
   .collection('users')
   .limit(Number(limit) || 100)
   .offset(Number(offset) || 0)
-  .query('value.cities: "' + citystate + (query ? '" AND ' + query : '"'))
+  .query('value.cities.' + citystate + (query ? ' AND ' + query : ''))
   .then(function(result){
     for (var i=0; i < result.body.results.length; i++) {
       delete result.body.results[i].path.collection;
@@ -705,14 +706,38 @@ function handleUnlink(req, res) {
 
 function handleMaintenance(req, res) {
   var enabled = true;
+  var startKey = '';
+  var userlist = [];
   
-  if (enabled) {
-    searchincity("bend-or", "Bend, OR")
+  function getList(startKey, userlist) {    
+    db.list('users', {limit: 50, startKey: startKey})
     .then( function(data) {
-      console.log(data);
+      for (var item in data.body.results) {
+        data.body.results[item].value.cities = { "bend-or": { "admin": false } };
+        userlist.push(data.body.results[item]);                    
+      }                
+      if (data.body.next) {
+        var nextkey = url.parse(data.body.next).query;        
+        startKey = nextkey.substr(18, nextkey.length - 18);   
+        console.log('Getting next group..' + startKey);        
+        getList(startKey, userlist);
+      } else {
+        console.log('Get done, moving to Put..' + userlist.length);         
+        for (var user in userlist) {
+          console.log('Updating ' + userlist[user].value.name);
+          db.put('users', userlist[user].path.key, userlist[user].value)
+          .then(function(response) {            
+            console.log('Record updated!');
+          });
+        }
+      }
     });
   }
-  
+    
+  if (enabled) {
+    console.log('Starting maintenance..');
+    getList(startKey, userlist);           
+  }
 }
 
 module.exports = UserApi;
