@@ -9,13 +9,6 @@ var express = require('express'),
 
 var app = express();
 
-// for exception logging
-var opbeat = require('opbeat')({
-    organizationId: config.opbeat.organizationId,
-    appId: config.opbeat.appId,
-    secretToken: config.opbeat.secretToken
-});
-
 // Order really matters here..!
 app.disable('x-powered-by');
 app.use(logger('dev'));
@@ -35,7 +28,14 @@ if (process.env.NODE_ENV !== "production") {
     var protocol = req.get('x-forwarded-proto');
     protocol == 'https' ? next() : res.redirect('https://' + req.hostname + req.url);
   });
-} 
+} else {
+    // for exception logging
+    var opbeat = require('opbeat')({
+        organizationId: config.opbeat.organizationId,
+        appId: config.opbeat.appId,
+        secretToken: config.opbeat.secretToken
+    });
+}
 
 var routes = {
 	userApi: new UserApi(),

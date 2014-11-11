@@ -16,7 +16,7 @@ var UserApi = function() {
   this.userSearch = handleUserSearch;
   this.subscribeUser = handleSubscribeUser;
   this.createToken = handleCreateToken;  
-  this.addMentor = handleAddMentor;
+  this.addAdvisor = handleAddAdvisor;
   this.linkedin = handleLinkedin;
   this.getProfile = handleGetProfile;
   this.setRole = handleSetRole;
@@ -280,19 +280,19 @@ function handleLogin(req, res) {
 
 /*
  |--------------------------------------------------------------------------
- | Add Mentor
+ | Add Advisor
  |--------------------------------------------------------------------------
  */
 
-function handleAddMentor(req, res) {  
+function handleAddAdvisor(req, res) {  
     
-  var addMentor = JSON.parse(req.query.user);
-  if (addMentor) {
-    var gettoken = function(addMentor, callback) {          
+  var addAdvisor = JSON.parse(req.query.user);
+  if (addAdvisor) {
+    var gettoken = function(addAdvisor, callback) {          
       db.newSearchBuilder()
         .collection('users')
         .limit(1)
-        .query('value.linkedin.id: "' + addMentor.userid + '"')
+        .query('value.linkedin.id: "' + addAdvisor.userid + '"')
         .then(function(result){
           if (result.body.results.length > 0) {
             console.log("Found user, pulling access_token");
@@ -316,9 +316,9 @@ function handleAddMentor(req, res) {
           
     };
     
-    gettoken(addMentor, function(access_token) {    
+    gettoken(addAdvisor, function(access_token) {    
             
-      getlinkedinprofile(addMentor.url, addMentor.email, access_token, function(result) {                
+      getlinkedinprofile(addAdvisor.url, addAdvisor.email, access_token, function(result) {                
         res.status(result.status).send(result);
       });
       
