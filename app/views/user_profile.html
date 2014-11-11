@@ -44,16 +44,16 @@
 				                              </td>
 				                              <td style="text-align: center; border: none; padding: 10px 0 15px 0;">
 							                    <div class="col-md-4">
-							                        <label class="control-label" style="display: block; margin-bottom: -5px;"><h3>Leader {{ global.profile.value.cities.[global.city.path.key].clusters['Tech'].roles }}</h3></label>
-							                        <toggle-switch ng-init="leaderStatus = (global.profile.value.cities.[global.city.path.key].clusters[cluster].roles.indexOf('Leader') >= 0)" ng-model="leaderStatus" ng-click="setRole(cluster, 'Leader', leaderStatus)" class="danger" on-label="Yes" off-label="No" ng-disabled="global.profile.value.cities.[global.city.path.key].clusters[cluster].roles.indexOf('Leader') < 0"><toggle-switch>							
+							                        <label class="control-label" style="display: block; margin-bottom: -5px;"><h3>Leader</h3></label>
+							                        <toggle-switch ng-init="leaderStatus = (global.profile.value.cities[global.city.path.key].clusters[cluster].roles.indexOf('Leader') >= 0)" ng-model="leaderStatus" ng-click="setRole(cluster, 'Leader', leaderStatus)" class="danger" on-label="Yes" off-label="No" ng-disabled="global.profile.value.cities[global.city.path.key].clusters[cluster].roles.indexOf('Leader') < 0"><toggle-switch>							
 							                    </div>
 							                    <div class="col-md-4">
 							                        <label class="control-label" style="display: block; margin-bottom: -5px;"><h3>Advisor</h3></label>
-							                        <toggle-switch ng-init="advisorStatus = (global.profile.value.cities.[global.city.path.key].clusters[cluster].roles.indexOf('Advisor') >= 0)" ng-model="advisorStatus" ng-click="setRole(cluster, 'Advisor', advisorStatus)" class="info" on-label="Yes" off-label="No" ng-disabled="global.profile.value.cities.[global.city.path.key].clusters[cluster].roles.indexOf('Leader') < 0"><toggle-switch>							
+							                        <toggle-switch ng-init="advisorStatus = (global.profile.value.cities[global.city.path.key].clusters[cluster].roles.indexOf('Advisor') >= 0)" ng-model="advisorStatus" ng-click="setRole(cluster, 'Advisor', advisorStatus)" class="info" on-label="Yes" off-label="No" ng-disabled="global.profile.value.cities[global.city.path.key].clusters[cluster].roles.indexOf('Leader') < 0"><toggle-switch>							
 							                    </div>
 							                    <div class="col-md-4">
 							                        <label class="control-label" style="display: block; margin-bottom: -5px;"><h3>Member</h3></label>
-							                        <toggle-switch ng-init="memberStatus = (global.profile.value.cities.[global.city.path.key].clusters[cluster].roles.indexOf('Member') >= 0)" ng-model="memberStatus" ng-click="setRole(cluster, 'Member', memberStatus)" class="success" on-label="Yes" off-label="No"><toggle-switch>							
+							                        <toggle-switch ng-init="memberStatus = (global.profile.value.cities[global.city.path.key].clusters[cluster].roles.indexOf('Member') >= 0)" ng-model="memberStatus" ng-click="setRole(cluster, 'Member', memberStatus)" class="success" on-label="Yes" off-label="No"><toggle-switch>							
 							                    </div>
 				                              </td>	                             				                              
 				                            </tr>
