@@ -22,22 +22,22 @@ angular.module('theme.templates', []).run(['$templateCache', function ($template
     "<div class=\"widget\">\n" +
     "    <div style=\"overflow: hidden;\" class=\"widget-simple\" ng-class=\"['themed-background-dark','themed-background-dark-night','themed-background-dark-amethyst', 'themed-background-dark-autumn', 'themed-background-dark-flatie', 'themed-background-dark-spring', 'themed-background-dark-fancy', 'themed-background-dark-fire'][$index % 8]\">\n" +
     "        <div>\n" +
-    "            <a ng-click=\"viewUser($index)\" title=\"View {{item.value.name | words:0}}'s Profile\"><img ng-src=\"{{item.value.avatar || item.value.linkedin.pictureUrl || '/public/blank_avatar.png'}}\" alt=\"{{item.value.name}}\" class=\"widget-image img-circle pull-left\"></a>\n" +
+    "            <a ng-click=\"viewUser($index)\" title=\"View {{::item.value.name | words:0}}'s Profile\"><img ng-src=\"{{::item.value.avatar || item.value.linkedin.pictureUrl || '/public/blank_avatar.png'}}\" alt=\"{{::item.value.name}}\" class=\"widget-image img-circle pull-left\"></a>\n" +
     "        </div>\n" +
     "        <h4 class=\"widget-content widget-content-light\">\n" +
     "            <div ng-class=\"['themed-color','themed-color-night','themed-color-amethyst', 'themed-color-autumn', 'themed-color-flatie', 'themed-color-spring', 'themed-color-fancy', 'themed-color-fire'][$index % 8]\">\n" +
-    "                <a ng-click=\"viewUser($index)\" title=\"View {{item.value.name | words:0}}'s Profile\" style=\"color: inherit; text-decoration: none;\"><strong>{{item.value.name}}</strong></a>\n" +
+    "                <a ng-click=\"viewUser($index)\" title=\"View {{::item.value.name | words:0}}'s Profile\" style=\"color: inherit; text-decoration: none;\"><strong>{{::item.value.name}}</strong></a>\n" +
     "                <a ng-show=\"{{(item.value.linkedin.summary).length > 0}}\" title=\"Show Summary\" ng-click=\"showSummary = !showSummary\" class=\"btn btn-xs\" ng-class=\"['themed-color','themed-color-night','themed-color-amethyst', 'themed-color-autumn', 'themed-color-flatie', 'themed-color-spring', 'themed-color-fancy', 'themed-color-fire'][$index % 8]\" style=\"float:right\">\n" +
     "                    <i class=\"fa fa-chevron-down fa-fw\"></i>\n" +
     "                </a>\n" +
     "            </div>\n" +
-    "            <small>{{item.value.linkedin.headline}}</small>\n" +
+    "            <small>{{::item.value.linkedin.headline}}</small>\n" +
     "        </h4>\n" +
     "        \n" +
     "    </div>\n" +
     "    <div class=\"widget-extra\" ng-show=\"showSummary\">\n" +
     "        <h4 class=\"sub-header\">Summary</h4>\n" +
-    "        <p style=\"white-space:pre-wrap;\">{{item.value.linkedin.summary}}</p>\n" +
+    "        <p style=\"white-space:pre-wrap;\">{{::item.value.linkedin.summary}}</p>\n" +
     "    </div>\n" +
     "</div>"
   );

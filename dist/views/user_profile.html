@@ -4,12 +4,25 @@
             <div class="header-section">
                 <div class="options">
 		            <div class="btn-toolbar pull-right">
+			            <div class="btn-group hidden-xs">
+	                        <a href="javascript:void(0)" data-toggle="dropdown" class="btn btn-alt btn-primary dropdown-toggle">Edit Profile <span class="caret"></span></a>
+	                        <ul class="dropdown-menu dropdown-custom text-left">                            
+	                            <li>
+	                                <a ng-click="global.assignRoles = !global.assignRoles"><i class="fa fa-bookmark pull-right"></i>View Roles</a>
+	                            </li>
+	                            <li class="divider"></li>
+	                            <li>
+	                                <a ng-click="removeProfile(global.profile.path.key)"><i class="fa fa-times pull-right"></i>Delete Profile</a>
+	                            </li>
+	                        </ul>
+	                    </div><!--
 		                <div class="btn-group hidden-xs" data-dropdown>
-		                    <button class="btn btn-default dropdown-toggle" data-toggle='dropdown'><span class="hidden-sm"> Edit </span><span class="caret"></span></button>
+		                    <button class="btn btn-default dropdown-toggle" data-toggle='dropdown'><span class="hidden-sm"> Edit Profile </span><span class="caret"></span></button>
 		                    <ul class="dropdown-menu">
-		                        <li><a ng-click="removeProfile(global.profile.path.key)">Delete Profile</a></li>
+		                        <li><a class="dropdown-toggle" ng-click="global.assignRoles = !global.assignRoles" data-toggle='dropdown'>View Roles</a></li>
+		                        <li><a class="dropdown-toggle" ng-click="removeProfile(global.profile.path.key)">Delete Profile</a></li>
 		                    </ul>
-		                </div>
+		                </div>-->
 		                
 		            </div>
 		        </div>
@@ -22,16 +35,46 @@
         </div>
 	
 		
-		
 		<div class="container-fluid">	
-            
 			
-		
 			<div class="row">
 				<div class="col-md-12">
 					<div class="panel panel-gray">
 						<div class="panel-body">
-
+							<div class="row" ng-show="global.assignRoles">
+				                <div class="col-md-12">
+				
+				                    <panel panel-class="panel-primary" data-heading="Editable Rows">
+				                       
+				                          <table class="table table-condensed" style="border-bottom: 1px solid #e9ecf0;">
+	
+				                            <tr ng-repeat="cluster in global.city.value.clusters" style="border-bottom: 1px solid #e9ecf0;">
+				                              <td style="border: none;">				                                
+				                                <span editable-text="cluster.name" e-name="name" e-form="rowform" e-required>
+				                                  <h2>{{ cluster || 'empty' }} Cluster</h2>
+				                                </span>
+				                              </td>
+				                              <td style="text-align: center; border: none; padding: 10px 0 15px 0;">
+							                    <div class="col-md-4">
+							                        <label class="control-label" style="display: block; margin-bottom: -5px;"><h3>Leader</h3></label>
+							                        <toggle-switch ng-init="leaderStatus = (global.profile.value.cities[global.city.path.key].clusters[cluster].roles.indexOf('Leader') >= 0)" ng-model="leaderStatus" ng-click="setRole(cluster, 'Leader', leaderStatus)" class="danger" on-label="Yes" off-label="No" ng-disabled="global.profile.value.cities[global.city.path.key].clusters[cluster].roles.indexOf('Leader') < 0"><toggle-switch>							
+							                    </div>
+							                    <div class="col-md-4">
+							                        <label class="control-label" style="display: block; margin-bottom: -5px;"><h3>Advisor</h3></label>
+							                        <toggle-switch ng-init="advisorStatus = (global.profile.value.cities[global.city.path.key].clusters[cluster].roles.indexOf('Advisor') >= 0)" ng-model="advisorStatus" ng-click="setRole(cluster, 'Advisor', advisorStatus)" class="info" on-label="Yes" off-label="No" ng-disabled="global.profile.value.cities[global.city.path.key].clusters[cluster].roles.indexOf('Leader') < 0"><toggle-switch>							
+							                    </div>
+							                    <div class="col-md-4">
+							                        <label class="control-label" style="display: block; margin-bottom: -5px;"><h3>Member</h3></label>
+							                        <toggle-switch ng-init="memberStatus = (global.profile.value.cities[global.city.path.key].clusters[cluster].roles.indexOf('Member') >= 0)" ng-model="memberStatus" ng-click="setRole(cluster, 'Member', memberStatus)" class="success" on-label="Yes" off-label="No"><toggle-switch>							
+							                    </div>
+				                              </td>	                             				                              
+				                            </tr>
+				                          </table>
+				                    </panel>
+				                </div>
+				            
+				            </div>
+														
 							<div class="row">
 							
 								<div class="col-md-6">									
@@ -42,7 +85,7 @@
 											<tbody>											
 												<tr>
 													<td>Web</td>
-													<td><a href="{{global.profile.value.linkedin.publicProfileUrl}}">{{global.profile.value.linkedin.publicProfileUrl}}</a></td>
+													<td><a href="{{global.profile.value.linkedin.publicProfileUrl}}" target="_blank">{{global.profile.value.linkedin.publicProfileUrl}}</a></td>
 												</tr>
 												<tr>
 													<td>Email</td>
@@ -69,9 +112,6 @@
 								</div>
 							</div>
 							<hr>
-							
-
-
 						</div>
 					</div>
 				</div>

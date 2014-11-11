@@ -4,13 +4,25 @@
             <div class="header-section">
                 <div class="options">
 		            <div class="btn-toolbar pull-right">
+			            <div class="btn-group hidden-xs">
+	                        <a href="javascript:void(0)" data-toggle="dropdown" class="btn btn-alt btn-primary dropdown-toggle">Edit Profile <span class="caret"></span></a>
+	                        <ul class="dropdown-menu dropdown-custom text-left">                            
+	                            <li>
+	                                <a ng-click="global.assignRoles = !global.assignRoles"><i class="fa fa-bookmark pull-right"></i>View Roles</a>
+	                            </li>
+	                            <li class="divider"></li>
+	                            <li>
+	                                <a ng-click="removeProfile(global.profile.path.key)"><i class="fa fa-times pull-right"></i>Delete Profile</a>
+	                            </li>
+	                        </ul>
+	                    </div><!--
 		                <div class="btn-group hidden-xs" data-dropdown>
 		                    <button class="btn btn-default dropdown-toggle" data-toggle='dropdown'><span class="hidden-sm"> Edit Profile </span><span class="caret"></span></button>
 		                    <ul class="dropdown-menu">
 		                        <li><a class="dropdown-toggle" ng-click="global.assignRoles = !global.assignRoles" data-toggle='dropdown'>View Roles</a></li>
 		                        <li><a class="dropdown-toggle" ng-click="removeProfile(global.profile.path.key)">Delete Profile</a></li>
 		                    </ul>
-		                </div>
+		                </div>-->
 		                
 		            </div>
 		        </div>
@@ -73,7 +85,7 @@
 											<tbody>											
 												<tr>
 													<td>Web</td>
-													<td><a href="{{global.profile.value.linkedin.publicProfileUrl}}">{{global.profile.value.linkedin.publicProfileUrl}}</a></td>
+													<td><a href="{{global.profile.value.linkedin.publicProfileUrl}}" target="_blank">{{global.profile.value.linkedin.publicProfileUrl}}</a></td>
 												</tr>
 												<tr>
 													<td>Email</td>

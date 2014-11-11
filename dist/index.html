@@ -25,10 +25,10 @@
     <script type="text/javascript" src="assets/plugins/misc/media.match.min.js"></script>
   <![endif]-->
 
-    <link rel="stylesheet" href="assets/css/1d5dfcaa.vendor.css"/>
+    <link rel="stylesheet" href="assets/css/9154be43.vendor.css"/>
     
 
-    <link rel="stylesheet" href="assets/css/d949cf9a.main.css"/>
+    <link rel="stylesheet" href="assets/css/f1be9d91.main.css"/>
 
   <style type="text/css">
     [ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak {
@@ -76,6 +76,10 @@
     .fc-grid .fc-day-number {
       padding: 5px 6px;
     } 
+    
+    ul.nav li.dropdown:hover > ul.dropdown-menu {
+    display: block;    
+    }        
 
   </style>
   <script type="text/javascript">
@@ -121,13 +125,13 @@
           </li>
           <li class="dropdown" ng-show="isAuthenticated">
           
-            <a class="dropdown-toggle username"><span class="hidden-xs">{{global.user.value.name}}</span><img ng-src="{{global.user.value.avatar || global.user.value.linkedin.pictureUrl || '/public/blank_avatar.png'}}" alt="{{global.user.value.name}}" style="margin-right: 11px;"/></a>
+            <a class="dropdown-toggle username" data-toggle='dropdown'><span class="hidden-xs">{{global.user.value.name}}</span><img ng-src="{{global.user.value.avatar || global.user.value.linkedin.pictureUrl || '/public/blank_avatar.png'}}" alt="{{global.user.value.name}}" style="margin-right: 11px;"/></a>
             <ul class="dropdown-menu userinfo arrow">
               <li class="userlinks">
                 <ul class="dropdown-menu">
-                  <li><a ng-click="editProfile()">Edit Profile <i class="pull-right fa fa-fw fa-pencil"></i></a></li>
+                  <li><a class="dropdown-toggle" ng-click="editProfile()" data-toggle='dropdown'>Edit Profile <i class="pull-right fa fa-fw fa-pencil"></i></a></li>
                   <li class="divider"></li>
-                  <li><a class="text-right" ng-click="logOut()">Sign Out</a></li>
+                  <li><a class="text-right dropdown-toggle" ng-click="logOut()">Sign Out</a></li>
                 </ul>
               </li>
             </ul>
@@ -183,10 +187,10 @@
     
     <script type='text/javascript' src='https://maps.google.com/maps/api/js?sensor=true'></script> 
 
-    <script src="scripts/77195c1b.vendor.js"></script>
+    <script src="scripts/0ddcbbab.vendor.js"></script>
     
 
-      <script src="scripts/20540d39.scripts.js"></script>
+      <script src="scripts/6a635537.scripts.js"></script>
 
 </body>
 </html>
