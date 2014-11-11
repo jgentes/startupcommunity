@@ -79,8 +79,10 @@ var searchincity = function(city, limit, offset, query){
         delete result.body.results[i].path.ref;
         delete result.body.results[i].value.email;
         delete result.body.results[i].value.password;
-        delete result.body.results[i].value.linkedin.emailAddress;
-        delete result.body.results[i].value.linkedin.access_token;
+        if (result.body.results[i].value.linkedin) {
+          delete result.body.results[i].value.linkedin.emailAddress;
+          delete result.body.results[i].value.linkedin.access_token;
+        }
       }
     } catch (error) {
       console.warn('Possible database entry corrupted: ');
