@@ -66,28 +66,34 @@ var schema = {
 
 
 var searchincity = function(city, limit, offset, query){  
-  var deferred = Q.defer();
+  var deferred = Q.defer();  
   db.newSearchBuilder()
   .collection('users')
   .limit(Number(limit) || 100)
   .offset(Number(offset) || 0)
   .query('value.cities.' + city + '.admin: *' + (query ? ' AND ' + query : ''))
-  .then(function(result){
-    for (var i=0; i < result.body.results.length; i++) {
-      delete result.body.results[i].path.collection;
-      delete result.body.results[i].path.ref;
-      delete result.body.results[i].value.email;
-      delete result.body.results[i].value.password;
-      delete result.body.results[i].value.linkedin.emailAddress;
-      delete result.body.results[i].value.linkedin.access_token;
+  .then(function(result){        
+    try {
+      for (var i=0; i < result.body.results.length; i++) {
+        delete result.body.results[i].path.collection;
+        delete result.body.results[i].path.ref;
+        delete result.body.results[i].value.email;
+        delete result.body.results[i].value.password;
+        delete result.body.results[i].value.linkedin.emailAddress;
+        delete result.body.results[i].value.linkedin.access_token;
+      }
+    } catch (error) {
+      console.warn('Possible database entry corrupted: ');
+      console.log(result.body.results);
     }
+    
     if (result.body.next) {      
-      var getnext = url.parse(result.body.next, true);      
-      result.body.next = '/api/' + city + '/users?limit=' + getnext.query.limit + '&search=' + query + '&offset=' + getnext.query.offset;      
+      var getnext = url.parse(result.body.next, true);   
+      result.body.next = '/api/' + city + '/users?limit=' + getnext.query.limit + '&offset=' + getnext.query.offset + (query ? '&search=' + query : '');
     }
     if (result.body.prev) {
       var getprev = url.parse(result.body.prev, true);
-      result.body.prev = '/api/' + city + '/users?limit=' + getprev.query.limit + '&search=' + query + '&offset=' + getprev.query.offset;
+      result.body.prev = '/api/' + city + '/users?limit=' + getprev.query.limit + '&offset=' + getprev.query.offset + (query ? '&search=' + query : '');
     }
     deferred.resolve(result.body);
   })
@@ -167,6 +173,7 @@ function handleUserSearch(req, res){
       res.send(userlist);
     })
     .fail(function(err){
+      console.warn(err);
       res.send({ message: err});
     });
 }
