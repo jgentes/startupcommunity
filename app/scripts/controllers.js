@@ -74,24 +74,29 @@ angular
     };
     
     // Get and set user and city data         
-    userService.getProfile()
-    .then(function(response) {
-      if (response.data) {
-        $scope.global.user = response.data;
-        if (!$scope.global.profile) {
-          $scope.global.profile = response.data;
-        }
-        for (var citystate in $scope.global.user.value.cities) break; // grab first city
-        var city = (citystate.substr(0, citystate.length - 4) + '-' + citystate.substr(citystate.length - 2, 2)).toLowerCase();
-        cityService.getCity(city)
+    $scope.global.sessionReady = function() {
+      if (!$scope.global.user || !$scope.global.city) {
+        userService.getProfile()
         .then(function(response) {
-          if (response.data) {            
-            $scope.global.city = response.data;  
-            $scope.$broadcast('sessionReady', true);
+          if (response.data) {
+            $scope.global.user = response.data;
+            if (!$scope.global.profile) {
+              $scope.global.profile = response.data;
+            }
+            for (var citystate in $scope.global.user.value.cities) break; // grab first city
+            cityService.getCity(citystate)
+            .then(function(response) {
+              if (response.data) {            
+                $scope.global.city = response.data;  
+                $scope.$broadcast('sessionReady', true);
+              }
+            });        
           }
-        });        
-      }
-    });
+        });
+      } else $scope.$broadcast('sessionReady', true);
+    };
+    
+    $scope.global.sessionReady();
       
   }])
   
@@ -118,12 +123,13 @@ angular
       });
     };
     
-    $scope.$on('sessionReady', function(event, status) {
-      console.log('event emitted!: ' + status);
-      if (status) {
-        $scope.getUsers('/api/' + $scope.global.city.path.key + '/users?limit=32');
-      }
-    });
+    if (!$scope.global.city) {    
+      $scope.$on('sessionReady', function(event, status) {               
+        if (status) {
+          $scope.getUsers('/api/' + $scope.global.city.path.key + '/users?limit=32');
+        }
+      });
+    } else $scope.getUsers('/api/' + $scope.global.city.path.key + '/users?limit=32');
     
     $scope.viewUser = function(userindex) {            
       $scope.global.profile = ($location.$$path == '/search') ? $scope.global.search.results[userindex] : $scope.users.results[userindex];
@@ -246,6 +252,7 @@ angular
         .then(function(response) {
           $scope.global.user = response.data.user;
           $scope.global.alert = undefined;
+          $scope.global.sessionReady();
           $location.path('/');
           console.log('Logged in!');                    
         })
@@ -259,6 +266,7 @@ angular
         .then(function(response) {
           $scope.global.user = response.data.user;
           $scope.global.alert = undefined;
+          $scope.global.sessionReady();
           console.log('Logged in!');
           $location.path('/');
           $route.reload();          

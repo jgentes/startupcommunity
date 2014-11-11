@@ -65,13 +65,13 @@ var schema = {
 };
 
 
-var searchincity = function(city, citystate, limit, offset, query){  
+var searchincity = function(city, limit, offset, query){  
   var deferred = Q.defer();
   db.newSearchBuilder()
   .collection('users')
   .limit(Number(limit) || 100)
   .offset(Number(offset) || 0)
-  .query('value.cities.' + citystate + (query ? ' AND ' + query : ''))
+  .query('value.cities.' + city + '.admin: *' + (query ? ' AND ' + query : ''))
   .then(function(result){
     for (var i=0; i < result.body.results.length; i++) {
       delete result.body.results[i].path.collection;
@@ -160,10 +160,9 @@ function handleUserSearch(req, res){
   var city = req.params.city,
       query = req.query.search,
       limit = req.query.limit,
-      offset = req.query.offset,
-      citystate = city.substr(0, city.length - 3) + ', ' + city.substr(city.length - 2, 2);
+      offset = req.query.offset;      
   
-    searchincity(city, citystate, limit, offset, query)
+    searchincity(city, limit, offset, query)
     .then(function(userlist){
       res.send(userlist);
     })
