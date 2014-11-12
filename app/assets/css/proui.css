@@ -927,45 +927,6 @@ a.widget.widget-hover-effect4:active {
         margin-left: 3px;
         margin-right: 3px;
     }
-
-    /* Chat UI */
-    .chatui-people,
-    .chatui-talk,
-    .chatui-input {
-        position: absolute;
-    }
-
-    .chatui-talk,
-    .chatui-input {
-        right: 250px;
-        left: 0;
-    }
-
-    .chatui-people {
-        top: 0;
-        right: 0;
-        bottom: 0;
-        width: 250px;
-        height: auto;
-    }
-
-    .chatui-talk {
-        height: auto;
-    }
-
-    .chatui-talk .chatui-talk-msg {
-        width: 50%;
-        margin-left: 50%;
-    }
-
-    .chatui-talk .chatui-talk-msg.chatui-talk-msg-highlight {
-        margin-left: 0;
-        margin-right: 50%;
-    }
-
-    .chatui-input {
-        bottom: 0;
-    }
 }
 
 /* Medium devices, Desktops (>991px) */
@@ -1067,7 +1028,7 @@ pulseSlow
 /* Buttons */
 .btn {
     margin: 1px 0;
-    background-color: #ffffff;
+    background-color: none;
 }
 
 .btn .gi,
