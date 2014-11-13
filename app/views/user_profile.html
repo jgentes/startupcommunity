@@ -61,9 +61,9 @@
 				                    	<h3>Cluster Activity</h3>
 				                          <table class="table table-condensed" style="margin-bottom: -19px;">											
 											<tbody>
-					                            <tr ng-repeat="(cluster, val) in global.city.value.clusters | orderBy : cluster : false" style="border-top: 1px solid #e9ecf0;">
+					                            <tr ng-repeat="(cluster, val) in global.city.value.clusters" style="border-top: 1px solid #e9ecf0;">
 					                              <td style="border: none; padding: 8px 0 8px 0; width: 50%;">				                                					                                
-					                                  <h4><i class="fa {{val.icon}}" style="opacity: .6">&nbsp;</i> {{ cluster || 'empty' }} Cluster</h4>					                                
+					                                  <h4><i class="fa {{val.icon}}" style="opacity: .6">&nbsp;</i> <strong>{{ cluster || 'empty' }}</strong> Cluster</h4>					                                
 					                              </td>
 					                              <td style="text-align: center; width: 50%;" ng-hide="global.editProfile">
 					                              	<ul>

@@ -2,55 +2,59 @@
 
 angular
   .module('navigation-controller', [])
-  .controller('NavigationController', ['$scope', '$location', '$timeout', '$global', function ($scope, $location, $timeout, $global) {
-    $scope.menu = [
-        {
-            label: 'Bend',
-            iconClasses: 'fa fa-globe',
-            url: '/'
-        },
-        {
-            heading: 'COMMUNITY'
-        },
-        {
-            label: 'Leaders',
-            iconClasses: 'fa fa-flag-o'            
-        },
-        {
-            label: 'Advisors',
-            iconClasses: 'fa fa-graduation-cap',
-            url: '/advisors',
-            children: [
-                {
-                    label: 'Add Advisors',
-                    url: '/advisors/add'
-                }
-            ]
-        },
-        {
-            label: 'Startups',
-            iconClasses: 'fa fa-rocket'            
-        },
-        {
-            heading: 'CLUSTERS'            
-        },
-        {
-            label: 'Tech',
-            iconClasses: 'fa fa-code'
-        },
-        {
-            label: 'Bio-Science',
-            iconClasses: 'fa fa-flask'
-        },
-        {
-            label: 'Outdoor',
-            iconClasses: 'fa fa-tree'
-        },
-        {
-            label: 'Makers',
-            iconClasses: 'fa fa-wrench'
+  .controller('NavigationController', ['$scope', '$location', '$timeout', '$global', 'userService', function ($scope, $location, $timeout, $global, userService) {
+    
+    var buildNav = function() {        
+        var menu = [
+            {
+                label: $scope.global.city.value.citystate.split(',')[0],
+                iconClasses: 'fa fa-globe',
+                url: '/'
+            },
+            {
+                heading: 'COMMUNITY'
+            },
+            {
+                label: 'Leaders',
+                role: true,
+                iconClasses: 'fa fa-flag-o'            
+            },
+            {
+                label: 'Advisors',
+                iconClasses: 'fa fa-graduation-cap',
+                url: '/advisors',
+                children: [
+                    {
+                        label: 'Add Advisors',
+                        url: '/advisors/add'
+                    }
+                ]
+            },
+            {
+                label: 'Startups',
+                iconClasses: 'fa fa-rocket'            
+            },
+            {
+                heading: 'CLUSTERS'            
+            }
+        ];
+        
+        for (var cluster in $scope.global.city.value.clusters) {            
+            menu.push(
+            {
+                label: cluster,
+                cluster: true,
+                iconClasses: 'fa ' + $scope.global.city.value.clusters[cluster].icon,
+                url: '/cluster'
+            });
         }
-    ];
+        
+        $scope.menu = menu;
+        setParent ($scope.menu, null);
+        $scope.openItems = [];
+        $scope.selectedItems = [];
+        $scope.selectedFromNavMenu = false;
+    };
     
     var setParent = function (children, parent) {
       angular.forEach(children, function (child) {
@@ -70,12 +74,6 @@ angular
         }
       }
     };
-    
-    setParent ($scope.menu, null);
-    
-    $scope.openItems = [];
-    $scope.selectedItems = [];
-    $scope.selectedFromNavMenu = false;
     
     $scope.select = function (item) {
         // close open nodes
@@ -108,7 +106,23 @@ angular
             parentRef = parentRef.parent;
         }
         
+        if (item.cluster) {
+          userService.getUsers($scope.global.city.path.key, item.label, undefined, undefined)
+          .then(function(response) {          
+            $scope.global.search = response.data;
+            $location.path(item.url);
+          });
+        }
+        
     };
+    
+    if (!$scope.global.city) {    
+      $scope.$on('sessionReady', function(event, status) {               
+        if (status) {
+          buildNav();    
+        }
+      });
+    } else buildNav();
 
     $scope.$watch(function () {
       return $location.path();

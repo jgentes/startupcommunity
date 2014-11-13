@@ -4,10 +4,10 @@ angular
   .factory('userService', function($http) {
     return {        
       search: function(city, query) {
-        return $http.get('/api/' + city + '/users' + (query ? ('?search=' + query) : ''));
+        return $http.get('/api/' + city + '/users' + (query ? '?search=' + query : ''));
       },
-      getUsers: function(city, alturl) {
-        return $http.get(alturl || '/api/' + city + '/users');
+      getUsers: function(city, cluster, role, alturl) {
+        return $http.get(alturl || '/api/' + city + '/users' + (cluster ? '?cluster=' + cluster : '') + (role ? '?role=' + role : ''));
       },
       putUser: function(userid, profile, callback) {
         $http.put('/api/user/' + userid + '?profile=' + profile)

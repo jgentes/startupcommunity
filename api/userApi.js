@@ -9,7 +9,7 @@ var bcrypt = require('bcryptjs'),
     mcapi = require('mailchimp-api/mailchimp'),
     mc = new mcapi.Mailchimp(config.mailchimp);
 
-//require('request-debug')(request); // Very useful for debugging oauth and api req/res
+require('request-debug')(request); // Very useful for debugging oauth and api req/res
 
 var UserApi = function() {
   this.ensureAuthenticated = handleEnsureAuthenticated;
@@ -65,13 +65,13 @@ var schema = {
 };
 
 
-var searchincity = function(city, role, limit, offset, query){  
+var searchincity = function(city, cluster, role, limit, offset, query){  
   var deferred = Q.defer();  
   db.newSearchBuilder()
   .collection('users')
   .limit(Number(limit) || 100)
   .offset(Number(offset) || 0)
-  .query((role ? 'cities.' + city + '.clusters.*.roles: ' + role : 'cities.' + city + '.admin: *') + (query ? ' AND ' + query : ''))  //must include admin:* for city search
+  .query('cities.' + city + ((cluster || role) ? (cluster ? '.clusters.' + cluster + '.roles: *' : '') + (role ? '.clusters.*.roles: ' + role : '') : '.admin: *') + (query ? ' AND ' + query : ''))  //must include admin:* for city search
   .then(function(result){        
     try {
       for (var i=0; i < result.body.results.length; i++) {
@@ -166,12 +166,13 @@ function handleCreateToken(req, user) {
 
 function handleUserSearch(req, res){  
   var city = req.params.city,
+      cluster = req.query.cluster,
       role = req.query.role,
       query = req.query.search,
       limit = req.query.limit,
       offset = req.query.offset;      
   
-    searchincity(city, role, limit, offset, query)
+    searchincity(city, cluster, role, limit, offset, query)
     .then(function(userlist){
       res.send(userlist);
     })

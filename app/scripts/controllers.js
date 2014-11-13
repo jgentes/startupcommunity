@@ -117,22 +117,23 @@ angular
     };
     
     $scope.getUsers = function(alturl) {
-      userService.getUsers($scope.global.city.path.key, alturl)
+      userService.getUsers($scope.global.city.path.key, undefined, undefined, alturl)
       .then(function(response) {          
         $scope.users = response.data;
       });
     };
-    
-    if (!$scope.global.city) {    
-      $scope.$on('sessionReady', function(event, status) {               
-        if (status) {
-          $scope.getUsers('/api/' + $scope.global.city.path.key + '/users?limit=32');
-        }
-      });
-    } else $scope.getUsers('/api/' + $scope.global.city.path.key + '/users?limit=32');
+    if ($location.$$path == '/advisors') {
+      if (!$scope.global.city) {    
+        $scope.$on('sessionReady', function(event, status) {               
+          if (status) {
+            $scope.getUsers('/api/' + $scope.global.city.path.key + '/users?limit=32');
+          }
+        });
+      } else $scope.getUsers('/api/' + $scope.global.city.path.key + '/users?limit=32');
+    }
     
     $scope.viewUser = function(userindex) {            
-      $scope.global.profile = ($location.$$path == '/search') ? $scope.global.search.results[userindex] : $scope.users.results[userindex];
+      $scope.global.profile = ($location.$$path == '/search' || $location.$$path == '/cluster') ? $scope.global.search.results[userindex] : $scope.users.results[userindex];
       $location.path('/profile');
     };
     
