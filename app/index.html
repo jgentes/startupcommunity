@@ -138,7 +138,7 @@
                  >
                     <input type="text" ng-model="searchQuery" class="search-query" placeholder="Search..."
                     >
-                    <button type="submit" ng-click="search(searchQuery)"><i class="fa fa-search"></i></button>
+                    <button type="submit" ng-keyup="$event.keyCode == 13 && search(searchQuery)" ng-click="search(searchQuery)"><i class="fa fa-search"></i></button>
                 </form>
             </li>
         </div>

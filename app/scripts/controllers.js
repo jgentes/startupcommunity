@@ -169,24 +169,35 @@ angular
     };      
     
     $scope.setRole = function(cluster, role, status) {
-      userService.setRole($scope.global.profile.path.key, $scope.global.citystate, cluster, role, status, function(response, status) {        
-        if (status !== 201) {          
+      userService.setRole($scope.global.profile.path.key, $scope.global.city.path.key, cluster, role, status, function(response, rescode) {              
+        var sameuser = false;
+        if (rescode == 201) {
+          if ($scope.global.profile.path.key == $scope.global.user.path.key) { sameuser = true; }
+          if ($scope.global.profile.value.cities[$scope.global.city.path.key].clusters === undefined) { //need to create clusters key
+            $scope.global.profile.value.cities[$scope.global.city.path.key]['clusters'] = {};
+          }
+          if ($scope.global.profile.value.cities[$scope.global.city.path.key].clusters[cluster] === undefined) { //need to create the cluster in user profile            
+              $scope.global.profile.value.cities[$scope.global.city.path.key].clusters[cluster] = { "roles": [] };              
+            }
+          var thiscluster = $scope.global.profile.value.cities[$scope.global.city.path.key].clusters[cluster];
+          
+          if (status === true) {
+            if (thiscluster.roles.indexOf(role) < 0) {
+              thiscluster.roles.push(role);
+            } // else they already have the role, no action needed
+          } else {
+            if (thiscluster.roles.indexOf(role) >= 0) {
+              thiscluster.roles.splice(role);
+            } // else they do not have the role, no action needed
+          }
+          
+          $scope.global.profile.value.cities[$scope.global.city.path.key].clusters[cluster] = thiscluster;
+          if (sameuser) { $scope.global.user.value.cities[$scope.global.city.path.key].clusters[cluster] = thiscluster; }
+          
+          } else {            
             $scope.global.alert = { type: 'danger', msg: 'There was a problem: ' + String(response.message) }; 
             console.warn(response.message);
-          } else {
-            
-            /*
-            var thiscluster = $scope.global.user.value.profile.cities[$scope.global.citystate].clusters[cluster];
-            if (status === true) {
-              if (thiscluster.roles.indexOf(role) < 0) {
-                thiscluster.roles.push(role);
-              } // else they already have the role, no action needed
-            } else {
-              if (thiscluster.roles.indexOf(role) >= 0) {
-                thiscluster.roles.splice(role);
-              } // else they do not have the role, no action needed
-            }
-            */
+                        
           }
       });
     };

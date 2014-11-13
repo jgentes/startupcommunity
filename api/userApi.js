@@ -65,13 +65,13 @@ var schema = {
 };
 
 
-var searchincity = function(city, limit, offset, query){  
+var searchincity = function(city, role, limit, offset, query){  
   var deferred = Q.defer();  
   db.newSearchBuilder()
   .collection('users')
   .limit(Number(limit) || 100)
   .offset(Number(offset) || 0)
-  .query('value.cities.' + city + '.admin: *' + (query ? ' AND ' + query : ''))
+  .query((role ? 'cities.' + city + '.clusters.*.roles: ' + role : 'cities.' + city + '.admin: *') + (query ? ' AND ' + query : ''))  //must include admin:* for city search
   .then(function(result){        
     try {
       for (var i=0; i < result.body.results.length; i++) {
@@ -91,11 +91,11 @@ var searchincity = function(city, limit, offset, query){
     
     if (result.body.next) {      
       var getnext = url.parse(result.body.next, true);   
-      result.body.next = '/api/' + city + '/users?limit=' + getnext.query.limit + '&offset=' + getnext.query.offset + (query ? '&search=' + query : '');
+      result.body.next = '/api/' + city + '/users?limit=' + getnext.query.limit + '&offset=' + getnext.query.offset + (role ? '&role=' + role : '') + (query ? '&search=' + query : '');
     }
     if (result.body.prev) {
       var getprev = url.parse(result.body.prev, true);
-      result.body.prev = '/api/' + city + '/users?limit=' + getprev.query.limit + '&offset=' + getprev.query.offset + (query ? '&search=' + query : '');
+      result.body.prev = '/api/' + city + '/users?limit=' + getprev.query.limit + '&offset=' + getprev.query.offset + (role ? '&role=' + role : '') + (query ? '&search=' + query : '');
     }
     deferred.resolve(result.body);
   })
@@ -116,7 +116,7 @@ function handleEnsureAuthenticated(req, res, next) {
   
   if (!req.headers.authorization) {   
     console.log('Please make sure your request has an Authorization header');
-    return res.status(401).send({ message: 'Please make sure your request has an Authorization header' });
+    return res.status(401).send({ message: 'Your session is no longer valid. Sorry, but could you login again?' });
   }
   try {
     var token = req.headers.authorization.split(' ')[1];
@@ -166,11 +166,12 @@ function handleCreateToken(req, user) {
 
 function handleUserSearch(req, res){  
   var city = req.params.city,
+      role = req.query.role,
       query = req.query.search,
       limit = req.query.limit,
       offset = req.query.offset;      
   
-    searchincity(city, limit, offset, query)
+    searchincity(city, role, limit, offset, query)
     .then(function(userlist){
       res.send(userlist);
     })
@@ -600,58 +601,72 @@ function handleGetProfile(req, res) {
 
 function handleSetRole(req, res) {
   var userkey = req.query.userkey,
-      citystate = req.query.citystate,
+      citykey = req.query.citykey,
       cluster = req.query.cluster,
       role = req.query.role,
       status = req.query.status,
       allowed = false;
       
+  function checkperms(allowed, callback) {
+    if (!allowed) {
+      db.get("users", req.user)
+      .then(function (response) {
+        try {
+          allowed = (response.body.cities[citykey].clusters[cluster].roles.indexOf("Leader") >= 0);
+          callback(allowed);
+        } catch (err) {
+          console.warn('Lookup of city or cluster failed.. that should not happen: ' + err);                
+        }
+      })
+      .fail(function(err){
+        console.warn("SEARCH FAIL:" + err);
+        res.status(401).send({ message: 'Something went wrong: ' + err});
+      });
+    } else callback(allowed);
+  }
+      
   //check perms!
-  if (userkey !== req.user) {
-    db.get("users", req.user)
-    .then(function (response) {      
-      try {
-        allowed = (response.body.cities[citystate].clusters[cluster].roles.indexOf("Leader") >= 0);
-      } catch (err) {
-        console.warn('Lookup of city or cluster failed.. that should not happen: ' + err);        
-      }
-    })
-    .fail(function(err){
-      console.warn("SEARCH FAIL:" + err);
-      res.status(401).send({ message: 'Something went wrong: ' + err});
-    });
-  } else allowed = true;
-  
-  if (allowed) {
-    db.get("users", userkey)
-    .then(function (response) {
-      var thiscluster = response.body.cities[citystate].clusters[cluster];
-      if (status === "true") {
-        if (thiscluster.roles.indexOf(role) < 0) {
-          thiscluster.roles.push(role);
-        } // else they already have the role, no action needed
-      } else if (status === "false") {        
-        if (thiscluster.roles.indexOf(role) >= 0) {          
-          thiscluster.roles.splice(thiscluster.roles.indexOf(role), 1);          
-        } // else they do not have the role, no action needed
-      }
-      response.body.cities[citystate].clusters[cluster] = thiscluster;
-      db.put('users', userkey, response.body)
-      .then(function (finalres) {
-        res.status(201).send({ message: 'Profile updated.'});
+  if (userkey == req.user) { allowed = true; }
+  checkperms(allowed, function (allowed) {
+    if (allowed) {  
+      db.get("users", userkey)
+      .then(function (response) { 
+        if (response.body.cities[citykey].clusters === undefined) { //need to create clusters key
+          response.body.cities[citykey]['clusters'] = {};
+        }
+        if (response.body.cities[citykey].clusters[cluster] === undefined) { //need to create the cluster in user profile      
+          console.log('Adding user to cluster: ' + cluster);
+          response.body.cities[citykey].clusters[cluster] = { "roles": [] };        
+        }
+        var thiscluster = response.body.cities[citykey].clusters[cluster];
+        
+        if (status === "true") {
+          if (thiscluster.roles.indexOf(role) < 0) {
+            thiscluster.roles.push(role);
+          } // else they already have the role, no action needed
+        } else if (status === "false") {        
+          if (thiscluster.roles.indexOf(role) >= 0) {          
+            thiscluster.roles.splice(thiscluster.roles.indexOf(role), 1);          
+          } // else they do not have the role, no action needed
+        }
+        response.body.cities[citykey].clusters[cluster] = thiscluster;
+        db.put('users', userkey, response.body)
+        .then(function (finalres) {
+          res.status(201).send({ message: 'Profile updated.'});
+        })
+        .fail(function (err) {
+          console.warn('Problem with put: ' + err);
+          res.status(400).send({ message: 'Something went wrong: ' + err});
+        });
       })
       .fail(function (err) {
-        console.warn('Problem with put: ' + err);
+        console.warn('Problem with get: ' + err);
         res.status(400).send({ message: 'Something went wrong: ' + err});
       });
-    })
-    .fail(function (err) {
-      console.warn('Problem with get: ' + err);
-      res.status(400).send({ message: 'Something went wrong: ' + err});
-    });
-  } else { 
-    res.status(401).send({ message: 'You do not have permission to change this role.'}); 
-  }
+    } else { 
+      res.status(401).send({ message: 'You do not have permission to change this role.'}); 
+    }
+  });
 }
 
 /*

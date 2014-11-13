@@ -58,23 +58,22 @@
 								</div>
 								<div class="col-md-6">									
 				                    <panel panel-class="panel-primary">
-				                    	<h3>Cluster Membership</h3>
+				                    	<h3>Cluster Activity</h3>
 				                          <table class="table table-condensed" style="margin-bottom: -19px;">											
 											<tbody>
-					                            <tr ng-repeat="cluster in global.city.value.clusters" style="border-top: 1px solid #e9ecf0;">
-					                              <td style="border: none;">				                                
-					                                <span style="margin: 12px 0 12px 0;">
-					                                  <h4>{{ cluster || 'empty' }} Cluster</h4>
-					                                </span>
+					                            <tr ng-repeat="(cluster, val) in global.city.value.clusters | orderBy : cluster : false" style="border-top: 1px solid #e9ecf0;">
+					                              <td style="border: none; padding: 8px 0 8px 0; width: 50%;">				                                					                                
+					                                  <h4><i class="fa {{val.icon}}" style="opacity: .6">&nbsp;</i> {{ cluster || 'empty' }} Cluster</h4>					                                
 					                              </td>
-					                              <td style="text-align: center;" ng-hide="global.editProfile">
+					                              <td style="text-align: center; width: 50%;" ng-hide="global.editProfile">
 					                              	<ul>
-					                              		<li ng-repeat="role in global.profile.value.cities[global.city.path.key].clusters[cluster].roles" style="list-style: none; display: inline; padding-right: 20px;">
-					                              			<span ng-class="{'btn btn-xs btn-info' : role == 'Advisor', 'btn btn-xs btn-success' : role == 'Member', 'btn btn-xs btn-danger' : role == 'Leader'}" style="margin-top: 10px;">{{ role }}</span>
+					                              		<span ng-if="(global.profile.value.cities[global.city.path.key].clusters[cluster] === undefined) || (global.profile.value.cities[global.city.path.key].clusters[cluster].roles.length == 0)" class="btn btn-xs btn-default" style="margin-top: 10px; float: right; cursor: default;">Inactive</span>
+					                              		<li ng-repeat="role in global.profile.value.cities[global.city.path.key].clusters[cluster].roles | orderBy : role : true" style="list-style: none;">					                              			
+					                              			<span ng-class="{'btn btn-xs btn-info' : role == 'Advisor', 'btn btn-xs btn-success' : role == 'Member', 'btn btn-xs btn-danger' : role == 'Leader'}" style="margin-top: 10px; margin-left: 15px; float: right; cursor: default;">{{ role }}</span>
 					                              		</li>
 					                              	</ul>
 					                              </td>
-					                              <td style="text-align: center; border: none; padding: 15px 0 15px 0;" ng-show="global.editProfile">
+					                              <td style="text-align: center; border: none; padding: 15px 0 15px 0; width: 50%;" ng-show="global.editProfile">
 								                    <div class="col-md-4">
 								                        <label class="control-label" style="display: block; margin-bottom: -5px;"><h5>Leader</h5></label>
 								                        <toggle-switch ng-init="leaderStatus = (global.profile.value.cities[global.city.path.key].clusters[cluster].roles.indexOf('Leader') >= 0)" ng-model="leaderStatus" ng-click="setRole(cluster, 'Leader', leaderStatus)" class="small-toggle danger" on-label="Yes" off-label="No" ng-disabled="global.user.value.cities[global.city.path.key].clusters[cluster] == undefined || global.user.value.cities[global.city.path.key].clusters[cluster].roles.indexOf('Leader') < 0"><toggle-switch>							
