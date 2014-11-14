@@ -9,7 +9,7 @@ var bcrypt = require('bcryptjs'),
     mcapi = require('mailchimp-api/mailchimp'),
     mc = new mcapi.Mailchimp(config.mailchimp);
 
-require('request-debug')(request); // Very useful for debugging oauth and api req/res
+//require('request-debug')(request); // Very useful for debugging oauth and api req/res
 
 var UserApi = function() {
   this.ensureAuthenticated = handleEnsureAuthenticated;
@@ -613,7 +613,7 @@ function handleSetRole(req, res) {
       db.get("users", req.user)
       .then(function (response) {
         try {
-          allowed = (response.body.cities[citykey].clusters[cluster].roles.indexOf("Leader") >= 0);
+          allowed = (response.body.cities[citykey].admin == true || response.body.cities[citykey].clusters[cluster].roles.indexOf("Leader") >= 0);
           callback(allowed);
         } catch (err) {
           console.warn('Lookup of city or cluster failed.. that should not happen: ' + err);                

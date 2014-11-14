@@ -17,7 +17,8 @@ angular
             {
                 label: 'Leaders',
                 role: true,
-                iconClasses: 'fa fa-flag-o'            
+                iconClasses: 'fa fa-flag-o',
+                url: '/leaders'
             },
             {
                 label: 'Advisors',
@@ -108,6 +109,14 @@ angular
         
         if (item.cluster) {
           userService.getUsers($scope.global.city.path.key, item.label, undefined, undefined)
+          .then(function(response) {          
+            $scope.global.search = response.data;
+            $location.path(item.url);
+          });
+        }
+        
+        if (item.role) {
+          userService.getUsers($scope.global.city.path.key, undefined, item.label.slice(0, - 1), undefined)
           .then(function(response) {          
             $scope.global.search = response.data;
             $location.path(item.url);
