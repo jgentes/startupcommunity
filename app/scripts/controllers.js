@@ -120,6 +120,14 @@ angular
       userService.getUsers($scope.global.city.path.key, undefined, undefined, alturl)
       .then(function(response) {          
         $scope.users = response.data;
+        if ($scope.users.next) {
+          $scope.users.start = Number($scope.users.next.match(/offset=([^&]+)/)[1]) - Number($scope.users.count) + 1;
+          $scope.users.end = Number($scope.users.next.match(/offset=([^&]+)/)[1]);
+        } else if ($scope.users.prev) {
+          $scope.users.start = Number($scope.users.total_count) - Number($scope.users.count);
+          $scope.users.end = $scope.users.total_count;
+        } else { $scope.users.start = 1;
+        }
       });
     };
     if ($location.$$path == '/advisors') {

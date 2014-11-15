@@ -32,7 +32,48 @@
         <img src="assets/img/headers/widget5_header.jpg" alt="header image" class="animation-pulseSlow">
     </div>
         <!-- END Dashboard Header -->
-    <div class="container-fluid">
+        
+    <div class="col-md-4 col-lg-3">
+        <!-- Navigation Block -->
+        <div class="block full">
+            <div class="block-title">
+                <div class="block-options pull-right">
+                    <a href="javascript:void(0)" class="btn btn-alt btn-sm btn-default" data-toggle="tooltip" title="Settings"><i class="fa fa-cog"></i></a>
+                </div>
+                <h2><i class="fa fa-compass"></i> Cluster <strong>Filters</strong></h2>
+            </div>
+            <ul class="nav nav-pills nav-stacked nav-icons media-filter">
+                <li class="active">
+                    <a href="javascript:void(0)" data-category="all">
+                        <i class="fa fa-fw fa-folder-open themed-color-dark icon-push"></i> <strong>All</strong>
+                    </a>
+                </li>
+                <li>
+                    <a href="javascript:void(0)" data-category="movie">
+                        <i class="fa fa-fw fa-film text-danger icon-push"></i> <strong>Movies</strong>
+                    </a>
+                </li>
+                <li>
+                    <a href="javascript:void(0)" data-category="photo">
+                        <i class="fa fa-fw fa-picture-o text-success icon-push"></i> <strong>Photos</strong>
+                    </a>
+                </li>
+                <li>
+                    <a href="javascript:void(0)" data-category="music">
+                        <i class="fa fa-fw fa-music text-info icon-push"></i> <strong>Music</strong>
+                    </a>
+                </li>
+                <li>
+                    <a href="javascript:void(0)" data-category="book">
+                        <i class="fa fa-fw fa-book text-warning icon-push"></i> <strong>Books</strong>
+                    </a>
+                </li>
+            </ul>
+            <!-- END Filter by Type links -->
+        </div>
+        <!-- END Navigation Block -->    
+    </div>
+    <div class="col-md-8 col-lg-9">
     <!-- Messages List Block -->
         <div class="block">
             <!-- Messages List Title -->
@@ -50,7 +91,7 @@
                     <thead>
                         <tr>
                             <td class="text-right" colspan="3">
-                                <strong>1 - {{users.count}}</strong> of <strong>{{users.total_count}}&nbsp;&nbsp;</strong>
+                                <strong>{{users.start}} - {{users.end}}</strong> of <strong>{{users.total_count}}&nbsp;&nbsp;</strong>
                                 <div class="btn-group btn-group-sm">
                                     <span ng-if="users.prev"><a ng-click="getUsers(users.prev)" class="btn btn-sm btn-default"><i class="fa fa-angle-left"></i></a></span>
                                     <span ng-if="users.next"><a ng-click="getUsers(users.next)" class="btn btn-sm btn-default"><i class="fa fa-angle-right"></i></a></span>
@@ -59,7 +100,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr ng-repeat="item in users.results">           
+                        <tr ng-repeat="item in users.results | orderBy : item.value.clusters">           
                             <td class="text-center" style="width: 5%;">
                                 <a ng-click="viewUser($index)" title="View {{::item.value.name | words:0}}'s Profile"><img style="height:32px" ng-src="{{::item.value.avatar || item.value.linkedin.pictureUrl || '/public/blank_avatar.png'}}" alt="{{::item.value.name}}" class="widget-image img-circle pull-left"></a>
                             </td>                                                    
@@ -70,13 +111,13 @@
                             </td>
                             <td style="width: 35%;">
                                 <li ng-repeat="(cluster, val) in item.value.cities[global.city.path.key].clusters" style="list-style: none; display: inline; float: right; padding-left: 5px;">
-    					           <span class="btn btn-xs btn-alt btn-default" ng-class="{ 'btn-info' : ((val.roles.indexOf('Advisor') >= 0) && (val.roles.indexOf('Leader') < 0)), 'btn-danger' : (val.roles.indexOf('Leader') >= 0) }" style="cursor: default;"><i class="fa {{global.city.value.clusters[cluster].icon}}"></i></span>
+    					           <span title="{{cluster}} Cluster" class="btn btn-xs btn-alt btn-default" ng-class="{ 'btn-info' : ((val.roles.indexOf('Advisor') >= 0) && (val.roles.indexOf('Leader') < 0)), 'btn-danger' : (val.roles.indexOf('Leader') >= 0) }" style="cursor: default;"><i class="fa {{global.city.value.clusters[cluster].icon}}"></i></span>
     					        </li>
 					        </td>
                         </tr>
                         <tr>
                             <td class="text-right" colspan="3">
-                                <strong>1 - {{users.count}}</strong> of <strong>{{users.total_count}}&nbsp;&nbsp;</strong>
+                                <strong>{{users.start}} - {{users.end}}</strong> of <strong>{{users.total_count}}&nbsp;&nbsp;</strong>
                                 <div class="btn-group btn-group-sm">
                                     <span ng-if="users.prev"><a ng-click="getUsers(users.prev)" class="btn btn-sm btn-default"><i class="fa fa-angle-left"></i></a></span>
                                     <span ng-if="users.next"><a ng-click="getUsers(users.next)" class="btn btn-sm btn-default"><i class="fa fa-angle-right"></i></a></span>
