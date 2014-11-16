@@ -6,8 +6,8 @@ angular
       search: function(city, query) {
         return $http.get('/api/' + city + '/users' + (query ? '?search=' + query : ''));
       },
-      getUsers: function(city, cluster, role, alturl) {
-        return $http.get(alturl || '/api/' + city + '/users' + (cluster ? '?cluster=' + cluster : '') + (role ? '?role=' + role : ''));
+      getUsers: function(city, cluster, role, limit, alturl) {
+        return $http.get(alturl || '/api/' + city + '/users' + (cluster ? '?cluster=' + cluster : '') + (role ? '?role=' + role : '') + (limit ? (cluster || role) ? '&limit=' + limit : '?limit=' + limit : ''));
       },
       putUser: function(userid, profile, callback) {
         $http.put('/api/user/' + userid + '?profile=' + profile)
@@ -33,8 +33,8 @@ angular
           callback(response);
         });
       },
-      addAdvisor: function(url, email, userid, callback) {        
-        $http.get('/api/addAdvisor?user={"url":"' + url + '","email":"' + email + '","userid":"' + userid + '"}')
+      addPerson: function(url, email, userid, callback) {        
+        $http.get('/api/addPerson?user={"url":"' + url + '","email":"' + email + '","userid":"' + userid + '"}')
         .success( function(response) {
           callback(response);
         })

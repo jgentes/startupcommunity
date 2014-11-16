@@ -1,6 +1,13 @@
 /* CUSTOM CSS */
 
 .filternav i { width: 18px; }
+.filternav i.fa-spin { 
+    width: 12px;
+    height: 14px;
+    margin-top: 2px;
+    color: #656b79;
+    opacity: .5;
+}
 .filternav a { color: #656b79; }
 
 

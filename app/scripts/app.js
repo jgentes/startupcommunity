@@ -34,10 +34,10 @@ app
   .config(['$provide', '$routeProvider', '$locationProvider', function ($provide, $routeProvider, $locationProvider) {
     $routeProvider
       .when('/', {
-        redirectTo: '/advisors'
+        redirectTo: '/people'
       })
-      .when('/advisors', {
-        templateUrl: 'views/advisors.html',
+      .when('/people', {
+        templateUrl: 'views/people.html',
         resolve: {
           authenticated: ['$location', '$auth', function($location, $auth) {
             if (!$auth.isAuthenticated()) {
@@ -46,8 +46,8 @@ app
           }]
         }
       })
-      .when('/advisors/add', {
-        templateUrl: 'views/add_advisors.html',
+      .when('/people/add', {
+        templateUrl: 'views/add_people.html',
         resolve: {
           authenticated: ['$location', '$auth', function($location, $auth) {
             if (!$auth.isAuthenticated()) {

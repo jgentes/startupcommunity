@@ -19,7 +19,7 @@
                         <div class="col-xs-4 col-sm-3">
                             <h2>
                                 <strong style="color: white;">{{users.total_count}}</strong><br>
-                                <small><i class="fa fa-graduation-cap"></i> Advisors</small>
+                                <small><i class="fa fa-graduation-cap"></i> People</small>
                             </h2>
                         </div>
                         
@@ -39,25 +39,25 @@
             <div class="block-title">
                 <h2>Role <strong>Filters</strong></h2>
             </div>
-            <ul class="nav nav-pills nav-stacked nav-icons media-filter">
-                <li class="active">
-                    <a href="javascript:void(0)" data-category="all">
-                        <i class="fa fa-fw fa-folder-open themed-color-dark"></i> <strong>All</strong>
+            <ul class="nav nav-pills nav-stacked nav-icons">
+                <li ng-class="{'active':selectedRole === 'People'}" ng-click="selectedRole = 'People'; filterRole(selectedRole);">
+                    <a href="javascript:void(0)">
+                        <i class="fa fa-fw fa-globe themed-color-dark"></i> <strong>All</strong><i ng-show="loadingRole==true && selectedRole==='People'" class="fa fa-refresh fa-spin pull-right"></i>
                     </a>
                 </li>
-                <li>
+                <li ng-class="{'active':selectedRole === 'Leaders'}" ng-click="selectedRole = 'Leaders'; filterRole(selectedRole);">
                     <a href="javascript:void(0)">
-                        <i class="fa fa-flag text-danger"></i> <strong>Leaders</strong> 
+                        <i class="fa fa-flag text-danger"></i> <strong>Leaders</strong><i ng-show="loadingRole==true && selectedRole==='Leaders'" class="fa fa-refresh fa-spin pull-right"></i>
                     </a>
                 </li>
-                <li>
+                <li ng-class="{'active':selectedRole === 'Advisors'}" ng-click="selectedRole = 'Advisors'; filterRole(selectedRole);">
                     <a href="javascript:void(0)">
-                        <i class="fa fa-graduation-cap text-info"></i> <strong>Advisors</strong> 
+                        <i class="fa fa-graduation-cap text-info"></i> <strong>Advisors</strong><i ng-show="loadingRole==true && selectedRole==='Advisors'" class="fa fa-refresh fa-spin pull-right"></i>
                     </a>
                 </li>
-                <li>
+                <li ng-class="{'active':selectedRole === 'Members'}" ng-click="selectedRole = 'Members'; filterRole(selectedRole);">
                     <a href="javascript:void(0)">
-                        <i class="fa fa-leaf text-success"></i> <strong>Members</strong> 
+                        <i class="fa fa-leaf text-success"></i> <strong>Members</strong><i ng-show="loadingRole==true && selectedRole==='Members'" class="fa fa-refresh fa-spin pull-right"></i>
                     </a>
                 </li>
             </ul>
@@ -70,15 +70,15 @@
             <div class="block-title">
                 <h2>Cluster <strong>Filters</strong></h2>
             </div>
-            <ul class="nav nav-pills nav-stacked nav-icons media-filter">
-                <li class="active">
-                    <a href="javascript:void(0)" data-category="all">
-                        <i class="fa fa-fw fa-folder-open themed-color-dark icon-push"></i> <strong>All</strong>
+            <ul class="nav nav-pills nav-stacked nav-icons">
+                <li ng-class="{'active':global.city.selectedCluster === global.city.value.citystate.split(',')[0]}" ng-click="global.city.selectedCluster = global.city.value.citystate.split(',')[0]; filterCluster(global.city.selectedCluster);">
+                    <a href="javascript:void(0)">
+                        <i class="fa fa-fw fa-globe themed-color-dark icon-push"></i> <strong>All</strong><i ng-show="loadingCluster==true && global.city.selectedCluster===global.city.value.citystate.split(',')[0]" class="fa fa-refresh fa-spin pull-right"></i>
                     </a>
                 </li>
-                <li ng-repeat="(cluster, val) in global.city.value.clusters">
+                <li ng-repeat="(cluster, val) in global.city.value.clusters" ng-class="{'active':global.city.selectedCluster === cluster}" ng-click="global.city.selectedCluster = cluster; filterCluster(global.city.selectedCluster);">
                     <a ng-model="cluster_selection" value="{{cluster}}">
-                        <i class="fa {{val.icon}}"></i> <strong>{{cluster}}</strong> 
+                        <i class="fa {{val.icon}}"></i> <strong>{{cluster}}</strong><i ng-show="loadingCluster==true && global.city.selectedCluster===cluster" class="fa fa-refresh fa-spin pull-right"></i>
                     </a>
                 </li>
             </ul>
@@ -98,7 +98,7 @@
                         <span ng-if="users.next"><a ng-click="getUsers(users.next)" class="btn btn-sm btn-default" style="background-color: #fff;"><i class="fa fa-angle-right"></i></a></span>
                     </div>
                 </div>
-                <h2><strong>People </strong> in {{global.city.value.citystate.split(',')[0]}}</h2>
+                <h2><strong>{{selectedRole}} </strong> in {{global.city.selectedCluster}}</h2>
             </div>
             <!-- END Messages List Title -->
     
@@ -107,7 +107,7 @@
                 <table class="table table-hover table-vcenter">                
                     <tbody>
                         <tr><td style="border-bottom: 1px solid #fff; border-top: none; padding: 0;" colspan="3"></td></tr>
-                        <tr ng-repeat="item in users.results | filter:cluster_selection | orderBy : item.value.clusters">           
+                        <tr ng-repeat="item in users.results | orderBy : item.value.cities[global.city.path.key].clusters">           
                             <td class="text-center" style="width: 5%;">
                                 <a ng-click="viewUser($index)" title="View {{::item.value.name | words:0}}'s Profile"><img style="height:48px" ng-src="{{::item.value.avatar || item.value.linkedin.pictureUrl || '/public/blank_avatar.png'}}" alt="{{::item.value.name}}" class="widget-image img-circle pull-left"></a>
                             </td>                                                    

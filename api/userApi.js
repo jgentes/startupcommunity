@@ -16,7 +16,7 @@ var UserApi = function() {
   this.userSearch = handleUserSearch;
   this.subscribeUser = handleSubscribeUser;
   this.createToken = handleCreateToken;  
-  this.addAdvisor = handleAddAdvisor;
+  this.addPerson = handleAddPerson;
   this.linkedin = handleLinkedin;
   this.getProfile = handleGetProfile;
   this.setRole = handleSetRole;
@@ -65,7 +65,7 @@ var schema = {
 };
 
 
-var searchincity = function(city, cluster, role, limit, offset, query){  
+var searchincity = function(city, cluster, role, limit, offset, sort, query){  
   var deferred = Q.defer();  
   db.newSearchBuilder()
   .collection('users')
@@ -282,19 +282,19 @@ function handleLogin(req, res) {
 
 /*
  |--------------------------------------------------------------------------
- | Add Advisor
+ | Add Person
  |--------------------------------------------------------------------------
  */
 
-function handleAddAdvisor(req, res) {  
+function handleAddPerson(req, res) {  
     
-  var addAdvisor = JSON.parse(req.query.user);
-  if (addAdvisor) {
-    var gettoken = function(addAdvisor, callback) {          
+  var addPerson= JSON.parse(req.query.user);
+  if (addPerson) {
+    var gettoken = function(addPerson, callback) {          
       db.newSearchBuilder()
         .collection('users')
         .limit(1)
-        .query('value.linkedin.id: "' + addAdvisor.userid + '"')
+        .query('value.linkedin.id: "' + addPerson.userid + '"')
         .then(function(result){
           if (result.body.results.length > 0) {
             console.log("Found user, pulling access_token");
@@ -318,9 +318,9 @@ function handleAddAdvisor(req, res) {
           
     };
     
-    gettoken(addAdvisor, function(access_token) {    
+    gettoken(addPerson, function(access_token) {    
             
-      getlinkedinprofile(addAdvisor.url, addAdvisor.email, access_token, function(result) {                
+      getlinkedinprofile(addPerson.url, addPerson.email, access_token, function(result) {                
         res.status(result.status).send(result);
       });
       

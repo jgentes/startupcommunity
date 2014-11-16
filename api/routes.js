@@ -6,7 +6,7 @@ function setup(app,routes) {
     app.post('/api/profile/remove/:userid', routes.userApi.ensureAuthenticated, routes.userApi.removeProfile);
     app.get('/auth/unlink/:provider', routes.userApi.ensureAuthenticated, routes.userApi.unlink);     
     app.post('/auth/linkedin', routes.userApi.linkedin);
-    app.get('/api/addAdvisor', routes.userApi.ensureAuthenticated, routes.userApi.addAdvisor);
+    app.get('/api/addPerson', routes.userApi.ensureAuthenticated, routes.userApi.addPerson);
     app.post('/auth/signup', routes.userApi.signup);
     app.post('/auth/login', routes.userApi.login);
     app.post('/sub', routes.userApi.subscribeUser);

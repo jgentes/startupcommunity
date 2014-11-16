@@ -15,19 +15,13 @@ angular
                 heading: 'COMMUNITY'
             },
             {
-                label: 'Leaders',
-                role: true,
-                iconClasses: 'fa fa-flag-o',
-                url: '/leaders'
-            },
-            {
-                label: 'Advisors',
-                iconClasses: 'fa fa-graduation-cap',
-                url: '/advisors',
+                label: 'People',
+                iconClasses: 'fa fa-leaf',
+                url: '/people',
                 children: [
                     {
-                        label: 'Add Advisors',
-                        url: '/advisors/add'
+                        label: 'Add People',
+                        url: '/people/add'
                     }
                 ]
             },

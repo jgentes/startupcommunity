@@ -109,6 +109,21 @@ angular
   })
         
   .controller('PeopleController', ['$scope', '$location', 'userService', function ($scope, $location, userService) {
+          
+    function setPage() {
+      if ($scope.users.next) {
+          $scope.users.start = Number($scope.users.next.match(/offset=([^&]+)/)[1]) - Number($scope.users.count) + 1;
+          $scope.users.end = Number($scope.users.next.match(/offset=([^&]+)/)[1]);
+        } else if ($scope.users.prev) {
+          $scope.users.start = Number($scope.users.total_count) - Number($scope.users.count);
+          $scope.users.end = $scope.users.total_count;
+        } else if ($scope.users.count === 0) {
+          $scope.users.start = 0;
+          $scope.users.end = 0;
+        } else { 
+          $scope.users.start = 1; $scope.users.end = $scope.users.total_count;
+        }
+    }
     
     $scope.rotateWidgetClass = function() {
       var arr = ["'themed-background-dark'",'themed-background-dark-night','themed-background-dark-amethyst', 'themed-background-dark-modern', 'themed-background-dark-autumn', 'themed-background-dark-flatie', 'themed-background-dark-spring', 'themed-background-dark-fancy', 'themed-background-dark-fire'];
@@ -117,33 +132,53 @@ angular
     };
     
     $scope.getUsers = function(alturl) {
-      userService.getUsers($scope.global.city.path.key, undefined, undefined, alturl)
+      userService.getUsers($scope.global.city.path.key, undefined, undefined, 32, alturl)
       .then(function(response) {          
-        $scope.users = response.data;
-        if ($scope.users.next) {
-          $scope.users.start = Number($scope.users.next.match(/offset=([^&]+)/)[1]) - Number($scope.users.count) + 1;
-          $scope.users.end = Number($scope.users.next.match(/offset=([^&]+)/)[1]);
-        } else if ($scope.users.prev) {
-          $scope.users.start = Number($scope.users.total_count) - Number($scope.users.count);
-          $scope.users.end = $scope.users.total_count;
-        } else { $scope.users.start = 1;
-        }
+        $scope.users = response.data;        
+        setPage();
       });
-    };
-    if ($location.$$path == '/advisors') {
-      if (!$scope.global.city) {    
-        $scope.$on('sessionReady', function(event, status) {               
-          if (status) {
-            $scope.getUsers('/api/' + $scope.global.city.path.key + '/users?limit=32');
-          }
-        });
-      } else $scope.getUsers('/api/' + $scope.global.city.path.key + '/users?limit=32');
-    }
+    };  
     
     $scope.viewUser = function(userindex) {            
       $scope.global.profile = ($location.$$path == '/search' || $location.$$path == '/cluster') ? $scope.global.search.results[userindex] : $scope.users.results[userindex];
       $location.path('/profile');
+    };    
+    
+    $scope.filterCluster = function(cluster) {      
+      $scope.loadingCluster = true;
+      $scope.selectedRole = 'People';
+      if (cluster == $scope.global.city.value.citystate.split(',')[0]) { cluster = undefined; }
+      userService.getUsers($scope.global.city.path.key, cluster, undefined, 32, undefined)
+      .then(function(response) {
+        $scope.loadingCluster = false;
+        $scope.users = response.data;        
+        setPage();
+      });
     };
+    
+    $scope.filterRole = function(role) {      
+      $scope.loadingRole = true;
+      $scope.global.city.selectedCluster = $scope.global.city.value.citystate.split(',')[0];      
+      if (role == 'People') { role = undefined; } else role = role.slice(0,-1);      
+      userService.getUsers($scope.global.city.path.key, undefined, role, 32, undefined)
+      .then(function(response) {        
+        $scope.loadingRole = false;
+        $scope.users = response.data;           
+        setPage();
+      });
+    };
+    
+    if ($location.$$path == '/people') {
+      if (!$scope.global.city) {    
+        $scope.$on('sessionReady', function(event, status) {               
+          if (status) {
+            $scope.getUsers('/api/' + $scope.global.city.path.key + '/users?limit=32');            
+            $scope.global.city.selectedCluster = $scope.global.city.value.citystate.split(',')[0];
+            $scope.selectedRole = 'People';
+          }
+        });
+      } else $scope.getUsers('/api/' + $scope.global.city.path.key + '/users?limit=32');
+    }
     
   }])    
   
@@ -156,15 +191,15 @@ angular
             console.warn(response.message);
           } else {
             $scope.profile = response.data; // may need to tell angular to refresh view
-            $scope.global.alert = { type: 'success', msg: 'Advisor updated! ' + response.data.name + ' is good to go.' };  
+            $scope.global.alert = { type: 'success', msg: 'Person updated! ' + response.data.name + ' is good to go.' };  
           }
         });
     };  
     
     $scope.removeProfile = function(userid) {
       userService.removeProfile(userid, function(response) {        
-        $location.path('/advisors');
-        $scope.global.alert = { type: 'success', msg: "Advisor removed. Hopefully they'll return some day." };             
+        $location.path('/people');
+        $scope.global.alert = { type: 'success', msg: "Person removed. Hopefully they'll return some day." };             
       });
     };  
     
@@ -245,18 +280,23 @@ angular
     
   }])
   
-  .controller('AddAdvisorController', ['$scope', '$auth', 'userService', function ($scope, $auth, userService) {
+  .controller('AddPeopleController', ['$scope', '$auth', 'userService', function ($scope, $auth, userService) {
       
-    $scope.addAdvisor = function(url, email, userid) {                  
-        userService.addAdvisor(url, email, userid, function(response) {            
-          if (response.status !== 200) {          
-            $scope.global.alert = { type: 'danger', msg: 'There was a problem: ' + String(response.message) };  
-            console.warn(response.message);
-          } else {            
-            $scope.global.alert = { type: 'success', msg: 'Advisor imported! ' + response.data.name + ' is good to go.' };     
-          }
-        });
-      };    
+    $scope.addPerson = function(url, email, userid) {                  
+      $scope.disabled = true;
+      userService.addPerson(url, email, userid, function(response) {
+        $scope.disabled = false;
+        if (response.status !== 200) {          
+          $scope.global.alert = { type: 'danger', msg: 'There was a problem: ' + String(response.message) };  
+          console.warn(response.message);
+        } else {            
+          $scope.global.alert = { type: 'success', msg: 'Person imported! ' + response.data.name + ' is good to go.' };     
+        }
+      });
+    };    
+      
+    $scope.disabled = false;
+    
   }])
   
   .controller('LoginCtrl', ['$scope', '$auth', '$global', '$location', '$route', function($scope, $auth, $global, $location, $route) {
