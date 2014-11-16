@@ -1,3 +1,8 @@
+/* CUSTOM CSS */
+
+.filternav i { width: 18px; }
+.filternav a { color: #656b79; }
+
 
 /*
 =================================================================
@@ -60,7 +65,7 @@ a:focus,
 a.text-primary,
 a.text-primary:hover,
 a.text-primary:focus {
-    color: #1bbae1;
+    color: #4697ce;
 }
 
 .text-danger,
@@ -861,7 +866,7 @@ a.widget.widget-hover-effect4:active {
     .block,
     .block.full,
     .modal-body{
-        padding-left: 23px;
+        padding-left: 20px;
         padding-right: 20px;
     }
 
