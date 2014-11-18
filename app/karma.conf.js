@@ -8,7 +8,13 @@ module.exports = function(config) {
 
     // testing framework to use (jasmine/mocha/qunit/...)
     frameworks: ['jasmine'],
-
+    
+    plugins:[
+             'karma-jasmine',
+             'karma-phantomjs-launcher',
+             'karma-chrome-launcher'
+             ],
+    
     // list of files / patterns to load in the browser
     files: [
       '../bower_components/angular/angular.js',
@@ -28,6 +34,11 @@ module.exports = function(config) {
 
     // web server port
     //port: process.env.PORT,
+    
+    browsers: ['PhantomJS'],
+    hostname: process.env.IP || '',
+    port: process.env.PORT || '',
+    runnerPort: 0,
 
     // level of logging
     // possible values: LOG_DISABLE || LOG_ERROR || LOG_WARN || LOG_INFO || LOG_DEBUG
@@ -46,7 +57,7 @@ module.exports = function(config) {
     // - Safari (only Mac)
     // - PhantomJS
     // - IE (only Windows)
-    browsers: ['Chrome'],
+    //browsers: ['Chrome'],
 
 
     // Continuous Integration mode
