@@ -108,8 +108,8 @@ angular
     };
   })
         
-  .controller('PeopleController', ['$scope', '$location', 'userService', function ($scope, $location, userService) {
-          
+  .controller('PeopleController', ['$scope', '$location', 'userService', function ($scope, $location, userService) {    
+    
     function setPage() {
       if ($scope.users.next) {
           $scope.users.start = Number($scope.users.next.match(/offset=([^&]+)/)[1]) - Number($scope.users.count) + 1;
@@ -117,16 +117,16 @@ angular
         } else if ($scope.users.prev) {
           $scope.users.start = Number($scope.users.total_count) - Number($scope.users.count);
           $scope.users.end = $scope.users.total_count;
-        } else if ($scope.users.count === 0) {
+        } else if ($scope.users.count === 0 || $scope.users === undefined) {
           $scope.users.start = 0;
           $scope.users.end = 0;
-        } else { 
+        } else {          
           $scope.users.start = 1; $scope.users.end = $scope.users.total_count;
         }
     }
     
     $scope.rotateWidgetClass = function() {
-      var arr = ["'themed-background-dark'",'themed-background-dark-night','themed-background-dark-amethyst', 'themed-background-dark-modern', 'themed-background-dark-autumn', 'themed-background-dark-flatie', 'themed-background-dark-spring', 'themed-background-dark-fancy', 'themed-background-dark-fire'];
+      var arr = ["'themed-background-dark'",'themed-background-dark-night','themed-background-dark-modern', 'themed-background-dark-autumn', 'themed-background-dark-fancy', 'themed-background-dark-fire'];
       var idx = Math.floor(Math.random() * arr.length);
       return arr[idx];
     };
@@ -168,17 +168,22 @@ angular
       });
     };
     
-    if ($location.$$path == '/people') {
-      if (!$scope.global.city) {    
-        $scope.$on('sessionReady', function(event, status) {               
-          if (status) {
-            $scope.getUsers('/api/' + $scope.global.city.path.key + '/users?limit=32');            
-            $scope.global.city.selectedCluster = $scope.global.city.value.citystate.split(',')[0];
-            $scope.selectedRole = 'People';
-          }
-        });
-      } else $scope.getUsers('/api/' + $scope.global.city.path.key + '/users?limit=32');
+    function getData() {
+      if ($location.$$path == '/people' || $scope.global.search === undefined) {
+        $scope.getUsers('/api/' + $scope.global.city.path.key + '/users?limit=32');                                  
+      } else if ($location.$$path == '/search') {
+        $scope.users = $scope.global.search;
+        setPage();        
+      }
+      $scope.global.city.selectedCluster = $scope.global.city.value.citystate.split(',')[0];        
+      $scope.selectedRole = 'People';
     }
+    
+    if (!$scope.global.city) {
+      $scope.$on('sessionReady', function(event, status) {
+        getData();         
+      });                    
+    } else getData();       
     
   }])    
   
@@ -404,20 +409,27 @@ angular
     };
   }])
   
- 
-  .directive('scrollToBottom', function () {
-    return {
-      restrict: 'A',
-      scope: {
-        model: '=scrollToBottom'
-      },
-      link: function (scope, element, attr) {
-        scope.$watch('model', function (n, o) {
-          if (n != o) {
-            element[0].scrollTop = element[0].scrollHeight;
-          }
-        });
-      }
+  .controller('ErrorPageController', ['$scope', '$global', '$location', '$window', 'userService', function ($scope, $global, $location, $window, userService) {
+    $global.set('fullscreen', true);
+  	$scope.$on('$destroy', function () {
+      $global.set('fullscreen', false);
+    });
+  	$scope.formData = {};
+  	
+  	$scope.search = function(query) {
+      userService.search($scope.global.city.path.key, query)
+      .then(function(results) {
+        $scope.global.search = results.data;
+        $location.path('/search');
+      });
     };
-});
+    
+    $scope.goBack = function() {
+      $window.history.back();
+    };
+    
+  }]);
+  	
+  
+  
 

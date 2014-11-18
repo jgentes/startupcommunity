@@ -72,14 +72,10 @@
             </div>
             <ul class="nav nav-pills nav-stacked nav-icons">
                 <li ng-class="{'active':global.city.selectedCluster === global.city.value.citystate.split(',')[0]}" ng-click="global.city.selectedCluster = global.city.value.citystate.split(',')[0]; filterCluster(global.city.selectedCluster);">
-                    <a href="javascript:void(0)">
-                        <i class="fa fa-fw fa-globe themed-color-dark icon-push"></i> <strong>All</strong><i ng-show="loadingCluster==true && global.city.selectedCluster===global.city.value.citystate.split(',')[0]" class="fa fa-refresh fa-spin pull-right"></i>
-                    </a>
+                    <a><i class="fa fa-fw fa-globe themed-color-dark icon-push"></i> <strong>All</strong><i ng-show="loadingCluster==true && global.city.selectedCluster===global.city.value.citystate.split(',')[0]" class="fa fa-refresh fa-spin pull-right"></i></a>
                 </li>
                 <li ng-repeat="(cluster, val) in global.city.value.clusters" ng-class="{'active':global.city.selectedCluster === cluster}" ng-click="global.city.selectedCluster = cluster; filterCluster(global.city.selectedCluster);">
-                    <a ng-model="cluster_selection" value="{{cluster}}">
-                        <i class="fa {{val.icon}}"></i> <strong>{{cluster}}</strong><i ng-show="loadingCluster==true && global.city.selectedCluster===cluster" class="fa fa-refresh fa-spin pull-right"></i>
-                    </a>
+                    <a><i class="fa {{val.icon}}"></i> <strong>{{cluster}}</strong><i ng-show="loadingCluster==true && global.city.selectedCluster===cluster" class="fa fa-refresh fa-spin pull-right"></i></a>
                 </li>
             </ul>
             <!-- END Filter by Type links -->
@@ -104,24 +100,28 @@
     
             <!-- Messages List Content -->
             <div class="table-responsive" style="margin: 0 -10px;">
-                <table class="table table-hover table-vcenter">                
+                <table class="table table-vcenter">                
                     <tbody>
                         <tr><td style="border-bottom: 1px solid #fff; border-top: none; padding: 0;" colspan="3"></td></tr>
                         <tr ng-repeat="item in users.results | orderBy : item.value.cities[global.city.path.key].clusters">           
-                            <td class="text-center" style="width: 5%;">
-                                <a ng-click="viewUser($index)" title="View {{::item.value.name | words:0}}'s Profile"><img style="height:48px" ng-src="{{::item.value.avatar || item.value.linkedin.pictureUrl || '/public/blank_avatar.png'}}" alt="{{::item.value.name}}" class="widget-image img-circle pull-left"></a>
-                            </td>                                                    
-                            <td style="width: 65%;">
-                                <a ng-click="viewUser($index)" title="View {{::item.value.name | words:0}}'s Profile"><strong>{{::item.value.name}}</strong></a>                                
+                            <td class="text-center" style="width: 5%; vertical-align: top;">
+                                <a ng-click="viewUser($index)" title="View {{::item.value.name | words:0}}'s Profile"><img style="height:48px" ng-src="{{::item.value.avatar || item.value.linkedin.pictureUrl || '/public/blank_avatar.png'}}" alt="{{::item.value.name}}" class="widget-image img-circle pull-left"></a>                                
+                            </td>   
+                            <td style="width: 65%; vertical-align: top;  padding-top: 8px;">
+                                <a ng-click="viewUser($index)" title="View {{::item.value.name | words:0}}'s Profile"><strong>{{::item.value.name}} </strong></a>
+                                <a ng-show="{{(item.value.linkedin.summary).length > 0}}" title="Show Summary" ng-click="showSummary = !showSummary" style="color: #DDDDDD;" ng-cloak>
+                                    <i class="fa fa-chevron-down fa-fw"></i>
+                                </a>
     					        <br>
-                                <span class="text-muted">{{::item.value.linkedin.headline}}</span>
+                                <span class="text-muted">{{::item.value.linkedin.headline}}</span>                                
+                                <span ng-if="showSummary" class="text-muted" style="white-space:pre-wrap;"><hr>{{::item.value.linkedin.summary}}</span>                                
                             </td>
                             <td style="width: 30%;">
                                 <li ng-repeat="(cluster, val) in item.value.cities[global.city.path.key].clusters" style="list-style: none; display: inline; float: right; padding-left: 5px;">
     					           <span title="{{cluster}} Cluster" class="btn btn-xs btn-alt btn-default" ng-class="{ 'btn-info' : ((val.roles.indexOf('Advisor') >= 0) && (val.roles.indexOf('Leader') < 0)), 'btn-danger' : (val.roles.indexOf('Leader') >= 0) }" style="cursor: default;"><i class="fa {{global.city.value.clusters[cluster].icon}}"></i></span>
     					        </li>
 					        </td>
-                        </tr>
+                        </tr>                        
                         <tr>
                             <td class="text-right" colspan="3">
                                 <strong>{{users.start}} - {{users.end}}</strong> of <strong>{{users.total_count}}&nbsp;&nbsp;</strong>

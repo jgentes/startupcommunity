@@ -46,6 +46,16 @@ app
           }]
         }
       })
+      .when('/search', {
+        templateUrl: 'views/people.html',
+        resolve: {
+          authenticated: ['$location', '$auth', function($location, $auth) {
+            if (!$auth.isAuthenticated()) {
+              return $location.path('/launchform');
+            }
+          }]
+        }
+      })
       .when('/people/add', {
         templateUrl: 'views/add_people.html',
         resolve: {
@@ -80,12 +90,14 @@ app
       })      
       .when('/logout', {
         controller: 'LogoutCtrl'
-      })      
+      })        
+      /*
       .when('/:templateFile', { // this could be dangerous because it could expose hidden views
         templateUrl: function (param) { return 'views/'+param.templateFile+'.html' }
       })
+      */
       .otherwise({
-        redirectTo: '/' // this needs to be a 404 page
+        templateUrl: 'views/404.html'
       });
       $locationProvider
         .html5Mode(true);

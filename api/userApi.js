@@ -64,12 +64,17 @@ var schema = {
   } 
 };
 
-
-var searchincity = function(city, cluster, role, limit, offset, sort, query){  
+/*
+ |--------------------------------------------------------------------------
+ | Search API
+ |--------------------------------------------------------------------------
+ */
+ 
+var searchincity = function(city, cluster, role, limit, offset, query){  
   var deferred = Q.defer();  
   db.newSearchBuilder()
   .collection('users')
-  .limit(Number(limit) || 100)
+  .limit(Number(limit) || 32)
   .offset(Number(offset) || 0)
   .query('cities.' + city + ((cluster || role) ? (cluster ? '.clusters.' + cluster + '.roles: *' : '') + (role ? '.clusters.*.roles: ' + role : '') : '.admin: *') + (query ? ' AND ' + query : ''))  //must include admin:* for city search
   .then(function(result){        
@@ -106,6 +111,25 @@ var searchincity = function(city, cluster, role, limit, offset, sort, query){
   return deferred.promise;
   
 };
+
+
+function handleUserSearch(req, res){  
+  var city = req.params.city,
+      cluster = req.query.cluster,
+      role = req.query.role,
+      query = req.query.search,
+      limit = req.query.limit,
+      offset = req.query.offset;      
+  
+    searchincity(city, cluster, role, limit, offset, query)
+    .then(function(userlist){
+      res.send(userlist);
+    })
+    .fail(function(err){
+      console.warn(err);
+      res.send({ message: err});
+    });
+}
 
 /*
  |--------------------------------------------------------------------------
@@ -158,29 +182,7 @@ function handleCreateToken(req, user) {
   return jwt.encode(payload, config.token_secret);
 }
 
-/*
- |--------------------------------------------------------------------------
- | Search API
- |--------------------------------------------------------------------------
- */
 
-function handleUserSearch(req, res){  
-  var city = req.params.city,
-      cluster = req.query.cluster,
-      role = req.query.role,
-      query = req.query.search,
-      limit = req.query.limit,
-      offset = req.query.offset;      
-  
-    searchincity(city, cluster, role, limit, offset, query)
-    .then(function(userlist){
-      res.send(userlist);
-    })
-    .fail(function(err){
-      console.warn(err);
-      res.send({ message: err});
-    });
-}
 
 function handleSubscribeUser(req, res){  
   mc.lists.subscribe({id: 'ba6c99c719', email:{email:req.body.email}, merge_vars: {'CITY': req.body.city} }, function(data) { 
