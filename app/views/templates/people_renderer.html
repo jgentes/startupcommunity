@@ -1,11 +1,11 @@
 <div class="widget">
     <div style="overflow: hidden;" class="widget-simple" ng-class="['themed-background-dark','themed-background-dark-night', 'themed-background-dark-fire', 'themed-background-dark-autumn', 'themed-background-dark-fancy', 'themed-background-dark-flatie'][$index % 6]">
         <div>
-            <a ng-click="viewUser($index)" title="View {{::item.value.name | words:0}}'s Profile"><img ng-src="{{::item.value.avatar || item.value.linkedin.pictureUrl || '/public/blank_avatar.png'}}" alt="{{::item.value.name}}" class="widget-image img-circle pull-left"></a>
+            <a ng-click="viewUser(item)" title="View {{::item.value.name | words:0}}'s Profile"><img ng-src="{{::item.value.avatar || item.value.linkedin.pictureUrl || '/public/blank_avatar.png'}}" alt="{{::item.value.name}}" class="widget-image img-circle pull-left"></a>
         </div>
         <h4 class="widget-content widget-content-light">
             <div ng-class="['themed-color','themed-color-night', 'themed-color-fire', 'themed-color-autumn', 'themed-color-fancy', 'themed-color-flatie'][$index % 6]">
-                <a ng-click="viewUser($index)" title="View {{::item.value.name | words:0}}'s Profile" style="color: inherit; text-decoration: none;"><strong>{{::item.value.name}}</strong></a>
+                <a ng-click="viewUser(item)" title="View {{::item.value.name | words:0}}'s Profile" style="color: inherit; text-decoration: none;"><strong>{{::item.value.name}}</strong></a>
                 <a ng-show="{{(item.value.linkedin.summary).length > 0}}" title="Show Summary" ng-click="showSummary = !showSummary" class="btn btn-xs" ng-class="['themed-color', 'themed-color-night', 'themed-color-fire', 'themed-color-autumn', 'themed-color-fancy', 'themed-color-flatie'][$index % 6]" style="float:right">
                     <i class="fa fa-chevron-down fa-fw"></i>
                 </a>

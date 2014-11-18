@@ -105,10 +105,10 @@
                         <tr><td style="border-bottom: 1px solid #fff; border-top: none; padding: 0;" colspan="3"></td></tr>
                         <tr ng-repeat="item in users.results | orderBy : item.value.cities[global.city.path.key].clusters">           
                             <td class="text-center" style="width: 5%; vertical-align: top;">
-                                <a ng-click="viewUser($index)" title="View {{::item.value.name | words:0}}'s Profile"><img style="height:48px" ng-src="{{::item.value.avatar || item.value.linkedin.pictureUrl || '/public/blank_avatar.png'}}" alt="{{::item.value.name}}" class="widget-image img-circle pull-left"></a>                                
+                                <a ng-click="viewUser(item)" title="View {{::item.value.name | words:0}}'s Profile"><img style="height:48px" ng-src="{{::item.value.avatar || item.value.linkedin.pictureUrl || '/public/blank_avatar.png'}}" alt="{{::item.value.name}}" class="widget-image img-circle pull-left"></a>                                
                             </td>   
                             <td style="width: 65%; vertical-align: top;  padding-top: 8px;">
-                                <a ng-click="viewUser($index)" title="View {{::item.value.name | words:0}}'s Profile"><strong>{{::item.value.name}} </strong></a>
+                                <a ng-click="viewUser(item)" title="View {{::item.value.name | words:0}}'s Profile"><strong>{{::item.value.name}} </strong></a>
                                 <a ng-show="{{(item.value.linkedin.summary).length > 0}}" title="Show Summary" ng-click="showSummary = !showSummary" style="color: #DDDDDD;" ng-cloak>
                                     <i class="fa fa-chevron-down fa-fw"></i>
                                 </a>

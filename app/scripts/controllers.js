@@ -139,8 +139,8 @@ angular
       });
     };  
     
-    $scope.viewUser = function(userindex) {            
-      $scope.global.profile = ($location.$$path == '/search' || $location.$$path == '/cluster') ? $scope.global.search.results[userindex] : $scope.users.results[userindex];
+    $scope.viewUser = function(user) {
+      $scope.global.profile = user;
       $location.path('/profile');
     };    
     
@@ -187,7 +187,7 @@ angular
     
   }])    
   
-  .controller('ProfileController', ['$scope', 'userService', '$location', '$auth', function ($scope, userService, $location, $auth) {
+  .controller('ProfileController', ['$scope', 'userService', '$location', '$auth', '$bootbox', function ($scope, userService, $location, $auth, $bootbox) {
 
     $scope.putProfile = function(userid, profile) {
       userService.putProfile(userid, profile, function(response) {
@@ -201,11 +201,15 @@ angular
         });
     };  
     
-    $scope.removeProfile = function(userid) {
-      userService.removeProfile(userid, function(response) {        
-        $location.path('/people');
-        $scope.global.alert = { type: 'success', msg: "Person removed. Hopefully they'll return some day." };             
-      });
+    $scope.removeProfile = function(userid, name) {
+      $bootbox.confirm("Are you sure you want to remove " + name + "?", function(result) {
+        if (result) {
+          userService.removeProfile(userid, function(response) {        
+            $location.path('/people');
+            $scope.global.alert = { type: 'success', msg: "Person removed. Hopefully they'll return some day." };             
+          });
+        }
+      });      
     };  
     
     $scope.updateProfile = function() {

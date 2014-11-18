@@ -53,7 +53,7 @@
 												</tr>
 											</tbody>
 										</table>
-										<a  ng-show="global.editProfile && (global.user.value.cities[global.city.path.key].admin == true)" ng-click="removeProfile(global.profile.path.key)" class="btn btn-alt btn-danger"><i class="fa fa-times"></i> Delete {{::global.profile.value.name | words:0}} {{::global.profile.value.name | words:1}} {{::global.profile.value.name | words:2}}</a>                       
+										<a  ng-show="global.editProfile && (global.user.value.cities[global.city.path.key].admin == true)" ng-click="removeProfile(global.profile.path.key, global.profile.value.name)" class="btn btn-alt btn-danger"><i class="fa fa-times"></i> Delete {{::global.profile.value.name | words:0}} {{::global.profile.value.name | words:1}} {{::global.profile.value.name | words:2}}</a>                       
 									</div>
 								</div>
 								<div class="col-md-6">									
