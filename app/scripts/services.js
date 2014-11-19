@@ -42,6 +42,9 @@ angular
           callback(response);
         });
       },
+      getKey: function() {
+        return $http.get('/api/profile/getkey');
+      },      
       setRole: function(userkey, citykey, cluster, role, status, callback) {
         $http.put('/api/profile/role?userkey=' + userkey + '&citykey=' + citykey + '&cluster=' + cluster + '&role=' + role + '&status=' + status)
         .success( function(data, status) {

@@ -221,6 +221,16 @@ angular
       });
     };      
     
+    $scope.getKey = function() {
+      if (!$scope.global.user.value.api_key) {
+        userService.getKey()
+        .then(function(response) {
+          $scope.global.user.value.api_key = response.data;
+          $bootbox.alert({title: "See our <a href='https://www.mashape.com/jgentes/applications/startupcommunity-org' target='_blank'>API documentation</a> for help using your key:", message: "<pre>" + $scope.global.user.value.api_key + "</pre>"});
+        });
+      } else $bootbox.alert({title: "See our <a href='https://www.mashape.com/jgentes/applications/startupcommunity-org' target='_blank'>API documentation</a> for help using your key:", message: "<pre>" + $scope.global.user.value.api_key + "</pre>"});
+    };
+    
     $scope.setRole = function(cluster, role, status) {
       userService.setRole($scope.global.profile.path.key, $scope.global.city.path.key, cluster, role, status, function(response, rescode) {              
         var sameuser = false;

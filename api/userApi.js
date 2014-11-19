@@ -16,6 +16,7 @@ var UserApi = function() {
   this.userSearch = handleUserSearch;
   this.subscribeUser = handleSubscribeUser;
   this.createToken = handleCreateToken;  
+  this.createAPIToken = handleCreateAPIToken;  
   this.addPerson = handleAddPerson;
   this.linkedin = handleLinkedin;
   this.getProfile = handleGetProfile;
@@ -70,7 +71,21 @@ var schema = {
  |--------------------------------------------------------------------------
  */
  
-var searchincity = function(city, cluster, role, limit, offset, query){  
+var searchincity = function(city, cluster, role, limit, offset, query, token){
+  if (token) {
+    try {    
+      var payload = jwt.decode(token, config.API_token_secret);  
+      /* Assuming never expires
+      if (payload.exp <= Date.now()) {
+        console.log('Token has expired');
+        return deferred.reject(new Error('Token has expired.'));
+      }
+      */
+    } catch (err) {
+       return deferred.reject(new Error(err));
+    }
+  }
+    
   var deferred = Q.defer();  
   db.newSearchBuilder()
   .collection('users')
@@ -180,6 +195,40 @@ function handleCreateToken(req, user) {
     exp: moment().add(14, 'days').valueOf()
   };
   return jwt.encode(payload, config.token_secret);
+}
+
+function handleCreateAPIToken(req, res) {
+  var payload = {
+    iss: req.hostname,
+    sub: req.user,
+    iat: moment().valueOf(),
+    exp: moment().add(14, 'days').valueOf()
+  };
+  res.status(201).send(jwt.encode(payload, config.API_token_secret));
+  
+  db.get("users", req.user)
+  .then(function(response){
+    if (response.body.code !== "items_not_found") {
+      console.log('Matching user found.');
+      if (response.body.api_key === undefined) {
+        response.body["api_key"] = jwt.encode(payload, config.API_token_secret); // get user account and re-upload with api_key
+        db.put('users', req.user, response.body)
+        .then(function () {
+          console.log("Profile updated.");                          
+        })
+        .fail(function (err) {
+          console.error("Profile update failed:");
+          console.error(err.body);                          
+        });
+      }
+    } else {
+      console.warn('API Token for a user that does not exist!!');
+    }
+  })
+  .fail(function(err){
+    console.log("SEARCH FAIL:" + err);
+  });
+  
 }
 
 
