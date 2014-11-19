@@ -1,4 +1,4 @@
 exports.config = {
-  seleniumAddress: 'http://localhost:' + process.env.PORT + '/wd/hub',
+  seleniumAddress: 'http://localhost/wd/hub',
   specs: ['todo-spec.js']
 };

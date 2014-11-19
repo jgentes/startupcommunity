@@ -99,7 +99,7 @@
             <!-- END Messages List Title -->
     
             <!-- Messages List Content -->
-            <div class="table-responsive" style="margin: 0 -10px;" ng-cloak>
+            <div class="table-responsive" style="margin: 0 -10px;">
                 <table class="table table-vcenter">                
                     <tbody>
                         <tr><td style="border-bottom: 1px solid #fff; border-top: none; padding: 0;" colspan="3"></td></tr>
@@ -107,9 +107,9 @@
                             <td class="text-center" style="width: 5%; vertical-align: top;">
                                 <a ng-click="viewUser(item)" title="View {{::item.value.name | words:0}}'s Profile"><img style="height:48px" ng-src="{{::item.value.avatar || item.value.linkedin.pictureUrl || '/public/blank_avatar.png'}}" alt="{{::item.value.name}}" class="widget-image img-circle pull-left"></a>                                
                             </td>   
-                            <td style="width: 65%; vertical-align: top;  padding-top: 8px;">
+                            <td style="width: 65%; vertical-align: top;  padding-top: 8px;" ng-hide="loadingCluster==true || loadingRole==true">
                                 <a ng-click="viewUser(item)" title="View {{::item.value.name | words:0}}'s Profile"><strong>{{::item.value.name}} </strong></a>
-                                <a ng-show="{{(item.value.linkedin.summary).length > 0}}" title="Show Summary" ng-click="showSummary = !showSummary" style="color: #DDDDDD;" ng-cloak>
+                                <a ng-show="{{(item.value.linkedin.summary).length > 0}}" title="Show Summary" ng-click="showSummary = !showSummary" style="color: #DDDDDD;">
                                     <i class="fa fa-chevron-down fa-fw"></i>
                                 </a>
     					        <br>
