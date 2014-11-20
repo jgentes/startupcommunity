@@ -466,15 +466,16 @@ textarea.parsley-error {
 }
 
 .toggle-switch {
+	height: 25px; // for small
 	margin-bottom: -4px;
 	text-transform: uppercase;
 	letter-spacing: 0.1em;
-	min-width: 90px !important;
+	min-width: 70px !important; // was 90
 	font-size: @font-size-mini;
 	border-radius: @border-radius-base !important;
 	border: 1px solid @border-darker !important;
-	box-shadow: inset 0 0 0 1px @border-darker;
-	span {line-height: 24px !important;}
+	box-shadow: inset 0 0 0 1px @border-darker;		
+	span {line-height: 15px !important;} // was 24
 	.knob {
 		background: @gray-lighter !important;
 		border: none !important;

@@ -28,7 +28,7 @@
     <link rel="stylesheet" href="assets/css/9154be43.vendor.css"/>
     
 
-    <link rel="stylesheet" href="assets/css/f1be9d91.main.css"/>
+    <link rel="stylesheet" href="assets/css/7126efd2.main.css"/>
 
   <style type="text/css">
     [ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak {
@@ -110,11 +110,10 @@
             <li id="search">
                  <form 
                   ng-click="$event.stopPropagation()"
-                  ng-submit="search(searchQuery)"
                  >
                     <input type="text" ng-model="searchQuery" class="search-query" placeholder="Search..."
                     >
-                    <button type="submit" ng-click="search(searchQuery)"><i class="fa fa-search"></i></button>
+                    <button type="submit" ng-keyup="$event.keyCode == 13 && search(searchQuery)" ng-click="search(searchQuery)"><i class="fa fa-search"></i></button>
                 </form>
             </li>
         </div>
@@ -187,10 +186,10 @@
     
     <script type='text/javascript' src='https://maps.google.com/maps/api/js?sensor=true'></script> 
 
-    <script src="scripts/f7950720.vendor.js"></script>
+    <script src="scripts/95b24fdd.vendor.js"></script>
     
 
-      <script src="scripts/6a635537.scripts.js"></script>
+      <script src="scripts/8c186dd2.scripts.js"></script>
 
 </body>
 </html>

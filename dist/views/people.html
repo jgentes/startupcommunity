@@ -1,0 +1,157 @@
+<div ng-controller="PeopleController">
+<!-- Dashboard Header -->
+<!-- For an image header add the class 'content-header-media' and an image as in the following example -->
+    <div class="content-header content-header-media">
+        <div class="header-section">
+            <div class="row">
+                <!-- Main Title (hidden on small devices for the statistics to fit) -->
+                <div class="col-md-4 col-lg-6 hidden-xs hidden-sm">
+                    <h1><strong>{{global.city.value.citystate | words:0}}</strong> {{global.city.value.citystate | words:1}}<br><small>Welcome {{global.user.value.name | words:0}}!</small></h1>
+                </div>
+                <!-- END Main Title -->
+    
+                <!-- Top Stats -->
+                <div class="col-md-8 col-lg-6">
+                    <div class="row text-center">                     
+                        <div class="col-xs-4 col-sm-3"></div>
+                        <div class="col-xs-4 col-sm-3"></div>
+                        <div class="col-xs-4 col-sm-3"></div>
+                        <div class="col-xs-4 col-sm-3">
+                            <h2>
+                                <strong style="color: white;">{{users.total_count}}</strong><br>
+                                <small><i class="fa fa-leaf"></i> People</small>
+                            </h2>
+                        </div>
+                        
+                    </div>
+                </div>
+                <!-- END Top Stats -->
+            </div>
+        </div>
+        <!-- For best results use an image with a resolution of 2560x248 pixels (You can also use a blurred image with ratio 10:1 - eg: 1000x100 pixels - it will adjust and look great!) -->
+        <img src="assets/img/headers/widget5_header.jpg" alt="header image" class="animation-pulseSlow">
+    </div>
+        <!-- END Dashboard Header -->
+        
+    <div class="col-md-4 col-lg-3">
+        <!-- Navigation Block -->
+        <div class="block full filternav">
+            <div class="block-title">
+                <h2>Role <strong>Filters</strong></h2>
+            </div>
+            <ul class="nav nav-pills nav-stacked nav-icons">
+                <li ng-class="{'active':selectedRole === 'People'}" ng-click="selectedRole = 'People'; filterRole(selectedRole);">
+                    <a href="javascript:void(0)">
+                        <i class="fa fa-fw fa-globe themed-color-dark"></i> <strong>All</strong><i ng-show="loadingRole==true && selectedRole==='People'" class="fa fa-refresh fa-spin pull-right"></i>
+                    </a>
+                </li>
+                <li ng-class="{'active':selectedRole === 'Leaders'}" ng-click="selectedRole = 'Leaders'; filterRole(selectedRole);">
+                    <a href="javascript:void(0)">
+                        <i class="fa fa-flag text-danger"></i> <strong>Leaders</strong><i ng-show="loadingRole==true && selectedRole==='Leaders'" class="fa fa-refresh fa-spin pull-right"></i>
+                    </a>
+                </li>
+                <li ng-class="{'active':selectedRole === 'Advisors'}" ng-click="selectedRole = 'Advisors'; filterRole(selectedRole);">
+                    <a href="javascript:void(0)">
+                        <i class="fa fa-graduation-cap text-info"></i> <strong>Advisors</strong><i ng-show="loadingRole==true && selectedRole==='Advisors'" class="fa fa-refresh fa-spin pull-right"></i>
+                    </a>
+                </li>
+                <li ng-class="{'active':selectedRole === 'Members'}" ng-click="selectedRole = 'Members'; filterRole(selectedRole);">
+                    <a href="javascript:void(0)">
+                        <i class="fa fa-leaf text-success"></i> <strong>Members</strong><i ng-show="loadingRole==true && selectedRole==='Members'" class="fa fa-refresh fa-spin pull-right"></i>
+                    </a>
+                </li>
+            </ul>
+            <!-- END Filter by Type links -->
+        </div>
+        <!-- END Navigation Block -->  
+    
+        <!-- Navigation Block -->
+        <div class="block full filternav">
+            <div class="block-title">
+                <h2>Cluster <strong>Filters</strong></h2>
+            </div>
+            <ul class="nav nav-pills nav-stacked nav-icons">
+                <li ng-class="{'active':global.city.selectedCluster === global.city.value.citystate.split(',')[0]}" ng-click="global.city.selectedCluster = global.city.value.citystate.split(',')[0]; filterCluster(global.city.selectedCluster);">
+                    <a><i class="fa fa-fw fa-globe themed-color-dark icon-push"></i> <strong>All</strong><i ng-show="loadingCluster==true && global.city.selectedCluster===global.city.value.citystate.split(',')[0]" class="fa fa-refresh fa-spin pull-right"></i></a>
+                </li>
+                <li ng-repeat="(cluster, val) in global.city.value.clusters" ng-class="{'active':global.city.selectedCluster === cluster}" ng-click="global.city.selectedCluster = cluster; filterCluster(global.city.selectedCluster);">
+                    <a><i class="fa {{val.icon}}"></i> <strong>{{cluster}}</strong><i ng-show="loadingCluster==true && global.city.selectedCluster===cluster" class="fa fa-refresh fa-spin pull-right"></i></a>
+                </li>
+            </ul>
+            <!-- END Filter by Type links -->
+        </div>
+        <!-- END Navigation Block -->    
+    </div>
+    <div class="col-md-8 col-lg-9">
+    <!-- Messages List Block -->
+        <div class="block">
+            <!-- Messages List Title -->
+            <div class="block-title" style="margin-bottom: 0;">
+                <div class="block-options pull-right">
+                        <strong>{{users.start}} - {{users.end}}</strong> of <strong>{{users.total_count}}&nbsp;&nbsp;</strong>
+                    <div class="btn-group btn-group-sm" style="margin-top: -5px;">
+                        <span ng-if="users.prev"><a ng-click="getUsers(users.prev)" class="btn btn-sm btn-default" style="background-color: #fff;"><i class="fa fa-angle-left"></i></a></span>
+                        <span ng-if="users.next"><a ng-click="getUsers(users.next)" class="btn btn-sm btn-default" style="background-color: #fff;"><i class="fa fa-angle-right"></i></a></span>
+                    </div>
+                </div>
+                <h2><strong>{{selectedRole}} </strong> in {{global.city.selectedCluster}}</h2>
+            </div>
+            <!-- END Messages List Title -->
+    
+            <!-- Messages List Content -->
+            <div class="table-responsive" style="margin: 0 -10px;">
+                <table class="table table-vcenter">                
+                    <tbody>
+                        <tr><td style="border-bottom: 1px solid #fff; border-top: none; padding: 0;" colspan="3"></td></tr>
+                        <tr ng-repeat="item in users.results | orderBy : item.value.cities[global.city.path.key].clusters">           
+                            <td class="text-center" style="width: 5%; vertical-align: top;">
+                                <a ng-click="viewUser(item)" title="View {{::item.value.name | words:0}}'s Profile"><img style="height:48px" ng-src="{{::item.value.avatar || item.value.linkedin.pictureUrl || '/public/blank_avatar.png'}}" alt="{{::item.value.name}}" class="widget-image img-circle pull-left"></a>                                
+                            </td>   
+                            <td style="width: 65%; vertical-align: top;  padding-top: 8px;">
+                                <a ng-click="viewUser(item)" title="View {{::item.value.name | words:0}}'s Profile"><strong>{{::item.value.name}} </strong></a>
+                                <a ng-show="{{(item.value.linkedin.summary).length > 0}}" title="Show Summary" ng-click="showSummary = !showSummary" style="color: #DDDDDD;">
+                                    <i class="fa fa-chevron-down fa-fw"></i>
+                                </a>
+    					        <br>
+                                <span class="text-muted">{{::item.value.linkedin.headline}}</span>                                
+                                <span ng-show="showSummary" class="text-muted" style="white-space:pre-wrap;"><hr>{{::item.value.linkedin.summary}}</span>                                
+                            </td>
+                            <td style="width: 30%; vertical-align: top; padding-top: 19px;">
+                                <li ng-repeat="(cluster, val) in item.value.cities[global.city.path.key].clusters" style="list-style: none; display: inline; float: right; padding-left: 5px;">
+    					           <span title="{{cluster}} Cluster" class="btn btn-xs btn-alt btn-default" ng-class="{ 'btn-info' : ((val.roles.indexOf('Advisor') >= 0) && (val.roles.indexOf('Leader') < 0)), 'btn-danger' : (val.roles.indexOf('Leader') >= 0) }" style="cursor: default;"><i class="fa {{global.city.value.clusters[cluster].icon}}"></i></span>
+    					        </li>
+					        </td>
+                        </tr>                        
+                        <tr>
+                            <td class="text-right" colspan="3">
+                                <strong>{{users.start}} - {{users.end}}</strong> of <strong>{{users.total_count}}&nbsp;&nbsp;</strong>
+                                <div class="btn-group btn-group-sm">
+                                    <span ng-if="users.prev"><a ng-click="getUsers(users.prev)" class="btn btn-sm btn-default" style="border-radius: 15px;"><i class="fa fa-angle-left"></i></a></span>
+                                    <span ng-if="users.next"><a ng-click="getUsers(users.next)" class="btn btn-sm btn-default" style="border-radius: 15px;"><i class="fa fa-angle-right"></i></a></span>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <!-- END Messages List Content -->
+        </div>
+        <!-- END Messages List Block -->
+    </div>
+</div>
+<!-- END Messages List -->
+    
+    <div id="peoplelist">
+        <div class="row" style="margin-left: 10px; margin-right: 10px;">
+            <div class="col-sm-6 col-lg-4" >
+            </div>            
+        </div>              
+        <div class="row" style="margin-left: 1.5%; margin-right: 1.5%;"> 
+            <ul class="pager">
+                <li ng-if="users.prev" class="previous"><a ng-click="getUsers(users.prev)"><i class="fa fa-arrow-left"></i> Prev</a></li>
+                <li ng-if="users.next" class="next"><a ng-click="getUsers(users.next)">Next <i class="fa fa-arrow-right"></i></a></li>
+            </ul>
+        </div>
+    </div>
+
+</div>

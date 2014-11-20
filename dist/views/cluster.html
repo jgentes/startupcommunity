@@ -19,7 +19,7 @@
                         <div class="col-xs-4 col-sm-3">
                             <h2>
                                 <strong style="color: white;">{{global.search.total_count}}</strong><br>
-                                <small><i class="fa fa-graduation-cap"></i> Advisors</small>
+                                <small><i class="fa fa-graduation-cap"></i> Members</small>
                             </h2>
                         </div>
                         
@@ -35,7 +35,7 @@
     
     <div id="peoplelist">
         <div class="row" style="margin-left: 10px; margin-right: 10px;">            
-            <div ng-show="global.search.results === undefined || global.search.results.length == 0" style="text-align: center"><h2>No search results!</h2></div>
+            <div ng-show="global.search.results === undefined || global.search.results.length == 0" style="text-align: center"><h2>No cluster members!</h2></div>
             <div class="col-sm-6 col-lg-4" ng-repeat="item in global.search.results" ng-include="'views/templates/people_renderer.html'">                 
             </div>            
         </div>              
