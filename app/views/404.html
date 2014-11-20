@@ -12,6 +12,9 @@
             <form ng-submit="search(searchQuery)">
                 <input type="text" ng-model="searchQuery" class="form-control input-lg" placeholder="Search StartupCommunity.org...">
             </form>
+            <div ng-show="global.alert" style="margin-top: 15px;">
+				<alert type="{{global.alert.type}}" style="margin: 2px;" close="closeAlert($index)"><span ng-bind-html="global.alert.msg | safe_html"></alert>
+			</div>
         </div>
     </div>
 </div>

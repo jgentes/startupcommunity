@@ -431,11 +431,15 @@ angular
   	$scope.formData = {};
   	
   	$scope.search = function(query) {
-      userService.search($scope.global.city.path.key, query)
-      .then(function(results) {
-        $scope.global.search = results.data;
-        $location.path('/search');
-      });
+  	  try {
+        userService.search($scope.global.city.path.key, query)
+        .then(function(results) {
+          $scope.global.search = results.data;
+          $location.path('/search');
+        });
+  	  } catch (err) {
+  	    $scope.global.alert = {type: 'danger', msg: 'Whoops, we need you to login first.'}; 
+  	  }
     };
     
     $scope.goBack = function() {

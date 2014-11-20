@@ -9,7 +9,7 @@ var bcrypt = require('bcryptjs'),
     mcapi = require('mailchimp-api/mailchimp'),
     mc = new mcapi.Mailchimp(config.mailchimp);
 
-//require('request-debug')(request); // Very useful for debugging oauth and api req/res
+require('request-debug')(request); // Very useful for debugging oauth and api req/res
 
 var UserApi = function() {
   this.ensureAuthenticated = handleEnsureAuthenticated;
@@ -466,7 +466,7 @@ var linkedinPull = function (linkedinuser, pullcallback) {
 
 function handleLinkedin(req, res) {
   var accessTokenUrl = 'https://www.linkedin.com/uas/oauth2/accessToken';
-  var peopleApiUrl = 'https://api.linkedin.com/v1/people/~:(id,first-name,last-name,email-address,skills,picture-url;secure=true,headline,summary,public-profile-url)';    
+  var peopleApiUrl = 'https://api.linkedin.com/v1/people/~:(id,first-name,last-name,email-address,phone-numbers,skills,picture-url;secure=true,headline,summary,public-profile-url)';    
   
   var params = {
     client_id: config.linkedin.clientID,
@@ -474,7 +474,7 @@ function handleLinkedin(req, res) {
     client_secret: config.linkedin.clientSecret,
     code: req.body.code,
     grant_type: 'authorization_code',
-    scope: ['r_fullprofile r_emailaddress']
+    scope: ['r_fullprofile r_emailaddress, r_contactinfo']
   };
   // Step 1. Exchange authorization code for access token.
   request.post(accessTokenUrl, { form: params, json: true }, function(err, response, body) {

@@ -36,6 +36,9 @@ app
       .when('/', {
         redirectTo: '/people'
       })
+      .when('/launchform', {
+        templateUrl: 'views/launchform.html'        
+      })
       .when('/people', {
         templateUrl: 'views/people.html',
         resolve: {

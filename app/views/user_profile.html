@@ -36,13 +36,13 @@
 													<td>Web</td>
 													<td><a href="{{global.profile.value.linkedin.publicProfileUrl}}" target="_blank">{{global.profile.value.linkedin.publicProfileUrl}}</a></td>
 												</tr>
-												<tr>
+												<tr ng-if="global.profile.value.email">
 													<td>Email</td>
-													<td><a href=""></a></td>
+													<td>{{global.profile.value.email}}</td>
 												</tr>
-												<tr>
+												<tr ng-if="global.profile.value.phone_numbers">
 													<td>Phone</td>
-													<td>(123)-342-5412</td>
+													<td>{{global.profile.value.phone_numbers}}</td>
 												</tr>												
 												<tr>
 													<td>Social</td>
