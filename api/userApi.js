@@ -805,7 +805,7 @@ function handleUnlink(req, res) {
 
 
 function handleMaintenance(req, res) {
-  var enabled = true;
+  var enabled = false;
   var startKey = '';
   var userlist = [];
   
