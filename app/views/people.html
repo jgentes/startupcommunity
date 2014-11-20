@@ -107,7 +107,7 @@
                             <td class="text-center" style="width: 5%; vertical-align: top;">
                                 <a ng-click="viewUser(item)" title="View {{::item.value.name | words:0}}'s Profile"><img style="height:48px" ng-src="{{::item.value.avatar || item.value.linkedin.pictureUrl || '/public/blank_avatar.png'}}" alt="{{::item.value.name}}" class="widget-image img-circle pull-left"></a>                                
                             </td>   
-                            <td style="width: 65%; vertical-align: top;  padding-top: 8px;" ng-hide="loadingCluster==true || loadingRole==true">
+                            <td style="width: 65%; vertical-align: top;  padding-top: 8px;">
                                 <a ng-click="viewUser(item)" title="View {{::item.value.name | words:0}}'s Profile"><strong>{{::item.value.name}} </strong></a>
                                 <a ng-show="{{(item.value.linkedin.summary).length > 0}}" title="Show Summary" ng-click="showSummary = !showSummary" style="color: #DDDDDD;">
                                     <i class="fa fa-chevron-down fa-fw"></i>
@@ -116,7 +116,7 @@
                                 <span class="text-muted">{{::item.value.linkedin.headline}}</span>                                
                                 <span ng-show="showSummary" class="text-muted" style="white-space:pre-wrap;"><hr>{{::item.value.linkedin.summary}}</span>                                
                             </td>
-                            <td style="width: 30%;">
+                            <td style="width: 30%; vertical-align: top; padding-top: 19px;">
                                 <li ng-repeat="(cluster, val) in item.value.cities[global.city.path.key].clusters" style="list-style: none; display: inline; float: right; padding-left: 5px;">
     					           <span title="{{cluster}} Cluster" class="btn btn-xs btn-alt btn-default" ng-class="{ 'btn-info' : ((val.roles.indexOf('Advisor') >= 0) && (val.roles.indexOf('Leader') < 0)), 'btn-danger' : (val.roles.indexOf('Leader') >= 0) }" style="cursor: default;"><i class="fa {{global.city.value.clusters[cluster].icon}}"></i></span>
     					        </li>

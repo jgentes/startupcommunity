@@ -71,16 +71,25 @@ var schema = {
  |--------------------------------------------------------------------------
  */
  
-var searchincity = function(city, cluster, role, limit, offset, query, token){
-  if (token) {
+var searchincity = function(city, cluster, role, limit, offset, query, key) {
+  var allowed = false;
+  var userdata;
+  
+  if (key) {
     try {    
-      var payload = jwt.decode(token, config.API_token_secret);  
-      /* Assuming never expires
-      if (payload.exp <= Date.now()) {
-        console.log('Token has expired');
-        return deferred.reject(new Error('Token has expired.'));
-      }
-      */
+      var payload = jwt.decode(key, config.API_token_secret);  
+      // Assuming key never expires
+      //check perms!
+
+      db.get("users", payload.sub)
+      .then(function (response) {
+        userdata = response.body;
+        if (userdata.cities[city].admin === true) { allowed=true; }
+      })
+      .fail(function(err){
+        console.warn("SEARCH FAIL:" + err);
+        return deferred.reject(new Error(err));
+      });
     } catch (err) {
        return deferred.reject(new Error(err));
     }
@@ -93,12 +102,27 @@ var searchincity = function(city, cluster, role, limit, offset, query, token){
   .offset(Number(offset) || 0)
   .query('cities.' + city + ((cluster || role) ? (cluster ? '.clusters.' + cluster + '.roles: *' : '') + (role ? '.clusters.*.roles: ' + role : '') : '.admin: *') + (query ? ' AND ' + query : ''))  //must include admin:* for city search
   .then(function(result){        
+    var i;
+    var item_cluster;
+    
     try {
-      for (var i=0; i < result.body.results.length; i++) {
+      for (i=0; i < result.body.results.length; i++) {
         delete result.body.results[i].path.collection;
         delete result.body.results[i].path.ref;
-        delete result.body.results[i].value.email;
         delete result.body.results[i].value.password;
+        
+        if (!allowed && userdata) {          
+          for (item_cluster in result.body.results[i].value.cities[city].clusters) {            
+            if (userdata.cities[city].clusters[item_cluster].roles.indexOf("Leader") >= 0) {
+              allowed = true;
+            }
+          }
+        }
+        
+        if (!allowed) {
+          delete result.body.results[i].value.email;
+        }
+          
         if (result.body.results[i].value.linkedin) {
           delete result.body.results[i].value.linkedin.emailAddress;
           delete result.body.results[i].value.linkedin.access_token;
@@ -134,9 +158,10 @@ function handleUserSearch(req, res){
       role = req.query.role,
       query = req.query.search,
       limit = req.query.limit,
-      offset = req.query.offset;      
+      offset = req.query.offset,
+      key = req.query.api_key;      
   
-    searchincity(city, cluster, role, limit, offset, query)
+    searchincity(city, cluster, role, limit, offset, query, key)
     .then(function(userlist){
       res.send(userlist);
     })
@@ -202,7 +227,7 @@ function handleCreateAPIToken(req, res) {
     iss: req.hostname,
     sub: req.user,
     iat: moment().valueOf(),
-    exp: moment().add(14, 'days').valueOf()
+    exp: moment().add(90, 'days').valueOf()
   };
   res.status(201).send(jwt.encode(payload, config.API_token_secret));
   
