@@ -9,7 +9,7 @@ var bcrypt = require('bcryptjs'),
     mcapi = require('mailchimp-api/mailchimp'),
     mc = new mcapi.Mailchimp(config.mailchimp);
 
-require('request-debug')(request); // Very useful for debugging oauth and api req/res
+//require('request-debug')(request); // Very useful for debugging oauth and api req/res
 
 var UserApi = function() {
   this.ensureAuthenticated = handleEnsureAuthenticated;
