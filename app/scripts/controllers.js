@@ -153,6 +153,37 @@ angular
       }
       $scope.global.city.selectedCluster = $scope.global.city.value.citystate.split(',')[0];        
       $scope.selectedRole = ['*'];
+      setTitle();
+    }
+    
+    function setTitle() {
+      var item, role, cluster;
+      if ($scope.selectedRole[0] == '*') { 
+        role = "People";
+      } else {
+        for (item in $scope.selectedRole) {
+          role += $scope.selectedRole[item];
+          if (item < $scope.selectedRole.length - 1) {            
+            if (item < $scope.selectedRole.length - 2 ) {
+            role += ', ';
+            } else role += ' and ';
+          }
+        }
+      }
+      if ($scope.global.city.selectedCluster[0] == $scope.global.city.value.citystate.split(',')[0]) {
+        cluster = $scope.global.city.value.citystate.split(',')[0];
+      } else {
+        item = 0;
+        for (item in $scope.global.city.selectedCluster) {
+          cluster += $scope.global.city.selectedCluster[item];
+          if (item < $scope.global.city.selectedCluster.length - 1) {            
+            if (item < $scope.global.city.selectedCluster.length - 2 ) {
+            cluster += ', ';
+            } else cluster += ' and ';
+          }
+        }
+      }
+      $scope.title = role + ' in ' + cluster;
     }
     
     $scope.filterCluster = function(cluster) {      
@@ -164,6 +195,7 @@ angular
         $scope.loadingCluster = false;
         $scope.users = response.data;        
         setPage();
+        setTitle();
       });
     };
     
@@ -186,6 +218,7 @@ angular
         $scope.loadingRole = false;
         $scope.users = response.data;           
         setPage();
+        setTitle();
       });
     };
     
