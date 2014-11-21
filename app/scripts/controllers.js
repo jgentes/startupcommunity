@@ -108,7 +108,7 @@ angular
     };
   })
         
-  .controller('PeopleController', ['$scope', '$location', 'userService', function ($scope, $location, userService) {    
+  .controller('PeopleController', ['$scope', '$location', 'userService', function ($scope, $location, userService) {          
     
     function setPage() {
       if ($scope.users.next) {
@@ -144,9 +144,20 @@ angular
       $location.path('/profile');
     };    
     
+    function getData() {
+      if ($location.$$path == '/people' || $scope.global.search === undefined) {
+        $scope.getUsers('/api/' + $scope.global.city.path.key + '/users?limit=32');                                  
+      } else if ($location.$$path == '/search') {
+        $scope.users = $scope.global.search;
+        setPage();        
+      }
+      $scope.global.city.selectedCluster = $scope.global.city.value.citystate.split(',')[0];        
+      $scope.selectedRole = ['*'];
+    }
+    
     $scope.filterCluster = function(cluster) {      
       $scope.loadingCluster = true;
-      $scope.selectedRole = 'People';
+      $scope.selectedRole = ['People'];
       if (cluster == $scope.global.city.value.citystate.split(',')[0]) { cluster = undefined; }
       userService.getUsers($scope.global.city.path.key, cluster, undefined, 32, undefined)
       .then(function(response) {
@@ -159,8 +170,18 @@ angular
     $scope.filterRole = function(role) {      
       $scope.loadingRole = true;
       $scope.global.city.selectedCluster = $scope.global.city.value.citystate.split(',')[0];      
-      if (role == 'People') { role = undefined; } else role = role.slice(0,-1);      
-      userService.getUsers($scope.global.city.path.key, undefined, role, 32, undefined)
+      if (role == '*') {         
+        $scope.selectedRole = ['*'];        
+      } else {
+        if ($scope.selectedRole.indexOf('*') >= 0) {
+          $scope.selectedRole.splice($scope.selectedRole.indexOf('*'), 1);
+        }
+        if ($scope.selectedRole.indexOf(role) < 0) {
+          $scope.selectedRole.push(role);
+        } else $scope.selectedRole.splice($scope.selectedRole.indexOf(role), 1);
+      }
+      
+      userService.getUsers($scope.global.city.path.key, undefined, $scope.selectedRole, 32, undefined)
       .then(function(response) {        
         $scope.loadingRole = false;
         $scope.users = response.data;           
@@ -168,22 +189,13 @@ angular
       });
     };
     
-    function getData() {
-      if ($location.$$path == '/people' || $scope.global.search === undefined) {
-        $scope.getUsers('/api/' + $scope.global.city.path.key + '/users?limit=32');                                  
-      } else if ($location.$$path == '/search') {
-        $scope.users = $scope.global.search;
-        setPage();        
-      }
-      $scope.global.city.selectedCluster = $scope.global.city.value.citystate.split(',')[0];        
-      $scope.selectedRole = 'People';
-    }
+    
     
     if (!$scope.global.city) {
       $scope.$on('sessionReady', function(event, status) {
         getData();         
       });                    
-    } else getData();       
+    } else getData();         
     
   }])    
   
@@ -231,6 +243,42 @@ angular
       } else $bootbox.alert({title: "See our <a href='https://www.mashape.com/jgentes/applications/startupcommunity-org' target='_blank'>API documentation</a> for help using your key:", message: "<pre>" + $scope.global.user.value.api_key + "</pre>"});
     };
     
+    $scope.isCityAdvisor = function(status) {
+      userService.setCityAdvisor($scope.global.profile.path.key, $scope.global.city.path.key, 'cityAdvisor', status, function(response, rescode) {
+        var sameuser = false;
+        var cluster;
+        if (rescode == 201) {
+          if ($scope.global.profile.path.key == $scope.global.user.path.key) { sameuser = true; }
+          if ($scope.global.profile.value.cities[$scope.global.city.path.key].cityAdvisor === undefined) { //need to create key
+            $scope.global.profile.value.cities[$scope.global.city.path.key]['cityAdvisor'] = false;
+          }
+          
+          $scope.global.profile.value.cities[$scope.global.city.path.key].cityAdvisor = status;
+                                
+          for (cluster in $scope.global.city.value.clusters) {
+            if (status === true) {
+              if ($scope.global.profile.value.cities[$scope.global.city.path.key].clusters[cluster]) {
+                $scope.global.profile.value.cities[$scope.global.city.path.key].clusters[cluster].advisorStatus = true;              
+              }
+            } else {
+              if (!$scope.global.profile.value.cities[$scope.global.city.path.key].clusters[cluster].roles || ($scope.global.profile.value.cities[$scope.global.city.path.key].clusters[cluster].roles.indexOf("Advisor") < 0)) {
+                $scope.global.profile.value.cities[$scope.global.city.path.key].clusters[cluster].advisorStatus = false;
+              } else {
+                $scope.global.profile.value.cities[$scope.global.city.path.key].clusters[cluster].advisorStatus = true;
+              }              
+            }
+          }
+          
+          if (sameuser) {            
+            $scope.global.user.value.cities[$scope.global.city.path.key].cityAdvisor = status;
+          }
+        } else {            
+            $scope.global.alert = { type: 'danger', msg: 'There was a problem: ' + String(response.message) }; 
+            console.warn(response.message);                      
+        }
+      });
+    };
+    
     $scope.setRole = function(cluster, role, status) {
       userService.setRole($scope.global.profile.path.key, $scope.global.city.path.key, cluster, role, status, function(response, rescode) {              
         var sameuser = false;
@@ -250,7 +298,7 @@ angular
             } // else they already have the role, no action needed
           } else {
             if (thiscluster.roles.indexOf(role) >= 0) {
-              thiscluster.roles.splice(role);
+              thiscluster.roles.splice(thiscluster.roles.indexOf(role), 1);
             } // else they do not have the role, no action needed
           }
           

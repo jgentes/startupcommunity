@@ -45,6 +45,15 @@ angular
       getKey: function() {
         return $http.get('/api/profile/getkey');
       },      
+      setCityAdvisor: function(userkey, citykey, role, status, callback) {
+        $http.put('/api/profile/role?userkey=' + userkey + '&citykey=' + citykey + '&role=' + role + '&status=' + status)
+        .success( function(data, status) {
+          callback(data, status);
+        })
+        .error( function(data, status) {
+          callback(data, status);
+        });
+      },
       setRole: function(userkey, citykey, cluster, role, status, callback) {
         $http.put('/api/profile/role?userkey=' + userkey + '&citykey=' + citykey + '&cluster=' + cluster + '&role=' + role + '&status=' + status)
         .success( function(data, status) {

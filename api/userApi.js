@@ -73,7 +73,7 @@ var schema = {
  
 var searchincity = function(city, cluster, role, limit, offset, query, key) {
   var allowed = false;
-  var userdata;
+  var userdata;  
   
   if (key) {
     try {    
@@ -94,13 +94,31 @@ var searchincity = function(city, cluster, role, limit, offset, query, key) {
        return deferred.reject(new Error(err));
     }
   }
-    
+  
+  // create searchstring
+  var searchstring = 'cities.' + city + '.admin: *'; // first argument to scope to city
+  if (cluster) { searchstring += ' && cities.' + city + '.clusters.' + cluster + '.roles: *'; } // scope to cluster
+  if (role && role !== ['*']) {
+    role = role.split(',');
+    searchstring += ' && ';
+    if (role.indexOf('cityAdvisor') >= 0) { 
+      searchstring += 'cities.' + city + '.cityAdvisor: true';
+      role.splice(role.indexOf('cityAdvisor'), 1);
+    }
+    for (var i in role) {
+      searchstring += 'cities.' + city + '.clusters.*.roles: ' + role[i].slice(0,-1); // scope to role
+      if (i < (role.length - 1)) { searchstring += ' || '; }
+    } 
+  }
+  
+  if (query) { searchstring += ' && ' + query; }
+  console.log(searchstring);
   var deferred = Q.defer();  
   db.newSearchBuilder()
   .collection('users')
   .limit(Number(limit) || 32)
   .offset(Number(offset) || 0)
-  .query('cities.' + city + ((cluster || role) ? (cluster ? '.clusters.' + cluster + '.roles: *' : '') + (role ? '.clusters.*.roles: ' + role : '') : '.admin: *') + (query ? ' AND ' + query : ''))  //must include admin:* for city search
+  .query(searchstring)  //must include admin:* for city search
   .then(function(result){        
     var i;
     var item_cluster;
@@ -687,13 +705,12 @@ function handleSetRole(req, res) {
   function checkperms(allowed, callback) {
     if (!allowed) {
       db.get("users", req.user)
-      .then(function (response) {
-        try {
-          allowed = (response.body.cities[citykey].admin == true || response.body.cities[citykey].clusters[cluster].roles.indexOf("Leader") >= 0);
-          callback(allowed);
-        } catch (err) {
-          console.warn('Lookup of city or cluster failed.. that should not happen: ' + err);                
+      .then(function (response) {        
+        if (cluster) {
+          allowed = (response.body.cities[citykey].clusters[cluster].roles.indexOf("Leader") >= 0);
         }
+        if (response.body.cities[citykey].admin === true) { allowed = true; }
+        callback(allowed);        
       })
       .fail(function(err){
         console.warn("SEARCH FAIL:" + err);
@@ -705,28 +722,37 @@ function handleSetRole(req, res) {
   //check perms!
   if (userkey == req.user) { allowed = true; }
   checkperms(allowed, function (allowed) {
-    if (allowed) {  
+    if (allowed) {
       db.get("users", userkey)
-      .then(function (response) { 
-        if (response.body.cities[citykey].clusters === undefined) { //need to create clusters key
-          response.body.cities[citykey]['clusters'] = {};
+      .then(function (response) {
+        if (role == "cityAdvisor") {
+          if (response.body.cities[citykey].cityAdvisor === undefined) { //need to create key
+            response.body.cities[citykey]['cityAdvisor'] = false;
+          }          
+          response.body.cities[citykey].cityAdvisor = status;
+          
+        } else {
+          if (response.body.cities[citykey].clusters === undefined) { //need to create clusters key
+            response.body.cities[citykey]['clusters'] = {};
+          }
+          if (response.body.cities[citykey].clusters[cluster] === undefined) { //need to create the cluster in user profile      
+            console.log('Adding user to cluster: ' + cluster);
+            response.body.cities[citykey].clusters[cluster] = { "roles": [] };        
+          }
+          var thiscluster = response.body.cities[citykey].clusters[cluster];
+          
+          if (status === "true") {
+            if (thiscluster.roles.indexOf(role) < 0) {
+              thiscluster.roles.push(role);
+            } // else they already have the role, no action needed
+          } else if (status === "false") {        
+            if (thiscluster.roles.indexOf(role) >= 0) {          
+              thiscluster.roles.splice(thiscluster.roles.indexOf(role), 1);          
+            } // else they do not have the role, no action needed
+          }
+          response.body.cities[citykey].clusters[cluster] = thiscluster;
         }
-        if (response.body.cities[citykey].clusters[cluster] === undefined) { //need to create the cluster in user profile      
-          console.log('Adding user to cluster: ' + cluster);
-          response.body.cities[citykey].clusters[cluster] = { "roles": [] };        
-        }
-        var thiscluster = response.body.cities[citykey].clusters[cluster];
         
-        if (status === "true") {
-          if (thiscluster.roles.indexOf(role) < 0) {
-            thiscluster.roles.push(role);
-          } // else they already have the role, no action needed
-        } else if (status === "false") {        
-          if (thiscluster.roles.indexOf(role) >= 0) {          
-            thiscluster.roles.splice(thiscluster.roles.indexOf(role), 1);          
-          } // else they do not have the role, no action needed
-        }
-        response.body.cities[citykey].clusters[cluster] = thiscluster;
         db.put('users', userkey, response.body)
         .then(function (finalres) {
           res.status(201).send({ message: 'Profile updated.'});
@@ -735,6 +761,7 @@ function handleSetRole(req, res) {
           console.warn('Problem with put: ' + err);
           res.status(400).send({ message: 'Something went wrong: ' + err});
         });
+        
       })
       .fail(function (err) {
         console.warn('Problem with get: ' + err);
