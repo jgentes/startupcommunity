@@ -441,14 +441,15 @@ module.exports = function (grunt) {
         mangle: false
       }
     },
-    protractor_webdriver: {
-      all: {
+    protractor: {
+      options: {
+        keepAlive: true,
+        configFile: "test/protractor.conf.js"
       },
+      run: {}
     }
     
   });
-  
-  grunt.loadNpmTasks('grunt-protractor-webdriver');
 
 
   grunt.registerTask('serve', function (target) {
@@ -476,7 +477,8 @@ module.exports = function (grunt) {
     'concurrent:test',
     'autoprefixer',
     'connect:test',
-    'karma'
+    'karma',
+    'protractor:run'
   ]);
 
   grunt.registerTask('build', [
