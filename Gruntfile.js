@@ -440,8 +440,15 @@ module.exports = function (grunt) {
       options: {
         mangle: false
       }
+    },
+    protractor_webdriver: {
+      all: {
+      },
     }
+    
   });
+  
+  grunt.loadNpmTasks('grunt-protractor-webdriver');
 
 
   grunt.registerTask('serve', function (target) {
@@ -498,5 +505,5 @@ module.exports = function (grunt) {
     'build'
   ]);
   
-  grunt.loadNpmTasks('grunt-protractor-webdriver');
+  
 };
