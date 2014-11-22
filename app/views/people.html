@@ -119,8 +119,11 @@
                                 <span ng-show="showSummary" class="text-muted" style="white-space:pre-wrap;"><hr>{{::item.value.linkedin.summary}}</span>                                
                             </td>
                             <td style="width: 30%; vertical-align: top; padding-top: 19px;">
-                                <li ng-repeat="(cluster, val) in global.city.value.clusters" style="list-style: none; display: inline; float: right; padding-left: 5px;">
-    					           <span ng-show="item.value.cities[global.city.path.key].clusters[cluster] !== undefined || item.value.cities[global.city.path.key].cityAdvisor == 'true'" title="{{cluster}} Cluster" class="btn btn-xs btn-alt btn-default" ng-class="{ 'btn-info' : (((item.value.cities[global.city.path.key].clusters[cluster].roles.indexOf('Advisor') >= 0) || item.value.cities[global.city.path.key].cityAdvisor == 'true') && (item.value.cities[global.city.path.key].clusters[cluster].roles.indexOf('Leader') < 0 || item.value.cities[global.city.path.key].clusters[cluster] === undefined)), 'btn-danger' : (item.value.cities[global.city.path.key].clusters[cluster].roles.indexOf('Leader') >= 0) }" style="cursor: default;"><i class="fa {{global.city.value.clusters[cluster].icon}}"></i></span>
+                                <li ng-if="item.value.cities[global.city.path.key].cityAdvisor === (false || undefined)" ng-repeat="(cluster, val) in item.value.cities[global.city.path.key].clusters" style="list-style: none; display: inline; float: right; padding-left: 5px;">
+    					           <span title="{{cluster}} Cluster" class="btn btn-xs btn-alt btn-default" ng-class="{ 'btn-info' : ((val.roles.indexOf('Advisor') >= 0) && (val.roles.indexOf('Leader') < 0)), 'btn-danger' : (val.roles.indexOf('Leader') >= 0) }" style="cursor: default;"><i class="fa {{global.city.value.clusters[cluster].icon}}"></i></span>
+    					        </li>
+                                <li ng-if="item.value.cities[global.city.path.key].cityAdvisor === true" style="list-style: none; display: inline; float: right; padding-left: 5px;">
+    					           <span title="General Advisor" class="btn btn-xs btn-alt btn-info" style="cursor: default;">General Advisor</span>
     					        </li>
 					        </td>
                         </tr>                        

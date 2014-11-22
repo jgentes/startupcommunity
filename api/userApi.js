@@ -707,7 +707,7 @@ function handleSetRole(req, res) {
       citykey = req.query.citykey,
       cluster = req.query.cluster,
       role = req.query.role,
-      status = req.query.status,
+      status = (req.query.status === 'true'), // will convert string to bool
       allowed = false;
       
   function checkperms(allowed, callback) {
