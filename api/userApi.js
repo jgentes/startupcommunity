@@ -97,10 +97,18 @@ var searchincity = function(city, cluster, role, limit, offset, query, key) {
   
   // create searchstring
   var searchstring = 'cities.' + city + '.admin: *'; // first argument to scope to city
-  if (cluster) { searchstring += ' && cities.' + city + '.clusters.' + cluster + '.roles: *'; } // scope to cluster
-  if (role && role !== ['*']) {
+  if (cluster && cluster[0] !== '*') {
+    cluster = cluster.split(',');
+    searchstring += ' && (';
+    for (var i in cluster) {
+      searchstring += 'cities.' + city + '.clusters.' + cluster[i] + '.roles: *'; // scope to cluster
+      if (i < (cluster.length - 1)) { searchstring += ' || '; }
+    }
+    searchstring += ')';
+  }  
+  if (role && role[0] !== '*') {
     role = role.split(',');
-    searchstring += ' && ';
+    searchstring += ' && (';
     if (role.indexOf('cityAdvisor') >= 0) { 
       searchstring += 'cities.' + city + '.cityAdvisor: true';
       role.splice(role.indexOf('cityAdvisor'), 1);
@@ -109,10 +117,11 @@ var searchincity = function(city, cluster, role, limit, offset, query, key) {
       searchstring += 'cities.' + city + '.clusters.*.roles: ' + role[i].slice(0,-1); // scope to role
       if (i < (role.length - 1)) { searchstring += ' || '; }
     } 
+    searchstring += ')';
   }
   
   if (query) { searchstring += ' && ' + query; }
-  console.log(searchstring);
+
   var deferred = Q.defer();  
   db.newSearchBuilder()
   .collection('users')
@@ -178,7 +187,7 @@ function handleUserSearch(req, res){
       limit = req.query.limit,
       offset = req.query.offset,
       key = req.query.api_key;      
-  
+
     searchincity(city, cluster, role, limit, offset, query, key)
     .then(function(userlist){
       res.send(userlist);

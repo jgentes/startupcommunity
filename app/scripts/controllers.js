@@ -151,13 +151,15 @@ angular
         $scope.users = $scope.global.search;
         setPage();        
       }
-      $scope.global.city.selectedCluster = $scope.global.city.value.citystate.split(',')[0];        
+      $scope.global.city.selectedCluster = ['*'];        
       $scope.selectedRole = ['*'];
       setTitle();
     }
     
     function setTitle() {
-      var item, role, cluster;
+      var item, 
+          role = '', 
+          cluster = '';
       if ($scope.selectedRole[0] == '*') { 
         role = "People";
       } else {
@@ -165,32 +167,44 @@ angular
           role += $scope.selectedRole[item];
           if (item < $scope.selectedRole.length - 1) {            
             if (item < $scope.selectedRole.length - 2 ) {
-            role += ', ';
-            } else role += ' and ';
+            role += '</strong>,<strong> ';
+            } else role += ' </strong>&<strong> ';
           }
         }
       }
-      if ($scope.global.city.selectedCluster[0] == $scope.global.city.value.citystate.split(',')[0]) {
+      if ($scope.global.city.selectedCluster[0] == '*') {
         cluster = $scope.global.city.value.citystate.split(',')[0];
       } else {
         item = 0;
-        for (item in $scope.global.city.selectedCluster) {
-          cluster += $scope.global.city.selectedCluster[item];
+        for (item in $scope.global.city.selectedCluster) {          
+          cluster += $scope.global.city.selectedCluster[item];          
           if (item < $scope.global.city.selectedCluster.length - 1) {            
             if (item < $scope.global.city.selectedCluster.length - 2 ) {
             cluster += ', ';
-            } else cluster += ' and ';
+            } else cluster += ' & ';
           }
         }
       }
-      $scope.title = role + ' in ' + cluster;
+      $scope.title = '<strong>' + role + '</strong> in ' + cluster;
     }
     
     $scope.filterCluster = function(cluster) {      
       $scope.loadingCluster = true;
-      $scope.selectedRole = ['People'];
-      if (cluster == $scope.global.city.value.citystate.split(',')[0]) { cluster = undefined; }
-      userService.getUsers($scope.global.city.path.key, cluster, undefined, 32, undefined)
+      if (cluster == '*') { 
+        $scope.global.city.selectedCluster = ['*']; 
+      } else {
+        if ($scope.global.city.selectedCluster.indexOf('*') >= 0) {
+          $scope.global.city.selectedCluster.splice($scope.global.city.selectedCluster.indexOf('*'), 1);
+        }
+        if ($scope.global.city.selectedCluster.indexOf(cluster) < 0) {
+          $scope.global.city.selectedCluster.push(cluster);
+        } else $scope.global.city.selectedCluster.splice($scope.global.city.selectedCluster.indexOf(cluster), 1);
+        if ($scope.global.city.selectedCluster.length === 0) { 
+          $scope.global.city.selectedCluster = ['*'];
+        }
+      }
+        
+      userService.getUsers($scope.global.city.path.key, $scope.global.city.selectedCluster, $scope.selectedRole, 32, undefined)
       .then(function(response) {
         $scope.loadingCluster = false;
         $scope.users = response.data;        
@@ -200,8 +214,7 @@ angular
     };
     
     $scope.filterRole = function(role) {      
-      $scope.loadingRole = true;
-      $scope.global.city.selectedCluster = $scope.global.city.value.citystate.split(',')[0];      
+      $scope.loadingRole = true;  
       if (role == '*') {         
         $scope.selectedRole = ['*'];        
       } else {
@@ -211,9 +224,12 @@ angular
         if ($scope.selectedRole.indexOf(role) < 0) {
           $scope.selectedRole.push(role);
         } else $scope.selectedRole.splice($scope.selectedRole.indexOf(role), 1);
+        if ($scope.selectedRole.length === 0) { 
+          $scope.selectedRole = ['*'];
+        }
       }
       
-      userService.getUsers($scope.global.city.path.key, undefined, $scope.selectedRole, 32, undefined)
+      userService.getUsers($scope.global.city.path.key, $scope.global.city.selectedCluster, $scope.selectedRole, 32, undefined)
       .then(function(response) {        
         $scope.loadingRole = false;
         $scope.users = response.data;           

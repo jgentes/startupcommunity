@@ -38,7 +38,7 @@
         <div class="block full filternav">
             <i ng-show="loadingRole==true" class="fa fa-refresh fa-spin pull-right"></i>
             <div class="block-title">
-                <h2>Role <strong>Filters</strong></h2>
+                <h2><strong>Role</strong> Filters</h2>
             </div>
             <ul class="nav nav-pills nav-stacked nav-icons">
                 <li ng-class="{'active':selectedRole.indexOf('*') >= 0}" ng-click="filterRole('*')">
@@ -70,13 +70,13 @@
         <div class="block full filternav">
             <i ng-show="loadingCluster==true" class="fa fa-refresh fa-spin pull-right"></i>
             <div class="block-title">
-                <h2>Cluster <strong>Filters</strong></h2>
+                <h2><strong>Cluster</strong> Filters</h2>
             </div>
             <ul class="nav nav-pills nav-stacked nav-icons">
-                <li ng-class="{'active':global.city.selectedCluster === global.city.value.citystate.split(',')[0]}" ng-click="global.city.selectedCluster = global.city.value.citystate.split(',')[0]; filterCluster(global.city.selectedCluster);">
+                <li ng-class="{'active':global.city.selectedCluster.indexOf('*') >= 0}" ng-click="filterCluster('*');">
                     <a><i class="fa fa-fw fa-globe themed-color-dark icon-push"></i> <strong>All</strong></a>
                 </li>
-                <li ng-repeat="(cluster, val) in global.city.value.clusters" ng-class="{'active':global.city.selectedCluster === cluster}" ng-click="global.city.selectedCluster = cluster; filterCluster(global.city.selectedCluster);">
+                <li ng-repeat="(cluster, val) in global.city.value.clusters" ng-class="{'active':global.city.selectedCluster.indexOf(cluster) >= 0}" ng-click="filterCluster(cluster);">
                     <a><i class="fa {{val.icon}}"></i> <strong>{{cluster}}</strong></a>
                 </li>
             </ul>
@@ -96,7 +96,7 @@
                         <span ng-if="users.next"><a ng-click="getUsers(users.next)" class="btn btn-sm btn-default" style="background-color: #fff;"><i class="fa fa-angle-right"></i></a></span>
                     </div>
                 </div>
-                <h2>{{title}}</h2>
+                <h2 ng-bind-html="title"></h2>
             </div>
             <!-- END Messages List Title -->
     

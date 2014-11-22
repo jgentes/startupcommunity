@@ -7,7 +7,7 @@ angular
         return $http.get('/api/' + city + '/users' + (query ? '?search=' + query : ''));
       },
       getUsers: function(city, cluster, role, limit, alturl) {
-        return $http.get(alturl || '/api/' + city + '/users' + (cluster ? '?cluster=' + cluster : '') + (role ? '?role=' + role : '') + (limit ? (cluster || role) ? '&limit=' + limit : '?limit=' + limit : ''));
+        return $http.get(alturl || '/api/' + city + '/users' + (cluster ? '?cluster=' + cluster : '') + (cluster && role ? '&' : '?') + (role ? 'role=' + role : '') + (limit ? (cluster || role) ? '&limit=' + limit : '?limit=' + limit : ''));
       },
       putUser: function(userid, profile, callback) {
         $http.put('/api/user/' + userid + '?profile=' + profile)
