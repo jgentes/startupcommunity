@@ -451,8 +451,8 @@ angular
           $route.reload();          
         })
         .catch(function(response) {
-          $scope.global.alert = { type: 'danger', msg: 'There was a problem: ' + String(response.data.message) };     
-          console.warn(response.data.message);
+          $scope.global.alert = { type: 'danger', msg: 'There was a problem: ' + String(response.data) };     
+          console.warn(response.data);
         });
     };
   }])

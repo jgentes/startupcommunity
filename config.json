@@ -5,6 +5,10 @@
       "clientID": "75bqixdv58z1az",
       "clientSecret": "C5zHpSLjV4uNFUM1"
     },
+    "angellist": {
+      "clientID": "7d93aaf3f93e48b83e9cfa147004d6a4",
+      "clientSecret": "df04e3b2a392debf2d95424287f28b1b"
+    },
     "token_secret": "2l3knfgqlkn2fvkl23nvklgnvkg23bhva08",
     "API_token_secret": "2lknvqk32nvqknv3qlkvn3kvln234lknvqS",
     "mailchimp": "4cd1eb319ae631eb57ef642b9340af68-us9",
@@ -17,6 +21,10 @@
       "clientID": "75bqixdv58z1az",
       "clientSecret": "C5zHpSLjV4uNFUM1"
     },
+    "angellist": {
+      "clientID": "7d93aaf3f93e48b83e9cfa147004d6a4",
+      "clientSecret": "df04e3b2a392debf2d95424287f28b1b"
+    },
     "token_secret": "2l3knfgqlkn2fvkl23nvklgnvkg23bhva08",
     "API_token_secret": "2lknvqk32nvqknv3qlkvn3kvln234lknvqS",
     "mailchimp": "4cd1eb319ae631eb57ef642b9340af68-us9",
@@ -28,6 +36,10 @@
     "linkedin": {
       "clientID": "75bqixdv58z1az",
       "clientSecret": "C5zHpSLjV4uNFUM1"
+    },
+    "angellist": {
+      "clientID": "7d93aaf3f93e48b83e9cfa147004d6a4",
+      "clientSecret": "df04e3b2a392debf2d95424287f28b1b"
     },
     "token_secret": "2l3knfgqlkn2fvkl23nvklgnvkg23bhva08",
     "API_token_secret": "2lknvqk32nvqknv3qlkvn3kvln234lknvqS",
@@ -45,6 +57,10 @@
     "linkedin": {
       "clientID": "75bqixdv58z1az",
       "clientSecret": "C5zHpSLjV4uNFUM1"
+    },
+    "angellist": {
+      "clientID": "7d93aaf3f93e48b83e9cfa147004d6a4",
+      "clientSecret": "df04e3b2a392debf2d95424287f28b1b"
     },
     "token_secret": "2l3knfgqlkn2fvkl23nvklgnvkg23bhva08",
     "API_token_secret": "2lknvqk32nvqknv3qlkvn3kvln234lknvqS",
