@@ -36,28 +36,29 @@
     <div class="col-md-4 col-lg-3">
         <!-- Navigation Block -->
         <div class="block full filternav">
+            <i ng-show="loadingRole==true" class="fa fa-refresh fa-spin pull-right"></i>
             <div class="block-title">
-                <h2>Role <strong>Filters</strong></h2>
+                <h2><strong>Role</strong> Filters</h2>
             </div>
             <ul class="nav nav-pills nav-stacked nav-icons">
-                <li ng-class="{'active':selectedRole === 'People'}" ng-click="selectedRole = 'People'; filterRole(selectedRole);">
+                <li ng-class="{'active':selectedRole.indexOf('*') >= 0}" ng-click="filterRole('*')">
                     <a href="javascript:void(0)">
-                        <i class="fa fa-fw fa-globe themed-color-dark"></i> <strong>All</strong><i ng-show="loadingRole==true && selectedRole==='People'" class="fa fa-refresh fa-spin pull-right"></i>
+                        <i class="fa fa-fw fa-globe themed-color-dark"></i> <strong>All</strong>
                     </a>
                 </li>
-                <li ng-class="{'active':selectedRole === 'Leaders'}" ng-click="selectedRole = 'Leaders'; filterRole(selectedRole);">
+                <li ng-class="{'active':selectedRole.indexOf('Leaders') >= 0}" ng-click="filterRole('Leaders')">
                     <a href="javascript:void(0)">
-                        <i class="fa fa-flag text-danger"></i> <strong>Leaders</strong><i ng-show="loadingRole==true && selectedRole==='Leaders'" class="fa fa-refresh fa-spin pull-right"></i>
+                        <i class="fa fa-flag text-danger"></i> <strong>Leaders</strong>
                     </a>
                 </li>
-                <li ng-class="{'active':selectedRole === 'Advisors'}" ng-click="selectedRole = 'Advisors'; filterRole(selectedRole);">
+                <li ng-class="{'active':selectedRole.indexOf('Advisors') >= 0}" ng-click="filterRole('Advisors')">
                     <a href="javascript:void(0)">
-                        <i class="fa fa-graduation-cap text-info"></i> <strong>Advisors</strong><i ng-show="loadingRole==true && selectedRole==='Advisors'" class="fa fa-refresh fa-spin pull-right"></i>
+                        <i class="fa fa-graduation-cap text-info"></i> <strong>Advisors</strong>
                     </a>
                 </li>
-                <li ng-class="{'active':selectedRole === 'Members'}" ng-click="selectedRole = 'Members'; filterRole(selectedRole);">
+                <li ng-class="{'active':selectedRole.indexOf('Members') >= 0}" ng-click="filterRole('Members')">
                     <a href="javascript:void(0)">
-                        <i class="fa fa-leaf text-success"></i> <strong>Members</strong><i ng-show="loadingRole==true && selectedRole==='Members'" class="fa fa-refresh fa-spin pull-right"></i>
+                        <i class="fa fa-leaf text-success"></i> <strong>Members</strong>
                     </a>
                 </li>
             </ul>
@@ -67,15 +68,16 @@
     
         <!-- Navigation Block -->
         <div class="block full filternav">
+            <i ng-show="loadingCluster==true" class="fa fa-refresh fa-spin pull-right"></i>
             <div class="block-title">
-                <h2>Cluster <strong>Filters</strong></h2>
+                <h2><strong>Cluster</strong> Filters</h2>
             </div>
             <ul class="nav nav-pills nav-stacked nav-icons">
-                <li ng-class="{'active':global.city.selectedCluster === global.city.value.citystate.split(',')[0]}" ng-click="global.city.selectedCluster = global.city.value.citystate.split(',')[0]; filterCluster(global.city.selectedCluster);">
-                    <a><i class="fa fa-fw fa-globe themed-color-dark icon-push"></i> <strong>All</strong><i ng-show="loadingCluster==true && global.city.selectedCluster===global.city.value.citystate.split(',')[0]" class="fa fa-refresh fa-spin pull-right"></i></a>
+                <li ng-class="{'active':global.city.selectedCluster.indexOf('*') >= 0}" ng-click="filterCluster('*');">
+                    <a><i class="fa fa-fw fa-globe themed-color-dark icon-push"></i> <strong>All</strong></a>
                 </li>
-                <li ng-repeat="(cluster, val) in global.city.value.clusters" ng-class="{'active':global.city.selectedCluster === cluster}" ng-click="global.city.selectedCluster = cluster; filterCluster(global.city.selectedCluster);">
-                    <a><i class="fa {{val.icon}}"></i> <strong>{{cluster}}</strong><i ng-show="loadingCluster==true && global.city.selectedCluster===cluster" class="fa fa-refresh fa-spin pull-right"></i></a>
+                <li ng-repeat="(cluster, val) in global.city.value.clusters" ng-class="{'active':global.city.selectedCluster.indexOf(cluster) >= 0}" ng-click="filterCluster(cluster);">
+                    <a><i class="fa {{val.icon}}"></i> <strong>{{cluster}}</strong></a>
                 </li>
             </ul>
             <!-- END Filter by Type links -->
@@ -94,7 +96,7 @@
                         <span ng-if="users.next"><a ng-click="getUsers(users.next)" class="btn btn-sm btn-default" style="background-color: #fff;"><i class="fa fa-angle-right"></i></a></span>
                     </div>
                 </div>
-                <h2><strong>{{selectedRole}} </strong> in {{global.city.selectedCluster}}</h2>
+                <h2 ng-bind-html="title"></h2>
             </div>
             <!-- END Messages List Title -->
     
@@ -118,7 +120,10 @@
                             </td>
                             <td style="width: 30%; vertical-align: top; padding-top: 19px;">
                                 <li ng-repeat="(cluster, val) in item.value.cities[global.city.path.key].clusters" style="list-style: none; display: inline; float: right; padding-left: 5px;">
-    					           <span title="{{cluster}} Cluster" class="btn btn-xs btn-alt btn-default" ng-class="{ 'btn-info' : ((val.roles.indexOf('Advisor') >= 0) && (val.roles.indexOf('Leader') < 0)), 'btn-danger' : (val.roles.indexOf('Leader') >= 0) }" style="cursor: default;"><i class="fa {{global.city.value.clusters[cluster].icon}}"></i></span>
+    					           <span ng-hide="((val.roles.indexOf('Advisor') >= 0) && (val.roles.indexOf('Leader') < 0) && (val.roles.indexOf('Member') < 0)) && item.value.cities[global.city.path.key].cityAdvisor === true" title="{{cluster}} Cluster" class="btn btn-xs btn-alt btn-default" ng-class="{ 'btn-info' : ((val.roles.indexOf('Advisor') >= 0) && (val.roles.indexOf('Leader') < 0) && (item.value.cities[global.city.path.key].cityAdvisor === false || item.value.cities[global.city.path.key].cityAdvisor === undefined)), 'btn-danger' : (val.roles.indexOf('Leader') >= 0) }" style="cursor: default;"><i class="fa {{global.city.value.clusters[cluster].icon}}"></i></span>
+    					        </li>
+                                <li ng-if="item.value.cities[global.city.path.key].cityAdvisor === true" style="list-style: none; display: inline; float: right; padding-left: 5px;">
+    					           <span title="General Advisor" class="btn btn-xs btn-alt btn-info" style="cursor: default;">General Advisor</span>
     					        </li>
 					        </td>
                         </tr>                        
