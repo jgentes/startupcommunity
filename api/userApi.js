@@ -707,7 +707,7 @@ function handleSetRole(req, res) {
       citykey = req.query.citykey,
       cluster = req.query.cluster,
       role = req.query.role,
-      status = (req.query.status === 'true'), // will convert string to bool
+      status = (req.query.status == 'true'), // will convert string to bool
       allowed = false;
       
   function checkperms(allowed, callback) {
@@ -749,11 +749,11 @@ function handleSetRole(req, res) {
           }
           var thiscluster = response.body.cities[citykey].clusters[cluster];
           
-          if (status === "true") {
+          if (status === true) {
             if (thiscluster.roles.indexOf(role) < 0) {
               thiscluster.roles.push(role);
             } // else they already have the role, no action needed
-          } else if (status === "false") {        
+          } else if (status === false) {        
             if (thiscluster.roles.indexOf(role) >= 0) {          
               thiscluster.roles.splice(thiscluster.roles.indexOf(role), 1);          
             } // else they do not have the role, no action needed

@@ -339,8 +339,11 @@ angular
           if ($scope.global.profile.value.cities[$scope.global.city.path.key].clusters[cluster] === undefined) { //need to create the cluster in user profile            
               $scope.global.profile.value.cities[$scope.global.city.path.key].clusters[cluster] = { "roles": [] };              
             }
+          if ($scope.global.profile.value.cities[$scope.global.city.path.key].clusters[cluster].roles === undefined) { //this can happen due to temp local scope variables
+              $scope.global.profile.value.cities[$scope.global.city.path.key].clusters[cluster].roles = [];              
+            }
           var thiscluster = $scope.global.profile.value.cities[$scope.global.city.path.key].clusters[cluster];
-          
+
           if (status === true) {
             if (thiscluster.roles.indexOf(role) < 0) {
               thiscluster.roles.push(role);
