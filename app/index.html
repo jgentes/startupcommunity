@@ -7,9 +7,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="StartupCommunity.org">
   <meta name="author" content="James Gentes">
-  <base href="/">
   <link rel="icon" type="image/png" href="/public/favicon.png">
-
+  <base href="/">
+  
   <!-- prochtml:remove:dist -->
   <link href="assets/less/styles.less" rel="stylesheet/less" media="all"> 
   <!-- /prochtml -->
@@ -29,30 +29,30 @@
     <script type="text/javascript" src="assets/plugins/misc/media.match.min.js"></script>
   <![endif]-->
 
-    <!-- build:css assets/css/vendor.css -->
-    <!-- bower:css -->
-    <link rel="stylesheet" href="../bower_components/ng-grid/ng-grid.css" />
-    <link rel="stylesheet" href="../bower_components/angular-toggle-switch/angular-toggle-switch.css" />
-    <link rel="stylesheet" href="../bower_components/select2/select2.css" />
-    <!-- endbower -->    
-    <link rel='stylesheet' type='text/css' href='assets/plugins/icheck/all.css' /> 
-    <link rel='stylesheet' type='text/css' href='assets/plugins/form-multiselect/css/multi-select.css' />     
-    <link rel='stylesheet' type='text/css' href='assets/plugins/progress-skylo/skylo.css' /> 
-    <link rel='stylesheet' type='text/css' href='assets/plugins/form-select2/select2.css' />    
-    <!-- endbuild -->
-    
+  <!-- build:css assets/css/vendor.css -->
+  <!-- bower:css -->
+  <link rel="stylesheet" href="../bower_components/ng-grid/ng-grid.css" />
+  <link rel="stylesheet" href="../bower_components/angular-toggle-switch/angular-toggle-switch.css" />
+  <link rel="stylesheet" href="../bower_components/select2/select2.css" />
+  <!-- endbower -->    
+  <link rel='stylesheet' type='text/css' href='assets/plugins/icheck/all.css' /> 
+  <link rel='stylesheet' type='text/css' href='assets/plugins/form-multiselect/css/multi-select.css' />     
+  <link rel='stylesheet' type='text/css' href='assets/plugins/progress-skylo/skylo.css' /> 
+  <link rel='stylesheet' type='text/css' href='assets/plugins/form-select2/select2.css' />    
+  <!-- endbuild -->
+  
 
-    <!-- build:css({.tmp,app}) assets/css/main.css -->
-    <link rel="stylesheet" href="assets/css/themes.css">    
-    <link rel="stylesheet" href="assets/css/main.css">     
-    <link rel="stylesheet" href="assets/css/styles.css">       
-    <link rel="stylesheet" href="assets/css/proui.css">
-    <!-- endbuild -->
+  <!-- build:css({.tmp,app}) assets/css/main.css -->
+  <link rel="stylesheet" href="assets/css/themes.css">    
+  <link rel="stylesheet" href="assets/css/main.css">     
+  <link rel="stylesheet" href="assets/css/styles.css">       
+  <link rel="stylesheet" href="assets/css/proui.css">
+  <!-- endbuild -->
 
-    <!-- prochtml:remove:dist -->
-    <script type="text/javascript">less = {}; less.env = 'development';</script>
-    <script type="text/javascript" src="assets/plugins/misc/less.js"></script>
-    <!-- /prochtml -->
+  <!-- prochtml:remove:dist -->
+  <script type="text/javascript">less = {}; less.env = 'development';</script>
+  <script type="text/javascript" src="assets/plugins/misc/less.js"></script>
+  <!-- /prochtml -->
 
   <style type="text/css">
     [ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak {
@@ -104,7 +104,7 @@
     ul.nav li.dropdown:hover > ul.dropdown-menu {
     display: block;    
     }        
-
+    
   </style>
   <script type="text/javascript">
     window.analytics=window.analytics||[],window.analytics.methods=["identify","group","track","page","pageview","alias","ready","on","once","off","trackLink","trackForm","trackClick","trackSubmit"],window.analytics.factory=function(t){return function(){var a=Array.prototype.slice.call(arguments);return a.unshift(t),window.analytics.push(a),window.analytics}};for(var i=0;i<window.analytics.methods.length;i++){var key=window.analytics.methods[i];window.analytics[key]=window.analytics.factory(key)}window.analytics.load=function(t){if(!document.getElementById("analytics-js")){var a=document.createElement("script");a.type="text/javascript",a.id="analytics-js",a.async=!0,a.src=("https:"===document.location.protocol?"https://":"http://")+"cdn.segment.io/analytics.js/v1/"+t+"/analytics.min.js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n)}},window.analytics.SNIPPET_VERSION="2.0.9",
@@ -118,10 +118,8 @@
   ng-class="{
               'static-header': !style_fixedHeader,
               'focusedform': style_fullscreen,
-              'layout-horizontal': style_layoutHorizontal,
               'fixed-layout': style_layoutBoxed,
-              'collapse-leftbar': style_leftbarCollapsed && !style_leftbarShown,
-              'show-rightbar': style_rightbarCollapsed,
+              'collapse-leftbar': style_leftbarCollapsed && !style_leftbarShown,              
               'show-leftbar': style_leftbarShown
             }"
   ng-cloak

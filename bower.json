@@ -1,6 +1,6 @@
 {
   "name": "startupcommunity.org",
-  "version": "0.1",
+  "version": "0.7",
   "appPath": "app",
   "dependencies": {
     "underscore": "~1.5.2",
@@ -17,7 +17,7 @@
     "ng-grid": "2.0.11",
     "jquery-autosize": "1.18.9",
     "angular-toggle-switch": "1.0.0",    
-    "bootbox.js": "https://github.com/makeusabrew/bootbox.git#4.2.0",
+    "bootbox.js": "https://github.com/makeusabrew/bootbox.git#4.3.0",
     "enquire": "2.1.1",
     "jquery-validation": "*",
     "jquery.inputmask": "3.0.0",
@@ -62,7 +62,7 @@
   "overrides": {
     "bootstrap": {
       "main": "dist/js/bootstrap.js"
-    },
+    }
     "iCheck": {
       "main": "icheck.min.js"
     },
