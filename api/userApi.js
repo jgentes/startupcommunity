@@ -533,8 +533,8 @@ function handleLinkedin(req, res) {
           .query('value.linkedin.id: "' + profile.id + '"')
           .then(function (result){     
             if (result.body.results.length > 0){            
-              console.log("Found user: " + profile.firstName + ' ' + profile.lastName);                                                                                             
-              return res.status(409).send({ message: 'Your account is already associated with Linkedin.' });
+              console.log("Found user: " + profile.firstName + ' ' + profile.lastName);
+              res.send({ token: req.headers.authorization.split(' ')[1], user: result.body.results[0] });
             } else {
             
               console.log('No Linkedin user in the system with that id; ok to add it.');
