@@ -12,6 +12,7 @@
     "token_secret": "2l3knfgqlkn2fvkl23nvklgnvkg23bhva08",
     "API_token_secret": "2lknvqk32nvqknv3qlkvn3kvln234lknvqS",
     "mailchimp": "4cd1eb319ae631eb57ef642b9340af68-us9",
+    "mandrill": "JDkgsI2Q5La5kGVPXCOrFg",
     "path": "/app",
     "api_base_url": "https://startupcommunity-c9-jgentes.c9.io"
   },
@@ -28,6 +29,7 @@
     "token_secret": "2l3knfgqlkn2fvkl23nvklgnvkg23bhva08",
     "API_token_secret": "2lknvqk32nvqknv3qlkvn3kvln234lknvqS",
     "mailchimp": "4cd1eb319ae631eb57ef642b9340af68-us9",
+    "mandrill": "JDkgsI2Q5La5kGVPXCOrFg",
     "path": "/theme",
     "api_base_url": "https://startupcommunity-c9-jgentes.c9.io"
   },
@@ -44,6 +46,7 @@
     "token_secret": "2l3knfgqlkn2fvkl23nvklgnvkg23bhva08",
     "API_token_secret": "2lknvqk32nvqknv3qlkvn3kvln234lknvqS",
     "mailchimp": "4cd1eb319ae631eb57ef642b9340af68-us9",
+    "mandrill": "JDkgsI2Q5La5kGVPXCOrFg",
     "path": "/dist",
     "api_base_url": "https://startupcommunity-c9-jgentes.c9.io",
     "opbeat": {
@@ -65,6 +68,7 @@
     "token_secret": "2l3knfgqlkn2fvkl23nvklgnvkg23bhva08",
     "API_token_secret": "2lknvqk32nvqknv3qlkvn3kvln234lknvqS",
     "mailchimp": "4cd1eb319ae631eb57ef642b9340af68-us9",
+    "mandrill": "JDkgsI2Q5La5kGVPXCOrFg",
     "path": "/dist",
     "api_base_url": "https://startupcommunity.org",
     "opbeat": {

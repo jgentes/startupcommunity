@@ -238,7 +238,7 @@ blockquote.pull-right:before {
 
 .content-header-media {
     position: relative;
-    height: 200px;
+    height: 150px;
     overflow: hidden;
     border-top-color: #222222;
 }

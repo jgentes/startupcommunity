@@ -1,6 +1,6 @@
 angular
   .module('appControllers', [])
-  .controller('MainController', ['$scope','$window', '$global', '$route', '$timeout', '$interval', 'progressLoader', '$location', '$auth', 'userService', 'cityService', function ($scope, $window, $global, $route, $timeout, $interval, progressLoader, $location, $auth, userService, cityService) {
+  .controller('MainController', ['$scope','$window', '$global', '$route', '$timeout', '$interval', 'progressLoader', '$location', '$auth', 'userService', 'cityService', 'segmentio', function ($scope, $window, $global, $route, $timeout, $interval, progressLoader, $location, $auth, userService, cityService, segmentio) {
     $scope.style_fixedHeader = $global.get('fixedHeader');
     $scope.style_headerBarHidden = $global.get('headerBarHidden');
     $scope.style_layoutBoxed = $global.get('layoutBoxed');
@@ -73,6 +73,15 @@ angular
       $scope.global.alert = undefined;
     };
     
+    var broadcast = function() {      
+      $scope.$broadcast('sessionReady', true);
+      segmentio.identify($scope.global.user.path.key, {
+        name: $scope.global.user.value.name,
+        email: $scope.global.user.value.email
+      });
+    };
+      
+    
     // Get and set user and city data         
     $scope.global.sessionReady = function() {
       if (!$scope.global.user || !$scope.global.city) {
@@ -88,16 +97,18 @@ angular
             .then(function(response) {
               if (response.data) {            
                 $scope.global.city = response.data;  
-                $scope.$broadcast('sessionReady', true);
+                broadcast();
               }
             });        
           }
         });
-      } else $scope.$broadcast('sessionReady', true);
-    };
+      } else broadcast();
+    };    
+    
+    segmentio.load('fn0wc8wvqu');
     
     $scope.global.sessionReady();
-      
+    
   }])
   
   .filter('words', function() {    

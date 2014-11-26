@@ -7,7 +7,9 @@ var bcrypt = require('bcryptjs'),
     config = require('../config.json')[process.env.NODE_ENV || 'development'],
     db = require('orchestrate')(config.db),
     mcapi = require('mailchimp-api/mailchimp'),
-    mc = new mcapi.Mailchimp(config.mailchimp);
+    mc = new mcapi.Mailchimp(config.mailchimp),
+    mandrill = require('mandrill-api/mandrill'),
+    mandrill_client = new mandrill.Mandrill(config.mandrill);
 
 //require('request-debug')(request); // Very useful for debugging oauth and api req/res
 
