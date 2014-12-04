@@ -38,7 +38,8 @@
   <link rel='stylesheet' type='text/css' href='assets/plugins/icheck/all.css' /> 
   <link rel='stylesheet' type='text/css' href='assets/plugins/form-multiselect/css/multi-select.css' />     
   <link rel='stylesheet' type='text/css' href='assets/plugins/progress-skylo/skylo.css' /> 
-  <link rel='stylesheet' type='text/css' href='assets/plugins/form-select2/select2.css' />    
+  <link rel='stylesheet' type='text/css' href='assets/plugins/form-select2/select2.css' />  
+  <link rel='stylesheet' type='text/css' href='assets/plugins/bootstro.js/bootstro.css' />
   <!-- endbuild -->
   
 
@@ -118,19 +119,15 @@
               'collapse-leftbar': style_leftbarCollapsed && !style_leftbarShown,              
               'show-leftbar': style_leftbarShown
             }"
-  ng-cloak
->
+  ng-cloak>
     
     <header class="navbar navbar-inverse" ng-class="{'navbar-fixed-top': style_fixedHeader, 'navbar-static-top': !style_fixedHeader}" role="banner">
         <a id="leftmenu-trigger" tooltip-placement="right" tooltip="Toggle Sidebar" ng-click="toggleLeftBar()"><i class="fa fa-bars"></i></a>        
-  
-        <div class="navbar-header pull-left">
+        <img beta-tour src="assets/img/logo_startupcommunity.png" width="160px" style="padding: 11px 10px 0 0px" class="navbar-header pull-left"/>
+        <div class="navbar-header pull-left" style="border-left: 1px solid #e4e7eb;">
             <li id="search">
-                 <form 
-                  ng-click="$event.stopPropagation()"
-                 >
-                    <input type="text" ng-model="searchQuery" class="search-query" placeholder="Search..."
-                    >
+                 <form ng-click="$event.stopPropagation()" >
+                    <input type="text" ng-model="searchQuery" class="search-query" placeholder="Search...">
                     <button type="submit" ng-keyup="$event.keyCode == 13 && search(searchQuery)" ng-click="search(searchQuery)"><i class="fa fa-search"></i></button>
                 </form>
             </li>
@@ -213,12 +210,12 @@
     <script src="../bower_components/angular-cookies/angular-cookies.js"></script>
     <script src="../bower_components/angular-sanitize/angular-sanitize.js"></script>
     <script src="../bower_components/angular-route/angular-route.js"></script>
-    <script src="../bower_components/angular-animate/angular-animate.js"></script>
-    <script src="../bower_components/angular-bootstrap/ui-bootstrap-tpls.js"></script>
+    <script src="../bower_components/angular-animate/angular-animate.js"></script>    
     <script src="../bower_components/ng-grid/build/ng-grid.js"></script>
     <script src="../bower_components/jquery-autosize/jquery.autosize.js"></script>
     <script src="../bower_components/angular-toggle-switch/angular-toggle-switch.min.js"></script>
     <script src="../bower_components/bootstrap/dist/js/bootstrap.js"></script>
+    <script src="../bower_components/angular-bootstrap/ui-bootstrap-tpls.js"></script>
     <script src="../bower_components/bootbox.js/bootbox.js"></script>
     <script src="../bower_components/enquire/dist/enquire.js"></script>
     <script src="../bower_components/jquery.slimscroll/jquery.slimscroll.min.js"></script>
@@ -226,12 +223,13 @@
     <script src="../bower_components/select2/select2.js"></script>
     <script src="../bower_components/angular-ui-select2/src/select2.js"></script>
     <script src="../bower_components/iCheck/icheck.min.js"></script>
-    <script src="../bower_components/angular-segmentio/angular-segmentio.js"></script>
-    <script src="../bower_components/satellizer/satellizer.js"></script>
+    <script src="../bower_components/angular-segmentio/angular-segmentio.js"></script>    
+    <script src="../bower_components/satellizer/satellizer.js"></script>    
     <script src="../bower_components/moment/moment.js"></script>
     <!-- endbower -->
     <script type='text/javascript' src='assets/plugins/form-multiselect/js/jquery.multi-select.min.js'></script> 
     <script type='text/javascript' src='assets/plugins/progress-skylo/skylo.js'></script> 
+    <script type='text/javascript' src='assets/plugins/bootstro.js/bootstro.js'></script>
     <!-- endbuild -->
     
 

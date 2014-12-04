@@ -1,6 +1,6 @@
 'use strict';
 
-var app = angular.module('StartupCommunity', [    
+var app = angular.module('StartupCommunity', [        
     'ui.bootstrap',
     'ui.select2',     
     'toggle-switch',
@@ -30,7 +30,7 @@ app
 
   })
   
-  .config(['$provide', '$routeProvider', '$locationProvider', function ($provide, $routeProvider, $locationProvider) {
+  .config(['$provide', '$routeProvider', '$locationProvider', '$logProvider', function ($provide, $routeProvider, $locationProvider, $logProvider) {
     $routeProvider
       .when('/', {
         redirectTo: '/people'
@@ -103,6 +103,9 @@ app
       });
       $locationProvider
         .html5Mode(true);
+        
+      //disable logging
+      $logProvider.debugEnabled(false);
   }]);
 
  

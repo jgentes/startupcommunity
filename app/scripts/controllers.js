@@ -104,10 +104,32 @@ angular
         });
       } else broadcast();
     };    
-    
+        
     segmentio.load('fn0wc8wvqu');
     
-    $scope.global.sessionReady();
+    $scope.global.sessionReady();       
+    
+    // Feedback mechanisms used during Beta
+    
+    var feedbackdata = {};
+    
+    $scope.global.betaTour = {
+      items: [{
+          "step": 1,
+          "selector": ".beta",
+          "title": "My role in the startup community is:",
+          "content": "<fieldset><div class='checkbox'><label><input ng-change='global.feedback(\"advisor\", advisor)' type='checkbox' value='' ng-model='advisor'>Advisor {{advisor}}</label></div><div class='checkbox'><label><input ng-change='global.feedback(\"leader\", leader)' type='checkbox' value='' ng-model='leader'>Community Leader</label></div><div class='checkbox'><label><input type='checkbox' ng-change='global.feedback(\"member\", member)' value='' ng-model='member'>Community Member</label></div><div class='checkbox'><label><input ng-change='global.feedback(\"investor\", investor)' type='checkbox' value='' ng-model='investor'>Investor</label></div><div class='checkbox'><label><input ng-change='global.feedback(\"founder\", founder)' type='checkbox' value='' ng-model='founder'>Startup Founder</label></div><label>Something else?<input type='text' ng-change='global.feedback(\"other\", other)' ng-model='other' class='form-control'></label></fieldset>",
+          "width": "300px",
+          "placement": "right",        
+          "finishButton": "<button class='btn btn-primary btn-mini bootstro-finish-btn'>Done! »</button>"          
+      }]
+    };
+    
+    $scope.global.feedback = function(type, value, submit) {
+      console.log('hit!');
+      feedbackdata[type] = value;
+      console.log(feedbackdata[type] + ': ' + value);
+    };
     
   }])
   
@@ -119,7 +141,7 @@ angular
     };
   })
         
-  .controller('PeopleController', ['$scope', '$location', 'userService', function ($scope, $location, userService) {          
+  .controller('PeopleController', ['$scope', '$location', 'userService', function ($scope, $location, userService) {            
     
     function setPage() {
       if ($scope.users.next) {
@@ -248,14 +270,12 @@ angular
         setTitle();
       });
     };
-    
-    
-    
+            
     if (!$scope.global.city) {
       $scope.$on('sessionReady', function(event, status) {
         getData();         
       });                    
-    } else getData();         
+    } else getData();             
     
   }])    
   
