@@ -15,18 +15,10 @@ angular
     return {
       restrict: 'A',      
       link: function(scope, element, attrs) {
-        var recompile = function () {
-          // timeout to let bootstro render
-          $timeout(function () {            
-            // get the popover bootstro inserted into the DOM
-            var popoverEl = $('.beta').parent().find('.popover');
-            $compile(popoverEl)(scope);
-          }, 50);
-        };
         
         element.click( function() {          
           bootstro.start('', scope.global.betaTour);
-          recompile();
+          scope.global.betaTour.recompile('.beta1');
         });
       
         // for the first popover

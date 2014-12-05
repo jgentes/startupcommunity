@@ -1,6 +1,6 @@
 angular
   .module('appControllers', [])
-  .controller('MainController', ['$scope','$window', '$global', '$route', '$timeout', '$interval', 'progressLoader', '$location', '$auth', 'userService', 'cityService', 'segmentio', function ($scope, $window, $global, $route, $timeout, $interval, progressLoader, $location, $auth, userService, cityService, segmentio) {
+  .controller('MainController', ['$scope','$window', '$global', '$route', '$timeout', '$interval', 'progressLoader', '$location', '$auth', 'userService', 'cityService', 'segmentio', '$compile', function ($scope, $window, $global, $route, $timeout, $interval, progressLoader, $location, $auth, userService, cityService, segmentio, $compile) {
     $scope.style_fixedHeader = $global.get('fixedHeader');
     $scope.style_headerBarHidden = $global.get('headerBarHidden');
     $scope.style_layoutBoxed = $global.get('layoutBoxed');
@@ -98,8 +98,14 @@ angular
               if (response.data) {            
                 $scope.global.city = response.data;  
                 broadcast();
+              } else {
+                 $scope.global.alert = { type: 'danger', msg: 'Sorry, something went wrong: ' + String(response.message) }; 
+                $scope.logout();
               }
-            });        
+            });
+          } else {
+            $scope.global.alert = { type: 'danger', msg: 'Sorry, something went wrong: ' + String(response.message) }; 
+            $scope.logout();
           }
         });
       } else broadcast();
@@ -111,26 +117,43 @@ angular
     
     // Feedback mechanisms used during Beta
     
-    var feedbackdata = {};
-    
     $scope.global.betaTour = {
-      items: [{
-          "step": 1,
-          "selector": ".beta",
-          "title": "My role in the startup community is:",
-          "content": "<fieldset><div class='checkbox'><label><input ng-change='global.feedback(\"advisor\", advisor)' type='checkbox' value='' ng-model='advisor'>Advisor {{advisor}}</label></div><div class='checkbox'><label><input ng-change='global.feedback(\"leader\", leader)' type='checkbox' value='' ng-model='leader'>Community Leader</label></div><div class='checkbox'><label><input type='checkbox' ng-change='global.feedback(\"member\", member)' value='' ng-model='member'>Community Member</label></div><div class='checkbox'><label><input ng-change='global.feedback(\"investor\", investor)' type='checkbox' value='' ng-model='investor'>Investor</label></div><div class='checkbox'><label><input ng-change='global.feedback(\"founder\", founder)' type='checkbox' value='' ng-model='founder'>Startup Founder</label></div><label>Something else?<input type='text' ng-change='global.feedback(\"other\", other)' ng-model='other' class='form-control'></label></fieldset>",
-          "width": "300px",
-          "placement": "right",        
-          "finishButton": "<button class='btn btn-primary btn-mini bootstro-finish-btn'>Done! »</button>"          
-      }]
+      data: {},      
+      feedback: function(type, value, submit) {
+        console.log('hit!');
+        $scope.global.betaTour.data[type] = value;
+        console.log($scope.global.betaTour.data[type] + ': ' + value);
+      },
+      recompile: function(nextEl) {
+        $timeout(function() {
+          console.log(nextEl);
+          var popoverEl = $(nextEl).parent().find('.popover');
+          $compile(popoverEl)($scope);
+        }, 50);
+      }
     };
-    
-    $scope.global.feedback = function(type, value, submit) {
-      console.log('hit!');
-      feedbackdata[type] = value;
-      console.log(feedbackdata[type] + ': ' + value);
-    };
-    
+            
+    $scope.global.betaTour['items'] = [{      
+      selector: ".beta1",
+      title: "Welcome to Bend's Startup Community!",
+      content: "Before diving in, please answer a few questions about your activity in Bend.",      
+      placement: "bottom",        
+      width: "300px",
+      finishButton: "<span style='display: none'></span>",
+      stopOnBackdropClick: "false",
+      onStep: $scope.global.betaTour.recompile('.beta2')
+    },
+    {      
+      selector: ".beta2",
+      title: "My role in the startup community is:",
+      content: "<fieldset style='margin-top: -10px;'><div class='checkbox'><label><input type='checkbox' value='' ng-model='global.betaTour.data.advisor'>Advisor</label></div><div class='checkbox'><label><input type='checkbox' value='' ng-model='global.betaTour.data.leader'>Community Leader</label></div><div class='checkbox'><label><input type='checkbox' value='' ng-model='global.betaTour.data.member'>Community Member</label></div><div class='checkbox'><label><input type='checkbox' value='' ng-model='global.betaTour.data.investor'>Investor</label></div><div class='checkbox'><label><input type='checkbox' value='' ng-model='global.betaTour.data.founder'>Startup Founder</label></div><label>Something else?<input type='text' ng-model='global.betaTour.data.other' class='form-control'></label></fieldset>",
+      width: "300px",
+      placement: "right",        
+      finishButton: "<button class='btn btn-primary btn-mini bootstro-finish-btn'>Done!</button>",
+      stopOnBackdropClick: false,
+      onStep: $scope.global.betaTour.recompile
+    }];
+  
   }])
   
   .filter('words', function() {    

@@ -179,11 +179,12 @@ $(document).ready(function(){
                 t = "<span class='label label-success'>" + (i +1)  + "/" + count + "</span>";
             }
             p.title = $el.attr('data-bootstro-title') || '';
+            /* Remove the step counter icon
             if (p.title != '' && t != '')
                 p.title = t + ' - ' + p.title;
             else if (p.title == '') 
                 p.title = t;
-
+            */
             p.content = $el.attr('data-bootstro-content') || '';
             p.content = add_nav_btn(p.content, i);
             p.placement = $el.attr('data-bootstro-placement') || 'top';
