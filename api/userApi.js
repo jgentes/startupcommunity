@@ -842,7 +842,7 @@ function handleUnlink(req, res) {
 
 
 function handleMaintenance(req, res) {
-  var enabled = true;
+  var enabled = false;
   var startKey = '';
   var userlist = [];
   
@@ -850,7 +850,7 @@ function handleMaintenance(req, res) {
     db.list('users', {limit: 50, startKey: startKey})
     .then( function(data) {
       for (var item in data.body.results) {
-        //data.body.results[item].value.cities = { "bend-or": { "admin": false } };
+        // be careful to retreive existing values from target key then append!
         data.body.results[item].value.cities = { "bend-or": { "admin": false, "cityAdvisor": true } };
         userlist.push(data.body.results[item]);                    
       }                
