@@ -842,7 +842,7 @@ function handleUnlink(req, res) {
 
 
 function handleMaintenance(req, res) {
-  var enabled = false;
+  var enabled = true;
   var startKey = '';
   var userlist = [];
   
@@ -850,7 +850,8 @@ function handleMaintenance(req, res) {
     db.list('users', {limit: 50, startKey: startKey})
     .then( function(data) {
       for (var item in data.body.results) {
-        data.body.results[item].value.cities = { "bend-or": { "admin": false } };
+        //data.body.results[item].value.cities = { "bend-or": { "admin": false } };
+        data.body.results[item].value.cities = { "bend-or": { "cityAdvisor": true } };
         userlist.push(data.body.results[item]);                    
       }                
       if (data.body.next) {
