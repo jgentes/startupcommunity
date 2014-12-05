@@ -851,7 +851,7 @@ function handleMaintenance(req, res) {
     .then( function(data) {
       for (var item in data.body.results) {
         //data.body.results[item].value.cities = { "bend-or": { "admin": false } };
-        data.body.results[item].value.cities = { "bend-or": { "cityAdvisor": true } };
+        data.body.results[item].value.cities = { "bend-or": { "cityAdvisor": false } };
         userlist.push(data.body.results[item]);                    
       }                
       if (data.body.next) {
