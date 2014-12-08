@@ -163,11 +163,11 @@ var searchincity = function(city, cluster, role, limit, offset, query, key) {
     
     if (result.body.next) {      
       var getnext = url.parse(result.body.next, true);   
-      result.body.next = '/api/' + city + '/users?limit=' + getnext.query.limit + '&offset=' + getnext.query.offset + (role ? '&role=' + role : '') + (query ? '&search=' + query : '');
+      result.body.next = '/api/1/' + city + '/users?limit=' + getnext.query.limit + '&offset=' + getnext.query.offset + (role ? '&role=' + role : '') + (query ? '&search=' + query : '');
     }
     if (result.body.prev) {
       var getprev = url.parse(result.body.prev, true);
-      result.body.prev = '/api/' + city + '/users?limit=' + getprev.query.limit + '&offset=' + getprev.query.offset + (role ? '&role=' + role : '') + (query ? '&search=' + query : '');
+      result.body.prev = '/api/1/' + city + '/users?limit=' + getprev.query.limit + '&offset=' + getprev.query.offset + (role ? '&role=' + role : '') + (query ? '&search=' + query : '');
     }
     deferred.resolve(result.body);
   })
