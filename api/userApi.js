@@ -715,9 +715,13 @@ function handleSetRole(req, res) {
   function checkperms(allowed, callback) {
     if (!allowed) {
       db.get("users", req.user)
-      .then(function (response) {        
+      .then(function (response) {                
         if (cluster) {
-          allowed = (response.body.cities[citykey].clusters[cluster].roles.indexOf("Leader") >= 0);
+          if (response.body.cities[citykey].clusters) {
+            if (response.body.cities[citykey].clusters[cluster]) {
+              allowed = (response.body.cities[citykey].clusters[cluster].roles.indexOf("Leader") >= 0);    
+            }
+          }         
         }
         if (response.body.cities[citykey].admin === true) { allowed = true; }
         callback(allowed);        
