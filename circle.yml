@@ -1,5 +1,7 @@
 deployment:
   production:
     branch: master
+    commands:
+      - ./build.sh
     heroku:
       appname: startupcommunity
