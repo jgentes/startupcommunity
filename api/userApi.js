@@ -89,7 +89,7 @@ var searchincity = function(city, cluster, role, limit, offset, query, key) {
         if (userdata.cities[city].admin === true) { allowed=true; }
       })
       .fail(function(err){
-        console.warn("SEARCH FAIL:" + err);
+        console.warn("WARNING: " +  "WARNING: SEARCH FAIL:" + err);
         return deferred.reject(new Error(err));
       });
     } catch (err) {
@@ -157,7 +157,7 @@ var searchincity = function(city, cluster, role, limit, offset, query, key) {
         }
       }
     } catch (error) {
-      console.warn('Possible database entry corrupted: ');
+      console.warn("WARNING: " +  'Possible database entry corrupted: ');
       console.log(result.body.results);
     }
     
@@ -194,7 +194,7 @@ function handleUserSearch(req, res){
       res.send(userlist);
     })
     .fail(function(err){
-      console.warn(err);
+      console.warn("WARNING: " +  err);
       res.send({ message: err});
     });
 }
@@ -275,7 +275,7 @@ function handleCreateAPIToken(req, res) {
         });
       }
     } else {
-      console.warn('API Token for a user that does not exist!!');
+      console.warn("WARNING: " +  'API Token for a user that does not exist!!');
     }
   })
   .fail(function(err){
@@ -330,7 +330,7 @@ function handleSignup(req, res) {
             console.log(user);
             res.send({ token: handleCreateToken(req, result.body.results[0]), user: result.body.results[0] });
           } else {
-            console.warn("Search couldn't find user after posting new user!");
+            console.warn("WARNING: " +  "WARNING: Search couldn't find user after posting new user!");
             res.status(401).send({ message: 'Something went wrong!'});
           }
         })
@@ -469,7 +469,7 @@ var linkedinPull = function (linkedinuser, pullcallback) {
         console.log("Matched Linkedin user to database user: " + linkedinuser.name);        
         pullcallback({ "status": 409, "message": "It looks like " + linkedinuser.name + " is already in the system.", "data": result.body.results[0].value });  
       } else {
-        console.warn("There's already an existing user with that public Linkedin profile.");
+        console.warn("WARNING: " +  "WARNING: There's already an existing user with that public Linkedin profile.");
         pullcallback({ "status": 200, "data": result.body.results[0].value });
       }
     } else { 
@@ -685,14 +685,14 @@ function handleGetProfile(req, res) {
       };
       res.status(200).send(response);
     } else {
-      console.warn('User not found.');
+      console.warn("WARNING: " +  'User not found.');
       return res.status(200).send({ message: 'User not found.' });
     }
   })
   
   .fail(function(err){
-    console.warn("SEARCH FAIL:");
-    console.warn(err);
+    console.warn("WARNING: " +  "WARNING: SEARCH FAIL:");
+    console.warn("WARNING: " +  err);
     res.status(401).send({ message: 'Something went wrong: ' + err});
   }); 
 
@@ -727,7 +727,7 @@ function handleSetRole(req, res) {
         callback(allowed);        
       })
       .fail(function(err){
-        console.warn("SEARCH FAIL:" + err);
+        console.warn("WARNING: " +  "WARNING: SEARCH FAIL:" + err);
         res.status(401).send({ message: 'Something went wrong: ' + err});
       });
     } else callback(allowed);
@@ -772,13 +772,13 @@ function handleSetRole(req, res) {
           res.status(201).send({ message: 'Profile updated.'});
         })
         .fail(function (err) {
-          console.warn('Problem with put: ' + err);
+          console.warn("WARNING: " +  'Problem with put: ' + err);
           res.status(400).send({ message: 'Something went wrong: ' + err});
         });
         
       })
       .fail(function (err) {
-        console.warn('Problem with get: ' + err);
+        console.warn("WARNING: " +  'Problem with get: ' + err);
         res.status(400).send({ message: 'Something went wrong: ' + err});
       });
     } else { 
