@@ -3,5 +3,4 @@ deployment:
     branch: master
     commands:
       - ./build.sh
-    heroku:
-      appname: startupcommunity
+      - git push git@heroku.com:startupcommunity.git $CIRCLE_SHA1:master
