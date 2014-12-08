@@ -582,7 +582,10 @@ function handleLinkedin(req, res) {
           .then(function (result){                    
             if (result.body.results.length > 0){            
               console.log("Found user: " + profile.firstName + ' ' + profile.lastName);
-              result.body.results[0].value["linkedin"] = profile; // get user account and re-upload with linkedin data            
+              result.body.results[0].value["linkedin"] = profile; // get user account and re-upload with linkedin data  
+              if (result.body.results[0].value.avatar === "") {
+                result.body.results[0].value.avatar = result.body.results[0].value.linkedin.pictureUrl;
+              }
               db.put('users', result.body.results[0].path.key, result.body.results[0].value)
                 .then(function () {
                   console.log("Profile updated: " + userprofile.email);                    
