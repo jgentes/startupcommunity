@@ -500,6 +500,11 @@ module.exports = function (grunt) {
     'processhtml:dist',
     // 'htmlmin'
   ]);
+  
+  grunt.registerTask('heroku', [
+  'bower', // Runs `bower install` to fetch frontend dependencies
+  'default' // Builds the static app files: HTML, JS, CSS, images, etc.
+  ]);
 
   grunt.registerTask('default', [
     // 'newer:jshint',

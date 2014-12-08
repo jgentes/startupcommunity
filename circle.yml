@@ -1,7 +1,12 @@
+test:
+  pre:
+    - bower install
 deployment:
   production:
-    branch: staging
-    commands:
-      - git add . -A; git commit -am "commit for heroku push"
-      - git push origin staging:master
-      - git push git@heroku.com:startupcommunity.git staging:master
+    branch: master
+    heroku:
+      appname: startupcommunity
+  staging:
+    branch: dev
+    heroku:
+      appname: startupcommunity-dev
