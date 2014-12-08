@@ -1,9 +1,6 @@
 deployment:
   production:
     branch: master
-    heroku:
-      appname: startupcommunity
-  staging:
-    branch: dev
-    heroku:
-      appname: startupcommunity-dev
+    commands:
+      - ./build.sh
+      - git push git@heroku.com:startupcommunity.git $CIRCLE_SHA1:master
