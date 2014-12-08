@@ -723,7 +723,7 @@ function handleSetRole(req, res) {
         callback(allowed);        
       })
       .fail(function(err){
-        console.warn("SEARCH FAIL:" + err);
+        console.error("SEARCH FAIL:" + err);
         res.status(401).send({ message: 'Something went wrong: ' + err});
       });
     } else callback(allowed);
