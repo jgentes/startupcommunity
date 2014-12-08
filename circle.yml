@@ -1,6 +1,7 @@
 deployment:
   production:
-    branch: master
+    branch: staging
     commands:
-      - ./build.sh
-      - git push git@heroku.com:startupcommunity.git $CIRCLE_SHA1:master
+      - git add . -A; git commit -am "commit for heroku push"
+      - git push origin staging:master
+      - git push git@heroku.com:startupcommunity.git staging:master
