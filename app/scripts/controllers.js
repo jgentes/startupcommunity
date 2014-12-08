@@ -157,7 +157,7 @@ angular
     
     function getData() {
       if ($location.$$path == '/people' || $scope.global.search === undefined) {
-        $scope.getUsers('/api/' + $scope.global.city.path.key + '/users?limit=32');                                  
+        $scope.getUsers('/api/1/' + $scope.global.city.path.key + '/users?limit=32');                                  
       } else if ($location.$$path == '/search') {
         $scope.users = $scope.global.search;
         setPage();        
