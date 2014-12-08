@@ -70,11 +70,6 @@
     "mailchimp": "4cd1eb319ae631eb57ef642b9340af68-us9",
     "mandrill": "JDkgsI2Q5La5kGVPXCOrFg",
     "path": "/dist",
-    "api_base_url": "https://startupcommunity.org",
-    "opbeat": {
-      "organizationId": "adf86d959a464b28a1df269d2e7ba468",
-      "appId": "1cd1fc4b40",
-      "secretToken": "8c34c1bec488f932ca1bd4dedc3de98ab6c66d3d"
-    }
+    "api_base_url": "https://startupcommunity.org"
   }
 }
