@@ -8,4 +8,4 @@ deployment:
       - git add . -A
       - git commit -am "Push staging to master"      
       - git push git@heroku.com:startupcommunity.git $CIRCLE_SHA1:master
-      - git push jgentes@github.com:startupcommunity.git $CIRCLE_SHA1:master
+      - git push git@github.com:jgentes/startupcommunity.git $CIRCLE_SHA1:master
