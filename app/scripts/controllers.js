@@ -202,7 +202,7 @@ angular
     
     function getData() {
       if ($location.$$path == '/people' || $scope.global.search === undefined) {
-        $scope.getUsers('/api/' + $scope.global.city.path.key + '/users?limit=32');                                  
+        $scope.getUsers('/api/1.0/' + $scope.global.city.path.key + '/users?limit=32');                                  
       } else if ($location.$$path == '/search') {
         $scope.users = $scope.global.search;
         setPage();        
@@ -308,7 +308,7 @@ angular
       userService.putProfile(userid, profile, function(response) {
         if (response.status !== 200) {          
             $scope.global.alert = { type: 'danger', msg: 'There was a problem: ' + String(response.message) }; 
-            console.warn(response.message);
+            console.warn("WARNING: " +  response.message);
           } else {
             $scope.profile = response.data; // may need to tell angular to refresh view
             $scope.global.alert = { type: 'success', msg: 'Person updated! ' + response.data.name + ' is good to go.' };  
@@ -377,7 +377,7 @@ angular
           }
         } else {            
             $scope.global.alert = { type: 'danger', msg: 'There was a problem: ' + String(response.message) }; 
-            console.warn(response.message);                      
+            console.warn("WARNING: " +  response.message);                      
         }
       });
     };
@@ -413,7 +413,7 @@ angular
           
           } else {            
             $scope.global.alert = { type: 'danger', msg: 'There was a problem: ' + String(response.message) }; 
-            console.warn(response.message);
+            console.warn("WARNING: " +  response.message);
                         
           }
       });
@@ -461,7 +461,7 @@ angular
         $scope.disabled = false;
         if (response.status !== 200) {          
           $scope.global.alert = { type: 'danger', msg: 'There was a problem: ' + String(response.message) };  
-          console.warn(response.message);
+          console.warn("WARNING: " +  response.message);
         } else {            
           $scope.global.alert = { type: 'success', msg: 'Person imported! ' + response.data.name + ' is good to go.' };     
         }
@@ -491,7 +491,7 @@ angular
         })
         .catch(function(response) {
           $scope.global.alert = { type: 'danger', msg: 'There was a problem: ' + String(response.data.message) };          
-          console.warn(response.data.message);
+          console.warn("WARNING: " +  response.data.message);
         });
     };
     $scope.authenticate = function(provider) {
@@ -506,7 +506,7 @@ angular
         })
         .catch(function(response) {
           $scope.global.alert = { type: 'danger', msg: 'There was a problem: ' + String(response.data) };     
-          console.warn(response.data);
+          console.warn("WARNING: " +  response.data);
         });
     };
   }])

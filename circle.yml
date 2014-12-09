@@ -1,0 +1,11 @@
+deployment:
+  production:
+    branch: staging
+    commands:
+      - ./build.sh
+      - git config --global user.email "james@thesocialbusiness.com"
+      - git config --global user.name "James Gentes"
+      - git add . -A
+      - git commit -am "Push staging to master"      
+      - git push git@heroku.com:startupcommunity.git $CIRCLE_SHA1:master
+      - git push git@github.com:jgentes/startupcommunity.git $CIRCLE_SHA1:master

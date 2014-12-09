@@ -4,13 +4,13 @@ angular
   .factory('userService', function($http) {
     return {        
       search: function(city, query) {
-        return $http.get('/api/' + city + '/users' + (query ? '?search=' + query : ''));
+        return $http.get('/api/1.0/' + city + '/users' + (query ? '?search=' + query : ''));
       },
       getUsers: function(city, cluster, role, limit, alturl) {
-        return $http.get(alturl || '/api/' + city + '/users' + (cluster ? '?cluster=' + cluster : '') + (cluster && role ? '&' : '?') + (role ? 'role=' + role : '') + (limit ? (cluster || role) ? '&limit=' + limit : '?limit=' + limit : ''));
+        return $http.get(alturl || '/api/1.0/' + city + '/users' + (cluster ? '?cluster=' + cluster : '') + (cluster && role ? '&' : '?') + (role ? 'role=' + role : '') + (limit ? (cluster || role) ? '&limit=' + limit : '?limit=' + limit : ''));
       },
       putUser: function(userid, profile, callback) {
-        $http.put('/api/user/' + userid + '?profile=' + profile)
+        $http.put('/api/1.0/user/' + userid + '?profile=' + profile)
         .success( function(response) {
           callback(response);
         })
@@ -19,13 +19,13 @@ angular
         });
       },
       getProfile: function(userid) {        
-        return $http.get(userid ? '/api/profile/' + userid : '/api/profile'); // return me if no userid is provided
+        return $http.get(userid ? '/api/1.0/profile/' + userid : '/api/1.0/profile'); // return me if no userid is provided
       },
       putProfile: function(profileData) { // addcallback!
-        return $http.put('/api/profile', profileData);
+        return $http.put('/api/1.0/profile', profileData);
       },
       removeProfile: function(userid, callback) {
-        $http.post('/api/profile/remove/' + userid)
+        $http.post('/api/1.0/profile/remove/' + userid)
         .success( function(response) {
           callback(response);
         })
@@ -34,7 +34,7 @@ angular
         });
       },
       addPerson: function(url, email, userid, callback) {        
-        $http.get('/api/addPerson?user={"url":"' + url + '","email":"' + email + '","userid":"' + userid + '"}')
+        $http.get('/api/1.0/addPerson?user={"url":"' + url + '","email":"' + email + '","userid":"' + userid + '"}')
         .success( function(response) {
           callback(response);
         })
@@ -43,10 +43,10 @@ angular
         });
       },
       getKey: function() {
-        return $http.get('/api/profile/getkey');
+        return $http.get('/api/1.0/profile/getkey');
       },      
       setCityAdvisor: function(userkey, citykey, role, status, callback) {
-        $http.put('/api/profile/role?userkey=' + userkey + '&citykey=' + citykey + '&role=' + role + '&status=' + status)
+        $http.put('/api/1.0/profile/role?userkey=' + userkey + '&citykey=' + citykey + '&role=' + role + '&status=' + status)
         .success( function(data, status) {
           callback(data, status);
         })
@@ -55,7 +55,7 @@ angular
         });
       },
       setRole: function(userkey, citykey, cluster, role, status, callback) {
-        $http.put('/api/profile/role?userkey=' + userkey + '&citykey=' + citykey + '&cluster=' + cluster + '&role=' + role + '&status=' + status)
+        $http.put('/api/1.0/profile/role?userkey=' + userkey + '&citykey=' + citykey + '&cluster=' + cluster + '&role=' + role + '&status=' + status)
         .success( function(data, status) {
           callback(data, status);
         })
@@ -69,7 +69,7 @@ angular
   .factory('cityService', function($http) {
     return {
       getCity: function(city) {
-        return $http.get('/api/city/' + city);
+        return $http.get('/api/1.0/city/' + city);
       }
     };
   })

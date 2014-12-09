@@ -89,7 +89,7 @@ var searchincity = function(city, cluster, role, limit, offset, query, key) {
         if (userdata.cities[city].admin === true) { allowed=true; }
       })
       .fail(function(err){
-        console.warn("SEARCH FAIL:" + err);
+        console.warn("WARNING: SEARCH FAIL:" + err);
         return deferred.reject(new Error(err));
       });
     } catch (err) {
@@ -157,17 +157,17 @@ var searchincity = function(city, cluster, role, limit, offset, query, key) {
         }
       }
     } catch (error) {
-      console.warn('Possible database entry corrupted: ');
+      console.warn('WARNING:  Possible database entry corrupted: ');
       console.log(result.body.results);
     }
     
     if (result.body.next) {      
       var getnext = url.parse(result.body.next, true);   
-      result.body.next = '/api/' + city + '/users?limit=' + getnext.query.limit + '&offset=' + getnext.query.offset + (role ? '&role=' + role : '') + (query ? '&search=' + query : '');
+      result.body.next = '/api/1.0/' + city + '/users?limit=' + getnext.query.limit + '&offset=' + getnext.query.offset + (role ? '&role=' + role : '') + (query ? '&search=' + query : '');
     }
     if (result.body.prev) {
       var getprev = url.parse(result.body.prev, true);
-      result.body.prev = '/api/' + city + '/users?limit=' + getprev.query.limit + '&offset=' + getprev.query.offset + (role ? '&role=' + role : '') + (query ? '&search=' + query : '');
+      result.body.prev = '/api/1.0/' + city + '/users?limit=' + getprev.query.limit + '&offset=' + getprev.query.offset + (role ? '&role=' + role : '') + (query ? '&search=' + query : '');
     }
     deferred.resolve(result.body);
   })
@@ -275,7 +275,7 @@ function handleCreateAPIToken(req, res) {
         });
       }
     } else {
-      console.warn('API Token for a user that does not exist!!');
+      console.warn('WARNING:  API Token for a user that does not exist!!');
     }
   })
   .fail(function(err){
@@ -330,7 +330,7 @@ function handleSignup(req, res) {
             console.log(user);
             res.send({ token: handleCreateToken(req, result.body.results[0]), user: result.body.results[0] });
           } else {
-            console.warn("Search couldn't find user after posting new user!");
+            console.warn("WARNING: Search couldn't find user after posting new user!");
             res.status(401).send({ message: 'Something went wrong!'});
           }
         })
@@ -469,7 +469,7 @@ var linkedinPull = function (linkedinuser, pullcallback) {
         console.log("Matched Linkedin user to database user: " + linkedinuser.name);        
         pullcallback({ "status": 409, "message": "It looks like " + linkedinuser.name + " is already in the system.", "data": result.body.results[0].value });  
       } else {
-        console.warn("There's already an existing user with that public Linkedin profile.");
+        console.warn("WARNING: There's already an existing user with that public Linkedin profile.");
         pullcallback({ "status": 200, "data": result.body.results[0].value });
       }
     } else { 
@@ -582,7 +582,10 @@ function handleLinkedin(req, res) {
           .then(function (result){                    
             if (result.body.results.length > 0){            
               console.log("Found user: " + profile.firstName + ' ' + profile.lastName);
-              result.body.results[0].value["linkedin"] = profile; // get user account and re-upload with linkedin data            
+              result.body.results[0].value["linkedin"] = profile; // get user account and re-upload with linkedin data  
+              if (result.body.results[0].value.avatar === "") {
+                result.body.results[0].value.avatar = result.body.results[0].value.linkedin.pictureUrl;
+              }
               db.put('users', result.body.results[0].path.key, result.body.results[0].value)
                 .then(function () {
                   console.log("Profile updated: " + userprofile.email);                    
@@ -685,13 +688,13 @@ function handleGetProfile(req, res) {
       };
       res.status(200).send(response);
     } else {
-      console.warn('User not found.');
+      console.warn('WARNING:  User not found.');
       return res.status(200).send({ message: 'User not found.' });
     }
   })
   
   .fail(function(err){
-    console.warn("SEARCH FAIL:");
+    console.warn("WARNING: SEARCH FAIL:");
     console.warn(err);
     res.status(401).send({ message: 'Something went wrong: ' + err});
   }); 
@@ -715,15 +718,19 @@ function handleSetRole(req, res) {
   function checkperms(allowed, callback) {
     if (!allowed) {
       db.get("users", req.user)
-      .then(function (response) {        
+      .then(function (response) {                
         if (cluster) {
-          allowed = (response.body.cities[citykey].clusters[cluster].roles.indexOf("Leader") >= 0);
+          if (response.body.cities[citykey].clusters) {
+            if (response.body.cities[citykey].clusters[cluster]) {
+              allowed = (response.body.cities[citykey].clusters[cluster].roles.indexOf("Leader") >= 0);    
+            }
+          }         
         }
         if (response.body.cities[citykey].admin === true) { allowed = true; }
         callback(allowed);        
       })
       .fail(function(err){
-        console.warn("SEARCH FAIL:" + err);
+        console.warn("WARNING: SEARCH FAIL:" + err);
         res.status(401).send({ message: 'Something went wrong: ' + err});
       });
     } else callback(allowed);
@@ -768,13 +775,13 @@ function handleSetRole(req, res) {
           res.status(201).send({ message: 'Profile updated.'});
         })
         .fail(function (err) {
-          console.warn('Problem with put: ' + err);
+          console.warn('WARNING:  Problem with put: ' + err);
           res.status(400).send({ message: 'Something went wrong: ' + err});
         });
         
       })
       .fail(function (err) {
-        console.warn('Problem with get: ' + err);
+        console.warn('WARNING:  Problem with get: ' + err);
         res.status(400).send({ message: 'Something went wrong: ' + err});
       });
     } else { 
@@ -850,7 +857,8 @@ function handleMaintenance(req, res) {
     db.list('users', {limit: 50, startKey: startKey})
     .then( function(data) {
       for (var item in data.body.results) {
-        data.body.results[item].value.cities = { "bend-or": { "admin": false } };
+        // be careful to retreive existing values from target key then append!
+        data.body.results[item].value.cities = { "bend-or": { "admin": false, "cityAdvisor": true } };
         userlist.push(data.body.results[item]);                    
       }                
       if (data.body.next) {
