@@ -11,22 +11,6 @@ angular
     };
   }])
   
-  .directive('betaTour', function($compile, $timeout) {    
-    return {
-      restrict: 'A',      
-      link: function(scope, element, attrs) {
-        
-        element.click( function() {          
-          bootstro.start('', scope.global.betaTour.people);
-          scope.global.betaTour.recompile();
-        });
-      
-        // for the first popover
-        //recompile();
-      }      
-    };
-  })
-  
   .directive('slideOut', function() {
     return {
       restrict: 'A',

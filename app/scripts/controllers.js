@@ -71,53 +71,7 @@ angular
   
     $scope.closeAlert = function() {
       $scope.global.alert = undefined;
-    };
-    
-    var broadcast = function() {      
-      $scope.$broadcast('sessionReady', true);
-      segmentio.identify($scope.global.user.path.key, {
-        name: $scope.global.user.value.name,
-        email: $scope.global.user.value.email
-      });
-      UserVoice.push(['identify', {
-        id: $scope.global.user.path.key,
-        name: $scope.global.user.value.name,
-        email: $scope.global.user.value.email
-      }]);
-    };      
-    
-    // Get and set user and city data         
-    $scope.global.sessionReady = function() {
-      if (!$scope.global.user || !$scope.global.city) {
-        userService.getProfile()
-        .then(function(response) {
-          if (response.data) {
-            $scope.global.user = response.data;
-            if (!$scope.global.profile) {
-              $scope.global.profile = response.data;
-            }
-            for (var citystate in $scope.global.user.value.cities) break; // grab first city
-            cityService.getCity(citystate)
-            .then(function(response) {
-              if (response.data) {            
-                $scope.global.city = response.data;  
-                broadcast();
-              } else {
-                 $scope.global.alert = { type: 'danger', msg: 'Sorry, something went wrong: ' + String(response.message) }; 
-                $scope.logout();
-              }
-            });
-          } else {
-            $scope.global.alert = { type: 'danger', msg: 'Sorry, something went wrong: ' + String(response.message) }; 
-            $scope.logout();
-          }
-        });
-      } else broadcast();
     };    
-        
-    segmentio.load('fn0wc8wvqu');
-    
-    $scope.global.sessionReady();       
     
     // Feedback mechanisms used during Beta
     
@@ -141,7 +95,7 @@ angular
           $scope.global.editProfile = true;
           bootstro.stop();          
           bootstro.start('', $scope.global.betaTour.profile);
-          }, 1000);
+          }, 1500);
       }
     };        
     
@@ -207,6 +161,59 @@ angular
       finishButton: "<button ng-click='global.betaTour.feedback(global.betaTour.data)' class='btn btn-mini btn-success bootstro-finish-btn'><i class='fa fa-check'></i> Ok, let me in!</button>",
       onStep: $scope.global.betaTour.recompile
     }];
+    
+    var broadcast = function() {           
+      $scope.$broadcast('sessionReady', true);
+      if ($scope.global.user.value.beta === undefined) {
+        $location.path('/people');
+        $timeout(function() {      
+          bootstro.start('', $scope.global.betaTour.people);
+          $scope.global.betaTour.recompile();
+        }, 3500);        
+      } 
+      segmentio.identify($scope.global.user.path.key, {
+        name: $scope.global.user.value.name,
+        email: $scope.global.user.value.email
+      });
+      UserVoice.push(['identify', {
+        id: $scope.global.user.path.key,
+        name: $scope.global.user.value.name,
+        email: $scope.global.user.value.email
+      }]);
+    };      
+    
+    // Get and set user and city data         
+    $scope.global.sessionReady = function() {
+      if (!$scope.global.user || !$scope.global.city) {
+        userService.getProfile()
+        .then(function(response) {
+          if (response.data) {
+            $scope.global.user = response.data;
+            if (!$scope.global.profile) {
+              $scope.global.profile = response.data;
+            }
+            for (var citystate in $scope.global.user.value.cities) break; // grab first city
+            cityService.getCity(citystate)
+            .then(function(response) {
+              if (response.data) {            
+                $scope.global.city = response.data;  
+                broadcast();
+              } else {
+                 $scope.global.alert = { type: 'danger', msg: 'Sorry, something went wrong: ' + String(response.message) }; 
+                $scope.logout();
+              }
+            });
+          } else {
+            $scope.global.alert = { type: 'danger', msg: 'Sorry, something went wrong: ' + String(response.message) }; 
+            $scope.logout();
+          }
+        });
+      } else broadcast();
+    };    
+        
+    segmentio.load('fn0wc8wvqu');
+    
+    $scope.global.sessionReady();       
   
   }])
   

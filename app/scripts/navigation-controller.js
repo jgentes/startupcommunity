@@ -9,7 +9,8 @@ angular
             {
                 label: $scope.global.city.value.citystate.split(',')[0],
                 iconClasses: 'fa fa-globe',
-                url: '/'
+                url: '/',
+                id: 'globe'
             },
             {
                 heading: 'COMMUNITY',
@@ -28,11 +29,13 @@ angular
             },
             {
                 label: 'Startups',
-                iconClasses: 'fa fa-rocket'            
+                iconClasses: 'fa fa-rocket',
+                id: 'startups'                                
             },
             {
                 heading: 'CLUSTERS',
-                navClass: 'beta2 noback'
+                navClass: 'beta2 noback',
+                id: 'clusters'
             }
         ];
         
@@ -40,9 +43,9 @@ angular
             menu.push(
             {
                 label: cluster,
-                cluster: true,
-                iconClasses: 'fa ' + $scope.global.city.value.clusters[cluster].icon,
-                url: '/cluster'
+                cluster: false,
+                iconClasses: 'fa ' + $scope.global.city.value.clusters[cluster].icon,                
+                ngclick: "UserVoice.push(['show', { target: '#clusters'}]);"
             });
         }
         
@@ -72,6 +75,10 @@ angular
         };
         
         $scope.select = function (item) {
+          
+            if (item.ngclick) {
+              eval(item.ngclick);
+            }
             // close open nodes
             if (item.open) {
                 item.open = false;
@@ -100,23 +107,7 @@ angular
                 parentRef.selected = true;
                 $scope.selectedItems.push(parentRef);
                 parentRef = parentRef.parent;
-            }
-            
-            if (item.cluster) {
-              userService.getUsers($scope.global.city.path.key, item.label, undefined, undefined)
-              .then(function(response) {          
-                $scope.global.search = response.data;
-                $location.path(item.url);
-              });
-            }
-            
-            if (item.role) {
-              userService.getUsers($scope.global.city.path.key, undefined, item.label.slice(0, - 1), undefined)
-              .then(function(response) {          
-                $scope.global.search = response.data;
-                $location.path(item.url);
-              });
-            }
+            }            
             
         };
         
@@ -136,7 +127,45 @@ angular
     if (!$scope.global.city) {    
       $scope.$on('sessionReady', function(event, status) {               
         if (status) {
-          buildNav();    
+          buildNav();
+          $timeout(function() {
+            UserVoice.push(['addTrigger', { 
+              target: '#startups',
+              trigger_position: 'automatic',
+              mode: 'contact',
+              screenshot_enabled: false,
+              strings: {
+                contact_title: "We're Working on Startups",
+                contact_message_placeholder: "What stats would you expect to see on the Startups page?                                                 How would you want to filter Startups?                                                                                                 What information is most important to see for each Startup?",
+                contact_submit_button: "Send feedback",
+                contact_success_title: "Feedback sent!"
+              }
+            },
+            {
+              target: '#globe',
+              trigger_position: 'automatic',
+              mode: 'contact',
+              screenshot_enabled: false,
+              strings: {
+                contact_title: "We're Working on City View",
+                contact_message_placeholder: "What stats would you expect to see on the City page?                                                     What information is most important to see for the City?",
+                contact_submit_button: "Send feedback",
+                contact_success_title: "Feedback sent!"
+              }
+            },
+            {
+              target: '#cluster',
+              trigger_position: 'automatic',
+              mode: 'contact',
+              screenshot_enabled: false,
+              strings: {
+                contact_title: "We're Working on Cluster View",
+                contact_message_placeholder: "What stats would you expect to see on the Cluster page?                                                     What information is most important to see for the Cluster?",
+                contact_submit_button: "Send feedback",
+                contact_success_title: "Feedback sent!"
+              }
+            }]);
+          }, 1500);
         }
       });
     } else buildNav();
