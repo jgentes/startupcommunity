@@ -27,7 +27,7 @@ $(document).ready(function(){
             //prevButton : '<button class="btn btn-primary btn-xs bootstro-prev-btn">&laquo; Prev</button>',
             finishButtonText : '<i class="icon-ok"></i> Ok I got it, get back to the site',
             //finishButton : '<button class="btn btn-xs btn-success bootstro-finish-btn"><i class="icon-ok"></i> Ok I got it, get back to the site</button>',
-            stopOnBackdropClick : true,
+            stopOnBackdropClick : false,
             stopOnEsc : true,
             
             //onComplete : function(params){} //params = {idx : activeIndex}
@@ -148,11 +148,11 @@ $(document).ready(function(){
         }
 
         //get the element to intro at stack i 
-        get_element = function(i)
-        {
+        get_element = function(i)                
+        {            
             //get the element with data-bootstro-step=i 
             //or otherwise the the natural order of the set
-            if ($elements.filter("[data-bootstro-step=" + i +"]").size() > 0)
+            if ($elements.filter("[data-bootstro-step=" + i +"]").size() > 0)                
                 return $elements.filter("[data-bootstro-step=" + i +"]");
             else 
             {
@@ -278,18 +278,24 @@ $(document).ready(function(){
             }
         };
         
-        bootstro.next = function()
-        {
+        bootstro.next = function()        
+        {            
             if (activeIndex + 1 == count)
-            {
-                if (typeof settings.onComplete == 'function')
+            {                
+                if (typeof settings.onComplete == 'function') {
                     settings.onComplete.call(this, {idx : activeIndex});//
+                } else if (typeof settings.items[activeIndex].onComplete == 'function') {
+                    settings.items[activeIndex].onComplete.call(this, {idx : activeIndex});
+                }
             }
             else 
             {
                 bootstro.go_to(activeIndex + 1);
-                if (typeof settings.onStep == 'function')
+                if (typeof settings.onStep == 'function') {
                     settings.onStep.call(this, {idx : activeIndex, direction : 'next'});//
+                } else if (typeof settings.items[activeIndex].onStep == 'function') {
+                    settings.items[activeIndex].onStep.call(this, {idx : activeIndex, direction : 'next'});
+                }
             }
         };
         
@@ -305,8 +311,11 @@ $(document).ready(function(){
             else
             {
                 bootstro.go_to(activeIndex -1);
-                if (typeof settings.onStep == 'function')
+                if (typeof settings.onStep == 'function') {
                     settings.onStep.call(this, {idx : activeIndex, direction : 'prev'});//
+                } else if (typeof settings.items[activeIndex].onStep == 'function') {
+                    settings.items[activeIndex].onStep.call(this, {idx : activeIndex, direction : 'prev'});
+                }
             }
         };
         
@@ -387,7 +396,7 @@ $(document).ready(function(){
                 bootstro.stop();
             });        
             
-            if (settings.stopOnBackdropClick)
+            if (settings.stopOnBackdropClick)            
             {
                 $("html").on('click.bootstro', 'div.bootstro-backdrop', function(e){
                     if ($(e.target).hasClass('bootstro-backdrop'))
@@ -398,11 +407,13 @@ $(document).ready(function(){
             //bind the key event
             $(document).on('keydown.bootstro', function(e){
                 var code = (e.keyCode ? e.keyCode : e.which);
+                /* disable keyboard navigation
                 if (code == 39 || code == 40)
                     bootstro.next();
                 else if (code == 37 || code == 38)
                     bootstro.prev();
-                else if(code == 27 && settings.stopOnEsc)
+                else */
+                if(code == 27 && settings.stopOnEsc)
                     bootstro.stop();
             })
         };

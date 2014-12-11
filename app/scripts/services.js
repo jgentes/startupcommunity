@@ -62,7 +62,10 @@ angular
         .error( function(data, status) {
           callback(data, status);
         });
-      }
+      },
+      feedback: function(data) {
+        $http.post('/api/1.0/feedback?data=' + encodeURIComponent(JSON.stringify(data)));
+      }      
     };
   })
   

@@ -23,7 +23,12 @@
 	z-index: 9999;
 	position: relative;
 	border: 1px solid white;
-	background-color: white;
+	background-color: white !important;
+}
+
+.noback
+{
+    background-color: inherit !important;
 }
 
 .bootstro-finish-btn-wrapper

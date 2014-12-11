@@ -127,8 +127,8 @@
         <div class="navbar-header pull-left" style="border-left: 1px solid #e4e7eb;">
             <li id="search">
                  <form ng-click="$event.stopPropagation()" >
-                    <input type="text" ng-model="searchQuery" class="search-query" placeholder="Search...">
-                    <button type="submit" ng-keyup="$event.keyCode == 13 && search(searchQuery)" ng-click="search(searchQuery)"><i class="fa fa-search"></i></button>
+                    <input type="text" ng-keyup="$event.which == 13 ? search(searchQuery):0" ng-model="searchQuery" class="search-query" placeholder="Search...">
+                    <button type="submit" ng-click="search(searchQuery)"><i class="fa fa-search"></i></button>
                 </form>
             </li>
         </div>
@@ -246,4 +246,13 @@
       <!-- endbuild -->
 
 </body>
+<script>
+UserVoice=window.UserVoice||[];(function(){var uv=document.createElement('script');uv.type='text/javascript';uv.async=true;uv.src='//widget.uservoice.com/zK2VtojScbtpM3kB4CRZA.js';var s=document.getElementsByTagName('script')[0];s.parentNode.insertBefore(uv,s)})();
+UserVoice.push(['set', {
+  accent_color: '#3498db',
+  trigger_color: 'white',
+  trigger_background_color: '#3498db'
+}]);
+UserVoice.push(['addTrigger', { mode: 'contact', trigger_position: 'bottom-left' }]);
+</script>
 </html>

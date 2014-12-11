@@ -28,6 +28,7 @@ var UserApi = function() {
   this.signup = handleSignup;
   this.login = handleLogin;
   this.maintenance = handleMaintenance;
+  this.feedback = handleFeedback;
 };
   
 
@@ -788,6 +789,30 @@ function handleSetRole(req, res) {
       res.status(401).send({ message: 'You do not have permission to change this role.'}); 
     }
   });
+}
+
+function handleFeedback(req, res) {
+  var userkey = req.user,
+      data = JSON.parse(decodeURIComponent(req.query.data));  
+      
+  db.get("users", userkey)
+    .then(function (response) {
+      response.body['beta'] = data;
+      
+      db.put('users', userkey, response.body)
+      .then(function (finalres) {
+        res.status(201).send({ message: 'Profile updated.'});
+      })
+      .fail(function (err) {
+        console.warn('WARNING:  Problem with put: ' + err);
+        res.status(400).send({ message: 'Something went wrong: ' + err});
+      });
+      
+    })
+    .fail(function (err) {
+      console.warn('WARNING:  Problem with get: ' + err);
+      res.status(400).send({ message: 'Something went wrong: ' + err});
+    }); 
 }
 
 /*

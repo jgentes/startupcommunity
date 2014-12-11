@@ -9,12 +9,11 @@ angular
             {
                 label: $scope.global.city.value.citystate.split(',')[0],
                 iconClasses: 'fa fa-globe',
-                url: '/',
-                navClass: ''
+                url: '/'
             },
             {
                 heading: 'COMMUNITY',
-                iconClasses: 'beta3'
+                navClass: 'beta1 noback'
             },
             {
                 label: 'People',
@@ -32,7 +31,8 @@ angular
                 iconClasses: 'fa fa-rocket'            
             },
             {
-                heading: 'CLUSTERS'            
+                heading: 'CLUSTERS',
+                navClass: 'beta2 noback'
             }
         ];
         

@@ -8,6 +8,7 @@ function setup(app,routes) {
     app.get('/api/1.0/addPerson', routes.userApi.ensureAuthenticated, routes.userApi.addPerson);
     app.put('/api/1.0/profile/role', routes.userApi.ensureAuthenticated, routes.userApi.setRole);
     app.post('/api/1.0/profile/remove/:userid', routes.userApi.ensureAuthenticated, routes.userApi.removeProfile);
+    app.post('/api/1.0/feedback', routes.userApi.ensureAuthenticated, routes.userApi.feedback);
     
     // Auth
     app.get('/auth/unlink/:provider', routes.userApi.ensureAuthenticated, routes.userApi.unlink);     

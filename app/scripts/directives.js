@@ -17,8 +17,8 @@ angular
       link: function(scope, element, attrs) {
         
         element.click( function() {          
-          bootstro.start('', scope.global.betaTour);
-          scope.global.betaTour.recompile('.beta1');
+          bootstro.start('', scope.global.betaTour.people);
+          scope.global.betaTour.recompile();
         });
       
         // for the first popover
