@@ -25,10 +25,10 @@
     <script type="text/javascript" src="assets/plugins/misc/media.match.min.js"></script>
   <![endif]-->
 
-  <link rel="stylesheet" href="assets/css/9154be43.vendor.css"/>
+  <link rel="stylesheet" href="assets/css/37262ed9.vendor.css"/>
   
 
-  <link rel="stylesheet" href="assets/css/2fc9b0ba.main.css"/>
+  <link rel="stylesheet" href="assets/css/94c0dfd2.main.css"/>
 
   <style type="text/css">
     [ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak {
@@ -94,20 +94,16 @@
               'collapse-leftbar': style_leftbarCollapsed && !style_leftbarShown,              
               'show-leftbar': style_leftbarShown
             }"
-  ng-cloak
->
+  ng-cloak>
     
     <header class="navbar navbar-inverse" ng-class="{'navbar-fixed-top': style_fixedHeader, 'navbar-static-top': !style_fixedHeader}" role="banner">
         <a id="leftmenu-trigger" tooltip-placement="right" tooltip="Toggle Sidebar" ng-click="toggleLeftBar()"><i class="fa fa-bars"></i></a>        
-  
-        <div class="navbar-header pull-left">
+        <img src="assets/img/logo_startupcommunity.png" width="160px" style="padding: 11px 10px 0 0px" class="navbar-header pull-left"/>
+        <div class="navbar-header pull-left" style="border-left: 1px solid #e4e7eb;">
             <li id="search">
-                 <form 
-                  ng-click="$event.stopPropagation()"
-                 >
-                    <input type="text" ng-model="searchQuery" class="search-query" placeholder="Search..."
-                    >
-                    <button type="submit" ng-keyup="$event.keyCode == 13 && search(searchQuery)" ng-click="search(searchQuery)"><i class="fa fa-search"></i></button>
+                 <form ng-click="$event.stopPropagation()" >
+                    <input type="text" ng-keyup="$event.which == 13 ? search(searchQuery):0" ng-model="searchQuery" class="search-query" placeholder="Search...">
+                    <button type="submit" ng-click="search(searchQuery)"><i class="fa fa-search"></i></button>
                 </form>
             </li>
         </div>
@@ -147,6 +143,7 @@
                                       open: (item.children!==undefined) && item.open,
                                    heading: item.heading }"
                       ng-include="'views/templates/nav_renderer.html'"
+                      class="{{item.navClass}}"
                     ></li>
               </ul>
             </div>
@@ -180,10 +177,19 @@
     
     <script type='text/javascript' src='https://maps.google.com/maps/api/js?sensor=true'></script> 
 
-    <script src="scripts/537318f2.vendor.js"></script>
+    <script src="scripts/d9efb559.vendor.js"></script>
     
 
-      <script src="scripts/ad5433a2.scripts.js"></script>
+      <script src="scripts/59a3ed9a.scripts.js"></script>
 
 </body>
+<script>
+UserVoice=window.UserVoice||[];(function(){var uv=document.createElement('script');uv.type='text/javascript';uv.async=true;uv.src='//widget.uservoice.com/zK2VtojScbtpM3kB4CRZA.js';var s=document.getElementsByTagName('script')[0];s.parentNode.insertBefore(uv,s)})();
+UserVoice.push(['set', {
+  accent_color: '#3498db',
+  trigger_color: 'white',
+  trigger_background_color: '#3498db'
+}]);
+UserVoice.push(['addTrigger', { mode: 'contact', trigger_position: 'bottom-left' }]);
+</script>
 </html>

@@ -200,7 +200,7 @@ body.collapse-leftbar {
 			white-space: nowrap;
 			z-index: 999;
 			position: relative;
-			span{display: none;}
+			span, h5 {display: none;}
 
 			> ul {
 				position: absolute;
@@ -213,7 +213,7 @@ body.collapse-leftbar {
 				
 				background: @sidebar-hover-bg;
 				width: 250px;
-				span {display:inline;}
+				span, h5 {display:inline;}
 				> ul {display: block !important;}
 					&.divider {width: 40px !important;}
 				> a, a i {color: @sidebar-hover-color;}

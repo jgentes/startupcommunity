@@ -1,6 +1,6 @@
 	<div ng-controller="ProfileController">
 		
-		<div class="content-header">
+		<div class="content-header beta4">
             <div class="header-section">
                 <div class="options">
 		            <div class="btn-toolbar pull-right">		            	
@@ -21,8 +21,7 @@
 			<div class="row">
 				<div class="col-md-12">
 					<div class="panel panel-gray">
-						<div class="panel-body">
-						
+						<div class="panel-body">						
 											
 							<div class="row">
 							
@@ -60,7 +59,7 @@
 										<a  ng-show="global.editProfile && (global.user.value.cities[global.city.path.key].admin === true)" ng-click="removeProfile(global.profile.path.key, global.profile.value.name)" class="btn btn-alt btn-danger"><i class="fa fa-times"></i> Delete {{::global.profile.value.name | words:0}} {{::global.profile.value.name | words:1}} {{::global.profile.value.name | words:2}}</a>                       
 									</div>
 								</div>
-								<div class="col-md-6">									
+								<div class="col-md-6 beta5" style="padding-bottom:15px">									
 				                    <panel panel-class="panel-primary">			                    					                    	
 				                          <table class="table table-condensed" style="margin-bottom: -19px;">											
 											<tbody>

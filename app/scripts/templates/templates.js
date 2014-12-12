@@ -2,11 +2,11 @@ angular.module('theme.templates', []).run(['$templateCache', function ($template
   'use strict';
 
   $templateCache.put('app/templates/nav_renderer.html',
-    "<a ng-if=\"!item.heading\" ng-click=\"select(item)\" ng-href=\"{{item.url}}\">\n" +
+    "<a ng-if=\"!item.heading\" ng-click=\"select(item)\" ng-href=\"{{item.url}}\" id=\"{{item.id}}\">\n" +
     "\t<i ng-if=\"item.iconClasses\" class=\"{{item.iconClasses}}\"></i><span>{{item.label}}</span>\n" +
     "\t<span ng-bind-html=\"item.html\"></span>\n" +
     "</a>\n" +
-    "<h5 ng-if=\"item.heading\" class=\"heading\">{{item.heading}}</h5>\n" +
+    "<h5 ng-if=\"item.heading\" class=\"heading\" id=\"{{item.id}}\">{{item.heading}}</h5>\n" +
     "<ul ng-if=\"item.children.length\" data-slide-out-nav=\"item.open\">\n" +
     "    <li ng-repeat=\"item in item.children\"\n" +
     "\t    ng-class=\"{ hasChild: (item.children!==undefined),\n" +
