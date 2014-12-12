@@ -8,9 +8,9 @@ angular
         var menu = [
             {
                 label: $scope.global.city.value.citystate.split(',')[0],
-                iconClasses: 'fa fa-globe',
-                url: '/',
-                id: 'globe'
+                iconClasses: 'fa fa-globe',                
+                id: 'globe',
+                ngclick: "UserVoice.push(['show', { target: '#globe', trigger_position: 'automatic', mode: 'contact',             screenshot_enabled: false, strings: { contact_title: 'We&apos;re Working on City View', contact_message_placeholder: 'What stats would you expect to see on the City page?                                                     What information is most important to see for the City?', contact_submit_button: 'Send feedback', contact_success_title: 'Feedback sent!' }}]);"
             },
             {
                 heading: 'COMMUNITY',
@@ -30,7 +30,8 @@ angular
             {
                 label: 'Startups',
                 iconClasses: 'fa fa-rocket',
-                id: 'startups'                                
+                id: 'startups',
+                ngclick: "UserVoice.push(['show', { target: '#startups', trigger_position: 'automatic', mode: 'contact',        screenshot_enabled: false, strings: { contact_title: 'We&apos;re Working on Startups', contact_message_placeholder: 'What stats would you expect to see on the Startups page?                                                 How would you want to filter Startups?                                                                                                 What information is most important to see for each Startup?', contact_submit_button: 'Send feedback', contact_success_title: 'Feedback sent!' }}]);"
             },
             {
                 heading: 'CLUSTERS',
@@ -45,7 +46,7 @@ angular
                 label: cluster,
                 cluster: false,
                 iconClasses: 'fa ' + $scope.global.city.value.clusters[cluster].icon,                
-                ngclick: "UserVoice.push(['show', { target: '#clusters'}]);"
+                ngclick: "UserVoice.push(['show', { target: '#clusters', trigger_position: 'automatic', mode: 'contact', screenshot_enabled: false, strings: { contact_title: 'We&apos;re Working on Cluster View', contact_message_placeholder: 'What stats would you expect to see on the Cluster page?                                                  What information is most important to see for the Cluster?', contact_submit_button: 'Send feedback', contact_success_title: 'Feedback sent!' }}]);"
             });
         }
         
@@ -128,44 +129,6 @@ angular
       $scope.$on('sessionReady', function(event, status) {               
         if (status) {
           buildNav();
-          $timeout(function() {
-            UserVoice.push(['addTrigger', { 
-              target: '#startups',
-              trigger_position: 'automatic',
-              mode: 'contact',
-              screenshot_enabled: false,
-              strings: {
-                contact_title: "We're Working on Startups",
-                contact_message_placeholder: "What stats would you expect to see on the Startups page?                                                 How would you want to filter Startups?                                                                                                 What information is most important to see for each Startup?",
-                contact_submit_button: "Send feedback",
-                contact_success_title: "Feedback sent!"
-              }
-            },
-            {
-              target: '#globe',
-              trigger_position: 'automatic',
-              mode: 'contact',
-              screenshot_enabled: false,
-              strings: {
-                contact_title: "We're Working on City View",
-                contact_message_placeholder: "What stats would you expect to see on the City page?                                                     What information is most important to see for the City?",
-                contact_submit_button: "Send feedback",
-                contact_success_title: "Feedback sent!"
-              }
-            },
-            {
-              target: '#cluster',
-              trigger_position: 'automatic',
-              mode: 'contact',
-              screenshot_enabled: false,
-              strings: {
-                contact_title: "We're Working on Cluster View",
-                contact_message_placeholder: "What stats would you expect to see on the Cluster page?                                                     What information is most important to see for the Cluster?",
-                contact_submit_button: "Send feedback",
-                contact_success_title: "Feedback sent!"
-              }
-            }]);
-          }, 1500);
         }
       });
     } else buildNav();
