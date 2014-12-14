@@ -11,7 +11,7 @@ var bcrypt = require('bcryptjs'),
     mandrill = require('mandrill-api/mandrill'),
     mandrill_client = new mandrill.Mandrill(config.mandrill);
 
-//require('request-debug')(request); // Very useful for debugging oauth and api req/res
+require('request-debug')(request); // Very useful for debugging oauth and api req/res
 
 var UserApi = function() {
   this.ensureAuthenticated = handleEnsureAuthenticated;
@@ -109,6 +109,7 @@ var searchincity = function(city, cluster, role, limit, offset, query, key) {
     }
     searchstring += ')';
   }  
+
   if (role && role[0] !== '*') {
     role = role.split(',');
     searchstring += ' && (';
@@ -116,7 +117,7 @@ var searchincity = function(city, cluster, role, limit, offset, query, key) {
       searchstring += 'cities.' + city + '.cityAdvisor: true || ';
     }
     for (var i in role) {
-      searchstring += 'cities.' + city + '.clusters.*.roles: ' + role[i].slice(0,-1); // scope to role
+      searchstring += 'cities.' + city + '.clusters.*.roles: ' + role[i]; // scope to role
       if (i < (role.length - 1)) { searchstring += ' || '; }
     } 
     searchstring += ')';
@@ -173,7 +174,8 @@ var searchincity = function(city, cluster, role, limit, offset, query, key) {
     deferred.resolve(result.body);
   })
   .fail(function(err){
-    deferred.reject(new Error(err.body));
+    console.log(err.body.message);
+    deferred.reject(err.body.message);
   });
  
   return deferred.promise;
@@ -190,14 +192,14 @@ function handleUserSearch(req, res){
       offset = req.query.offset,
       key = req.query.api_key;      
 
-    searchincity(city, cluster, role, limit, offset, query, key)
-    .then(function(userlist){
-      res.send(userlist);
-    })
-    .fail(function(err){
-      console.warn(err);
-      res.send({ message: err});
-    });
+  searchincity(city, cluster, role, limit, offset, query, key)
+  .then(function(userlist){
+    res.send(userlist);
+  })
+  .fail(function(err){
+    console.warn(err);
+    res.send({message:err});
+  });
 }
 
 /*

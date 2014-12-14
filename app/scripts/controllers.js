@@ -281,7 +281,7 @@ angular
         role = "People";
       } else {
         for (item in $scope.selectedRole) {
-          role += $scope.selectedRole[item];
+          role += ($scope.selectedRole[item] + 's');
           if (item < $scope.selectedRole.length - 1) {            
             if (item < $scope.selectedRole.length - 2 ) {
             role += '</strong>,<strong> ';
