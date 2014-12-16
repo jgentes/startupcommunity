@@ -48,7 +48,7 @@
     "mailchimp": "4cd1eb319ae631eb57ef642b9340af68-us9",
     "mandrill": "JDkgsI2Q5La5kGVPXCOrFg",
     "path": "/dist",
-    "api_base_url": "https://startupcommunity-c9-jgentes.c9.io"
+    "api_base_url": "https://dev.startupcommunity.org"
   },
   "production": {
     "db": "be406a43-5cc1-425f-9545-23bd75ec6cfc",
