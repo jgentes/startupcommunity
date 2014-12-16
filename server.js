@@ -22,7 +22,7 @@ app.use("/public", express.static(__dirname + '/public'));
 require('debug-trace')({ always: true, colors: { log: '32' } });
 console.format = function(c) { return "[" + c.filename + ":" + c.getLineNumber() + "]"; };
 
-if (process.env.NODE_ENV !== "production") {    
+if (process.env.NODE_ENV !== ("production" || "test")) {    
   app.use("/bower_components", express.static(__dirname + "/bower_components"));
   app.use(function(req, res, next) { // Force HTTPS
     var protocol = req.get('x-forwarded-proto');
