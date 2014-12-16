@@ -21,7 +21,7 @@ app.use("/public", express.static(__dirname + '/public'));
 // for console log debugging
 require('debug-trace')({ always: true, colors: { log: '32' } });
 console.format = function(c) { return "[" + c.filename + ":" + c.getLineNumber() + "]"; };
-console.log(process.env.NODE_ENV);
+console.log(process.env.NODE_ENV == "test");
 if (process.env.NODE_ENV == "production" || process.env.NODE_ENV == "test") {    
     // production-only things go here 
 } else { 
