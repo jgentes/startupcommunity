@@ -43,14 +43,10 @@ var routes = {
 
 api.setup(app,routes);
 
-app.use(function(req, res) {
-  return res.redirect('https://' + req.get('Host') + '/#' + req.url);
-});
-/*
 app.get('/[^\.]+$', function(req, res){
     res.sendFile("index.html", { root: __dirname + config.path });
 });
-*/
+
 var port = process.env.PORT || 5000;
 app.listen(port);
 console.log("StartupCommunity.org ready!");
