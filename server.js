@@ -43,7 +43,7 @@ var routes = {
 
 api.setup(app,routes);
 
-app.get('/[^\.]+$', function(req, res){
+app.get('/*', function(req, res){
     res.sendFile("index.html", { root: __dirname + config.path });
 });
 
