@@ -29,10 +29,7 @@ if (process.env.NODE_ENV == "production" || process.env.NODE_ENV == "test") {
     // production-only things go here 
 } else { 
   app.use("/bower_components", express.static(__dirname + "/bower_components"));
-  app.use(function(req, res, next) { // Force HTTPS
-    var protocol = req.get('x-forwarded-proto');
-    protocol == 'https' ? next() : res.redirect('https://' + req.hostname + req.url);
-  });
+  
   
 }
 
@@ -43,6 +40,11 @@ var routes = {
 
 api.setup(app,routes);
 
+app.use(function(req, res, next) { // Force HTTPS
+    var protocol = req.get('x-forwarded-proto');
+    protocol == 'https' ? next() : res.redirect('https://' + req.hostname + req.url);
+  });
+  
 app.use(function(req, res) {
   return res.redirect(req.protocol + '://' + req.get('Host') + '/#' + req.url);
 });
