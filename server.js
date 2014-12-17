@@ -16,6 +16,7 @@ app.use(methodOverride());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use("/", express.static(__dirname + config.path));
+app.use("/public", express.static(__dirname + '/public'));
 
 // for console log debugging
 require('debug-trace')({ always: true, colors: { log: '32' } });
