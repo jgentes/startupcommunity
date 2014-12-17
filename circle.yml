@@ -8,7 +8,7 @@ deployment:
       - git add . -A
       - git commit -am "Push dev branch to sc-dev:master"      
       - git push git@heroku.com:startupcommunity-dev.git $CIRCLE_SHA1:master --force
-      - git push git@github.com:jgentes/startupcommunity.git $CIRCLE_SHA1:dev
+      - git push git@github.com:jgentes/startupcommunity.git $CIRCLE_SHA1:dev --force
   production:
     branch: staging
     commands:
@@ -17,5 +17,5 @@ deployment:
       - git config --global user.name "James Gentes"
       - git add . -A
       - git commit -am "Push staging to production master"      
-      - git push git@heroku.com:startupcommunity.git $CIRCLE_SHA1:master
-      - git push git@github.com:jgentes/startupcommunity.git $CIRCLE_SHA1:master
+      - git push git@heroku.com:startupcommunity.git $CIRCLE_SHA1:master --force
+      - git push git@github.com:jgentes/startupcommunity.git $CIRCLE_SHA1:master --force
