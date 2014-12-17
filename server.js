@@ -43,11 +43,14 @@ var routes = {
 
 api.setup(app,routes);
 
-app.all('/*', function(req, res, next) {
-    // Just send the index.html for other files to support HTML5Mode
-    res.sendFile('index.html', { root: __dirname + config.path });
+app.use(function(req, res) {
+  return res.redirect(req.protocol + '://' + req.get('Host') + '/#' + req.url);
 });
-
+/*
+app.get('/[^\.]+$', function(req, res){
+    res.sendFile("index.html", { root: __dirname + config.path });
+});
+*/
 var port = process.env.PORT || 5000;
 app.listen(port);
 console.log("StartupCommunity.org ready!");
