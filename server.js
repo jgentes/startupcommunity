@@ -17,14 +17,15 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use("/", express.static(__dirname + config.path));
 app.use("/public", express.static(__dirname + '/public'));
+/*
 app.use("/assets", express.static(__dirname + config.path + '/assets'));
 app.use("/scripts", express.static(__dirname + config.path + '/scripts'));
 app.use("/views", express.static(__dirname + config.path + '/views'));
-
+*/
 // for console log debugging
 require('debug-trace')({ always: true, colors: { log: '32' } });
 console.format = function(c) { return "[" + c.filename + ":" + c.getLineNumber() + "]"; };
-
+console.log(process.env.NODE_ENV == "production" || process.env.NODE_ENV == "test");
 if (process.env.NODE_ENV == "production" || process.env.NODE_ENV == "test") {    
     // production-only things go here 
 } else { 
