@@ -16,12 +16,7 @@ app.use(methodOverride());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use("/", express.static(__dirname + config.path));
-/*
-app.use("/public", express.static(__dirname + '/public'));
-app.use("/assets", express.static(__dirname + config.path + '/assets'));
-app.use("/scripts", express.static(__dirname + config.path + '/scripts'));
-app.use("/views", express.static(__dirname + config.path + '/views'));
-*/
+
 // for console log debugging
 require('debug-trace')({ always: true, colors: { log: '32' } });
 console.format = function(c) { return "[" + c.filename + ":" + c.getLineNumber() + "]"; };
@@ -43,11 +38,11 @@ var routes = {
 };
 
 api.setup(app,routes);
-/*
+
 app.all('/*', function(req, res, next){
     res.sendFile("index.html", { root: __dirname + config.path });
 });
-*/
+
 var port = process.env.PORT || 5000;
 app.listen(port);
 console.log("StartupCommunity.org ready!");
