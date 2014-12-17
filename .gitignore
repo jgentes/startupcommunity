@@ -27,9 +27,6 @@ app/app
 node_modules
 bower_components
 
-# Config files
-config.json
-
 # C9
 .c9
 
