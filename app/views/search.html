@@ -35,7 +35,7 @@
     
     <div id="peoplelist">
         <div class="row" style="margin-left: 10px; margin-right: 10px;">            
-            <div ng-show="global.search.results === undefined || global.search.results.length == 0" style="text-align: center"><h2>No search results!</h2></div>
+            <div ng-show="global.search.results === undefined || global.search.results.length == 0" style="text-align: center"><h2>Sorry, there are no results for '{{global.search.query}}'!</h2></div>
             <div class="col-sm-6 col-lg-4" ng-repeat="item in global.search.results" ng-include="'views/templates/people_renderer.html'">                 
             </div>            
         </div>              

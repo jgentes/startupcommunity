@@ -9,7 +9,7 @@
         <div class="col-sm-8 col-sm-offset-2 text-center">
             <p style="font-size: 8em;"><i style="font-size: .9em;" class="fa fa-exclamation-triangle text-info animation-pulse"></i> 404</p>
             <p style="font-size: 2em;">Sorry, we couldn't find that page. Perhaps try searching instead?</p>
-            <form ng-submit="search(searchQuery)">
+            <form ng-submit="search(global.search.query)">
                 <input type="text" ng-model="searchQuery" class="form-control input-lg" placeholder="Search StartupCommunity.org...">
             </form>
             <div ng-show="global.alert" style="margin-top: 15px;">

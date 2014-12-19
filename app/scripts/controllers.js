@@ -46,12 +46,14 @@ angular
       return $auth.isAuthenticated(); //returns true or false based on browser local storage token
     };  
     
-    $scope.search = function(query) {
+    $scope.search = function(query) {        	  
+  	  console.log('search triggered!');  	    	  
       userService.search($scope.global.city.path.key, query)
       .then(function(results) {
         $scope.global.search = results.data;
+        // add this here but consider why have global.search at all? $scope.users = $scope.global.search;
         $location.path('/search');
-      });
+      });  	  
     };
     
     $scope.editProfile = function() {            

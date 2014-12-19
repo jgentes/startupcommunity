@@ -126,9 +126,9 @@
         <img src="assets/img/logo_startupcommunity.png" width="160px" style="padding: 11px 10px 0 0px" class="navbar-header pull-left"/>
         <div class="navbar-header pull-left" style="border-left: 1px solid #e4e7eb;">
             <li id="search">
-                 <form ng-click="$event.stopPropagation()" >
-                    <input type="text" ng-keyup="$event.which == 13 ? search(searchQuery):0" ng-model="searchQuery" class="search-query" placeholder="Search...">
-                    <button type="submit" ng-click="search(searchQuery)"><i class="fa fa-search"></i></button>
+                 <form ng-submit="search(global.search.query)">
+                    <input type="text" ng-model="global.search.query" class="search-query" placeholder="Search...">
+                    <button type="submit"><i class="fa fa-search"></i></button>
                 </form>
             </li>
         </div>
@@ -213,11 +213,6 @@
     <script src="../bower_components/angular-route/angular-route.js"></script>
     <script src="../bower_components/angular-animate/angular-animate.js"></script>
     <script src="../bower_components/angular-bootstrap/ui-bootstrap-tpls.js"></script>
-    <script src="../bower_components/jquery.ui/ui/jquery.ui.core.js"></script>
-    <script src="../bower_components/jquery.ui/ui/jquery.ui.widget.js"></script>
-    <script src="../bower_components/jquery.ui/ui/jquery.ui.mouse.js"></script>
-    <script src="../bower_components/jquery.ui/ui/jquery.ui.draggable.js"></script>
-    <script src="../bower_components/jquery.ui/ui/jquery.ui.resizable.js"></script>
     <script src="../bower_components/ng-grid/build/ng-grid.js"></script>
     <script src="../bower_components/jquery-autosize/jquery.autosize.js"></script>
     <script src="../bower_components/angular-toggle-switch/angular-toggle-switch.min.js"></script>
