@@ -1,6 +1,6 @@
 angular
   .module('appControllers', [])
-  .controller('MainController', ['$scope','$window', '$global', '$route', '$timeout', '$interval', 'progressLoader', '$location', '$auth', 'userService', 'cityService', 'segmentio', '$compile', function ($scope, $window, $global, $route, $timeout, $interval, progressLoader, $location, $auth, userService, cityService, segmentio, $compile) {
+  .controller('MainController', ['$scope','$window', '$global', '$route', '$timeout', '$interval', 'progressLoader', '$location', '$auth', 'userService', 'cityService', 'segmentio', '$compile', 'resultService', function ($scope, $window, $global, $route, $timeout, $interval, progressLoader, $location, $auth, userService, cityService, segmentio, $compile, resultService) {
     $scope.style_fixedHeader = $global.get('fixedHeader');
     $scope.style_headerBarHidden = $global.get('headerBarHidden');
     $scope.style_layoutBoxed = $global.get('layoutBoxed');
@@ -46,12 +46,11 @@ angular
       return $auth.isAuthenticated(); //returns true or false based on browser local storage token
     };  
     
-    $scope.search = function(query) {        	  
-  	  console.log('search triggered!');  	    	  
+    $scope.search = function(query) {        	    	  
       userService.search($scope.global.city.path.key, query)
-      .then(function(results) {
-        $scope.global.search = results.data;
-        // add this here but consider why have global.search at all? $scope.users = $scope.global.search;
+      .then(function(response) {
+        $scope.global.search = resultService.setPage(response.data);
+        $scope.global.search.lastQuery = query;
         $location.path('/search');
       });  	  
     };
@@ -227,34 +226,15 @@ angular
     };
   })
         
-  .controller('PeopleController', ['$scope', '$location', 'userService', function ($scope, $location, userService) {            
-    
-    function setPage() {
-      if ($scope.users.next) {
-          $scope.users.start = Number($scope.users.next.match(/offset=([^&]+)/)[1]) - Number($scope.users.count) + 1;
-          $scope.users.end = Number($scope.users.next.match(/offset=([^&]+)/)[1]);
-        } else if ($scope.users.prev) {
-          $scope.users.start = Number($scope.users.total_count) - Number($scope.users.count);
-          $scope.users.end = $scope.users.total_count;
-        } else if ($scope.users.count === 0 || $scope.users === undefined) {
-          $scope.users.start = 0;
-          $scope.users.end = 0;
-        } else {          
-          $scope.users.start = 1; $scope.users.end = $scope.users.total_count;
-        }
-    }
-    
-    $scope.rotateWidgetClass = function() {
-      var arr = ["'themed-background-dark'",'themed-background-dark-night','themed-background-dark-modern', 'themed-background-dark-autumn', 'themed-background-dark-fancy', 'themed-background-dark-fire'];
-      var idx = Math.floor(Math.random() * arr.length);
-      return arr[idx];
-    };
-    
+  .controller('PeopleController', ['$scope', '$location', 'userService', 'resultService', function ($scope, $location, userService, resultService) {            
+            
     $scope.getUsers = function(alturl) {
       userService.getUsers($scope.global.city.path.key, undefined, undefined, 32, alturl)
       .then(function(response) {          
-        $scope.users = response.data;        
-        setPage();
+        $scope.users = resultService.setPage(response.data);
+        if ($location.$$path == '/search') {
+          $scope.global.search = resultService.setPage($scope.users);
+        } else { $scope.global.search = undefined }
       });
     };  
     
@@ -265,11 +245,8 @@ angular
     
     function getData() {
       if ($location.$$path == '/people' || $scope.global.search === undefined) {
-        $scope.getUsers('/api/1.0/' + $scope.global.city.path.key + '/users?limit=32');                                  
-      } else if ($location.$$path == '/search') {
-        $scope.users = $scope.global.search;
-        setPage();        
-      }
+        $scope.getUsers('/api/1.0/' + $scope.global.city.path.key + '/users?limit=32');        
+      }      
       $scope.global.city.selectedCluster = ['*'];        
       $scope.selectedRole = ['*'];
       setTitle();
@@ -326,8 +303,7 @@ angular
       userService.getUsers($scope.global.city.path.key, $scope.global.city.selectedCluster, $scope.selectedRole, 32, undefined)
       .then(function(response) {
         $scope.loadingCluster = false;
-        $scope.users = response.data;        
-        setPage();
+        $scope.users = resultService.setPage(response.data);     
         setTitle();
       });
     };
@@ -351,8 +327,7 @@ angular
       userService.getUsers($scope.global.city.path.key, $scope.global.city.selectedCluster, $scope.selectedRole, 32, undefined)
       .then(function(response) {        
         $scope.loadingRole = false;
-        $scope.users = response.data;           
-        setPage();
+        $scope.users = resultService.setPage(response.data);                   
         setTitle();
       });
     };

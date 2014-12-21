@@ -77,6 +77,29 @@ angular
     };
   })
   
+  .factory('resultService', function() {
+    // This service will eventually handle a variety of functions for multiple views, such as search, cluster view, people view, startup view, etc
+    return {
+      setPage: function($scope) {
+        if ($scope !== undefined) {
+          if ($scope.next) {
+              $scope.start = Number($scope.next.match(/offset=([^&]+)/)[1]) - Number($scope.count) + 1;
+              $scope.end = Number($scope.next.match(/offset=([^&]+)/)[1]);
+            } else if ($scope.prev) {
+              $scope.start = Number($scope.total_count) - Number($scope.count);
+              $scope.end = $scope.total_count;
+            } else if ($scope.count === 0 || $scope === undefined) {
+              $scope.start = 0;
+              $scope.end = 0;
+            } else {          
+              $scope.start = 1; $scope.end = $scope.total_count;
+            }
+        }
+        return $scope;
+      }
+    };
+  })
+  
   .service('geocoder',function() {
     this.geocode = function(georequest, outerCallback) {
       var geocoder = new google.maps.Geocoder();

@@ -2,7 +2,8 @@
 
 var app = angular.module('StartupCommunity', [        
     'ui.bootstrap',
-    'ui.select2',     
+    'ui.select2',
+    'ui.highlight',
     'toggle-switch',
     'form-directives',
     'navigation-controller',
@@ -49,7 +50,7 @@ app
         }
       })
       .when('/search', {
-        templateUrl: 'views/people.html',
+        templateUrl: 'views/search.html',
         resolve: {
           authenticated: ['$location', '$auth', function($location, $auth) {
             if (!$auth.isAuthenticated()) {

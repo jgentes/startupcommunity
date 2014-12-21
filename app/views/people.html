@@ -105,28 +105,7 @@
                 <table class="table table-vcenter">                
                     <tbody>
                         <tr><td style="border-bottom: 1px solid #fff; border-top: none; padding: 0;" colspan="3"></td></tr>
-                        <tr ng-repeat="item in users.results | orderBy : item.value.cities[global.city.path.key].clusters">           
-                            <td class="text-center" style="width: 5%; vertical-align: top;">
-                                <a ng-click="viewUser(item)" title="View {{::item.value.name | words:0}}'s Profile"><img style="height:48px" ng-src="{{::item.value.avatar || item.value.linkedin.pictureUrl || '/public/blank_avatar.png'}}" alt="{{::item.value.name}}" class="widget-image img-circle pull-left"></a>                                
-                            </td>   
-                            <td style="width: 65%; vertical-align: top;  padding-top: 8px;">
-                                <a ng-click="viewUser(item)" title="View {{::item.value.name | words:0}}'s Profile"><strong>{{::item.value.name}} </strong></a>
-                                <a ng-show="{{(item.value.linkedin.summary).length > 0}}" title="Show Summary" ng-click="showSummary = !showSummary" style="color: #DDDDDD;">
-                                    <i class="fa fa-chevron-down fa-fw"></i>
-                                </a>
-    					        <br>
-                                <span class="text-muted">{{::item.value.linkedin.headline}}</span>                                
-                                <span ng-show="showSummary" class="text-muted" style="white-space:pre-wrap;"><hr>{{::item.value.linkedin.summary}}</span>                                
-                            </td>
-                            <td style="width: 30%; vertical-align: top; padding-top: 19px;">
-                                <li ng-repeat="(cluster, val) in item.value.cities[global.city.path.key].clusters" style="list-style: none; display: inline; float: right; padding-left: 5px;">
-    					           <span ng-hide="((val.roles.indexOf('Advisor') >= 0) && (val.roles.indexOf('Leader') < 0) && (val.roles.indexOf('Member') < 0)) && item.value.cities[global.city.path.key].cityAdvisor === true" title="{{cluster}} Cluster" class="btn btn-xs btn-alt btn-default" ng-class="{ 'btn-info' : ((val.roles.indexOf('Advisor') >= 0) && (val.roles.indexOf('Leader') < 0) && (item.value.cities[global.city.path.key].cityAdvisor === false || item.value.cities[global.city.path.key].cityAdvisor === undefined)), 'btn-danger' : (val.roles.indexOf('Leader') >= 0) }" style="cursor: default;"><i class="fa {{global.city.value.clusters[cluster].icon}}"></i></span>
-    					        </li>
-                                <li ng-if="item.value.cities[global.city.path.key].cityAdvisor === true" style="list-style: none; display: inline; float: right; padding-left: 5px;">
-    					           <span title="General Advisor" class="btn btn-xs btn-alt btn-info" style="cursor: default;">General Advisor</span>
-    					        </li>
-					        </td>
-                        </tr>                        
+                        <tr ng-repeat="item in users.results" ng-include="'views/templates/people_renderer.html'"></tr>                        
                         <tr>
                             <td class="text-right" colspan="3">
                                 <strong>{{users.start}} - {{users.end}}</strong> of <strong>{{users.total_count}}&nbsp;&nbsp;</strong>
@@ -145,18 +124,3 @@
     </div>
 </div>
 <!-- END Messages List -->
-    
-    <div id="peoplelist">
-        <div class="row" style="margin-left: 10px; margin-right: 10px;">
-            <div class="col-sm-6 col-lg-4" >
-            </div>            
-        </div>              
-        <div class="row" style="margin-left: 1.5%; margin-right: 1.5%;"> 
-            <ul class="pager">
-                <li ng-if="users.prev" class="previous"><a ng-click="getUsers(users.prev)"><i class="fa fa-arrow-left"></i> Prev</a></li>
-                <li ng-if="users.next" class="next"><a ng-click="getUsers(users.next)">Next <i class="fa fa-arrow-right"></i></a></li>
-            </ul>
-        </div>
-    </div>
-
-</div>
