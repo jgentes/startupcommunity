@@ -28,7 +28,7 @@
   <link rel="stylesheet" href="assets/css/814e4b37.vendor.css">
   
 
-  <link rel="stylesheet" href="assets/css/8805f548.main.css">
+  <link rel="stylesheet" href="assets/css/4f54b90d.main.css">
 
   <style type="text/css">
     [ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak {
@@ -101,9 +101,9 @@
         <img src="assets/img/logo_startupcommunity.png" width="160px" style="padding: 11px 10px 0 0px" class="navbar-header pull-left"/>
         <div class="navbar-header pull-left" style="border-left: 1px solid #e4e7eb;">
             <li id="search">
-                 <form ng-click="$event.stopPropagation()" >
-                    <input type="text" ng-keyup="$event.which == 13 ? search(searchQuery):0" ng-model="searchQuery" class="search-query" placeholder="Search...">
-                    <button type="submit" ng-click="search(searchQuery)"><i class="fa fa-search"></i></button>
+                 <form ng-submit="search(global.search.query)">
+                    <input type="text" ng-model="global.search.query" class="search-query" placeholder="Search...">
+                    <button type="submit"><i class="fa fa-search"></i></button>
                 </form>
             </li>
         </div>
@@ -177,10 +177,10 @@
     
     <script type='text/javascript' src='https://maps.google.com/maps/api/js?sensor=true'></script> 
 
-    <script src="scripts/07b2ccca.vendor.js"></script>
+    <script src="scripts/7b42118d.vendor.js"></script>
     
 
-      <script src="scripts/769f0d52.scripts.js"></script>
+      <script src="scripts/06343991.scripts.js"></script>
 
 </body>
 <script>
