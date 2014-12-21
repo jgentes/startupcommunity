@@ -167,9 +167,7 @@ module.exports = function (grunt) {
                   'Chart.min.js',
                   'raphael',
                   'morris',
-                  'jquery.inputmask',
-                  'jquery.validate.js',
-                  'jquery.stepy.js'
+                  'jquery.inputmask'
                   ]
       }
     },

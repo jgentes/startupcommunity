@@ -40,7 +40,7 @@ var routes = {
 
 api.setup(app,routes);
 
-app.get('/[a-z]{0,100}', function(req, res, next){
+app.get('/*', function(req, res, next){
     res.sendFile("index.html", { root: __dirname + config.path });
 });
 
