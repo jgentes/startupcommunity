@@ -17,7 +17,6 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use("/", express.static(__dirname + config.path));
 app.use("/public", express.static(__dirname + '/public'));
-app.use("/bower_components", express.static(__dirname + "/bower_components"));
 
 // for console log debugging
 require('debug-trace')({ always: true, colors: { log: '32' } });
@@ -25,7 +24,8 @@ console.format = function(c) { return "[" + c.filename + ":" + c.getLineNumber()
 
 if (process.env.NODE_ENV == "production" || process.env.NODE_ENV == "test") {    
     // production-only things go here 
-} else {   
+} else { 
+  app.use("/bower_components", express.static(__dirname + "/bower_components"));
   app.use(function(req, res, next) { // Force HTTPS
     var protocol = req.get('x-forwarded-proto');
     protocol == 'https' ? next() : res.redirect('https://' + req.hostname + req.url);
