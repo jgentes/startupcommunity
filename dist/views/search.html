@@ -19,7 +19,7 @@
                         <div class="col-xs-4 col-sm-3">
                             <h2>
                                 <strong style="color: white;">{{global.search.total_count}}</strong><br>
-                                <small><i class="fa fa-leaf"></i> People</small>
+                                <small><i class="fa fa-leaf"></i> <span ng-bind-html="global.search.total_count == 1 ? 'Person' : 'People'"></span></small>
                             </h2>
                         </div>
                         
