@@ -179,7 +179,7 @@
 
     <div id="page-content" class="clearfix" fit-height>
         <div ng-show="global.alert && !style_fullscreen">
-          <alert type="{{global.alert.type}}" style="margin: 2px;" close="closeAlert($index)"><span ng-bind-html="global.alert.msg | safe_html"></alert>
+          <alert type="{{global.alert.type}}" style="margin: 2px;" close="closeAlert($index)"><span ng-bind-html="global.alert.msg | safe_html"></span></alert>
         </div>
         <div id="wrap" ng-view="" class="mainview-animation">                
         </div> <!--wrap -->
