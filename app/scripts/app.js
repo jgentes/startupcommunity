@@ -66,12 +66,6 @@ app
             if (!$auth.isAuthenticated()) {
               return $location.path('/launchform');
             }
-          }],
-          lazyLoad: ['lazyLoad', function (lazyLoad) {
-            return lazyLoad.load([
-              'bower_components/jquery-validation/dist/jquery.validate.js',
-              'bower_components/stepy/lib/jquery.stepy.js'
-            ]);
           }]
         }
       })
