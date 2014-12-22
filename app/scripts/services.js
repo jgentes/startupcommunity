@@ -296,4 +296,4 @@ angular
     return function(val) {
       return $sce.trustAsHtml(val);
     };
-}]);
+  }]);

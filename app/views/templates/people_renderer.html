@@ -10,7 +10,7 @@
     <span class="text-muted" ng-bind-html="::item.value.linkedin.headline | highlight:global.search.lastQuery"></span>                                
     <div ng-show="(showSummary || global.search.count) && item.value.linkedin.summary">
         <hr>
-        <span class="text-muted" style="white-space:pre-wrap;" ng-bind-html="::item.value.linkedin.summary | linky | highlight:global.search.lastQuery"></span>
+        <span class="text-muted" style="white-space:pre-wrap;" ng-bind-html="::item.value.linkedin.summary | linky:'_blank' | highlight:global.search.lastQuery | safe_html"></span>
     </div>
 </td>
 <td style="width: 30%; vertical-align: top; padding-top: 19px;">
