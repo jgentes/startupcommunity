@@ -183,13 +183,19 @@
         </div>
         <div id="wrap" ng-view="" class="mainview-animation">                
         </div> <!--wrap -->
-        <footer role="contentinfo" style="margin: 1%;">
-          <div class="clearfix">        
-            <ul class="list-unstyled list-inline pull-left">
-              <li style="color: #bbb;">StartupCommunity.org &copy; 2014</li>
-            </ul>        
-            <button class="pull-right btn btn-default btn-xs hidden-print" back-to-top><i class="fa fa-angle-up"></i></button>        
+        
+        <footer role="contentinfo" style="margin: 1%; height: 70px;">        
+          <div class="col-md-4">                    
+            <ul class="list-unstyled list-inline">            
+              <button class="pull-left btn btn-default btn-xs hidden-print" back-to-top><i class="fa fa-angle-up"></i></button>
+              <li style="color: #bbb; padding-top: 2px;">StartupCommunity.org &copy; 2014</li>              
+            </ul>                      
           </div>
+          <div class="col-xs-12 col-md-8">
+            <ul class="list-unstyled list-inline pull-right">
+              <li style="color: #aaa;" random-quote></li>
+            </ul>
+          </div>          
         </footer>
     </div> <!-- page-content -->   
      
