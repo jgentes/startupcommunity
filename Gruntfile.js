@@ -40,7 +40,7 @@ module.exports = function (grunt) {
       },
       jsTest: {
         files: ['test/spec/{,*/}*.js'],
-        tasks: ['newer:jshint:test', 'karma']
+        tasks: ['newer:jshint:test', 'protractor']
       },
       styles: {
         files: ['<%= yeoman.app %>/styles/{,*/}*.css'],
@@ -419,12 +419,6 @@ module.exports = function (grunt) {
     // },
 
     // Test settings
-    karma: {
-      unit: {
-        configFile: 'app/karma.conf.js',
-        singleRun: true
-      }
-    },
     processhtml: {
       options: {
         commentMarker: 'prochtml',
@@ -476,8 +470,7 @@ module.exports = function (grunt) {
     'clean:server',
     'concurrent:test',
     'autoprefixer',
-    'connect:test',
-    'karma',
+    'connect:test',    
     'protractor:run'
   ]);
 
