@@ -113,7 +113,7 @@ var searchincity = function(city, cluster, role, limit, offset, query, key) {
   if (role && role[0] !== '*') {
     role = role.split(',');
     searchstring += ' && (';
-    if (role.indexOf('Advisors') >= 0) { 
+    if (role.indexOf('Advisor') >= 0) { 
       searchstring += 'cities.' + city + '.cityAdvisor: true || ';
     }
     for (var i in role) {
