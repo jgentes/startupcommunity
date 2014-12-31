@@ -123,7 +123,7 @@ var searchincity = function(city, cluster, role, limit, offset, query, key) {
     searchstring += ')';
   }
   
-  if (query) { searchstring += ' && ' + query; }
+  if (query) { searchstring += ' && ' + '(' + query + ')'; }
 
   var deferred = Q.defer();  
   db.newSearchBuilder()
