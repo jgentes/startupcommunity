@@ -17,7 +17,9 @@ var app = angular.module('StartupCommunity', [
     'appDirectives',
     'theme.templates',
     'theme.template-overrides',
-    'segmentio', 
+    'angulartics',
+    'angulartics.google.analytics',
+    'angulartics.mixpanel',
     'satellizer'
   ]);
 

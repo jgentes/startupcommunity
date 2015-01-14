@@ -31,7 +31,7 @@ angular.module('theme.templates', []).run(['$templateCache', function ($template
     "    <span class=\"text-muted\" ng-bind-html=\"::item.value.linkedin.headline | highlight:global.search.lastQuery\"></span>                                \n" +
     "    <div ng-show=\"(showSummary || global.search.count) && item.value.linkedin.summary\">\n" +
     "        <hr>\n" +
-    "        <span class=\"text-muted\" style=\"white-space:pre-wrap;\" ng-bind-html=\"::item.value.linkedin.summary | linky | highlight:global.search.lastQuery\"></span>\n" +
+    "        <span class=\"text-muted\" style=\"white-space:pre-wrap;\" ng-bind-html=\"::item.value.linkedin.summary | linky:'_blank' | highlight:global.search.lastQuery | safe_html\"></span>\n" +
     "    </div>\n" +
     "</td>\n" +
     "<td style=\"width: 30%; vertical-align: top; padding-top: 19px;\">\n" +

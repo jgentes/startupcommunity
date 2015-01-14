@@ -28,8 +28,8 @@
     "stepy": "https://github.com/wbotelhos/stepy.git",
     "moment": "~2.8.3",
     "es5-shim": "~4.0.3",
-    "angular-segmentio": "~1.0.0",
-    "angular-ui-utils": "bower-highlight"
+    "angular-ui-utils": "bower-highlight",
+    "angulartics": "~0.17.1"
   },
   "olddependencies": {
     "seiyria-bootstrap-slider": "~1.9.0",
@@ -71,6 +71,17 @@
     },
     "iCheck": {
       "main": "icheck.min.js"
+    },
+    "angulartics": {
+      "main": [
+        "src/angulartics.js",
+        "src/angulartics-ga.js",
+        "src/angulartics-mixpanel.js"
+      ],
+      "dependencies": {
+        "angular": ">= 1.1.5",
+        "SHA-1": "*"
+      }
     },
     "stepy": {
       "main": "lib/jquery.stepy.js"

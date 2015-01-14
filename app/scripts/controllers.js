@@ -1,6 +1,6 @@
 angular
   .module('appControllers', [])
-  .controller('MainController', ['$scope','$window', '$global', '$route', '$timeout', '$interval', 'progressLoader', '$location', '$auth', 'userService', 'cityService', 'segmentio', '$compile', 'resultService', function ($scope, $window, $global, $route, $timeout, $interval, progressLoader, $location, $auth, userService, cityService, segmentio, $compile, resultService) {
+  .controller('MainController', ['$scope','$window', '$global', '$route', '$timeout', '$interval', 'progressLoader', '$location', '$auth', 'userService', 'cityService', '$compile', 'resultService', '$analytics', function ($scope, $window, $global, $route, $timeout, $interval, progressLoader, $location, $auth, userService, cityService, $compile, resultService, $analytics) {
     $scope.style_fixedHeader = $global.get('fixedHeader');
     $scope.style_headerBarHidden = $global.get('headerBarHidden');
     $scope.style_layoutBoxed = $global.get('layoutBoxed');
@@ -81,7 +81,6 @@ angular
       profile: {},
       data: {},      
       feedback: function(userdata) {                      
-        segmentio.track('Completed BetaTour', userdata);
         userService.feedback(userdata);
       },
       recompile: function() {        
@@ -172,9 +171,10 @@ angular
           $scope.global.betaTour.recompile();
         }, 3500);        
       } 
-      segmentio.identify($scope.global.user.path.key, {
-        name: $scope.global.user.value.name,
-        email: $scope.global.user.value.email
+      $analytics.setUsername($scope.global.user.path.key);
+      $analytics.setUserProperties({
+        $name: $scope.global.user.value.name,
+        $email: $scope.global.user.value.email
       });
       UserVoice.push(['identify', {
         id: $scope.global.user.path.key,
@@ -211,8 +211,6 @@ angular
         });
       } else broadcast();
     };    
-        
-    segmentio.load('fn0wc8wvqu');
     
     $scope.global.sessionReady();       
   
