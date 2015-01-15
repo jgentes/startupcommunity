@@ -4,6 +4,7 @@ var express = require('express'),
     bodyParser = require('body-parser'),
     methodOverride = require('method-override'),
     logger = require('morgan'),
+    nodalytics = require('nodalytics'),
     UserApi = require('./api/userApi.js'),
     CityApi = require('./api/cityApi.js');
 
@@ -13,6 +14,7 @@ var app = express();
 app.disable('x-powered-by');
 app.use(logger('dev'));
 app.use(methodOverride());
+app.use(nodalytics('UA-58555092-2'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use("/", express.static(__dirname + config.path));
