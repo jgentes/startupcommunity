@@ -22,7 +22,7 @@
     </li>
     <div id="skills" ng-show="(showSummary || global.search.count) && item.value.linkedin.summary" style="padding-top:40px">
         <li ng-repeat="skill in item.value.linkedin.skills.values" class="label btn-default" style="margin-right: 3px; margin-top: 3px; float:right; padding-bottom: 5px;">
-            <span ng-bind-html="::skill.skill.name | highlight:global.search.lastQuery"></span>
+            <a><span ng-click="search(skill.skill.name)" ng-bind-html="::skill.skill.name | highlight:global.search.lastQuery"></span></a>
         </li>			
     </div>
 </td>

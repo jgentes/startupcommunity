@@ -46,7 +46,9 @@ angular
       return $auth.isAuthenticated(); //returns true or false based on browser local storage token
     };  
     
-    $scope.search = function(query) {        	    	  
+    $scope.search = function(query) {                   
+      $scope.global.search.tag = query;
+      $scope.global.search.results = undefined;      
       userService.search($scope.global.city.path.key, query)
       .then(function(response) {
         $scope.global.search = resultService.setPage(response.data);
@@ -306,6 +308,17 @@ angular
       });
     };
     
+    $scope.search = function(query) {          
+      $scope.global.search.tag = query;
+      $scope.global.search.results = undefined;
+      userService.search($scope.global.city.path.key, query)
+      .then(function(response) {        
+        $scope.global.search = resultService.setPage(response.data);
+        $scope.global.search.lastQuery = query;
+        $location.path('/search');
+      });  	  
+    }; 
+    
     $scope.filterRole = function(role) {      
       $scope.loadingRole = true;  
       if (role == '*') {         
@@ -334,7 +347,7 @@ angular
       $scope.$on('sessionReady', function(event, status) {
         getData();         
       });                    
-    } else getData();             
+    } else getData();        
     
   }])    
   
