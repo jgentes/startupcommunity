@@ -14,7 +14,6 @@ var app = express();
 app.disable('x-powered-by');
 app.use(logger('dev'));
 app.use(methodOverride());
-app.use(nodalytics('UA-58555092-2'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use("/", express.static(__dirname + config.path));
@@ -26,6 +25,7 @@ console.format = function(c) { return "[" + c.filename + ":" + c.getLineNumber()
 
 if (process.env.NODE_ENV == "production" || process.env.NODE_ENV == "test") {    
     // production-only things go here 
+    app.use(nodalytics('UA-58555092-2'));
 } else { 
   app.use("/bower_components", express.static(__dirname + "/bower_components"));
   app.use(function(req, res, next) { // Force HTTPS
