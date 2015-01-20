@@ -8,7 +8,7 @@
                     </div>	                   
 		        </div>
                 
-                <img ng-src="{{global.profile.value.avatar || global.profile.value.linkedin.pictureUrl || '/public/blank_avatar.png'}}" alt="{{::global.profile.value.name}}" class="pull-left img-circle" style="margin-right: 15px;">
+                <img ng-src="{{global.profile.value.avatar || global.profile.value.linkedin.pictureUrl || '/public/blank_avatar.png'}}" alt="{{::global.profile.value.name}}" class="pull-left img-circle" style="margin-right: 15px; margin-top:-10px;">
                 <h1>{{::global.profile.value.name | words:0}} {{::global.profile.value.name | words:1}} {{::global.profile.value.name | words:2}}<br>
                 <small>{{::global.profile.value.linkedin.headline}}</small></h1>                
             </div>
@@ -110,7 +110,7 @@
 							<hr>
 							<div class="col-md-12">
 								<h3>Summary</h3>									
-								<p style="white-space:pre-wrap;">{{::global.profile.value.linkedin.summary}}</p>
+								<p style="white-space:pre-wrap;" ng-bind-html="::global.profile.value.linkedin.summary | linky:'_blank'"></p>
 								<h3>Skills</h3>
 								<li ng-repeat="skill in global.profile.value.linkedin.skills.values" class="label btn-info" style="margin-right: 3px; margin-top: 3px; float:left; padding-bottom: 5px;">{{::skill.skill.name}}</li>								
 	            			</div>
