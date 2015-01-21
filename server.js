@@ -27,13 +27,13 @@ if (process.env.NODE_ENV == "production" || process.env.NODE_ENV == "test") {
     // production-only things go here 
     app.use(nodalytics('UA-58555092-2'));
 } else { 
-  app.use("/bower_components", express.static(__dirname + "/bower_components"));
-  app.use(function(req, res, next) { // Force HTTPS
+  app.use("/bower_components", express.static(__dirname + "/bower_components"));  
+}
+
+app.use(function(req, res, next) { // Force HTTPS
     var protocol = req.get('x-forwarded-proto');
     protocol == 'https' ? next() : res.redirect('https://' + req.hostname + req.url);
-  });
-  
-}
+});
 
 var routes = {
 	userApi: new UserApi(),
