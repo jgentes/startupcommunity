@@ -9,6 +9,7 @@
     "body-parser": "~1.6.5",
     "debug-trace": "~0.2.3",
     "express": "~4.8.5",
+    "express-sslify": "^0.1.1",
     "jwt-simple": "~0.2.0",
     "mailchimp-api": "~2.0.6",
     "mandrill-api": "~1.0.41",

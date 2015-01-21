@@ -1,4 +1,5 @@
 var express = require('express'),
+    enforce = require('express-sslify'),
     config = require('./config.json')[process.env.NODE_ENV || 'development'],
     api = require('./api/routes'),
     bodyParser = require('body-parser'),
@@ -27,13 +28,10 @@ if (process.env.NODE_ENV == "production" || process.env.NODE_ENV == "test") {
     // production-only things go here 
     app.use(nodalytics('UA-58555092-2'));
 } else { 
-  app.use("/bower_components", express.static(__dirname + "/bower_components"));  
+    app.use("/bower_components", express.static(__dirname + "/bower_components"));  
 }
 
-app.use(function(req, res, next) { // Force HTTPS
-    var protocol = req.get('x-forwarded-proto');
-    protocol == 'https' ? next() : res.redirect('https://' + req.hostname + req.url);
-});
+app.use(enforce.HTTPS(true));
 
 var routes = {
 	userApi: new UserApi(),
