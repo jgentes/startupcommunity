@@ -14,7 +14,7 @@ var app = express();
 // Order really matters here..!
 app.disable('x-powered-by');
 app.use(logger('dev'));
-app.use(methodOverride());
+//app.use(methodOverride());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use("/", express.static(__dirname + config.path));
@@ -27,11 +27,10 @@ console.format = function(c) { return "[" + c.filename + ":" + c.getLineNumber()
 if (process.env.NODE_ENV == "production" || process.env.NODE_ENV == "test") {    
     // production-only things go here 
     app.use(nodalytics('UA-58555092-2'));
+    app.use(enforce.HTTPS(true));
 } else { 
     app.use("/bower_components", express.static(__dirname + "/bower_components"));  
 }
-
-app.use(enforce.HTTPS(true));
 
 var routes = {
 	userApi: new UserApi(),
