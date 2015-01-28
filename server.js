@@ -14,7 +14,7 @@ var app = express();
 // Order really matters here..!
 app.disable('x-powered-by');
 app.use(logger('dev'));
-//app.use(methodOverride());
+app.use(methodOverride());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use("/", express.static(__dirname + config.path));
