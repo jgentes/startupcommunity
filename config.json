@@ -14,7 +14,7 @@
     "mailchimp": "4cd1eb319ae631eb57ef642b9340af68-us9",
     "mandrill": "JDkgsI2Q5La5kGVPXCOrFg",
     "path": "/app",
-    "api_base_url": "https://startupcommunity-c9-jgentes.c9.io"
+    "api_base_url": "http://localhost:5000"
   },
   "theme": {
     "db": "95bd29ce-e6a9-48b1-888e-780c74d1ef3a",
@@ -31,7 +31,7 @@
     "mailchimp": "4cd1eb319ae631eb57ef642b9340af68-us9",
     "mandrill": "JDkgsI2Q5La5kGVPXCOrFg",
     "path": "/theme",
-    "api_base_url": "https://startupcommunity-c9-jgentes.c9.io"
+    "api_base_url": "http://localhost:5000"
   },
   "test": {
     "db": "95bd29ce-e6a9-48b1-888e-780c74d1ef3a",

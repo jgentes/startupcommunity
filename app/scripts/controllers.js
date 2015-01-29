@@ -539,8 +539,9 @@ angular
           console.log('Logged in!');                    
         })
         .catch(function(response) {
-          $scope.global.alert = { type: 'danger', msg: 'There was a problem: ' + String(response.data.message) };          
-          console.warn("WARNING: " +  response.data.message);
+          $scope.global.alert = { type: 'danger', msg: 'There was a problem: ' + String(response.data.message) };
+          console.warn("WARNING:");
+              console.log(response);
         });
     };
     $scope.authenticate = function(provider) {
@@ -554,8 +555,9 @@ angular
           $route.reload();          
         })
         .catch(function(response) {
-          $scope.global.alert = { type: 'danger', msg: 'There was a problem: ' + String(response.data) };     
-          console.warn("WARNING: " +  response.data);
+          $scope.global.alert = { type: 'danger', msg: 'There was a problem: ' + String(response.data) };
+          console.warn("WARNING:");
+              console.log(response);
         });
     };
   }])
