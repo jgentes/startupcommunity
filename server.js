@@ -13,11 +13,11 @@ var app = express();
 
 // for debugging
 require('debug-trace')({ always: true, colors: { log: '32' } });
+console.format = function(c) { return "[" + c.filename + ":" + c.getLineNumber() + "]"; };
 
 // Order really matters here..!
 app.disable('x-powered-by');
 app.use(logger('dev'));
-console.format = function(c) { return "[" + c.filename + ":" + c.getLineNumber() + "]"; };
 app.use(methodOverride());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
