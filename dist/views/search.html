@@ -19,7 +19,7 @@
                         <div class="col-xs-4 col-sm-3">
                             <h2>
                                 <strong style="color: white;">{{global.search.total_count}}</strong><br>
-                                <small><i class="fa fa-leaf"></i> <span ng-bind-html="global.search.total_count == 1 ? 'Person' : 'People'"></span></small>
+                                <small><span ng-bind-html="global.search.total_count == 1 ? 'Person' : 'People'"></span></small>
                             </h2>
                         </div>
                         
@@ -56,7 +56,8 @@
                 <table class="table table-vcenter">                
                     <tbody>
                         <tr><td style="border-bottom: 1px solid #fff; border-top: none; padding: 0;" colspan="3"></td></tr>
-                        <div ng-show="global.search.count == 0" style="text-align: center" ng-cloak><h2><br/>Sorry, there are no results for '{{global.search.lastQuery}}'!</h2></div>
+                        <div ng-show="global.search.tag" style="text-align: center" ng-cloak><h2><br/>Searching for {{global.search.tag}}..</h2></div>
+                        <div ng-show="global.search.count == 0" style="text-align: center" ng-cloak><h2><br/>Sorry, there are no results for '{{global.search.lastQuery}}'</h2></div>
                         <tr ng-repeat="item in global.search.results" ng-include="'views/templates/people_renderer.html'"></tr>                        
                         <tr>
                             <td class="text-right" colspan="3">
