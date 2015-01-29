@@ -102,7 +102,7 @@ app
         .html5Mode(true);
         
       //disable logging
-      $logProvider.debugEnabled(false);
+      $logProvider.debugEnabled(true);
   }]);
 
  
