@@ -11,18 +11,18 @@ var express = require('express'),
 
 var app = express();
 
+// for debugging
+require('debug-trace')({ always: true, colors: { log: '32' } });
+
 // Order really matters here..!
 app.disable('x-powered-by');
 app.use(logger('dev'));
+console.format = function(c) { return "[" + c.filename + ":" + c.getLineNumber() + "]"; };
 app.use(methodOverride());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use("/", express.static(__dirname + config.path));
 app.use("/public", express.static(__dirname + '/public'));
-
-// for console log debugging
-require('debug-trace')({ always: true, colors: { log: '32' } });
-console.format = function(c) { return "[" + c.filename + ":" + c.getLineNumber() + "]"; };
 
 if (process.env.NODE_ENV == "production" || process.env.NODE_ENV == "test") {    
     // production-only things go here 
