@@ -28,8 +28,7 @@ app
    
     $authProvider.linkedin({
       clientId: "75bqixdv58z1az", //move this to config file
-      url: '/auth/linkedin',
-      requiredUrlParams: []
+      url: '/auth/linkedin'
     });
 
   })

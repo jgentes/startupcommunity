@@ -28,7 +28,8 @@
     "moment": "~2.8.3",
     "es5-shim": "~4.0.3",
     "angular-ui-utils": "bower-highlight",
-    "angulartics": "~0.17.1"
+    "angulartics": "~0.17.1",
+    "satellizer": "~0.9.2"
   },
   "olddependencies": {
     "seiyria-bootstrap-slider": "~1.9.0",
