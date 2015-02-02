@@ -211,7 +211,7 @@ function handleEnsureAuthenticated(req, res, next) {
   
   if (!req.headers.authorization) {   
     console.log('Please make sure your request has an Authorization header');
-    return res.status(401).send({ message: 'Your session is no longer valid. Sorry, but could you login again?' });
+    return res.status(401).redirect('/login');
   }
   try {
     var token = req.headers.authorization.split(' ')[1];
@@ -219,7 +219,7 @@ function handleEnsureAuthenticated(req, res, next) {
 
     if (payload.exp <= Date.now()) {
       console.log('Token has expired');
-      return res.status(401).send({ message: 'Token has expired' });
+      return res.status(401).redirect('/login');
     }
     
     if (req.user === undefined) {      
@@ -234,7 +234,7 @@ function handleEnsureAuthenticated(req, res, next) {
   catch (e) {
     console.log('EnsureAuth failure: ');
     console.log(e);
-    return res.status(401).send({ message: 'Please logout or clear your local browser storage and try again' });
+    return res.status(401).redirect('/login');
   }  
 }
 
