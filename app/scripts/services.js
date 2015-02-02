@@ -1,7 +1,7 @@
 angular
   .module('appServices', [])
   
-  .factory('userService', function($http) {
+  .factory('userService', function($http, $location) {
     return {        
       search: function(city, query) {
         return $http.get('/api/1.0/' + city + '/users' + (query ? '?search=' + query : ''));
@@ -19,7 +19,10 @@ angular
         });
       },
       getProfile: function(userid) {        
-        return $http.get(userid ? '/api/1.0/profile/' + userid : '/api/1.0/profile'); // return me if no userid is provided
+        return $http.get(userid ? '/api/1.0/profile/' + userid : '/api/1.0/profile') // return me if no userid is provided
+            .error( function(response) {
+                $location.path('/login');
+            });
       },
       putProfile: function(profileData) { // addcallback!
         return $http.put('/api/1.0/profile', profileData);
