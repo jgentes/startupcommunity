@@ -187,6 +187,7 @@ angular
     
     // Get and set user and city data         
     $scope.global.sessionReady = function() {
+        console.log('going for getprofile');
       if (!$scope.global.user || !$scope.global.city) {
         userService.getProfile()
         .then(function(response) {
