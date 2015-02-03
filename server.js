@@ -25,7 +25,8 @@ app.use("/", express.static(__dirname + config.path));
 app.use("/public", express.static(__dirname + '/public'));
 
 if (process.env.NODE_ENV == "production" || process.env.NODE_ENV == "test") {    
-    // production-only things go here 
+    // production-only things go here
+    app.use(enforce.HTTPS(true));
     app.use(nodalytics('UA-58555092-2'));
     app.use(enforce.HTTPS(true));
 } else { 

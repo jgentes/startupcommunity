@@ -27,8 +27,9 @@ app/app
 node_modules
 bower_components
 
-# C9
+# dev
 .c9
+.idea
 
 # Forza theme
 theme

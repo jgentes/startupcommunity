@@ -221,8 +221,8 @@ function handleEnsureAuthenticated(req, res, next) {
       console.log('Token has expired');
       return res.status(401).send({ message: 'Token has expired' });
     }
-    
-    if (req.user === undefined) {      
+
+    if (req.user === undefined) {
       req.user = {}; //required step to pursue auth through refresh  
     } else {
       console.log('Existing user in request:');

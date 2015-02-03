@@ -39,14 +39,14 @@ app
         redirectTo: '/people'
       })
       .when('/launchform', {
-        templateUrl: 'views/launchform.html'        
+        templateUrl: 'views/login.html'
       })
       .when('/people', {
         templateUrl: 'views/people.html',
         resolve: {
           authenticated: ['$location', '$auth', function($location, $auth) {
             if (!$auth.isAuthenticated()) {
-              return $location.path('/launchform');
+              return $location.path('/login');
             }
           }]
         }
