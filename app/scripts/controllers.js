@@ -190,6 +190,8 @@ angular
       if (!$scope.global.user || !$scope.global.city) {
         userService.getProfile()
         .then(function(response) {
+                console.log("this is the response");
+                console.log(response);
           if (response.data) {
             $scope.global.user = response.data;
             if (!$scope.global.profile) {
@@ -202,7 +204,7 @@ angular
                 $scope.global.city = response.data;  
                 broadcast();
               } else {
-                 $scope.global.alert = { type: 'danger', msg: 'Sorry, something went wrong: ' + String(response.message) }; 
+                $scope.global.alert = { type: 'danger', msg: 'Sorry, something went wrong: ' + String(response.message) };
                 $scope.logout();
               }
             });

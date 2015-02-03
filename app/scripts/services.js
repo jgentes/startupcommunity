@@ -19,12 +19,7 @@ angular
         });
       },
       getProfile: function(userid) {        
-        return $http.get(userid ? '/api/1.0/profile/' + userid : '/api/1.0/profile') // return me if no userid is provided
-            .error( function(response) {
-                console.log("THIS IS THE RESPONSE:");
-                console.log(response);
-                $location.path('/login');
-            });
+        return $http.get(userid ? '/api/1.0/profile/' + userid : '/api/1.0/profile'); // return me if no userid is provided
       },
       putProfile: function(profileData) { // addcallback!
         return $http.put('/api/1.0/profile', profileData);
