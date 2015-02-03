@@ -187,13 +187,10 @@ angular
     
     // Get and set user and city data         
     $scope.global.sessionReady = function() {
-        console.log('going for getprofile');
       if (!$scope.global.user || !$scope.global.city) {
         userService.getProfile()
         .then(function(response) {
-                console.log("this is the response");
-                console.log(response);
-          if (response.data) {
+          if (response.data.path) {
             $scope.global.user = response.data;
             if (!$scope.global.profile) {
               $scope.global.profile = response.data;
@@ -202,7 +199,7 @@ angular
             cityService.getCity(citystate)
             .then(function(response) {
               if (response.data) {            
-                $scope.global.city = response.data;  
+                $scope.global.city = response.data; 
                 broadcast();
               } else {
                 $scope.global.alert = { type: 'danger', msg: 'Sorry, something went wrong: ' + String(response.message) };

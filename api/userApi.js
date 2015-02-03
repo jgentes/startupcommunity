@@ -699,7 +699,7 @@ function handleGetProfile(req, res) {
   .fail(function(err){
     console.warn("WARNING: SEARCH FAIL:");
     console.warn(err);
-    res.status(401).send({ message: 'Something went wrong: ' + err});
+    res.status(200).send({ message: 'Something went wrong: ' + err});
   }); 
 
 }
