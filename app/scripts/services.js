@@ -19,8 +19,7 @@ angular
         });
       },
       getProfile: function(userid) {
-          console.log('in getprofile')
-        return $http.get(userid ? '/api/1.0/profile/' + userid : '/api/1.0/profile'); // return me if no userid is provided
+        return $http.get(userid ? '/api/1.0/profile/' + userid : '/api/1.0/profile');
       },
       putProfile: function(profileData) { // addcallback!
         return $http.put('/api/1.0/profile', profileData);
