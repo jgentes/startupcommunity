@@ -353,7 +353,7 @@ angular
     
   }])    
   
-  .controller('ProfileController', ['$scope', 'userService', '$location', '$auth', '$bootbox', '$mixpanel' function ($scope, userService, $location, $auth, $bootbox, $mixpanel) {
+  .controller('ProfileController', ['$scope', 'userService', '$location', '$auth', '$bootbox', '$mixpanel', function ($scope, userService, $location, $auth, $bootbox, $mixpanel) {
 
     $mixpanel.track('Viewed Profile');
 
