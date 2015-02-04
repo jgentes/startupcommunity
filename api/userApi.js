@@ -42,7 +42,7 @@ var schema = {
   linkedin: function(profile, email) {
     return {
       name: profile.firstName + ' ' + profile.lastName,
-      email: email || profile.emailAddress,
+      email: profile.emailAddress || email,
       cities: {
         "bend-or": {
           admin: false
