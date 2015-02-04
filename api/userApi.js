@@ -210,8 +210,8 @@ function handleUserSearch(req, res){
 function handleEnsureAuthenticated(req, res, next) {
   
   if (!req.headers.authorization) {   
-    console.log('Please make sure your request has an Authorization header');
-    return res.send({ message: 'Your session is no longer valid. Sorry, but could you login again?' });
+    console.log('Session is no longer valid.');
+    return res.status(401).send({ message: 'Your session is no longer valid.' });
   }
   try {
     var token = req.headers.authorization.split(' ')[1];
@@ -219,7 +219,7 @@ function handleEnsureAuthenticated(req, res, next) {
 
     if (payload.exp <= Date.now()) {
       console.log('Token has expired');
-      return res.send({ message: 'Token has expired' });
+      return res.status(401).send({ message: 'Token has expired. Login again.' });
     }
 
     if (req.user === undefined) {
@@ -234,7 +234,7 @@ function handleEnsureAuthenticated(req, res, next) {
   catch (e) {
     console.log('EnsureAuth failure: ');
     console.log(e);
-    return res.send({ message: 'Please logout or clear your local browser storage and try again' });
+    return res.status(401).send({ message: 'Please logout or clear your local browser storage and try again.' });
   }  
 }
 
@@ -699,7 +699,7 @@ function handleGetProfile(req, res) {
   .fail(function(err){
     console.warn("WARNING: SEARCH FAIL:");
     console.warn(err);
-    res.status(200).send({ message: 'Something went wrong: ' + err});
+    res.status(401).send({ message: 'Something went wrong: ' + err});
   }); 
 
 }
