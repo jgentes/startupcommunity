@@ -353,8 +353,10 @@ angular
     
   }])    
   
-  .controller('ProfileController', ['$scope', 'userService', '$location', '$auth', '$bootbox', function ($scope, userService, $location, $auth, $bootbox) {
-    
+  .controller('ProfileController', ['$scope', 'userService', '$location', '$auth', '$bootbox', '$mixpanel' function ($scope, userService, $location, $auth, $bootbox, $mixpanel) {
+
+    $mixpanel.track('Viewed Profile');
+
     $scope.putProfile = function(userid, profile) {
       userService.putProfile(userid, profile, function(response) {
         if (response.status !== 200) {          
