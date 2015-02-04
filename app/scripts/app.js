@@ -1,6 +1,6 @@
 'use strict';
 
-var app = angular.module('StartupCommunity', [        
+var app = angular.module('StartupCommunity', [
     'ui.bootstrap',
     'ui.select2',
     'ui.highlight',
@@ -105,5 +105,5 @@ app
 
 angular.module('analytics.mixpanel')
   .config(['$mixpanelProvider', function($mixpanelProvider) {
-    $mixpanelProvider.apiKey("0f110baeb6150d7e3b8968e32d7a5595");
+    $mixpanelProvider.apiKey("411d744a538ab3f3456396fe091a97ea");
   }]);
