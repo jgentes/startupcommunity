@@ -539,7 +539,7 @@ angular
           $scope.global.sessionReady();
           $location.path('/');
           console.log('Logged in!');
-          $analytics.eventTrack('Logged in', {});
+          $analytics.eventTrack('Logged in');
         })
         .catch(function(response) {
           $scope.global.alert = { type: 'danger', msg: 'There was a problem: ' + String(response.data.message) };

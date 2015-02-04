@@ -17,9 +17,7 @@ var app = angular.module('StartupCommunity', [
     'appDirectives',
     'theme.templates',
     'theme.template-overrides',
-    'angulartics',
-    'angulartics.google.analytics',
-    'angulartics.mixpanel',
+    'analytics.mixpanel',
     'satellizer'
   ]);
 
@@ -105,4 +103,7 @@ app
       $logProvider.debugEnabled(true);
   }]);
 
- 
+angular.module('analytics.mixpanel')
+  .config(['$mixpanelProvider', function($mixpanelProvider) {
+    $mixpanelProvider.apiKey("0f110baeb6150d7e3b8968e32d7a5595");
+  }]);
