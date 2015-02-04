@@ -2,3 +2,8 @@
 .ui-match {
 	background: yellow;
 }
+
+#searchbox::-webkit-input-placeholder {color:#777; background:rgb(237, 237, 237);}
+#searchbox::-moz-placeholder {color:#777; background:rgb(237, 237, 237);} /* firefox 19+ */
+#searchbox:-moz-placeholder {color:#777; background:rgb(237, 237, 237);}
+#searchbox:-ms-input-placeholder {color:#777; background:rgb(237, 237, 237);} /* ie */

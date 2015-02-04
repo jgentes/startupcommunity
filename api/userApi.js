@@ -589,6 +589,13 @@ function handleLinkedin(req, res) {
               if (result.body.results[0].value.avatar === "") {
                 result.body.results[0].value.avatar = result.body.results[0].value.linkedin.pictureUrl;
               }
+              if (result.body.results[0].value.name !== result.body.results[0].value.linkedin.firstName + ' ' + result.body.results[0].value.linkedin.lastName) {
+                result.body.results[0].value.name = result.body.results[0].value.linkedin.firstName + ' ' + result.body.results[0].value.linkedin.lastName;
+              }
+              if (result.body.results[0].value.email !== result.body.results[0].value.linkedin.emailAddress) {
+                result.body.results[0].value.email = result.body.results[0].value.linkedin.emailAddress;
+              }
+
               db.put('users', result.body.results[0].path.key, result.body.results[0].value)
                 .then(function () {
                   console.log("Profile updated: " + userprofile.email);                    
