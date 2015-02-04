@@ -523,7 +523,7 @@ angular
     
   }])
   
-  .controller('LoginCtrl', ['$scope', '$auth', '$global', '$location', '$route', function($scope, $auth, $global, $location, $route) {
+  .controller('LoginCtrl', ['$scope', '$auth', '$global', '$location', '$route', '$analytics', function($scope, $auth, $global, $location, $route, $analytics) {
     $global.set('fullscreen', true);    
     $scope.$on('$destroy', function () {
       $global.set('fullscreen', false);
@@ -538,7 +538,8 @@ angular
           $scope.global.alert = undefined;
           $scope.global.sessionReady();
           $location.path('/');
-          console.log('Logged in!');                    
+          console.log('Logged in!');
+          $analytics.EventTrack('Logged in',{});
         })
         .catch(function(response) {
           $scope.global.alert = { type: 'danger', msg: 'There was a problem: ' + String(response.data.message) };
