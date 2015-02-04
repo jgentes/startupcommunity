@@ -1,6 +1,6 @@
 angular
   .module('appControllers', [])
-  .controller('MainController', ['$scope','$window', '$global', '$route', '$timeout', '$interval', 'progressLoader', '$location', '$auth', 'userService', 'cityService', '$compile', 'resultService', '$analytics', function ($scope, $window, $global, $route, $timeout, $interval, progressLoader, $location, $auth, userService, cityService, $compile, resultService, $analytics) {
+  .controller('MainController', ['$scope','$window', '$global', '$route', '$timeout', '$interval', 'progressLoader', '$location', '$auth', 'userService', 'cityService', '$compile', 'resultService', '$mixpanelProvider', function ($scope, $window, $global, $route, $timeout, $interval, progressLoader, $location, $auth, userService, cityService, $compile, resultService, $mixpanelProvider) {
     $scope.style_fixedHeader = $global.get('fixedHeader');
     $scope.style_headerBarHidden = $global.get('headerBarHidden');
     $scope.style_layoutBoxed = $global.get('layoutBoxed');
@@ -174,8 +174,8 @@ angular
         }, 3500);
       }
         if ($scope.global.user.path.key) {
-            $analytics.setUsername($scope.global.user.path.key);
-            $analytics.setUserProperties({
+            $mixpanelProvider.identify($scope.global.user.path.key);
+            $mixpanelProvider.people.set({
                 $name: $scope.global.user.value.name,
                 $email: $scope.global.user.value.email
             });
@@ -523,7 +523,7 @@ angular
     
   }])
   
-  .controller('LoginCtrl', ['$scope', '$auth', '$global', '$location', '$route', '$analytics', function($scope, $auth, $global, $location, $route, $analytics) {
+  .controller('LoginCtrl', ['$scope', '$auth', '$global', '$location', '$route', '$mixpanelProvider', function($scope, $auth, $global, $location, $route, $mixpanelProvider) {
     $global.set('fullscreen', true);    
     $scope.$on('$destroy', function () {
       $global.set('fullscreen', false);
@@ -539,7 +539,7 @@ angular
           $scope.global.sessionReady();
           $location.path('/');
           console.log('Logged in!');
-          $analytics.eventTrack('Logged in');
+          $mixpanelProvider.track('Logged in');
         })
         .catch(function(response) {
           $scope.global.alert = { type: 'danger', msg: 'There was a problem: ' + String(response.data.message) };
