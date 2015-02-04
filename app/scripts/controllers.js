@@ -168,21 +168,23 @@ angular
       $scope.$broadcast('sessionReady', true);
       if ($scope.global.user.value.beta === undefined) {
         $location.path('/people');
-        $timeout(function() {      
+        $timeout(function() {
           bootstro.start('', $scope.global.betaTour.people);
           $scope.global.betaTour.recompile();
-        }, 3500);        
-      } 
-      $analytics.setUsername($scope.global.user.path.key);
-      $analytics.setUserProperties({
-        $name: $scope.global.user.value.name,
-        $email: $scope.global.user.value.email
-      });
-      UserVoice.push(['identify', {
-        id: $scope.global.user.path.key,
-        name: $scope.global.user.value.name,
-        email: $scope.global.user.value.email
-      }]);
+        }, 3500);
+      }
+        if ($scope.global.user.path.key) {
+            $analytics.setUsername($scope.global.user.path.key);
+            $analytics.setUserProperties({
+                $name: $scope.global.user.value.name,
+                $email: $scope.global.user.value.email
+            });
+            UserVoice.push(['identify', {
+                id: $scope.global.user.path.key,
+                name: $scope.global.user.value.name,
+                email: $scope.global.user.value.email
+            }]);
+        } else console.log('NO GLOBAL USER RECORD, SO NO ANALYTICS YO!')
     };      
     
     // Get and set user and city data         
@@ -199,7 +201,7 @@ angular
             cityService.getCity(citystate)
             .then(function(response) {
               if (response.data) {            
-                $scope.global.city = response.data; 
+                $scope.global.city = response.data;
                 broadcast();
               } else {
                 $scope.global.alert = { type: 'danger', msg: 'Sorry, something went wrong: ' + String(response.message) };
