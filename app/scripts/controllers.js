@@ -174,7 +174,6 @@ angular
         }, 3500);
       }
         if ($scope.global.user.path.key) {
-            $mixpanel.identify($scope.global.user.path.key);
             $mixpanel.people.set({
                 "$name": $scope.global.user.value.name,
                 "$email": $scope.global.user.value.email
@@ -541,6 +540,7 @@ angular
           $scope.global.sessionReady();
           $location.path('/');
           console.log('Logged in!');
+          $mixpanel.identify($scope.global.user.path.key);
           $mixpanel.track('Logged in');
         })
         .catch(function(response) {
@@ -556,6 +556,7 @@ angular
           $scope.global.alert = undefined;
           $scope.global.sessionReady();
           console.log('Logged in!');
+          $mixpanel.identify($scope.global.user.path.key);
           $mixpanel.track('Logged in');
           $location.path('/');
           $route.reload();          

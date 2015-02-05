@@ -1,4 +1,4 @@
-'use strict'
+ 'use strict'
 
 angular
   .module('navigation-controller', [])
@@ -37,6 +37,11 @@ angular
                 heading: 'CLUSTERS',
                 navClass: 'beta2 noback',
                 id: 'clusters'
+            },
+            {
+              heading: 'NETWORKS',
+              navClass: 'beta2 noback',
+              id: 'networks'
             }
         ];
         
