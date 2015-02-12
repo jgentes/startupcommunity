@@ -1,7 +1,7 @@
-<td class="text-center" style="width: 68px; vertical-align: top;">
-    <a ng-click="viewUser(item)" title="View {{::item.value.name | words:0}}'s Profile"><img style="height:48px" ng-src="{{::item.value.avatar || item.value.linkedin.pictureUrl || '/public/blank_avatar.png'}}" alt="{{::item.value.name}}" class="widget-image img-circle pull-left"></a>                                
+<td class="text-center" style="width: 58px; vertical-align: top; height: 70px;">
+    <a ng-click="viewUser(item)" title="View {{::item.value.name | words:0}}'s Profile"><img style="height:58px" ng-src="{{::item.value.avatar || item.value.linkedin.pictureUrl || '/public/blank_avatar.png'}}" alt="{{::item.value.name}}" class="widget-image img-circle pull-left"></a>                                
 </td>   
-<td style="vertical-align: top;  padding-top: 8px;">
+<td style="vertical-align: middle; height: 70px;">
     <a ng-click="viewUser(item)" title="View {{::item.value.name | words:0}}'s Profile"><strong>{{::item.value.name}} </strong></a>
     <a ng-show="{{(item.value.linkedin.summary).length > 0}}" title="Show Summary" ng-click="showSummary = !showSummary" style="color: #DDDDDD;">
         <i class="fa fa-chevron-down fa-fw"></i>
@@ -13,7 +13,7 @@
         <span class="text-muted" style="white-space:pre-wrap;" ng-bind-html="::item.value.linkedin.summary | linky:'_blank' | highlight:global.search.lastQuery | safe_html"></span>
     </div>
 </td>
-<td style="vertical-align: top; padding-top: 19px;">
+<td style="vertical-align: middle; height: 70px;">
     <li ng-repeat="(cluster, val) in item.value.cities[global.city.path.key].clusters" style="list-style: none; display: inline; float: right; padding-left: 5px;">
        <span ng-hide="((val.roles.indexOf('Advisor') >= 0) && (val.roles.indexOf('Leader') < 0) && (val.roles.indexOf('Member') < 0)) && item.value.cities[global.city.path.key].cityAdvisor === true" title="{{cluster}} Cluster" class="btn btn-xs btn-alt btn-default" ng-class="{ 'btn-info' : ((val.roles.indexOf('Advisor') >= 0) && (val.roles.indexOf('Leader') < 0) && (item.value.cities[global.city.path.key].cityAdvisor === false || item.value.cities[global.city.path.key].cityAdvisor === undefined)), 'btn-danger' : (val.roles.indexOf('Leader') >= 0) }" style="cursor: default;"><i class="fa {{global.city.value.clusters[cluster].icon}}"></i></span>
     </li>

@@ -1,0 +1,93 @@
+<div ng-controller="PeopleController">
+  <!-- Dashboard Header -->
+  <!-- For an image header add the class 'content-header-media' and an image as in the following example -->
+  <div class="content-header content-header-media beta0">
+    <div class="header-section">
+      <div class="row">
+        <!-- Main Title (hidden on small devices for the statistics to fit) -->
+        <div class="col-md-4 col-lg-6 hidden-xs hidden-sm">
+          <h1><strong>Innovation</strong> Garden<br><small>Welcome {{global.user.value.name | words:0}}!</small></h1>
+        </div>
+        <!-- END Main Title -->
+
+        <!-- Top Stats -->
+        <div class="col-md-8 col-lg-6">
+          <div class="row text-center">
+            <div class="col-xs-4 col-sm-3">
+              <h2>
+                <strong style="color: white;">45</strong><br>
+                <small><i class="fa fa-rocket"></i> Startups</small>
+              </h2>
+            </div>
+            <div class="col-xs-4 col-sm-3">
+              <h2>
+                <strong style="color: white;">98</strong><br>
+                <small><i class="fa fa-graduation-cap"></i> Advisors</small>
+              </h2>
+            </div>
+            <div class="col-xs-4 col-sm-3">
+              <h2>
+                <strong style="color: white;">27</strong><br>
+                <small><i class="fa fa-leaf"></i> Investors</small>
+              </h2>
+            </div>
+            <div class="col-xs-4 col-sm-3">
+              <h2>
+                <strong style="color: white;">2.4M</strong><br>
+                <small><i class="fa fa-dollar"></i> Raised</small>
+              </h2>
+            </div>
+
+          </div>
+        </div>
+        <!-- END Top Stats -->
+      </div>
+    </div>
+    <!-- For best results use an image with a resolution of 2560x248 pixels (You can also use a blurred image with ratio 10:1 - eg: 1000x100 pixels - it will adjust and look great!) -->
+    <img src="assets/img/headers/IG.jpg" alt="header image" class="animation-pulseSlow">
+  </div>
+  <!-- END Dashboard Header -->
+
+  <div class="col-md-6 col-lg-4">
+    <div class="block">
+      <!-- Messages List Title -->
+      <div class="block-title" style="margin-bottom: 0;">
+        <h2>Recent <strong>Startups</strong></h2>
+      </div>
+      <!-- END Messages List Title -->
+
+      <!-- Messages List Content -->
+      <div class="table-responsive" style="margin: 0 -10px;">
+        <table class="table table-vcenter">
+          <tbody ng-include="'views/templates/startup_renderer.html'">
+          </tbody>
+        </table>
+      </div>
+      <div class="text-center" style="padding-bottom:15px;"><a href="javascript:void(0)">Show all..</a></div>
+      <!-- END Messages List Content -->
+    </div>
+  </div>
+
+  <div class="col-md-6 col-lg-4">
+    <div class="block">
+      <!-- Messages List Title -->
+      <div class="block-title" style="margin-bottom: 0;">
+        <h2>Active <strong>Advisors</strong></h2>
+      </div>
+      <!-- END Messages List Title -->
+
+      <!-- Messages List Content -->
+      <div class="table-responsive" style="margin: 0 -10px;">
+        <table class="table table-vcenter">
+          <tbody>
+          <tr ng-repeat="item in users.results" ng-if="$index < 5" ng-include="'views/templates/people_renderer.html'"></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="text-center" style="padding-bottom:15px;"><a href="javascript:void(0)">Show all..</a><br/></div>
+      <!-- END Messages List Content -->
+    </div>
+
+  </div>
+</div>
+<!-- END Messages List -->

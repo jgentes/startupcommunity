@@ -10,6 +10,121 @@
 }
 .filternav a { color: #656b79; }
 
+/*
+=================================================================
+(#m04mcs) TIMELINE
+=================================================================
+*/
+
+/* Timeline */
+.timeline {
+    position: relative;
+}
+
+.timeline-header {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 600;
+    padding: 0 15px;
+    min-height: 60px;
+    line-height: 60px;
+    background-color: #ffffff;
+    border-bottom: 2px solid #f0f0f0;
+    z-index: 500;
+}
+
+.timeline-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.timeline-list:after {
+    position: absolute;
+    display: block;
+    width: 2px;
+    top: 0;
+    left: 30px;
+    bottom: 0;
+    content: "";
+    background-color: #f0f0f0;
+    z-index: 1;
+}
+
+.timeline-header + .timeline-list:after {
+    top: 60px;
+}
+
+.timeline-list li {
+    position: relative;
+    margin: 0;
+    padding: 15px 0;
+}
+
+.timeline-list.timeline-hover li:hover {
+    background-color: #f9f9f9;
+}
+
+.timeline-list .timeline-icon {
+    position: absolute;
+    left: 15px;
+    top: 10px;
+    width: 30px;
+    height: 30px;
+    line-height: 28px;
+    font-size: 14px;
+    text-align: center;
+    background-color: #ffffff;
+    border: 1px solid #dddddd;
+    border-radius: 15px;
+    z-index: 500;
+}
+
+.timeline-list .active .timeline-icon {
+    background-color: #1bbae1;
+    border-color: #1bbae1;
+    color: #ffffff;
+}
+
+.timeline-list .timeline-time {
+    float: right;
+    width: 70px;
+    text-align: right;
+    margin-right: 12px;
+}
+
+.timeline-list .timeline-content {
+    margin-left: 55px;
+}
+
+.block-content-full .timeline-content {
+    padding-right: 20px;
+}
+
+.media-feed {
+    margin-bottom: 0;
+}
+
+.media-feed > .media {
+    margin-top: 0;
+    padding: 20px 20px 0;
+    border-top: 1px dotted #dbe1e8;
+}
+
+.media-feed > .media:first-child {
+    border-top: none;
+}
+
+.media-feed.media-feed-hover > .media:hover {
+    background-color: #f9f9f9;
+}
+
+.media-body {
+    display: block;
+    overflow: hidden;
+    zoom: 1;
+}
+
 
 /*
 =================================================================

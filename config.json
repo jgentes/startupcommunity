@@ -1,6 +1,12 @@
 {
   "development": {
-    "db": "95bd29ce-e6a9-48b1-888e-780c74d1ef3a",
+    "db": {
+      "key": "be406a43-5cc1-425f-9545-23bd75ec6cfc",
+      "collections": {
+        "users": "users-dev",
+        "cities": "cities-dev"
+      }
+    },
     "linkedin": {
       "clientID": "75bqixdv58z1az",
       "clientSecret": "C5zHpSLjV4uNFUM1"
@@ -17,7 +23,13 @@
     "api_base_url": "http://localhost:5000"
   },
   "theme": {
-    "db": "95bd29ce-e6a9-48b1-888e-780c74d1ef3a",
+    "db": {
+      "key": "be406a43-5cc1-425f-9545-23bd75ec6cfc",
+      "collections": {
+        "users": "users-dev",
+        "cities": "cities-dev"
+      }
+    },
     "linkedin": {
       "clientID": "75bqixdv58z1az",
       "clientSecret": "C5zHpSLjV4uNFUM1"
@@ -34,7 +46,13 @@
     "api_base_url": "http://localhost:5000"
   },
   "test": {
-    "db": "95bd29ce-e6a9-48b1-888e-780c74d1ef3a",
+    "db": {
+      "key": "be406a43-5cc1-425f-9545-23bd75ec6cfc",
+      "collections": {
+        "users": "users-dev",
+        "cities": "cities-dev"
+      }
+    },
     "linkedin": {
       "clientID": "75bqixdv58z1az",
       "clientSecret": "C5zHpSLjV4uNFUM1"
@@ -51,7 +69,13 @@
     "api_base_url": "https://dev.startupcommunity.org"
   },
   "production": {
-    "db": "be406a43-5cc1-425f-9545-23bd75ec6cfc",
+    "db": {
+      "key": "be406a43-5cc1-425f-9545-23bd75ec6cfc",
+      "collections": {
+        "users": "users",
+        "cities": "cities"
+      }
+    },
     "linkedin": {
       "clientID": "75bqixdv58z1az",
       "clientSecret": "C5zHpSLjV4uNFUM1"

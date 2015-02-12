@@ -6,43 +6,43 @@ angular
     
     var buildNav = function() {        
         var menu = [
-            {
-                label: $scope.global.city.value.citystate.split(',')[0],
-                iconClasses: 'fa fa-globe',                
-                id: 'globe',
-                ngclick: "UserVoice.push(['show', { target: '#globe', trigger_position: 'automatic', mode: 'contact',             screenshot_enabled: false, strings: { contact_title: 'We&apos;re Working on City View', contact_message_placeholder: 'What stats would you expect to see on the City page?                                                     What information is most important to see for the City?', contact_submit_button: 'Send feedback', contact_success_title: 'Feedback sent!' }}]);"
-            },
-            {
-                heading: 'COMMUNITY',
-                navClass: 'beta1 noback'
-            },
-            {
-                label: 'People',
-                iconClasses: 'fa fa-leaf',
-                url: '/people',
-                children: [
-                    {
-                        label: 'Add People',
-                        url: '/people/add'
-                    }
-                ]
-            },
-            {
-                label: 'Startups',
-                iconClasses: 'fa fa-rocket',
-                id: 'startups',
-                ngclick: "UserVoice.push(['show', { target: '#startups', trigger_position: 'automatic', mode: 'contact',        screenshot_enabled: false, strings: { contact_title: 'We&apos;re Working on Startups', contact_message_placeholder: 'What stats would you expect to see on the Startups page?                                                 How would you want to filter Startups?                                                                                                 What information is most important to see for each Startup?', contact_submit_button: 'Send feedback', contact_success_title: 'Feedback sent!' }}]);"
-            },
-            {
-                heading: 'CLUSTERS',
-                navClass: 'beta2 noback',
-                id: 'clusters'
-            },
-            {
-              heading: 'NETWORKS',
+          {
+            label: 'Innovation Garden',
+            iconClasses: 'fa fa-globe',
+            id: 'globe',
+            url: '/network',
+            children: [
+              {
+                label: 'Resources',
+                url: '/network'
+              }
+            ]
+          },
+          {
+              heading: 'COMMUNITY',
+              navClass: 'beta1 noback'
+          },
+          {
+              label: 'People',
+              iconClasses: 'fa fa-flag',
+              url: '/people',
+              children: [
+                  {
+                      label: 'Add People',
+                      url: '/people/add'
+                  }
+              ]
+          },
+          {
+              label: 'Startups',
+              iconClasses: 'fa fa-rocket',
+              id: 'startups'
+          },
+          {
+              heading: 'CLUSTERS',
               navClass: 'beta2 noback',
-              id: 'networks'
-            }
+              id: 'clusters'
+          }
         ];
         
         for (var cluster in $scope.global.city.value.clusters) {            
@@ -50,11 +50,10 @@ angular
             {
                 label: cluster,
                 cluster: false,
-                iconClasses: 'fa ' + $scope.global.city.value.clusters[cluster].icon,                
-                ngclick: "UserVoice.push(['show', { target: '#clusters', trigger_position: 'automatic', mode: 'contact', screenshot_enabled: false, strings: { contact_title: 'We&apos;re Working on Cluster View', contact_message_placeholder: 'What stats would you expect to see on the Cluster page?                                                  What information is most important to see for the Cluster?', contact_submit_button: 'Send feedback', contact_success_title: 'Feedback sent!' }}]);"
+                iconClasses: 'fa ' + $scope.global.city.value.clusters[cluster].icon
             });
         }
-        
+
         var setParent = function (children, parent) {
           angular.forEach(children, function (child) {
               child.parent = parent;

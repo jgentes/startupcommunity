@@ -87,7 +87,16 @@ app
       })      
       .when('/logout', {
         controller: 'LogoutCtrl'
-      })        
+      })
+      .when('/network', {
+        templateUrl: 'views/network.html'
+      })
+      .when('/network/people', {
+        templateUrl: 'views/network_people.html'
+      })
+      .when('/network/resources', {
+        templateUrl: 'views/network_resources.html'
+      })
       /*
       .when('/:templateFile', { // this could be dangerous because it could expose hidden views
         templateUrl: function (param) { return 'views/'+param.templateFile+'.html' }

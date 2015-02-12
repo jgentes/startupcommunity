@@ -1,5 +1,5 @@
 var config = require('../config.json')[process.env.NODE_ENV || 'development'],
-    db = require('orchestrate')(config.db);
+    db = require('orchestrate')(config.db.key);
 
 //require('request-debug')(request); // Very useful for debugging oauth and api req/res
 
@@ -46,7 +46,7 @@ var convert_state = function(name, to) {
 
 function handleGetCity(req, res) {
   var city = req.params.city;
-  db.get('cities', city)
+  db.get(config.db.collections.cities, city)
   .then(function(response){    
     if (response.body.code !== "items_not_found") {
       console.log('Found city: ' + response.body.citystate);

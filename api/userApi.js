@@ -5,7 +5,7 @@ var bcrypt = require('bcryptjs'),
     jwt = require('jwt-simple'),
     moment = require('moment'),
     config = require('../config.json')[process.env.NODE_ENV || 'development'],
-    db = require('orchestrate')(config.db),
+    db = require('orchestrate')(config.db.key),
     mcapi = require('mailchimp-api/mailchimp'),
     mc = new mcapi.Mailchimp(config.mailchimp),
     mandrill = require('mandrill-api/mandrill'),
@@ -84,7 +84,7 @@ var searchincity = function(city, cluster, role, limit, offset, query, key) {
       // Assuming key never expires
       //check perms!
 
-      db.get("users", payload.sub)
+      db.get(config.db.collections.users, payload.sub)
       .then(function (response) {
         userdata = response.body;
         if (userdata.cities[city].admin === true) { allowed=true; }
@@ -127,7 +127,7 @@ var searchincity = function(city, cluster, role, limit, offset, query, key) {
 
   var deferred = Q.defer();  
   db.newSearchBuilder()
-  .collection('users')
+  .collection(config.db.collections.users)
   .limit(Number(limit) || 32)
   .offset(Number(offset) || 0)
   .query(searchstring)  //must include admin:* for city search
@@ -262,13 +262,13 @@ function handleCreateAPIToken(req, res) {
   };
   res.status(201).send(jwt.encode(payload, config.API_token_secret));
   
-  db.get("users", req.user)
+  db.get(config.db.collections.users, req.user)
   .then(function(response){
     if (response.body.code !== "items_not_found") {
       console.log('Matching user found.');
       if (response.body.api_key === undefined) {
         response.body["api_key"] = jwt.encode(payload, config.API_token_secret); // get user account and re-upload with api_key
-        db.put('users', req.user, response.body)
+        db.put(config.db.collections.users, req.user, response.body)
         .then(function () {
           console.log("Profile updated.");                          
         })
@@ -312,7 +312,7 @@ function handleSignup(req, res) {
   var user = schema.signupform(req.body);
   
   db.newSearchBuilder()
-  .collection('users')
+  .collection(config.db.collections.users)
   .limit(1)
   .query('value.email: "' + req.body.email + '"')
   .then(function(result){
@@ -321,10 +321,10 @@ function handleSignup(req, res) {
       res.status(401).send({ message: 'That email address is already registered to a user.'}); //username already exists
     } else {
       console.log('Email is free for use');
-      db.post('users', user)
+      db.post(config.db.collections.users, user)
       .then(function () {
         db.newSearchBuilder()
-        .collection('users')
+        .collection(config.db.collections.users)
         .limit(1)
         .query('value.email: "' + req.body.email + '"')
         .then(function(result){
@@ -363,7 +363,7 @@ function handleSignup(req, res) {
 
 function handleLogin(req, res) {
   db.newSearchBuilder()
-    .collection('users')
+    .collection(config.db.collections.users)
     .limit(1)
     .query('value.email: "' + req.body.email + '"')
     .then(function(result){
@@ -399,7 +399,7 @@ function handleAddPerson(req, res) {
   if (addPerson) {
     var gettoken = function(addPerson, callback) {          
       db.newSearchBuilder()
-        .collection('users')
+        .collection(config.db.collections.users)
         .limit(1)
         .query('value.linkedin.id: "' + addPerson.userid + '"')
         .then(function(result){
@@ -464,7 +464,7 @@ var linkedinPull = function (linkedinuser, pullcallback) {
   
   console.log('Looking for existing user based on public Linkedin profile.');  
   
-  db.search('users', 'value.linkedin.publicProfileUrl: "' + linkedinuser.linkedin.publicProfileUrl + '"')
+  db.search(config.db.collections.users, 'value.linkedin.publicProfileUrl: "' + linkedinuser.linkedin.publicProfileUrl + '"')
   .then(function (result){
     console.log('Result of db search: ' + result.body.total_count);    
     if (result.body.results.length > 0){
@@ -477,7 +477,7 @@ var linkedinPull = function (linkedinuser, pullcallback) {
       }
     } else { 
       console.log('No existing linkedin user found!');
-      db.post('users', linkedinuser)
+      db.post(config.db.collections.users, linkedinuser)
       .then(function () {
         console.log("REGISTERED: " + linkedinuser.email);
         pullcallback({ "status": 200, "data": linkedinuser });
@@ -533,7 +533,7 @@ function handleLinkedin(req, res) {
       if (req.headers.authorization) { // isloggedin already?
           
         db.newSearchBuilder()
-          .collection('users')
+          .collection(config.db.collections.users)
           .limit(1)
           .query('value.linkedin.id: "' + profile.id + '"')
           .then(function (result){     
@@ -546,12 +546,12 @@ function handleLinkedin(req, res) {
               var token = req.headers.authorization.split(' ')[1];
               var payload = jwt.decode(token, config.token_secret);
               
-              db.get("users", payload.sub)
+              db.get(config.db.collections.users, payload.sub)
                 .then(function(response){
                   if (response.body.code !== "items_not_found") {
                     console.log('Matching user found.');
                     response.body["linkedin"] = profile; // get user account and re-upload with linkedin data
-                    db.put('users', payload.sub, response.body)
+                    db.put(config.db.collections.users, payload.sub, response.body)
                       .then(function () {
                         console.log("Profile updated: " + userprofile.email);                          
                       })
@@ -579,7 +579,7 @@ function handleLinkedin(req, res) {
         } else {
           
           db.newSearchBuilder()
-          .collection('users')
+          .collection(config.db.collections.users)
           .limit(1)
           .query('value.linkedin.id: "' + profile.id + '"')
           .then(function (result){                    
@@ -596,7 +596,7 @@ function handleLinkedin(req, res) {
                 result.body.results[0].value.email = result.body.results[0].value.linkedin.emailAddress;
               }
 
-              db.put('users', result.body.results[0].path.key, result.body.results[0].value)
+              db.put(config.db.collections.users, result.body.results[0].path.key, result.body.results[0].value)
                 .then(function () {
                   console.log("Profile updated: " + userprofile.email);                    
                 })
@@ -607,14 +607,14 @@ function handleLinkedin(req, res) {
               res.send({ token: handleCreateToken(req, result.body.results[0]), user: result.body.results[0] }); 
             } else {
               db.newSearchBuilder()
-                .collection('users')
+                .collection(config.db.collections.users)
                 .limit(1)
                 .query('value.email: "' + profile.emailAddress + '"')
                 .then(function(result){
                   if (result.body.results.length > 0) {
                     console.log("Found user: " + profile.firstName + ' ' + profile.lastName);
                     result.body.results[0].value["linkedin"] = profile; // get user account and re-upload with linkedin data            
-                    db.put('users', result.body.results[0].path.key, result.body.results[0].value)
+                    db.put(config.db.collections.users, result.body.results[0].path.key, result.body.results[0].value)
                       .then(function () {
                         console.log("Profile updated: " + userprofile.email);                    
                       })
@@ -625,7 +625,8 @@ function handleLinkedin(req, res) {
                     res.send({ token: handleCreateToken(req, result.body.results[0]), user: result.body.results[0] });     
                     
                   } else {
-                    console.log('No existing user found.');
+                    console.log('No existing user found:');
+                    console.log(result);
                     res.status(400).send({ message: "Sorry, we couldn't find you in our system." }); 
                   }
                 })
@@ -636,7 +637,7 @@ function handleLinkedin(req, res) {
               
               /* Do this to create a user account if no user exists
               db.newSearchBuilder()
-                .collection('users')
+                .collection(config.db.collections.users)
                 .limit(1)
                 .query('value.email: "' + profile.emailAddress + '"')
                 .then(function(result){
@@ -645,7 +646,7 @@ function handleLinkedin(req, res) {
                     res.status(409).send({ message: "Sorry, there's already a user with your email address." });
                     
                   } else {
-                    db.post('users', userprofile)
+                    db.post(config.db.collections.users, userprofile)
                       .then(function () {
                         console.log("Profile created: " + JSON.stringify(userprofile));                        
                         res.send({ token: handleCreateToken(req, userprofile) });
@@ -686,7 +687,7 @@ function handleLinkedin(req, res) {
 function handleGetProfile(req, res) {
   var userid = req.param.userid || req.user;
   
-  db.get("users", userid)
+  db.get(config.db.collections.users, userid)
   .then(function(response){
     if (response.body.code !== "items_not_found") {
       console.log('Authenticated user: ' + response.body.name);
@@ -727,7 +728,7 @@ function handleSetRole(req, res) {
       
   function checkperms(allowed, callback) {
     if (!allowed) {
-      db.get("users", req.user)
+      db.get(config.db.collections.users, req.user)
       .then(function (response) {                
         if (cluster) {
           if (response.body.cities[citykey].clusters) {
@@ -750,7 +751,7 @@ function handleSetRole(req, res) {
   if (userkey == req.user) { allowed = true; }
   checkperms(allowed, function (allowed) {
     if (allowed) {
-      db.get("users", userkey)
+      db.get(config.db.collections.users, userkey)
       .then(function (response) {
         if (role == "cityAdvisor") {
           if (response.body.cities[citykey].cityAdvisor === undefined) { //need to create key
@@ -780,7 +781,7 @@ function handleSetRole(req, res) {
           response.body.cities[citykey].clusters[cluster] = thiscluster;
         }
         
-        db.put('users', userkey, response.body)
+        db.put(config.db.collections.users, userkey, response.body)
         .then(function (finalres) {
           res.status(201).send({ message: 'Profile updated.'});
         })
@@ -804,11 +805,11 @@ function handleFeedback(req, res) {
   var userkey = req.user,
       data = JSON.parse(decodeURIComponent(req.query.data));  
       
-  db.get("users", userkey)
+  db.get(config.db.collections.users, userkey)
     .then(function (response) {
       response.body['beta'] = data;
       
-      db.put('users', userkey, response.body)
+      db.put(config.db.collections.users, userkey, response.body)
       .then(function (finalres) {
         res.status(201).send({ message: 'Profile updated.'});
       })
@@ -832,7 +833,7 @@ function handleFeedback(req, res) {
 
 function handleRemoveProfile(req, res) {
   var userid = req.params.userid;
-  db.remove('users', userid) // ideally I should store an undo option
+  db.remove(config.db.collections.users, userid) // ideally I should store an undo option
     .then(function(result){      
         console.log('User removed.');
         res.status(200).send({ message: 'User removed' });
@@ -851,11 +852,11 @@ function handleRemoveProfile(req, res) {
 
 function handleUnlink(req, res) {
   var provider = req.params.provider;  
-  db.get("users", req.user)
+  db.get(config.db.collections.users, req.user)
     .then(function(response){
       if (response.body.code !== "items_not_found") {
         response.body[provider] = undefined;
-        db.put('users', req.user, response.body)
+        db.put(config.db.collections.users, req.user, response.body)
           .then(function() {         
             console.log('Successfully unlinked provider!');
             res.status(200).end();
@@ -888,12 +889,14 @@ function handleMaintenance(req, res) {
   var userlist = [];
   
   function getList(startKey, userlist) {    
-    db.list('users', {limit: 50, startKey: startKey})
+    db.list('cities', {limit: 50, startKey: startKey})
     .then( function(data) {
       for (var item in data.body.results) {
-        // be careful to retreive existing values from target key then append!
-        data.body.results[item].value.cities = { "bend-or": { "admin": false, "cityAdvisor": true } };
-        userlist.push(data.body.results[item]);                    
+        // be careful to retrieve existing values from target key then append!
+        //data.body.results[item].value.cities = { "bend-or": { "admin": false, "cityAdvisor": true } };
+        //userlist.push(data.body.results[item]);
+        console.log('Adding record..');
+        db.post('cities-dev', data.body.results[item].value);
       }                
       if (data.body.next) {
         var nextkey = url.parse(data.body.next).query;        
@@ -901,14 +904,16 @@ function handleMaintenance(req, res) {
         console.log('Getting next group..' + startKey);        
         getList(startKey, userlist);
       } else {
-        console.log('Get done, moving to Put..' + userlist.length);         
+        console.log('Get done!' + userlist.length);
+        /*
         for (var user in userlist) {
           console.log('Updating ' + userlist[user].value.name);
-          db.put('users', userlist[user].path.key, userlist[user].value)
+          db.put(config.db.collections.users, userlist[user].path.key, userlist[user].value)
           .then(function(response) {            
             console.log('Record updated!');
           });
         }
+        */
       }
     });
   }
