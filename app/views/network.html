@@ -52,7 +52,7 @@
     <div class="block">
       <!-- Messages List Title -->
       <div class="block-title" style="margin-bottom: 0;">
-        <h2>Recent <strong>Startups</strong></h2>
+        <h2>Popular <strong>Startups</strong></h2>
       </div>
       <!-- END Messages List Title -->
 
@@ -89,5 +89,26 @@
     </div>
 
   </div>
+
+  <div class="col-md-6 col-lg-4">
+    <div class="block">
+      <!-- Messages List Title -->
+      <div class="block-title" style="margin-bottom: 0;">
+        <h2>Recent <strong>Fundraising</strong></h2>
+      </div>
+      <!-- END Messages List Title -->
+
+      <!-- Messages List Content -->
+      <div class="table-responsive" style="margin: 0 -10px;">
+        <table class="table table-vcenter">
+          <tbody ng-include="'views/templates/raised_renderer.html'">
+          </tbody>
+        </table>
+      </div>
+      <div class="text-center" style="padding-bottom:15px;"><a href="javascript:void(0)">Show all..</a></div>
+      <!-- END Messages List Content -->
+    </div>
+  </div>
+
 </div>
 <!-- END Messages List -->
