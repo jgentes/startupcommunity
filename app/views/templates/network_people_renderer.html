@@ -9,15 +9,8 @@
 </td>   
 <td style="vertical-align: middle; height: 80px;">
     <a ng-click="viewUser(item)" title="View {{::item.value.name | words:0}}'s Profile"><strong>{{::item.value.name}} </strong></a>
-    <a ng-show="{{(item.value.linkedin.summary).length > 0}}" title="Show Summary" ng-click="showSummary = !showSummary" style="color: #DDDDDD;">
-        <i class="fa fa-chevron-down fa-fw"></i>
-    </a>
     <br>
-    <span class="text-muted" ng-bind-html="::item.value.linkedin.headline | highlight:global.search.lastQuery"></span>                                
-    <div ng-show="(showSummary || global.search.count) && item.value.linkedin.summary" style="padding-bottom: 10px;">
-        <hr>
-        <span class="text-muted" style="white-space:pre-wrap;" ng-bind-html="::item.value.linkedin.summary | linky:'_blank' | highlight:global.search.lastQuery | safe_html"></span>
-    </div>
+    <span class="text-muted" ng-bind-html="::item.value.linkedin.headline | highlight:global.search.lastQuery"></span>
 </td>
 <td style="vertical-align: middle; height: 80px;">
     <li ng-repeat="(cluster, val) in item.value.cities[global.city.path.key].clusters" style="list-style: none; display: inline; float: right; padding-left: 5px;">

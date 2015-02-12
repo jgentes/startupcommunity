@@ -89,7 +89,14 @@ app
         controller: 'LogoutCtrl'
       })
       .when('/network', {
-        templateUrl: 'views/network.html'
+        templateUrl: 'views/network.html',
+        resolve: {
+          lazyLoad: ['lazyLoad', function (lazyLoad) {
+            return lazyLoad.load([
+              'assets/plugins/fullcalendar/fullcalendar.js'
+            ]);
+          }]
+        }
       })
       .when('/network/people', {
         templateUrl: 'views/network_people.html'
