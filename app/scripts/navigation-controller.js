@@ -7,14 +7,21 @@ angular
     var buildNav = function() {        
         var menu = [
           {
-            label: 'Innovation Garden',
+            label: 'Bend',
             iconClasses: 'fa fa-globe',
             id: 'globe',
-            url: '/network',
             children: [
               {
-                label: 'Resources',
-                url: '/network'
+                label: 'Innovation Garden',
+                url: '/network',
+                children: [
+                  {
+                    label: 'Events'
+                  },
+                  {
+                    label: 'Resources'
+                  }
+                ]
               }
             ]
           },
@@ -106,14 +113,16 @@ angular
             for (var j = $scope.selectedItems.length - 1; j >= 0; j--) {
                 $scope.selectedItems[j].selected = false;
             }
+
             $scope.selectedItems = [];
             parentRef = item;
+
             while (parentRef !== null) {
-                parentRef.selected = true;
+                item.selected = true;
                 $scope.selectedItems.push(parentRef);
                 parentRef = parentRef.parent;
             }            
-            
+
         };
         
         $scope.$watch(function () {
