@@ -98,9 +98,6 @@ app
           }]
         }
       })
-      .when('/network/people', {
-        templateUrl: 'views/network_people.html'
-      })
       .when('/network/resources', {
         templateUrl: 'views/network_resources.html'
       })

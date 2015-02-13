@@ -7,7 +7,7 @@ angular
     var buildNav = function() {        
         var menu = [
           {
-            label: 'Bend',
+            label: 'East Stroudsburg',
             iconClasses: 'fa fa-globe',
             id: 'globe',
             children: [
@@ -15,9 +15,6 @@ angular
                 label: 'Innovation Garden',
                 url: '/network',
                 children: [
-                  {
-                    label: 'Events'
-                  },
                   {
                     label: 'Resources'
                   }
@@ -44,6 +41,11 @@ angular
               label: 'Startups',
               iconClasses: 'fa fa-rocket',
               id: 'startups'
+          },
+          {
+            label: 'Events',
+            iconClasses: 'fa fa-map-marker',
+            id: 'events'
           },
           {
               heading: 'CLUSTERS',
