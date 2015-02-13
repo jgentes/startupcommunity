@@ -958,6 +958,56 @@ a.widget.widget-hover-effect4:active {
 }
 */
 
+
+/* Gallery */
+.gallery img, .gallery a img, .gallery-image img, a[data-toggle="lightbox-image"] img {
+    max-width: 100%;
+}
+
+a[data-toggle="lightbox-image"],
+a.gallery-link {
+    cursor: pointer;
+    cursor: -webkit-zoom-in;
+    cursor: -moz-zoom-in;
+    cursor: zoom-in;
+}
+
+.gallery a:hover img,
+.gallery-image:hover img,
+a[data-toggle="lightbox-image"]:hover img {
+    opacity: 0.75;
+    filter: alpha(opacity=75);
+}
+
+.gallery-image {
+    position: relative;
+}
+
+.gallery-image-options {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    display: none;
+    padding: 10px;
+}
+
+.gallery-image:hover .gallery-image-options {
+    display: block;
+}
+
+.gallery > .row > div {
+    margin-bottom: 15px;
+}
+
+.gallery.gallery-widget > .row > div {
+    margin-bottom: 0;
+    padding-top: 7px;
+    padding-bottom: 7px;
+}
+
+
 /*
 =================================================================
 (#m09res) RESPONSIVE

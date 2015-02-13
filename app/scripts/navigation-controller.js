@@ -16,7 +16,8 @@ angular
                 url: '/network',
                 children: [
                   {
-                    label: 'Resources'
+                    label: 'Resources',
+                    url: '/network/resources'
                   }
                 ]
               }
