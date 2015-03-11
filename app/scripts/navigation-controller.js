@@ -28,16 +28,6 @@ angular
               ]
           },
           {
-              label: 'Startups',
-              iconClasses: 'fa fa-rocket',
-              id: 'startups'
-          },
-          {
-            label: 'Events',
-            iconClasses: 'fa fa-map-marker',
-            id: 'events'
-          },
-          {
               heading: 'CLUSTERS',
               navClass: 'beta2 noback',
               id: 'clusters'
