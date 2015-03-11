@@ -84,9 +84,6 @@ app
       })
       .when('/login', {
         templateUrl: 'views/login.html'
-      })      
-      .when('/logout', {
-        controller: 'LogoutCtrl'
       })
       .when('/network', {
         templateUrl: 'views/network.html',

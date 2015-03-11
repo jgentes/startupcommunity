@@ -129,7 +129,7 @@
     
     <header class="navbar navbar-inverse" ng-class="{'navbar-fixed-top': style_fixedHeader, 'navbar-static-top': !style_fixedHeader}" role="banner">
         <a id="leftmenu-trigger" tooltip-placement="right" tooltip="Toggle Sidebar" ng-click="toggleLeftBar()"><i class="fa fa-bars"></i></a>        
-        <img src="assets/img/logo_startupcommunity.png" width="160px" style="padding: 11px 10px 0 0px" class="navbar-header pull-left"/>
+        <img src="assets/img/thumb_32.png" width="32px" style="padding: 11px 10px 0 0px" class="navbar-header pull-left"/>
         <div class="navbar-header pull-left" style="border-left: 1px solid #e4e7eb;">
             <div id="search">
                  <form ng-submit="search(global.search.query)">
@@ -151,7 +151,7 @@
                 <ul class="dropdown-menu">
                   <li><a class="dropdown-toggle" ng-click="editProfile()" data-toggle='dropdown'>Edit Profile <i class="pull-right fa fa-fw fa-pencil"></i></a></li>
                   <li class="divider"></li>
-                  <li><a class="text-right dropdown-toggle" ng-click="logOut()">Sign Out</a></li>
+                  <li><a class="text-right dropdown-toggle" ng-click="global.logout()">Sign Out</a></li>
                 </ul>
               </li>
             </ul>

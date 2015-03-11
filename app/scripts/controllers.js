@@ -41,130 +41,130 @@ angular
     $scope.$on('$routeChangeSuccess', function (e) {      
       progressLoader.end();
     });
-            
+
+    $scope.global.logout = function(error) {
+      $auth.logout()
+        .then(function() {
+          $scope.global.user = undefined;
+          error ? $scope.global.alert = error : $scope.global.alert = undefined;
+          $location.path('/login');
+        });
+    };
+
     $scope.isAuthenticated = function() {
       return $auth.isAuthenticated(); //returns true or false based on browser local storage token
-    };  
-    
-    $scope.search = function(query) {                   
+    };
+
+    $scope.search = function(query) {
       $scope.global.search.tag = query;
-      $scope.global.search.results = undefined;      
+      $scope.global.search.results = undefined;
       userService.search($scope.global.city.path.key, query)
       .then(function(response) {
         $scope.global.search = resultService.setPage(response.data);
         $scope.global.search.lastQuery = query;
         $location.path('/search');
-      });  	  
+      });
     };
-    
-    $scope.editProfile = function() {            
-      $scope.global.profile = $scope.global.user;            
+
+    $scope.editProfile = function() {
+      $scope.global.profile = $scope.global.user;
       $location.path('/profile');
       $route.reload();
     };
-    
-    $scope.logOut = function() {      
-      $auth.logout()
-      .then(function() {
-        $scope.global.user = undefined;
-        $scope.global.alert = undefined;
-        $location.path('/login');
-        });
-    };      
-  
+
     $scope.closeAlert = function() {
       $scope.global.alert = undefined;
-    };    
-    
+    };
+
     // Feedback mechanisms used during Beta
-    
+
     $scope.global.betaTour = {
       people: {},
       profile: {},
-      data: {},      
-      feedback: function(userdata) {                      
+      data: {},
+      feedback: function(userdata) {
         userService.feedback(userdata);
       },
-      recompile: function() {        
-        $timeout(function() {          
+      recompile: function() {
+        $timeout(function() {
           var popoverEl = $('body').find('.popover');
           $compile(popoverEl)($scope);
-        }, 50);        
+        }, 50);
       },
       gotoProfile: function() {
         $location.path('/profile');
         $timeout(function() {
           $scope.global.editProfile = true;
-          bootstro.stop();          
+          bootstro.stop();
           bootstro.start('', $scope.global.betaTour.profile);
           }, 1500);
       }
-    };        
-    
-    $scope.global.betaTour.people['items'] = [{     
+    };
+
+    $scope.global.betaTour.people['items'] = [{
       step: 0,
       selector: ".beta0",
       title: "Welcome to Bend's Startup Community!",
-      content: "Before getting started, please take our tour and answer a few questions.",      
-      placement: "bottom",        
-      width: "300px",      
-      finishButton: "<span style='display: none'></span>",      
+      content: "Before getting started, please take our tour and answer a few questions.",
+      placement: "bottom",
+      width: "300px",
+      finishButton: "<span style='display: none'></span>",
       onStep: $scope.global.betaTour.recompile
     },
-    {     
+    {
       step: 1,
       selector: ".beta1",
       title: "Community = People and Startups",
       content: "The community is organized around People and Startups.<br><br>People have different roles, including founders, advisors, and investors in Startups.<br><br><label>Expect something else? Tell us:<input onkeydown='if (event.keyCode == 13) $(&apos;.bootstro-next-btn&apos;).click()' type='text' ng-model='global.betaTour.data.community' class='form-control'></label>",
-      placement: "bottom",        
+      placement: "bottom",
       margin: 150,
-      width: "300px",      
-      finishButton: "<span style='display: none'></span>",      
+      width: "300px",
+      finishButton: "<span style='display: none'></span>",
       onStep: $scope.global.betaTour.recompile
     },
-    {      
+    {
       step: 2,
       selector: ".beta2",
-      title: "Clusters = Industry Segments",     
+      title: "Clusters = Industry Segments",
       content: "Clusters represent an ecosystem focused on a specific industry.<br><br>People and Startups are grouped into Clusters.<br><br><label>Expect something else? Tell us:<input onkeydown='if (event.keyCode == 13) $(&apos;.bootstro-next-btn&apos;).click()' type='text' ng-model='global.betaTour.data.clusters' class='form-control'></label>",
-      placement: "right",        
-      width: "300px",      
-      finishButton: "<span style='display: none'></span>",      
+      placement: "right",
+      width: "300px",
+      finishButton: "<span style='display: none'></span>",
       onStep: $scope.global.betaTour.recompile
     },
-    {      
+    {
       step: 3,
       selector: ".beta3",
       title: "My role in the startup community is:",
       content: "<fieldset style='margin-top: -10px;'><div class='checkbox'><label><input type='checkbox' value='' ng-model='global.betaTour.data.advisor'>Advisor</label></div><div class='checkbox'><label><input type='checkbox' value='' ng-model='global.betaTour.data.leader'>Community Leader</label></div><div class='checkbox'><label><input type='checkbox' value='' ng-model='global.betaTour.data.member'>Community Member</label></div><div class='checkbox'><label><input type='checkbox' value='' ng-model='global.betaTour.data.investor'>Investor</label></div><div class='checkbox'><label><input type='checkbox' value='' ng-model='global.betaTour.data.founder'>Startup Founder</label></div><label>Something else?<input type='text' ng-model='global.betaTour.data.other' class='form-control'></label></fieldset>",
       width: "300px",
-      placement: "right",      
+      placement: "right",
       finishButton: "<button ng-click='global.betaTour.gotoProfile()' class='btn btn-primary btn-mini bootstro-next-btn' style='margin-top:-34px'>Next »</button>",
       onStep: $scope.global.betaTour.recompile
     }];
-    
-  $scope.global.betaTour.profile['items'] = [{       
+
+  $scope.global.betaTour.profile['items'] = [{
       step: 4,
       selector: ".beta4",
-      title: "{{global.user.value.name | words:0}}, this is your profile.",     
+      title: "{{global.user.value.name | words:0}}, this is your profile.",
       content: "Your profile information is pulled from Linkedin.<br><br>If you update your Summary or Contact info on Linkedin, it will update here.",
-      placement: "bottom",        
+      placement: "bottom",
       width: "300px",
       finishButton: "<span style='display: none'></span>",
       onStep: $scope.global.betaTour.recompile
     },
-    {       
+    {
       step: 5,
       selector: ".beta5",
-      title: "Your Cluster Activity",     
+      title: "Your Cluster Activity",
       content: "You should indicate whether you are a member or an advisor in each cluster.<br><br>If you advise all clusters, you are considered a 'General Advisor'.<br><br><label><strong>Quick question:</strong> What do you hope this site will help you do?<textarea placeholder='Could be tasks you want to perform, problems you are trying to solve, or needs you are trying to satisfy.' ng-model='global.betaTour.data.jobs' rows='4' class='form-control'></textarea></label>",
-      placement: "left",        
-      width: "300px",      
+      placement: "left",
+      width: "300px",
       finishButton: "<button ng-click='global.betaTour.feedback(global.betaTour.data)' class='btn btn-mini btn-success bootstro-finish-btn'><i class='fa fa-check'></i> Ok, let me in!</button>",
       onStep: $scope.global.betaTour.recompile
     }];
-    
-    var broadcast = function() {           
+
+    var broadcast = function() {
       $scope.$broadcast('sessionReady', true);
       if ($scope.global.user.value.beta === undefined) {
         $location.path('/people');
@@ -184,33 +184,37 @@ angular
                 email: $scope.global.user.value.email
             }]);
         } else console.log('NO GLOBAL USER RECORD, SO NO ANALYTICS YO!')
-    };      
-    
-    // Get and set user and city data         
+    };
+
+    // Get and set user and city data
     $scope.global.sessionReady = function() {
       if (!$scope.global.user || !$scope.global.city) {
         userService.getProfile()
-        .then(function(response) {
-          if (response.data.path) {
-            $scope.global.user = response.data;
+        .success(function(response) {
+          if (response.path) {
+            $scope.global.user = response;
             if (!$scope.global.profile) {
-              $scope.global.profile = response.data;
+              $scope.global.profile = response;
             }
             for (var citystate in $scope.global.user.value.cities) break; // grab first city
             cityService.getCity(citystate)
-            .then(function(response) {
-              if (response.data) {            
-                $scope.global.city = response.data;
+            .success(function(response) {
+              if (response) {
+                $scope.global.city = response;
                 broadcast();
               } else {
-                $scope.global.alert = { type: 'danger', msg: 'Sorry, something went wrong: ' + String(response.message) };
-                $scope.logout();
+                $scope.global.logout({ type: 'danger', msg: 'Sorry, ' + String(response.message) });
               }
+            })
+            .error(function(response) {
+              $scope.global.alert ({ type: 'danger', msg: 'Sorry, ' + String(response.message) });
             });
           } else {
-            $scope.global.alert = { type: 'danger', msg: 'Sorry, something went wrong: ' + String(response.message) }; 
-            $scope.logout();
+            $scope.global.logout({ type: 'danger', msg: 'Sorry, ' + String(response.message) });
           }
+        })
+        .error(function(response) {
+            $scope.global.logout({ type: 'danger', msg: 'Sorry, ' + String(response.message) });
         });
       } else broadcast();
     };    
@@ -562,7 +566,7 @@ angular
           $route.reload();          
         })
         .catch(function(response) {
-          $scope.global.alert = { type: 'danger', msg: 'There was a problem: ' + String(response.data) };
+          $scope.global.alert = { type: 'danger', msg: 'There was a problem: ' + String(response.data.message) };
           console.warn("WARNING:");
               console.log(response);
         });

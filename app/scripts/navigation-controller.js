@@ -7,21 +7,10 @@ angular
     var buildNav = function() {        
         var menu = [
           {
-            label: 'East Stroudsburg',
+            label: 'Bend',
             iconClasses: 'fa fa-globe',
-            id: 'globe',
-            children: [
-              {
-                label: 'Innovation Garden',
-                url: '/network',
-                children: [
-                  {
-                    label: 'Resources',
-                    url: '/network/resources'
-                  }
-                ]
-              }
-            ]
+            url: '/people',
+            id: 'globe'
           },
           {
               heading: 'COMMUNITY',

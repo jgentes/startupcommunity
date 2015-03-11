@@ -211,7 +211,7 @@ function handleEnsureAuthenticated(req, res, next) {
   
   if (!req.headers.authorization) {   
     console.log('Session is no longer valid.');
-    return res.status(401).send({ message: 'Your session is no longer valid.' });
+    return res.status(401).send({ message: 'your session is no longer valid. Please log in again.' });
   }
   try {
     var token = req.headers.authorization.split(' ')[1];
@@ -219,23 +219,23 @@ function handleEnsureAuthenticated(req, res, next) {
 
     if (payload.exp <= Date.now()) {
       console.log('Token has expired');
-      return res.status(401).send({ message: 'Token has expired. Login again.' });
+      return res.status(401).send({ message: 'your session has expired. Please log in again.' });
     }
 
     if (req.user === undefined) {
-      req.user = {}; //required step to pursue auth through refresh  
+      req.user = {}; //required step to pursue auth through refresh
     } else {
       console.log('Existing user in request:');
     }
-    
-    req.user = payload.sub;    
+
+    req.user = payload.sub;
     next();
   }
   catch (e) {
     console.log('EnsureAuth failure: ');
     console.log(e);
-    return res.status(401).send({ message: 'Please logout or clear your local browser storage and try again.' });
-  }  
+    return res.status(401).send({ message: 'please logout or clear your local browser storage and try again.' });
+  }
 }
 
 /*
@@ -537,7 +537,7 @@ function handleLinkedin(req, res) {
           .limit(1)
           .query('value.linkedin.id: "' + profile.id + '"')
           .then(function (result){     
-            if (result.body.results.length > 0){            
+            if (result.body.results.length > 0){
               console.log("Found user: " + profile.firstName + ' ' + profile.lastName);
               res.send({ token: req.headers.authorization.split(' ')[1], user: result.body.results[0] });
             } else {
@@ -583,7 +583,7 @@ function handleLinkedin(req, res) {
           .limit(1)
           .query('value.linkedin.id: "' + profile.id + '"')
           .then(function (result){                    
-            if (result.body.results.length > 0){            
+            if (result.body.results.length > 0){
               console.log("Found user: " + profile.firstName + ' ' + profile.lastName);
               result.body.results[0].value["linkedin"] = profile; // get user account and re-upload with linkedin data  
               if (result.body.results[0].value.avatar === "") {
