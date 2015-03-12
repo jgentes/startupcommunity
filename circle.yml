@@ -14,20 +14,5 @@ dependencies:
 deployment:
   dev:
     branch: dev
-    commands:
-      - ./build.sh
-      - git config --global user.email "james@startupcommunity.org"
-      - git config --global user.name "James Gentes"
-      - git add . -A
-      - git commit -am "Push dev branch to sc-dev:master"      
-      - git push git@heroku.com:startupcommunity-dev.git HEAD:master --force      
-  production:
-    branch: staging
-    commands:
-      - ./build.sh
-      - git config --global user.email "james@startupcommunity.org"
-      - git config --global user.name "James Gentes"
-      - git add . -A
-      - git commit -am "Push staging to production master"      
-      - git push git@heroku.com:startupcommunity.git HEAD:master --force
-      - git push git@github.com:jgentes/startupcommunity.git $CIRCLE_SHA1:master --force
+    heroku:
+      appname: startupcommunity-dev
