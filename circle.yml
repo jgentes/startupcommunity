@@ -16,7 +16,7 @@ deployment:
     branch: dev
     commands:
       - ./build.sh
-      - git config --global user.email "james@thesocialbusiness.com"
+      - git config --global user.email "james@startupcommunity.org"
       - git config --global user.name "James Gentes"
       - git add . -A
       - git commit -am "Push dev branch to sc-dev:master"      
@@ -25,7 +25,7 @@ deployment:
     branch: staging
     commands:
       - ./build.sh
-      - git config --global user.email "james@thesocialbusiness.com"
+      - git config --global user.email "james@startupcommunity.org"
       - git config --global user.name "James Gentes"
       - git add . -A
       - git commit -am "Push staging to production master"      
