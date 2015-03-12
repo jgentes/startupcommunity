@@ -17,7 +17,6 @@
     "moment": "~2.8.3",
     "morgan": "~1.2.3",
     "nodalytics": "^1.1.0",
-    "opbeat": "~1.0.2",
     "orchestrate": "~0.3.4",
     "q": "~1.0.1",
     "request": "~2.40.0",
