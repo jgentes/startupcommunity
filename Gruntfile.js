@@ -500,13 +500,9 @@ module.exports = function (grunt) {
     'build'
   ]);
 
-  grunt.registerTask('heroku:test', [
-    'build'
-  ]);
+  grunt.registerTask('heroku:test', 'build');
 
-  grunt.registerTask('heroku:production', [
-    'build'
-  ]);
+  grunt.registerTask('heroku:production', 'build');
   
   
 };
