@@ -530,7 +530,7 @@ function handleLinkedin(req, res) {
       var userprofile = schema.linkedin(profile);              
         
         // Step 3a. Link user accounts.
-      if (req.headers.authorization) { // isloggedin already?
+      if (req.headers.authorization) { // isloggedin already? [this use case is for linking a linkedin profile to an existing account
           
         db.newSearchBuilder()
           .collection(config.db.collections.users)
@@ -627,7 +627,7 @@ function handleLinkedin(req, res) {
                   } else {
                     console.log('No existing user found:');
                     console.log(result);
-                    res.status(400).send({ message: "Sorry, we couldn't find you in our system." }); 
+                    res.status(400).send({ profile: profile, message: "Sorry, we couldn't find you in our system." });
                   }
                 })
                 .fail(function(err){

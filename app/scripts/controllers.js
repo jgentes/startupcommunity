@@ -183,7 +183,7 @@ angular
                 name: $scope.global.user.value.name,
                 email: $scope.global.user.value.email
             }]);
-        } else console.log('NO GLOBAL USER RECORD, SO NO ANALYTICS YO!')
+        }
     };
 
     // Get and set user and city data
@@ -548,7 +548,7 @@ angular
           $mixpanel.track('Logged in');
         })
         .catch(function(response) {
-          $scope.global.alert = { type: 'danger', msg: 'There was a problem: ' + String(response.data.message) };
+          $scope.global.alert = { type: 'danger', msg: String(response.data.message) };
           console.warn("WARNING:");
               console.log(response);
         });
@@ -566,7 +566,19 @@ angular
           $route.reload();          
         })
         .catch(function(response) {
-          $scope.global.alert = { type: 'danger', msg: 'There was a problem: ' + String(response.data.message) };
+          if (response.data.profile) {
+            $mixpanel.people.set({
+              "$name": response.data.profile.firstName + ' ' + response.data.profile.lastName,
+              "$email": response.data.profile.emailAddress
+            });
+            $mixpanel.track('Attempted Login');
+            UserVoice.push(['identify', {
+              name: response.data.profile.firstName + ' ' + response.data.profile.lastName,
+              email: response.data.profile.emailAddress
+            }]);
+          }
+
+          $scope.global.alert = { type: 'danger', msg: String(response.data.message) };
           console.warn("WARNING:");
               console.log(response);
         });
