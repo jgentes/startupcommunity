@@ -36,7 +36,7 @@
 	}
 	
 	a {text-decoration: none;}
-	ul {padding: 10px 0;list-style: none;}
+	ul {list-style: none;}
 	ul {padding-left: 0 !important}
 	ul, ul li a {background: @sidebar-submenu-bg; color: @sidebar-submenu-color; }
 	
@@ -49,8 +49,9 @@
 	>li.active>a {background: @sidebar-active-bg; color: @sidebar-active-color; padding-left: 8px; border-left: 2px solid @brand-primary;}
 	
 	// Submenu Styles - Level 2
-	ul li.active>a { background: @sidebar-submenu-bg; color: @sidebar-submenu-active-color !important;} 
-	ul li a {padding: 5px 10px 5px 37px;}
+    ul li.active>a {background: @sidebar-active-bg; color: @sidebar-active-color; border-left: 2px solid @brand-primary;}
+	//ul li.active>a { background: @sidebar-submenu-bg; color: @sidebar-submenu-active-color !important;}
+	ul li a {padding: 10px 10px 10px 37px;}
 	ul li.active:not(.open)>a {font-weight: 600; color: #fff;}
 	   li ul {display: none;}
 	

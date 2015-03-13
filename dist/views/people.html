@@ -46,6 +46,9 @@
                         <i class="fa fa-fw fa-globe themed-color-dark"></i> <strong>All</strong>
                     </a>
                 </li>
+                <li>
+                  <hr>
+                </li>
                 <li ng-class="{'active':selectedRole.indexOf('Leader') >= 0}" ng-click="filterRole('Leader')">
                     <a href="javascript:void(0)">
                         <i class="fa fa-flag text-danger"></i> <strong>Leaders</strong>
@@ -75,6 +78,9 @@
             <ul class="nav nav-pills nav-stacked nav-icons">
                 <li ng-class="{'active':global.city.selectedCluster.indexOf('*') >= 0}" ng-click="filterCluster('*');">
                     <a><i class="fa fa-fw fa-globe themed-color-dark icon-push"></i> <strong>All</strong></a>
+                </li>
+                <li>
+                  <hr>
                 </li>
                 <li ng-repeat="(cluster, val) in global.city.value.clusters" ng-class="{'active':global.city.selectedCluster.indexOf(cluster) >= 0}" ng-click="filterCluster(cluster);">
                     <a><i class="fa {{val.icon}}"></i> <strong>{{cluster}}</strong></a>

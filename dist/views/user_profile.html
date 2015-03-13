@@ -111,7 +111,7 @@
 							<div class="col-md-12">
 								<h3>Summary</h3>									
 								<p style="white-space:pre-wrap;" ng-bind-html="::global.profile.value.linkedin.summary | linky:'_blank'"></p>
-								<h3>Skills</h3>
+								<h3 ng-show="global.profile.value.linkedin.skills">Skills</h3>
 								<li ng-repeat="skill in global.profile.value.linkedin.skills.values" class="label btn-info" style="margin-right: 3px; margin-top: 3px; float:left; padding-bottom: 5px;">{{::skill.skill.name}}</li>								
 	            			</div>
 						</div>

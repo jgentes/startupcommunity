@@ -17,7 +17,6 @@
     <link rel="stylesheet" href="assets/css/668b0601.ie8.css">
     <script type="text/javascript" src="https://html5shim.googlecode.com/svn/trunk/html5.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/respond.js/1.1.0/respond.min.js"></script>
-    <script type="text/javascript" src="assets/plugins/charts-flot/excanvas.min.js"></script>
     <script type='text/javascript' src='assets/plugins/misc/placeholdr.js'></script>
   <![endif]-->
 
@@ -25,10 +24,15 @@
     <script type="text/javascript" src="assets/plugins/misc/media.match.min.js"></script>
   <![endif]-->
 
-  <link rel="stylesheet" href="assets/css/37262ed9.vendor.css"/>
+  <link rel="stylesheet" href="assets/css/aef3a985.vendor.css"/>
   
 
-  <link rel="stylesheet" href="assets/css/8f354bc9.main.css"/>
+  <link rel="stylesheet" href="assets/css/5783aff2.main.css"/>
+
+  <script
+    src="//d2wy8f7a9ursnm.cloudfront.net/bugsnag-2.min.js"
+    data-apikey="0d9fee787095deb887ac5b39b4a80e3d">
+  </script>
 
   <style type="text/css">
     [ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak {
@@ -97,15 +101,16 @@
   ng-cloak>
     
     <header class="navbar navbar-inverse" ng-class="{'navbar-fixed-top': style_fixedHeader, 'navbar-static-top': !style_fixedHeader}" role="banner">
-        <a id="leftmenu-trigger" tooltip-placement="right" tooltip="Toggle Sidebar" ng-click="toggleLeftBar()"><i class="fa fa-bars"></i></a>        
-        <img src="assets/img/logo_startupcommunity.png" width="160px" style="padding: 11px 10px 0 0px" class="navbar-header pull-left"/>
+        <a id="leftmenu-trigger" tooltip-placement="right" tooltip="Toggle Sidebar" ng-click="toggleLeftBar()">
+          <img src="../public/favicon.png" width="32px" style="padding: 1px 3px 2px 0;" class="navbar-header pull-left"/>
+        </a>
         <div class="navbar-header pull-left" style="border-left: 1px solid #e4e7eb;">
-            <li id="search">
+            <div id="search">
                  <form ng-submit="search(global.search.query)">
-                    <input type="text" ng-model="global.search.query" class="search-query" placeholder="Search...">
+                    <input type="text" ng-model="global.search.query" class="search-query" id="searchbox" placeholder=" Search...">
                     <button type="submit"><i class="fa fa-search"></i></button>
                 </form>
-            </li>
+            </div>
         </div>
 
         <ul class="nav navbar-nav pull-right toolbar">
@@ -120,7 +125,7 @@
                 <ul class="dropdown-menu">
                   <li><a class="dropdown-toggle" ng-click="editProfile()" data-toggle='dropdown'>Edit Profile <i class="pull-right fa fa-fw fa-pencil"></i></a></li>
                   <li class="divider"></li>
-                  <li><a class="text-right dropdown-toggle" ng-click="logOut()">Sign Out</a></li>
+                  <li><a class="text-right dropdown-toggle" ng-click="global.logout()">Sign Out</a></li>
                 </ul>
               </li>
             </ul>
@@ -183,13 +188,10 @@
     
     <script type='text/javascript' src='https://maps.google.com/maps/api/js?sensor=true'></script> 
 
-    <script src="scripts/8deaaf7b.vendor.js"></script>
+    <script src="scripts/0b0fb86c.vendor.js"></script>
 
-      <script src="scripts/96ab88d4.scripts.js"></script>
+      <script src="scripts/c8c6740d.scripts.js"></script>
 
-<script type="text/javascript">(function(f,b){if(!b.__SV){var a,e,i,g;window.mixpanel=b;b._i=[];b.init=function(a,e,d){function f(b,h){var a=h.split(".");2==a.length&&(b=b[a[0]],h=a[1]);b[h]=function(){b.push([h].concat(Array.prototype.slice.call(arguments,0)))}}var c=b;"undefined"!==typeof d?c=b[d]=[]:d="mixpanel";c.people=c.people||[];c.toString=function(b){var a="mixpanel";"mixpanel"!==d&&(a+="."+d);b||(a+=" (stub)");return a};c.people.toString=function(){return c.toString(1)+".people (stub)"};i="disable track track_pageview track_links track_forms register register_once alias unregister identify name_tag set_config people.set people.set_once people.increment people.append people.track_charge people.clear_charges people.delete_user".split(" ");
-for(g=0;g<i.length;g++)f(c,i[g]);b._i.push([a,e,d])};b.__SV=1.2;a=f.createElement("script");a.type="text/javascript";a.async=!0;a.src="//cdn.mxpnl.com/libs/mixpanel-2-latest.min.js";e=f.getElementsByTagName("script")[0];e.parentNode.insertBefore(a,e)}})(document,window.mixpanel||[]);
-mixpanel.init("0f110baeb6150d7e3b8968e32d7a5595");</script>
 <script>
 UserVoice=window.UserVoice||[];(function(){var uv=document.createElement('script');uv.type='text/javascript';uv.async=true;uv.src='//widget.uservoice.com/zK2VtojScbtpM3kB4CRZA.js';var s=document.getElementsByTagName('script')[0];s.parentNode.insertBefore(uv,s)})();
 UserVoice.push(['set', {
