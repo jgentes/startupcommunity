@@ -78,15 +78,6 @@ var App = function() {
             });
         });
 
-        // With jquery.videoBG, Check out examples and documentation at https://github.com/sydlawrence/jquery.videoBG
-         $('.js-video-bg').videoBG({
-            mp4: 'img/placeholders/videos/placeholder_video.mp4',
-            ogv: 'img/placeholders/videos/placeholder_video.ogv',
-            webm: 'img/placeholders/videos/placeholder_video.webm',
-            poster: 'img/placeholders/videos/placeholder_video.jpg',
-            scale: true,
-            zIndex: 0
-        });
 
         // Toggles 'open' class on store menu
         $('.store-menu .submenu').on('click', function(){

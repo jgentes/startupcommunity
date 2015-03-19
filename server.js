@@ -41,7 +41,7 @@ var routes = {
 api.setup(app,routes);
 
 app.get('/*', function(req, res, next){
-    res.sendFile("index.html", { root: __dirname + config.path });
+    res.sendFile("frontend.html", { root: __dirname + config.path });
 });
 
 var port = process.env.PORT || 5000;

@@ -13,15 +13,19 @@ THEME DEFAULT
 */
 
 .themed-color-default {
-    color: #1bbae1 !important;
+    color: #82bc4b !important;
 }
 
 .themed-border-default {
-    border-color: #1bbae1 !important;
+    border-color: #82bc4b !important;
 }
 
 .themed-background-default {
-    background-color: #1bbae1 !important;
+    background-color: #4f5259 !important;
+}
+
+.themed-background-green {
+    background-color: #C2DF99 !important;
 }
 
 .themed-color-dark-default {
