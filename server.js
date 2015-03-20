@@ -24,51 +24,51 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use("/", express.static(__dirname + config.path));
 app.use("/public", express.static(__dirname + '/public'));
 
-if (process.env.NODE_ENV == "production") {
-    // production-only things go here
-    app.use(enforce.HTTPS(true));
-    app.use(nodalytics('UA-58555092-2'));
+if (process.env.NODE_ENV === "production") {
+  // production-only things go here
+  app.use(enforce.HTTPS(true));
+  app.use(nodalytics('UA-58555092-2'));
 
-    app.get('/*', function(req, res, next){
-        res.sendFile("frontend.html", { root: __dirname + config.path });
-    });
-
-} else { 
-    app.use("/bower_components", express.static(__dirname + "/bower_components"));
-
-  if (process.env.NODE_ENV == "test") { // prompt for credentials if on public dev.startupcommunity.org
-
-    var basicAuth = require('basic-auth');
-
-    var auth = function (req, res, next) {
-      function unauthorized(res) {
-        res.set('WWW-Authenticate', 'Basic realm=Authorization Required');
-        return res.send(401);
-      };
-
-      var user = basicAuth(req);
-
-      if (!user || !user.name || !user.pass) {
-        return unauthorized(res);
-      }
-      ;
-
-      if (user.name === 'james' && user.pass === 'Doctor64') {
-        return next();
-      } else {
-        return unauthorized(res);
-      }
-      ;
-    };
-  } else {
-    var auth = function (req, res, next) {};
-  }
-
-   app.get('/*', auth, function(req, res, next){
-    res.sendFile("frontend.html", { root: __dirname + config.path });
-   });
-
+} else {
+  app.use("/bower_components", express.static(__dirname + "/bower_components"));
 }
+
+if (process.env.NODE_ENV === "test") { // prompt for credentials if on public dev.startupcommunity.org
+
+  var basicAuth = require('basic-auth');
+
+  var auth = function (req, res, next) {
+    function unauthorized(res) {
+      res.set('WWW-Authenticate', 'Basic realm=Authorization Required');
+      return res.send(401);
+    };
+
+    var user = basicAuth(req);
+
+    if (!user || !user.name || !user.pass) {
+      return unauthorized(res);
+    }
+    ;
+
+    if (user.name === 'james' && user.pass === 'Doctor64') {
+      return next();
+    } else {
+      return unauthorized(res);
+    }
+    ;
+  };
+
+  app.get('/*', auth, function(req, res, next){
+    res.sendFile("frontend.html", { root: __dirname + config.path });
+  });
+
+} else {
+
+  app.get('/*', function (req, res, next) {
+    res.sendFile("frontend.html", {root: __dirname + config.path});
+  });
+
+};
 
 var routes = {
 	userApi: new UserApi(),
