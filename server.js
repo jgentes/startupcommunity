@@ -28,7 +28,6 @@ if (process.env.NODE_ENV == "production") {
     // production-only things go here
     app.use(enforce.HTTPS(true));
     app.use(nodalytics('UA-58555092-2'));
-    app.use(enforce.HTTPS(true));
 
     app.get('/*', function(req, res, next){
         res.sendFile("frontend.html", { root: __dirname + config.path });
@@ -36,6 +35,8 @@ if (process.env.NODE_ENV == "production") {
 
 } else { 
     app.use("/bower_components", express.static(__dirname + "/bower_components"));
+
+
 
     var basicAuth = require('basic-auth');
 
