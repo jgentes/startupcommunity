@@ -36,28 +36,33 @@ if (process.env.NODE_ENV == "production") {
 } else { 
     app.use("/bower_components", express.static(__dirname + "/bower_components"));
 
-
+  if (process.env.NODE_ENV == "test") { // prompt for credentials if on public dev.startupcommunity.org
 
     var basicAuth = require('basic-auth');
 
     var auth = function (req, res, next) {
-        function unauthorized(res) {
-            res.set('WWW-Authenticate', 'Basic realm=Authorization Required');
-            return res.send(401);
-        };
+      function unauthorized(res) {
+        res.set('WWW-Authenticate', 'Basic realm=Authorization Required');
+        return res.send(401);
+      };
 
-        var user = basicAuth(req);
+      var user = basicAuth(req);
 
-        if (!user || !user.name || !user.pass) {
-            return unauthorized(res);
-        };
+      if (!user || !user.name || !user.pass) {
+        return unauthorized(res);
+      }
+      ;
 
-        if (user.name === 'james' && user.pass === 'Doctor64') {
-            return next();
-        } else {
-            return unauthorized(res);
-        };
+      if (user.name === 'james' && user.pass === 'Doctor64') {
+        return next();
+      } else {
+        return unauthorized(res);
+      }
+      ;
     };
+  } else {
+    var auth = function (req, res, next) {};
+  }
 
    app.get('/*', auth, function(req, res, next){
     res.sendFile("frontend.html", { root: __dirname + config.path });
