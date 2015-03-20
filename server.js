@@ -41,21 +41,18 @@ if (process.env.NODE_ENV === "test") { // prompt for credentials if on public de
     function unauthorized(res) {
       res.set('WWW-Authenticate', 'Basic realm=Authorization Required');
       return res.send(401);
-    };
-
+    }
     var user = basicAuth(req);
 
     if (!user || !user.name || !user.pass) {
       return unauthorized(res);
     }
-    ;
 
     if (user.name === 'james' && user.pass === 'Doctor64') {
       return next();
     } else {
       return unauthorized(res);
     }
-    ;
   };
 
   app.get('/*', auth, function(req, res, next){
@@ -68,7 +65,7 @@ if (process.env.NODE_ENV === "test") { // prompt for credentials if on public de
     res.sendFile("frontend.html", {root: __dirname + config.path});
   });
 
-};
+}
 
 var routes = {
 	userApi: new UserApi(),
