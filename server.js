@@ -30,7 +30,18 @@ if (process.env.NODE_ENV == "production" || process.env.NODE_ENV == "test") {
     app.use(nodalytics('UA-58555092-2'));
     app.use(enforce.HTTPS(true));
 } else { 
-    app.use("/bower_components", express.static(__dirname + "/bower_components"));  
+    app.use("/bower_components", express.static(__dirname + "/bower_components"));
+    var auth = require('basic-auth')
+    var credentials = auth(req)
+
+    if (!credentials || credentials.name !== 'james' || credentials.pass !== 'Doctor64') {
+        res.writeHead(401, {
+            'WWW-Authenticate': 'Basic realm="StartupCommunity.org"'
+        })
+        res.end()
+    } else {
+        res.end('Access granted');
+    }
 }
 
 var routes = {
