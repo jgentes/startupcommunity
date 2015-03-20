@@ -1,5 +1,18 @@
 # Apache Configuration File
 
+# ### FOR PASSWORD PROTECTING DEV SITE
+
+SetEnvIf Host dev.startupcommunity.org passreq
+AuthType Basic
+AuthName "Password Required"
+AuthUserFile /app/.htpasswd
+Require valid-user
+Order allow,deny
+Allow from all
+Deny from env=passreq
+Satisfy any
+
+
 # (!) Using `.htaccess` files slows down Apache, therefore, if you have access
 # to the main server config file (usually called `httpd.conf`), you should add
 # this logic there: http://httpd.apache.org/docs/current/howto/htaccess.html.
