@@ -56,11 +56,12 @@ if (process.env.NODE_ENV == "production") {
         } else {
             return unauthorized(res);
         };
-
-        app.get('/*', auth, function(req, res, next){
-            res.sendFile("frontend.html", { root: __dirname + config.path });
-        });
     };
+
+   app.get('/*', auth, function(req, res, next){
+    res.sendFile("frontend.html", { root: __dirname + config.path });
+   });
+
 }
 
 var routes = {
