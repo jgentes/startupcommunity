@@ -29,19 +29,38 @@ if (process.env.NODE_ENV == "production" || process.env.NODE_ENV == "test") {
     app.use(enforce.HTTPS(true));
     app.use(nodalytics('UA-58555092-2'));
     app.use(enforce.HTTPS(true));
+
+    app.get('/*', function(req, res, next){
+        res.sendFile("frontend.html", { root: __dirname + config.path });
+    });
+
 } else { 
     app.use("/bower_components", express.static(__dirname + "/bower_components"));
-    var auth = require('basic-auth')
-    var credentials = auth(req)
 
-    if (!credentials || credentials.name !== 'james' || credentials.pass !== 'Doctor64') {
-        res.writeHead(401, {
-            'WWW-Authenticate': 'Basic realm="StartupCommunity.org"'
-        })
-        res.end()
-    } else {
-        res.end('Access granted');
-    }
+    var basicAuth = require('basic-auth');
+
+    var auth = function (req, res, next) {
+        function unauthorized(res) {
+            res.set('WWW-Authenticate', 'Basic realm=Authorization Required');
+            return res.send(401);
+        };
+
+        var user = basicAuth(req);
+
+        if (!user || !user.name || !user.pass) {
+            return unauthorized(res);
+        };
+
+        if (user.name === 'james' && user.pass === 'Doctor64') {
+            return next();
+        } else {
+            return unauthorized(res);
+        };
+
+        app.get('/*', auth, function(req, res, next){
+            res.sendFile("frontend.html", { root: __dirname + config.path });
+        });
+    };
 }
 
 var routes = {
@@ -50,10 +69,6 @@ var routes = {
 };
 
 api.setup(app,routes);
-
-app.get('/*', function(req, res, next){
-    res.sendFile("frontend.html", { root: __dirname + config.path });
-});
 
 var port = process.env.PORT || 5000;
 app.listen(port);
