@@ -616,41 +616,7 @@ angular
   		}, 500);
   	};
   }])
-  
-  .controller('LaunchformController', ['$scope', '$global', '$http', '$q', 'geocoder', function ($scope, $global, $http, $q, geocoder) {
-  	$global.set('fullscreen', true);
-  	$scope.$on('$destroy', function () {
-      $global.set('fullscreen', false);
-    });
-  	$scope.formData = {};  	
-  	$scope.subscribe = function() { 
-      $http({
-  	        method  : 'POST',
-  	        url     : '/sub',
-  	        data    : $.param({ email: $scope.formData.email, city: $scope.formData.city }),  // pass in data as strings
-  	        headers : { 'Content-Type': 'application/x-www-form-urlencoded' }  // set the headers so angular passing info as form data (not request payload)
-  	    }).success(function(data, status, headers) {
-          if(data.success){
-            $scope.global.alert = { type: 'success', msg: 'Thanks, we look forward to helping you build a vibrant startup community in <strong>' + $scope.formData.city.substr(0, $scope.formData.city.length - 4) + '</strong>!  We\'ll be in touch soon.'}; 
-            $scope.formData = {};
-            
-          }else {
-            $scope.global.alert = {type: 'danger', msg: 'Something went wrong!'}; 
-          }
-      });
-    };
-    
-    $scope.getLocation = function(val) {      
-      var deferred = $q.defer();      
-      
-      geocoder.geocode({ address: String(val), componentRestrictions: {'country':'US'} }, function(callbackResult) {        
-        deferred.resolve(callbackResult);
-      });
-        
-      return deferred.promise;            
-    };
-  }])
-  
+
   .controller('ErrorPageController', ['$scope', '$global', '$location', '$window', 'userService', function ($scope, $global, $location, $window, userService) {
     $global.set('fullscreen', true);
   	$scope.$on('$destroy', function () {

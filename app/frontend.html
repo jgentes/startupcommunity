@@ -21,6 +21,10 @@
         <link rel="stylesheet" href="frontend/css/themes.css">
         <!-- endbuild -->
 
+        <!-- start Mixpanel --><script type="text/javascript">(function(f,b){if(!b.__SV){var a,e,i,g;window.mixpanel=b;b._i=[];b.init=function(a,e,d){function f(b,h){var a=h.split(".");2==a.length&&(b=b[a[0]],h=a[1]);b[h]=function(){b.push([h].concat(Array.prototype.slice.call(arguments,0)))}}var c=b;"undefined"!==typeof d?c=b[d]=[]:d="mixpanel";c.people=c.people||[];c.toString=function(b){var a="mixpanel";"mixpanel"!==d&&(a+="."+d);b||(a+=" (stub)");return a};c.people.toString=function(){return c.toString(1)+".people (stub)"};i="disable track track_pageview track_links track_forms register register_once alias unregister identify name_tag set_config people.set people.set_once people.increment people.append people.union people.track_charge people.clear_charges people.delete_user".split(" ");
+        for(g=0;g<i.length;g++)f(c,i[g]);b._i.push([a,e,d])};b.__SV=1.2;a=f.createElement("script");a.type="text/javascript";a.async=!0;a.src="undefined"!==typeof MIXPANEL_CUSTOM_LIB_URL?MIXPANEL_CUSTOM_LIB_URL:"//cdn.mxpnl.com/libs/mixpanel-2-latest.min.js";e=f.getElementsByTagName("script")[0];e.parentNode.insertBefore(a,e)}})(document,window.mixpanel||[]);
+      mixpanel.init("0f110baeb6150d7e3b8968e32d7a5595");</script><!-- end Mixpanel -->
+
     </head>
     <body>
         <!-- Page Container -->
@@ -61,12 +65,47 @@
               <h1 class="text-center animation-slideDown hidden-xs"><strong>Kickstart your city's entrepreneurial ecosystem</strong></h1>
               <h2 class="text-center animation-slideUp push hidden-xs">A framework for building and measuring startup communities, from our experience creating <a href="http://www.entrepreneur.com/article/223997" target="_blank">the most entrepreneurial city in America</a>. <span style="font-size:12px">(Entrepreneur Mag)</span></h2>
             </div>
-            <div class="container" style="margin-bottom:-45px; margin-top:-15px;">
-              <div class="site-block text-center">
-                <a href="" class="btn btn-lg btn-info">Sign up for Free</a>
+            <div class="container" style="margin-top:-10px;">
+
+              <div class="panel" style="max-width: 600px; min-width: 300px; margin:auto;">
+                <div class="panel-body">
+                  <h4 class="text-center" style="margin-bottom: 25px; color: #000; font-size:22px;">Sign up to be notified when we launch!</h4>
+                  <form class="form-horizontal" style="margin-bottom: 0px !important;">
+                    <div class="form-group">
+                      <div class="col-sm-12">
+                        <div class="input-group">
+                          <span class="input-group-addon"><i class="fa fa-map-marker"></i></span>
+                          <input id="city" type="text" placeholder="Your city" class="form-control input-typeahead" autofocus>
+
+                        </div>
+                      </div>
+                    </div>
+                    <div class="form-group">
+                      <div class="col-sm-12">
+                        <div class="input-group">
+                          <span class="input-group-addon"><i class="fa fa-envelope-o"></i></span>
+                          <input id="email" type="text" class="form-control" placeholder="Email" required>
+                          <div class="input-group-btn">
+                            <button id="signup" type="submit" class="btn btn-info" style="border-radius:0;">Sign up</button>
+                          </div>
+
+                        </div>
+
+                      </div>
+                    </div>
+                    <button id="success" type="button" class="btn btn-alt btn-sm btn-success" style="display:block; margin:auto;">Thanks, we'll be in touch soon!</button>
+                  </form>
+                </div>
+
               </div>
+
             </div>
+
+
+
           </section>
+
+
 
           <section class="site-content site-section">
             <div class="container" style="margin-top: -20px; text-align:center;">
@@ -85,7 +124,7 @@
                   <p class="promo-content">Start by identifying public groups and organizing them into industry clusters.</p>
                 </div>
                 <div class="col-sm-6 col-md-offset-1 site-block">
-                  <img src="img/placeholders/screenshots/promo_desktop_right.png" alt="Promo #2" class="img-responsive">
+                  <img src="" alt="Promo #2" class="img-responsive">
                 </div>
               </div>
             </div>
@@ -97,7 +136,7 @@
             <div class="container">
               <div class="row visibility-none" data-toggle="animation-appear" data-animation-class="animation-fadeInQuick" data-element-offset="-100">
                 <div class="col-sm-6 site-block">
-                  <img src="img/placeholders/screenshots/promo_desktop_left.png" alt="Promo #1" class="img-responsive">
+                  <img src="" alt="Promo #1" class="img-responsive">
                 </div>
                 <div class="col-sm-6 col-md-5 col-md-offset-1 site-block">
                   <h3 class="h2 site-heading site-heading-promo"><strong>Sign up</strong> to our platform</h3>
@@ -139,62 +178,13 @@
                   <p class="promo-content">And that was it! Relax and watch your as your products reach millions of mobile users all over the world!</p>
                 </div>
                 <div class="col-sm-6 col-md-offset-1 site-block">
-                  <img src="img/placeholders/screenshots/promo_mobile.png" alt="Promo #4" class="img-responsive">
+                  <img src="" alt="Promo #4" class="img-responsive">
                 </div>
               </div>
             </div>
           </section>
           <!-- END Step 3 -->
 
-            <!-- Testimonials -->
-            <section class="site-content site-section">
-                <div class="container">
-                    <!-- Testimonials Carousel -->
-                    <div id="testimonials-carousel" class="carousel slide carousel-html" data-ride="carousel" data-interval="4000">
-                        <!-- Indicators -->
-                        <ol class="carousel-indicators">
-                            <li data-target="#testimonials-carousel" data-slide-to="0" class="active"></li>
-                            <li data-target="#testimonials-carousel" data-slide-to="1"></li>
-                            <li data-target="#testimonials-carousel" data-slide-to="2"></li>
-                        </ol>
-                        <!-- END Indicators -->
-
-                        <!-- Wrapper for slides -->
-                        <div class="carousel-inner text-center">
-                            <div class="active item">
-                                <p>
-                                    <img src="frontend/img/placeholders/avatars/avatar12.jpg" alt="Avatar" class="img-circle">
-                                </p>
-                                <blockquote class="no-symbol">
-                                    <p>An awesome team that brought our ideas to life! Highly recommended!</p>
-                                    <footer><strong>Sophie Illich</strong>, example.com</footer>
-                                </blockquote>
-                            </div>
-                            <div class="item">
-                                <p>
-                                    <img src="frontend/img/placeholders/avatars/avatar7.jpg" alt="Avatar" class="img-circle">
-                                </p>
-                                <blockquote class="no-symbol">
-                                    <p>I have never imagined that our final product would look that good!</p>
-                                    <footer><strong>David Cull</strong>, example.com</footer>
-                                </blockquote>
-                            </div>
-                            <div class="item">
-                                <p>
-                                    <img src="frontend/img/placeholders/avatars/avatar9.jpg" alt="Avatar" class="img-circle">
-                                </p>
-                                <blockquote class="no-symbol">
-                                    <p>An extraordinary service that helped us grow way too fast!</p>
-                                    <footer><strong>Nathan Brown</strong>, example.com</footer>
-                                </blockquote>
-                            </div>
-                        </div>
-                        <!-- END Wrapper for slides -->
-                    </div>
-                    <!-- END Testimonials Carousel -->
-                </div>
-            </section>
-            <!-- END Testimonials -->
 
             <!-- Sign Up Action -->
             <section class="site-content site-section site-section-light themed-background-dark-night">
@@ -295,16 +285,47 @@
 
         <a href="#" id="to-top"><i class="fa fa-angle-up"></i></a>
 
+        <script src="http://maps.googleapis.com/maps/api/js?sensor=false&amp;libraries=places"></script>
+
         <!-- build:js frontend/scripts/vendor.js -->
         <script src="frontend/js/vendor/modernizr-respond.min.js"></script>
         <script src="frontend/js/vendor/jquery-1.11.2.min.js"></script>
         <script src="frontend/js/vendor/bootstrap.min.js"></script>
+        <script src="frontend/js/helpers/jquery.geocomplete.min.js"></script>
         <!-- endbuild -->
 
         <!-- build:js({.tmp,app}) frontend/scripts/scripts.js -->
         <script src="frontend/js/plugins.js"></script>
         <script src="frontend/js/app.js"></script>
         <!-- endbuild -->
+
+        <script>
+          $(document).ready(function(){
+            $("#success").hide();
+            $("#city").geocomplete();
+            $("#signup").submit(function() {
+
+              var email = $('#email').val();
+              var location = $('#city').val();
+
+              mixpanel.identify(email);
+              mixpanel.track("Signed Up");
+              mixpanel.people.set({
+                "$email": email,
+                "$created": Date(),
+                "Location": location
+              })
+
+              $("#success").show();
+              $('#email').val('');
+              $('#city').val('');
+
+              return false;
+            });
+          });
+</script>
+
+
 
     </body>
 </html>
