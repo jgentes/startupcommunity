@@ -211,7 +211,7 @@ function handleEnsureAuthenticated(req, res, next) {
   
   if (!req.headers.authorization) {   
     console.log('Session is no longer valid.');
-    return res.status(401).send({ message: 'your session is no longer valid. Please log in again.' });
+    return res.status(401);
   }
   try {
     var token = req.headers.authorization.split(' ')[1];

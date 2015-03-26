@@ -36,6 +36,34 @@ THEME DEFAULT
     background-color: #394263 !important;
 }
 
+.themed-color-default {
+    color: #82bc4b !important;
+}
+
+.themed-border-default {
+    border-color: #82bc4b !important;
+}
+
+.themed-background-default {
+    background-color: #4f5259 !important;
+}
+
+.themed-background-green {
+    background-color: #C2DF99 !important;
+}
+
+.themed-color-dark-default {
+    color: #394263 !important;
+}
+
+.themed-border-dark-default {
+    border-color: #394263 !important;
+}
+
+.themed-background-dark-default {
+    background-color: #394263 !important;
+}
+
 /*
 =================================================================
 THEME NIGHT

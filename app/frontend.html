@@ -15,10 +15,10 @@
         <link rel="shortcut icon" href="/public/favicon.png">
 
         <!-- build:css({.tmp,app}) frontend/css/main.css -->
-        <link rel="stylesheet" href="frontend/css/bootstrap.min.css">
-        <link rel="stylesheet" href="frontend/css/plugins.css">
-        <link rel="stylesheet" href="frontend/css/main.css">
-        <link rel="stylesheet" href="frontend/css/themes.css">
+        <link rel="stylesheet" type="text/css" href="frontend/css/bootstrap.min.css">
+        <link rel="stylesheet" type="text/css" href="frontend/css/plugins.css">
+        <link rel="stylesheet" type="text/css" href="frontend/css/frontend.css">
+        <link rel="stylesheet" type="text/css" href="assets/css/themes.css">
         <!-- endbuild -->
 
         <!-- start Mixpanel --><script type="text/javascript">(function(f,b){if(!b.__SV){var a,e,i,g;window.mixpanel=b;b._i=[];b.init=function(a,e,d){function f(b,h){var a=h.split(".");//noinspection CommaExpressionJS
@@ -63,21 +63,29 @@
             <!-- END Site Header -->
           <section class="site-section site-section-light site-section-top themed-background-default">
             <div class="container">
-              <h1 class="text-center animation-slideDown hidden-xs"><strong>Kickstart your city's entrepreneurial ecosystem</strong></h1>
-              <h2 class="text-center animation-slideUp push hidden-xs">A framework for building and measuring startup communities, from our experience creating <a href="http://www.entrepreneur.com/article/223997" target="_blank">the most entrepreneurial city in America</a>. <span style="font-size:12px">(Entrepreneur Mag)</span></h2>
+              <h1 class="text-center animation-slideDown"><strong>Kickstart your city's entrepreneurial ecosystem</strong></h1>
+              <h2 class="text-center animation-slideDown push">A framework for building and measuring startup communities, from our experience creating <a href="http://www.entrepreneur.com/article/223997" target="_blank">the most entrepreneurial city in America</a>. <span style="font-size:12px">(Entrepreneur Mag)</span></h2>
             </div>
             <div class="container" style="margin-top:-10px;">
 
               <div class="panel" style="max-width: 600px; min-width: 300px; margin:auto;">
                 <div class="panel-body">
-                  <h4 class="text-center" style="margin-bottom: 25px; color: #000; font-size:22px;">Sign up to be notified when we launch!</h4>
-                  <form class="form-horizontal" style="margin-bottom: 0 !important;">
+                  <h4 class="text-center" style="margin-bottom: 25px; color: #000; font-size:22px;">Request an invite for your city today.</h4>
+                  <form class="form-horizontal" id="inviteForm" style="margin-bottom: 0 !important;">
+                    <div class="form-group">
+                      <div class="col-sm-12">
+                        <h4 class="text-center" style="color: #000; font-size: 20px; padding-left: 20px;">I am a:
+                          <label class="switch switch-danger"><input id="founder" type="checkbox"><span></span></label> Founder
+                          <label class="switch switch-info"><input id="advisor" type="checkbox"><span></span></label> Advisor
+                          <label class="switch switch-success"><input id="investor" type="checkbox"><span></span></label> Investor
+                        </h4>
+                      </div>
+                    </div>
                     <div class="form-group">
                       <div class="col-sm-12">
                         <div class="input-group">
                           <span class="input-group-addon"><i class="fa fa-map-marker"></i></span>
-                          <input id="city" type="text" placeholder="Your city" class="form-control input-typeahead" autofocus>
-
+                          <input id="location" type="text" placeholder="City, State" class="form-control input-typeahead" autofocus>
                         </div>
                       </div>
                     </div>
@@ -87,14 +95,12 @@
                           <span class="input-group-addon"><i class="fa fa-envelope-o"></i></span>
                           <input id="email" type="text" class="form-control" placeholder="Email" required>
                           <div class="input-group-btn">
-                            <button id="signup" type="submit" class="btn btn-info" style="border-radius:0;">Sign up</button>
+                            <button id="signup" type="submit" class="btn btn-info" style="border-radius:0;">Request Invite</button>
                           </div>
-
                         </div>
-
                       </div>
                     </div>
-                    <button id="success" type="button" class="btn btn-alt btn-sm btn-success" style="display:block; margin:auto;">Thanks, we'll be in touch soon!</button>
+                    <button id="success" type="button" class="btn btn-alt btn-sm btn-success" style="display:none; margin:auto;">Thanks, we'll be in touch soon!</button>
                   </form>
                 </div>
 
@@ -102,143 +108,107 @@
 
             </div>
 
-
-
           </section>
 
-
-
+          <!-- Promo Image -->
           <section class="site-content site-section">
-            <div class="container" style="margin-top: -20px; text-align:center;">
+            <div class="container" style="margin-top: -40px; margin-bottom: 10px; text-align:center;">
               <h1>Learn More <i class="fa fa-arrow-circle-down"></i></h1>
-              <p>Screenshots, our methodology, and pricing</p>
+              <p>Our product and methodology</p>
             </div>
-            <hr>
+            <div class="container text-center">
+              <div class="site-block">
+                <img src="frontend/img/SCpromo_all_devices.png" alt="StartupCommunity Promo Image" class="img-responsive visibility-none" data-toggle="animation-appear" data-animation-class="animation-fadeIn" data-element-offset="-100">
+              </div>
+              <hr>
+            </div>
           </section>
+          <!-- END Promo Image -->
 
-          <!-- Step 2 -->
-          <section class="site-content site-section site-slide-content">
-            <div class="container">
-              <div class="row visibility-none" data-toggle="animation-appear" data-animation-class="animation-fadeInQuick" data-element-offset="-100">
-                <div class="col-sm-6 col-md-5 site-block">
-                  <h3 class="h2 site-heading site-heading-promo"><strong>Build</strong> your startup community</h3>
-                  <p class="promo-content">Start by identifying public groups and organizing them into industry clusters.</p>
+          <!-- Features -->
+          <section class="site-content site-section">
+            <div class="container text-center">
+              <div class="row row-items">
+                <div class="col-sm-4">
+                  <a href="javascript:void(0)" class="circle visibility-none themed-background-fire" data-toggle="animation-appear" data-animation-class="animation-fadeIn360" data-element-offset="-100">
+                    <i class="fa fa-flag"></i>
+                  </a>
+                  <h4 class="site-heading"><strong>Build</strong> Clusters</h4>
+                  <p class="text-left remove-margin">Identify the leaders in your community and organize them around industry clusters. Each cluster includes startups, advisors, investors, and resources such as coworking space, incubators, and networking events.</p>
                 </div>
-                <div class="col-sm-6 col-md-offset-1 site-block">
-                  <img src="" alt="Promo #2" class="img-responsive">
+                <div class="col-sm-4">
+                  <a href="javascript:void(0)" class="circle visibility-none themed-background-modern" data-toggle="animation-appear" data-animation-class="animation-fadeIn360" data-element-offset="-100">
+                    <i class="fa fa-graduation-cap"></i>
+                  </a>
+                  <h4 class="site-heading"><strong>Connect</strong> People</h4>
+                  <p class="text-left remove-margin">Startup founders can search for advisors and investors based on skills pulled from Linkedin profiles. Create invite-only networks for alumni of accelerators, universities, and trade organizations.</p>
+                </div>
+                <div class="col-sm-4">
+                  <a href="javascript:void(0)" class="circle visibility-none themed-background-spring" data-toggle="animation-appear" data-animation-class="animation-fadeIn360" data-element-offset="-100">
+                    <i class="fa fa-leaf"></i>
+                  </a>
+                  <h4 class="site-heading"><strong>Measure</strong> Impact</h4>
+                  <p class="text-left remove-margin">Track your economic growth by numbers of startups, jobs, capital investment, and other metrics. View statistics at the city, county, or state level, or within a specific cluster or private network.</p>
                 </div>
               </div>
+
+              <hr>
             </div>
           </section>
-          <!-- END Step 2 -->
+          <!-- END Features -->
 
-          <!-- Step 1 -->
-          <section class="site-content site-section site-slide-content">
+          <!-- Sign Up Action -->
+          <section class="site-content site-section site-section-light themed-background-dark-night">
             <div class="container">
-              <div class="row visibility-none" data-toggle="animation-appear" data-animation-class="animation-fadeInQuick" data-element-offset="-100">
-                <div class="col-sm-6 site-block">
-                  <img src="" alt="Promo #1" class="img-responsive">
-                </div>
-                <div class="col-sm-6 col-md-5 col-md-offset-1 site-block">
-                  <h3 class="h2 site-heading site-heading-promo"><strong>Sign up</strong> to our platform</h3>
-                  <p class="promo-content">The first step is to sign up to our platform using our easy and quick to use registration form. You can get in your dashboard in under a minute!</p>
-                </div>
-              </div>
-            </div>
-          </section>
-          <!-- END Step 1 -->
-
-          <!-- Step 2 Header -->
-          <section class="site-content site-section site-section-light themed-background">
-            <div class="container">
-              <div class="site-block visibility-none" data-toggle="animation-appear" data-animation-class="animation-fadeInQuick" data-element-offset="-100">
-                <h1 class="site-heading"><i class="fa fa-arrow-right"></i> <strong> Step Two</strong></h1>
-              </div>
-            </div>
-          </section>
-          <!-- END Step 2 Header -->
-
-
-
-          <!-- Step 3 Header -->
-          <section class="site-content site-section site-section-light themed-background">
-            <div class="container">
-              <div class="site-block visibility-none" data-toggle="animation-appear" data-animation-class="animation-fadeInQuick" data-element-offset="-100">
-                <h1 class="site-heading"><i class="fa fa-arrow-right"></i> <strong> Step Three</strong></h1>
-              </div>
-            </div>
-          </section>
-          <!-- END Step 3 Header -->
-
-          <!-- Step 3 -->
-          <section class="site-content site-section site-slide-content">
-            <div class="container">
-              <div class="row visibility-none" data-toggle="animation-appear" data-animation-class="animation-fadeInQuick" data-element-offset="-100">
-                <div class="col-sm-6 col-md-5 site-block">
-                  <h3 class="h2 site-heading site-heading-promo"><strong>Sit back</strong> and relax!</h3>
-                  <p class="promo-content">And that was it! Relax and watch your as your products reach millions of mobile users all over the world!</p>
-                </div>
-                <div class="col-sm-6 col-md-offset-1 site-block">
-                  <img src="" alt="Promo #4" class="img-responsive">
-                </div>
-              </div>
-            </div>
-          </section>
-          <!-- END Step 3 -->
-
-
-            <!-- Sign Up Action -->
-            <section class="site-content site-section site-section-light themed-background-dark-night">
-                <div class="container">
-                    <h3 class="site-heading text-center"><strong>Sign Up Today</strong> and receive <strong>30% discount</strong>!</h3>
-                    <div class="site-block text-center">
-                        <form action="views/login.html" method="post" class="form-horizontal" onsubmit="return false;">
-                            <div class="form-group">
-                                <div class="col-md-6 col-md-offset-3">
-                                    <label class="sr-only" for="register-email">Your Email</label>
-                                    <div class="input-group input-group-lg">
-                                        <input type="email" id="register-email" name="register-email" class="form-control" placeholder="Your Email..">
-                                        <div class="input-group-btn">
-                                            <button type="submit" class="btn btn-primary"><i class="fa fa-plus"></i> Sign Up</button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </form>
+              <h3 class="site-heading text-center"><strong>Sign Up Today</strong> and receive <strong>30% discount</strong>!</h3>
+              <div class="site-block text-center">
+                <form action="features.html" method="post" class="form-horizontal" onsubmit="return false;">
+                  <div class="form-group">
+                    <div class="col-md-6 col-md-offset-3">
+                      <label class="sr-only" for="register-email">Your Email</label>
+                      <div class="input-group input-group-lg">
+                        <input type="email" id="register-email" name="register-email" class="form-control" placeholder="Your Email..">
+                        <div class="input-group-btn">
+                          <button type="submit" class="btn btn-primary"><i class="fa fa-plus"></i> Sign Up</button>
+                        </div>
+                      </div>
                     </div>
-                </div>
-            </section>
-            <!-- END Sign Up Action -->
+                  </div>
+                </form>
+              </div>
+            </div>
+          </section>
+          <!-- END Sign Up Action -->
 
-            <!-- Quick Stats -->
-            <section class="site-content site-section themed-background">
-                <div class="container">
-                    <!-- Stats Row -->
-                    <!-- CountTo (initialized in frontend/js/app.js), for more examples you can check out https://github.com/mhuggins/jquery-countTo -->
-                    <div class="row" id="counters">
-                        <div class="col-sm-4">
-                            <div class="counter site-block">
-                                <span data-toggle="countTo" data-to="6800" data-after="+"></span>
-                                <small>Projects</small>
-                            </div>
-                        </div>
-                        <div class="col-sm-4">
-                            <div class="counter site-block">
-                                <span data-toggle="countTo" data-to="5500" data-after="+"></span>
-                                <small>Happy Customers</small>
-                            </div>
-                        </div>
-                        <div class="col-sm-4">
-                            <div class="counter site-block">
-                                <span data-toggle="countTo" data-to="100" data-after="+"></span>
-                                <small>New Accounts Today</small>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- END Stats Row -->
+          <!-- Quick Stats -->
+          <section class="site-content site-section themed-background">
+            <div class="container">
+              <!-- Stats Row -->
+              <!-- CountTo (initialized in js/app.js), for more examples you can check out https://github.com/mhuggins/jquery-countTo -->
+              <div class="row" id="counters">
+                <div class="col-sm-4">
+                  <div class="counter site-block">
+                    <span data-toggle="countTo" data-to="6800" data-after="+"></span>
+                    <small>Projects</small>
+                  </div>
                 </div>
-            </section>
-            <!-- END Quick Stats -->
+                <div class="col-sm-4">
+                  <div class="counter site-block">
+                    <span data-toggle="countTo" data-to="5500" data-after="+"></span>
+                    <small>Happy Customers</small>
+                  </div>
+                </div>
+                <div class="col-sm-4">
+                  <div class="counter site-block">
+                    <span data-toggle="countTo" data-to="100" data-after="+"></span>
+                    <small>New Accounts Today</small>
+                  </div>
+                </div>
+              </div>
+              <!-- END Stats Row -->
+            </div>
+          </section>
+          <!-- END Quick Stats -->
 
             <!-- Footer -->
             <footer class="site-footer site-section">
@@ -271,9 +241,9 @@
                             </ul>
                         </div>
                         <div class="col-sm-6 col-md-3">
-                            <h4 class="footer-heading"><span id="year-copy">2015</span> &copy; StartupCommunity.org</h4>
+                            <h5 class="footer-heading">2015 &copy; StartupCommunity.org</h5>
                             <ul class="footer-nav list-inline">
-                                <li>Crafted with <i class="fa fa-heart text-danger"></i> from Bend, Oregon</li>
+                                <li>Made with <i class="fa fa-heart text-danger"></i> in beautiful Bend, OR</li>
                             </ul>
                         </div>
                     </div>
@@ -302,26 +272,31 @@
 
         <script>
           $(document).ready(function(){
-            $("#success").hide();
-            $("#city").geocomplete();
-            $("#signup").submit(function() {
+            $("#location").geocomplete();
+
+            $("#inviteForm").submit(function(e) {
+              e.preventDefault();
 
               var email = $('#email').val();
-              var location = $('#city').val();
+              var location = $('#location').val();
+              var investor = $('#investor').val();
+              var founder = $('#founder').val();
+              var advisor = $('#advisor').val();
 
               mixpanel.identify(email);
               mixpanel.track("Signed Up");
               mixpanel.people.set({
                 "$email": email,
                 "$created": Date(),
-                "Location": location
-              })
+                "Location": location,
+                "Founder": founder,
+                "Advisor": advisor,
+                "Investor": investor
+              });
 
-              $("#success").show();
+              $("#success").toggle();
               $('#email').val('');
-              $('#city').val('');
-
-              return false;
+              $('#location').val('');
             });
           });
 </script>
