@@ -16,7 +16,7 @@ var App = function() {
 
         // Add the correct copyright year at the footer
         var yearCopy = $('#year-copy'), d = new Date();
-        if (d.getFullYear() === 2014) { yearCopy.html('2014'); } else { yearCopy.html('2014-' + d.getFullYear().toString().substr(2,2)); }
+        yearCopy.html(d.getFullYear());
 
         // Initialize tabs
         $('[data-toggle="tabs"] a, .enable-tabs a').click(function(e){ e.preventDefault(); $(this).tab('show'); });
@@ -117,7 +117,7 @@ var App = function() {
     /* Scroll to top functionality */
     var scrollToTop = function() {
         // Get link
-        var link = $('#to-top');
+        var link = $('.to-top');
         var windowW = window.innerWidth
                         || document.documentElement.clientWidth
                         || document.body.clientWidth;

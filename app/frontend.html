@@ -70,7 +70,7 @@
 
               <div class="panel" style="max-width: 600px; min-width: 300px; margin:auto;">
                 <div class="panel-body">
-                  <h4 class="text-center" style="margin-bottom: 25px; color: #000; font-size:22px;">Request an invite for your city today.</h4>
+                  <h4 class="text-center" style="margin-bottom: 25px; color: #000; font-size:22px;">Request an invite for your city.</h4>
                   <form class="form-horizontal" id="inviteForm" style="margin-bottom: 0 !important;">
                     <div class="form-group">
                       <div class="col-sm-12">
@@ -151,8 +151,6 @@
                   <p class="text-left remove-margin">Track your economic growth by numbers of startups, jobs, capital investment, and other metrics. View statistics at the city, county, or state level, or within a specific cluster or private network.</p>
                 </div>
               </div>
-
-              <hr>
             </div>
           </section>
           <!-- END Features -->
@@ -160,55 +158,15 @@
           <!-- Sign Up Action -->
           <section class="site-content site-section site-section-light themed-background-dark-night">
             <div class="container">
-              <h3 class="site-heading text-center"><strong>Sign Up Today</strong> and receive <strong>30% discount</strong>!</h3>
+              <h3 class="site-heading text-center">Are you a <strong>founder</strong>, <strong>advisor</strong>, or <strong>investor</strong>?</h3>
               <div class="site-block text-center">
-                <form action="features.html" method="post" class="form-horizontal" onsubmit="return false;">
-                  <div class="form-group">
-                    <div class="col-md-6 col-md-offset-3">
-                      <label class="sr-only" for="register-email">Your Email</label>
-                      <div class="input-group input-group-lg">
-                        <input type="email" id="register-email" name="register-email" class="form-control" placeholder="Your Email..">
-                        <div class="input-group-btn">
-                          <button type="submit" class="btn btn-primary"><i class="fa fa-plus"></i> Sign Up</button>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </form>
+                <button type="submit" class="to-top btn btn-primary" style="font-size:24px; padding:15px;">Request an invite</button>
               </div>
             </div>
           </section>
           <!-- END Sign Up Action -->
 
-          <!-- Quick Stats -->
-          <section class="site-content site-section themed-background">
-            <div class="container">
-              <!-- Stats Row -->
-              <!-- CountTo (initialized in js/app.js), for more examples you can check out https://github.com/mhuggins/jquery-countTo -->
-              <div class="row" id="counters">
-                <div class="col-sm-4">
-                  <div class="counter site-block">
-                    <span data-toggle="countTo" data-to="6800" data-after="+"></span>
-                    <small>Projects</small>
-                  </div>
-                </div>
-                <div class="col-sm-4">
-                  <div class="counter site-block">
-                    <span data-toggle="countTo" data-to="5500" data-after="+"></span>
-                    <small>Happy Customers</small>
-                  </div>
-                </div>
-                <div class="col-sm-4">
-                  <div class="counter site-block">
-                    <span data-toggle="countTo" data-to="100" data-after="+"></span>
-                    <small>New Accounts Today</small>
-                  </div>
-                </div>
-              </div>
-              <!-- END Stats Row -->
-            </div>
-          </section>
-          <!-- END Quick Stats -->
+
 
             <!-- Footer -->
             <footer class="site-footer site-section">
@@ -218,30 +176,24 @@
                         <div class="col-sm-6 col-md-3">
                             <h4 class="footer-heading">About Us</h4>
                             <ul class="footer-nav list-inline">
-                                <li><a href="frontend/about.html">Company</a></li>
-                                <li><a href="frontend/contact.html">Contact</a></li>
-                                <li><a href="frontend/contact.html">Support</a></li>
+                              <li><a href="https://startupcommunity.readme.io/">API Docs</a></li>
+                              <li><a href="mailto:james@startupcommunity.org">Contact</a></li>
                             </ul>
                         </div>
                         <div class="col-sm-6 col-md-3">
                             <h4 class="footer-heading">Legal</h4>
                             <ul class="footer-nav list-inline">
-                                <li><a href="javascript:void(0)">Licensing</a></li>
-                                <li><a href="javascript:void(0)">Privacy Policy</a></li>
+                                <li><a href="//www.iubenda.com/privacy-policy/904271" class="iubenda-white iub-legal-only iubenda-embed" title="Privacy Policy">Privacy Policy</a><script type="text/javascript">(function (w,d) {var loader = function () {var s = d.createElement("script"), tag = d.getElementsByTagName("script")[0]; s.src = "//cdn.iubenda.com/iubenda.js"; tag.parentNode.insertBefore(s,tag);}; if(w.addEventListener){w.addEventListener("load", loader, false);}else if(w.attachEvent){w.attachEvent("onload", loader);}else{w.onload = loader;}})(window, document);</script></li>
                             </ul>
                         </div>
                         <div class="col-sm-6 col-md-3">
-                            <h4 class="footer-heading">Follow Us</h4>
-                            <ul class="footer-nav footer-nav-social list-inline">
-                                <li><a href="javascript:void(0)"><i class="fa fa-facebook"></i></a></li>
-                                <li><a href="javascript:void(0)"><i class="fa fa-twitter"></i></a></li>
-                                <li><a href="javascript:void(0)"><i class="fa fa-google-plus"></i></a></li>
-                                <li><a href="javascript:void(0)"><i class="fa fa-dribbble"></i></a></li>
-                                <li><a href="javascript:void(0)"><i class="fa fa-rss"></i></a></li>
+                            <h4 class="footer-heading">Our Blog</h4>
+                            <ul class="footer-nav list-inline">
+                                <li><a href="/journey">Startup Community Journey</a></li>
                             </ul>
                         </div>
                         <div class="col-sm-6 col-md-3">
-                            <h5 class="footer-heading">2015 &copy; StartupCommunity.org</h5>
+                            <h5 class="footer-heading"><span id="year-copy"></span> &copy; StartupCommunity.org</h5>
                             <ul class="footer-nav list-inline">
                                 <li>Made with <i class="fa fa-heart text-danger"></i> in beautiful Bend, OR</li>
                             </ul>
@@ -254,7 +206,7 @@
         </div>
         <!-- END Page Container -->
 
-        <a href="#" id="to-top"><i class="fa fa-angle-up"></i></a>
+        <a href="#" id="to-top" class="to-top"><i class="fa fa-angle-up"></i></a>
 
         <script src="http://maps.googleapis.com/maps/api/js?sensor=false&amp;libraries=places"></script>
 
