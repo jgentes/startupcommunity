@@ -544,7 +544,7 @@ angular
           $scope.global.user = response.data.user;
           $scope.global.alert = undefined;
           $scope.global.sessionReady();
-          $location.path('/');
+          $location.path('/app');
           console.log('Logged in!');
           $mixpanel.identify($scope.global.user.path.key);
           $mixpanel.track('Logged in');
@@ -566,7 +566,7 @@ angular
           console.log('Logged in!');
           $mixpanel.identify($scope.global.user.path.key);
           $mixpanel.track('Logged in');
-          $location.path('/');
+          $location.path('/app');
           $route.reload();          
         })
         .catch(function(response) {

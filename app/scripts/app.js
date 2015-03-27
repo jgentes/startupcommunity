@@ -21,26 +21,21 @@ var app = angular.module('StartupCommunity', [
     'satellizer'
   ]);
 
-app  
+app
   .config(function($authProvider) {
-   
+
     $authProvider.linkedin({
       clientId: "75bqixdv58z1az",
-      url: '/auth/linkedin'
+      url: '/auth/linkedin',
+      redirectUri: 'http://localhost:5000/app'
     });
 
   })
   
   .config(['$provide', '$routeProvider', '$locationProvider', '$logProvider', function ($provide, $routeProvider, $locationProvider, $logProvider) {
     $routeProvider
-      .when('/', {
+      .when('/app', {
         redirectTo: '/people'
-      })
-      .when('/home', {
-        redirectTo: '/people'
-      })
-      .when('/launchform', {
-        templateUrl: 'views/login.html'
       })
       .when('/people', {
         templateUrl: 'views/people.html',
@@ -57,7 +52,7 @@ app
         resolve: {
           authenticated: ['$location', '$auth', function($location, $auth) {
             if (!$auth.isAuthenticated()) {
-              return $location.path('/launchform');
+              return $location.path('/login');
             }
           }]
         }
@@ -67,7 +62,7 @@ app
         resolve: {
           authenticated: ['$location', '$auth', function($location, $auth) {
             if (!$auth.isAuthenticated()) {
-              return $location.path('/launchform');
+              return $location.path('/login');
             }
           }]
         }
@@ -77,13 +72,10 @@ app
         resolve: {
           authenticated: ['$location', '$auth', function($location, $auth) {
             if (!$auth.isAuthenticated()) {
-              return $location.path('/launchform');
+              return $location.path('/login');
             }
           }]
         }
-      })
-      .when('/alpha', {
-        templateUrl: 'views/home.html'
       })
       .when('/login', {
         templateUrl: 'views/login.html'

@@ -498,7 +498,7 @@ var linkedinPull = function (linkedinuser, pullcallback) {
 function handleLinkedin(req, res) {
   var accessTokenUrl = 'https://www.linkedin.com/uas/oauth2/accessToken';
   var peopleApiUrl = 'https://api.linkedin.com/v1/people/~:(id,first-name,last-name,email-address,phone-numbers,skills,picture-url;secure=true,headline,summary,public-profile-url)';    
-  
+
   var params = {
     client_id: config.linkedin.clientID,
     redirect_uri: req.body.redirectUri,
