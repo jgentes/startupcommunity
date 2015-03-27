@@ -55,14 +55,22 @@ if (process.env.NODE_ENV === "test") { // prompt for credentials if on public de
     }
   };
 
+  app.get('/', auth, function (req, res, next) {
+    res.sendFile("frontend.html", {root: __dirname + config.path});
+  });
+
   app.get('/*', auth, function(req, res, next){
-    res.sendFile("frontend.html", { root: __dirname + config.path });
+    res.sendFile("app.html", { root: __dirname + config.path });
   });
 
 } else {
 
-  app.get('/*', function (req, res, next) {
+  app.get('/', function (req, res, next) {
     res.sendFile("frontend.html", {root: __dirname + config.path});
+  });
+
+  app.get('/*', function (req, res, next) {
+    res.sendFile("app.html", {root: __dirname + config.path});
   });
 
 }
@@ -73,6 +81,7 @@ var routes = {
 };
 
 api.setup(app,routes);
+
 
 var port = process.env.PORT || 5000;
 app.listen(port);

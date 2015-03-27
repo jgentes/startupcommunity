@@ -16,7 +16,7 @@ function setup(app,routes) {
     app.post('/auth/signup', routes.userApi.signup);
     app.post('/auth/login', routes.userApi.login);
     
-    // Launchform
+    // Launchform //TODO: DELETE if not used
     app.post('/sub', routes.userApi.subscribeUser);
     
     // Maintenance

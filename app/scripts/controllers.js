@@ -203,18 +203,18 @@ angular
                 $scope.global.city = response;
                 broadcast();
               } else {
-                $scope.global.logout({ type: 'danger', msg: 'Sorry, ' + String(response.message) });
+                $scope.global.logout({ type: 'danger', msg: String(response.message) });
               }
             })
             .error(function(response) {
-              $scope.global.alert ({ type: 'danger', msg: 'Sorry, ' + String(response.message) });
+              $scope.global.alert ({ type: 'danger', msg: String(response.message) });
             });
           } else {
-            $scope.global.logout({ type: 'danger', msg: 'Sorry, ' + String(response.message) });
+            $scope.global.logout({ type: 'danger', msg: String(response.message) });
           }
         })
         .error(function(response) {
-            $scope.global.logout({ type: 'danger', msg: 'Sorry, ' + String(response.message) });
+            $scope.global.logout({ type: 'danger', msg: String(response.message) });
         });
       } else broadcast();
     };    
@@ -536,6 +536,8 @@ angular
     $scope.isAuthenticated = function() {
       return $auth.isAuthenticated();
     };
+    if ($scope.global.alert.msg == 'undefined' || !$scope.global.alert.msg) { $scope.global.alert = undefined };
+
     $scope.login = function() {
       $auth.login({ email: $scope.email, password: $scope.password })
         .then(function(response) {
@@ -548,7 +550,9 @@ angular
           $mixpanel.track('Logged in');
         })
         .catch(function(response) {
-          $scope.global.alert = { type: 'danger', msg: String(response.data.message) };
+          if (response.data.message) {
+            $scope.global.alert = {type: 'danger', msg: String(response.data.message)};
+          };
           console.warn("WARNING:");
               console.log(response);
         });
@@ -577,8 +581,9 @@ angular
               email: response.data.profile.emailAddress
             }]);
           }
-
-          $scope.global.alert = { type: 'danger', msg: String(response.data.message) };
+          if (response.data.message) {
+            $scope.global.alert = {type: 'danger', msg: String(response.data.message)};
+          };
           console.warn("WARNING:");
               console.log(response);
         });

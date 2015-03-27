@@ -102,7 +102,7 @@ angular
       }
     };
   })
-  
+  //TODO: Remove geocoder
   .service('geocoder',function() {
     this.geocode = function(georequest, outerCallback) {
       var geocoder = new google.maps.Geocoder();

@@ -44,7 +44,7 @@
                         <!-- Menu Toggle -->
                         <!-- Toggles menu on small screens -->
                         <a href="javascript:void(0)" class="btn btn-default site-menu-toggle visible-xs visible-sm">
-                            <i class="fa fa-bars"></i>
+                            <i class="icon-bars"></i>
                         </a>
                         <!-- END Menu Toggle -->
 
@@ -52,7 +52,7 @@
                         <ul class="site-nav">
                             <li>
                                 Have an account?&nbsp;
-                                <form action="views/login.html" style="display:inline-block;"><button class="btn btn-success">Sign in</button></form>
+                                <button id="signIn" class="btn btn-success" style="display:inline-block;">Sign in</button>
                             </li>
                         </ul>
                         <!-- END Main Menu -->
@@ -61,7 +61,7 @@
                 </div>
             </header>
             <!-- END Site Header -->
-          <section class="site-section site-section-light site-section-top themed-background-default">
+          <section class="site-section site-section-light site-section-top parallax-image themed-background-default" style="background-image: url('frontend/img/frontend_office.jpg')">
             <div class="container">
               <h1 class="text-center animation-slideDown"><strong>Kickstart your city's entrepreneurial ecosystem</strong></h1>
               <h2 class="text-center animation-slideDown push">A framework for building and measuring startup communities, from our experience creating <a href="http://www.entrepreneur.com/article/223997" target="_blank">the most entrepreneurial city in America</a>. <span style="font-size:12px">(Entrepreneur Mag)</span></h2>
@@ -84,7 +84,7 @@
                     <div class="form-group">
                       <div class="col-sm-12">
                         <div class="input-group">
-                          <span class="input-group-addon"><i class="fa fa-map-marker"></i></span>
+                          <span class="input-group-addon"><i class="icon-location"></i></span>
                           <input id="location" type="text" placeholder="City, State" class="form-control input-typeahead" autofocus>
                         </div>
                       </div>
@@ -92,7 +92,7 @@
                     <div class="form-group">
                       <div class="col-sm-12">
                         <div class="input-group">
-                          <span class="input-group-addon"><i class="fa fa-envelope-o"></i></span>
+                          <span class="input-group-addon"><i class="icon-mail"></i></span>
                           <input id="email" type="text" class="form-control" placeholder="Email" required>
                           <div class="input-group-btn">
                             <button id="signup" type="submit" class="btn btn-info" style="border-radius:0;">Request Invite</button>
@@ -100,8 +100,8 @@
                         </div>
                       </div>
                     </div>
-                    <button id="success" type="button" class="btn btn-alt btn-sm btn-success" style="display:none; margin:auto;">Thanks, we'll be in touch soon!</button>
                   </form>
+                  <h4 id="success" class="text-center themed-color-spring" style="display:none;">Thanks, you're on the list!</h4>
                 </div>
 
               </div>
@@ -113,7 +113,7 @@
           <!-- Promo Image -->
           <section class="site-content site-section">
             <div class="container" style="margin-top: -40px; margin-bottom: 10px; text-align:center;">
-              <h1>Learn More <i class="fa fa-arrow-circle-down"></i></h1>
+              <h1>Learn More <i class="icon-down-circled2"></i></h1>
               <p>Our product and methodology</p>
             </div>
             <div class="container text-center">
@@ -131,21 +131,21 @@
               <div class="row row-items">
                 <div class="col-sm-4">
                   <a href="javascript:void(0)" class="circle visibility-none themed-background-fire" data-toggle="animation-appear" data-animation-class="animation-fadeIn360" data-element-offset="-100">
-                    <i class="fa fa-flag"></i>
+                    <i class="icon-flag"></i>
                   </a>
                   <h4 class="site-heading"><strong>Build</strong> Clusters</h4>
                   <p class="text-left remove-margin">Identify the leaders in your community and organize them around industry clusters. Each cluster includes startups, advisors, investors, and resources such as coworking space, incubators, and networking events.</p>
                 </div>
                 <div class="col-sm-4">
                   <a href="javascript:void(0)" class="circle visibility-none themed-background-modern" data-toggle="animation-appear" data-animation-class="animation-fadeIn360" data-element-offset="-100">
-                    <i class="fa fa-graduation-cap"></i>
+                    <i class="icon-graduation-cap"></i>
                   </a>
                   <h4 class="site-heading"><strong>Connect</strong> People</h4>
                   <p class="text-left remove-margin">Startup founders can search for advisors and investors based on skills pulled from Linkedin profiles. Create invite-only networks for alumni of accelerators, universities, and trade organizations.</p>
                 </div>
                 <div class="col-sm-4">
                   <a href="javascript:void(0)" class="circle visibility-none themed-background-spring" data-toggle="animation-appear" data-animation-class="animation-fadeIn360" data-element-offset="-100">
-                    <i class="fa fa-leaf"></i>
+                    <i class="icon-leaf"></i>
                   </a>
                   <h4 class="site-heading"><strong>Measure</strong> Impact</h4>
                   <p class="text-left remove-margin">Track your economic growth by numbers of startups, jobs, capital investment, and other metrics. View statistics at the city, county, or state level, or within a specific cluster or private network.</p>
@@ -187,15 +187,15 @@
                             </ul>
                         </div>
                         <div class="col-sm-6 col-md-3">
-                            <h4 class="footer-heading">Our Blog</h4>
+                            <h4 class="footer-heading">Our Journey</h4>
                             <ul class="footer-nav list-inline">
-                                <li><a href="/journey">Startup Community Journey</a></li>
+                                <li><a href="/journey">Startup Community Lessons</a></li>
                             </ul>
                         </div>
                         <div class="col-sm-6 col-md-3">
                             <h5 class="footer-heading"><span id="year-copy"></span> &copy; StartupCommunity.org</h5>
                             <ul class="footer-nav list-inline">
-                                <li>Made with <i class="fa fa-heart text-danger"></i> in beautiful Bend, OR</li>
+                                <li>Made with <i class="icon-heart text-danger"></i> in beautiful Bend, OR</li>
                             </ul>
                         </div>
                     </div>
@@ -206,9 +206,7 @@
         </div>
         <!-- END Page Container -->
 
-        <a href="#" id="to-top" class="to-top"><i class="fa fa-angle-up"></i></a>
-
-        <script src="http://maps.googleapis.com/maps/api/js?sensor=false&amp;libraries=places"></script>
+        <a href="#" id="to-top" class="to-top"><i class="icon-angle-circled-up"></i></a>
 
         <!-- build:js frontend/scripts/vendor.js -->
         <script src="frontend/js/vendor/modernizr-respond.min.js"></script>
@@ -219,7 +217,7 @@
 
         <!-- build:js({.tmp,app}) frontend/scripts/scripts.js -->
         <script src="frontend/js/plugins.js"></script>
-        <script src="frontend/js/app.js"></script>
+        <script src="frontend/js/frontend.js"></script>
         <!-- endbuild -->
 
         <script>
@@ -231,9 +229,9 @@
 
               var email = $('#email').val();
               var location = $('#location').val();
-              var investor = $('#investor').val();
-              var founder = $('#founder').val();
-              var advisor = $('#advisor').val();
+              var investor = $('#investor').is(':checked');
+              var founder = $('#founder').is(':checked');
+              var advisor = $('#advisor').is(':checked');
 
               mixpanel.identify(email);
               mixpanel.track("Signed Up");
@@ -250,8 +248,14 @@
               $('#email').val('');
               $('#location').val('');
             });
+
+            $('#signIn').click(function() {
+              window.location.replace("/home");
+            });
+
           });
-</script>
+
+        </script>
 
 
 

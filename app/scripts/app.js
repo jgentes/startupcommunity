@@ -36,6 +36,9 @@ app
       .when('/', {
         redirectTo: '/people'
       })
+      .when('/home', {
+        redirectTo: '/people'
+      })
       .when('/launchform', {
         templateUrl: 'views/login.html'
       })
