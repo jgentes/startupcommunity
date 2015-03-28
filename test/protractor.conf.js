@@ -1,3 +1,3 @@
 exports.config = {
-  specs: []
+  //specs: []
 };
