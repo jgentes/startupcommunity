@@ -604,8 +604,7 @@ function handleLinkedin(req, res) {
                   console.error("Profile update failed:");
                   console.error(err);
                 });
-              console.log('RESULT');
-              console.log(result);
+
               res.send({ token: handleCreateToken(req, result.body.results[0]), user: result.body.results[0] }); 
             } else {
               db.newSearchBuilder()
