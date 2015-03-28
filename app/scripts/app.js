@@ -25,9 +25,7 @@ app
   .config(function($authProvider) {
 
     $authProvider.linkedin({
-      clientId: "75bqixdv58z1az",
-      url: '/auth/linkedin',
-      redirectUri: 'http://localhost:5000/app'
+      clientId: "75bqixdv58z1az"
     });
 
   })

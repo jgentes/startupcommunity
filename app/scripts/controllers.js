@@ -536,7 +536,9 @@ angular
     $scope.isAuthenticated = function() {
       return $auth.isAuthenticated();
     };
-    if ($scope.global.alert.msg == 'undefined' || !$scope.global.alert.msg) { $scope.global.alert = undefined };
+    if ($scope.global.alert) {
+      if ($scope.global.alert.msg == 'undefined' || !$scope.global.alert.msg) { $scope.global.alert = undefined };
+    }
 
     $scope.login = function() {
       $auth.login({ email: $scope.email, password: $scope.password })

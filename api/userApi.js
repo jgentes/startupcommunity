@@ -208,7 +208,7 @@ function handleUserSearch(req, res){
  |--------------------------------------------------------------------------
  */
 function handleEnsureAuthenticated(req, res, next) {
-  
+
   if (!req.headers.authorization) {   
     console.log('Session is no longer valid.');
     return res.status(401);
@@ -243,7 +243,7 @@ function handleEnsureAuthenticated(req, res, next) {
  | Generate JSON Web Token
  |--------------------------------------------------------------------------
  */
-function handleCreateToken(req, user) {       
+function handleCreateToken(req, user) {
   var payload = {
     iss: req.hostname,
     sub: user.path.key,
@@ -603,7 +603,9 @@ function handleLinkedin(req, res) {
                 .fail(function (err) {
                   console.error("Profile update failed:");
                   console.error(err);
-                }); 
+                });
+              console.log('RESULT');
+              console.log(result);
               res.send({ token: handleCreateToken(req, result.body.results[0]), user: result.body.results[0] }); 
             } else {
               db.newSearchBuilder()

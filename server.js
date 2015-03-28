@@ -24,6 +24,13 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use("/", express.static(__dirname + config.path));
 app.use("/public", express.static(__dirname + '/public'));
 
+var routes = {
+  userApi: new UserApi(),
+  cityApi: new CityApi()
+};
+
+api.setup(app,routes);
+
 if (process.env.NODE_ENV === "production") {
   // production-only things go here
   app.use(enforce.HTTPS(true));
@@ -74,14 +81,6 @@ if (process.env.NODE_ENV === "test") { // prompt for credentials if on public de
   });
 
 }
-
-var routes = {
-	userApi: new UserApi(),
-	cityApi: new CityApi()
-};
-
-api.setup(app,routes);
-
 
 var port = process.env.PORT || 5000;
 app.listen(port);
