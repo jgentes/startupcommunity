@@ -472,7 +472,7 @@ module.exports = function (grunt) {
     'concurrent:test',
     'autoprefixer',
     'connect:test',    
-    'protractor:run'
+    //'protractor:run'
   ]);
 
   grunt.registerTask('build', [
