@@ -51,7 +51,7 @@ header {
     right: 0;
     padding: 25px 0;
     color: #ffffff;
-    background: url('../img/template/ie8_opacity_dark_20.png');
+    background: url('../../../public/img/template/ie8_opacity_dark_20.png');
     background: rgba(0, 0, 0, 0.2);
     z-index: 1000;
     -webkit-transition: all ease-out 0.25s;
@@ -60,7 +60,7 @@ header {
 
 header.header-scroll {
     padding: 10px 0;
-    background: url('../img/template/ie8_opacity_dark_60.png');
+    background: url('../../../public/img/template/ie8_opacity_dark_60.png');
     background: rgba(0, 0, 0, 0.6);
 }
 
@@ -148,7 +148,7 @@ header nav {
 .site-nav a.active:hover,
 .site-nav li.active > a {
     color: #ffffff;
-    background: url('../img/template/ie8_opacity_dark_40.png');
+    background: url('../../../public/img/template/ie8_opacity_dark_40.png');
     background: rgba(0, 0, 0, 0.4);
 }
 
@@ -280,7 +280,7 @@ header nav {
 
 .media-container > .site-section {
     z-index: 200;
-    background: url('../img/template/ie8_opacity_dark_20.png');
+    background: url('../../../public/img/template/ie8_opacity_dark_20.png');
     background: rgba(0, 0, 0, 0.2);
     text-shadow: 0 0 30px #000000;
 }
@@ -369,7 +369,7 @@ header nav {
     bottom: 0;
     padding: 10px 5px;
     color: #ffffff;
-    background: url('../img/template/ie8_opacity_dark_60.png');
+    background: url('../../../public/img/template/ie8_opacity_dark_60.png');
     background: rgba(0, 0, 0, 0.6);
 }
 
@@ -1458,7 +1458,7 @@ fieldset[disabled] .btn-info.active {
 }
 
 .badge {
-    background: url('../img/template/ie8_opacity_dark_30.png') repeat;
+    background: url('../../../public/img/template/ie8_opacity_dark_30.png') repeat;
     background: rgba(0, 0, 0, 0.3);
     padding: 3px 6px;
 }
@@ -1589,7 +1589,7 @@ fieldset[disabled] .btn-info.active {
 
 .carousel-control.left:hover,
 .carousel-control.right:hover {
-    background: url('../img/template/ie8_opacity_dark_20.png') repeat;
+    background: url('../../../public/img/template/ie8_opacity_dark_20.png') repeat;
     background: rgba(0, 0, 0, 0.1);
     filter: none;
 }
@@ -1710,7 +1710,7 @@ fieldset[disabled] .btn-info.active {
 }
 
 .nav-pills > li.active > a > .badge {
-    background: url('../img/template/ie8_opacity_dark_20.png') repeat;
+    background: url('../../../public/img/template/ie8_opacity_dark_20.png') repeat;
     background: rgba(0, 0, 0, 0.2);
     color: #ffffff;
 }
