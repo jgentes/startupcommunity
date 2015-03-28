@@ -20,7 +20,3 @@ deployment:
     branch: master
     heroku:
       appname: startupcommunity
-
-test:
-  post:
-    - protractor test/protractor.conf.js
