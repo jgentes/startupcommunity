@@ -210,8 +210,6 @@
 
         <a href="#" id="to-top" class="to-top"><i class="icon-angle-circled-up"></i></a>
 
-        <script src="https://maps.googleapis.com/maps/api/js?sensor=false&amp;libraries=places"></script>
-
         <!-- build:js frontend/scripts/vendor.js -->
         <script src="frontend/js/vendor/modernizr-respond.min.js"></script>
         <script src="frontend/js/vendor/jquery-1.11.2.min.js"></script>
@@ -226,6 +224,15 @@
 
         <script>
           $(document).ready(function(){
+
+            $('#signIn').click(function() {
+              window.location.replace("/app");
+            });
+
+          });
+
+          var requestInvite = function() {
+            console.log('loaded!');
             $("#location").geocomplete();
 
             $("#inviteForm").submit(function(e) {
@@ -252,12 +259,9 @@
               $('#email').val('');
               $('#location').val('');
             });
+          };
 
-            $('#signIn').click(function() {
-              window.location.replace("/app");
-            });
-
-          });
+          $.getScript("https://maps.googleapis.com/maps/api/js?sensor=false&libraries=places&callback=requestInvite");
 
         </script>
     </body>
