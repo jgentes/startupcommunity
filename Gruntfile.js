@@ -44,7 +44,7 @@ module.exports = function (grunt) {
       },
       styles: {
         files: ['<%= yeoman.app %>/styles/{,*/}*.css'],
-        tasks: ['newer:copy:styles', 'autoprefixer']
+        tasks: ['newer:copy:backstyles', 'newer:copy:frontstyles', 'autoprefixer']
       },
       less: {
         files: ['<%= yeoman.app %>/assets/less/*.less'],
@@ -233,7 +233,13 @@ module.exports = function (grunt) {
           cwd: '<%= yeoman.app %>/assets/img',
           src: '{,*/}*.{png,jpg,jpeg,gif}',
           dest: '<%= yeoman.dist %>/assets/img'
-        }]
+        },
+          {
+            expand: true,
+            cwd: '<%= yeoman.app %>/frontend/img',
+            src: '{,*/}*.{png,jpg,jpeg,gif}',
+            dest: '<%= yeoman.dist %>/frontend/img'
+          }]
       }
     },
 
@@ -321,10 +327,16 @@ module.exports = function (grunt) {
           src: ['generated/*']
         }]
       },
-      styles: {
+      backstyles: {
         expand: true,
         cwd: '<%= yeoman.app %>/assets/css',
         dest: '.tmp/assets/css',
+        src: '{,*/}*.css'
+      },
+      frontstyles: {
+        expand: true,
+        cwd: '<%= yeoman.app %>/frontend/css',
+        dest: '.tmp/frontend/css',
         src: '{,*/}*.css'
       }
     },
@@ -332,13 +344,16 @@ module.exports = function (grunt) {
     // Run some tasks in parallel to speed up the build process
     concurrent: {
       server: [
-        'copy:styles'
+        'copy:backstyles',
+        'copy:frontstyles'
       ],
       test: [
-        'copy:styles'
+        'copy:backstyles',
+        'copy:frontstyles'
       ],
       dist: [
-        'copy:styles',
+        'copy:backstyles',
+        'copy:frontstyles',
         'copy:dist',
         'imagemin',
         'svgmin'
