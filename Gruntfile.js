@@ -151,7 +151,13 @@ module.exports = function (grunt) {
           cwd: '.tmp/assets/css/',
           src: '{,*/}*.css',
           dest: '.tmp/assets/css/'
-        }]
+        }, {
+          expand: true,
+          cwd: '.tmp/frontend/css/',
+          src: '{,*/}*.css',
+          dest: '.tmp/frontend/css/'
+        }
+        ]
       }
     },
 
@@ -181,6 +187,7 @@ module.exports = function (grunt) {
           src: [
             '<%= yeoman.dist %>/scripts/{,*/}*.js',
             '<%= yeoman.dist %>/assets/css/{,*/}*.css',
+            '<%= yeoman.dist %>/frontend/css/{,*/}*.css',
             '<%= yeoman.dist %>/images/{,*/}*.{png,jpg,jpeg,gif,webp,svg}',
             '<%= yeoman.dist %>/styles/fonts/*'
           ]
@@ -210,7 +217,7 @@ module.exports = function (grunt) {
     // Performs rewrites based on rev and the useminPrepare configuration
     usemin: {
       html: ['<%= yeoman.dist %>/{,*/}*.html'],
-      css: ['<%= yeoman.dist %>/assets/css/{,*/}*.css'],
+      css: ['<%= yeoman.dist %>/assets/css/{,*/}*.css','<%= yeoman.dist %>/frontend/css/{,*/}*.css'],
       options: {
         assetsDirs: ['<%= yeoman.dist %>']
       }
