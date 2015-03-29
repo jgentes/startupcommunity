@@ -302,6 +302,7 @@ module.exports = function (grunt) {
             'images/{,*/}*.{webp}',
             'fonts/*',
             'assets/**',
+            'frontend/**',
             '../bower_components/jquery.inputmask/dist/jquery.inputmask.bundle.js'
             //'../bower_components/jquery-validation/dist/jquery.validate.js',
             //'../bower_components/stepy/lib/jquery.stepy.js'
