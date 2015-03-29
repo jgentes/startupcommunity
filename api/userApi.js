@@ -219,7 +219,7 @@ function handleEnsureAuthenticated(req, res, next) {
 
     if (payload.exp <= Date.now()) {
       console.log('Token has expired');
-      return res.status(401).send({ message: 'your session has expired. Please log in again.' });
+      return res.status(401).send({ message: 'Your session has expired. Please log in again.' });
     }
 
     if (req.user === undefined) {
@@ -234,7 +234,7 @@ function handleEnsureAuthenticated(req, res, next) {
   catch (e) {
     console.log('EnsureAuth failure: ');
     console.log(e);
-    return res.status(401).send({ message: 'please logout or clear your local browser storage and try again.' });
+    return res.status(401).send({ message: 'Please logout or clear your local browser storage and try again.' });
   }
 }
 
