@@ -1,0 +1,68 @@
+{{!< default}}
+
+{{! The comment above "< default" means - insert everything in this file into
+    the {body} of the default.hbs template, which contains our header/footer. }}
+
+<main class="content" role="main">
+	<!-- start: .home -->
+	<div class="home">
+	
+		<!-- start: .content -->
+		<div class="content center">
+			<!-- start: .timeline -->
+			<div class="timeline">
+				<div class="spine"></div>
+				
+				{{#foreach posts columns=2}}
+				
+					<article class="ep-one-half animated opacity50 {{post_class}} {{#if @rowEnd}}ep-last{{/if}}" data-animation="fadeIn" data-appear-top-offset="-200">
+						<span class="arrow"></span>
+						<header>
+							<a href="{{url}}" class="thumb">
+								{{#if image}}
+									<i class="fa fa-link"></i>
+									<img src="{{image}}">
+								{{else}}
+									{{content words="0"}}
+								{{/if}}
+							</a>
+							<time datetime="{{date format="YYYY-MM-DD"}}">
+								{{date format='MMM'}}
+								<span class="month">{{date format='DD'}}</span>
+							</time>
+							<h2 class="post-title"><a href="{{url}}">{{{title}}}</a></h2>
+						</header>
+						
+						<section class="post-excerpt">
+							<p>{{excerpt}}&hellip;</p>
+							<div class="clear10"></div>
+						</section>
+						
+						{{#if tags}}
+							<div class="clear20"></div>
+							<footer class="post-footer">
+								<p class="tags">
+									<i class="fa fa-tag"></i>
+									<span>{{tags}}</span>
+								</p>
+							</footer>
+						{{/if}}
+						
+						<div class="clear"></div>
+						
+					</article>
+					
+					{{#if @rowEnd}}<div class="clear"></div>{{/if}}
+					
+				{{/foreach}}
+				<div class="clear40"></div>
+			</div>
+			<!-- end: .timeline -->
+			{{pagination}}
+			
+		</div>
+		<!-- end: .content -->
+		
+	</div>
+	<!-- end: .home -->
+</main>

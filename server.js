@@ -1,5 +1,7 @@
 var express = require('express'),
     enforce = require('express-sslify'),
+    httpProxy = require('http-proxy'),
+    blogProxy = httpProxy.createProxyServer(),
     config = require('./config.json')[process.env.NODE_ENV || 'development'],
     api = require('./api/routes'),
     bodyParser = require('body-parser'),
@@ -7,7 +9,9 @@ var express = require('express'),
     logger = require('morgan'),
     nodalytics = require('nodalytics'),
     UserApi = require('./api/userApi.js'),
-    CityApi = require('./api/cityApi.js');
+    CityApi = require('./api/cityApi.js'),
+    ghost = require('ghost'),
+    parentApp = express();
 
 var app = express();
 
@@ -19,6 +23,11 @@ console.format = function(c) { return "[" + c.filename + ":" + c.getLineNumber()
 app.disable('x-powered-by');
 app.use(logger('dev'));
 app.use(methodOverride());
+
+app.all("/blog*", function(req, res){
+  blogProxy.web(req, res, { target: 'http://localhost:2368' });
+});
+
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use("/", express.static(__dirname + config.path));
@@ -81,6 +90,14 @@ if (process.env.NODE_ENV === "test") { // prompt for credentials if on public de
   });
 
 }
+
+ghost({
+  config: __dirname + '/app/frontend/ghost/config.js'
+}).then(function (ghostServer) {
+  parentApp.use('/blog', ghostServer.rootApp);
+
+  ghostServer.start(parentApp);
+});
 
 var port = process.env.PORT || 5000;
 app.listen(port);

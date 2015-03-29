@@ -1,0 +1,18 @@
+<!-- start: #footer -->
+<footer id="footer">
+	<div class="center">
+		{{#if @blog.logo}}
+			<h2 class="logo" ><a href="{{@blog.url}}"><img src="{{@blog.logo}}" alt="{{@blog.title}}" /></a></h2>
+		{{else}}
+			<h2 class="logo"><a href="{{@blog.url}}">{{@blog.title}}</a></h2>
+		{{/if}}
+		<h4 class="blog-description">{{@blog.description}}</h4>
+		<ul class="social">
+			<li><a href="{{@blog.url}}/rss" target="_blank">RSS</a></li>
+			<li><a href="#" target="_blank">• Facebook</a></li>
+			<li><a href="#" target="_blank">• Twitter</a></li>
+			<li><a href="#" target="_blank">• Pinterest</a></li>
+		</ul>
+	</div>
+</footer>
+<!-- end: #footer -->

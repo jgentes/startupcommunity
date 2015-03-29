@@ -1,0 +1,14 @@
+<!-- start: #header -->
+<header id="header" class="center">
+	<hgroup>
+		{{#if @blog.logo}}
+			<h1 class="logo" ><a href="{{@blog.url}}"><img src="{{@blog.logo}}" alt="{{@blog.title}}" /></a></h1>
+		{{else}}
+			<h1 class="logo"><a href="{{@blog.url}}">{{@blog.title}}</a></h1>
+		{{/if}}
+		<h2 class="blog-description">{{@blog.description}}</h2>
+	</hgroup>
+	{{navigation}}
+	<div class="clear"></div>
+</header>
+<!-- end: #header -->

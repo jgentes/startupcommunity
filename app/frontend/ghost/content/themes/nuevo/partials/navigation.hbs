@@ -1,0 +1,10 @@
+<!-- start: .main-nav -->
+<nav class="main-nav" role="navigation">
+	<ul>
+		{{#foreach navigation}}
+			<li class="nav-{{slug}}{{#if current}} nav-current{{/if}}"><a href="{{url absolute="true"}}">{{label}}</a></li>
+		{{/foreach}}
+	</ul>
+</nav>
+<!-- end: .main-nav -->
+<div class="mobile selector"><i class="fa fa-bars"></i></div>

@@ -1,0 +1,37 @@
+/* @group Main Color */
+
+#header nav,
+div.home div.timeline article header time,
+div.home div.timeline div.spine,
+div.home div.timeline article:hover span.arrow,
+.pagination div.nav,
+#footer,
+div.single div.spine,
+div.single article header div.meta time,
+div.single article footer section.share a,
+nav.mobile{
+	background: #F15F74;
+}
+
+div.home div.timeline article span.arrow,
+div.single article header div.separator,
+.post-content blockquote,
+div.single article footer section.tags{
+	border-color: #F15F74;	
+}
+
+a,
+#header hgroup h1.logo a,
+div.home div.timeline article header h2 a,
+#back-to-top,
+h1, h2, h3, h4, h5, h6,
+div.single article header h2,
+div.single article footer section.share h4,
+section.author h4 a,
+div.map h3.location i.fa,
+div.single article footer section.tags time,
+div.single article footer section.tags span{
+	color: #F15F74;	
+}
+
+/* @end */
