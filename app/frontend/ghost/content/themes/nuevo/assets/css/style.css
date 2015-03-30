@@ -11,15 +11,10 @@ Author URI: http://www.estudiopatagon.com
 
 /* @group Fonts and Icons */
 
-@import url(http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,700italic,400,700);
+@import url('http://fonts.googleapis.com/css?family=Quicksand');
 
 @font-face {
-    font-family: 'Pacifico';
-    src: url('../fonts/pacifico-webfont.eot');
-    src: url('../fonts/pacifico-webfont.eot?#iefix') format('embedded-opentype'),
-		 url('../fonts/pacifico-webfont.svg#pacificoregular') format('svg'),
-		 url('../fonts/pacifico-webfont.woff') format('woff'),
-         url('../fonts/pacifico-webfont.ttf') format('truetype');
+    font-family: 'Quicksand', sans-serif;
     font-weight: normal;
     font-style: normal;
 }
@@ -351,9 +346,9 @@ form p{ padding-bottom: 15px; font-size: 12px; }
 }
 #header hgroup{ padding: 25px 0; }
 #header hgroup h1.logo{ }
-#header hgroup h1.logo a{ font: 42px/1 'Pacifico'; color: #F15F74; }
+#header hgroup h1.logo a{ font: 42px/1 'Quicksand'; color: #F15F74; }
 #header hgroup h2.blog-description{ font-size: 13px; line-height: 120%; margin: 5px 0 0 3px; color: #999; }
-#header hgroup h1.logo a img{ max-width: 205px; height: auto; }
+#header hgroup h1.logo a img{ width: 400px; max-height: 133px; }
 #header nav{
 	background: #F15F74;
 	color: #fff;
@@ -429,11 +424,11 @@ div.home div.timeline article header time{
 div.home div.timeline article.ep-last time{ left: inherit; right: -30px; }
 div.home div.timeline article header time span{
 	display: block;
-	font: 36px/1 'Pacifico';
-	margin-top: -5px;	
+	font: 36px/1 'Quicksand';
+	margin-top: -5px;
 }
 div.home div.timeline article header h2{ margin-top: 10px; }
-div.home div.timeline article header h2 a{ font: 18px/1.4 'Pacifico'; color: #F15F74;  }
+div.home div.timeline article header h2 a{ font: 28px/1.4 'Quicksand'; color: #F15F74;  }
 div.home div.timeline article header h2 a:hover{ color: #333; }
 div.home div.timeline article a.thumb{ display: block; overflow: hidden; position: relative; }
 div.home div.timeline article a.thumb i.fa-link{
@@ -461,7 +456,7 @@ div.home div.timeline article a.thumb i.fa-link{
 div.home div.timeline article a.thumb:hover i.fa-link{ top: 50%; }
 div.home div.timeline article a.thumb img{
 	width: 100%;
-	height: auto;	
+	height: auto;
 }
 div.home div.timeline article .post-excerpt{ margin-top: 5px; font-size: 12px; }
 div.home div.timeline article footer p.tags{ color: #666; font-size: 11px; }
@@ -529,16 +524,16 @@ div.single article header div.meta time{
 	background: #F15F74;
 	-webkit-border-radius: 100%;
 	-moz-border-radius: 100%;
-	border-radius: 100%;	
+	border-radius: 100%;
 }
 div.single article header div.meta time span{
 	display: block;
-	font: 36px/1 'Pacifico';
-	margin-top: -5px;	
+	font: 36px/1 'Quicksand';
+	margin-top: -5px;
 }
 div.single article header div.main-image{ min-height: 30px; }
 div.single article header div.main-image img{ display: block; margin: 0 auto; max-width: 100%; height: auto; }
-div.single article header h2{ font: 26px 'Pacifico'; padding: 20px 0 0 0; text-align: center; color: #F15F73; }
+div.single article header h2{ font: 26px 'Quicksand'; padding: 20px 0 0 0; text-align: center; color: #F15F73; }
 div.single article header div.separator{ margin: 0 10%; border-top: 1px dotted #F15F74; }
 div.single article .post-content { margin-top: 20px; }
 div.single article .post-content img[alt=main-image]{ display: none; }
@@ -551,7 +546,7 @@ div.single article footer section.tags{
 div.single article footer section.tags time, div.single article footer section.tags span{ color: #F15F74; }
 div.single article footer section.share{ position: absolute; right: 20px; bottom: -10px; }
 div.single article footer section.share h4{
-	font: 18px/40px 'Pacifico';
+	font: 18px/40px 'Quicksand';
 	color: 	#F15F74;
 	float: left;
 }
@@ -559,23 +554,23 @@ div.single article footer section.share a{
 	display: block;
 	float: left;
 	width: 50px;
-	height: 50px;	
+	height: 50px;
 	color: #fff;
 	text-align: center;
 	background: #F15F74;
 	margin-left: 10px;
 	-webkit-border-radius: 100%;
 	-moz-border-radius: 100%;
-	border-radius: 100%;	
+	border-radius: 100%;
 }
 div.single article footer section.share a:hover{
 	-webkit-opacity: .85;
 	-moz-opacity: .85;
-	opacity: .85;	
+	opacity: .85;
 }
 div.single article footer section.share a i.fa{
 	line-height: 50px;
-	font-size: 25px;	
+	font-size: 25px;
 }
 div.single div#disqus_thread{ color: #666; }
 
@@ -590,7 +585,7 @@ section.author div.avatar{
 	top: -20px;
 	-webkit-border-radius: 50%;
 	-moz-border-radius: 50%;
-	border-radius: 50%;	
+	border-radius: 50%;
 }
 section.author div.avatar img{
 	display: block;
@@ -599,12 +594,12 @@ section.author div.avatar img{
 	border: 3px solid #fff;
 	-webkit-border-radius: 50%;
 	-moz-border-radius: 50%;
-	border-radius: 50%;			
+	border-radius: 50%;
 }
 section.author div.right{ margin-left: 120px; font-size: 12px; }
 section.author.no-avatar div.right{ margin-left: 0; }
 section.author div.no-avatar div.right{ float: none; width: auto; }
-section.author h4{ font: 18px 'Pacifico'; color: #aaa; padding-bottom: 15px; }
+section.author h4{ font: 18px 'Quicksand'; color: #aaa; padding-bottom: 15px; }
 section.author h4 a{ color: #F15F74; }
 section.author h4 a:hover{ color: #333; }
 
@@ -618,7 +613,7 @@ div.home div.basic-list.timeline div.subtitle{
 	background: #fff;
 	padding: 15px;
 	font-size: 15px;
-	margin-top: 90px;	
+	margin-top: 90px;
 }
 div.home div.basic-list.timeline div.subtitle h3{ font-size: 15px; color: #444; }
 div.home div.basic-list.timeline article{ float: none; width: auto; padding: 15px; margin: 60px 0 0; }
@@ -698,16 +693,16 @@ div#gallery a:hover:after{ top: 50%; }
 /* @group 404 Page */
 
 section.not-found{ color: #ccc; text-align: center; padding: 100px 0; }
-section.not-found h1{ font: 80px/1 'Pacifico'; color: #ccc; }
+section.not-found h1{ font: 80px/1 'Quicksand'; color: #ccc; }
 section.not-found p{ font-size: 32px; margin-top: 10px; padding-bottom: 50px; }
-section.not-found a{ font: 42px/1 'Pacifico'; }
+section.not-found a{ font: 42px/1 'Quicksand'; }
 
 /* @end */
 
 /* @group Footer */
 
 #footer{ background: #F15F74; text-align: center; padding: 20px 0; color: #fff; margin-top: 90px; }
-#footer h2.logo a{ color: #fff; font: 42px/1 'Pacifico';}
+#footer h2.logo a{ color: #fff; font: 42px/1 'Quicksand';}
 #footer h2.logo a img{ max-width: 205px; height: auto; }
 #footer h4.blog-description{ font-size: 12px; color: #000; margin-top: 5px; }
 #footer ul.social{ margin-top: 15px; }

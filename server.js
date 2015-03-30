@@ -5,17 +5,17 @@ console.format = function(c) { return "[" + c.filename + ":" + c.getLineNumber()
 
 var express = require('express'),
     enforce = require('express-sslify'),
-    //httpProxy = require('http-proxy'),
-    //blogProxy = httpProxy.createProxyServer(),
+    httpProxy = require('http-proxy'),
+    blogProxy = httpProxy.createProxyServer(),
     config = require('./config.json')[process.env.NODE_ENV || 'development'],
     bodyParser = require('body-parser'),
     methodOverride = require('method-override'),
     logger = require('morgan'),
     nodalytics = require('nodalytics'),
     UserApi = require('./api/userApi.js'),
-    CityApi = require('./api/cityApi.js');
-    //ghost = require('ghost'),
-    //parentApp = express();
+    CityApi = require('./api/cityApi.js'),
+    ghost = require('ghost'),
+    parentApp = express();
 
 var app = express();
 
@@ -23,11 +23,12 @@ var app = express();
 app.disable('x-powered-by');
 app.use(logger('dev'));
 app.use(methodOverride());
-/*
+
+// Some things must come before Body Parser
 app.all("/blog*", function(req, res){
   blogProxy.web(req, res, { target: 'http://localhost:2368' });
 });
-*/
+
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use("/", express.static(__dirname + config.path));
@@ -71,12 +72,6 @@ app.get('/', function (req, res, next) {
   res.sendFile("frontend.html", {root: __dirname + config.path});
 });
 
-// Backend App
-app.get('/*', function (req, res, next) {
-  res.sendFile("app.html", {root: __dirname + config.path});
-});
-
-/*
 ghost({
   config: __dirname + '/app/frontend/ghost/config.js'
 }).then(function (ghostServer) {
@@ -84,7 +79,12 @@ ghost({
 
   ghostServer.start(parentApp);
 });
-*/
+
+// Backend App
+app.get('/*', function (req, res, next) {
+  res.sendFile("app.html", {root: __dirname + config.path});
+});
+
 var port = process.env.PORT || 5000;
 app.listen(port);
 console.log("StartupCommunity.org ready!");

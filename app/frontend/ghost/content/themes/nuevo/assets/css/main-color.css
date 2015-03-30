@@ -4,20 +4,23 @@
 div.home div.timeline article header time,
 div.home div.timeline div.spine,
 div.home div.timeline article:hover span.arrow,
-.pagination div.nav,
+.pagination div.nav{
+	background: #82bc4b;
+}
+
 #footer,
 div.single div.spine,
 div.single article header div.meta time,
 div.single article footer section.share a,
 nav.mobile{
-	background: #F15F74;
+	background: none;
 }
 
 div.home div.timeline article span.arrow,
 div.single article header div.separator,
 .post-content blockquote,
 div.single article footer section.tags{
-	border-color: #F15F74;	
+	border-color: #82bc4b;
 }
 
 a,
@@ -31,7 +34,7 @@ section.author h4 a,
 div.map h3.location i.fa,
 div.single article footer section.tags time,
 div.single article footer section.tags span{
-	color: #F15F74;	
+	color: #82bc4b;
 }
 
 /* @end */
