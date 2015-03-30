@@ -43,6 +43,11 @@ if (process.env.NODE_ENV === "production") {
   app.use("/bower_components", express.static(__dirname + "/bower_components"));
 }
 
+if (process.env.NODE_ENV === "test") {
+  var wwwhisper = require('connect-wwwhisper');
+  app.use(wwwhisper());
+}
+
 // ROUTE METHODS
 var userApi = new UserApi(),
     cityApi = new CityApi();
