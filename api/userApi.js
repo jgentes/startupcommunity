@@ -211,9 +211,10 @@ function handleEnsureAuthenticated(req, res, next) {
 
   if (!req.headers.authorization) {   
     console.log('Session is no longer valid.');
-    return res.status(401);
+    return res.status(401).send('');
   }
   try {
+
     var token = req.headers.authorization.split(' ')[1];
     var payload = jwt.decode(token, config.token_secret);
 
