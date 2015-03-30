@@ -43,6 +43,7 @@ if (process.env.NODE_ENV === "production") {
   app.use("/bower_components", express.static(__dirname + "/bower_components"));
 }
 
+// Restrict access to dev.startupcommunity.org
 if (process.env.NODE_ENV === "test") {
   var wwwhisper = require('connect-wwwhisper');
   app.use(wwwhisper());

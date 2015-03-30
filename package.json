@@ -24,6 +24,7 @@
     "request": "~2.40.0",
     "request-debug": "~0.1.1",
     "satellizer": "~0.9.0",
+    "newrelic": "^1.18.0",
     "connect-wwwhisper": "*"
   },
   "devDependencies": {
@@ -55,7 +56,6 @@
     "grunt-usemin": "~2.0.0",
     "jshint-stylish": "~0.1.3",
     "load-grunt-tasks": "~0.4.0",
-    "newrelic": "^1.18.0",
     "protractor": "~1.4.0",
     "time-grunt": "~0.2.1"
   },
