@@ -43,6 +43,12 @@ if (process.env.NODE_ENV === "production") {
   app.use("/bower_components", express.static(__dirname + "/bower_components"));
 }
 
+// Restrict access to dev.startupcommunity.org
+if (process.env.NODE_ENV === "test") {
+    var wwwhisper = require('connect-wwwhisper');
+    app.use(wwwhisper());
+}
+
 // ROUTE METHODS
 var userApi = new UserApi(),
     cityApi = new CityApi();
@@ -79,12 +85,6 @@ ghost({
 
   ghostServer.start(parentApp);
 });
-
-// Restrict access to dev.startupcommunity.org
-if (process.env.NODE_ENV === "test") {
-    var wwwhisper = require('connect-wwwhisper');
-    app.use(wwwhisper());
-}
 
 // Backend App
 app.get('/*', function (req, res, next) {
