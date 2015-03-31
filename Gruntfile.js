@@ -524,7 +524,7 @@ module.exports = function (grunt) {
     'build'
   ]);
 
-  grunt.registerTask('heroku:test', 'build');
+  grunt.registerTask('heroku:development', 'build');
 
   grunt.registerTask('heroku:production', 'build');
   

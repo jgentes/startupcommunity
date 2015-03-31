@@ -22,7 +22,7 @@ var app = express();
 // Some things must come before Body Parser
 
 // Restrict access to dev.startupcommunity.org
-if (process.env.NODE_ENV === "test") {
+if (process.env.NODE_ENV === "development") {
   var wwwhisper = require('connect-wwwhisper');
   app.use(wwwhisper());
 }
@@ -78,8 +78,7 @@ app.get('/api/1.0/maint', userApi.maintenance);
 app.get('/', function (req, res, next) {
   res.sendFile("frontend.html", {root: __dirname + config.path});
 });
-console.log('DIRNAME');
-console.log(__dirname);
+
 ghost({
   config: __dirname + '/app/frontend/ghost/config.js'
 }).then(function (ghostServer) {
