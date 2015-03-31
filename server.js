@@ -19,18 +19,18 @@ var express = require('express'),
 
 var app = express();
 
+// Restrict access to dev.startupcommunity.org
+if (process.env.NODE_ENV === "test") {
+  var wwwhisper = require('connect-wwwhisper');
+  app.use(wwwhisper());
+}
+
 // Order really matters here..!
 app.disable('x-powered-by');
 app.use(logger('dev'));
 app.use(methodOverride());
+
 // Some things must come before Body Parser
-
-// Restrict access to dev.startupcommunity.org
-if (process.env.NODE_ENV === "test") {
-    var wwwhisper = require('connect-wwwhisper');
-    app.use(wwwhisper());
-}
-
 // Proxy for Ghost, which runs on different port
 app.all("/blog*", function(req, res){
     blogProxy.web(req, res, { target: 'http://localhost:2368' });
