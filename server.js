@@ -79,7 +79,7 @@ app.get('/', function (req, res, next) {
   res.sendFile("frontend.html", {root: __dirname + config.path});
 });
 console.log('DIRNAME');
-console.log(dirname);
+console.log(__dirname);
 ghost({
   config: __dirname + '/app/frontend/ghost/config.js'
 }).then(function (ghostServer) {
