@@ -4,8 +4,7 @@
 
 var path = require('path'),
     config;
-console.log('DIRNAME');
-console.log(__dirname);
+
 config = {
     // ### Production
     // When running Ghost in the wild, use the production environment
