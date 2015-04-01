@@ -21,11 +21,12 @@ var app = express();
 
 // Some things must come before Body Parser
 // Restrict access to dev.startupcommunity.org
+/*
 if (process.env.NODE_ENV === "development") {
   var wwwhisper = require('connect-wwwhisper');
   app.use(wwwhisper());
 }
-
+*/
 // Proxy for Ghost, which runs on different port
 app.all("/blog*", function(req, res){
     blogProxy.web(req, res, { target: 'http://localhost:2368' });
