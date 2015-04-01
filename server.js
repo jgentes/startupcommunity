@@ -20,7 +20,6 @@ var express = require('express'),
 var app = express();
 
 // Some things must come before Body Parser
-
 // Restrict access to dev.startupcommunity.org
 if (process.env.NODE_ENV === "development") {
   var wwwhisper = require('connect-wwwhisper');
