@@ -9,9 +9,22 @@ Author URI: http://www.estudiopatagon.com
 
 */
 
+/* CUSTOM CSS */
+
+.postline {
+	width: 40px;
+	position: absolute;
+	left: 408px;
+	top: 10px;
+}
+
+.ep-last .postline {
+	left: -41px;
+}
+
 /* @group Fonts and Icons */
 
-@import url('http://fonts.googleapis.com/css?family=Quicksand');
+/* @import url('https://fonts.googleapis.com/css?family=Quicksand'); moved this to default.hbs */
 
 @font-face {
     font-family: 'Quicksand', sans-serif;
@@ -73,11 +86,11 @@ body{
 	-o-background-size: cover !important;
 	background-size: cover !important;
 }
-h1, h2, h3, h4, h5, h6{ color: #F15F74; }
+h1, h2, h3, h4, h5, h6{ color: #76A33D; }
 h1 a, h2 a, h3 a, h4 a, h5 a, h6 a{ color: #333; }
-h1 a:hover, h2 a:hover, h3 a:hover, h4 a:hover, h5 a:hover, h6 a:hover{ color: #F15F74; }
+h1 a:hover, h2 a:hover, h3 a:hover, h4 a:hover, h5 a:hover, h6 a:hover{ color: #76A33D; }
 a{
-	color: #F15F74;
+	color: #76A33D;
 	-webkit-transition: all 300ms linear;
 	-moz-transition: all 300ms linear;
 	-ms-transition: all 300ms linear;
@@ -122,7 +135,7 @@ hr{ border: 0; border-top: 1px solid #ddd; height: 1px; }
 	width: 30px;
 	height: 30px;
 	background: #fff;
-	color: #F15F74;
+	color: #76A33D;
 	font-size: 10px;
 	text-align: center;
 	line-height: 30px;
@@ -150,12 +163,12 @@ main.content{ position: relative; }
 .boxed-content{ background: #fff; width: 760px; padding: 20px; margin: 0 auto; }
 .center{ display: block; width: 900px; margin: 0 auto; padding: 0 20px; }
 .overflow{ overflow: hidden; }
-header.title{ background: #F15F74; padding: 20px 0; }
+header.title{ background: #76A33D; padding: 20px 0; }
 header.title h2{ font-size: 22px; color: #fff; }
 a.readmore{
 	font-size: 10px;
 	padding: 5px 10px;
-	background: #F15F74;
+	background: #76A33D;
 	color: #fff;
 }
 a.readmore:hover{
@@ -240,7 +253,7 @@ a.readmore:hover{
     padding-bottom: 20px;
 	line-height: 160%;
 }
-.post-content blockquote{ padding: 5px 5px 0px 20px; margin: 0 0 20px 0; border-left: 4px solid #F15F74; font-style: italic; }
+.post-content blockquote{ padding: 5px 5px 0px 20px; margin: 0 0 20px 0; border-left: 4px solid #76A33D; font-style: italic; }
 .post-content blockquote cite:before{
 	content: "\2014 \2009";
 }
@@ -306,7 +319,7 @@ textarea{ width: 95%; height: 220px; }
 input[type=submit]{
 	width: 170px;
 	height: 45px;
-	background: #F15F74;
+	background: #76A33D;
 	color: #fff;
 	font: 16px 'Open Sans';
 	-webkit-border-radius: 2px;
@@ -326,7 +339,7 @@ input[type=submit]:hover{
 	opacity: 0.75;
 }
 form p{ padding-bottom: 15px; font-size: 12px; }
-.empty{ border-color: #F15F74 !important; }
+.empty{ border-color: #76A33D !important; }
 ::-webkit-input-placeholder{ color: #999; }
 ::-moz-placeholder{ color: #999; }
 :-ms-input-placeholder{ color: #999; }
@@ -346,11 +359,11 @@ form p{ padding-bottom: 15px; font-size: 12px; }
 }
 #header hgroup{ padding: 25px 0; }
 #header hgroup h1.logo{ }
-#header hgroup h1.logo a{ font: 42px/1 'Quicksand'; color: #F15F74; }
+#header hgroup h1.logo a{ font: 42px/1 'Quicksand'; color: #76A33D; }
 #header hgroup h2.blog-description{ font-size: 13px; line-height: 120%; margin: 5px 0 0 3px; color: #999; }
 #header hgroup h1.logo a img{ width: 400px; max-height: 133px; }
 #header nav{
-	background: #F15F74;
+	background: #76A33D;
 	color: #fff;
 	padding-top: 15px;
 	width: 100%;
@@ -367,7 +380,7 @@ div.home{ margin: 0; padding: 0; }
 div.home div.timeline{ position: relative; }
 div.home div.timeline div.spine{
 	width: 2px;
-	background: #F15F74;
+	background: #76A33D;
 	position: absolute;
 	top: 0;
 	left: 50%;
@@ -389,11 +402,11 @@ div.home div.timeline article span.arrow{
 	height: 5px;
 	background: #fff;
 	top: 10%;
-	left: 100%;
-	margin-left: 10px;
+	left: 443px;
+	margin-left: 0;
 	position: absolute;
 	z-index: 100;
-	border: 4px solid #F15F74;
+	border: 3px solid #76A33D;
 	-webkit-border-radius: 100%;
 	-moz-border-radius: 100%;
 	border-radius: 100%;
@@ -403,32 +416,33 @@ div.home div.timeline article span.arrow{
 	-o-transition: all 300ms linear;
 	transition: all 300ms linear;
 }
-div.home div.timeline article.ep-last span.arrow{ left: -25px; margin-left: 0; }
-div.home div.timeline article:hover span.arrow{ background: #F15F74; }
+div.home div.timeline article.ep-last span.arrow{ left: -47px; margin-left: 0; }
+div.home div.timeline article:hover span.arrow{ background: #76A33D; }
 div.home div.timeline article header time{
 	position: absolute;
 	top: -30px;
 	left: -30px;
-	width: 70px;
-	height: 55px;
+	width: 65px;
+	height: 50px;
 	font-size: 12px;
 	line-height: 1;
 	padding-top: 15px;
 	text-align: center;
-	color: #fff;
-	background: #F15F74;
+	color: #76A33D;
+	background: #fff !important;
 	-webkit-border-radius: 100%;
 	-moz-border-radius: 100%;
 	border-radius: 100%;
+	border: 2px solid #76A33D;
 }
 div.home div.timeline article.ep-last time{ left: inherit; right: -30px; }
 div.home div.timeline article header time span{
 	display: block;
-	font: 36px/1 'Quicksand';
-	margin-top: -5px;
+	font: 28px/1 'Quicksand';
+	margin-top: -2px;
 }
 div.home div.timeline article header h2{ margin-top: 10px; }
-div.home div.timeline article header h2 a{ font: 28px/1.4 'Quicksand'; color: #F15F74;  }
+div.home div.timeline article header h2 a{ font: 28px/1.4 'Quicksand'; color: #76A33D;  }
 div.home div.timeline article header h2 a:hover{ color: #333; }
 div.home div.timeline article a.thumb{ display: block; overflow: hidden; position: relative; }
 div.home div.timeline article a.thumb i.fa-link{
@@ -470,7 +484,7 @@ div.home div.timeline article footer p.tags{ color: #666; font-size: 11px; }
 }
 .pagination div.nav{
 	display: inline-block;
-	background: #F15F74;
+	background: #76A33D;
 	height: 40px;
 	line-height: 40px;
 	padding: 0 30px;
@@ -498,7 +512,7 @@ div.single img[alt=main-image]{ display: none; }
 div.single .center.boxed{ width: 760px; padding: 20px; }
 div.single div.spine{
 	width: 2px;
-	background: #F15F74;
+	background: #76A33D;
 	position: absolute;
 	bottom: 100%;
 	left: 50%;
@@ -521,7 +535,7 @@ div.single article header div.meta time{
 	padding-top: 15px;
 	text-align: center;
 	color: #fff;
-	background: #F15F74;
+	background: #76A33D;
 	-webkit-border-radius: 100%;
 	-moz-border-radius: 100%;
 	border-radius: 100%;
@@ -534,20 +548,20 @@ div.single article header div.meta time span{
 div.single article header div.main-image{ min-height: 30px; }
 div.single article header div.main-image img{ display: block; margin: 0 auto; max-width: 100%; height: auto; }
 div.single article header h2{ font: 26px 'Quicksand'; padding: 20px 0 0 0; text-align: center; color: #F15F73; }
-div.single article header div.separator{ margin: 0 10%; border-top: 1px dotted #F15F74; }
+div.single article header div.separator{ margin: 0 10%; border-top: 1px dotted #76A33D; }
 div.single article .post-content { margin-top: 20px; }
 div.single article .post-content img[alt=main-image]{ display: none; }
 div.single article footer{ padding-bottom: 20px; }
 div.single article footer section.tags{
-	border-top: 1px dotted #F15F74;
+	border-top: 1px dotted #76A33D;
 	font-size: 11px;
 	padding-top: 10px;
 }
-div.single article footer section.tags time, div.single article footer section.tags span{ color: #F15F74; }
+div.single article footer section.tags time, div.single article footer section.tags span{ color: #76A33D; }
 div.single article footer section.share{ position: absolute; right: 20px; bottom: -10px; }
 div.single article footer section.share h4{
 	font: 18px/40px 'Quicksand';
-	color: 	#F15F74;
+	color: 	#76A33D;
 	float: left;
 }
 div.single article footer section.share a{
@@ -557,7 +571,7 @@ div.single article footer section.share a{
 	height: 50px;
 	color: #fff;
 	text-align: center;
-	background: #F15F74;
+	background: #76A33D;
 	margin-left: 10px;
 	-webkit-border-radius: 100%;
 	-moz-border-radius: 100%;
@@ -600,7 +614,7 @@ section.author div.right{ margin-left: 120px; font-size: 12px; }
 section.author.no-avatar div.right{ margin-left: 0; }
 section.author div.no-avatar div.right{ float: none; width: auto; }
 section.author h4{ font: 18px 'Quicksand'; color: #aaa; padding-bottom: 15px; }
-section.author h4 a{ color: #F15F74; }
+section.author h4 a{ color: #76A33D; }
 section.author h4 a:hover{ color: #333; }
 
 div.home div.basic-list.timeline section.author{ margin-top: 90px; width: auto; }
@@ -631,7 +645,7 @@ div.home div.basic-list.timeline article header h2 a{
 	font-size: 22px;
 	color: #333;
 }
-div.home div.basic-list.timeline article header h2 a:hover{ color: #F15F74; }
+div.home div.basic-list.timeline article header h2 a:hover{ color: #76A33D; }
 div.home div.basic-list.timeline article div.right section.post-excerpt{ min-height: 173px; font-size: 13px; line-height: 1.6; margin-top: 10px; }
 div.home div.basic-list.timeline article.format-standard div.right{ width: auto; float: none; }
 div.home div.basic-list.timeline article.format-standard div.right section.post-excerpt{ min-height: inherit; }
@@ -654,7 +668,7 @@ div.map h3.location{
 	color: #333;
 	font-style: italic;
 }
-div.map h3.location i.fa{ color: #F15F74; font-size: 24px; margin-right: 10px; }
+div.map h3.location i.fa{ color: #76A33D; font-size: 24px; margin-right: 10px; }
 
 /* @end */
 
@@ -701,7 +715,7 @@ section.not-found a{ font: 42px/1 'Quicksand'; }
 
 /* @group Footer */
 
-#footer{ background: #F15F74; text-align: center; padding: 20px 0; color: #fff; margin-top: 90px; }
+#footer{ background: #76A33D; text-align: center; padding: 20px 0; color: #fff; margin-top: 90px; }
 #footer h2.logo a{ color: #fff; font: 42px/1 'Quicksand';}
 #footer h2.logo a img{ max-width: 205px; height: auto; }
 #footer h4.blog-description{ font-size: 12px; color: #000; margin-top: 5px; }
