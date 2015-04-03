@@ -7,7 +7,7 @@ var express = require('express'),
     enforce = require('express-sslify'),
     httpProxy = require('http-proxy'),
     blogProxy = httpProxy.createProxyServer(),
-    config = require('./config.json')[process.env.NODE_ENV || 'development'],
+    config = require('./config.json')[process.env.NODE_ENV || 'local'],
     bodyParser = require('body-parser'),
     methodOverride = require('method-override'),
     logger = require('morgan'),
@@ -19,16 +19,23 @@ var express = require('express'),
 
 var app = express();
 
+// Some things must come before Body Parser
+
+// Proxy for Ghost, which runs on different port
+app.all("/blog*", function(req, res){
+    blogProxy.web(req, res, { target: 'http://localhost:2368' });
+});
+
+// Restrict access to dev.startupcommunity.org
+if (process.env.NODE_ENV === "development") {
+  var wwwhisper = require('connect-wwwhisper');
+  app.use(wwwhisper());
+}
+
 // Order really matters here..!
 app.disable('x-powered-by');
 app.use(logger('dev'));
 app.use(methodOverride());
-
-// Some things must come before Body Parser
-app.all("/blog*", function(req, res){
-  blogProxy.web(req, res, { target: 'http://localhost:2368' });
-});
-
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use("/", express.static(__dirname + config.path));
@@ -41,11 +48,6 @@ if (process.env.NODE_ENV === "production") {
 
 } else {
   app.use("/bower_components", express.static(__dirname + "/bower_components"));
-}
-
-if (process.env.NODE_ENV === "test") {
-  var wwwhisper = require('connect-wwwhisper');
-  app.use(wwwhisper());
 }
 
 // ROUTE METHODS
