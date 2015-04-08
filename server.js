@@ -1,5 +1,4 @@
 // for debugging
-require('newrelic');
 require('debug-trace')({ always: true, colors: { log: '32' } });
 console.format = function(c) { return "[" + c.filename + ":" + c.getLineNumber() + "]"; };
 
