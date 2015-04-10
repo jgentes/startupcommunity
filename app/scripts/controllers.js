@@ -554,7 +554,7 @@ angular
         .catch(function(response) {
           if (response.data.message) {
             $scope.global.alert = {type: 'danger', msg: String(response.data.message)};
-          }
+          } else $scope.global.alert = undefined;
           console.warn("WARNING:");
               console.log(response);
         });
@@ -585,7 +585,7 @@ angular
           }
           if (response.data.message) {
             $scope.global.alert = {type: 'danger', msg: String(response.data.message)};
-          }
+          } else $scope.global.alert = undefined;
           console.warn("WARNING:");
               console.log(response);
         });
