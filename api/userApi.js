@@ -627,9 +627,8 @@ function handleLinkedin(req, res) {
                     res.send({ token: handleCreateToken(req, result.body.results[0]), user: result.body.results[0] });     
                     
                   } else {
-                    console.log('No existing user found:');
-                    console.log(result);
-                    res.status(400).send({ profile: profile, message: "Sorry, we couldn't find you in our system." });
+                    console.log('No existing user found!');
+                    res.status(401).send({ profile: profile, message: "Sorry, we couldn't find you in our system. Please <a href='/'>request an invitation</a>." });
                   }
                 })
                 .fail(function(err){
