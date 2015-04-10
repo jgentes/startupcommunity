@@ -562,7 +562,7 @@ function handleLinkedin(req, res) {
                       });
                     res.send({ token: handleCreateToken(req, response.body), user: response.body });
                   } else {
-                    return res.status(401).send({ message: "Sorry, we couldn't find you in our system. Please <a href='/'>request an invitation</a>." });
+                    return res.status(401).send({ message: "Sorry, we couldn't find you in our system. Please <a href='/' target='_self'>request an invitation</a>." });
                   }
                 })
                 .fail(function(err){
@@ -628,7 +628,7 @@ function handleLinkedin(req, res) {
                     
                   } else {
                     console.log('No existing user found!');
-                    res.status(401).send({ profile: profile, message: "Sorry, we couldn't find you in our system. Please <a href='/'>request an invitation</a>." });
+                    res.status(401).send({ profile: profile, message: "Sorry, we couldn't find you in our system. Please <a href='/' target='_self'>request an invitation</a>." });
                   }
                 })
                 .fail(function(err){
