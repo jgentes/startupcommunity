@@ -537,7 +537,7 @@ angular
       return $auth.isAuthenticated();
     };
     if ($scope.global.alert) {
-      if ($scope.global.alert.msg == 'undefined' || !$scope.global.alert.msg) { $scope.global.alert = undefined };
+      if ($scope.global.alert.msg == 'undefined' || !$scope.global.alert.msg) { $scope.global.alert = undefined }
     }
 
     $scope.login = function() {
@@ -554,7 +554,7 @@ angular
         .catch(function(response) {
           if (response.data.message) {
             $scope.global.alert = {type: 'danger', msg: String(response.data.message)};
-          };
+          }
           console.warn("WARNING:");
               console.log(response);
         });
@@ -585,7 +585,7 @@ angular
           }
           if (response.data.message) {
             $scope.global.alert = {type: 'danger', msg: String(response.data.message)};
-          };
+          }
           console.warn("WARNING:");
               console.log(response);
         });

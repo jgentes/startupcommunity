@@ -562,7 +562,7 @@ function handleLinkedin(req, res) {
                       });
                     res.send({ token: handleCreateToken(req, response.body), user: response.body });
                   } else {
-                    return res.status(400).send({ message: "Sorry, we couldn't find you in our system. Please <a href='/'>request an invitation</a>." });
+                    return res.status(401).send({ message: "Sorry, we couldn't find you in our system. Please <a href='/'>request an invitation</a>." });
                   }
                 })
                 .fail(function(err){
