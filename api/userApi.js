@@ -524,12 +524,13 @@ function handleLinkedin(req, res) {
       
     if (uploadcheck === 0) {
     // Step 2. Retrieve profile information about the current user.
-      request.get({ url: peopleApiUrl, qs: params, json: true }, function(err, response, profile) {      
-      if (err) {
-        console.log("Linkedin GET FAIL:");
-        console.log(err);
-        res.status(401).send({ message: 'Something went wrong: ' + err});
-      } else profile['access_token'] = params.oauth2_access_token;
+      request.get({ url: peopleApiUrl, qs: params, json: true }, function(err, response, profile) {
+
+        if (err) {
+          console.log("Linkedin GET FAIL:");
+          console.log(err);
+          return res.status(401).send({ message: 'Something went wrong: ' + err});
+        } else profile['access_token'] = params.oauth2_access_token;
       
       var userprofile = schema.linkedin(profile);              
         

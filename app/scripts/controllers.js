@@ -552,7 +552,7 @@ angular
           $mixpanel.track('Logged in');
         })
         .catch(function(response) {
-          if (response.data.message) {
+          if (response.data.message && response.data.message !== 'undefined') {
             $scope.global.alert = {type: 'danger', msg: String(response.data.message)};
           } else $scope.global.alert = undefined;
           console.warn("WARNING:");
@@ -583,7 +583,7 @@ angular
               email: response.data.profile.emailAddress
             }]);
           }
-          if (response.data.message) {
+          if (response.data.message && response.data.message !== 'undefined') {
             $scope.global.alert = {type: 'danger', msg: String(response.data.message)};
           } else $scope.global.alert = undefined;
           console.warn("WARNING:");
