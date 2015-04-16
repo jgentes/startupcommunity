@@ -59,7 +59,7 @@ app.get('/api/1.0/:city/users', userApi.userSearch);
 app.get('/api/1.0/city/:city', cityApi.getCity);
 app.get('/api/1.0/profile', userApi.ensureAuthenticated, userApi.getProfile);
 app.get('/api/1.0/profile/getkey', userApi.ensureAuthenticated, userApi.createAPIToken);
-app.get('/api/1.0/addPerson', userApi.ensureAuthenticated, userApi.addPerson);
+app.get('/api/1.0/invitePerson', userApi.ensureAuthenticated, userApi.invitePerson);
 app.put('/api/1.0/profile/role', userApi.ensureAuthenticated, userApi.setRole);
 app.post('/api/1.0/profile/remove/:userid', userApi.ensureAuthenticated, userApi.removeProfile);
 app.post('/api/1.0/feedback', userApi.ensureAuthenticated, userApi.feedback);

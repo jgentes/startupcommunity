@@ -1,14 +1,14 @@
-<div ng-controller="AddPeopleController">       
+<div ng-controller="InvitePeopleController">
         
     <div class="content-header">
         <div class="header-section">
             <h1>
-                <i ng-class="{'fa fa-circle-o-notch fa-spin' : disabled, 'fa fa-leaf' : !disabled}"></i>Add People<br><small>This works best with the URL from the person's Linkedin profile.</small>
+                <i ng-class="{'fa fa-circle-o-notch fa-spin' : disabled, 'fa fa-leaf' : !disabled}"></i>Invite People<br><small>This works best with the URL from the person's Linkedin profile.</small>
             </h1>
         </div>
     </div>              
     <div class="panel-boxed">
-    	<form ng-submit='addPerson(formData.url, formData.email, global.user.value.linkedin.id)' data-wizard="{finishButton: true, titleClick: false, block: true, validate: true, legend: false }" class="form-horizontal">
+    	<form ng-submit='invitePerson(formData.url, formData.email, global.user.value.linkedin.id)' data-wizard="{finishButton: true, titleClick: false, block: true, validate: true, legend: false }" class="form-horizontal">
     		<fieldset title="Contact Info">
     			<legend></legend>
     			<div class="form-group">

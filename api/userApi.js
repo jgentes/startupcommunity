@@ -17,9 +17,9 @@ var UserApi = function() {
   this.ensureAuthenticated = handleEnsureAuthenticated;
   this.userSearch = handleUserSearch;
   this.subscribeUser = handleSubscribeUser;
-  this.createToken = handleCreateToken;  
+  this.createToken = handleCreateToken;
   this.createAPIToken = handleCreateAPIToken;  
-  this.addPerson = handleAddPerson;
+  this.invitePerson = handleInvitePerson;
   this.linkedin = handleLinkedin;
   this.getProfile = handleGetProfile;
   this.setRole = handleSetRole;
@@ -390,19 +390,19 @@ function handleLogin(req, res) {
 
 /*
  |--------------------------------------------------------------------------
- | Add Person
+ | Invite Person
  |--------------------------------------------------------------------------
  */
 
-function handleAddPerson(req, res) {  
+function handleInvitePerson(req, res) {
     
-  var addPerson= JSON.parse(req.query.user);
-  if (addPerson) {
-    var gettoken = function(addPerson, callback) {          
+  var invitePerson= JSON.parse(req.query.user);
+  if (invitePerson) {
+    var gettoken = function(invitePerson, callback) {
       db.newSearchBuilder()
         .collection(config.db.collections.users)
         .limit(1)
-        .query('value.linkedin.id: "' + addPerson.userid + '"')
+        .query('value.linkedin.id: "' + invitePerson.userid + '"')
         .then(function(result){
           if (result.body.results.length > 0) {
             console.log("Found user, pulling access_token");
@@ -426,9 +426,9 @@ function handleAddPerson(req, res) {
           
     };
     
-    gettoken(addPerson, function(access_token) {    
+    gettoken(invitePerson, function(access_token) {
             
-      getlinkedinprofile(addPerson.url, addPerson.email, access_token, function(result) {                
+      getlinkedinprofile(invitePerson.url, invitePerson.email, access_token, function(result) {
         res.status(result.status).send(result);
       });
       

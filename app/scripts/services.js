@@ -33,8 +33,8 @@ angular
           callback(response);
         });
       },
-      addPerson: function(url, email, userid, callback) {        
-        $http.get('/api/1.0/addPerson?user={"url":"' + url + '","email":"' + email + '","userid":"' + userid + '"}')
+      invitePerson: function(url, email, userid, callback) {
+        $http.get('/api/1.0/invitePerson?user={"url":"' + url + '","email":"' + email + '","userid":"' + userid + '"}')
         .success( function(response) {
           callback(response);
         })

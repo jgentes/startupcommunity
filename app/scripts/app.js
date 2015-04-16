@@ -55,8 +55,8 @@ app
           }]
         }
       })
-      .when('/people/add', {
-        templateUrl: 'views/add_people.html',
+      .when('/people/invite', {
+        templateUrl: '../views/invite_people.html',
         resolve: {
           authenticated: ['$location', '$auth', function($location, $auth) {
             if (!$auth.isAuthenticated()) {

@@ -509,15 +509,16 @@ angular
     
   }])
   
-  .controller('AddPeopleController', ['$scope', '$auth', 'userService', function ($scope, $auth, userService) {
+  .controller('InvitePeopleController', ['$scope', '$auth', 'userService', function ($scope, $auth, userService) {
       
-    $scope.addPerson = function(url, email, userid) {                  
+    $scope.invitePerson = function(url, email, userid) {
       $scope.disabled = true;
-      userService.addPerson(url, email, userid, function(response) {
+      userService.invitePerson(url, email, userid, function(response) {
         $scope.disabled = false;
         if (response.status !== 200) {          
           $scope.global.alert = { type: 'danger', msg: 'There was a problem: ' + String(response.message) };  
-          console.warn("WARNING: " +  response.message);
+          console.warn("WARNING: ");
+          console.log(response);
         } else {            
           $scope.global.alert = { type: 'success', msg: 'Person imported! ' + response.data.name + ' is good to go.' };     
         }

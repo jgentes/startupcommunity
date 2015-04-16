@@ -22,8 +22,8 @@ angular
               url: '/people',
               children: [
                   {
-                      label: 'Add People',
-                      url: '/people/add'
+                      label: 'Invite People',
+                      url: '/people/invite'
                   }
               ]
           },
