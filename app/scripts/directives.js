@@ -402,7 +402,8 @@ angular
       "There are many wonderful things that will never be done if you do not do them. -- Charles D. Gill",
       "Determine that the thing can and shall be done, and then we shall find the way. -- Abraham Lincoln",
       "Human beings are perhaps never more frightening than when they are convinced beyond doubt that they are right. -- Laurens van der Post",
-      "The chief beauty about time is that you cannot waste it in advance. The next year, the next day, the next hour are lying ready for you, as perfect, as unspoiled, as if you had never wasted or misapplied a single moment in all your life. You can turn over a new leaf every hour if you choose. -- Arnold Bennett"
+      "The chief beauty about time is that you cannot waste it in advance. The next year, the next day, the next hour are lying ready for you, as perfect, as unspoiled, as if you had never wasted or misapplied a single moment in all your life. You can turn over a new leaf every hour if you choose. -- Arnold Bennett",
+      "I fully realize that I have not succeeded in answering all of your questions.. Indeed, I feel I have not answered any of them completely. The answers I have found only serve to raise a whole new set of questions, which only lead to more problems, some of which we weren't even aware were problems. To sum it up.. In some ways I feel we are confused as ever, but I believe we are confused on a higher level, and about more important things."
     ];
     var rand = quotes[Math.floor(Math.random() * quotes.length)];
     return {

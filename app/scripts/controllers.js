@@ -157,7 +157,7 @@ angular
       step: 5,
       selector: ".beta5",
       title: "Your Cluster Activity",
-      content: "You should indicate whether you are a member or an advisor in each cluster.<br><br>If you advise all clusters, you are considered a 'General Advisor'.<br><br><label><strong>Quick question:</strong> What do you hope this site will help you do?<textarea placeholder='Could be tasks you want to perform, problems you are trying to solve, or needs you are trying to satisfy.' ng-model='global.betaTour.data.jobs' rows='4' class='form-control'></textarea></label>",
+      content: "You should indicate whether you are an investor or an advisor in each cluster.<br><br>If you advise all clusters, you are considered a 'General Advisor'.<br><br><label><strong>Quick question:</strong> What do you hope this site will help you do?<textarea placeholder='Could be tasks you want to perform, problems you are trying to solve, or needs you are trying to satisfy.' ng-model='global.betaTour.data.jobs' rows='4' class='form-control'></textarea></label>",
       placement: "left",
       width: "300px",
       finishButton: "<button ng-click='global.betaTour.feedback(global.betaTour.data)' class='btn btn-mini btn-success bootstro-finish-btn'><i class='fa fa-check'></i> Ok, let me in!</button>",

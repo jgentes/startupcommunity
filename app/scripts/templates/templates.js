@@ -236,7 +236,7 @@ angular.module('theme.templates', []).run(['$templateCache', function ($template
     "\n" +
     "    <li ng-repeat=\"(cluster, val) in item.value.cities[global.city.path.key].clusters\" style=\"list-style: none; display: inline; float: right; padding-left: 5px;\">\r" +
     "\n" +
-    "       <span ng-hide=\"((val.roles.indexOf('Advisor') >= 0) && (val.roles.indexOf('Leader') < 0) && (val.roles.indexOf('Member') < 0)) && item.value.cities[global.city.path.key].cityAdvisor === true\" title=\"{{cluster}} Cluster\" class=\"btn btn-xs btn-alt btn-default\" ng-class=\"{ 'btn-info' : ((val.roles.indexOf('Advisor') >= 0) && (val.roles.indexOf('Leader') < 0) && (item.value.cities[global.city.path.key].cityAdvisor === false || item.value.cities[global.city.path.key].cityAdvisor === undefined)), 'btn-danger' : (val.roles.indexOf('Leader') >= 0) }\" style=\"cursor: default;\"><i class=\"fa {{global.city.value.clusters[cluster].icon}}\"></i></span>\r" +
+    "       <span ng-hide=\"((val.roles.indexOf('Advisor') >= 0) && (val.roles.indexOf('Founder') < 0) && (val.roles.indexOf('Investor') < 0)) && item.value.cities[global.city.path.key].cityAdvisor === true\" title=\"{{cluster}} Cluster\" class=\"btn btn-xs btn-alt btn-default\" ng-class=\"{ 'btn-info' : ((val.roles.indexOf('Advisor') >= 0) && (val.roles.indexOf('Founder') < 0) && (item.value.cities[global.city.path.key].cityAdvisor === false || item.value.cities[global.city.path.key].cityAdvisor === undefined)), 'btn-danger' : (val.roles.indexOf('Founder') >= 0) }\" style=\"cursor: default;\"><i class=\"fa {{global.city.value.clusters[cluster].icon}}\"></i></span>\r" +
     "\n" +
     "    </li>\r" +
     "\n" +
@@ -307,7 +307,7 @@ angular.module('theme.templates', []).run(['$templateCache', function ($template
     "\n" +
     "    <li ng-repeat=\"(cluster, val) in item.value.cities[global.city.path.key].clusters\" style=\"list-style: none; display: inline; float: right; padding-left: 5px;\">\r" +
     "\n" +
-    "       <span ng-hide=\"((val.roles.indexOf('Advisor') >= 0) && (val.roles.indexOf('Leader') < 0) && (val.roles.indexOf('Member') < 0)) && item.value.cities[global.city.path.key].cityAdvisor === true\" title=\"{{cluster}} Cluster\" class=\"btn btn-xs btn-alt btn-default\" ng-class=\"{ 'btn-info' : ((val.roles.indexOf('Advisor') >= 0) && (val.roles.indexOf('Leader') < 0) && (item.value.cities[global.city.path.key].cityAdvisor === false || item.value.cities[global.city.path.key].cityAdvisor === undefined)), 'btn-danger' : (val.roles.indexOf('Leader') >= 0) }\" style=\"cursor: default;\"><i class=\"fa {{global.city.value.clusters[cluster].icon}}\"></i></span>\r" +
+    "       <span ng-hide=\"((val.roles.indexOf('Advisor') >= 0) && (val.roles.indexOf('Founder') < 0) && (val.roles.indexOf('Investor') < 0)) && item.value.cities[global.city.path.key].cityAdvisor === true\" title=\"{{cluster}} Cluster\" class=\"btn btn-xs btn-alt btn-default\" ng-class=\"{ 'btn-info' : ((val.roles.indexOf('Advisor') >= 0) && (val.roles.indexOf('Founder') < 0) && (item.value.cities[global.city.path.key].cityAdvisor === false || item.value.cities[global.city.path.key].cityAdvisor === undefined)), 'btn-danger' : (val.roles.indexOf('Founder') >= 0) }\" style=\"cursor: default;\"><i class=\"fa {{global.city.value.clusters[cluster].icon}}\"></i></span>\r" +
     "\n" +
     "    </li>\r" +
     "\n" +

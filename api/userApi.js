@@ -143,7 +143,7 @@ var searchincity = function(city, cluster, role, limit, offset, query, key) {
         
         if (!allowed && userdata) {          
           for (item_cluster in result.body.results[i].value.cities[city].clusters) {            
-            if (userdata.cities[city].clusters[item_cluster].roles.indexOf("Leader") >= 0) {
+            if (userdata.cities[city].clusters[item_cluster].roles.indexOf("Founder") >= 0) {
               allowed = true;
             }
           }
@@ -738,7 +738,7 @@ function handleSetRole(req, res) {
         if (cluster) {
           if (response.body.cities[citykey].clusters) {
             if (response.body.cities[citykey].clusters[cluster]) {
-              allowed = (response.body.cities[citykey].clusters[cluster].roles.indexOf("Leader") >= 0);    
+              allowed = (response.body.cities[citykey].clusters[cluster].roles.indexOf("Founder") >= 0);
             }
           }         
         }
