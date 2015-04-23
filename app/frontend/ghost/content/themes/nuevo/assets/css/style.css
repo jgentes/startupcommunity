@@ -22,11 +22,12 @@ Author URI: http://www.estudiopatagon.com
 	left: -41px;
 }
 
-blockquote :after {
-	content:"\f099";
+blockquote a:after {
+	content: "\f099";
 	font-family: FontAwesome;
-	margin-left: 10px;
+	margin: 0 5px 5px 5px;
 	color: #55acee;
+	float: right;
 }
 
 blockquote {
@@ -34,6 +35,7 @@ blockquote {
 	background: #f2f0f0;
 	color: #999;
 	padding: 1px 4px;
+	display: inline-block;
 }
 
 blockquote p {
