@@ -64,6 +64,25 @@
 	<script type="text/javascript" src="{{asset "js/fancybox/jquery.fancybox.pack.js"}}"></script>
 	<script type="text/javascript" src="{{asset "js/fancybox/helpers/jquery.fancybox-buttons.js"}}"></script>
   <script type="text/javascript" src="//platform.twitter.com/widgets.js"></script>
+  <script type="text/javascript">
+    var completeurl = window.location.protocol + "//" + window.location.host + window.location.pathname + window.location.search;
+    completeurl = encodeURIComponent(completeurl);
+    var twshare = "https://twitter.com/intent/tweet?url=" + completeurl;
+
+		$("blockquote").each(function () {
+			var $link = $("<a />"),
+							linkText = "",
+							url = twshare + "&text=" + $(this).find("p").text() + "&via=startupyourcity";
+			$link.attr("href", url);
+			$link.attr("title", "Tweet this");
+			$link.attr("target", "_blank");
+			$link.text(linkText);
+			$link.addClass('tweet-this');
+
+			$(this).wrap($link);
+
+		});
+	</script>
     <script type="text/javascript" src="{{asset "js/global.js"}}"></script>
 </body>
 </html>

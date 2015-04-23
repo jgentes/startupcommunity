@@ -22,6 +22,25 @@ Author URI: http://www.estudiopatagon.com
 	left: -41px;
 }
 
+blockquote :after {
+	content:"\f099";
+	font-family: FontAwesome;
+	margin-left: 10px;
+	color: #55acee;
+}
+
+blockquote {
+	text-decoration: none;
+	background: #f2f0f0;
+	color: #999;
+	padding: 1px 4px;
+}
+
+blockquote p {
+	font: 26px/40px 'Quicksand';
+}
+
+
 /* @group Fonts and Icons */
 
 /* @import url('https://fonts.googleapis.com/css?family=Quicksand'); moved this to default.hbs */
@@ -78,7 +97,7 @@ div.clear100{ height: 100px; }
 /* @group Global Styles */
 
 body{
-	font: 14px 'Open Sans', Arial, Helvetica, sans-serif;
+	font: 20px 'Quicksand', 'Open Sans', Arial, Helvetica, sans-serif;
 	line-height: 1.6;
 	color: #777;
 	-webkit-background-size: cover !important;
@@ -213,7 +232,7 @@ a.readmore:hover{
 
 /* @group Editor Styles */
 
-.post-content { font-size: 14px; line-height: 160%; margin-top: 25px; }
+.post-content { font-size: 20px; line-height: 160%; margin-top: 25px; }
 .post-content hr{ margin-bottom: 20px; }
 .post-content div#map_canvas img{ max-width: none; height: inherit; }
 .post-content img{
@@ -360,7 +379,7 @@ form p{ padding-bottom: 15px; font-size: 12px; }
 #header hgroup{ padding: 25px 0; }
 #header hgroup h1.logo{ }
 #header hgroup h1.logo a{ font: 42px/1 'Quicksand'; color: #76A33D; }
-#header hgroup h2.blog-description{ font-size: 13px; line-height: 120%; margin: 5px 0 0 3px; color: #999; }
+#header hgroup h2.blog-description{ font-size: 22px; line-height: 120%; margin: 5px 0 0 3px; color: #777; }
 #header hgroup h1.logo a img{ width: 400px; max-height: 133px; }
 #header nav{
 	background: #76A33D;
@@ -522,7 +541,7 @@ div.single div.spine{
 }
 div.single article{ position: relative; }
 div.single article header{ }
-div.single article header div.meta{ position: relative; }
+div.single article header div.meta{ position: relative; padding-top: 25px;}
 div.single article header div.meta time{
 	position: absolute;
 	top: -35px;
