@@ -22,14 +22,6 @@ Author URI: http://www.estudiopatagon.com
 	left: -41px;
 }
 
-blockquote a:after {
-	content: "\f099";
-	font-family: FontAwesome;
-	margin: 0 5px 5px 5px;
-	color: #55acee;
-	float: right;
-}
-
 blockquote {
 	text-decoration: none;
 	background: #f2f0f0;
@@ -42,6 +34,25 @@ blockquote p {
 	font: 26px/40px 'Quicksand';
 }
 
+blockquote span {
+	text-decoration: none;
+	background: #f2f0f0;
+	color: #666;
+	padding: 1px 4px;
+	display: inline-block;
+}
+
+blockquote :hover, span:hover {
+	color: #76A33D;
+}
+
+blockquote span:after {
+	content: "\f099";
+	font-family: FontAwesome;
+	margin: 0 5px 5px 5px;
+	color: #55acee;
+	float: right;
+}
 
 /* @group Fonts and Icons */
 
