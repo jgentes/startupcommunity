@@ -1,10 +1,14 @@
 <!-- start: .main-nav -->
 <nav class="main-nav" role="navigation">
-	<ul>
-		{{#foreach navigation}}
-			<li class="nav-{{slug}}{{#if current}} nav-current{{/if}}"><a href="{{url absolute="true"}}">{{label}}</a></li>
-		{{/foreach}}
-	</ul>
+  <ul>
+	  {{#foreach navigation}}
+	    <li class="nav-{{slug}}"><a href="{{url absolute="true"}}">{{#if current}}{{else}}{{label}}{{/if}}</a></li>
+	  {{/foreach}}
+    <li>Get Startup Community Lessons via Email ->
+    <input type="email" class="email-input form-control" style="width: 20%; -moz-border-radius: 0px; -webkit-border-radius: 0px; border-radius: 0px; line-height: 1.428571429; height: 10px;" placeholder="your@emailaddress.com">
+    <button type="submit" class="btn btn-primary">Subscribe Now</button>
+    </li>
+  </ul>
 </nav>
 <!-- end: .main-nav -->
 <div class="mobile selector"><i class="fa fa-bars"></i></div>

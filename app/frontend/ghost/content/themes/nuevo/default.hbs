@@ -29,9 +29,6 @@
 <link rel="stylesheet" type="text/css" href="{{asset "js/fancybox/helpers/jquery.fancybox-buttons.css"}}">
 <link rel="stylesheet" type="text/css" href="{{asset "css/prettify-bootstrap.css"}}">
 
-<script src="//load.sumome.com/" data-sumo-site-id="4c2677cd45a898f7f323f0e31e33d3642ece7be678d3a895a98a3b01b6892282" async="async"></script>
-<style> .sumome-control, .sumome-popup-link { display: none !important; } </style>
-
 <!--[if lt IE 9]>
 <script src="https://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
 <![endif]-->
@@ -67,27 +64,6 @@
 	<script type="text/javascript" src="{{asset "js/google-code-prettify/prettify.js"}}"></script>
 	<script type="text/javascript" src="{{asset "js/fancybox/jquery.fancybox.pack.js"}}"></script>
 	<script type="text/javascript" src="{{asset "js/fancybox/helpers/jquery.fancybox-buttons.js"}}"></script>
-  <script type="text/javascript" src="//platform.twitter.com/widgets.js"></script>
-  <script type="text/javascript">
-    var completeurl = window.location.protocol + "//" + window.location.host + window.location.pathname + window.location.search;
-    completeurl = encodeURIComponent(completeurl);
-    var twshare = "https://twitter.com/intent/tweet?url=" + completeurl;
-
-		$("blockquote").each(function () {
-			var $link = $("<a />"),
-							linkText = "",
-							url = twshare + "&text=" + $(this).find("p").text() + "&via=startupyourcity";
-			$link.attr("href", url);
-			$link.attr("title", "Tweet this");
-			$link.attr("target", "_blank");
-			$link.text(linkText);
-			$link.addClass('tweet-this');
-
-			$(this).wrap($link);
-		    $(this).append("<span style='float:right;font-style:normal;'>Click to Tweet</span>");
-
-		});
-	</script>
     <script type="text/javascript" src="{{asset "js/global.js"}}"></script>
 </body>
 </html>
