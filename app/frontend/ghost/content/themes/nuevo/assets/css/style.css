@@ -11,7 +11,12 @@ Author URI: http://www.estudiopatagon.com
 
 /* CUSTOM CSS */
 
+
 .post-title, .post > header h2 { display: none; } /* Removes duplication when title is inside image */
+#header hgroup h2.blog-description { text-align: center; } /* for small screens */
+#header hgroup h1.logo { text-align: center; } /* for small screens */
+
+/* FOR LINES CONNECTING BLOG POSTS TO TIMELINE */
 
 .postline {
 	width: 40px;
@@ -23,6 +28,8 @@ Author URI: http://www.estudiopatagon.com
 .ep-last .postline {
 	left: -41px;
 }
+
+/* FOR CLICK TO TWEET */
 
 blockquote {
 	text-decoration: none;
@@ -56,6 +63,29 @@ blockquote span:after {
 	float: right;
 }
 
+/* FOR MAILCHIMP FORM */
+
+.btn {
+    display: inline-block;
+    padding: 6px 12px;
+    margin-bottom: 0;
+    font-size: 14px;
+    font-weight: normal;
+    line-height: 1.428571429;
+    text-align: center;
+    vertical-align: middle;
+    cursor: pointer;
+    background-image: none;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    white-space: nowrap;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    -o-user-select: none;
+    user-select: none;
+}
+
 .btn.btn-primary {
 	-moz-border-radius: 0;
 	-webkit-border-radius: 0;
@@ -71,33 +101,64 @@ blockquote span:after {
 	font-weight: 300;
 }
 
-.btn-primary {
-	color: #ffffff;
-	background-color: #428bca;
-	border-color: #357ebd;
+.btn-primary:hover {
+    background-color: #bc6148;
 }
 
-.btn {
-	display: inline-block;
-	padding: 6px 12px;
-	margin-bottom: 0;
-	font-size: 14px;
-	font-weight: normal;
-	line-height: 1.428571429;
-	text-align: center;
-	vertical-align: middle;
-	cursor: pointer;
-	background-image: none;
-	border: 1px solid transparent;
-	border-radius: 4px;
-	white-space: nowrap;
-	-webkit-user-select: none;
-	-moz-user-select: none;
-	-ms-user-select: none;
-	-o-user-select: none;
-	user-select: none;
+.btn-primary:active { top: 2px; border-bottom-width: 1px; }
+
+nav.mobile ul li { color: #fff; display: inline-block !important;}
+
+#notification_container {
+    display: block;
+    margin: 0 auto;
 }
 
+#notification_container .alert {
+    display: block;
+    width: 100%;
+    padding: 11px 20px;
+    border: 1px solid #cfc07e;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+    color: #515151;
+    font-size: 1.1em;
+    line-height: 1.3em;
+    font-weight: bold;
+    text-shadow: 1px 1px 0 rgba(255,255,255,0.75);
+    background-color: #e3cb77;
+    background-image: -webkit-gradient(linear, left top, left bottom, from(#e3cb77), to(#f4e4a8));
+    background-image: -webkit-linear-gradient(top, #e3cb77, #f4e4a8);
+    background-image: -moz-linear-gradient(top, #e3cb77, #f4e4a8);
+    background-image: -ms-linear-gradient(top, #e3cb77, #f4e4a8);
+    background-image: -o-linear-gradient(top, #e3cb77, #f4e4a8);
+    background-image: linear-gradient(top, #e3cb77, #f4e4a8);
+}
+
+#notification_container .success {
+    display: block;
+    width: 100%;
+    padding: 11px 20px;
+    border: 1px solid #78aa5f;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+    color: #515151;
+    font-size: 1.1em;
+    line-height: 1.3em;
+    font-weight: bold;
+    text-shadow: 1px 1px 0 rgba(255,255,255,0.5);
+    background-color: #9ac784;
+    background-image: -webkit-gradient(linear, left top, left bottom, from(#9ac784), to(#aed39c));
+    background-image: -webkit-linear-gradient(top, #9ac784, #aed39c);
+    background-image: -moz-linear-gradient(top, #9ac784, #aed39c);
+    background-image: -ms-linear-gradient(top, #9ac784, #aed39c);
+    background-image: -o-linear-gradient(top, #9ac784, #aed39c);
+    background-image: linear-gradient(top, #9ac784, #aed39c);
+}
+
+/* END CUSTOM CSS */
 
 /* @group Fonts and Icons */
 
