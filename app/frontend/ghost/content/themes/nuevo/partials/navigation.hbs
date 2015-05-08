@@ -1,6 +1,6 @@
 <!-- start: .main-nav -->
 <nav class="main-nav" role="navigation">
-  <ul style="padding-left: 10px; color: #fff;">
+  <ul style="padding-left: 10px; color: #fff;" id="navlist">
 	  {{#foreach navigation}}
 	    <li class="nav-{{slug}}"><a href="{{url absolute="true"}}" style="float:left; padding-top:20px;">{{#if current}}{{else}}{{label}}{{/if}}</a></li>
 	  {{/foreach}}
