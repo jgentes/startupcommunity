@@ -11,6 +11,7 @@ Author URI: http://www.estudiopatagon.com
 
 /* CUSTOM CSS */
 
+#footer div { color: #aaa; }
 
 .post-title, .post > header h2 { display: none; } /* Removes duplication when title is inside image */
 #header hgroup h2.blog-description { text-align: center; } /* for small screens */
@@ -22,7 +23,7 @@ Author URI: http://www.estudiopatagon.com
 	width: 40px;
 	position: absolute;
 	left: 408px;
-	top: 28px;
+	top: 36px;
 }
 
 .ep-last .postline {
@@ -110,7 +111,6 @@ blockquote span:after {
 nav.mobile ul li { color: #fff; display: inline-block !important;}
 
 #header nav { padding-top: 0 !important;}
-
 
 /* END CUSTOM CSS */
 
@@ -564,8 +564,8 @@ div.home div.timeline article a.thumb img{
 	width: 100%;
 	height: auto;
 }
-div.home div.timeline article .post-excerpt{ margin-top: 5px; font-size: 12px; }
-div.home div.timeline article footer p.tags{ color: #666; font-size: 11px; }
+div.home div.timeline article .post-excerpt{ margin-top: 5px; font-size: 16px; }
+div.home div.timeline article footer p.tags{ color: #666; font-size: 12px; }
 
 /* @end */
 
