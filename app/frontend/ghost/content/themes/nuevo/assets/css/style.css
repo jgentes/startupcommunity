@@ -11,16 +11,26 @@ Author URI: http://www.estudiopatagon.com
 
 /* CUSTOM CSS */
 
+#footer div { color: #aaa; }
+
+.post-title, .post > header h2 { display: none; } /* Removes duplication when title is inside image */
+#header hgroup h2.blog-description { text-align: center; } /* for small screens */
+#header hgroup h1.logo { text-align: center; } /* for small screens */
+
+/* FOR LINES CONNECTING BLOG POSTS TO TIMELINE */
+
 .postline {
 	width: 40px;
 	position: absolute;
 	left: 408px;
-	top: 10px;
+	top: 36px;
 }
 
 .ep-last .postline {
 	left: -41px;
 }
+
+/* FOR CLICK TO TWEET */
 
 blockquote {
 	text-decoration: none;
@@ -53,6 +63,56 @@ blockquote span:after {
 	color: #55acee;
 	float: right;
 }
+
+/* FOR MAILCHIMP FORM */
+
+.btn {
+    display: inline-block;
+    padding: 6px 12px;
+    margin-bottom: 0;
+    font-size: 14px;
+    font-weight: normal;
+    line-height: 1.428571429;
+    text-align: center;
+    vertical-align: middle;
+    cursor: pointer;
+    background-image: none;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    white-space: nowrap;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    -o-user-select: none;
+    user-select: none;
+}
+
+.btn.btn-primary {
+	-moz-border-radius: 0;
+	-webkit-border-radius: 0;
+	border-radius: 0;
+	border: none !important;
+	background-color: #d5775d;
+	color: white !important;
+	transition: all 0.25s ease-in-out;
+	-o-transition: all 0.25s ease-in-out;
+	-moz-transition: all 0.25s ease-in-out;
+	-webkit-transition: all 0.25s ease-in-out;
+	font-family: "museo-sans", sans-serif;
+	font-weight: 300;
+}
+
+.btn-primary:hover {
+    background-color: #bc6148;
+}
+
+.btn-primary:active { top: 2px; border-bottom-width: 1px; }
+
+nav.mobile ul li { color: #fff; display: inline-block !important;}
+
+#header nav { padding-top: 0 !important;}
+
+/* END CUSTOM CSS */
 
 /* @group Fonts and Icons */
 
@@ -112,7 +172,7 @@ div.clear100{ height: 100px; }
 body{
 	font: 20px 'Quicksand', 'Open Sans', Arial, Helvetica, sans-serif;
 	line-height: 1.6;
-	color: #777;
+	color: #555;
 	-webkit-background-size: cover !important;
 	-moz-background-size: cover !important;
 	-o-background-size: cover !important;
@@ -259,7 +319,7 @@ a.readmore:hover{
 .post-content h1, .post-content h2, .post-content h3,
 .post-content h4, .post-content h5, .post-content h6{ color: #333; line-height: 160%; }
 .post-content h1{ font-size: 24px; border-bottom: 1px solid #eee; padding-bottom: 15px; margin-bottom: 20px; }
-.post-content h2{ font-size: 22px; }
+.post-content h2{ font-size: 24px; font-weight: bold;}
 .post-content h3{ font-size: 20px; }
 .post-content h4{ font-size: 18px; }
 .post-content h5{ font-size: 16px; }
@@ -328,7 +388,7 @@ input[type=email],
 input[type=tel],
 input[type=url],
 textarea{
-	display: block;
+	display: inline-block;
 	background: #f6f6f6;
 	color: #999;
 	font: 14px 'Open Sans';	
@@ -504,8 +564,8 @@ div.home div.timeline article a.thumb img{
 	width: 100%;
 	height: auto;
 }
-div.home div.timeline article .post-excerpt{ margin-top: 5px; font-size: 12px; }
-div.home div.timeline article footer p.tags{ color: #666; font-size: 11px; }
+div.home div.timeline article .post-excerpt{ margin-top: 5px; font-size: 16px; }
+div.home div.timeline article footer p.tags{ color: #666; font-size: 12px; }
 
 /* @end */
 

@@ -1,10 +1,21 @@
 <!-- start: .main-nav -->
 <nav class="main-nav" role="navigation">
-	<ul>
-		{{#foreach navigation}}
-			<li class="nav-{{slug}}{{#if current}} nav-current{{/if}}"><a href="{{url absolute="true"}}">{{label}}</a></li>
-		{{/foreach}}
-	</ul>
+  <ul style="padding-left: 10px; color: #fff;" id="navlist">
+	  {{#foreach navigation}}
+	    <li class="nav-{{slug}}"><a href="{{url absolute="true"}}" style="float:left; padding-top:20px;">{{#if current}}{{else}}{{label}}{{/if}}</a></li>
+	  {{/foreach}}
+    <li>Get Startup Community Lessons Delivered To Your Inbox:</li>
+    <li>
+      <form action="//startupcommunity.us9.list-manage.com/subscribe/post-json?u=e84a98eb12e090eb0b1a06b80&amp;id=ba6c99c719&amp;c=?" method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" target="_blank" style="display:inline-block;" novalidate>
+        <div style="display: inline-block !important;">
+            <input type="email" value="" name="EMAIL" class="required email" id="mce-EMAIL" placeholder="your@emailaddress.com" style="width:175px;">
+        </div>
+        <div style="margin-left:5px; display: inline-block !important;">
+            <input type="submit" value="Subscribe Now" name="subscribe" id="mc-embedded-subscribe" class="button" style="float:none;">
+        </div>
+      </form>
+    </li>
+  </ul>
 </nav>
 <!-- end: .main-nav -->
 <div class="mobile selector"><i class="fa fa-bars"></i></div>
