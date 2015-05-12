@@ -13,9 +13,10 @@ Author URI: http://www.estudiopatagon.com
 
 #footer div { color: #aaa; }
 
-.post-title, .post > header h2 { display: none; } /* Removes duplication when title is inside image */
 #header hgroup h2.blog-description { text-align: center; } /* for small screens */
 #header hgroup h1.logo { text-align: center; } /* for small screens */
+#header hgroup h2#post-title { font-size: 26px }
+article h2.post-title { display: none; }
 
 /* FOR LINES CONNECTING BLOG POSTS TO TIMELINE */
 
@@ -453,7 +454,7 @@ form p{ padding-bottom: 15px; font-size: 12px; }
 #header hgroup h1.logo{ }
 #header hgroup h1.logo a{ font: 42px/1 'Quicksand'; color: #76A33D; }
 #header hgroup h2.blog-description{ font-size: 22px; line-height: 120%; margin: 5px 0 0 3px; color: #777; }
-#header hgroup h1.logo a img{ width: 400px; max-height: 133px; }
+#header hgroup h1.logo a img{ max-width: 400px; max-height: 133px; width: 100%; height: 100% }
 #header nav{
 	background: #76A33D;
 	color: #fff;
