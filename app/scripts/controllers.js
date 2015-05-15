@@ -76,114 +76,21 @@ angular
       $scope.global.alert = undefined;
     };
 
-    // Feedback mechanisms used during Beta
-
-    $scope.global.betaTour = {
-      people: {},
-      profile: {},
-      data: {},
-      feedback: function(userdata) {
-        userService.feedback(userdata);
-      },
-      recompile: function() {
-        $timeout(function() {
-          var popoverEl = $('body').find('.popover');
-          $compile(popoverEl)($scope);
-        }, 50);
-      },
-      gotoProfile: function() {
-        $location.path('/profile');
-        $timeout(function() {
-          $scope.global.editProfile = true;
-          bootstro.stop();
-          bootstro.start('', $scope.global.betaTour.profile);
-          }, 1500);
-      }
-    };
-
-    $scope.global.betaTour.people['items'] = [{
-      step: 0,
-      selector: ".beta0",
-      title: "Welcome to Bend's Startup Community!",
-      content: "Before getting started, please take our tour and answer a few questions.",
-      placement: "bottom",
-      width: "300px",
-      finishButton: "<span style='display: none'></span>",
-      onStep: $scope.global.betaTour.recompile
-    },
-    {
-      step: 1,
-      selector: ".beta1",
-      title: "Community = People and Startups",
-      content: "The community is organized around People and Startups.<br><br>People have different roles, including founders, advisors, and investors in Startups.<br><br><label>Expect something else? Tell us:<input onkeydown='if (event.keyCode == 13) $(&apos;.bootstro-next-btn&apos;).click()' type='text' ng-model='global.betaTour.data.community' class='form-control'></label>",
-      placement: "bottom",
-      margin: 150,
-      width: "300px",
-      finishButton: "<span style='display: none'></span>",
-      onStep: $scope.global.betaTour.recompile
-    },
-    {
-      step: 2,
-      selector: ".beta2",
-      title: "Clusters = Industry Segments",
-      content: "Clusters represent an ecosystem focused on a specific industry.<br><br>People and Startups are grouped into Clusters.<br><br><label>Expect something else? Tell us:<input onkeydown='if (event.keyCode == 13) $(&apos;.bootstro-next-btn&apos;).click()' type='text' ng-model='global.betaTour.data.clusters' class='form-control'></label>",
-      placement: "right",
-      width: "300px",
-      finishButton: "<span style='display: none'></span>",
-      onStep: $scope.global.betaTour.recompile
-    },
-    {
-      step: 3,
-      selector: ".beta3",
-      title: "My role in the startup community is:",
-      content: "<fieldset style='margin-top: -10px;'><div class='checkbox'><label><input type='checkbox' value='' ng-model='global.betaTour.data.advisor'>Advisor</label></div><div class='checkbox'><label><input type='checkbox' value='' ng-model='global.betaTour.data.leader'>Community Leader</label></div><div class='checkbox'><label><input type='checkbox' value='' ng-model='global.betaTour.data.member'>Community Member</label></div><div class='checkbox'><label><input type='checkbox' value='' ng-model='global.betaTour.data.investor'>Investor</label></div><div class='checkbox'><label><input type='checkbox' value='' ng-model='global.betaTour.data.founder'>Startup Founder</label></div><label>Something else?<input type='text' ng-model='global.betaTour.data.other' class='form-control'></label></fieldset>",
-      width: "300px",
-      placement: "right",
-      finishButton: "<button ng-click='global.betaTour.gotoProfile()' class='btn btn-primary btn-mini bootstro-next-btn' style='margin-top:-34px'>Next »</button>",
-      onStep: $scope.global.betaTour.recompile
-    }];
-
-  $scope.global.betaTour.profile['items'] = [{
-      step: 4,
-      selector: ".beta4",
-      title: "{{global.user.value.name | words:0}}, this is your profile.",
-      content: "Your profile information is pulled from Linkedin.<br><br>If you update your Summary or Contact info on Linkedin, it will update here.",
-      placement: "bottom",
-      width: "300px",
-      finishButton: "<span style='display: none'></span>",
-      onStep: $scope.global.betaTour.recompile
-    },
-    {
-      step: 5,
-      selector: ".beta5",
-      title: "Your Cluster Activity",
-      content: "You should indicate whether you are an investor or an advisor in each cluster.<br><br>If you advise all clusters, you are considered a 'General Advisor'.<br><br><label><strong>Quick question:</strong> What do you hope this site will help you do?<textarea placeholder='Could be tasks you want to perform, problems you are trying to solve, or needs you are trying to satisfy.' ng-model='global.betaTour.data.jobs' rows='4' class='form-control'></textarea></label>",
-      placement: "left",
-      width: "300px",
-      finishButton: "<button ng-click='global.betaTour.feedback(global.betaTour.data)' class='btn btn-mini btn-success bootstro-finish-btn'><i class='fa fa-check'></i> Ok, let me in!</button>",
-      onStep: $scope.global.betaTour.recompile
-    }];
-
     var broadcast = function() {
       $scope.$broadcast('sessionReady', true);
-      if ($scope.global.user.value.beta === undefined) {
-        $location.path('/people');
-        $timeout(function() {
-          bootstro.start('', $scope.global.betaTour.people);
-          $scope.global.betaTour.recompile();
-        }, 3500);
+      $location.path('/people');
+
+      if ($scope.global.user.path.key) {
+          $mixpanel.people.set({
+              "$name": $scope.global.user.value.name,
+              "$email": $scope.global.user.value.email
+          });
+          UserVoice.push(['identify', {
+              id: $scope.global.user.path.key,
+              name: $scope.global.user.value.name,
+              email: $scope.global.user.value.email
+          }]);
       }
-        if ($scope.global.user.path.key) {
-            $mixpanel.people.set({
-                "$name": $scope.global.user.value.name,
-                "$email": $scope.global.user.value.email
-            });
-            UserVoice.push(['identify', {
-                id: $scope.global.user.path.key,
-                name: $scope.global.user.value.name,
-                email: $scope.global.user.value.email
-            }]);
-        }
     };
 
     // Get and set user and city data

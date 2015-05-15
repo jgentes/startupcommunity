@@ -14,7 +14,7 @@ angular
           },
           {
               heading: 'COMMUNITY',
-              navClass: 'beta1 noback'
+              navClass: 'noback'
           },
           {
               label: 'People',
@@ -29,7 +29,7 @@ angular
           },
           {
               heading: 'CLUSTERS',
-              navClass: 'beta2 noback',
+              navClass: 'noback',
               id: 'clusters'
           }
         ];
