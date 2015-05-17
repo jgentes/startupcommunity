@@ -20,7 +20,7 @@
     "mailchimp": "4cd1eb319ae631eb57ef642b9340af68-us9",
     "mandrill": "JDkgsI2Q5La5kGVPXCOrFg",
     "path": "/app",
-    "api_base_url": "http://localhost:5000"
+    "api_base_url": "https://dev.startupcommunity.org"
   },
   "local": {
     "db": {
