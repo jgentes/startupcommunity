@@ -174,32 +174,19 @@ angular.module('theme.templates', []).run(['$templateCache', function ($template
 
 
   $templateCache.put('app/templates/nav_renderer.html',
-    "<a ng-if=\"!item.heading\" ng-click=\"select(item)\" ng-href=\"{{item.url}}\" id=\"{{item.id}}\">\r" +
-    "\n" +
-    "\t<i ng-if=\"item.iconClasses\" class=\"{{item.iconClasses}}\"></i><span>{{item.label}}</span>\r" +
-    "\n" +
-    "\t<span ng-bind-html=\"item.html\"></span>\r" +
-    "\n" +
-    "</a>\r" +
-    "\n" +
-    "<h5 ng-if=\"item.heading\" class=\"heading\" id=\"{{item.id}}\">{{item.heading}}</h5>\r" +
-    "\n" +
-    "<ul ng-if=\"item.children.length\" data-slide-out-nav=\"item.open\">\r" +
-    "\n" +
-    "    <li ng-repeat=\"item in item.children\"\r" +
-    "\n" +
-    "\t    ng-class=\"{ hasChild: (item.children!==undefined),\r" +
-    "\n" +
-    "                      active: item.selected,\r" +
-    "\n" +
-    "                        open: (item.children!==undefined) && item.open }\"\r" +
-    "\n" +
-    "    \tng-include=\"'views/templates/nav_renderer.html'\"\r" +
-    "\n" +
-    "    ></li>\r" +
-    "\n" +
-    "</ul>\r" +
-    "\n"
+    "<a ng-if=\"!item.heading\" ng-click=\"select(item)\" ng-href=\"{{item.url}}\" id=\"{{item.id}}\">\n" +
+    "\t<i ng-if=\"item.iconClasses\" class=\"{{item.iconClasses}}\"></i><span>{{item.label}}</span>\n" +
+    "\t<span ng-bind-html=\"item.html\"></span>\n" +
+    "</a>\n" +
+    "<h5 ng-if=\"item.heading\" class=\"heading\" id=\"{{item.id}}\">{{item.heading}}</h5>\n" +
+    "<ul ng-if=\"item.children.length\" data-slide-out-nav=\"item.open\">\n" +
+    "    <li ng-repeat=\"item in item.children\"\n" +
+    "\t    ng-class=\"{ hasChild: (item.children!==undefined),\n" +
+    "                      active: item.selected,\n" +
+    "                        open: (item.children!==undefined) && item.open }\"\n" +
+    "    \tng-include=\"'views/templates/nav_renderer.html'\"\n" +
+    "    ></li>\n" +
+    "</ul>\n"
   );
 
 
