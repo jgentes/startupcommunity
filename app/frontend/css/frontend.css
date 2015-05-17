@@ -107,7 +107,8 @@ header nav {
     overflow-y: auto;
     list-style: none;
     margin: 0;
-    padding: 0;
+    padding-top: 30px;
+    padding-left: 30px;
     width: 250px;
     background: #353535;
     z-index: 1001;
@@ -1873,6 +1874,7 @@ p, .table, .alert, .carousel {
         z-index: auto;
         -webkit-transition: none;
         transition: none;
+        padding: 0;
     }
 
     .site-nav.site-nav-visible {
