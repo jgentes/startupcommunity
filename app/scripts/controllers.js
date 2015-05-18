@@ -480,6 +480,7 @@ angular
                     $route.reload();
                 })
                 .catch(function(response) {
+                    console.warn("WARNING:");
                     console.log(response);
                     if (response.data.profile) {
                         $mixpanel.people.set({
@@ -495,8 +496,6 @@ angular
                     if (response.data.message && response.data.message !== 'undefined') {
                         $scope.global.alert = {type: 'danger', msg: String(response.data.message)};
                     } else $scope.global.alert = undefined;
-                    console.warn("WARNING:");
-                    console.log(response);
                 });
         };
     }])

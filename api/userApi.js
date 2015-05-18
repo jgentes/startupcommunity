@@ -505,8 +505,7 @@ function handleLinkedin(req, res) {
         redirect_uri: req.body.redirectUri,
         client_secret: config.linkedin.clientSecret,
         code: req.body.code,
-        grant_type: 'authorization_code',
-        scope: ['r_basicprofile', 'r_emailaddress']
+        grant_type: 'authorization_code'
     };
     // Step 1. Exchange authorization code for access token.
     request.post(accessTokenUrl, { form: params, json: true }, function(err, response, body) {
