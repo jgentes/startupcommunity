@@ -119,11 +119,14 @@
               'focusedform': style_fullscreen,
               'fixed-layout': style_layoutBoxed,
               'collapse-leftbar': style_leftbarCollapsed && !style_leftbarShown,              
-              'show-leftbar': style_leftbarShown
+              'show-leftbar': style_leftbarShown,
+              'start-hidden': start_hidden
             }"
-  ng-cloak>
-    
-    <header class="navbar navbar-inverse" ng-class="{'navbar-fixed-top': style_fixedHeader, 'navbar-static-top': !style_fixedHeader}" role="banner">
+      style="display:none;">
+
+    <header class="navbar navbar-inverse"
+            ng-class="{'navbar-fixed-top': style_fixedHeader, 'navbar-static-top': !style_fixedHeader}"
+            role="banner">
         <a id="leftmenu-trigger" tooltip-placement="right" tooltip="Toggle Sidebar" ng-click="toggleLeftBar()">
           <img src="../public/favicon.png" width="32px" style="padding: 1px 3px 2px 0;" class="navbar-header pull-left"/>
         </a>
@@ -141,7 +144,7 @@
             <a href="/login" style="font-size: 14px"><i class="fa fa-sign-in"></i> Log in</a>
           </li>
           <li class="dropdown" ng-show="isAuthenticated">
-          
+
             <a class="dropdown-toggle username" data-toggle='dropdown'><span class="hidden-xs">{{global.user.value.name}}</span><img ng-src="{{global.user.value.avatar || global.user.value.linkedin.pictureUrl || '/public/blank_avatar.png'}}" alt="{{global.user.value.name}}" style="margin-right: 11px;"/></a>
             <ul class="dropdown-menu userinfo arrow">
               <li class="userlinks">
@@ -153,10 +156,10 @@
               </li>
             </ul>
           </li>
-        
+
     </ul>
     </header>
-    
+
 <div id="page-container" class="clearfix">
 
         <!-- BEGIN SIDEBAR -->
@@ -164,7 +167,7 @@
 
             <div>
               <ul ng-controller="NavigationController" id="sidebar" sticky-scroll="40">
-                  
+
                   <li ng-repeat="item in menu"
                       ng-class="{ hasChild: (item.children!==undefined),
                                     active: item.selected,
@@ -176,32 +179,32 @@
               </ul>
             </div>
             <!-- END SIDEBAR MENU -->
-            
+
         </nav>
 
     <div id="page-content" class="clearfix" fit-height>
         <div ng-show="global.alert && !style_fullscreen">
           <alert type="{{global.alert.type}}" style="margin: 2px;" close="closeAlert($index)"><span ng-bind-html="global.alert.msg | safe_html"></span></alert>
         </div>
-        <div id="wrap" ng-view="" class="mainview-animation">                
+        <div id="wrap" ng-view="" class="mainview-animation">
         </div> <!--wrap -->
-        
-        <footer role="contentinfo" style="margin: 1%; height: 70px;">        
-          <div class="col-md-4">                    
-            <ul class="list-unstyled list-inline">            
+
+        <footer role="contentinfo" style="margin: 1%; height: 70px;">
+          <div class="col-md-4">
+            <ul class="list-unstyled list-inline">
               <button class="pull-left btn btn-default btn-xs hidden-print" back-to-top><i class="fa fa-angle-up"></i></button>
-              <li style="color: #bbb; padding-top: 2px;">StartupCommunity.org &copy; 2014</li>              
-            </ul>                      
+              <li style="color: #bbb; padding-top: 2px;">StartupCommunity.org &copy; 2014</li>
+            </ul>
           </div>
           <div class="col-xs-12 col-md-8">
             <ul class="list-unstyled list-inline pull-right">
               <li style="color: #aaa;" random-quote></li>
             </ul>
-          </div>          
+          </div>
         </footer>
-    </div> <!-- page-content -->   
-     
-    
+    </div> <!-- page-content -->
+
+
 </div> <!-- page-container -->
 
     <!--[if lt IE 9]>

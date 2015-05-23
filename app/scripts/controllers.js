@@ -10,6 +10,7 @@ angular
         $scope.style_rightbarCollapsed = $global.get('rightbarCollapsed');
         $scope.style_isSmallScreen = false;
         $scope.style_layoutHorizontal = $global.get('layoutHorizontal');
+        $scope.start_hidden = false;
         $scope.global = { alert: undefined };
 
         $scope.toggleLeftBar = function () {
@@ -127,6 +128,7 @@ angular
         };
 
         $scope.global.sessionReady();
+        $scope.start_hidden = true;
 
     }])
 
