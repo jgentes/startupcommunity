@@ -1,11 +1,5 @@
 <td class="text-center" style="width: 58px; vertical-align: top; height: 80px;">
-  <div ng-show="item.value.linkedin.pictureUrl">
-    <a ng-click="viewUser(item)" title="View {{::item.value.name | words:0}}'s Profile"><img style="height:58px" ng-src="{{item.value.linkedin.pictureUrl || item.value.avatar}}" alt="{{::item.value.name}}" class="widget-image img-circle pull-left"/></a>
-  </div>
-  <div ng-show="!item.value.linkedin.pictureUrl">
-    <a ng-click="viewUser(item)" title="View {{::item.value.name | words:0}}'s Profile"><img style="height:58px" ng-src="{{'/public/blank_avatar.png'}}" alt="{{::item.value.name}}" class="widget-image img-circle pull-left"/></a>
-  </div>
-
+    <a ng-click="viewUser(item)" title="View {{::item.value.name | words:0}}'s Profile"><img style="height:58px" ng-src="{{item.value.linkedin.pictureUrl || item.value.avatar}}" fallback-src="{{'/public/blank_avatar.png'}}" alt="{{::item.value.name}}" class="widget-image img-circle pull-left"/></a>
 </td>   
 <td style="vertical-align: middle; height: 80px;">
     <a ng-click="viewUser(item)" title="View {{::item.value.name | words:0}}'s Profile"><strong>{{::item.value.name}} </strong></a>
