@@ -11,7 +11,6 @@ var app = angular.module('StartupCommunity', [
     'ngResource',
     'ngSanitize',
     'ngRoute',
-    'ngAnimate',
     'appControllers',
     'appServices',
     'appDirectives',
