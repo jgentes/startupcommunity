@@ -41,14 +41,14 @@ var UserApi = function() {
 var schema = {
     linkedin: function(profile, email) {
         return {
-            type: 'user',
-            profile: {
-                name: profile.firstName + ' ' + profile.lastName,
-                email: profile.emailAddress || email,
-                linkedin: profile,
-                avatar: profile.pictureUrl || ''
+            "type": "user",
+            "profile": {
+                "name": profile.firstName + " " + profile.lastName,
+                "email": profile.emailAddress || email,
+                "linkedin": profile,
+                "avatar": profile.pictureUrl || ""
             },
-            communities: {
+            "communities": {
                 "usa": {
                     "oregon": {
                         "deschutes-or": {
@@ -66,14 +66,14 @@ var schema = {
     signupform: function(formdata) {
         var hash = bcrypt.hashSync(formdata.password, 8);
         return {
-            "type": 'user',
+            "type": "user",
             "profile": {
                 "name": formdata.name,
                 "email": formdata.email,
                 "password": hash,
-                "avatar": ''
+                "avatar": ""
             },
-            communities: {
+            "communities": {
                 "usa": {
                     "oregon": {
                         "deschutes-or": {
