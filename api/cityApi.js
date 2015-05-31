@@ -45,21 +45,21 @@ var convert_state = function(name, to) {
 };
 
 function handleGetCity(req, res) {
-  var city = req.params.city;
-  db.get(config.db.collections.cities, city)
+  var location = req.params.city;
+  db.get(config.db.collections.communities, location)
   .then(function(response){    
     if (response.body.code !== "items_not_found") {
-      console.log('Found city: ' + response.body.citystate);
+      console.log('Found location: ' + response.body.profile.city + ', ' + response.body.profile.state);
       var newresponse = {
         "path": {
-          "key": city
+          "key": location
         },
         "value": response.body
       };
       res.status(200).send(newresponse);
     } else {
-      console.warn('City not found!');
-      res.status(401).send({ message: 'City not found.' });
+      console.warn('Location not found!');
+      res.status(401).send({ message: 'Location not found.' });
     }
   })
   .fail(function(err){

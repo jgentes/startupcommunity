@@ -41,29 +41,51 @@ var UserApi = function() {
 var schema = {
     linkedin: function(profile, email) {
         return {
-            name: profile.firstName + ' ' + profile.lastName,
-            email: profile.emailAddress || email,
-            cities: {
-                "bend-or": {
-                    admin: false
-                }
+            type: 'user',
+            profile: {
+                name: profile.firstName + ' ' + profile.lastName,
+                email: profile.emailAddress || email,
+                linkedin: profile,
+                avatar: profile.pictureUrl || ''
             },
-            linkedin: profile,
-            avatar: profile.pictureUrl || ''
+            communities: {
+                "usa": {
+                    "oregon": {
+                        "deschutes-or": {
+                            "bend-or": {
+                                "roles": [
+                                  "supporter"
+                                ]
+                            }
+                        }
+                    }
+                }
+            }
         };
     },
     signupform: function(formdata) {
         var hash = bcrypt.hashSync(formdata.password, 8);
         return {
-            "name": formdata.name,
-            "email": formdata.email,
-            "password": hash,
-            "cities": {
-                "bend-or": {
-                    "admin": false
-                }
+            "type": 'user',
+            "profile": {
+                "name": formdata.name,
+                "email": formdata.email,
+                "password": hash,
+                "avatar": ''
             },
-            "avatar": ''
+            communities: {
+                "usa": {
+                    "oregon": {
+                        "deschutes-or": {
+                            "bend-or": {
+                                "roles": [
+                                    "supporter"
+                                ]
+                            }
+                        }
+                    }
+                }
+            }
         };
     }
 };
@@ -724,7 +746,7 @@ function handleGetProfile(req, res) {
 
 function handleSetRole(req, res) {
     var userkey = req.query.userkey,
-        citykey = req.query.citykey,
+        location = req.query.location,
         cluster = req.query.cluster,
         role = req.query.role,
         status = (req.query.status == 'true'), // will convert string to bool
@@ -735,13 +757,13 @@ function handleSetRole(req, res) {
             db.get(config.db.collections.users, req.user)
                 .then(function (response) {
                     if (cluster) {
-                        if (response.body.cities[citykey].clusters) {
-                            if (response.body.cities[citykey].clusters[cluster]) {
-                                allowed = (response.body.cities[citykey].clusters[cluster].roles.indexOf("Founder") >= 0);
+                        if (response.body.cities[location].clusters) {
+                            if (response.body.cities[location].clusters[cluster]) {
+                                allowed = (response.body.cities[location].clusters[cluster].roles.indexOf("Founder") >= 0);
                             }
                         }
                     }
-                    if (response.body.cities[citykey].admin === true) { allowed = true; }
+                    if (response.body.cities[location].admin === true) { allowed = true; }
                     callback(allowed);
                 })
                 .fail(function(err){
@@ -758,20 +780,20 @@ function handleSetRole(req, res) {
             db.get(config.db.collections.users, userkey)
                 .then(function (response) {
                     if (role == "cityAdvisor") {
-                        if (response.body.cities[citykey].cityAdvisor === undefined) { //need to create key
-                            response.body.cities[citykey]['cityAdvisor'] = false;
+                        if (response.body.cities[location].cityAdvisor === undefined) { //need to create key
+                            response.body.cities[location]['cityAdvisor'] = false;
                         }
-                        response.body.cities[citykey].cityAdvisor = status;
+                        response.body.cities[location].cityAdvisor = status;
 
                     } else {
-                        if (response.body.cities[citykey].clusters === undefined) { //need to create clusters key
-                            response.body.cities[citykey]['clusters'] = {};
+                        if (response.body.cities[location].clusters === undefined) { //need to create clusters key
+                            response.body.cities[location]['clusters'] = {};
                         }
-                        if (response.body.cities[citykey].clusters[cluster] === undefined) { //need to create the cluster in user profile
+                        if (response.body.cities[location].clusters[cluster] === undefined) { //need to create the cluster in user profile
                             console.log('Adding user to cluster: ' + cluster);
-                            response.body.cities[citykey].clusters[cluster] = { "roles": [] };
+                            response.body.cities[location].clusters[cluster] = { "roles": [] };
                         }
-                        var thiscluster = response.body.cities[citykey].clusters[cluster];
+                        var thiscluster = response.body.cities[location].clusters[cluster];
 
                         if (status === true) {
                             if (thiscluster.roles.indexOf(role) < 0) {
@@ -782,7 +804,7 @@ function handleSetRole(req, res) {
                                 thiscluster.roles.splice(thiscluster.roles.indexOf(role), 1);
                             } // else they do not have the role, no action needed
                         }
-                        response.body.cities[citykey].clusters[cluster] = thiscluster;
+                        response.body.cities[location].clusters[cluster] = thiscluster;
                     }
 
                     db.put(config.db.collections.users, userkey, response.body)

@@ -1,33 +1,11 @@
 {
-  "development": {
-    "db": {
-      "key": "be406a43-5cc1-425f-9545-23bd75ec6cfc",
-      "collections": {
-        "users": "users-dev",
-        "cities": "cities-dev"
-      }
-    },
-    "linkedin": {
-      "clientID": "75bqixdv58z1az",
-      "clientSecret": "C5zHpSLjV4uNFUM1"
-    },
-    "angellist": {
-      "clientID": "7d93aaf3f93e48b83e9cfa147004d6a4",
-      "clientSecret": "df04e3b2a392debf2d95424287f28b1b"
-    },
-    "token_secret": "2l3knfgqlkn2fvkl23nvklgnvkg23bhva08",
-    "API_token_secret": "2lknvqk32nvqknv3qlkvn3kvln234lknvqS",
-    "mailchimp": "4cd1eb319ae631eb57ef642b9340af68-us9",
-    "mandrill": "JDkgsI2Q5La5kGVPXCOrFg",
-    "path": "/app",
-    "api_base_url": "https://dev.startupcommunity.org"
-  },
   "local": {
     "db": {
       "key": "be406a43-5cc1-425f-9545-23bd75ec6cfc",
       "collections": {
         "users": "users-dev",
-        "cities": "cities-dev"
+        "cities": "cities-dev",
+        "communities": "communities-dev"
       }
     },
     "linkedin": {
@@ -50,7 +28,8 @@
       "key": "be406a43-5cc1-425f-9545-23bd75ec6cfc",
       "collections": {
         "users": "users-dev",
-        "cities": "cities-dev"
+        "cities": "cities-dev",
+        "communities": "communities-dev"
       }
     },
     "linkedin": {
@@ -67,6 +46,30 @@
     "mandrill": "JDkgsI2Q5La5kGVPXCOrFg",
     "path": "/theme",
     "api_base_url": "http://localhost:5000"
+  },
+  "development": {
+    "db": {
+      "key": "be406a43-5cc1-425f-9545-23bd75ec6cfc",
+      "collections": {
+        "users": "users-dev",
+        "cities": "cities-dev",
+        "communities": "communities-dev"
+      }
+    },
+    "linkedin": {
+      "clientID": "75bqixdv58z1az",
+      "clientSecret": "C5zHpSLjV4uNFUM1"
+    },
+    "angellist": {
+      "clientID": "7d93aaf3f93e48b83e9cfa147004d6a4",
+      "clientSecret": "df04e3b2a392debf2d95424287f28b1b"
+    },
+    "token_secret": "2l3knfgqlkn2fvkl23nvklgnvkg23bhva08",
+    "API_token_secret": "2lknvqk32nvqknv3qlkvn3kvln234lknvqS",
+    "mailchimp": "4cd1eb319ae631eb57ef642b9340af68-us9",
+    "mandrill": "JDkgsI2Q5La5kGVPXCOrFg",
+    "path": "/app",
+    "api_base_url": "https://dev.startupcommunity.org"
   },
   "production": {
     "db": {

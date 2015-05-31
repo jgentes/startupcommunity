@@ -12,7 +12,7 @@ var express = require('express'),
     logger = require('morgan'),
     nodalytics = require('nodalytics'),
     UserApi = require('./api/userApi.js'),
-    CityApi = require('./api/cityApi.js'),
+    LocationApi = require('./api/locationApi.js'),
     ghost = require('ghost'),
     parentApp = express();
 
@@ -51,27 +51,35 @@ if (process.env.NODE_ENV === "production") {
 
 // ROUTE METHODS
 var userApi = new UserApi(),
-    cityApi = new CityApi();
+    locationApi = new LocationApi();
 
 // API
-app.get('/api/:city/users', userApi.userSearch);
-app.get('/api/1.0/:city/users', userApi.userSearch);
-app.get('/api/1.0/city/:city', cityApi.getCity);
+app.get('/api/:location/users', userApi.userSearch);
+app.get('/api/1.0/:location/users', userApi.userSearch);
+app.get('/api/1.1/:location/users', userApi.userSearch);
+app.get('/api/1.0/city/:location', locationApi.getLocation);
+app.get('/api/1.1/location/:location', locationApi.getLocation);
 app.get('/api/1.0/profile', userApi.ensureAuthenticated, userApi.getProfile);
+app.get('/api/1.1/profile', userApi.ensureAuthenticated, userApi.getProfile);
 app.get('/api/1.0/profile/getkey', userApi.ensureAuthenticated, userApi.createAPIToken);
+app.get('/api/1.1/profile/getkey', userApi.ensureAuthenticated, userApi.createAPIToken);
 app.get('/api/1.0/invitePerson', userApi.ensureAuthenticated, userApi.invitePerson);
+app.get('/api/1.1/invitePerson', userApi.ensureAuthenticated, userApi.invitePerson);
 app.put('/api/1.0/profile/role', userApi.ensureAuthenticated, userApi.setRole);
+app.put('/api/1.1/profile/role', userApi.ensureAuthenticated, userApi.setRole);
 app.post('/api/1.0/profile/remove/:userid', userApi.ensureAuthenticated, userApi.removeProfile);
+app.post('/api/1.1/profile/remove/:userid', userApi.ensureAuthenticated, userApi.removeProfile);
 app.post('/api/1.0/feedback', userApi.ensureAuthenticated, userApi.feedback);
+app.post('/api/1.1/feedback', userApi.ensureAuthenticated, userApi.feedback);
 
 // Auth
 app.get('/auth/unlink/:provider', userApi.ensureAuthenticated, userApi.unlink);
 app.post('/auth/linkedin', userApi.linkedin);
-app.post('/auth/signup', userApi.signup);
-app.post('/auth/login', userApi.login);
+app.post('/auth/signup', userApi.signup); //not currently used?
+app.post('/auth/login', userApi.login); //not currently used?
 
 // Maintenance
-app.get('/api/1.0/maint', userApi.maintenance);
+app.get('/api/1.1/maint', userApi.maintenance);
 
 // Frontend Homepage & Blog
 app.get('/', function (req, res, next) {
