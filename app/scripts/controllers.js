@@ -1,6 +1,6 @@
 angular
   .module('appControllers', [])
-  .controller('MainController', ['$scope','$window', '$global', '$route', '$timeout', '$interval', 'progressLoader', '$location', '$auth', 'userService', 'cityService', '$compile', 'resultService', '$mixpanel', function ($scope, $window, $global, $route, $timeout, $interval, progressLoader, $location, $auth, userService, cityService, $compile, resultService, $mixpanel) {
+  .controller('MainController', ['$scope','$window', '$global', '$route', '$timeout', '$interval', 'progressLoader', '$location', '$auth', 'userService', 'locationService', '$compile', 'resultService', '$mixpanel', function ($scope, $window, $global, $route, $timeout, $interval, progressLoader, $location, $auth, userService, locationService, $compile, resultService, $mixpanel) {
       $scope.style_fixedHeader = $global.get('fixedHeader');
       $scope.style_headerBarHidden = $global.get('headerBarHidden');
       $scope.style_layoutBoxed = $global.get('layoutBoxed');
@@ -11,7 +11,7 @@ angular
       $scope.style_isSmallScreen = false;
       $scope.style_layoutHorizontal = $global.get('layoutHorizontal');
       $scope.start_hidden = false;
-      $scope.global = { alert: undefined };
+      $scope.global = { alert: undefined, community: {} };
 
       $scope.toggleLeftBar = function () {
           if ($scope.style_isSmallScreen) {
@@ -59,7 +59,7 @@ angular
       $scope.search = function(query) {
           $scope.global.search.tag = query;
           $scope.global.search.results = undefined;
-          userService.search($scope.global.city.path.key, query)
+          userService.search($scope.global.community.location.path.key, query)
             .then(function(response) {
                 $scope.global.search = resultService.setPage(response.data);
                 $scope.global.search.lastQuery = query;
@@ -83,20 +83,20 @@ angular
 
           if ($scope.global.user.path.key) {
               $mixpanel.people.set({
-                  "$name": $scope.global.user.value.name,
-                  "$email": $scope.global.user.value.email
+                  "$name": $scope.global.user.value.profile.name,
+                  "$email": $scope.global.user.value.profile.email
               });
               UserVoice.push(['identify', {
                   id: $scope.global.user.path.key,
-                  name: $scope.global.user.value.name,
-                  email: $scope.global.user.value.email
+                  name: $scope.global.user.value.profile.name,
+                  email: $scope.global.user.value.profile.email
               }]);
           }
       };
 
-      // Get and set user and city data
+      // Get and set user and location data
       $scope.global.sessionReady = function() {
-          if (!$scope.global.user || !$scope.global.city) {
+          if (!$scope.global.user || !$scope.global.community.location) {
               userService.getProfile()
                 .success(function(response) {
                     if (response.path) {
@@ -104,11 +104,11 @@ angular
                         if (!$scope.global.profile) {
                             $scope.global.profile = response;
                         }
-                        for (var citystate in $scope.global.user.value.cities) break; // grab first city
-                        cityService.getCity(citystate)
+                        var location = $scope.global.user.value.profile.home;
+                        locationService.getLocation(location)
                           .success(function(response) {
                               if (response) {
-                                  $scope.global.city = response;
+                                  $scope.global.community.location = response;
                                   broadcast();
                               } else {
                                   $scope.global.logout({ type: 'danger', msg: String(response.message) });
@@ -144,7 +144,7 @@ angular
   .controller('PeopleController', ['$scope', '$location', 'userService', 'resultService', function ($scope, $location, userService, resultService) {
 
       $scope.getUsers = function(alturl) {
-          userService.getUsers($scope.global.city.path.key, undefined, undefined, 32, alturl)
+          userService.getUsers($scope.global.community.location.path.key, undefined, undefined, 32, alturl)
             .then(function(response) {
                 $scope.users = resultService.setPage(response.data);
                 if ($location.$$path == '/search') {
@@ -160,9 +160,9 @@ angular
 
       function getData() {
           if ($location.$$path == '/people' || $scope.global.search === undefined) {
-              $scope.getUsers('/api/1.0/' + $scope.global.city.path.key + '/users?limit=32');
+              $scope.getUsers('/api/1.0/' + $scope.global.community.location.path.key + '/users?limit=32');
           }
-          $scope.global.city.selectedCluster = ['*'];
+          $scope.global.community.location.selectedCluster = ['*'];
           $scope.selectedRole = ['*'];
           setTitle();
       }
@@ -183,14 +183,14 @@ angular
                   }
               }
           }
-          if ($scope.global.city.selectedCluster[0] == '*') {
-              cluster = $scope.global.city.value.citystate.split(',')[0];
+          if ($scope.global.community.location.selectedCluster[0] == '*') {
+              cluster = $scope.global.community.location.value.citystate.split(',')[0];
           } else {
               item = 0;
-              for (item in $scope.global.city.selectedCluster) {
-                  cluster += $scope.global.city.selectedCluster[item];
-                  if (item < $scope.global.city.selectedCluster.length - 1) {
-                      if (item < $scope.global.city.selectedCluster.length - 2 ) {
+              for (item in $scope.global.community.location.selectedCluster) {
+                  cluster += $scope.global.community.location.selectedCluster[item];
+                  if (item < $scope.global.community.location.selectedCluster.length - 1) {
+                      if (item < $scope.global.community.location.selectedCluster.length - 2 ) {
                           cluster += ', ';
                       } else cluster += ' & ';
                   }
@@ -202,20 +202,20 @@ angular
       $scope.filterCluster = function(cluster) {
           $scope.loadingCluster = true;
           if (cluster == '*') {
-              $scope.global.city.selectedCluster = ['*'];
+              $scope.global.community.location.selectedCluster = ['*'];
           } else {
-              if ($scope.global.city.selectedCluster.indexOf('*') >= 0) {
-                  $scope.global.city.selectedCluster.splice($scope.global.city.selectedCluster.indexOf('*'), 1);
+              if ($scope.global.community.location.selectedCluster.indexOf('*') >= 0) {
+                  $scope.global.community.location.selectedCluster.splice($scope.global.community.location.selectedCluster.indexOf('*'), 1);
               }
-              if ($scope.global.city.selectedCluster.indexOf(cluster) < 0) {
-                  $scope.global.city.selectedCluster.push(cluster);
-              } else $scope.global.city.selectedCluster.splice($scope.global.city.selectedCluster.indexOf(cluster), 1);
-              if ($scope.global.city.selectedCluster.length === 0) {
-                  $scope.global.city.selectedCluster = ['*'];
+              if ($scope.global.community.location.selectedCluster.indexOf(cluster) < 0) {
+                  $scope.global.community.location.selectedCluster.push(cluster);
+              } else $scope.global.community.location.selectedCluster.splice($scope.global.community.location.selectedCluster.indexOf(cluster), 1);
+              if ($scope.global.community.location.selectedCluster.length === 0) {
+                  $scope.global.community.location.selectedCluster = ['*'];
               }
           }
 
-          userService.getUsers($scope.global.city.path.key, $scope.global.city.selectedCluster, $scope.selectedRole, 32, undefined)
+          userService.getUsers($scope.global.community.location.path.key, $scope.global.community.location.selectedCluster, $scope.selectedRole, 32, undefined)
             .then(function(response) {
                 $scope.loadingCluster = false;
                 $scope.users = resultService.setPage(response.data);
@@ -226,7 +226,7 @@ angular
       $scope.search = function(query) {
           $scope.global.search.tag = query;
           $scope.global.search.results = undefined;
-          userService.search($scope.global.city.path.key, query)
+          userService.search($scope.global.community.location.path.key, query)
             .then(function(response) {
                 $scope.global.search = resultService.setPage(response.data);
                 $scope.global.search.lastQuery = query;
@@ -250,7 +250,7 @@ angular
               }
           }
 
-          userService.getUsers($scope.global.city.path.key, $scope.global.city.selectedCluster, $scope.selectedRole, 32, undefined)
+          userService.getUsers($scope.global.community.location.path.key, $scope.global.community.location.selectedCluster, $scope.selectedRole, 32, undefined)
             .then(function(response) {
                 $scope.loadingRole = false;
                 $scope.users = resultService.setPage(response.data);
@@ -258,7 +258,7 @@ angular
             });
       };
 
-      if (!$scope.global.city) {
+      if (!$scope.global.community.location) {
           $scope.$on('sessionReady', function(event, status) {
               getData();
           });
@@ -303,43 +303,43 @@ angular
       };
 
       $scope.getKey = function() {
-          if (!$scope.global.user.value.api_key) {
+          if (!$scope.global.user.value.profile.api_key) {
               userService.getKey()
                 .then(function(response) {
-                    $scope.global.user.value.api_key = response.data;
-                    $bootbox.alert({title: "See our <a href='http://startupcommunity.readme.io?appkey=" + $scope.global.user.value.api_key + "' target='_blank'>API documentation</a> for help using your key:", message: "<pre>" + $scope.global.user.value.api_key + "</pre>"});
+                    $scope.global.user.value.profile.api_key = response.data;
+                    $bootbox.alert({title: "See our <a href='http://startupcommunity.readme.io?appkey=" + $scope.global.user.value.profile.api_key + "' target='_blank'>API documentation</a> for help using your key:", message: "<pre>" + $scope.global.user.value.profile.api_key + "</pre>"});
                 });
-          } else $bootbox.alert({title: "See our <a href='http://startupcommunity.readme.io?appkey=" + $scope.global.user.value.api_key + "' target='_blank'>API documentation</a> for help using your key:", message: "<pre>" + $scope.global.user.value.api_key + "</pre>"});
+          } else $bootbox.alert({title: "See our <a href='http://startupcommunity.readme.io?appkey=" + $scope.global.user.value.profile.api_key + "' target='_blank'>API documentation</a> for help using your key:", message: "<pre>" + $scope.global.user.value.profile.api_key + "</pre>"});
       };
 
       $scope.isCityAdvisor = function(status) {
-          userService.setCityAdvisor($scope.global.profile.path.key, $scope.global.city.path.key, 'cityAdvisor', status, function(response, rescode) {
+          userService.setCityAdvisor($scope.global.profile.path.key, $scope.global.community.location.path.key, 'cityAdvisor', status, function(response, rescode) {
               var sameuser = false;
               var cluster;
               if (rescode == 201) {
                   if ($scope.global.profile.path.key == $scope.global.user.path.key) { sameuser = true; }
-                  if ($scope.global.profile.value.cities[$scope.global.city.path.key].cityAdvisor === undefined) { //need to create key
-                      $scope.global.profile.value.cities[$scope.global.city.path.key]['cityAdvisor'] = false;
+                  if ($scope.global.profile.value.cities[$scope.global.community.location.path.key].cityAdvisor === undefined) { //need to create key
+                      $scope.global.profile.value.cities[$scope.global.community.location.path.key]['cityAdvisor'] = false;
                   }
 
-                  $scope.global.profile.value.cities[$scope.global.city.path.key].cityAdvisor = status;
+                  $scope.global.profile.value.cities[$scope.global.community.location.path.key].cityAdvisor = status;
 
-                  for (cluster in $scope.global.city.value.clusters) {
+                  for (cluster in $scope.global.community.location.value.clusters) {
                       if (status === true) {
-                          if ($scope.global.profile.value.cities[$scope.global.city.path.key].clusters[cluster]) {
-                              $scope.global.profile.value.cities[$scope.global.city.path.key].clusters[cluster].advisorStatus = true;
+                          if ($scope.global.profile.value.cities[$scope.global.community.location.path.key].clusters[cluster]) {
+                              $scope.global.profile.value.cities[$scope.global.community.location.path.key].clusters[cluster].advisorStatus = true;
                           }
                       } else {
-                          if (!$scope.global.profile.value.cities[$scope.global.city.path.key].clusters[cluster].roles || ($scope.global.profile.value.cities[$scope.global.city.path.key].clusters[cluster].roles.indexOf("Advisor") < 0)) {
-                              $scope.global.profile.value.cities[$scope.global.city.path.key].clusters[cluster].advisorStatus = false;
+                          if (!$scope.global.profile.value.cities[$scope.global.community.location.path.key].clusters[cluster].roles || ($scope.global.profile.value.cities[$scope.global.community.location.path.key].clusters[cluster].roles.indexOf("Advisor") < 0)) {
+                              $scope.global.profile.value.cities[$scope.global.community.location.path.key].clusters[cluster].advisorStatus = false;
                           } else {
-                              $scope.global.profile.value.cities[$scope.global.city.path.key].clusters[cluster].advisorStatus = true;
+                              $scope.global.profile.value.cities[$scope.global.community.location.path.key].clusters[cluster].advisorStatus = true;
                           }
                       }
                   }
 
                   if (sameuser) {
-                      $scope.global.user.value.cities[$scope.global.city.path.key].cityAdvisor = status;
+                      $scope.global.user.value.cities[$scope.global.community.location.path.key].cityAdvisor = status;
                   }
               } else {
                   $scope.global.alert = { type: 'danger', msg: 'There was a problem: ' + String(response.message) };
@@ -349,20 +349,20 @@ angular
       };
 
       $scope.setRole = function(cluster, role, status) {
-          userService.setRole($scope.global.profile.path.key, $scope.global.city.path.key, cluster, role, status, function(response, rescode) {
+          userService.setRole($scope.global.profile.path.key, $scope.global.community.location.path.key, cluster, role, status, function(response, rescode) {
               var sameuser = false;
               if (rescode == 201) {
                   if ($scope.global.profile.path.key == $scope.global.user.path.key) { sameuser = true; }
-                  if ($scope.global.profile.value.cities[$scope.global.city.path.key].clusters === undefined) { //need to create clusters key
-                      $scope.global.profile.value.cities[$scope.global.city.path.key]['clusters'] = {};
+                  if ($scope.global.profile.value.cities[$scope.global.community.location.path.key].clusters === undefined) { //need to create clusters key
+                      $scope.global.profile.value.cities[$scope.global.community.location.path.key]['clusters'] = {};
                   }
-                  if ($scope.global.profile.value.cities[$scope.global.city.path.key].clusters[cluster] === undefined) { //need to create the cluster in user profile
-                      $scope.global.profile.value.cities[$scope.global.city.path.key].clusters[cluster] = { "roles": [] };
+                  if ($scope.global.profile.value.cities[$scope.global.community.location.path.key].clusters[cluster] === undefined) { //need to create the cluster in user profile
+                      $scope.global.profile.value.cities[$scope.global.community.location.path.key].clusters[cluster] = { "roles": [] };
                   }
-                  if ($scope.global.profile.value.cities[$scope.global.city.path.key].clusters[cluster].roles === undefined) { //this can happen due to temp local scope variables
-                      $scope.global.profile.value.cities[$scope.global.city.path.key].clusters[cluster].roles = [];
+                  if ($scope.global.profile.value.cities[$scope.global.community.location.path.key].clusters[cluster].roles === undefined) { //this can happen due to temp local scope variables
+                      $scope.global.profile.value.cities[$scope.global.community.location.path.key].clusters[cluster].roles = [];
                   }
-                  var thiscluster = $scope.global.profile.value.cities[$scope.global.city.path.key].clusters[cluster];
+                  var thiscluster = $scope.global.profile.value.cities[$scope.global.community.location.path.key].clusters[cluster];
 
                   if (status === true) {
                       if (thiscluster.roles.indexOf(role) < 0) {
@@ -374,8 +374,8 @@ angular
                       } // else they do not have the role, no action needed
                   }
 
-                  $scope.global.profile.value.cities[$scope.global.city.path.key].clusters[cluster] = thiscluster;
-                  if (sameuser) { $scope.global.user.value.cities[$scope.global.city.path.key].clusters[cluster] = thiscluster; }
+                  $scope.global.profile.value.cities[$scope.global.community.location.path.key].clusters[cluster] = thiscluster;
+                  if (sameuser) { $scope.global.user.value.cities[$scope.global.community.location.path.key].clusters[cluster] = thiscluster; }
 
               } else {
                   $scope.global.alert = { type: 'danger', msg: 'There was a problem: ' + String(response.message) };
@@ -544,7 +544,7 @@ angular
 
       $scope.search = function(query) {
           try {
-              userService.search($scope.global.city.path.key, query)
+              userService.search($scope.global.community.location.path.key, query)
                 .then(function(results) {
                     $scope.global.search = results.data;
                     $location.path('/search');

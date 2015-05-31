@@ -289,8 +289,8 @@ function handleCreateAPIToken(req, res) {
         .then(function(response){
             if (response.body.code !== "items_not_found") {
                 console.log('Matching user found.');
-                if (response.body.api_key === undefined) {
-                    response.body["api_key"] = jwt.encode(payload, config.API_token_secret); // get user account and re-upload with api_key
+                if (response.body.profile.api_key === undefined) {
+                    response.body.profile["api_key"] = jwt.encode(payload, config.API_token_secret); // get user account and re-upload with api_key
                     db.put(config.db.collections.users, req.user, response.body)
                         .then(function () {
                             console.log("Profile updated.");
@@ -561,7 +561,7 @@ function handleLinkedin(req, res) {
                     db.newSearchBuilder()
                         .collection(config.db.collections.users)
                         .limit(1)
-                        .query('value.linkedin.id: "' + profile.id + '"')
+                        .query('profile.linkedin.id: "' + profile.id + '"')
                         .then(function (result){
                             if (result.body.results.length > 0){
                                 console.log("Found user: " + profile.firstName + ' ' + profile.lastName);
@@ -576,7 +576,7 @@ function handleLinkedin(req, res) {
                                     .then(function(response){
                                         if (response.body.code !== "items_not_found") {
                                             console.log('Matching user found.');
-                                            response.body["linkedin"] = profile; // get user account and re-upload with linkedin data
+                                            response.body.profile["linkedin"] = profile; // get user account and re-upload with linkedin data
                                             db.put(config.db.collections.users, payload.sub, response.body)
                                                 .then(function () {
                                                     console.log("Profile updated: " + userprofile.email);
@@ -607,19 +607,19 @@ function handleLinkedin(req, res) {
                     db.newSearchBuilder()
                         .collection(config.db.collections.users)
                         .limit(1)
-                        .query('value.linkedin.id: "' + profile.id + '"')
+                        .query('profile.linkedin.id: "' + profile.id + '"')
                         .then(function (result){
                             if (result.body.results.length > 0){
                                 console.log("Found user: " + profile.firstName + ' ' + profile.lastName);
-                                result.body.results[0].value["linkedin"] = profile; // get user account and re-upload with linkedin data
-                                if (result.body.results[0].value.avatar === "") {
-                                    result.body.results[0].value.avatar = result.body.results[0].value.linkedin.pictureUrl;
+                                result.body.results[0].value.profile["linkedin"] = profile; // get user account and re-upload with linkedin data
+                                if (result.body.results[0].value.profile.avatar === "") {
+                                    result.body.results[0].value.profile.avatar = result.body.results[0].value.profile.linkedin.pictureUrl;
                                 }
-                                if (result.body.results[0].value.name !== result.body.results[0].value.linkedin.firstName + ' ' + result.body.results[0].value.linkedin.lastName) {
-                                    result.body.results[0].value.name = result.body.results[0].value.linkedin.firstName + ' ' + result.body.results[0].value.linkedin.lastName;
+                                if (result.body.results[0].value.profile.name !== result.body.results[0].value.profile.linkedin.firstName + ' ' + result.body.results[0].value.profile.linkedin.lastName) {
+                                    result.body.results[0].value.profile.name = result.body.results[0].value.profile.linkedin.firstName + ' ' + result.body.results[0].value.profile.linkedin.lastName;
                                 }
-                                if (result.body.results[0].value.email !== result.body.results[0].value.linkedin.emailAddress) {
-                                    result.body.results[0].value.email = result.body.results[0].value.linkedin.emailAddress;
+                                if (result.body.results[0].value.profile.email !== result.body.results[0].value.profile.linkedin.emailAddress) {
+                                    result.body.results[0].value.profile.email = result.body.results[0].value.profile.linkedin.emailAddress;
                                 }
 
                                 db.put(config.db.collections.users, result.body.results[0].path.key, result.body.results[0].value)
@@ -636,14 +636,14 @@ function handleLinkedin(req, res) {
                                 db.newSearchBuilder()
                                     .collection(config.db.collections.users)
                                     .limit(1)
-                                    .query('value.email: "' + profile.emailAddress + '"')
+                                    .query('profile.email: "' + profile.emailAddress + '"')
                                     .then(function(result){
                                         if (result.body.results.length > 0) {
                                             console.log("Found user: " + profile.firstName + ' ' + profile.lastName);
-                                            result.body.results[0].value["linkedin"] = profile; // get user account and re-upload with linkedin data
+                                            result.body.results[0].value.profile["linkedin"] = profile; // get user account and re-upload with linkedin data
                                             db.put(config.db.collections.users, result.body.results[0].path.key, result.body.results[0].value)
                                                 .then(function () {
-                                                    console.log("Profile updated: " + userprofile.email);
+                                                    console.log("Profile updated: " + userprofile.profile.email);
                                                 })
                                                 .fail(function (err) {
                                                     console.error("Profile update failed:");
@@ -716,7 +716,7 @@ function handleGetProfile(req, res) {
     db.get(config.db.collections.users, userid)
         .then(function(response){
             if (response.body.code !== "items_not_found") {
-                console.log('Authenticated user: ' + response.body.name);
+                console.log('Authenticated user: ' + response.body.profile.name);
                 response = {
                     "path": {
                         "key": userid
