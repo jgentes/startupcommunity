@@ -34,13 +34,14 @@ angular
           }
         ];
         
-        for (var cluster in $scope.global.city.value.clusters) {            
+        for (var industry in $scope.global.community.industries) {
+            var menuitem = $scope.global.getObject($scope.global.community.industries[industry], $scope.global.user.value.context);
             menu.push(
-            {
-                label: cluster,
-                cluster: false,
-                iconClasses: 'fa ' + $scope.global.city.value.clusters[cluster].icon
-            });
+              {
+                  label: menuitem["profile"].name,
+                  cluster: false,
+                  iconClasses: 'fa ' + menuitem["profile"].icon
+              });
         }
 
         var setParent = function (children, parent) {

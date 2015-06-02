@@ -1,10 +1,11 @@
 var config = require('../config.json')[process.env.NODE_ENV || 'development'],
   db = require('orchestrate')(config.db.key);
+//request = require('request');
 
 //require('request-debug')(request); // Very useful for debugging oauth and api req/res
 
-var LocationApi = function() {
-    this.getLocation = handleGetLocation;
+var CommunityApi = function() {
+    this.getCommunity = handleGetCommunity;
 };
 
 var convert_state = function(name, to) {
@@ -44,42 +45,57 @@ var convert_state = function(name, to) {
     return returnthis;
 };
 
-function handleGetLocation(req, res) { //TODO IS THIS GETCOMMUNITY?
-    var location = req.params.location;
-    db.search(config.db.collections.communities, '@path,key: ' + location + ' OR communities.*.' + location + '.*:*')
-      .then(function (result){ //TODO ITERATE THROUGH RESULTS TO EXTRACT NETWORKS, INDUSTRIES, ETC, ALLOW FOR PAGING! Also finish global.city find
-          console.log('Result of db search: ' + result.body.total_count);
-          if (result.body.results.length > 0){
-              if (result.body.results[0].value.linkedin.id == linkedinuser.linkedin.id){
-                  console.log('Found location: ' + response.body.profile.city + ', ' + response.body.profile.state);
-                  var newresponse = {
-                      "path": {
-                          "key": location
-                      },
-                      "value": response.body
-                  };
+function handleGetCommunity(req, res) {
+    var community = req.params.community;
+
+    function pullCommunity() {
+        var startKey = 0;
+
+        db.newSearchBuilder()
+          .collection(config.db.collections.communities)
+          .limit(100)
+          .offset(startKey)
+          .query('@path.key: ' + community + ' OR communities.*.' + community + '.*:* AND NOT (type:startup OR type:user)')
+          .then(function (result) {
+              var newresponse = {
+                  locations: [],
+                  industries: [],
+                  networks: []
+              };
+
+              if (result.body.results.length > 0) {
+                  for (item in result.body.results) {
+                      result.body.results[item] = { // get rid of extra db info
+                          "path": { "key": result.body.results[item].path.key },
+                          "value": result.body.results[item].value
+                      };
+                      switch (result.body.results[item].value.type) {
+                          case "location":
+                              newresponse.locations.push(result.body.results[item]);
+                              break;
+                          case "industry":
+                              newresponse.industries.push(result.body.results[item]);
+                              break;
+                          case "network":
+                              newresponse.networks.push(result.body.results[item]);
+                              break;
+                      }
+                  }
                   res.status(200).send(newresponse);
               } else {
-                  console.warn('Location not found!');
-                  res.status(401).send({ message: 'Location not found.' });
+                  console.warn('Community not found!');
+                  res.status(400).send({message: 'Community not found.'});
               }
-          } else {
-              console.log('No existing linkedin user found!');
-              db.post(config.db.collections.users, linkedinuser)
-                .then(function () {
-                    console.log("REGISTERED: " + linkedinuser.email);
-                    pullcallback({ "status": 200, "data": linkedinuser });
-                })
-                .fail(function (err) {
-                    console.error("PUT FAIL:");
-                    console.error(err);
-                });
-          }
-      })
-      .fail(function (result) {
-          console.error("SEARCH FAIL! " + JSON.stringify(linkedinuser));
-          console.error(result);
-      });
-}
+          })
+          .fail(function(err){
+              console.log("SEARCH FAIL:" + err);
+              res.status(400).send({ message: 'Something went wrong: ' + err});
+          });
+    }
 
-module.exports = LocationApi;
+    console.log('Pulling ' + community);
+    pullCommunity();
+
+};
+
+module.exports = CommunityApi;

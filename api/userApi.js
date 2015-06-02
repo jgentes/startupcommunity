@@ -304,9 +304,10 @@ function handleCreateAPIToken(req, res) {
                 console.warn('WARNING:  API Token for a user that does not exist!!');
             }
         })
-        .fail(function(err){
-            console.log("SEARCH FAIL:" + err);
-        });
+      .fail(function(err){
+          console.log("SEARCH FAIL:" + err);
+          res.status(400).send({ message: 'Something went wrong: ' + err});
+      });
 
 }
 
@@ -362,18 +363,18 @@ function handleSignup(req, res) {
                             })
                             .fail(function(err){
                                 console.log("SEARCH FAIL:" + err);
-                                res.status(401).send({ message: 'Something went wrong: ' + err});
+                                res.status(400).send({ message: 'Something went wrong: ' + err});
                             })
                             .fail(function (err) {
                                 console.log("POST FAIL:" + err.body);
-                                res.status(401).send({ message: 'Something went wrong: ' + err});
+                                res.status(400).send({ message: 'Something went wrong: ' + err});
                             });
                     });
             }
         })
         .fail(function(err){
             console.log("SEARCH FAIL:" + err);
-            res.status(401).send({ message: 'Something went wrong: ' + err});
+            res.status(400).send({ message: 'Something went wrong: ' + err});
         });
 }
 
@@ -406,7 +407,7 @@ function handleLogin(req, res) {
         })
         .fail(function(err){
             console.log("SEARCH FAIL:" + err);
-            res.status(401).send('Something went wrong: ' + err);
+            res.status(400).send('Something went wrong: ' + err);
         });
 }
 
@@ -442,7 +443,7 @@ function handleInvitePerson(req, res) {
                 })
                 .fail(function(err){
                     console.log("SEARCH FAIL:" + err);
-                    res.status(401).send({ message: 'Something went wrong: ' + err});
+                    res.status(400).send({ message: 'Something went wrong: ' + err});
                 });
 
 
@@ -511,10 +512,10 @@ var linkedinPull = function (linkedinuser, pullcallback) {
                     });
             }
         })
-        .fail(function (result) {
-            console.error("SEARCH FAIL! " + JSON.stringify(linkedinuser));
-            console.error(result);
-        });
+      .fail(function(err){
+          console.log("SEARCH FAIL:" + err);
+          res.status(400).send({ message: 'Something went wrong: ' + err});
+      });
 
 };
 
@@ -592,13 +593,13 @@ function handleLinkedin(req, res) {
                                     })
                                     .fail(function(err){
                                         console.log("SEARCH FAIL:" + err);
-                                        res.status(401).send({ message: 'Something went wrong: ' + err});
+                                        res.status(400).send({ message: 'Something went wrong: ' + err});
                                     });
                             }
                         })
                         .fail(function(err){
                             console.log("SEARCH FAIL:" + err);
-                            res.status(401).send({ message: 'Something went wrong: ' + err});
+                            res.status(400).send({ message: 'Something went wrong: ' + err});
                         });
 
 
@@ -658,7 +659,7 @@ function handleLinkedin(req, res) {
                                     })
                                     .fail(function(err){
                                         console.log("SEARCH FAIL:" + err);
-                                        res.status(401).send({ message: 'Something went wrong: ' + err});
+                                        res.status(400).send({ message: 'Something went wrong: ' + err});
                                     });
 
                                 /* Do this to create a user account if no user exists
@@ -713,7 +714,7 @@ function handleLinkedin(req, res) {
 function handleGetProfile(req, res) {
     var userid = req.param.userid || req.user;
 
-    db.get(config.db.collections.users, userid)
+    db.get(config.db.collections.communities, userid)
         .then(function(response){
             if (response.body.code !== "items_not_found") {
                 console.log('Authenticated user: ' + response.body.profile.name);
@@ -733,7 +734,7 @@ function handleGetProfile(req, res) {
         .fail(function(err){
             console.warn("WARNING: SEARCH FAIL:");
             console.warn(err);
-            res.status(401).send({ message: 'Something went wrong: ' + err});
+            res.status(400).send({ message: 'Something went wrong: ' + err});
         });
 
 }
@@ -768,7 +769,7 @@ function handleSetRole(req, res) {
                 })
                 .fail(function(err){
                     console.warn("WARNING: SEARCH FAIL:" + err);
-                    res.status(401).send({ message: 'Something went wrong: ' + err});
+                    res.status(400).send({ message: 'Something went wrong: ' + err});
                 });
         } else callback(allowed);
     }
@@ -866,7 +867,7 @@ function handleRemoveProfile(req, res) {
         })
         .fail(function(err){
             console.log("Remove FAIL:" + err);
-            res.status(401).send({ message: 'Something went wrong: ' + err });
+            res.status(400).send({ message: 'Something went wrong: ' + err });
         });
 }
 
@@ -898,7 +899,7 @@ function handleUnlink(req, res) {
         })
         .fail(function(err){
             console.log("SEARCH FAIL:" + err);
-            res.status(401).send({ message: 'Something went wrong: ' + err});
+            res.status(400).send({ message: 'Something went wrong: ' + err});
         });
 }
 

@@ -3,11 +3,11 @@ angular
   
   .factory('userService', function($http, $location) {
     return {        
-      search: function(location, query) {
-        return $http.get('/api/1.1/' + location + '/users' + (query ? '?search=' + query : ''));
+      search: function(community, query) {
+        return $http.get('/api/1.1/' + community + '/users' + (query ? '?search=' + query : ''));
       },
-      getUsers: function(location, cluster, role, limit, alturl) {
-        return $http.get(alturl || '/api/1.1/' + location + '/users' + (cluster ? '?cluster=' + cluster : '') + (cluster && role ? '&' : '?') + (role ? 'role=' + role : '') + (limit ? (cluster || role) ? '&limit=' + limit : '?limit=' + limit : ''));
+      getUsers: function(community, cluster, role, limit, alturl) {
+        return $http.get(alturl || '/api/1.1/' + community + '/users' + (cluster ? '?cluster=' + cluster : '') + (cluster && role ? '&' : '?') + (role ? 'role=' + role : '') + (limit ? (cluster || role) ? '&limit=' + limit : '?limit=' + limit : ''));
       },
       putUser: function(userid, profile, callback) {
         $http.put('/api/1.1/user/' + userid + '?profile=' + profile)
@@ -45,8 +45,8 @@ angular
       getKey: function() {
         return $http.get('/api/1.1/profile/getkey');
       },      
-      setCityAdvisor: function(userkey, location, role, status, callback) {
-        $http.put('/api/1.1/profile/role?userkey=' + userkey + '&location=' + location + '&role=' + role + '&status=' + status)
+      setCityAdvisor: function(userkey, community, role, status, callback) {
+        $http.put('/api/1.1/profile/role?userkey=' + userkey + '&community=' + community + '&role=' + role + '&status=' + status)
         .success( function(data, status) {
           callback(data, status);
         })
@@ -72,10 +72,10 @@ angular
     };
   })
   
-  .factory('locationService', function($http) {
+  .factory('communityService', function($http) {
     return {
-      getLocation: function(location) {
-        return $http.get('/api/1.1/location/' + location);
+      getCommunity: function(community) {
+        return $http.get('/api/1.1/community/' + community);
       }
     };
   })
@@ -102,32 +102,7 @@ angular
       }
     };
   })
-  //TODO: Remove geocoder
-  .service('geocoder',function() {
-    this.geocode = function(georequest, outerCallback) {
-      var geocoder = new google.maps.Geocoder();
-      geocoder.geocode( georequest, function(results, status) {        
-        if (status == google.maps.GeocoderStatus.OK) {          
-          var f = '';                  
-          var addresses = [];
-          angular.forEach(results, function(item){  
-            if (item.types[0] == 'locality') {          
-              for (f=1;f<item.address_components.length;f++) {              
-                if (item.address_components[f].types[0] == "administrative_area_level_1") {
-                addresses.push(item.address_components[0].short_name + ', ' + item.address_components[f].short_name);                                
-                break;
-                }
-              }
-            }            
-          });
-          outerCallback(addresses);         
-        } else {
-          outerCallback({success:false, err: new Error('Geocode was not successful for the following reason: ' + status), results: null});
-        }
-      });
-    };
-  })
-  
+
   .service('$global', ['$rootScope', 'EnquireService', '$document', function ($rootScope, EnquireService, $document) {
     this.settings = {
       fixedHeader: true,

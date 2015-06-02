@@ -12,7 +12,7 @@ var express = require('express'),
     logger = require('morgan'),
     nodalytics = require('nodalytics'),
     UserApi = require('./api/userApi.js'),
-    LocationApi = require('./api/locationApi.js'),
+    CommunityApi = require('./api/communityApi.js'),
     ghost = require('ghost'),
     parentApp = express();
 
@@ -51,14 +51,14 @@ if (process.env.NODE_ENV === "production") {
 
 // ROUTE METHODS
 var userApi = new UserApi(),
-    locationApi = new LocationApi();
+    communityApi = new CommunityApi();
 
 // API
-app.get('/api/:location/users', userApi.userSearch);
-app.get('/api/1.0/:location/users', userApi.userSearch);
-app.get('/api/1.1/:location/users', userApi.userSearch);
-app.get('/api/1.0/city/:location', locationApi.getLocation);
-app.get('/api/1.1/location/:location', locationApi.getLocation);
+app.get('/api/:community/users', userApi.userSearch);
+app.get('/api/1.0/:community/users', userApi.userSearch);
+app.get('/api/1.1/:community/users', userApi.userSearch);
+app.get('/api/1.0/city/:community', communityApi.getCommunity);
+app.get('/api/1.1/community/:community', communityApi.getCommunity);
 app.get('/api/1.0/profile', userApi.ensureAuthenticated, userApi.getProfile);
 app.get('/api/1.1/profile', userApi.ensureAuthenticated, userApi.getProfile);
 app.get('/api/1.0/profile/getkey', userApi.ensureAuthenticated, userApi.createAPIToken);
