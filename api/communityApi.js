@@ -58,17 +58,18 @@ function handleGetCommunity(req, res) {
           .query('@path.key: ' + community + ' OR communities.*.' + community + '.*:* AND NOT (type:startup OR type:user)')
           .then(function (result) {
               var newresponse = {
-                  locations: [],
-                  industries: [],
-                  networks: []
+                   locations: [],
+                   industries: [],
+                   networks: []
               };
 
               if (result.body.results.length > 0) {
                   for (item in result.body.results) {
                       result.body.results[item] = { // get rid of extra db info
-                          "path": { "key": result.body.results[item].path.key },
+                          "key": result.body.results[item].path.key,
                           "value": result.body.results[item].value
                       };
+
                       switch (result.body.results[item].value.type) {
                           case "location":
                               newresponse.locations.push(result.body.results[item]);
@@ -80,6 +81,7 @@ function handleGetCommunity(req, res) {
                               newresponse.networks.push(result.body.results[item]);
                               break;
                       }
+
                   }
                   res.status(200).send(newresponse);
               } else {

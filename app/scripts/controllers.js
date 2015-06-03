@@ -77,23 +77,27 @@ angular
           $scope.global.alert = undefined;
       };
 
-      $scope.global.getObject = function(theObject, key) { // a general function to find data in JSON objects & arrays
+      $scope.global.getObject = function(theObject, key, value) { // a general function to find data in JSON objects & arrays
           var result = null;
-          if (theObject instanceof Array) {
-              for (var i = 0; i < theObject.length; i++) {
-                  result = $scope.global.getObject(theObject[i], key);
+          if (value) {
+              if (theObject[key] == value) {
+                  result = theObject;
+                  return result;
               }
           } else {
               for (var prop in theObject) {
                   if (theObject[prop] instanceof Object || theObject[prop] instanceof Array) {
                       if (prop == key) {
                           result = theObject[key];
+                          console.log('match!')
                           break;
                       }
-                      result = $scope.global.getObject(theObject[prop], key);
+                      result = $scope.global.getObject(theObject[prop], key, value);
                   }
+
               }
           }
+          console.log('returning ' + result)
           return result;
       };
 
@@ -183,60 +187,60 @@ angular
           if ($location.$$path == '/people' || $scope.global.search === undefined) {
               $scope.getUsers('/api/1.0/' + $scope.global.user.value.context + '/users?limit=32');
           }
-          $scope.global.context.industry = ['*'];
-          $scope.global.context.role = ['*'];
+          $scope.global.context.selectedIndustry = ['*'];
+          $scope.global.context.selectedRole = ['*'];
           setTitle();
       }
 
       function setTitle() {
           var item,
             role = '',
-            cluster = '';
-          if ($scope.global.context.role[0] == '*') {
+            industry = '';
+          if ($scope.global.context.selectedRole[0] == '*') {
               role = "People";
           } else {
-              for (item in $scope.global.context.role) {
-                  role += ($scope.global.context.role[item] + 's');
-                  if (item < $scope.global.context.role.length - 1) {
-                      if (item < $scope.global.context.role.length - 2 ) {
+              for (item in $scope.global.context.selectedRole) {
+                  role += ($scope.global.context.selectedRole[item] + 's');
+                  if (item < $scope.global.context.selectedRole.length - 1) {
+                      if (item < $scope.global.context.selectedRole.length - 2 ) {
                           role += '</strong>,<strong> ';
                       } else role += ' </strong>&<strong> ';
                   }
               }
           }
-          if ($scope.global.context.industry[0] == '*') {
-              cluster = $scope.global.community.location.value.citystate.split(',')[0]; //TODO Define global.context.location - do I need 'path' in global.community.industries, etc so I can lookup the keys properly?
+          if ($scope.global.context.selectedIndustry[0] == '*') {
+              industry = $scope.global.context.home.value.profile; //TODO Define global.context.location (no could be a network)
           } else {
               item = 0;
-              for (item in $scope.global.context.industry) {
-                  cluster += $scope.global.context.industry[item];
-                  if (item < $scope.global.context.industry.length - 1) {
-                      if (item < $scope.global.context.industry.length - 2 ) {
-                          cluster += ', ';
-                      } else cluster += ' & ';
+              for (item in $scope.global.context.selectedIndustry) {
+                  industry += $scope.global.context.selectedIndustry[item];
+                  if (item < $scope.global.context.selectedIndustry.length - 1) {
+                      if (item < $scope.global.context.selectedIndustry.length - 2 ) {
+                          industry += ', ';
+                      } else industry += ' & ';
                   }
               }
           }
-          $scope.title = '<strong>' + role + '</strong> in ' + cluster;
+          $scope.title = '<strong>' + role + '</strong> in ' + industry;
       }
 
       $scope.filterCluster = function(cluster) {
           $scope.loadingCluster = true;
           if (cluster == '*') {
-              $scope.global.context.industry = ['*'];
+              $scope.global.context.selectedIndustry = ['*'];
           } else {
-              if ($scope.global.context.industry.indexOf('*') >= 0) {
-                  $scope.global.context.industry.splice($scope.global.context.industry.indexOf('*'), 1);
+              if ($scope.global.context.selectedIndustry.indexOf('*') >= 0) {
+                  $scope.global.context.selectedIndustry.splice($scope.global.context.selectedIndustry.indexOf('*'), 1);
               }
-              if ($scope.global.context.industry.indexOf(cluster) < 0) {
-                  $scope.global.context.industry.push(cluster);
-              } else $scope.global.context.industry.splice($scope.global.context.industry.indexOf(cluster), 1);
-              if ($scope.global.context.industry.length === 0) {
-                  $scope.global.context.industry = ['*'];
+              if ($scope.global.context.selectedIndustry.indexOf(cluster) < 0) {
+                  $scope.global.context.selectedIndustry.push(cluster);
+              } else $scope.global.context.selectedIndustry.splice($scope.global.context.selectedIndustry.indexOf(cluster), 1);
+              if ($scope.global.context.selectedIndustry.length === 0) {
+                  $scope.global.context.selectedIndustry = ['*'];
               }
           }
 
-          userService.getUsers($scope.global.user.value.context, $scope.global.context.industry, $scope.global.context.role, 32, undefined)
+          userService.getUsers($scope.global.user.value.context, $scope.global.context.selectedIndustry, $scope.global.context.selectedRole, 32, undefined)
             .then(function(response) {
                 $scope.loadingCluster = false;
                 $scope.users = resultService.setPage(response.data);
@@ -258,20 +262,20 @@ angular
       $scope.filterRole = function(role) {
           $scope.loadingRole = true;
           if (role == '*') {
-              $scope.global.context.role = ['*'];
+              $scope.global.context.selectedRole = ['*'];
           } else {
-              if ($scope.global.context.role.indexOf('*') >= 0) {
-                  $scope.global.context.role.splice($scope.global.context.role.indexOf('*'), 1);
+              if ($scope.global.context.selectedRole.indexOf('*') >= 0) {
+                  $scope.global.context.selectedRole.splice($scope.global.context.selectedRole.indexOf('*'), 1);
               }
-              if ($scope.global.context.role.indexOf(role) < 0) {
-                  $scope.global.context.role.push(role);
-              } else $scope.global.context.role.splice($scope.global.context.role.indexOf(role), 1);
-              if ($scope.global.context.role.length === 0) {
-                  $scope.global.context.role = ['*'];
+              if ($scope.global.context.selectedRole.indexOf(role) < 0) {
+                  $scope.global.context.selectedRole.push(role);
+              } else $scope.global.context.selectedRole.splice($scope.global.context.selectedRole.indexOf(role), 1);
+              if ($scope.global.context.selectedRole.length === 0) {
+                  $scope.global.context.selectedRole = ['*'];
               }
           }
 
-          userService.getUsers($scope.global.user.value.context, $scope.global.context.industry, $scope.global.context.role, 32, undefined)
+          userService.getUsers($scope.global.user.value.context, $scope.global.context.selectedIndustry, $scope.global.context.selectedRole, 32, undefined)
             .then(function(response) {
                 $scope.loadingRole = false;
                 $scope.users = resultService.setPage(response.data);
