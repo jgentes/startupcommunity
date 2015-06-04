@@ -54,22 +54,22 @@ var userApi = new UserApi(),
     communityApi = new CommunityApi();
 
 // API
-app.get('/api/:community/users', userApi.userSearch);
 app.get('/api/1.0/:community/users', userApi.userSearch);
-app.get('/api/1.1/:community/users', userApi.userSearch);
 app.get('/api/1.0/city/:community', communityApi.getCommunity);
-app.get('/api/1.1/community/:community', communityApi.getCommunity);
 app.get('/api/1.0/profile', userApi.ensureAuthenticated, userApi.getProfile);
-app.get('/api/1.1/profile', userApi.ensureAuthenticated, userApi.getProfile);
 app.get('/api/1.0/profile/getkey', userApi.ensureAuthenticated, userApi.createAPIToken);
-app.get('/api/1.1/profile/getkey', userApi.ensureAuthenticated, userApi.createAPIToken);
 app.get('/api/1.0/invitePerson', userApi.ensureAuthenticated, userApi.invitePerson);
-app.get('/api/1.1/invitePerson', userApi.ensureAuthenticated, userApi.invitePerson);
 app.put('/api/1.0/profile/role', userApi.ensureAuthenticated, userApi.setRole);
-app.put('/api/1.1/profile/role', userApi.ensureAuthenticated, userApi.setRole);
 app.post('/api/1.0/profile/remove/:userid', userApi.ensureAuthenticated, userApi.removeProfile);
-app.post('/api/1.1/profile/remove/:userid', userApi.ensureAuthenticated, userApi.removeProfile);
 app.post('/api/1.0/feedback', userApi.ensureAuthenticated, userApi.feedback);
+
+app.get('/api/1.1/:community/users', userApi.userSearch);
+app.get('/api/1.1/community/:community', communityApi.getCommunity);
+app.get('/api/1.1/profile', userApi.ensureAuthenticated, userApi.getProfile);
+app.get('/api/1.1/profile/getkey', userApi.ensureAuthenticated, userApi.createAPIToken);
+app.get('/api/1.1/invitePerson', userApi.ensureAuthenticated, userApi.invitePerson);
+app.put('/api/1.1/profile/role', userApi.ensureAuthenticated, userApi.setRole);
+app.post('/api/1.1/profile/remove/:userid', userApi.ensureAuthenticated, userApi.removeProfile);
 app.post('/api/1.1/feedback', userApi.ensureAuthenticated, userApi.feedback);
 
 // Auth

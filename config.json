@@ -3,8 +3,7 @@
     "db": {
       "key": "be406a43-5cc1-425f-9545-23bd75ec6cfc",
       "collections": {
-        "users": "users-dev",
-        "cities": "cities-dev",
+        "users": "communities-dev",
         "communities": "communities-dev"
       }
     },
@@ -27,8 +26,7 @@
     "db": {
       "key": "be406a43-5cc1-425f-9545-23bd75ec6cfc",
       "collections": {
-        "users": "users-dev",
-        "cities": "cities-dev",
+        "users": "communities-dev",
         "communities": "communities-dev"
       }
     },
@@ -51,8 +49,7 @@
     "db": {
       "key": "be406a43-5cc1-425f-9545-23bd75ec6cfc",
       "collections": {
-        "users": "users-dev",
-        "cities": "cities-dev",
+        "users": "communities-dev",
         "communities": "communities-dev"
       }
     },

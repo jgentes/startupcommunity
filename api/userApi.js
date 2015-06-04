@@ -90,26 +90,63 @@ var schema = {
     }
 };
 
+var findKey = function(obj, key, results, value) {
+    if (!obj) {
+        return results;
+    }
+
+    var keys = Object.keys(obj);
+
+    for (var i = 0; (i < keys.length); i++) {
+        var name = keys[i];
+        var subkeys = obj[name];
+
+        if (typeof subkeys === 'object') {
+            if (name === key) {
+                if (value) {
+                    if (obj[name] == value) {
+                        results.push(subkeys);
+                    }
+                } else results.push(subkeys);
+            }
+            $scope.global.findKey(subkeys, key, results, value);
+
+        } else {
+            if (name === key) {
+                if (results.indexOf(subkeys) === -1) {
+                    if (value) {
+                        if (obj[name] == value) {
+                            results.push(obj);
+                        }
+                    } else results.push(obj);
+                }
+            }
+        }
+    }
+    return results;
+};
+
 /*
  |--------------------------------------------------------------------------
  | Search API
  |--------------------------------------------------------------------------
  */
 
-var searchincity = function(city, cluster, role, limit, offset, query, key) {
+var searchincity = function(community, city, industry, role, limit, offset, query, key) {
     var allowed = false;
-    var userdata;
+    var userperms;
 
-    if (key) {
+    if (key) { //check api key to determine if restricted profile data is included with results
         try {
             var payload = jwt.decode(key, config.API_token_secret);
             // Assuming key never expires
             //check perms!
-
+            console.log('test then remove me')
+            //todo test this
             db.get(config.db.collections.users, payload.sub)
                 .then(function (response) {
-                    userdata = response.body;
-                    if (userdata.cities[city].admin === true) { allowed=true; }
+                    userperms = findKey(response.body.communities, community, []);
+                    if (userperms[0].roles.indexOf("advisor") > -1) { allowed=true; }
                 })
                 .fail(function(err){
                     console.warn("WARNING: SEARCH FAIL:" + err);
@@ -121,13 +158,13 @@ var searchincity = function(city, cluster, role, limit, offset, query, key) {
     }
 
     // create searchstring
-    var searchstring = 'cities.' + city + '.admin: *'; // first argument to scope to city
-    if (cluster && cluster[0] !== '*') {
-        cluster = cluster.split(',');
+    var searchstring = 'communities.*.' + community + '.*:*'; // first argument to scope to community
+    if (industry && industry[0] !== '*') {
+        industry = industry.split(',');
         searchstring += ' && (';
-        for (var i in cluster) {
-            searchstring += 'cities.' + city + '.clusters.' + cluster[i] + '.roles: *'; // scope to cluster
-            if (i < (cluster.length - 1)) { searchstring += ' || '; }
+        for (var i in industry) {
+            searchstring += 'communities.*.' + industry[i] + '.*:*'; // scope to industry
+            if (i < (industry.length - 1)) { searchstring += ' || '; }
         }
         searchstring += ')';
     }
@@ -136,10 +173,10 @@ var searchincity = function(city, cluster, role, limit, offset, query, key) {
         role = role.split(',');
         searchstring += ' && (';
         if (role.indexOf('Advisor') >= 0) {
-            searchstring += 'cities.' + city + '.cityAdvisor: true || ';
+            searchstring += 'communities.*.' + community + '.*:advisor || ';
         }
         for (var i in role) {
-            searchstring += 'cities.' + city + '.clusters.*.roles: ' + role[i]; // scope to role
+            searchstring += 'communities.*.' + community + '.*:' + role[i]; // scope to role
             if (i < (role.length - 1)) { searchstring += ' || '; }
         }
         searchstring += ')';
@@ -152,7 +189,7 @@ var searchincity = function(city, cluster, role, limit, offset, query, key) {
         .collection(config.db.collections.users)
         .limit(Number(limit) || 32)
         .offset(Number(offset) || 0)
-        .query(searchstring)  //must include admin:* for city search
+        .query(searchstring)
         .then(function(result){
             var i;
             var item_cluster;
@@ -163,9 +200,9 @@ var searchincity = function(city, cluster, role, limit, offset, query, key) {
                     delete result.body.results[i].path.ref;
                     delete result.body.results[i].value.password;
 
-                    if (!allowed && userdata) {
+                    if (!allowed && userperms) { //todo finish converting this to community
                         for (item_cluster in result.body.results[i].value.cities[city].clusters) {
-                            if (userdata.cities[city].clusters[item_cluster].roles.indexOf("Founder") >= 0) {
+                            if (userperms.cities[city].clusters[item_cluster].roles.indexOf("Founder") >= 0) {
                                 allowed = true;
                             }
                         }

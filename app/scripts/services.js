@@ -44,18 +44,9 @@ angular
       },
       getKey: function() {
         return $http.get('/api/1.1/profile/getkey');
-      },      
-      setCityAdvisor: function(userkey, community, role, status, callback) {
-        $http.put('/api/1.1/profile/role?userkey=' + userkey + '&community=' + community + '&role=' + role + '&status=' + status)
-        .success( function(data, status) {
-          callback(data, status);
-        })
-        .error( function(data, status) {
-          callback(data, status);
-        });
       },
-      setRole: function(userkey, citykey, cluster, role, status, callback) {
-        $http.put('/api/1.1/profile/role?userkey=' + userkey + '&citykey=' + citykey + '&cluster=' + cluster + '&role=' + role + '&status=' + status)
+      setRole: function(userkey, communitykey, cluster, role, status, callback) {
+        $http.put('/api/1.1/profile/role?userkey=' + userkey + '&communitykey=' + communitykey + '&cluster=' + cluster + '&role=' + role + '&status=' + status)
         .success( function(data, status) {
           callback(data, status);
         })
