@@ -4,44 +4,48 @@ angular
   .module('navigation-controller', [])
   .controller('NavigationController', ['$scope', '$location', '$timeout', '$global', 'userService', function ($scope, $location, $timeout, $global, userService) {
     
-    var buildNav = function() {        
+    var buildNav = function() {
         var menu = [
-          {
-            label: 'Bend',
-            iconClasses: 'fa fa-globe',
-            url: '/people',
-            id: 'globe'
-          },
-          {
-              heading: 'COMMUNITY',
-              navClass: 'noback'
-          },
-          {
-              label: 'People',
-              iconClasses: 'fa fa-flag',
-              url: '/people',
-              children: [
-                  {
-                      label: 'Invite People',
-                      url: '/people/invite'
-                  }
-              ]
-          },
-          {
-              heading: 'CLUSTERS',
-              navClass: 'noback',
-              id: 'clusters'
-          }
+            {
+                label: 'Bend',
+                iconClasses: 'fa fa-globe',
+                url: '/people',
+                id: 'globe'
+            },
+            {
+                heading: 'COMMUNITY',
+                navClass: 'noback'
+            },
+            {
+                label: 'People',
+                iconClasses: 'fa fa-flag',
+                url: '/people',
+                children: [
+                    {
+                        label: 'Invite People',
+                        url: '/people/invite'
+                    }
+                ]
+            },
+            {
+                heading: 'CLUSTERS',
+                navClass: 'noback',
+                id: 'clusters'
+            }
         ];
-        
-        for (var industry in $scope.global.community.industries) {
-            var menuitem = $scope.global.getObject($scope.global.community.industries[industry], $scope.global.user.value.context);
-            menu.push(
-              {
-                  label: menuitem["profile"].name,
-                  cluster: false,
-                  iconClasses: 'fa ' + menuitem["profile"].icon
-              });
+
+        for (var item in $scope.global.community) {
+            if ($scope.global.community[item].value.type == "industry") {
+                var industries = $scope.global.findKey($scope.global.community[item], $scope.global.context.home, []);
+                for (var menuitem in industries) {
+                    menu.push(
+                      {
+                          label: industries[menuitem].profile.name,
+                          cluster: false,
+                          iconClasses: 'fa ' + industries[menuitem].profile.icon
+                      });
+                };
+            }
         }
 
         var setParent = function (children, parent) {

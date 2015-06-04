@@ -916,15 +916,42 @@ function handleMaintenance(req, res) {
     var userlist = [];
 
     function getList(startKey, userlist) {
-        db.list('cities', {limit: 50, startKey: startKey})
+        db.list('users', {limit: 50, startKey: startKey})
             .then( function(data) {
                 for (var item in data.body.results) {
                     // be careful to retrieve existing values from target key then append!
                     //data.body.results[item].value.cities = { "bend-or": { "admin": false, "cityAdvisor": true } };
                     //userlist.push(data.body.results[item]);
+
+                    var newdata = {
+                        "type": "user",
+                        "home": "bend-or",
+                        "profile": {
+                            "name": data.body.results[item].value.name,
+                            "email": data.body.results[item].value.email,
+                            "avatar": data.body.results[item].value.avatar,
+                            "linkedin": data.body.results[item].value.linkedin
+                        },
+                        "communities": {
+                            "usa": {
+                                "oregon": {
+                                    "deschutes-or": {
+                                        "bend-or": {
+                                            "roles": [
+                                                "advisor"
+                                            ]
+                                        }
+                                    }
+                                }
+                            }
+                        }
+
+                    };
+
                     console.log('Adding record..');
-                    db.post('cities-dev', data.body.results[item].value);
+                    db.post('communities-dev', newdata);
                 }
+
                 if (data.body.next) {
                     var nextkey = url.parse(data.body.next).query;
                     startKey = nextkey.substr(18, nextkey.length - 18);
@@ -942,6 +969,8 @@ function handleMaintenance(req, res) {
                      }
                      */
                 }
+
+
             });
     }
 

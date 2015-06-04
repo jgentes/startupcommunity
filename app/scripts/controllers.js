@@ -77,28 +77,40 @@ angular
           $scope.global.alert = undefined;
       };
 
-      $scope.global.getObject = function(theObject, key, value) { // a general function to find data in JSON objects & arrays
-          var result = null;
-          if (value) {
-              if (theObject[key] == value) {
-                  result = theObject;
-                  return result;
-              }
-          } else {
-              for (var prop in theObject) {
-                  if (theObject[prop] instanceof Object || theObject[prop] instanceof Array) {
-                      if (prop == key) {
-                          result = theObject[key];
-                          console.log('match!')
-                          break;
-                      }
-                      result = $scope.global.getObject(theObject[prop], key, value);
-                  }
+      $scope.global.findKey = function(obj, key, results, value) {
+          if (!obj) {
+              return results;
+          }
 
+          var keys = Object.keys(obj);
+
+          for (var i = 0; (i < keys.length); i++) {
+              var name = keys[i];
+              var subkeys = obj[name];
+
+              if (typeof subkeys === 'object') {
+                  if (name === key) {
+                      if (value) {
+                          if (obj[name] == value) {
+                              results.push(subkeys);
+                          }
+                      } else results.push(subkeys);
+                  }
+                  $scope.global.findKey(subkeys, key, results, value);
+
+              } else {
+                  if (name === key) {
+                      if (results.indexOf(subkeys) === -1) {
+                          if (value) {
+                              if (obj[name] == value) {
+                                  results.push(obj);
+                              }
+                          } else results.push(obj);
+                      }
+                  }
               }
           }
-          console.log('returning ' + result)
-          return result;
+          return results;
       };
 
       var broadcast = function() {
@@ -120,7 +132,7 @@ angular
 
       // Get and set user and location data
       $scope.global.sessionReady = function() {
-          if (!$scope.global.user || !$scope.global.community) {
+          if (!$scope.global.user || !$scope.global.community || !$scope.global.context.home) {
               userService.getProfile()
                 .success(function(response) {
                     if (response.path) {
@@ -129,11 +141,12 @@ angular
                             $scope.global.profile = response;
                         }
 
-                        var community = $scope.global.user.value.context;
+                        var community = $scope.global.user.value.home;
                         communityService.getCommunity(community)
                           .success(function(response) {
                               if (response) {
                                   $scope.global.community = response;
+                                  $scope.global.context.home = community;
                                   broadcast();
                               } else {
                                   $scope.global.logout({ type: 'danger', msg: String(response.message) });
@@ -169,7 +182,7 @@ angular
   .controller('PeopleController', ['$scope', '$location', 'userService', 'resultService', function ($scope, $location, userService, resultService) {
 
       $scope.getUsers = function(alturl) {
-          userService.getUsers($scope.global.user.value.context, undefined, undefined, 32, alturl)
+          userService.getUsers($scope.global.context.home, undefined, undefined, 32, alturl)
             .then(function(response) {
                 $scope.users = resultService.setPage(response.data);
                 if ($location.$$path == '/search') {
@@ -209,7 +222,7 @@ angular
               }
           }
           if ($scope.global.context.selectedIndustry[0] == '*') {
-              industry = $scope.global.context.home.value.profile; //TODO Define global.context.location (no could be a network)
+              industry = $scope.global.community[$scope.global.context.home].value.profile.name;
           } else {
               item = 0;
               for (item in $scope.global.context.selectedIndustry) {
@@ -275,7 +288,7 @@ angular
               }
           }
 
-          userService.getUsers($scope.global.user.value.context, $scope.global.context.selectedIndustry, $scope.global.context.selectedRole, 32, undefined)
+          userService.getUsers($scope.global.context.home, $scope.global.context.selectedIndustry, $scope.global.context.selectedRole, 32, undefined)
             .then(function(response) {
                 $scope.loadingRole = false;
                 $scope.users = resultService.setPage(response.data);

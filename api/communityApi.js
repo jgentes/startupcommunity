@@ -57,31 +57,15 @@ function handleGetCommunity(req, res) {
           .offset(startKey)
           .query('@path.key: ' + community + ' OR communities.*.' + community + '.*:* AND NOT (type:startup OR type:user)')
           .then(function (result) {
-              var newresponse = {
-                   locations: [],
-                   industries: [],
-                   networks: []
-              };
+              var newresponse = {};
 
               if (result.body.results.length > 0) {
                   for (item in result.body.results) {
+                      var itemkey = result.body.results[item].path.key;
                       result.body.results[item] = { // get rid of extra db info
-                          "key": result.body.results[item].path.key,
                           "value": result.body.results[item].value
                       };
-
-                      switch (result.body.results[item].value.type) {
-                          case "location":
-                              newresponse.locations.push(result.body.results[item]);
-                              break;
-                          case "industry":
-                              newresponse.industries.push(result.body.results[item]);
-                              break;
-                          case "network":
-                              newresponse.networks.push(result.body.results[item]);
-                              break;
-                      }
-
+                      newresponse[itemkey] = result.body.results[item];
                   }
                   res.status(200).send(newresponse);
               } else {
