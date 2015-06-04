@@ -132,7 +132,7 @@ angular
 
       // Get and set user and location data
       $scope.global.sessionReady = function() {
-          if (!$scope.global.user || !$scope.global.community || !$scope.global.context.home) {
+          if (!$scope.global.user || !$scope.global.community || !$scope.global.context) {
               userService.getProfile()
                 .success(function(response) {
                     if (response.path) {
@@ -140,13 +140,17 @@ angular
                         if (!$scope.global.profile) {
                             $scope.global.profile = response;
                         }
+                        var community = $scope.global.user.value.context.community || undefined;
+                        var location = $scope.global.user.value.context.location || undefined;
 
-                        var community = $scope.global.user.value.home;
-                        communityService.getCommunity(community)
+                        if (!community && !location) { location = $scope.global.user.value.profile.linkedin.location.country.code || 'us'} //TODO does private/private block location in linkedin api?
+
+                        communityService.getCommunity(location, community)
                           .success(function(response) {
                               if (response) {
                                   $scope.global.community = response;
-                                  $scope.global.context.home = community;
+                                  $scope.global.context.community = community;
+                                  $scope.global.context.location = location;
                                   broadcast();
                               } else {
                                   $scope.global.logout({ type: 'danger', msg: String(response.message) });
@@ -182,7 +186,7 @@ angular
   .controller('PeopleController', ['$scope', '$location', 'userService', 'resultService', function ($scope, $location, userService, resultService) {
 
       $scope.getUsers = function(alturl) {
-          userService.getUsers($scope.global.context.home, undefined, undefined, 32, alturl)
+          userService.getUsers($scope.global.context.community, undefined, undefined, 32, alturl)
             .then(function(response) {
                 $scope.users = resultService.setPage(response.data);
                 if ($location.$$path == '/search') {
@@ -222,7 +226,7 @@ angular
               }
           }
           if ($scope.global.context.selectedIndustry[0] == '*') {
-              industry = $scope.global.community[$scope.global.context.home].value.profile.name;
+              industry = $scope.global.community[$scope.global.context.community].value.profile.name;
           } else {
               item = 0;
               for (item in $scope.global.context.selectedIndustry) {
@@ -288,7 +292,7 @@ angular
               }
           }
 
-          userService.getUsers($scope.global.context.home, $scope.global.context.selectedIndustry, $scope.global.context.selectedRole, 32, undefined)
+          userService.getUsers($scope.global.context.community, $scope.global.context.selectedIndustry, $scope.global.context.selectedRole, 32, undefined)
             .then(function(response) {
                 $scope.loadingRole = false;
                 $scope.users = resultService.setPage(response.data);

@@ -125,7 +125,7 @@ angular
         
     };    
     
-    if (!$scope.global.city) {    
+    if (!$scope.global.community) {
       $scope.$on('sessionReady', function(event, status) {               
         if (status) {
           buildNav();

@@ -6,8 +6,19 @@ angular
       search: function(community, query) {
         return $http.get('/api/1.1/' + community + '/users' + (query ? '?search=' + query : ''));
       },
-      getUsers: function(community, cluster, role, limit, alturl) {
-        return $http.get(alturl || '/api/1.1/' + community + '/users' + (cluster ? '?cluster=' + cluster : '') + (cluster && role ? '&' : '?') + (role ? 'role=' + role : '') + (limit ? (cluster || role) ? '&limit=' + limit : '?limit=' + limit : ''));
+      getUsers: function(location, community, cluster, role, limit, alturl) {
+          if (alturl) { return $http.get(alturl) } else {
+              var urlString = '/api/1.1/';
+              if (location && community) {
+                  urlString += community + '/users?location=' + location;
+              } else if (location && !community) {
+                  urlString += location + '/users';
+              } else if (!location && community) {
+                  urlString += community + '/users';
+              }
+              urlString += (cluster ? '?cluster=' + cluster : '') + (cluster && role ? '&' : '?') + (role ? 'role=' + role : '') + (limit ? (cluster || role) ? '&limit=' + limit : '?limit=' + limit : '');
+              return $http.get(urlString);
+          };
       },
       putUser: function(userid, profile, callback) {
         $http.put('/api/1.1/user/' + userid + '?profile=' + profile)
@@ -65,8 +76,16 @@ angular
   
   .factory('communityService', function($http) {
     return {
-      getCommunity: function(community) {
-        return $http.get('/api/1.1/community/' + community);
+      getCommunity: function(location, community) {
+        var urlString = '/api/1.1/community/';
+        if (location && community) {
+          urlString += community + '?location=' + location;
+        } else if (location && !community) {
+          urlString += location;
+        } else if (!location && community) {
+            urlString += community;
+        }
+          return $http.get(urlString);
       }
     };
   })

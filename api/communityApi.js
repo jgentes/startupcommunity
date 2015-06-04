@@ -46,7 +46,19 @@ var convert_state = function(name, to) {
 };
 
 function handleGetCommunity(req, res) {
-    var community = req.params.community;
+    var community = req.params.community,
+        location = req.params.location;
+
+    var searchString = '@path.key: ' + (community || location); // grab the primary community object
+
+    if (location && community)
+    {
+        searchString += ' OR (communities.*' + location + '.' + community + '.*:*)'; // grab anything associated with this community in this location
+    } else {
+        searchString += ' OR (communities.*' + (location || community) + '.*:*)'; // grab anything in this location
+    }
+
+    searchString += ' AND NOT (type:startup OR type:user)'
 
     function pullCommunity() {
         var startKey = 0;
@@ -55,7 +67,7 @@ function handleGetCommunity(req, res) {
           .collection(config.db.collections.communities)
           .limit(100)
           .offset(startKey)
-          .query('@path.key: ' + community + ' OR communities.*.' + community + '.*:* AND NOT (type:startup OR type:user)')
+          .query(searchString)
           .then(function (result) {
               var newresponse = {};
 

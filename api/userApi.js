@@ -1,22 +1,19 @@
 var bcrypt = require('bcryptjs'),
-    Q = require('q'),
-    request = require('request'),
-    url = require('url'),
-    jwt = require('jwt-simple'),
-    moment = require('moment'),
-    config = require('../config.json')[process.env.NODE_ENV || 'development'],
-    db = require('orchestrate')(config.db.key),
-    mcapi = require('mailchimp-api/mailchimp'),
-    mc = new mcapi.Mailchimp(config.mailchimp),
-    mandrill = require('mandrill-api/mandrill'),
-    mandrill_client = new mandrill.Mandrill(config.mandrill);
+  Q = require('q'),
+  request = require('request'),
+  url = require('url'),
+  jwt = require('jwt-simple'),
+  moment = require('moment'),
+  config = require('../config.json')[process.env.NODE_ENV || 'development'],
+  db = require('orchestrate')(config.db.key),
+  mandrill = require('mandrill-api/mandrill'),
+  mandrill_client = new mandrill.Mandrill(config.mandrill);
 
 require('request-debug')(request); // Very useful for debugging oauth and api req/res
 
 var UserApi = function() {
     this.ensureAuthenticated = handleEnsureAuthenticated;
     this.userSearch = handleUserSearch;
-    this.subscribeUser = handleSubscribeUser;
     this.createToken = handleCreateToken;
     this.createAPIToken = handleCreateAPIToken;
     this.invitePerson = handleInvitePerson;
@@ -54,7 +51,7 @@ var schema = {
                         "deschutes-or": {
                             "bend-or": {
                                 "roles": [
-                                  "supporter"
+                                    "supporter"
                                 ]
                             }
                         }
@@ -132,7 +129,7 @@ var findKey = function(obj, key, results, value) {
  |--------------------------------------------------------------------------
  */
 
-var searchincity = function(community, city, industry, role, limit, offset, query, key) {
+var searchInCommunity = function(location, community, industry, role, limit, offset, query, key) {
     var allowed = false;
     var userperms;
 
@@ -144,21 +141,32 @@ var searchincity = function(community, city, industry, role, limit, offset, quer
             console.log('test then remove me')
             //todo test this
             db.get(config.db.collections.users, payload.sub)
-                .then(function (response) {
-                    userperms = findKey(response.body.communities, community, []);
-                    if (userperms[0].roles.indexOf("advisor") > -1) { allowed=true; }
-                })
-                .fail(function(err){
-                    console.warn("WARNING: SEARCH FAIL:" + err);
-                    return deferred.reject(new Error(err));
-                });
+              .then(function (response) {
+                  if (location && community) {
+                      userperms = findKey(response.body.communities, location + '.' + community, []);
+                  } else if (location && !community) {
+                      userperms = findKey(response.body.communities, (location || community), []);
+                  }
+                  if (userperms[0].roles.indexOf("admin") > -1) { allowed=true; }
+              })
+              .fail(function(err){
+                  console.warn("WARNING: SEARCH FAIL:" + err);
+                  return deferred.reject(new Error(err));
+              });
         } catch (err) {
             return deferred.reject(new Error(err));
         }
     }
 
     // create searchstring
-    var searchstring = 'communities.*.' + community + '.*:*'; // first argument to scope to community
+    var searchstring = 'communities.';
+    if (location && community) {
+        searchstring += '*' + location + '.' + community + '.*:*';
+    } else {
+        searchstring += '*' + (location || community) + '.*:*';
+    }
+    searchstring += ' AND type:user'; // first argument to scope to community & limit to users
+
     if (industry && industry[0] !== '*') {
         industry = industry.split(',');
         searchstring += ' && (';
@@ -173,7 +181,12 @@ var searchincity = function(community, city, industry, role, limit, offset, quer
         role = role.split(',');
         searchstring += ' && (';
         if (role.indexOf('Advisor') >= 0) {
-            searchstring += 'communities.*.' + community + '.*:advisor || ';
+            if (location && community) {
+                searchstring += 'communities.*' + location + '.' + community + '.*:advisor || ';
+            } else {
+                searchstring += 'communities.*' + (location || community) + '.*:advisor || ';
+            }
+
         }
         for (var i in role) {
             searchstring += 'communities.*.' + community + '.*:' + role[i]; // scope to role
@@ -186,56 +199,50 @@ var searchincity = function(community, city, industry, role, limit, offset, quer
 
     var deferred = Q.defer();
     db.newSearchBuilder()
-        .collection(config.db.collections.users)
-        .limit(Number(limit) || 32)
-        .offset(Number(offset) || 0)
-        .query(searchstring)
-        .then(function(result){
-            var i;
-            var item_cluster;
+      .collection(config.db.collections.users)
+      .limit(Number(limit) || 32)
+      .offset(Number(offset) || 0)
+      .query(searchstring)
+      .then(function(result){
+          var i;
+          var item_industry;
 
-            try {
-                for (i=0; i < result.body.results.length; i++) {
-                    delete result.body.results[i].path.collection;
-                    delete result.body.results[i].path.ref;
-                    delete result.body.results[i].value.password;
+          try {
+              for (i=0; i < result.body.results.length; i++) {
+                  delete result.body.results[i].path.collection;
+                  delete result.body.results[i].path.ref;
+                  delete result.body.results[i].value.profile.password;
+                  delete result.body.results[i].value.type;
+                  delete result.body.results[i].value.home;
 
-                    if (!allowed && userperms) { //todo finish converting this to community
-                        for (item_cluster in result.body.results[i].value.cities[city].clusters) {
-                            if (userperms.cities[city].clusters[item_cluster].roles.indexOf("Founder") >= 0) {
-                                allowed = true;
-                            }
-                        }
-                    }
+                  if (!allowed) {
+                      delete result.body.results[i].value.profile.email;
+                  }
 
-                    if (!allowed) {
-                        delete result.body.results[i].value.email;
-                    }
+                  if (result.body.results[i].value.linkedin) {
+                      delete result.body.results[i].value.profile.linkedin.emailAddress;
+                      delete result.body.results[i].value.profile.linkedin.access_token;
+                  }
+              }
+          } catch (error) {
+              console.warn('WARNING:  Possible database entry corrupted: ');
+              console.log(result.body.results);
+          }
 
-                    if (result.body.results[i].value.linkedin) {
-                        delete result.body.results[i].value.linkedin.emailAddress;
-                        delete result.body.results[i].value.linkedin.access_token;
-                    }
-                }
-            } catch (error) {
-                console.warn('WARNING:  Possible database entry corrupted: ');
-                console.log(result.body.results);
-            }
-
-            if (result.body.next) {
-                var getnext = url.parse(result.body.next, true);
-                result.body.next = '/api/1.0/' + city + '/users?limit=' + getnext.query.limit + '&offset=' + getnext.query.offset + (role ? '&role=' + role : '') + (query ? '&search=' + query : '');
-            }
-            if (result.body.prev) {
-                var getprev = url.parse(result.body.prev, true);
-                result.body.prev = '/api/1.0/' + city + '/users?limit=' + getprev.query.limit + '&offset=' + getprev.query.offset + (role ? '&role=' + role : '') + (query ? '&search=' + query : '');
-            }
-            deferred.resolve(result.body);
-        })
-        .fail(function(err){
-            console.log(err.body.message);
-            deferred.reject(err.body.message);
-        });
+          if (result.body.next) {
+              var getnext = url.parse(result.body.next, true);
+              result.body.next = '/api/1.1/' + community + '/users?limit=' + getnext.query.limit + '&offset=' + getnext.query.offset + (role ? '&role=' + role : '') + (query ? '&search=' + query : '');
+          }
+          if (result.body.prev) {
+              var getprev = url.parse(result.body.prev, true);
+              result.body.prev = '/api/1.0/' + community + '/users?limit=' + getprev.query.limit + '&offset=' + getprev.query.offset + (role ? '&role=' + role : '') + (query ? '&search=' + query : '');
+          }
+          deferred.resolve(result.body);
+      })
+      .fail(function(err){
+          console.log(err.body.message);
+          deferred.reject(err.body.message);
+      });
 
     return deferred.promise;
 
@@ -243,22 +250,23 @@ var searchincity = function(community, city, industry, role, limit, offset, quer
 
 
 function handleUserSearch(req, res){
-    var city = req.params.city,
-        cluster = req.query.cluster,
-        role = req.query.role,
-        query = req.query.search,
-        limit = req.query.limit,
-        offset = req.query.offset,
-        key = req.query.api_key;
+    var community = req.params.community,
+      location = req.query.location,
+      cluster = req.query.cluster,
+      role = req.query.role,
+      query = req.query.search,
+      limit = req.query.limit,
+      offset = req.query.offset,
+      key = req.query.api_key;
 
-    searchincity(city, cluster, role, limit, offset, query, key)
-        .then(function(userlist){
-            res.send(userlist);
-        })
-        .fail(function(err){
-            console.warn(err);
-            res.send({message:err});
-        });
+    searchInCommunity(location, community, cluster, role, limit, offset, query, key)
+      .then(function(userlist){
+          res.send(userlist);
+      })
+      .fail(function(err){
+          console.warn(err);
+          res.send({message:err});
+      });
 }
 
 /*
@@ -323,45 +331,29 @@ function handleCreateAPIToken(req, res) {
     res.status(201).send(jwt.encode(payload, config.API_token_secret));
 
     db.get(config.db.collections.users, req.user)
-        .then(function(response){
-            if (response.body.code !== "items_not_found") {
-                console.log('Matching user found.');
-                if (response.body.profile.api_key === undefined) {
-                    response.body.profile["api_key"] = jwt.encode(payload, config.API_token_secret); // get user account and re-upload with api_key
-                    db.put(config.db.collections.users, req.user, response.body)
-                        .then(function () {
-                            console.log("Profile updated.");
-                        })
-                        .fail(function (err) {
-                            console.error("Profile update failed:");
-                            console.error(err.body);
-                        });
-                }
-            } else {
-                console.warn('WARNING:  API Token for a user that does not exist!!');
-            }
-        })
+      .then(function(response){
+          if (response.body.code !== "items_not_found") {
+              console.log('Matching user found.');
+              if (response.body.profile.api_key === undefined) {
+                  response.body.profile["api_key"] = jwt.encode(payload, config.API_token_secret); // get user account and re-upload with api_key
+                  db.put(config.db.collections.users, req.user, response.body)
+                    .then(function () {
+                        console.log("Profile updated.");
+                    })
+                    .fail(function (err) {
+                        console.error("Profile update failed:");
+                        console.error(err.body);
+                    });
+              }
+          } else {
+              console.warn('WARNING:  API Token for a user that does not exist!!');
+          }
+      })
       .fail(function(err){
           console.log("SEARCH FAIL:" + err);
           res.status(400).send({ message: 'Something went wrong: ' + err});
       });
 
-}
-
-
-
-function handleSubscribeUser(req, res){
-    mc.lists.subscribe({id: 'ba6c99c719', email:{email:req.body.email}, merge_vars: {'CITY': req.body.city} }, function(data) {
-            console.log(data);
-            res.send({ success: "Successfully subscribed " + req.body.email });
-        },
-        function(error) {
-            if (error.error) {
-                console.log("Mailchimp API Error" + error.code + ": " + error.error);
-            } else {
-                console.log('There was an error subscribing ' + req.body.email);
-            }
-        });
 }
 
 /*
@@ -373,46 +365,46 @@ function handleSignup(req, res) {
     var user = schema.signupform(req.body);
 
     db.newSearchBuilder()
-        .collection(config.db.collections.users)
-        .limit(1)
-        .query('value.email: "' + req.body.email + '"')
-        .then(function(result){
-            if (result.body.results.length > 0) {
-                console.log('User already exists');
-                res.status(401).send({ message: 'That email address is already registered to a user.'}); //username already exists
-            } else {
-                console.log('Email is free for use');
-                db.post(config.db.collections.users, user)
-                    .then(function () {
-                        db.newSearchBuilder()
-                            .collection(config.db.collections.users)
-                            .limit(1)
-                            .query('value.email: "' + req.body.email + '"')
-                            .then(function(result){
-                                if (result.body.results.length > 0) {
-                                    console.log("USER:");
-                                    console.log(user);
-                                    res.send({ token: handleCreateToken(req, result.body.results[0]), user: result.body.results[0] });
-                                } else {
-                                    console.warn("WARNING: Search couldn't find user after posting new user!");
-                                    res.status(401).send({ message: 'Something went wrong!'});
-                                }
-                            })
-                            .fail(function(err){
-                                console.log("SEARCH FAIL:" + err);
-                                res.status(400).send({ message: 'Something went wrong: ' + err});
-                            })
-                            .fail(function (err) {
-                                console.log("POST FAIL:" + err.body);
-                                res.status(400).send({ message: 'Something went wrong: ' + err});
-                            });
-                    });
-            }
-        })
-        .fail(function(err){
-            console.log("SEARCH FAIL:" + err);
-            res.status(400).send({ message: 'Something went wrong: ' + err});
-        });
+      .collection(config.db.collections.users)
+      .limit(1)
+      .query('profile.email: "' + req.body.profile.email + '"')
+      .then(function(result){
+          if (result.body.results.length > 0) {
+              console.log('User already exists');
+              res.status(401).send({ message: 'That email address is already registered to a user.'}); //username already exists
+          } else {
+              console.log('Email is free for use');
+              db.post(config.db.collections.users, user)
+                .then(function () {
+                    db.newSearchBuilder()
+                      .collection(config.db.collections.users)
+                      .limit(1)
+                      .query('profile.email: "' + req.body.profile.email + '"')
+                      .then(function(result){
+                          if (result.body.results.length > 0) {
+                              console.log("USER:");
+                              console.log(user);
+                              res.send({ token: handleCreateToken(req, result.body.results[0]), user: result.body.results[0] });
+                          } else {
+                              console.warn("WARNING: Search couldn't find user after posting new user!");
+                              res.status(401).send({ message: 'Something went wrong!'});
+                          }
+                      })
+                      .fail(function(err){
+                          console.log("SEARCH FAIL:" + err);
+                          res.status(400).send({ message: 'Something went wrong: ' + err});
+                      })
+                      .fail(function (err) {
+                          console.log("POST FAIL:" + err.body);
+                          res.status(400).send({ message: 'Something went wrong: ' + err});
+                      });
+                });
+          }
+      })
+      .fail(function(err){
+          console.log("SEARCH FAIL:" + err);
+          res.status(400).send({ message: 'Something went wrong: ' + err});
+      });
 }
 
 
@@ -424,28 +416,28 @@ function handleSignup(req, res) {
 
 function handleLogin(req, res) {
     db.newSearchBuilder()
-        .collection(config.db.collections.users)
-        .limit(1)
-        .query('value.email: "' + req.body.email + '"')
-        .then(function(result){
-            if (result.body.results.length > 0) {
-                console.log("FOUND USER");
-                var hash = result.body.results[0].value.password;
-                if (bcrypt.compareSync(req.body.password, hash)) {
-                    res.send({ token: handleCreateToken(req, result.body.results[0]), user: result.body.results[0] });
-                } else {
-                    console.log("PASSWORDS DO NOT MATCH");
-                    return res.status(401).send({ message: 'Wrong email and/or password' });
-                }
-            } else {
-                console.log("COULD NOT FIND USER IN DB FOR SIGNIN");
-                return res.status(401).send({ message: 'Wrong email and/or password' });
-            }
-        })
-        .fail(function(err){
-            console.log("SEARCH FAIL:" + err);
-            res.status(400).send('Something went wrong: ' + err);
-        });
+      .collection(config.db.collections.users)
+      .limit(1)
+      .query('profile.email: "' + req.body.profile.email + '"')
+      .then(function(result){
+          if (result.body.results.length > 0) {
+              console.log("FOUND USER");
+              var hash = result.body.results[0].value.profile.password;
+              if (bcrypt.compareSync(req.body.profile.password, hash)) {
+                  res.send({ token: handleCreateToken(req, result.body.results[0]), user: result.body.results[0] });
+              } else {
+                  console.log("PASSWORDS DO NOT MATCH");
+                  return res.status(401).send({ message: 'Wrong email and/or password' });
+              }
+          } else {
+              console.log("COULD NOT FIND USER IN DB FOR SIGNIN");
+              return res.status(401).send({ message: 'Wrong email and/or password' });
+          }
+      })
+      .fail(function(err){
+          console.log("SEARCH FAIL:" + err);
+          res.status(400).send('Something went wrong: ' + err);
+      });
 }
 
 /*
@@ -460,35 +452,35 @@ function handleInvitePerson(req, res) {
     if (invitePerson) {
         var gettoken = function(invitePerson, callback) {
             db.newSearchBuilder()
-                .collection(config.db.collections.users)
-                .limit(1)
-                .query('value.linkedin.id: "' + invitePerson.userid + '"')
-                .then(function(result){
-                    if (result.body.results.length > 0) {
-                        console.log("Found user, pulling access_token");
-                        if (result.body.results[0].value.linkedin.access_token) {
-                            var access_token = result.body.results[0].value.linkedin.access_token;
-                            callback(access_token);
-                        } else {
-                            console.log("User does not have Linkedin access_token!");
-                            return res.status(401).send({ message: 'Sorry, you need to login to StartupCommunity.org with Linkedin first.' });
-                        }
-                    } else {
-                        console.log("COULD NOT FIND USER IN DB");
-                        return res.status(401).send({ message: 'Something went wrong, please login again.' });
-                    }
-                })
-                .fail(function(err){
-                    console.log("SEARCH FAIL:" + err);
-                    res.status(400).send({ message: 'Something went wrong: ' + err});
-                });
+              .collection(config.db.collections.users)
+              .limit(1)
+              .query('profile.linkedin.id: "' + invitePerson.userid + '"')
+              .then(function(result){
+                  if (result.body.results.length > 0) {
+                      console.log("Found user, pulling access_token");
+                      if (result.body.results[0].value.profile.linkedin.access_token) {
+                          var access_token = result.body.results[0].value.profile.linkedin.access_token;
+                          callback(access_token);
+                      } else {
+                          console.log("User does not have Linkedin access_token!");
+                          return res.status(401).send({ message: 'Sorry, you need to login to StartupCommunity.org with Linkedin first.' });
+                      }
+                  } else {
+                      console.log("COULD NOT FIND USER IN DB");
+                      return res.status(401).send({ message: 'Something went wrong, please login again.' });
+                  }
+              })
+              .fail(function(err){
+                  console.log("SEARCH FAIL:" + err);
+                  res.status(400).send({ message: 'Something went wrong: ' + err});
+              });
 
 
         };
 
         gettoken(invitePerson, function(access_token) {
 
-            getlinkedinprofile(invitePerson.url, invitePerson.email, access_token, function(result) {
+            getLinkedinProfile(invitePerson.url, invitePerson.email, access_token, function(result) {
                 res.status(result.status).send(result);
             });
 
@@ -502,53 +494,53 @@ function handleInvitePerson(req, res) {
  |--------------------------------------------------------------------------
  */
 
-var getlinkedinprofile = function(url, email, access_token, profilecallback) {
+var getLinkedinProfile = function(url, email, access_token, profilecallback) {
     var querystring = require('querystring');
-    request.get({ url: 'https://api.linkedin.com/v1/people/url=' + querystring.escape(url) + ':(id,first-name,last-name,picture-url;secure=true,headline,summary,public-profile-url)', qs: { oauth2_access_token: access_token, format: 'json' }, json: true },
-        function(error, response, body) {
-            if (!body.status || body.status === 200) {
-                if (body.id !== undefined) {
-                    var linkedinuser = schema.linkedin(body, email);
-                    console.log('LINKEDIN USER:');
-                    console.log(linkedinuser);
-                    linkedinPull(linkedinuser, profilecallback);
-                }
-            } else {
-                console.error('Linkedin profile error: ' + body.message);
-                console.log(body);
-                profilecallback(body);
-            }
-        });
+    request.get({ url: 'https://api.linkedin.com/v1/people/url=' + querystring.escape(url) + ':(id,first-name,last-name,picture-url;secure=true,headline,location,summary,public-profile-url)', qs: { oauth2_access_token: access_token, format: 'json' }, json: true },
+      function(error, response, body) {
+          if (!body.status || body.status === 200) {
+              if (body.id !== undefined) {
+                  var linkedinuser = schema.linkedin(body, email);
+                  console.log('LINKEDIN USER:');
+                  console.log(linkedinuser);
+                  linkedinPull(linkedinuser, profilecallback);
+              }
+          } else {
+              console.error('Linkedin profile error: ' + body.message);
+              console.log(body);
+              profilecallback(body);
+          }
+      });
 };
 
 var linkedinPull = function (linkedinuser, pullcallback) {
 
     console.log('Looking for existing user based on public Linkedin profile.');
 
-    db.search(config.db.collections.users, 'value.linkedin.publicProfileUrl: "' + linkedinuser.linkedin.publicProfileUrl + '"')
-        .then(function (result){
-            console.log('Result of db search: ' + result.body.total_count);
-            if (result.body.results.length > 0){
-                if (result.body.results[0].value.linkedin.id == linkedinuser.linkedin.id){
-                    console.log("Matched Linkedin user to database user: " + linkedinuser.name);
-                    pullcallback({ "status": 409, "message": "It looks like " + linkedinuser.name + " is already in the system.", "data": result.body.results[0].value });
-                } else {
-                    console.warn("WARNING: There's already an existing user with that public Linkedin profile.");
-                    pullcallback({ "status": 200, "data": result.body.results[0].value });
-                }
-            } else {
-                console.log('No existing linkedin user found!');
-                db.post(config.db.collections.users, linkedinuser)
-                    .then(function () {
-                        console.log("REGISTERED: " + linkedinuser.email);
-                        pullcallback({ "status": 200, "data": linkedinuser });
-                    })
-                    .fail(function (err) {
-                        console.error("PUT FAIL:");
-                        console.error(err);
-                    });
-            }
-        })
+    db.search(config.db.collections.users, 'profile.linkedin.publicProfileUrl: "' + linkedinuser.profile.linkedin.publicProfileUrl + '"')
+      .then(function (result){
+          console.log('Result of db search: ' + result.body.total_count);
+          if (result.body.results.length > 0){
+              if (result.body.results[0].value.profile.linkedin.id == linkedinuser.profile.linkedin.id){
+                  console.log("Matched Linkedin user to database user: " + linkedinuser.profile.name);
+                  pullcallback({ "status": 409, "message": "It looks like " + linkedinuser.profile.name + " is already in the system.", "data": result.body.results[0].value });
+              } else {
+                  console.warn("WARNING: There's already an existing user with that public Linkedin profile.");
+                  pullcallback({ "status": 200, "data": result.body.results[0].value });
+              }
+          } else {
+              console.log('No existing linkedin user found!');
+              db.post(config.db.collections.users, linkedinuser)
+                .then(function () {
+                    console.log("REGISTERED: " + linkedinuser.profile.email);
+                    pullcallback({ "status": 200, "data": linkedinuser });
+                })
+                .fail(function (err) {
+                    console.error("PUT FAIL:");
+                    console.error(err);
+                });
+          }
+      })
       .fail(function(err){
           console.log("SEARCH FAIL:" + err);
           res.status(400).send({ message: 'Something went wrong: ' + err});
@@ -558,7 +550,7 @@ var linkedinPull = function (linkedinuser, pullcallback) {
 
 function handleLinkedin(req, res) {
     var accessTokenUrl = 'https://www.linkedin.com/uas/oauth2/accessToken';
-    var peopleApiUrl = 'https://api.linkedin.com/v1/people/~:(id,first-name,last-name,email-address,picture-url;secure=true,headline,specialties,positions,summary,industry,public-profile-url)';
+    var peopleApiUrl = 'https://api.linkedin.com/v1/people/~:(id,first-name,last-name,email-address,picture-url;secure=true,headline,location,specialties,positions,summary,industry,public-profile-url)';
 
     var params = {
         client_id: config.linkedin.clientID,
@@ -597,137 +589,137 @@ function handleLinkedin(req, res) {
                 if (req.headers.authorization) { // isloggedin already? [this use case is for linking a linkedin profile to an existing account
 
                     db.newSearchBuilder()
-                        .collection(config.db.collections.users)
-                        .limit(1)
-                        .query('profile.linkedin.id: "' + profile.id + '"')
-                        .then(function (result){
-                            if (result.body.results.length > 0){
-                                console.log("Found user: " + profile.firstName + ' ' + profile.lastName);
-                                res.send({ token: req.headers.authorization.split(' ')[1], user: result.body.results[0] });
-                            } else {
+                      .collection(config.db.collections.users)
+                      .limit(1)
+                      .query('profile.linkedin.id: "' + profile.id + '"')
+                      .then(function (result){
+                          if (result.body.results.length > 0){
+                              console.log("Found user: " + profile.firstName + ' ' + profile.lastName);
+                              res.send({ token: req.headers.authorization.split(' ')[1], user: result.body.results[0] });
+                          } else {
 
-                                console.log('No Linkedin user in the system with that id; ok to add it.');
-                                var token = req.headers.authorization.split(' ')[1];
-                                var payload = jwt.decode(token, config.token_secret);
+                              console.log('No Linkedin user in the system with that id; ok to add it.');
+                              var token = req.headers.authorization.split(' ')[1];
+                              var payload = jwt.decode(token, config.token_secret);
 
-                                db.get(config.db.collections.users, payload.sub)
-                                    .then(function(response){
-                                        if (response.body.code !== "items_not_found") {
-                                            console.log('Matching user found.');
-                                            response.body.profile["linkedin"] = profile; // get user account and re-upload with linkedin data
-                                            db.put(config.db.collections.users, payload.sub, response.body)
-                                                .then(function () {
-                                                    console.log("Profile updated: " + userprofile.email);
-                                                })
-                                                .fail(function (err) {
-                                                    console.error("Profile update failed:");
-                                                    console.error(err.body);
-                                                });
-                                            res.send({ token: handleCreateToken(req, response.body), user: response.body });
-                                        } else {
-                                            return res.status(401).send({ message: "Sorry, we couldn't find you in our system. Please <a href='/' target='_self'>request an invitation</a>." });
-                                        }
-                                    })
-                                    .fail(function(err){
-                                        console.log("SEARCH FAIL:" + err);
-                                        res.status(400).send({ message: 'Something went wrong: ' + err});
-                                    });
-                            }
-                        })
-                        .fail(function(err){
-                            console.log("SEARCH FAIL:" + err);
-                            res.status(400).send({ message: 'Something went wrong: ' + err});
-                        });
+                              db.get(config.db.collections.users, payload.sub)
+                                .then(function(response){
+                                    if (response.body.code !== "items_not_found") {
+                                        console.log('Matching user found.');
+                                        response.body.profile["linkedin"] = profile; // get user account and re-upload with linkedin data
+                                        db.put(config.db.collections.users, payload.sub, response.body)
+                                          .then(function () {
+                                              console.log("Profile updated: " + userprofile.profile.email);
+                                          })
+                                          .fail(function (err) {
+                                              console.error("Profile update failed:");
+                                              console.error(err.body);
+                                          });
+                                        res.send({ token: handleCreateToken(req, response.body), user: response.body });
+                                    } else {
+                                        return res.status(401).send({ message: "Sorry, we couldn't find you in our system. Please <a href='/' target='_self'>request an invitation</a>." });
+                                    }
+                                })
+                                .fail(function(err){
+                                    console.log("SEARCH FAIL:" + err);
+                                    res.status(400).send({ message: 'Something went wrong: ' + err});
+                                });
+                          }
+                      })
+                      .fail(function(err){
+                          console.log("SEARCH FAIL:" + err);
+                          res.status(400).send({ message: 'Something went wrong: ' + err});
+                      });
 
 
                 } else {
 
                     db.newSearchBuilder()
-                        .collection(config.db.collections.users)
-                        .limit(1)
-                        .query('profile.linkedin.id: "' + profile.id + '"')
-                        .then(function (result){
-                            if (result.body.results.length > 0){
-                                console.log("Found user: " + profile.firstName + ' ' + profile.lastName);
-                                result.body.results[0].value.profile["linkedin"] = profile; // get user account and re-upload with linkedin data
-                                if (result.body.results[0].value.profile.avatar === "") {
-                                    result.body.results[0].value.profile.avatar = result.body.results[0].value.profile.linkedin.pictureUrl;
-                                }
-                                if (result.body.results[0].value.profile.name !== result.body.results[0].value.profile.linkedin.firstName + ' ' + result.body.results[0].value.profile.linkedin.lastName) {
-                                    result.body.results[0].value.profile.name = result.body.results[0].value.profile.linkedin.firstName + ' ' + result.body.results[0].value.profile.linkedin.lastName;
-                                }
-                                if (result.body.results[0].value.profile.email !== result.body.results[0].value.profile.linkedin.emailAddress) {
-                                    result.body.results[0].value.profile.email = result.body.results[0].value.profile.linkedin.emailAddress;
-                                }
+                      .collection(config.db.collections.users)
+                      .limit(1)
+                      .query('profile.linkedin.id: "' + profile.id + '"')
+                      .then(function (result){
+                          if (result.body.results.length > 0){
+                              console.log("Found user: " + profile.firstName + ' ' + profile.lastName);
+                              result.body.results[0].value.profile["linkedin"] = profile; // get user account and re-upload with linkedin data
+                              if (result.body.results[0].value.profile.avatar === "") {
+                                  result.body.results[0].value.profile.avatar = result.body.results[0].value.profile.linkedin.pictureUrl;
+                              }
+                              if (result.body.results[0].value.profile.name !== result.body.results[0].value.profile.linkedin.firstName + ' ' + result.body.results[0].value.profile.linkedin.lastName) {
+                                  result.body.results[0].value.profile.name = result.body.results[0].value.profile.linkedin.firstName + ' ' + result.body.results[0].value.profile.linkedin.lastName;
+                              }
+                              if (result.body.results[0].value.profile.email !== result.body.results[0].value.profile.linkedin.emailAddress) {
+                                  result.body.results[0].value.profile.email = result.body.results[0].value.profile.linkedin.emailAddress;
+                              }
 
-                                db.put(config.db.collections.users, result.body.results[0].path.key, result.body.results[0].value)
-                                    .then(function () {
-                                        console.log("Profile updated: " + userprofile.email);
-                                    })
-                                    .fail(function (err) {
-                                        console.error("Profile update failed:");
-                                        console.error(err);
-                                    });
+                              db.put(config.db.collections.users, result.body.results[0].path.key, result.body.results[0].value)
+                                .then(function () {
+                                    console.log("Profile updated: " + userprofile.profile.email);
+                                })
+                                .fail(function (err) {
+                                    console.error("Profile update failed:");
+                                    console.error(err);
+                                });
 
-                                res.send({ token: handleCreateToken(req, result.body.results[0]), user: result.body.results[0] });
-                            } else {
-                                db.newSearchBuilder()
-                                    .collection(config.db.collections.users)
-                                    .limit(1)
-                                    .query('profile.email: "' + profile.emailAddress + '"')
-                                    .then(function(result){
-                                        if (result.body.results.length > 0) {
-                                            console.log("Found user: " + profile.firstName + ' ' + profile.lastName);
-                                            result.body.results[0].value.profile["linkedin"] = profile; // get user account and re-upload with linkedin data
-                                            db.put(config.db.collections.users, result.body.results[0].path.key, result.body.results[0].value)
-                                                .then(function () {
-                                                    console.log("Profile updated: " + userprofile.profile.email);
-                                                })
-                                                .fail(function (err) {
-                                                    console.error("Profile update failed:");
-                                                    console.error(err);
-                                                });
-                                            res.send({ token: handleCreateToken(req, result.body.results[0]), user: result.body.results[0] });
+                              res.send({ token: handleCreateToken(req, result.body.results[0]), user: result.body.results[0] });
+                          } else {
+                              db.newSearchBuilder()
+                                .collection(config.db.collections.users)
+                                .limit(1)
+                                .query('profile.email: "' + profile.emailAddress + '"')
+                                .then(function(result){
+                                    if (result.body.results.length > 0) {
+                                        console.log("Found user: " + profile.firstName + ' ' + profile.lastName);
+                                        result.body.results[0].value.profile["linkedin"] = profile; // get user account and re-upload with linkedin data
+                                        db.put(config.db.collections.users, result.body.results[0].path.key, result.body.results[0].value)
+                                          .then(function () {
+                                              console.log("Profile updated: " + userprofile.profile.email);
+                                          })
+                                          .fail(function (err) {
+                                              console.error("Profile update failed:");
+                                              console.error(err);
+                                          });
+                                        res.send({ token: handleCreateToken(req, result.body.results[0]), user: result.body.results[0] });
 
-                                        } else {
-                                            console.log('No existing user found!');
-                                            res.status(401).send({ profile: profile, message: "Sorry, we couldn't find you in our system. Please <a href='/' target='_self'>request an invitation</a>." });
-                                        }
-                                    })
-                                    .fail(function(err){
-                                        console.log("SEARCH FAIL:" + err);
-                                        res.status(400).send({ message: 'Something went wrong: ' + err});
-                                    });
+                                    } else {
+                                        console.log('No existing user found!');
+                                        res.status(401).send({ profile: profile, message: "Sorry, we couldn't find you in our system. Please <a href='/' target='_self'>request an invitation</a>." });
+                                    }
+                                })
+                                .fail(function(err){
+                                    console.log("SEARCH FAIL:" + err);
+                                    res.status(400).send({ message: 'Something went wrong: ' + err});
+                                });
 
-                                /* Do this to create a user account if no user exists
-                                 db.newSearchBuilder()
-                                 .collection(config.db.collections.users)
-                                 .limit(1)
-                                 .query('value.email: "' + profile.emailAddress + '"')
-                                 .then(function(result){
-                                 if (result.body.results.length > 0) {
-                                 console.log('Existing user found.');
-                                 res.status(409).send({ message: "Sorry, there's already a user with your email address." });
+                              /* Do this to create a user account if no user exists
+                               db.newSearchBuilder()
+                               .collection(config.db.collections.users)
+                               .limit(1)
+                               .query('value.email: "' + profile.emailAddress + '"')
+                               .then(function(result){
+                               if (result.body.results.length > 0) {
+                               console.log('Existing user found.');
+                               res.status(409).send({ message: "Sorry, there's already a user with your email address." });
 
-                                 } else {
-                                 db.post(config.db.collections.users, userprofile)
-                                 .then(function () {
-                                 console.log("Profile created: " + JSON.stringify(userprofile));
-                                 res.send({ token: handleCreateToken(req, userprofile) });
-                                 })
-                                 .fail(function (err) {
-                                 console.error("POST fail:");
-                                 console.error(err.body);
-                                 });
-                                 }
-                                 })
-                                 .fail(function(err){
-                                 console.log("SEARCH FAIL:" + err);
-                                 res.status(401).send({ message: 'Something went wrong: ' + err});
-                                 });
-                                 */
-                            }
-                        });
+                               } else {
+                               db.post(config.db.collections.users, userprofile)
+                               .then(function () {
+                               console.log("Profile created: " + JSON.stringify(userprofile));
+                               res.send({ token: handleCreateToken(req, userprofile) });
+                               })
+                               .fail(function (err) {
+                               console.error("POST fail:");
+                               console.error(err.body);
+                               });
+                               }
+                               })
+                               .fail(function(err){
+                               console.log("SEARCH FAIL:" + err);
+                               res.status(401).send({ message: 'Something went wrong: ' + err});
+                               });
+                               */
+                          }
+                      });
                 }
             });
         } else {
@@ -735,7 +727,7 @@ function handleLinkedin(req, res) {
             var userlist = {};
 
             for (var i=0; i < userlist.length; i++) {
-                getlinkedinprofile(userlist[i].url, userlist[i].email, params.oauth2_access_token, function(response) { console.log('User: ' + response.data); });
+                getLinkedinProfile(userlist[i].url, userlist[i].email, params.oauth2_access_token, function(response) { console.log('User: ' + response.data); });
             }
 
         }
@@ -752,27 +744,27 @@ function handleGetProfile(req, res) {
     var userid = req.param.userid || req.user;
 
     db.get(config.db.collections.communities, userid)
-        .then(function(response){
-            if (response.body.code !== "items_not_found") {
-                console.log('Authenticated user: ' + response.body.profile.name);
-                response = {
-                    "path": {
-                        "key": userid
-                    },
-                    "value": response.body
-                };
-                res.status(200).send(response);
-            } else {
-                console.warn('WARNING:  User not found.');
-                return res.status(200).send({ message: 'User not found.' });
-            }
-        })
+      .then(function(response){
+          if (response.body.code !== "items_not_found") {
+              console.log('Authenticated user: ' + response.body.profile.name);
+              response = {
+                  "path": {
+                      "key": userid
+                  },
+                  "value": response.body
+              };
+              res.status(200).send(response);
+          } else {
+              console.warn('WARNING:  User not found.');
+              return res.status(200).send({ message: 'User not found.' });
+          }
+      })
 
-        .fail(function(err){
-            console.warn("WARNING: SEARCH FAIL:");
-            console.warn(err);
-            res.status(400).send({ message: 'Something went wrong: ' + err});
-        });
+      .fail(function(err){
+          console.warn("WARNING: SEARCH FAIL:");
+          console.warn(err);
+          res.status(400).send({ message: 'Something went wrong: ' + err});
+      });
 
 }
 
@@ -784,30 +776,24 @@ function handleGetProfile(req, res) {
 
 function handleSetRole(req, res) {
     var userkey = req.query.userkey,
-        location = req.query.location,
-        cluster = req.query.cluster,
-        role = req.query.role,
-        status = (req.query.status == 'true'), // will convert string to bool
-        allowed = false;
+      community = req.query.community,
+      industry = req.query.industry,
+      role = req.query.role,
+      status = (req.query.status == 'true'), // will convert string to bool
+      allowed = false;
 
     function checkperms(allowed, callback) {
         if (!allowed) {
             db.get(config.db.collections.users, req.user)
-                .then(function (response) {
-                    if (cluster) {
-                        if (response.body.cities[location].clusters) {
-                            if (response.body.cities[location].clusters[cluster]) {
-                                allowed = (response.body.cities[location].clusters[cluster].roles.indexOf("Founder") >= 0);
-                            }
-                        }
-                    }
-                    if (response.body.cities[location].admin === true) { allowed = true; }
-                    callback(allowed);
-                })
-                .fail(function(err){
-                    console.warn("WARNING: SEARCH FAIL:" + err);
-                    res.status(400).send({ message: 'Something went wrong: ' + err});
-                });
+              .then(function (response) {
+                  userperms = findKey(response.body.communities, community, []); //todo this would mean an admin of anything would work, need to validate location + community
+                  if (userperms[0].roles.indexOf("admin") > -1) { allowed=true; }
+                  callback(allowed);
+              })
+              .fail(function(err){
+                  console.warn("WARNING: SEARCH FAIL:" + err);
+                  res.status(400).send({ message: 'Something went wrong: ' + err});
+              });
         } else callback(allowed);
     }
 
@@ -816,49 +802,41 @@ function handleSetRole(req, res) {
     checkperms(allowed, function (allowed) {
         if (allowed) {
             db.get(config.db.collections.users, userkey)
-                .then(function (response) {
-                    if (role == "cityAdvisor") {
-                        if (response.body.cities[location].cityAdvisor === undefined) { //need to create key
-                            response.body.cities[location]['cityAdvisor'] = false;
-                        }
-                        response.body.cities[location].cityAdvisor = status;
+              .then(function (response) {
+                  if (response.body.cities[community].clusters === undefined) { //need to create clusters key
+                      response.body.cities[community]['clusters'] = {};
+                  }
+                  if (response.body.cities[community].clusters[industry] === undefined) { //need to create the industry in user profile
+                      console.log('Adding user to cluster: ' + industry);
+                      response.body.cities[community].clusters[industry] = { "roles": [] };
+                  }
+                  var thisindustry = response.body.cities[community].clusters[industry];
 
-                    } else {
-                        if (response.body.cities[location].clusters === undefined) { //need to create clusters key
-                            response.body.cities[location]['clusters'] = {};
-                        }
-                        if (response.body.cities[location].clusters[cluster] === undefined) { //need to create the cluster in user profile
-                            console.log('Adding user to cluster: ' + cluster);
-                            response.body.cities[location].clusters[cluster] = { "roles": [] };
-                        }
-                        var thiscluster = response.body.cities[location].clusters[cluster];
+                  if (status === true) {
+                      if (thisindustry.roles.indexOf(role) < 0) {
+                          thisindustry.roles.push(role);
+                      } // else they already have the role, no action needed
+                  } else if (status === false) {
+                      if (thisindustry.roles.indexOf(role) >= 0) {
+                          thisindustry.roles.splice(thisindustry.roles.indexOf(role), 1);
+                      } // else they do not have the role, no action needed
+                  }
+                  response.body.cities[community].clusters[industry] = thisindustry;
 
-                        if (status === true) {
-                            if (thiscluster.roles.indexOf(role) < 0) {
-                                thiscluster.roles.push(role);
-                            } // else they already have the role, no action needed
-                        } else if (status === false) {
-                            if (thiscluster.roles.indexOf(role) >= 0) {
-                                thiscluster.roles.splice(thiscluster.roles.indexOf(role), 1);
-                            } // else they do not have the role, no action needed
-                        }
-                        response.body.cities[location].clusters[cluster] = thiscluster;
-                    }
+                  db.put(config.db.collections.users, userkey, response.body)
+                    .then(function (finalres) {
+                        res.status(201).send({ message: 'Profile updated.'});
+                    })
+                    .fail(function (err) {
+                        console.warn('WARNING:  Problem with put: ' + err);
+                        res.status(400).send({ message: 'Something went wrong: ' + err});
+                    });
 
-                    db.put(config.db.collections.users, userkey, response.body)
-                        .then(function (finalres) {
-                            res.status(201).send({ message: 'Profile updated.'});
-                        })
-                        .fail(function (err) {
-                            console.warn('WARNING:  Problem with put: ' + err);
-                            res.status(400).send({ message: 'Something went wrong: ' + err});
-                        });
-
-                })
-                .fail(function (err) {
-                    console.warn('WARNING:  Problem with get: ' + err);
-                    res.status(400).send({ message: 'Something went wrong: ' + err});
-                });
+              })
+              .fail(function (err) {
+                  console.warn('WARNING:  Problem with get: ' + err);
+                  res.status(400).send({ message: 'Something went wrong: ' + err});
+              });
         } else {
             res.status(401).send({ message: 'You do not have permission to change this role.'});
         }
@@ -867,26 +845,26 @@ function handleSetRole(req, res) {
 
 function handleFeedback(req, res) {
     var userkey = req.user,
-        data = JSON.parse(decodeURIComponent(req.query.data));
+      data = JSON.parse(decodeURIComponent(req.query.data));
 
     db.get(config.db.collections.users, userkey)
-        .then(function (response) {
-            response.body['beta'] = data;
+      .then(function (response) {
+          response.body['beta'] = data;
 
-            db.put(config.db.collections.users, userkey, response.body)
-                .then(function (finalres) {
-                    res.status(201).send({ message: 'Profile updated.'});
-                })
-                .fail(function (err) {
-                    console.warn('WARNING:  Problem with put: ' + err);
-                    res.status(400).send({ message: 'Something went wrong: ' + err});
-                });
+          db.put(config.db.collections.users, userkey, response.body)
+            .then(function (finalres) {
+                res.status(201).send({ message: 'Profile updated.'});
+            })
+            .fail(function (err) {
+                console.warn('WARNING:  Problem with put: ' + err);
+                res.status(400).send({ message: 'Something went wrong: ' + err});
+            });
 
-        })
-        .fail(function (err) {
-            console.warn('WARNING:  Problem with get: ' + err);
-            res.status(400).send({ message: 'Something went wrong: ' + err});
-        });
+      })
+      .fail(function (err) {
+          console.warn('WARNING:  Problem with get: ' + err);
+          res.status(400).send({ message: 'Something went wrong: ' + err});
+      });
 }
 
 /*
@@ -898,14 +876,14 @@ function handleFeedback(req, res) {
 function handleRemoveProfile(req, res) {
     var userid = req.params.userid;
     db.remove(config.db.collections.users, userid) // ideally I should store an undo option
-        .then(function(result){
-            console.log('User removed.');
-            res.status(200).send({ message: 'User removed' });
-        })
-        .fail(function(err){
-            console.log("Remove FAIL:" + err);
-            res.status(400).send({ message: 'Something went wrong: ' + err });
-        });
+      .then(function(result){
+          console.log('User removed.');
+          res.status(200).send({ message: 'User removed' });
+      })
+      .fail(function(err){
+          console.log("Remove FAIL:" + err);
+          res.status(400).send({ message: 'Something went wrong: ' + err });
+      });
 }
 
 /*
@@ -917,27 +895,27 @@ function handleRemoveProfile(req, res) {
 function handleUnlink(req, res) {
     var provider = req.params.provider;
     db.get(config.db.collections.users, req.user)
-        .then(function(response){
-            if (response.body.code !== "items_not_found") {
-                response.body[provider] = undefined;
-                db.put(config.db.collections.users, req.user, response.body)
-                    .then(function() {
-                        console.log('Successfully unlinked provider!');
-                        res.status(200).end();
-                    })
-                    .fail(function(err) {
-                        console.log('user update failed');
-                        res.status(400).send({ message: 'Something went wrong! ' + err });
-                    });
-            } else {
-                console.log('User not found.');
-                return res.status(400).send({ message: 'User not found' });
-            }
-        })
-        .fail(function(err){
-            console.log("SEARCH FAIL:" + err);
-            res.status(400).send({ message: 'Something went wrong: ' + err});
-        });
+      .then(function(response){
+          if (response.body.code !== "items_not_found") {
+              response.body[provider] = undefined;
+              db.put(config.db.collections.users, req.user, response.body)
+                .then(function() {
+                    console.log('Successfully unlinked provider!');
+                    res.status(200).end();
+                })
+                .fail(function(err) {
+                    console.log('user update failed');
+                    res.status(400).send({ message: 'Something went wrong! ' + err });
+                });
+          } else {
+              console.log('User not found.');
+              return res.status(400).send({ message: 'User not found' });
+          }
+      })
+      .fail(function(err){
+          console.log("SEARCH FAIL:" + err);
+          res.status(400).send({ message: 'Something went wrong: ' + err});
+      });
 }
 
 /*
@@ -954,61 +932,61 @@ function handleMaintenance(req, res) {
 
     function getList(startKey, userlist) {
         db.list('users', {limit: 50, startKey: startKey})
-            .then( function(data) {
-                for (var item in data.body.results) {
-                    // be careful to retrieve existing values from target key then append!
-                    //data.body.results[item].value.cities = { "bend-or": { "admin": false, "cityAdvisor": true } };
-                    //userlist.push(data.body.results[item]);
+          .then( function(data) {
+              for (var item in data.body.results) {
+                  // be careful to retrieve existing values from target key then append!
+                  //data.body.results[item].value.cities = { "bend-or": { "admin": false, "cityAdvisor": true } };
+                  //userlist.push(data.body.results[item]);
 
-                    var newdata = {
-                        "type": "user",
-                        "home": "bend-or",
-                        "profile": {
-                            "name": data.body.results[item].value.name,
-                            "email": data.body.results[item].value.email,
-                            "avatar": data.body.results[item].value.avatar,
-                            "linkedin": data.body.results[item].value.linkedin
-                        },
-                        "communities": {
-                            "usa": {
-                                "oregon": {
-                                    "deschutes-or": {
-                                        "bend-or": {
-                                            "roles": [
-                                                "advisor"
-                                            ]
-                                        }
-                                    }
-                                }
-                            }
-                        }
+                  var newdata = {
+                      "type": "user",
+                      "home": "bend-or",
+                      "profile": {
+                          "name": data.body.results[item].value.name,
+                          "email": data.body.results[item].value.email,
+                          "avatar": data.body.results[item].value.avatar,
+                          "linkedin": data.body.results[item].value.linkedin
+                      },
+                      "communities": {
+                          "usa": {
+                              "oregon": {
+                                  "deschutes-or": {
+                                      "bend-or": {
+                                          "roles": [
+                                              "advisor"
+                                          ]
+                                      }
+                                  }
+                              }
+                          }
+                      }
 
-                    };
+                  };
 
-                    console.log('Adding record..');
-                    db.post('communities-dev', newdata);
-                }
+                  console.log('Adding record..');
+                  db.post('communities-dev', newdata);
+              }
 
-                if (data.body.next) {
-                    var nextkey = url.parse(data.body.next).query;
-                    startKey = nextkey.substr(18, nextkey.length - 18);
-                    console.log('Getting next group..' + startKey);
-                    getList(startKey, userlist);
-                } else {
-                    console.log('Get done!' + userlist.length);
-                    /*
-                     for (var user in userlist) {
-                     console.log('Updating ' + userlist[user].value.name);
-                     db.put(config.db.collections.users, userlist[user].path.key, userlist[user].value)
-                     .then(function(response) {
-                     console.log('Record updated!');
-                     });
-                     }
-                     */
-                }
+              if (data.body.next) {
+                  var nextkey = url.parse(data.body.next).query;
+                  startKey = nextkey.substr(18, nextkey.length - 18);
+                  console.log('Getting next group..' + startKey);
+                  getList(startKey, userlist);
+              } else {
+                  console.log('Get done!' + userlist.length);
+                  /*
+                   for (var user in userlist) {
+                   console.log('Updating ' + userlist[user].value.name);
+                   db.put(config.db.collections.users, userlist[user].path.key, userlist[user].value)
+                   .then(function(response) {
+                   console.log('Record updated!');
+                   });
+                   }
+                   */
+              }
 
 
-            });
+          });
     }
 
     if (enabled) {
