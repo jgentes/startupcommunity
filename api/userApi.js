@@ -39,6 +39,10 @@ var schema = {
     linkedin: function(profile, email) {
         return {
             "type": "user",
+            "context": {
+                "location": "us",
+                "community": ""
+            },
             "profile": {
                 "name": profile.firstName + " " + profile.lastName,
                 "email": profile.emailAddress || email,
@@ -64,6 +68,10 @@ var schema = {
         var hash = bcrypt.hashSync(formdata.password, 8);
         return {
             "type": "user",
+            "context": {
+                "location": "us",
+                "community": ""
+            },
             "profile": {
                 "name": formdata.name,
                 "email": formdata.email,
@@ -213,7 +221,7 @@ var searchInCommunity = function(location, community, industry, role, limit, off
                   delete result.body.results[i].path.ref;
                   delete result.body.results[i].value.profile.password;
                   delete result.body.results[i].value.type;
-                  delete result.body.results[i].value.home;
+                  delete result.body.results[i].value.context;
 
                   if (!allowed) {
                       delete result.body.results[i].value.profile.email;
@@ -940,7 +948,10 @@ function handleMaintenance(req, res) {
 
                   var newdata = {
                       "type": "user",
-                      "home": "bend-or",
+                      "context": {
+                          "location": "bend-or",
+                          "community": ""
+                      },
                       "profile": {
                           "name": data.body.results[item].value.name,
                           "email": data.body.results[item].value.email,

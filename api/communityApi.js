@@ -61,7 +61,12 @@ function handleGetCommunity(req, res) {
     searchString += ' AND NOT (type:startup OR type:user)'
 
     function pullCommunity() {
-        var startKey = 0;
+        var startKey = 0,
+            newresponse = {
+                locations: [],
+                industries: [],
+                networks: []
+            };
 
         db.newSearchBuilder()
           .collection(config.db.collections.communities)
@@ -73,11 +78,23 @@ function handleGetCommunity(req, res) {
 
               if (result.body.results.length > 0) {
                   for (item in result.body.results) {
-                      var itemkey = result.body.results[item].path.key;
                       result.body.results[item] = { // get rid of extra db info
+                          "key": result.body.results[item].path.key,
                           "value": result.body.results[item].value
                       };
-                      newresponse[itemkey] = result.body.results[item];
+
+                      switch (result.body.results[item].value.type) {
+                          case "location":
+                              newresponse.locations.push(result.body.results[item]);
+                              break;
+                          case "industry":
+                              newresponse.industries.push(result.body.results[item]);
+                              break;
+                          case "network":
+                              newresponse.networks.push(result.body.results[item]);
+                              break;
+                      }
+
                   }
                   res.status(200).send(newresponse);
               } else {

@@ -6,7 +6,7 @@
             <div class="row">
                 <!-- Main Title (hidden on small devices for the statistics to fit) -->
                 <div class="col-md-4 col-lg-6 hidden-xs hidden-sm">
-                    <h1><strong>{{global.city.value.citystate | words:0}}</strong> {{global.city.value.citystate | words:1}}<br><small>Welcome {{global.user.value.name | words:0}}!</small></h1>
+                    <h1><strong>{{global.community[global.context.community || global.context.location].name}}<br><small>Welcome {{global.user.value.name | words:0}}!</small></h1>
                 </div>
                 <!-- END Main Title -->
     
@@ -76,13 +76,13 @@
                 <h2><strong>Cluster</strong> Filters</h2>
             </div>
             <ul class="nav nav-pills nav-stacked nav-icons">
-                <li ng-class="{'active':global.city.selectedCluster.indexOf('*') >= 0}" ng-click="filterCluster('*');">
+                <li ng-class="{'active':global.context.selectedIndustry.indexOf('*') >= 0}" ng-click="filterIndustry('*');">
                     <a><i class="fa fa-fw fa-globe themed-color-dark icon-push"></i> <strong>All</strong></a>
                 </li>
                 <li>
                   <hr>
                 </li>
-                <li ng-repeat="(cluster, val) in global.city.value.clusters" ng-class="{'active':global.city.selectedCluster.indexOf(cluster) >= 0}" ng-click="filterCluster(cluster);">
+                <li ng-repeat="(industry, val) in global.city.value.clusters" ng-class="{'active':global.city.selectedIndustry.indexOf(cluster) >= 0}" ng-click="filterCluster(cluster);">
                     <a><i class="fa {{val.icon}}"></i> <strong>{{cluster}}</strong></a>
                 </li>
             </ul>
