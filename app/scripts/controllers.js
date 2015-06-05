@@ -140,6 +140,7 @@ angular
                         if (!$scope.global.profile) {
                             $scope.global.profile = response;
                         }
+                        //TODO need to add some 'home' scope here to account for .. maybe it's just community || location || location.community? < - that's it
                         var community = $scope.global.user.value.context.community || undefined;
                         var location = $scope.global.user.value.context.location || undefined;
 
