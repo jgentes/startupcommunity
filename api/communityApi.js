@@ -61,12 +61,7 @@ function handleGetCommunity(req, res) {
     searchString += ' AND NOT (type:startup OR type:user)'
 
     function pullCommunity() {
-        var startKey = 0,
-            newresponse = {
-                locations: [],
-                industries: [],
-                networks: []
-            };
+        var startKey = 0;
 
         db.newSearchBuilder()
           .collection(config.db.collections.communities)
@@ -74,24 +69,25 @@ function handleGetCommunity(req, res) {
           .offset(startKey)
           .query(searchString)
           .then(function (result) {
-              var newresponse = {};
+              var newitem = {},
+                  newresponse = {
+                      locations: {},
+                      industries: {},
+                      networks: {}
+                  };
 
               if (result.body.results.length > 0) {
                   for (item in result.body.results) {
-                      result.body.results[item] = { // get rid of extra db info
-                          "key": result.body.results[item].path.key,
-                          "value": result.body.results[item].value
-                      };
 
                       switch (result.body.results[item].value.type) {
                           case "location":
-                              newresponse.locations.push(result.body.results[item]);
+                              newresponse.locations[result.body.results[item].path.key] = result.body.results[item].value;
                               break;
                           case "industry":
-                              newresponse.industries.push(result.body.results[item]);
+                              newresponse.industries[result.body.results[item].path.key] = result.body.results[item].value;
                               break;
                           case "network":
-                              newresponse.networks.push(result.body.results[item]);
+                              newresponse.networks[result.body.results[item].path.key] = result.body.results[item].value;
                               break;
                       }
 

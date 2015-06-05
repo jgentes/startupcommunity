@@ -6,7 +6,7 @@
             <div class="row">
                 <!-- Main Title (hidden on small devices for the statistics to fit) -->
                 <div class="col-md-4 col-lg-6 hidden-xs hidden-sm">
-                    <h1><strong>{{global.community[global.context.community || global.context.location].name}}</strong><br><small>Welcome {{global.user.value.profile.name | words:0}}!</small></h1>
+                    <h1><strong>{{global.community[global.context.community || global.context.location].name}}</strong><br><small>Welcome {{global.user.profile.name | words:0}}!</small></h1>
                 </div>
                 <!-- END Main Title -->
     
@@ -37,12 +37,12 @@
 
         <!-- Navigation Block -->
         <div class="block full filternav">
-            <i ng-show="loadingCluster==true" class="fa fa-refresh fa-spin pull-right"></i>
+            <i ng-show="loadingIndustry==true" class="fa fa-refresh fa-spin pull-right"></i>
             <div class="block-title">
                 <h2><strong>Resource</strong> Filters</h2>
             </div>
             <ul class="nav nav-pills nav-stacked nav-icons">
-              <li class="active" ng-click="filterCluster('*');">
+              <li class="active" ng-click="filterIndustry('*');">
                   <a><i class="fa fa-fw fa-globe themed-color-dark icon-push"></i> <strong>All</strong></a>
               </li>
               <li>

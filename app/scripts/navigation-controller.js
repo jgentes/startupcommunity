@@ -34,18 +34,15 @@ angular
             }
         ];
 
-        for (var item in $scope.global.community) {
-            if ($scope.global.community[item].value.type == "industry") {
-                var industries = $scope.global.findKey($scope.global.community[item], $scope.global.context.home, []);
-                for (var menuitem in industries) {
-                    menu.push(
-                      {
-                          label: industries[menuitem].profile.name,
-                          cluster: false,
-                          iconClasses: 'fa ' + industries[menuitem].profile.icon
-                      });
-                };
-            }
+        for (var item in $scope.global.community.industries) {
+            var industry = $scope.global.findKey($scope.global.community.industries[item].communities, $scope.global.context.location, []);
+
+            menu.push(
+              {
+                  label: industry[0].profile.name,
+                  cluster: false,
+                  iconClasses: 'fa ' + industry[0].profile.icon
+              });
         }
 
         var setParent = function (children, parent) {
@@ -125,7 +122,7 @@ angular
         
     };    
     
-    if (!$scope.global.community) {
+    if (!$scope.global.community.industries) {
       $scope.$on('sessionReady', function(event, status) {               
         if (status) {
           buildNav();

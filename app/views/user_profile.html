@@ -8,9 +8,9 @@
                     </div>	                   
 		        </div>
                 
-                <img ng-src="{{global.profile.value.avatar || global.profile.value.linkedin.pictureUrl || '/public/blank_avatar.png'}}" alt="{{::global.profile.value.name}}" class="pull-left img-circle" style="margin-right: 15px; margin-top:-10px;">
-                <h1>{{::global.profile.value.name | words:0}} {{::global.profile.value.name | words:1}} {{::global.profile.value.name | words:2}}<br>
-                <small>{{::global.profile.value.linkedin.headline}}</small></h1>                
+                <img ng-src="{{global.profile.profile.avatar || global.profile.profile.linkedin.pictureUrl || '/public/blank_avatar.png'}}" alt="{{::global.profile.profile.name}}" class="pull-left img-circle" style="margin-right: 15px; margin-top:-10px;">
+                <h1>{{::global.profile.profile.name | words:0}} {{::global.profile.profile.name | words:1}} {{::global.profile.profile.name | words:2}}<br>
+                <small>{{::global.profile.profile.linkedin.headline}}</small></h1>
             </div>
         </div>
 	
@@ -32,21 +32,21 @@
 											<tbody>											
 												<tr>
 													<td>Web</td>
-													<td><a href="{{global.profile.value.linkedin.publicProfileUrl}}" target="_blank">{{::global.profile.value.linkedin.publicProfileUrl}}</a></td>
+													<td><a href="{{global.profile.profile.linkedin.publicProfileUrl}}" target="_blank">{{::global.profile.profile.linkedin.publicProfileUrl}}</a></td>
 												</tr>
-												<tr ng-if="global.profile.value.email">
+												<tr ng-if="global.profile.profile.email">
 													<td>Email</td>
-													<td>{{global.profile.value.email}}</td>
+													<td>{{global.profile.profile.email}}</td>
 												</tr>
-												<tr ng-if="global.profile.value.phone_numbers">
+												<tr ng-if="global.profile.profile.phone_numbers">
 													<td>Phone</td>
-													<td>{{global.profile.value.phone_numbers}}</td>
+													<td>{{global.profile.profile.phone_numbers}}</td>
 												</tr>												
 												<tr>
 													<td>Social</td>
 													<td>
 														<a href="#" class="btn btn-social btn-twitter" target="_blank"><i class="fa fa-twitter"></i></a>
-														<a href="{{global.profile.value.linkedin.publicProfileUrl}}" class="btn btn-social btn-linkedin" target="_blank"><i class="fa fa-linkedin"></i></a>
+														<a href="{{global.profile.profile.linkedin.publicProfileUrl}}" class="btn btn-social btn-linkedin" target="_blank"><i class="fa fa-linkedin"></i></a>
 													</td>
 												</tr>
 												<tr ng-if="global.profile.path.key === global.user.path.key">
@@ -55,7 +55,7 @@
 												</tr>
 											</tbody>
 										</table>
-										<a  ng-show="global.editProfile && (global.user.value.cities[global.city.path.key].admin === true)" ng-click="removeProfile(global.profile.path.key, global.profile.value.name)" class="btn btn-alt btn-danger"><i class="fa fa-times"></i> Delete {{::global.profile.value.name | words:0}} {{::global.profile.value.name | words:1}} {{::global.profile.value.name | words:2}}</a>                       
+										<a  ng-show="global.editProfile && (global.user.profile.cities[global.city.path.key].admin === true)" ng-click="removeProfile(global.profile.path.key, global.profile.profile.name)" class="btn btn-alt btn-danger"><i class="fa fa-times"></i> Delete {{::global.profile.profile.name | words:0}} {{::global.profile.profile.name | words:1}} {{::global.profile.profile.name | words:2}}</a>
 									</div>
 								</div>
 								<div class="col-md-6" style="padding-bottom:15px">
@@ -68,35 +68,35 @@
 												<div class="checkbox" style="float: right; margin-top: 0px;">
 							                      <label class="icheck-label" ng-show="global.editProfile">
 							                      I advise all clusters&nbsp;
-							                        <div style="position: relative;" class="icheckbox_minimal-blue"><input style="position: absolute; opacity: 0;" ng-change="isCityAdvisor(global.profile.value.cities[global.city.path.key].cityAdvisor)" ng-model="global.profile.value.cities[global.city.path.key].cityAdvisor" icheck="" value="" type="checkbox"></div>
+							                        <div style="position: relative;" class="icheckbox_minimal-blue"><input style="position: absolute; opacity: 0;" ng-change="isCityAdvisor(global.profile.profile.cities[global.city.path.key].cityAdvisor)" ng-model="global.profile.profile.cities[global.city.path.key].cityAdvisor" icheck="" value="" type="checkbox"></div>
 							                      </label>
 							                    </div>
 							                    </td></tr>
-					                            <tr ng-repeat="(cluster, val) in global.city.value.clusters" style="border-top: 1px solid #e9ecf0;">
+					                            <tr ng-repeat="(cluster, val) in global.city.profile.clusters" style="border-top: 1px solid #e9ecf0;">
 					                              <td style="border: none; padding: 8px 0 8px 0; width: 50%;">				                                					                                
 					                                  <h4><i class="fa {{val.icon}}" style="opacity: .6">&nbsp;</i> <strong>{{ cluster || 'empty' }}</strong> Cluster</h4>					                                
 					                              </td>
 					                              <td style="text-align: center; width: 50%;" ng-hide="global.editProfile">
 					                              	<ul style="padding-left:0px;">
-					                              		<span ng-if="((global.profile.value.cities[global.city.path.key].clusters[cluster] === undefined) || (global.profile.value.cities[global.city.path.key].clusters[cluster].roles === undefined) || (global.profile.value.cities[global.city.path.key].clusters[cluster].roles.length == 0)) && (global.profile.value.cities[global.city.path.key].cityAdvisor == false || global.profile.value.cities[global.city.path.key].cityAdvisor === undefined)" class="btn btn-xs btn-default" style="margin-top: 10px; float: right; cursor: default;">Inactive</span>					                              		
-					                              		<li ng-repeat="role in global.profile.value.cities[global.city.path.key].clusters[cluster].roles | orderBy : role : true" style="list-style: none;">					                              			
-					                              			<span ng-hide="role == 'Advisor' && global.profile.value.cities[global.city.path.key].cityAdvisor === true" ng-class="{'btn btn-xs btn-info' : role == 'Advisor', 'btn btn-xs btn-success' : role == 'Investor', 'btn btn-xs btn-danger' : role == 'Founder'}" style="margin-top: 10px; margin-left: 10px; float: right; cursor: default;">{{ role }}</span>
+					                              		<span ng-if="((global.profile.profile.cities[global.city.path.key].clusters[cluster] === undefined) || (global.profile.profile.cities[global.city.path.key].clusters[cluster].roles === undefined) || (global.profile.profile.cities[global.city.path.key].clusters[cluster].roles.length == 0)) && (global.profile.profile.cities[global.city.path.key].cityAdvisor == false || global.profile.profile.cities[global.city.path.key].cityAdvisor === undefined)" class="btn btn-xs btn-default" style="margin-top: 10px; float: right; cursor: default;">Inactive</span>
+					                              		<li ng-repeat="role in global.profile.profile.cities[global.city.path.key].clusters[cluster].roles | orderBy : role : true" style="list-style: none;">
+					                              			<span ng-hide="role == 'Advisor' && global.profile.profile.cities[global.city.path.key].cityAdvisor === true" ng-class="{'btn btn-xs btn-info' : role == 'Advisor', 'btn btn-xs btn-success' : role == 'Investor', 'btn btn-xs btn-danger' : role == 'Founder'}" style="margin-top: 10px; margin-left: 10px; float: right; cursor: default;">{{ role }}</span>
 					                              		</li>
-					                              		<span ng-if="global.profile.value.cities[global.city.path.key].cityAdvisor === true" class="btn btn-xs btn-info" style="margin-top: 10px; float: right; cursor: default;">Advisor</span>
+					                              		<span ng-if="global.profile.profile.cities[global.city.path.key].cityAdvisor === true" class="btn btn-xs btn-info" style="margin-top: 10px; float: right; cursor: default;">Advisor</span>
 					                              	</ul>
 					                              </td>
 					                              <td style="text-align: center; border: none; padding: 15px 0 15px 0; width: 50%;" ng-show="global.editProfile">
 								                    <div class="col-md-4">
 								                        <label class="control-label" style="display: block; margin-bottom: -5px;"><h5>Founder</h5></label>
-								                        <toggle-switch ng-init="global.profile.value.cities[global.city.path.key].clusters[cluster].founderStatus = (global.profile.value.cities[global.city.path.key].clusters[cluster].roles.indexOf('Founder') >= 0)" ng-model="global.profile.value.cities[global.city.path.key].clusters[cluster].founderStatus" ng-click="setRole(cluster, 'Founder', global.profile.value.cities[global.city.path.key].clusters[cluster].founderStatus)" class="small-toggle danger" on-label="Yes" off-label="No" ng-disabled="(global.profile.value.cities[global.city.path.key].cityAdvisor == true) || ((global.user.value.cities[global.city.path.key].admin !== true) && (global.user.value.cities[global.city.path.key].clusters[cluster] === undefined || global.user.value.cities[global.city.path.key].clusters[cluster].roles.indexOf('Founder') < 0))"><toggle-switch>
+								                        <toggle-switch ng-init="global.profile.profile.cities[global.city.path.key].clusters[cluster].founderStatus = (global.profile.profile.cities[global.city.path.key].clusters[cluster].roles.indexOf('Founder') >= 0)" ng-model="global.profile.profile.cities[global.city.path.key].clusters[cluster].founderStatus" ng-click="setRole(cluster, 'Founder', global.profile.profile.cities[global.city.path.key].clusters[cluster].founderStatus)" class="small-toggle danger" on-label="Yes" off-label="No" ng-disabled="(global.profile.profile.cities[global.city.path.key].cityAdvisor == true) || ((global.user.profile.cities[global.city.path.key].admin !== true) && (global.user.profile.cities[global.city.path.key].clusters[cluster] === undefined || global.user.profile.cities[global.city.path.key].clusters[cluster].roles.indexOf('Founder') < 0))"><toggle-switch>
 								                    </div>
 								                    <div class="col-md-4">
 								                        <label class="control-label" style="display: block; margin-bottom: -5px;"><h5>Advisor</h5></label>
-								                        <toggle-switch ng-init="global.profile.value.cities[global.city.path.key].clusters[cluster].advisorStatus = ((global.profile.value.cities[global.city.path.key].clusters[cluster].roles.indexOf('Advisor') >= 0) || global.profile.value.cities[global.city.path.key].cityAdvisor == true)" ng-model="global.profile.value.cities[global.city.path.key].clusters[cluster].advisorStatus" ng-click="setRole(cluster, 'Advisor', global.profile.value.cities[global.city.path.key].clusters[cluster].advisorStatus)" class="info" on-label="Yes" off-label="No" style="line-height: 15px; min-width: 80px;" ng-disabled="(global.profile.value.cities[global.city.path.key].cityAdvisor == true) || ((global.user.value.cities[global.city.path.key].admin !== true) && (global.user.value.cities[global.city.path.key].clusters[cluster] === undefined || global.user.value.cities[global.city.path.key].clusters[cluster].roles.indexOf('Founder') < 0))"><toggle-switch>							
+								                        <toggle-switch ng-init="global.profile.profile.cities[global.city.path.key].clusters[cluster].advisorStatus = ((global.profile.profile.cities[global.city.path.key].clusters[cluster].roles.indexOf('Advisor') >= 0) || global.profile.profile.cities[global.city.path.key].cityAdvisor == true)" ng-model="global.profile.profile.cities[global.city.path.key].clusters[cluster].advisorStatus" ng-click="setRole(cluster, 'Advisor', global.profile.profile.cities[global.city.path.key].clusters[cluster].advisorStatus)" class="info" on-label="Yes" off-label="No" style="line-height: 15px; min-width: 80px;" ng-disabled="(global.profile.profile.cities[global.city.path.key].cityAdvisor == true) || ((global.user.profile.cities[global.city.path.key].admin !== true) && (global.user.profile.cities[global.city.path.key].clusters[cluster] === undefined || global.user.profile.cities[global.city.path.key].clusters[cluster].roles.indexOf('Founder') < 0))"><toggle-switch>
 								                    </div>
 								                    <div class="col-md-4">
 								                        <label class="control-label" style="display: block; margin-bottom: -5px;"><h5>Investor</h5></label>
-								                        <toggle-switch ng-init="global.profile.value.cities[global.city.path.key].clusters[cluster].investorStatus = (global.profile.value.cities[global.city.path.key].clusters[cluster].roles.indexOf('Investor') >= 0)" ng-model="global.profile.value.cities[global.city.path.key].clusters[cluster].investorStatus" ng-click="setRole(cluster, 'Investor', global.profile.value.cities[global.city.path.key].clusters[cluster].investorStatus)" class="success" on-label="Yes" off-label="No" style="line-height: 15px !important; min-width: 80px;" ng-disabled="(global.user.value.cities[global.city.path.key].admin !== true) && (global.profile.path.key !== global.user.path.key) && ((global.user.value.cities[global.city.path.key].clusters[cluster] === undefined) || (global.user.value.cities[global.city.path.key].clusters[cluster].roles.indexOf('Founder') < 0))"><toggle-switch>
+								                        <toggle-switch ng-init="global.profile.profile.cities[global.city.path.key].clusters[cluster].investorStatus = (global.profile.profile.cities[global.city.path.key].clusters[cluster].roles.indexOf('Investor') >= 0)" ng-model="global.profile.profile.cities[global.city.path.key].clusters[cluster].investorStatus" ng-click="setRole(cluster, 'Investor', global.profile.profile.cities[global.city.path.key].clusters[cluster].investorStatus)" class="success" on-label="Yes" off-label="No" style="line-height: 15px !important; min-width: 80px;" ng-disabled="(global.user.profile.cities[global.city.path.key].admin !== true) && (global.profile.path.key !== global.user.path.key) && ((global.user.profile.cities[global.city.path.key].clusters[cluster] === undefined) || (global.user.profile.cities[global.city.path.key].clusters[cluster].roles.indexOf('Founder') < 0))"><toggle-switch>
 								                    </div>
 					                              </td>	                             				                              
 					                            </tr>
@@ -110,9 +110,9 @@
 							<hr>
 							<div class="col-md-12">
 								<h3>Summary</h3>									
-								<p style="white-space:pre-wrap;" ng-bind-html="::global.profile.value.linkedin.summary | linky:'_blank'"></p>
-								<h3 ng-show="global.profile.value.linkedin.skills">Skills</h3>
-								<li ng-repeat="skill in global.profile.value.linkedin.skills.values" class="label btn-info" style="margin-right: 3px; margin-top: 3px; float:left; padding-bottom: 5px;">{{::skill.skill.name}}</li>								
+								<p style="white-space:pre-wrap;" ng-bind-html="::global.profile.profile.linkedin.summary | linky:'_blank'"></p>
+								<h3 ng-show="global.profile.profile.linkedin.skills">Skills</h3>
+								<li ng-repeat="skill in global.profile.profile.linkedin.skills.values" class="label btn-info" style="margin-right: 3px; margin-top: 3px; float:left; padding-bottom: 5px;">{{::skill.skill.name}}</li>
 	            			</div>
 						</div>
 					</div>

@@ -1,10 +1,10 @@
 <tr>
   <td class="text-center" style="width: 68px; vertical-align: top; height: 80px;">
-    <a ng-click="viewUser(item)" title="View {{::item.value.name | words:0}}'s Profile"><img style="height:58px" src="https://d1qb2nb5cznatu.cloudfront.net/startups/i/120454-e8aacd8ef4a5b9a83636ef3bc17e1579-thumb_jpg.jpg" alt="{{::item.value.name}}" class="widget-image img-rounded pull-left"></a>
+    <a ng-click="viewUser(item)" title="View {{::item.profile.name | words:0}}'s Profile"><img style="height:58px" src="https://d1qb2nb5cznatu.cloudfront.net/startups/i/120454-e8aacd8ef4a5b9a83636ef3bc17e1579-thumb_jpg.jpg" alt="{{::item.profile.name}}" class="widget-image img-rounded pull-left"></a>
   </td>
   <td style="vertical-align: center;  height: 80px;">
-    <a ng-click="viewUser(item)" title="View {{::item.value.name | words:0}}'s Profile"><strong>Flatiron Health </strong></a>
-    <a ng-show="{{(item.value.linkedin.summary).length > 0}}" title="Show Summary" ng-click="showSummary = !showSummary" style="color: #DDDDDD;">
+    <a ng-click="viewUser(item)" title="View {{::item.profile.name | words:0}}'s Profile"><strong>Flatiron Health </strong></a>
+    <a ng-show="{{(item.profile.linkedin.summary).length > 0}}" title="Show Summary" ng-click="showSummary = !showSummary" style="color: #DDDDDD;">
       <i class="fa fa-chevron-down fa-fw"></i>
     </a>
     <br>
@@ -27,11 +27,11 @@
 
 <tr>
   <td class="text-center" style="width: 68px; vertical-align: top; height: 80px;">
-    <a ng-click="viewUser(item)" title="View {{::item.value.name | words:0}}'s Profile"><img style="height:58px" src="https://d1qb2nb5cznatu.cloudfront.net/startups/i/85108-ccf40d86e68a7694547882e43fd2dfce-thumb_jpg.jpg" alt="{{::item.value.name}}" class="widget-image img-rounded pull-left"></a>
+    <a ng-click="viewUser(item)" title="View {{::item.profile.name | words:0}}'s Profile"><img style="height:58px" src="https://d1qb2nb5cznatu.cloudfront.net/startups/i/85108-ccf40d86e68a7694547882e43fd2dfce-thumb_jpg.jpg" alt="{{::item.profile.name}}" class="widget-image img-rounded pull-left"></a>
   </td>
   <td style="vertical-align: center;  height: 80px;">
-    <a ng-click="viewUser(item)" title="View {{::item.value.name | words:0}}'s Profile"><strong>Lore </strong></a>
-    <a ng-show="{{(item.value.linkedin.summary).length > 0}}" title="Show Summary" ng-click="showSummary = !showSummary" style="color: #DDDDDD;">
+    <a ng-click="viewUser(item)" title="View {{::item.profile.name | words:0}}'s Profile"><strong>Lore </strong></a>
+    <a ng-show="{{(item.profile.linkedin.summary).length > 0}}" title="Show Summary" ng-click="showSummary = !showSummary" style="color: #DDDDDD;">
       <i class="fa fa-chevron-down fa-fw"></i>
     </a>
     <br>
@@ -54,10 +54,10 @@
 
 <tr>
   <td class="text-center" style="width: 68px; vertical-align: top; height: 80px;">
-    <a ng-click="viewUser(item)" title="View {{::item.value.name | words:0}}'s Profile"><img style="height:58px" src="https://d1qb2nb5cznatu.cloudfront.net/startups/i/32615-1224220b2f0fde5ddb57a9091e3bbd8f-thumb_jpg.jpg" alt="{{::item.value.name}}" class="widget-image img-rounded pull-left"></a>
+    <a ng-click="viewUser(item)" title="View {{::item.profile.name | words:0}}'s Profile"><img style="height:58px" src="https://d1qb2nb5cznatu.cloudfront.net/startups/i/32615-1224220b2f0fde5ddb57a9091e3bbd8f-thumb_jpg.jpg" alt="{{::item.profile.name}}" class="widget-image img-rounded pull-left"></a>
   </td>
   <td style="vertical-align: center;  height: 80px;">
-    <a ng-click="viewUser(item)" title="View {{::item.value.name | words:0}}'s Profile"><strong>Dogster </strong></a>
+    <a ng-click="viewUser(item)" title="View {{::item.profile.name | words:0}}'s Profile"><strong>Dogster </strong></a>
     <a title="Show Summary" ng-click="showSummary = !showSummary" style="color: #DDDDDD;">
       <i class="fa fa-chevron-down fa-fw"></i>
     </a>

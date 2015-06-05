@@ -6,7 +6,7 @@
             <div class="row">
                 <!-- Main Title (hidden on small devices for the statistics to fit) -->
                 <div class="col-md-4 col-lg-6 hidden-xs hidden-sm">
-                    <h1><strong>{{global.community[global.context.community || global.context.location].name}}<br><small>Welcome {{global.user.value.name | words:0}}!</small></h1>
+                    <h1 style="font-size: 31px;" ng-bind-html="pageTitle"></h1>
                 </div>
                 <!-- END Main Title -->
     
@@ -41,7 +41,7 @@
                 <h2><strong>Role</strong> Filters</h2>
             </div>
             <ul class="nav nav-pills nav-stacked nav-icons">
-                <li ng-class="{'active':selectedRole.indexOf('*') >= 0}" ng-click="filterRole('*')">
+                <li ng-class="{'active':global.context.selectedRole.indexOf('*') >= 0}" ng-click="filterRole('*')">
                     <a href="javascript:void(0)">
                         <i class="fa fa-fw fa-globe themed-color-dark"></i> <strong>All</strong>
                     </a>
@@ -49,17 +49,17 @@
                 <li>
                   <hr>
                 </li>
-                <li ng-class="{'active':selectedRole.indexOf('Founder') >= 0}" ng-click="filterRole('Founder')">
+                <li ng-class="{'active':global.context.selectedRole.indexOf('Founder') >= 0}" ng-click="filterRole('Founder')">
                     <a href="javascript:void(0)">
                         <i class="fa fa-flag text-danger"></i> <strong>Founders</strong>
                     </a>
                 </li>
-                <li ng-class="{'active':selectedRole.indexOf('Advisor') >= 0}" ng-click="filterRole('Advisor')">
+                <li ng-class="{'active':global.context.selectedRole.indexOf('Advisor') >= 0}" ng-click="filterRole('Advisor')">
                     <a href="javascript:void(0)">
                         <i class="fa fa-graduation-cap text-info"></i> <strong>Advisors</strong>
                     </a>
                 </li>
-                <li ng-class="{'active':selectedRole.indexOf('Investor') >= 0}" ng-click="filterRole('Investor')">
+                <li ng-class="{'active':global.context.selectedRole.indexOf('Investor') >= 0}" ng-click="filterRole('Investor')">
                     <a href="javascript:void(0)">
                         <i class="fa fa-leaf text-success"></i> <strong>Investors</strong>
                     </a>
@@ -71,7 +71,7 @@
     
         <!-- Navigation Block -->
         <div class="block full filternav">
-            <i ng-show="loadingCluster==true" class="fa fa-refresh fa-spin pull-right"></i>
+            <i ng-show="loadingIndustry==true" class="fa fa-refresh fa-spin pull-right"></i>
             <div class="block-title">
                 <h2><strong>Cluster</strong> Filters</h2>
             </div>
@@ -82,8 +82,8 @@
                 <li>
                   <hr>
                 </li>
-                <li ng-repeat="(industry, val) in global.city.value.clusters" ng-class="{'active':global.city.selectedIndustry.indexOf(cluster) >= 0}" ng-click="filterCluster(cluster);">
-                    <a><i class="fa {{val.icon}}"></i> <strong>{{cluster}}</strong></a>
+                <li ng-repeat="industry in global.findKey(global.community.industries, global.context.location, [])" ng-class="{'active':global.context.selectedIndustry.indexOf(industry) >= 0}" ng-click="filterIndustry(industry);">
+                    <a><i class="fa {{industry.profile.icon}}"></i> <strong>{{industry.profile.name}}</strong></a>
                 </li>
             </ul>
             <!-- END Filter by Type links -->

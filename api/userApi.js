@@ -754,14 +754,8 @@ function handleGetProfile(req, res) {
     db.get(config.db.collections.communities, userid)
       .then(function(response){
           if (response.body.code !== "items_not_found") {
-              console.log('Authenticated user: ' + response.body.profile.name);
-              response = {
-                  "path": {
-                      "key": userid
-                  },
-                  "value": response.body
-              };
-              res.status(200).send(response);
+              response.body["key"] = userid;
+              res.status(200).send(response.body);
           } else {
               console.warn('WARNING:  User not found.');
               return res.status(200).send({ message: 'User not found.' });

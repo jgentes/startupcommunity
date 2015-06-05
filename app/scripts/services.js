@@ -13,7 +13,7 @@ angular
               urlString += (query ? '?search=' + query : '');
               return $http.get(urlString);
           },
-          getUsers: function(location, community, cluster, role, limit, alturl) {
+          getUsers: function(location, community, cluster, role, limit, alturl) { //alturl is for next/prev retrieval
               if (alturl) { return $http.get(alturl) } else {
                   var urlString = '/api/1.1/';
                   if (location && community) {
