@@ -1,9 +1,15 @@
+/**
+ * HOMER - Responsive Admin Theme
+ * Copyright 2015 Webapplayers.com
+ *
+ */
+
 function configState($stateProvider, $urlRouterProvider, $compileProvider) {
 
     // Optimize load start with remove binding information inside the DOM element
     $compileProvider.debugInfoEnabled(true);
 
-    // Set default unmatched url state
+    // Set default state
     $urlRouterProvider.otherwise("/dashboard");
     $stateProvider
 
@@ -15,26 +21,11 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider) {
                 pageTitle: 'Dashboard',
             }
         })
-};
-/*
+}
+
 angular
-  .module('analytics.mixpanel')
-  .config(['$mixpanelProvider', function($mixpanelProvider) {
-      $mixpanelProvider.apiKey("0f110baeb6150d7e3b8968e32d7a5595");
-  }]);
-*/
-angular
-    .module('startupcommunity')
+    .module('homer')
     .config(configState)
-    .config(function($authProvider) {
-
-      $authProvider.linkedin({
-          clientId: "75bqixdv58z1az"
-      });
-
-    })
-
     .run(function($rootScope, $state) {
         $rootScope.$state = $state;
     });
-

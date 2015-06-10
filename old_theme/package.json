@@ -7,7 +7,6 @@
   "dependencies": {
     "bcryptjs": "~0.7.12",
     "body-parser": "~1.6.5",
-    "connect-wwwhisper": "*",
     "debug-trace": "~0.2.3",
     "express": "~4.8.5",
     "express-sslify": "^0.1.1",

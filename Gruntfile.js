@@ -189,6 +189,13 @@ module.exports = function (grunt) {
         },
         usemin: {
             html: ['dist/index.html']
+        },
+        protractor: {
+            options: {
+                keepAlive: true,
+                configFile: "test/protractor.conf.js"
+            },
+            run: {}
         }
     });
 
@@ -215,6 +222,13 @@ module.exports = function (grunt) {
         'filerev',
         'usemin',
         'htmlmin'
+    ]);
+
+    grunt.registerTask('test', [
+        'clean:server',
+        'copy:styles',
+        'connect'
+        //'protractor:run'
     ]);
 
 };

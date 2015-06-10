@@ -1,12 +1,12 @@
-/**
- * HOMER - Responsive Admin Theme
- * Copyright 2015 Webapplayers.com
- *
- */
 (function () {
-    angular.module('homer', [
-        'ui.router',                // Angular flexible routing
-        'ui.bootstrap'             // AngularJS native directives for Bootstrap
-    ])
+    angular.module('startupcommunity', [
+        'ui.router',
+        'ui.bootstrap',
+        'ui.highlight',
+        'analytics.mixpanel',
+        'satellizer',
+        'appServices'
+        //'appDirectives'
+    ]);
 })();
 
