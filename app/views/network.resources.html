@@ -1,0 +1,297 @@
+<div ng-controller="PeopleController">
+<!-- Dashboard Header -->
+<!-- For an image header add the class 'content-header-media' and an image as in the following example -->
+    <div class="content-header content-header-media">
+        <div class="header-section">
+            <div class="row">
+                <!-- Main Title (hidden on small devices for the statistics to fit) -->
+                <div class="col-md-4 col-lg-6 hidden-xs hidden-sm">
+                    <h1><strong>{{global.community[global.context.community || global.context.location].name}}</strong><br><small>Welcome {{global.user.profile.name | words:0}}!</small></h1>
+                </div>
+                <!-- END Main Title -->
+    
+                <!-- Top Stats -->
+                <div class="col-md-8 col-lg-6">
+                    <div class="row text-center">                     
+                        <div class="col-xs-4 col-sm-3"></div>
+                        <div class="col-xs-4 col-sm-3"></div>
+                        <div class="col-xs-4 col-sm-3"></div>
+                        <div class="col-xs-4 col-sm-3">
+                            <h2>
+                                <strong style="color: white;">{{users.total_count}}</strong><br>
+                                <small><i class="fa fa-leaf"></i> People</small>
+                            </h2>
+                        </div>
+                        
+                    </div>
+                </div>
+                <!-- END Top Stats -->
+            </div>
+        </div>
+        <!-- For best results use an image with a resolution of 2560x248 pixels (You can also use a blurred image with ratio 10:1 - eg: 1000x100 pixels - it will adjust and look great!) -->
+        <img src="assets/img/headers/widget5_header.jpg" alt="header image" class="animation-pulseSlow">
+    </div>
+        <!-- END Dashboard Header -->
+        
+    <div class="col-md-4 col-lg-3">
+
+        <!-- Navigation Block -->
+        <div class="block full filternav">
+            <i ng-show="loadingIndustry==true" class="fa fa-refresh fa-spin pull-right"></i>
+            <div class="block-title">
+                <h2><strong>Resource</strong> Filters</h2>
+            </div>
+            <ul class="nav nav-pills nav-stacked nav-icons">
+              <li class="active" ng-click="filterIndustry('*');">
+                  <a><i class="fa fa-fw fa-globe themed-color-dark icon-push"></i> <strong>All</strong></a>
+              </li>
+              <li>
+                <hr>
+              </li>
+              <li>
+              <a href="javascript:void(0)">
+                <span class="pull-right"><strong>60</strong></span>
+                <i class="fa fa-desktop fa-fw"></i>&nbsp; Web Design
+              </a>
+              </li>
+              <li>
+              <a href="javascript:void(0)">
+                <span class="pull-right"><strong>19</strong></span>
+                <i class="fa fa-picture-o fa-fw"></i>&nbsp; Creative Studio
+
+              </a>
+              </li>
+              <li>
+              <a href="javascript:void(0)">
+                <span class="pull-right"><strong>35</strong></span>
+                <i class="fa fa-comments fa-fw"></i>&nbsp; Digital Marketing
+              </a>
+              </li>
+              <li>
+              <a href="javascript:void(0)">
+                <span class="pull-right"><strong>15</strong></span>
+                <i class="fa fa-briefcase fa-fw"></i>&nbsp; Accounting Services
+              </a>
+              </li>
+              <li>
+              <a href="javascript:void(0)">
+                <span class="pull-right"><strong>32</strong></span>
+                <i class="fa fa-bar-chart-o fa-fw"></i>&nbsp; Sales Solutions
+              </a>
+              </li>
+              <li>
+              <a href="javascript:void(0)">
+                <span class="pull-right"><strong>13</strong></span>
+                <i class="fa fa-gavel fa-fw"></i>&nbsp; Legal Support
+
+              </a>
+              </li>
+              <li>
+              <a href="javascript:void(0)">
+                <span class="pull-right"><strong>3</strong></span>
+                <i class="fa fa-tachometer fa-fw"></i>&nbsp; Accelerator Services
+              </a>
+              </li>
+            </ul>
+            <!-- END Filter by Type links -->
+        </div>
+        <!-- END Navigation Block -->    
+    </div>
+    <div class="col-md-8 col-lg-9">
+
+      <div class="col-md-4">
+        <div class="widget">
+          <div class="widget-simple">
+            <a href="javascript:void(0)" class="widget-icon pull-right themed-background">
+              <i class="fa fa-comments"></i>
+            </a>
+            <h4 class="widget-content">
+              <a target="_blank" href="http://analytics.thesocialbusiness.com/"><strong>Social</strong> Analytics</a>
+              <small>Measure the performance of your social media activity.</small>
+            </h4>
+          </div>
+          <div class="widget-extra-full">
+            <div class="gallery-image" style="height:100px;">
+              <a target="_blank" href="http://analytics.thesocialbusiness.com/">
+                <img src="assets/img/temp/social_analytics.png" style="zoom: 2; display: block; margin: auto; height: auto; width: auto; max-height: 100%; max-width: 100%;">
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-4">
+        <div class="widget">
+          <div class="widget-simple">
+            <a href="javascript:void(0)" class="widget-icon pull-right themed-background">
+              <i class="fa fa-tachometer"></i>
+            </a>
+            <h4 class="widget-content">
+              <a target="_blank" href="http://innovationgarden.com/"><strong>Innovation</strong> Garden</a>
+              <small>Venture accelerator for early stage startups.</small>
+            </h4>
+          </div>
+          <div class="widget-extra-full">
+            <div class="gallery-image" style="height:100px;">
+              <a target="_blank" href="http://innovationgarden.com/">
+                <img src="assets/img/temp/ig_logo_righ_size.png" style="zoom: 2; display: block; margin: auto; height: auto; width: auto; max-height: 100%; max-width: 100%;">
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-4">
+        <div class="widget">
+          <div class="widget-simple">
+            <a href="javascript:void(0)" class="widget-icon pull-right themed-background">
+              <i class="fa fa-desktop"></i>
+            </a>
+            <h4 class="widget-content">
+              <a target="_blank" href="http://betabulls.com"><strong>Beta</strong> Bulls</a>
+              <small>We build apps for startups.</small>
+            </h4>
+          </div>
+          <div class="widget-extra-full">
+            <div class="gallery-image" style="height:100px;">
+              <a target="_blank" href="http://betabulls.com">
+              <img src="assets/img/temp/betabullslogo.jpg" style="zoom: 2; display: block; margin: auto; height: auto; width: auto; max-height: 100%; max-width: 100%;">
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-4">
+        <div class="widget">
+          <div class="widget-simple">
+            <a href="javascript:void(0)" class="widget-icon pull-right themed-background">
+              <i class="fa fa-briefcase"></i>
+            </a>
+            <div class="widget-content">
+              <a target="_blank" href="http://fancyhands.com"><strong>Fancy</strong> Hands</a>
+              <small>Get your time back with our team of virtual assistants.</small>
+            </div>
+          </div>
+          <div class="widget-extra-full">
+            <div class="gallery-image" style="height:100px;">
+              <a target="_blank" href="http://fancyhands.com">
+                <img src="assets/img/temp/fancyhandslogo.png" style="zoom: 2; display: block; margin: auto; height: auto; width: auto; max-height: 100%; max-width: 100%;">
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-4">
+        <div class="widget">
+          <div class="widget-simple">
+            <a href="javascript:void(0)" class="widget-icon pull-right themed-background">
+              <i class="fa fa-bar-chart-o"></i>
+            </a>
+            <h4 class="widget-content">
+              <a target="_blank" href="http://grasshopper.com/"><strong>Grasshopper</strong></a>
+              <small>Grasshopper lets you run your business using your cell phones!</small>
+            </h4>
+          </div>
+          <div class="widget-extra-full">
+            <div class="gallery-image" style="height:100px;">
+              <a target="_blank" href="http://grasshopper.com/">
+                <img src="assets/img/temp/grasshopperlogo-crop-u5599.png" style="zoom: 2; display: block; margin: auto; height: auto; width: auto; max-height: 100%; max-width: 100%;">
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-4">
+        <div class="widget">
+          <div class="widget-simple">
+            <a href="javascript:void(0)" class="widget-icon pull-right themed-background">
+              <i class="fa fa-picture-o"></i>
+            </a>
+            <h4 class="widget-content">
+              <a target="_blank" href="http://moo.com/"><strong>Moo</strong></a>
+              <small>Custom business cards, flyers, postcards, stickers, and more.</small>
+            </h4>
+          </div>
+          <div class="widget-extra-full">
+            <div class="gallery-image" style="height:100px;">
+              <a target="_blank" href="http://moo.com/">
+                <img src="assets/img/temp/moologo-crop-u5621.jpg" style="zoom: 2; display: block; margin: auto; height: auto; width: auto; max-height: 100%; max-width: 100%;">
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-4">
+        <div class="widget">
+          <div class="widget-simple">
+            <a href="javascript:void(0)" class="widget-icon pull-right themed-background">
+              <i class="fa fa-briefcase"></i>
+            </a>
+            <h4 class="widget-content">
+              <a target="_blank" href="http://mvmgrants.com/"><strong>MVM</strong> Grants</a>
+              <small>Tax credit specialists.</small>
+            </h4>
+          </div>
+          <div class="widget-extra-full">
+            <div class="gallery-image" style="height:100px;">
+              <a target="_blank" href="http://mvmgrants.com/">
+                <img src="assets/img/temp/mvmlogo-crop-u5486.jpg" style="zoom: 2; display: block; margin: auto; height: auto; width: auto; max-height: 100%; max-width: 100%;">
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-4">
+        <div class="widget">
+          <div class="widget-simple">
+            <a href="javascript:void(0)" class="widget-icon pull-right themed-background">
+              <i class="fa fa-comments"></i>
+            </a>
+            <h4 class="widget-content">
+              <a target="_blank" href="http://princetonpartners.com/"><strong>Princeton</strong> Partners</a>
+              <small>Strategy, branding, advertising, digital, and social media.</small>
+            </h4>
+          </div>
+          <div class="widget-extra-full">
+            <div class="gallery-image" style="height:100px;">
+              <a target="_blank" href="http://princetonpartners.com/">
+                <img src="assets/img/temp/princetonpartnerslogo-crop-u5491.jpg" style="zoom: 2; display: block; margin: auto; height: auto; width: auto; max-height: 100%; max-width: 100%;">
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-4">
+        <div class="widget">
+          <div class="widget-simple">
+            <a href="javascript:void(0)" class="widget-icon pull-right themed-background">
+              <i class="fa fa-bar-chart-o"></i>
+            </a>
+            <h4 class="widget-content">
+              <a target="_blank" href="http://uber.com/"><strong>Uber</strong></a>
+              <small>Tap a button, get picked up in minutes.</small>
+            </h4>
+          </div>
+          <div class="widget-extra-full">
+            <div class="gallery-image" style="height:100px;">
+              <a target="_blank" href="http://uber.com/">
+                <img src="assets/img/temp/uberlogo-crop-u5496.jpg" style="zoom: 2; display: block; margin: auto; height: auto; width: auto; max-height: 100%; max-width: 100%;">
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+
+
+
+    </div>
+</div>
+<!-- END Messages List -->

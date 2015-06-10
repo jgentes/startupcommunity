@@ -16,6 +16,59 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                 pageTitle: 'Dashboard',
             }
         })
+        .state('search', {
+            templateUrl: 'views/search.html',
+            url: "/search",
+            resolve: {
+                authenticated: ['$location', '$auth', function($location, $auth) {
+                    if (!$auth.isAuthenticated()) {
+                        return $location.path('/login');
+                    }
+                }]
+            }
+        })
+        .state('invite', {
+            templateUrl: '../views/invite_people.html',
+            url: "/people/invite",
+            resolve: {
+                authenticated: ['$location', '$auth', function($location, $auth) {
+                    if (!$auth.isAuthenticated()) {
+                        return $location.path('/login');
+                    }
+                }]
+            }
+        })
+        .state('profile', {
+            templateUrl: 'views/user_profile.html',
+            url: "/profile",
+            resolve: {
+                authenticated: ['$location', '$auth', function($location, $auth) {
+                    if (!$auth.isAuthenticated()) {
+                        return $location.path('/login');
+                    }
+                }]
+            }
+        })
+        .state('login', {
+            url: "/login",
+            templateUrl: 'views/login.html'
+        })
+
+        .state('network', {
+            templateUrl: 'views/network.html',
+            url: "/network",
+            resolve: {
+                lazyLoad: ['lazyLoad', function (lazyLoad) {
+                    return lazyLoad.load([
+                        'assets/plugins/fullcalendar/fullcalendar.js'
+                    ]);
+                }]
+            }
+        })
+        .state('network.resources', {
+            url: "/resources",
+            templateUrl: 'views/network.resources.html'
+        });
 
     $locationProvider
         .html5Mode(true);

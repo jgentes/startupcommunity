@@ -23,7 +23,7 @@ angular
                     }
                     urlString += (cluster ? '?cluster=' + cluster : '') + (cluster && role ? '&' : '?') + (role ? 'role=' + role : '') + (limit ? (cluster || role) ? '&limit=' + limit : '?limit=' + limit : '');
                     return $http.get(urlString);
-                };
+                }
             },
             putUser: function(userid, profile, callback) {
                 $http.put('/api/1.1/user/' + userid + '?profile=' + profile)

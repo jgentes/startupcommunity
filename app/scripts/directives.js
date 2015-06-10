@@ -9,6 +9,8 @@ angular
     .directive('smallHeader', smallHeader)
     .directive('animatePanel', animatePanel)
     .directive('randomQuote', randomQuote)
+    .filter('safe_html', safeHTML)
+    .filter('words', words)
 
 /**
  * pageTitle - Directive for set Page title - mata title
@@ -31,13 +33,13 @@ function pageTitle($rootScope, $timeout) {
 };
 
 /**
- * sideNavigation - Directive for run metsiMenu on sidebar navigation
+ * sideNavigation - Directive for run metisMenu on sidebar navigation
  */
 function sideNavigation($timeout) {
     return {
         restrict: 'A',
         link: function(scope, element) {
-            // Call the metsiMenu plugin and plug it to sidebar navigation
+            // Call the metisMenu plugin and plug it to sidebar navigation
             element.metisMenu();
         }
     };
@@ -338,6 +340,20 @@ function randomQuote() {
         replace: true,
         transclude: true,
         template: '<li>' + rand + '</li>'
+    };
+}
+
+function safeHTML($sce) {
+    return function(val) {
+        return $sce.trustAsHtml(val);
+    };
+}
+
+function words() {
+    return function(text, wordnum) {
+        if (text) {
+            return text.split(" ")[wordnum];
+        }
     };
 }
 

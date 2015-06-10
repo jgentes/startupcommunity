@@ -1,0 +1,5 @@
+<a ng-if="!item.heading" ng-click="select(item)" ng-href="{{item.url}}" id="{{item.id}}">
+	<i ng-if="item.iconClasses" class="{{item.iconClasses}}"></i><span>{{item.label}}</span>
+	<span ng-bind-html="item.html"></span>
+</a>
+<h5 ng-if="item.heading" class="heading" id="{{item.id}}">{{item.heading}}</h5>

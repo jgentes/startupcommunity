@@ -17,7 +17,7 @@ module.exports = function (grunt) {
     grunt.initConfig({
 
         // Project settings
-        homer: appConfig,
+        startupcommunity: appConfig,
 
         // The grunt server settings
         connect: {
@@ -44,7 +44,7 @@ module.exports = function (grunt) {
             dist: {
                 options: {
                     open: true,
-                    base: '<%= homer.dist %>'
+                    base: '<%= startupcommunity.dist %>'
                 }
             }
         },
@@ -68,10 +68,10 @@ module.exports = function (grunt) {
                 options: {
                     nospawn: true,
                     livereload: '<%= connect.options.livereload %>'
-                },
+                }
             },
             js: {
-                files: ['<%= homer.app %>/scripts/{,*/}*.js'],
+                files: ['<%= startupcommunity.app %>/scripts/{,*/}*.js'],
                 options: {
                     livereload: '<%= connect.options.livereload %>'
                 }
@@ -81,9 +81,9 @@ module.exports = function (grunt) {
                     livereload: '<%= connect.options.livereload %>'
                 },
                 files: [
-                    '<%= homer.app %>/**/*.html',
+                    '<%= startupcommunity.app %>/**/*.html',
                     '.tmp/styles/{,*/}*.css',
-                    '<%= homer.app %>/images/{,*/}*.{png,jpg,jpeg,gif,webp,svg}'
+                    '<%= startupcommunity.app %>/images/{,*/}*.{png,jpg,jpeg,gif,webp,svg}'
                 ]
             }
         },
@@ -99,8 +99,8 @@ module.exports = function (grunt) {
                     dot: true,
                     src: [
                         '.tmp',
-                        '<%= homer.dist %>/{,*/}*',
-                        '!<%= homer.dist %>/.git*'
+                        '<%= startupcommunity.dist %>/{,*/}*',
+                        '!<%= startupcommunity.dist %>/.git*'
                     ]
                 }]
             },
@@ -113,8 +113,8 @@ module.exports = function (grunt) {
                     {
                         expand: true,
                         dot: true,
-                        cwd: '<%= homer.app %>',
-                        dest: '<%= homer.dist %>',
+                        cwd: '<%= startupcommunity.app %>',
+                        dest: '<%= startupcommunity.dist %>',
                         src: [
                             '*.{ico,png,txt}',
                             '.htaccess',
@@ -129,27 +129,27 @@ module.exports = function (grunt) {
                         dot: true,
                         cwd: 'bower_components/fontawesome',
                         src: ['fonts/*.*'],
-                        dest: '<%= homer.dist %>'
+                        dest: '<%= startupcommunity.dist %>'
                     },
                     {
                         expand: true,
                         dot: true,
                         cwd: 'bower_components/bootstrap',
                         src: ['fonts/*.*'],
-                        dest: '<%= homer.dist %>'
+                        dest: '<%= startupcommunity.dist %>'
                     },
                     {
                         expand: true,
                         dot: true,
                         cwd: 'app/fonts/pe-icon-7-stroke/',
                         src: ['fonts/*.*'],
-                        dest: '<%= homer.dist %>'
-                    },
+                        dest: '<%= startupcommunity.dist %>'
+                    }
                 ]
             },
             styles: {
                 expand: true,
-                cwd: '<%= homer.app %>/styles',
+                cwd: '<%= startupcommunity.app %>/styles',
                 dest: '.tmp/styles/',
                 src: '{,*/}*.css'
             }
@@ -158,9 +158,9 @@ module.exports = function (grunt) {
         filerev: {
             dist: {
                 src: [
-                    '<%= homer.dist %>/scripts/{,*/}*.js',
-                    '<%= homer.dist %>/styles/{,*/}*.css',
-                    '<%= homer.dist %>/styles/fonts/*'
+                    '<%= startupcommunity.dist %>/scripts/{,*/}*.js',
+                    '<%= startupcommunity.dist %>/styles/{,*/}*.css',
+                    '<%= startupcommunity.dist %>/styles/fonts/*'
                 ]
             }
         },
@@ -175,20 +175,20 @@ module.exports = function (grunt) {
                 },
                 files: [{
                     expand: true,
-                    cwd: '<%= homer.dist %>',
+                    cwd: '<%= startupcommunity.dist %>',
                     src: ['*.html', 'views/{,*/}*.html'],
-                    dest: '<%= homer.dist %>'
+                    dest: '<%= startupcommunity.dist %>'
                 }]
             }
         },
         useminPrepare: {
-            html: 'app/index.html',
+            html: 'app/app.html',
             options: {
                 dest: 'dist'
             }
         },
         usemin: {
-            html: ['dist/index.html']
+            html: ['dist/app.html']
         },
         protractor: {
             options: {
