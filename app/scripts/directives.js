@@ -40,7 +40,9 @@ function sideNavigation($timeout) {
         restrict: 'A',
         link: function(scope, element) {
             // Call the metisMenu plugin and plug it to sidebar navigation
-            element.metisMenu();
+            element.metisMenu({
+                toggle: false
+            });
         }
     };
 };

@@ -17,8 +17,32 @@
     </div>
 
     <ul side-navigation class="nav" id="side-menu">
-        <li ui-sref-active="active">
-            <a ui-sref="dashboard"> <span class="nav-label">Dashboard</span></a>
+        <li ui-sref-active="active" class="active">
+            <a href="#"><span class="nav-label">Community</span><span class="fa arrow"></span> </a>
+            <ul class="nav nav-second-level" ng-class="{in: $state.includes('people')}">
+                <li ui-sref-active="active">
+                    <a ui-sref="people"><i class="fa fa-flag"></i>&nbsp;&nbsp;People</a>
+                </li>
+                <li ui-sref-active="active">
+                    <a ui-sref="startups"><i class="fa fa-rocket"></i>&nbsp;&nbsp;Startups</a>
+                </li>
+            </ul>
+        </li>
+        <li ng-class="{active: $state.includes('industry')}" class="active">
+            <a href="#"><span class="nav-label">Clusters</span><span class="fa arrow"></span> </a>
+            <ul class="nav nav-second-level" ng-class="{in: $state.includes('industry')}">
+                <li ui-sref-active="active" ng-repeat="item in global.findKey(global.community.industries, global.context.location, [])">
+                    <a ui-sref="industry"><i ng-class="'fa ' + item.profile.icon"></i>&nbsp;&nbsp;{{item.profile.name}}</a>
+                </li>
+            </ul>
+        </li>
+        <li ng-class="{active: $state.includes('network')}" class="active">
+            <a href="#"><span class="nav-label">Networks</span><span class="fa arrow"></span> </a>
+            <ul class="nav nav-second-level" ng-class="{in: $state.includes('network')}">
+                <li ui-sref-active="active" ng-repeat="item in global.findKey(global.community.networks, global.context.location, [])">
+                    <a ui-sref="network"><i ng-class="'fa ' + item.profile.icon"></i>&nbsp;&nbsp;{{item.profile.name}}</a>
+                </li>
+            </ul>
         </li>
     </ul>
     <div>
