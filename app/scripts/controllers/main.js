@@ -2,9 +2,7 @@ angular
     .module('startupcommunity')
     .controller('mainCtrl', mainCtrl);
 
-function mainCtrl($http, $scope) {
-   /*
-    , $location, $auth, userService, communityService, resultService, $mixpanel
+function mainCtrl($http, $scope, $location, $auth, userApi, communityApi, resultApi, $mixpanel) {
 
     $scope.global = { alert: undefined, community: {}, context: {} };
     window.$scope = $scope; // for console testing to avoid $scope = $('body').scope()
@@ -25,9 +23,9 @@ function mainCtrl($http, $scope) {
     $scope.search = function(query) {
         $scope.global.search.tag = query;
         $scope.global.search.results = undefined;
-        userService.search($scope.global.user.context, query)
+        userApi.earch($scope.global.user.context, query)
           .then(function(response) {
-              $scope.global.search = resultService.setPage(response.data);
+              $scope.global.search = resultApi.setPage(response.data);
               $scope.global.search.lastQuery = query;
               $location.path('/search');
           });
@@ -99,7 +97,7 @@ function mainCtrl($http, $scope) {
     // Get and set user and location data
     $scope.global.sessionReady = function() {
         if (!$scope.global.user || !$scope.global.community || !$scope.global.context) {
-            userService.getProfile()
+            userApi.getProfile()
               .success(function(response) {
                   if (!response.message) {
                       $scope.global.user = response;
@@ -112,7 +110,7 @@ function mainCtrl($http, $scope) {
 
                       if (!community && !location) { location = $scope.global.user.profile.linkedin.location.country.code || 'us'} //TODO does private/private block location in linkedin api?
 
-                      communityService.getCommunity(location, community)
+                      communityApi.getCommunity(location, community)
                         .success(function(response) {
                             if (response) {
                                 $scope.global.community = response;
@@ -139,5 +137,5 @@ function mainCtrl($http, $scope) {
     };
 
     $scope.global.sessionReady();
-*/
+
 }

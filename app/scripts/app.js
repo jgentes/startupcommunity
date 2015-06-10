@@ -5,8 +5,7 @@
         'ui.highlight',
         'analytics.mixpanel',
         'satellizer',
-        'appServices'
-        //'appDirectives'
+        'apis'
     ]);
 })();
 
