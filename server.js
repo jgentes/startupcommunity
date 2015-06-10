@@ -95,6 +95,7 @@ ghost({
 });
 
 // Backend App
+
 app.get('/*', function (req, res, next) {
   res.sendFile("app.html", {root: __dirname + config.path});
 });

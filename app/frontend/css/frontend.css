@@ -14,6 +14,70 @@
  *      (#m08rts) RETINA
  */
 
+
+@font-face {
+    font-family: 'fontello';
+    src: url('font/fontello.eot?42694686');
+    src: url('font/fontello.eot?42694686#iefix') format('embedded-opentype'),
+    url('font/fontello.woff?42694686') format('woff'),
+    url('font/fontello.ttf?42694686') format('truetype'),
+    url('font/fontello.svg?42694686#fontello') format('svg');
+    font-weight: normal;
+    font-style: normal;
+}
+/* Chrome hack: SVG is rendered more smooth in Windozze. 100% magic, uncomment if you need it. */
+/* Note, that will break hinting! In other OS-es font will be not as sharp as it could be */
+/*
+@media screen and (-webkit-min-device-pixel-ratio:0) {
+  @font-face {
+    font-family: 'fontello';
+    src: url('font/fontello.svg?42694686#fontello') format('svg');
+  }
+}
+*/
+
+[class^="icon-"]:before, [class*=" icon-"]:before {
+    font-family: "fontello";
+    font-style: normal;
+    font-weight: normal;
+    speak: none;
+
+    display: inline-block;
+    text-decoration: inherit;
+    width: 1em;
+    margin-right: .2em;
+    text-align: center;
+    /* opacity: .8; */
+
+    /* For safety - reset parent styles, that can break glyph codes*/
+    font-variant: normal;
+    text-transform: none;
+
+    /* fix buttons height, for twitter bootstrap */
+    line-height: 1em;
+
+    /* Animation center compensation - margins should be symmetric */
+    /* remove if not needed */
+    margin-left: .2em;
+
+    /* you can be more comfortable with increased icons size */
+    /* font-size: 120%; */
+
+    /* Uncomment for 3D effect */
+    /* text-shadow: 1px 1px 1px rgba(127, 127, 127, 0.3); */
+}
+
+.icon-bars:before { content: '\e800'; } /* '?' */
+.icon-location:before { content: '\e801'; } /* '?' */
+.icon-down-circled2:before { content: '\e802'; } /* '?' */
+.icon-mail:before { content: '\e803'; } /* '?' */
+.icon-flag:before { content: '\e804'; } /* '?' */
+.icon-graduation-cap:before { content: '\e805'; } /* '?' */
+.icon-leaf:before { content: '\e806'; } /* '?' */
+.icon-heart:before { content: '\e807'; } /* '?' */
+.icon-angle-circled-up:before { content: '\e808'; } /* '?' */
+
+
 /*
 =================================================================
 (#m01mls) MAIN LAYOUT
@@ -36,6 +100,306 @@ body {
 #page-container.boxed {
     max-width: 1280px;
 }
+
+
+/*
+=================================================================
+THEME DEFAULT
+=================================================================
+*/
+
+.themed-color {
+    color: #1bbae1 !important;
+}
+
+.themed-border {
+    border-color: #1bbae1 !important;
+}
+
+.themed-background {
+    background-color: #1bbae1 !important;
+}
+
+.themed-color-dark {
+    color: #394263 !important;
+}
+
+.themed-border-dark {
+    border-color: #394263 !important;
+}
+
+.themed-background-dark {
+    background-color: #394263 !important;
+}
+
+.themed-color-default {
+    color: #82bc4b !important;
+}
+
+.themed-border-default {
+    border-color: #82bc4b !important;
+}
+
+.themed-background-default {
+    background-color: #4f5259 !important;
+}
+
+.themed-background-green {
+    background-color: #C2DF99 !important;
+}
+
+.themed-color-dark-default {
+    color: #394263 !important;
+}
+
+.themed-border-dark-default {
+    border-color: #394263 !important;
+}
+
+.themed-background-dark-default {
+    background-color: #394263 !important;
+}
+
+/*
+=================================================================
+THEME NIGHT
+=================================================================
+*/
+
+.themed-color-night {
+    color: #888888 !important;
+}
+
+.themed-border-night {
+    border-color: #888888 !important;
+}
+
+.themed-background-night {
+    background-color: #888888 !important;
+}
+
+.themed-color-dark-night {
+    color: #333333 !important;
+}
+
+.themed-border-dark-night {
+    border-color: #333333 !important;
+}
+
+.themed-background-dark-night {
+    background-color: #333333 !important;
+}
+
+/*
+=================================================================
+THEME AMETHYST
+=================================================================
+*/
+
+.themed-color-amethyst {
+    color: #af64cc !important;
+}
+
+.themed-border-amethyst {
+    border-color: #af64cc !important;
+}
+
+.themed-background-amethyst {
+    background-color: #af64cc !important;
+}
+
+.themed-color-dark-amethyst {
+    color: #583a63 !important;
+}
+
+.themed-border-dark-amethyst {
+    border-color: #583a63 !important;
+}
+
+.themed-background-dark-amethyst {
+    background-color: #583a63 !important;
+}
+
+/*
+=================================================================
+THEME MODERN
+=================================================================
+*/
+
+.themed-color-modern {
+    color: #46b7bf !important;
+}
+
+.themed-border-modern {
+    border-color: #46b7bf !important;
+}
+
+.themed-background-modern {
+    background-color: #46b7bf !important;
+}
+
+.themed-color-dark-modern {
+    color: #3b3f40 !important;
+}
+
+.themed-border-dark-modern {
+    border-color: #3b3f40 !important;
+}
+
+.themed-background-dark-modern {
+    background-color: #3b3f40 !important;
+}
+
+/*
+=================================================================
+THEME AUTUMN
+=================================================================
+*/
+
+.themed-color-autumn {
+    color: #e67e22 !important;
+}
+
+.themed-border-autumn {
+    border-color: #e67e22 !important;
+}
+
+.themed-background-autumn {
+    background-color: #e67e22 !important;
+}
+
+.themed-color-dark-autumn {
+    color: #4a392b !important;
+}
+
+.themed-border-dark-autumn {
+    border-color: #4a392b !important;
+}
+
+.themed-background-dark-autumn {
+    background-color: #4a392b !important;
+}
+
+/*
+=================================================================
+THEME FLATIE
+=================================================================
+*/
+
+.themed-color-flatie {
+    color: #1ec1b8 !important;
+}
+
+.themed-border-flatie {
+    border-color: #1ec1b8 !important;
+}
+
+.themed-background-flatie {
+    background-color: #1ec1b8 !important;
+}
+
+.themed-color-dark-flatie {
+    color: #32323a !important;
+}
+
+.themed-border-dark-flatie {
+    border-color: #32323a !important;
+}
+
+.themed-background-dark-flatie {
+    background-color: #32323a !important;
+}
+
+/*
+=================================================================
+THEME SPRING
+=================================================================
+*/
+
+.themed-color-spring {
+    color: #27ae60 !important;
+}
+
+.themed-border-spring {
+    border-color: #27ae60 !important;
+}
+
+.themed-background-spring {
+    background-color: #27ae60 !important;
+}
+
+.themed-color-dark-spring {
+    color: #344a3d !important;
+}
+
+.themed-border-dark-spring {
+    border-color: #344a3d !important;
+}
+
+.themed-background-dark-spring {
+    background-color: #344a3d !important;
+}
+
+/*
+=================================================================
+THEME FANCY
+=================================================================
+*/
+
+.themed-color-fancy {
+    color: #d9416c !important;
+}
+
+.themed-border-fancy {
+    border-color: #d9416c !important;
+}
+
+.themed-background-fancy {
+    background-color: #d9416c !important;
+}
+
+.themed-color-dark-fancy {
+    color: #352b4e !important;
+}
+
+.themed-border-dark-fancy {
+    border-color: #352b4e !important;
+}
+
+.themed-background-dark-fancy {
+    background-color: #352b4e !important;
+}
+
+/*
+=================================================================
+THEME FIRE
+=================================================================
+*/
+
+.themed-color-fire {
+    color: #e74c3c !important;
+}
+
+.themed-border-fire {
+    border-color: #e74c3c !important;
+}
+
+.themed-background-fire {
+    background-color: #e74c3c !important;
+}
+
+.themed-color-dark-fire {
+    color: #4a2e2b !important;
+}
+
+.themed-border-dark-fire {
+    border-color: #4a2e2b !important;
+}
+
+.themed-background-dark-fire {
+    background-color: #4a2e2b !important;
+}
+
 
 /*
 =================================================================

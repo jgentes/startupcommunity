@@ -1,9 +1,10 @@
-function configState($stateProvider, $urlRouterProvider, $compileProvider) {
+function configState($stateProvider, $urlRouterProvider, $compileProvider, $locationProvider) {
 
     // Optimize load start with remove binding information inside the DOM element
     $compileProvider.debugInfoEnabled(true);
 
     // Set default unmatched url state
+
     $urlRouterProvider.otherwise("/dashboard");
     $stateProvider
 
@@ -15,6 +16,10 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider) {
                 pageTitle: 'Dashboard',
             }
         })
+
+    $locationProvider
+        .html5Mode(true);
+
 };
 
 angular
