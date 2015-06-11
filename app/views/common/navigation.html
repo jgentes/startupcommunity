@@ -11,10 +11,10 @@
                     <li class="divider"></li>
                     <li><a ui-sref="common.login">Set as Home</a></li>
                 </ul>
+                <small class="text-muted">{{global.user.profile.name}}&nbsp;&nbsp;</small>
             </div>
-            <small class="text-muted">{{global.user.profile.name}}&nbsp;&nbsp;</small>
-            <div class="container side-menu" style="padding: 10px 0 0 0; ">
-                <div class="row side-menu" style="border-bottom: 1px solid #eee;">
+            <div class="container side-menu" style="padding: 10px 0 0 0; border-bottom: 1px solid #eee; border-bottom: 1px solid #eee;">
+                <div class="row side-menu">
                     <div class="col-md-6" style="padding-left: 0;">
                         <img class="img-circle m-b" ng-src="{{global.user.profile.avatar || global.user.profile.linkedin.pictureUrl || '/public/blank_avatar.png'}}" alt="{{global.user.profile.name}}" style="height: 40px; width: 40px; "/>
                     </div>

@@ -9,6 +9,7 @@ angular
     .directive('smallHeader', smallHeader)
     .directive('animatePanel', animatePanel)
     .directive('randomQuote', randomQuote)
+    .directive('backToTop', backToTop)
     .filter('safe_html', safeHTML)
     .filter('words', words)
 
@@ -223,6 +224,17 @@ function animatePanel($timeout) {
 
         }
     }
+}
+
+function backToTop() {
+    return {
+        restrict: 'AE',
+        link: function (scope, element, attr) {
+            element.click( function (e) {
+                $('body').scrollTop(0);
+            });
+        }
+    };
 }
 
 function randomQuote() {

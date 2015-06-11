@@ -39,6 +39,20 @@
     <!-- Page view wrapper -->
     <div class="uiview" ui-view style="height: 100%"></div>
 
+<footer>
+    <div class="col-md-4">
+        <ul class="list-unstyled list-inline">
+            <li style="color: #bbb; padding-top: 2px;">&copy; StartupCommunity.org</li>
+        </ul>
+    </div>
+    <div class="col-xs-12 col-md-8">
+        <ul class="list-unstyled list-inline pull-right">
+            <li style="color: #aaa;" random-quote></li>
+            <button class="pull-right btn btn-default btn-xs hidden-print" back-to-top><i class="fa fa-angle-up"></i></button>
+        </ul>
+    </div>
+</footer>
+
 <script>
     UserVoice=window.UserVoice||[];(function(){var uv=document.createElement('script');uv.type='text/javascript';uv.async=true;uv.src='//widget.uservoice.com/zK2VtojScbtpM3kB4CRZA.js';var s=document.getElementsByTagName('script')[0];s.parentNode.insertBefore(uv,s)})();
     UserVoice.push(['set', {
@@ -46,7 +60,6 @@
         trigger_color: 'white',
         trigger_background_color: '#3498db'
     }]);
-    UserVoice.push(['addTrigger', { mode: 'contact', trigger_position: 'bottom-right' }]);
 </script>
 </body>
 
