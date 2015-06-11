@@ -46,15 +46,13 @@
         trigger_color: 'white',
         trigger_background_color: '#3498db'
     }]);
-    UserVoice.push(['addTrigger', { mode: 'contact', trigger_position: 'bottom-left' }]);
+    UserVoice.push(['addTrigger', { mode: 'contact', trigger_position: 'bottom-right' }]);
 </script>
-
-<script src='//maps.googleapis.com/maps/api/js?sensor=false'></script>
-
 </body>
 
 <!-- build:js(.) scripts/vendor.js -->
 <script src="../bower_components/jquery/dist/jquery.min.js"></script>
+<script src="../bower_components/lodash/lodash.min.js"></script> <!-- req'd for angular-google-maps -->
 <script src="../bower_components/angular/angular.min.js"></script>
 <script src="../bower_components/angular-ui-router/release/angular-ui-router.min.js"></script>
 <script src="../bower_components/angular-bootstrap/ui-bootstrap-tpls.min.js"></script>

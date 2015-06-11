@@ -5,7 +5,8 @@
         'ui.highlight',
         'analytics.mixpanel',
         'satellizer',
-        'apis'
+        'apis',
+        'uiGmapgoogle-maps'
     ]);
 })();
 

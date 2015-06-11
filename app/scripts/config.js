@@ -85,13 +85,6 @@ angular
       });
 
     })
-    .config(function(uiGmapGoogleMapApiProvider) {
-        uiGmapGoogleMapApiProvider.configure({
-            key: '480490194210-u5lpfv6rdch4bto4j9n1vtjvsui4osjv.apps.googleusercontent.com',
-            v: '3.17',
-            libraries: 'weather,geometry,visualization'
-        });
-    })
 
     .run(function($rootScope, $state) {
         $rootScope.$state = $state;

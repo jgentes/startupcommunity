@@ -1,17 +1,27 @@
 <div id="navigation">
     <div class="profile-picture">
-        <a ui-sref="app_views.profile">
-            <img ng-src="{{global.user.profile.avatar || global.user.profile.linkedin.pictureUrl || '/public/blank_avatar.png'}}" alt="{{global.user.profile.name}}" class="img-circle m-b">
-        </a>
-
-        <div class="stats-label text-color">
-            <span class="font-extra-bold font-uppercase">{{global.findKey($scope.global.community.locations, $scope.global.context.location, [])[0].profile.name}}</span>
-
-            <div>
-                <h4 class="font-extra-bold m-b-xs">
-                    $260,104,200
-                </h4>
-                <small class="text-muted">Your income from last year.</small>
+        <ui-gmap-google-map center='global.map.center' zoom='global.map.zoom' options='global.map.options'></ui-gmap-google-map>
+        <div style="background: #fff; height: 14px; position: absolute; bottom: 0; left: 0; right: 0; top: 82px;"></div>
+        <div class="stats-label text-color" style="padding-top: 93px;">
+            <div class="dropdown" dropdown style="padding-bottom: 3px;">
+                <a dropdown-toggle class="dropdown-toggle" href="#">
+                    <span class="font-extra-bold font-uppercase">{{global.findKey(global.community.locations, global.context.location, [])[0].profile.name}} </span><b class="caret"></b></a>
+                <ul class="dropdown-menu animated m-t-xs">
+                    <li><a ui-sref="app_views.contacts">Change Location</a></li>
+                    <li class="divider"></li>
+                    <li><a ui-sref="common.login">Set as Home</a></li>
+                </ul>
+            </div>
+            <small class="text-muted">{{global.user.profile.name}}&nbsp;&nbsp;</small>
+            <div class="container side-menu" style="padding: 10px 0 0 0; ">
+                <div class="row side-menu" style="border-bottom: 1px solid #eee;">
+                    <div class="col-md-6" style="padding-left: 0;">
+                        <img class="img-circle m-b" ng-src="{{global.user.profile.avatar || global.user.profile.linkedin.pictureUrl || '/public/blank_avatar.png'}}" alt="{{global.user.profile.name}}" style="height: 40px; width: 40px; "/>
+                    </div>
+                    <div class="col-md-6">
+                        Stats
+                    </div>
+                </div>
             </div>
         </div>
     </div>

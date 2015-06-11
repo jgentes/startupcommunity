@@ -123,6 +123,10 @@ function mainCtrl($http, $scope, $location, $auth, userApi, communityApi, result
                                     $scope.global.community = response;
                                     $scope.global.context.community = community;
                                     $scope.global.context.location = location;
+
+                                    $scope.global.map = {center: {latitude: 44.0611364, longitude: -121.3146444 }, zoom: 7 };
+                                    $scope.global.map.options = {disableDefaultUI: true};
+
                                     broadcast();
                                 } else {
                                     $scope.global.logout({ type: 'danger', msg: String(response.message) });
