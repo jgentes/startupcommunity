@@ -3,9 +3,6 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
     // Optimize load start with remove binding information inside the DOM element
     $compileProvider.debugInfoEnabled(true);
 
-    // Set default unmatched url state
-
-    $urlRouterProvider.otherwise("/dashboard");
     $stateProvider
 
         // Dashboard - Main page
@@ -14,6 +11,13 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
             templateUrl: "views/dashboard.html",
             data: {
                 pageTitle: 'Dashboard'
+            },
+            resolve: {
+                authenticated: ['$location', '$auth', function($location, $auth) {
+                    if (!$auth.isAuthenticated()) {
+                        return $location.path('/login');
+                    }
+                }]
             }
         })
         .state('search', {
@@ -30,22 +34,6 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
         .state('invite', {
             templateUrl: '../views/invite_people.html',
             url: "/people/invite",
-            resolve: {
-                authenticated: ['$location', '$auth', function($location, $auth) {
-                    if (!$auth.isAuthenticated()) {
-                        return $location.path('/login');
-                    }
-                }]
-            }
-        })
-        .state('profile', {
-            templateUrl: 'views/profile.html',
-            parent: 'dashboard',
-            url: "^/profile",
-            params: {
-                user: {},
-                test: ''
-            },
             resolve: {
                 authenticated: ['$location', '$auth', function($location, $auth) {
                     if (!$auth.isAuthenticated()) {
@@ -73,7 +61,37 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
         .state('network.resources', {
             url: "/resources",
             templateUrl: 'views/network.resources.html'
-        });
+        })
+
+         // User views
+        .state('user', {
+            abstract: true,
+            templateUrl: "views/common/content_small.html",
+            data: {
+                pageTitle: 'User'
+            },
+        })
+        .state('user.profile', {
+            url: "^/profile",
+            templateUrl: "views/user/user.profile.html",
+            data: {
+                pageTitle: 'User Profile'
+            },
+            params: {
+                user: {},
+                test: ''
+            },
+            resolve: {
+                authenticated: ['$location', '$auth', function($location, $auth) {
+                    if (!$auth.isAuthenticated()) {
+                        return $location.path('/login');
+                    }
+                }]
+            }
+        })
+
+    // Set default unmatched url state
+    $urlRouterProvider.otherwise("/dashboard");
 
     $locationProvider
         .html5Mode(true);
@@ -93,6 +111,7 @@ angular
 
     .run(function($rootScope, $state) {
         $rootScope.$state = $state;
+        $rootScope.$on("$stateChangeError", console.log.bind(console)) // for debugging of ui-router
     });
 
 angular

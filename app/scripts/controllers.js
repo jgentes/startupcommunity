@@ -84,24 +84,9 @@ function mainCtrl($http, $scope, $location, $auth, userApi, communityApi, result
         return results;
     };
 
-    $scope.global.geocode = function(address, callback) {
-        var geocoder = new google.maps.Geocoder();
-
-        if (geocoder) {
-            geocoder.geocode({'address': address}, function (results, status) {
-                if (status == google.maps.GeocoderStatus.OK) {
-                    callback([results[0].geometry.location.A, results[0].geometry.location.F]);
-                }
-                else {
-                    console.log("Geocoding failed: " + status);
-                }
-            });
-        }
-    };
-
     var broadcast = function() {
         $scope.$broadcast('sessionReady', true);
-        $location.path('/people');
+        //$location.path('/people');
 
         if ($scope.global.user.key) {
             $mixpanel.people.set({
@@ -138,12 +123,6 @@ function mainCtrl($http, $scope, $location, $auth, userApi, communityApi, result
                                     $scope.global.community = response;
                                     $scope.global.context.community = community;
                                     $scope.global.context.location = location;
-
-                                    $scope.global.geocode($scope.global.findKey($scope.global.community.locations, location, [])[0].profile.name,
-                                        function (coordinates) {
-                                            $scope.global.map = coordinates; // use $broadcast and map-init if this starts failing
-                                            $scope.$apply();
-                                        });
 
                                     broadcast();
                                 } else {
@@ -182,13 +161,6 @@ function PeopleController($scope, $location, userApi, resultApi, $sce) {
                     $scope.global.search = resultApi.setPage($scope.users);
                 } else { $scope.global.search = undefined }
             });
-    };
-
-    $scope.viewUser = function(user) {
-        var thisProfile = user.value;
-        thisProfile["key"] = user.path.key;
-        $scope.global.profile = thisProfile;
-        $location.path('/profile');
     };
 
     function getData() {
