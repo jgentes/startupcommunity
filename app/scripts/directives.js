@@ -68,7 +68,6 @@ function minimalizaMenu($rootScope) {
     };
 };
 
-
 /**
  * sparkline - Directive for Sparkline chart
  */

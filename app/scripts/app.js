@@ -6,7 +6,7 @@
         'analytics.mixpanel',
         'satellizer',
         'apis',
-        'uiGmapgoogle-maps'
+        'ngMap'
     ]);
 })();
 

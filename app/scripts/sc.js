@@ -7,6 +7,7 @@ $(document).ready(function () {
 
     // Add special class to minimalize page elements when screen is less than 768px
     setBodySmall();
+
 });
 
 $(window).bind("load", function () {

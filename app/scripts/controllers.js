@@ -9,7 +9,7 @@ angular
 
 function mainCtrl($http, $scope, $location, $auth, userApi, communityApi, resultApi, $mixpanel) {
 
-    $scope.global = { alert: {}, community: {}, context: {} };
+    $scope.global = { alert: {}, community: {}, context: {}, map: []};
     window.$scope = $scope; // for console testing to avoid $scope = $('body').scope()
 
     $scope.global.logout = function(error) {
@@ -84,6 +84,21 @@ function mainCtrl($http, $scope, $location, $auth, userApi, communityApi, result
         return results;
     };
 
+    $scope.global.geocode = function(address, callback) {
+        var geocoder = new google.maps.Geocoder();
+
+        if (geocoder) {
+            geocoder.geocode({'address': address}, function (results, status) {
+                if (status == google.maps.GeocoderStatus.OK) {
+                    callback([results[0].geometry.location.A, results[0].geometry.location.F]);
+                }
+                else {
+                    console.log("Geocoding failed: " + status);
+                }
+            });
+        }
+    };
+
     var broadcast = function() {
         $scope.$broadcast('sessionReady', true);
         $location.path('/people');
@@ -123,9 +138,12 @@ function mainCtrl($http, $scope, $location, $auth, userApi, communityApi, result
                                     $scope.global.community = response;
                                     $scope.global.context.community = community;
                                     $scope.global.context.location = location;
+                                    //$scope.global.map = { center: "44.0611365, -121.3146444" }; //default until geocode replaces it
 
-                                    $scope.global.map = {center: {latitude: 44.0611364, longitude: -121.3146444 }, zoom: 7 };
-                                    $scope.global.map.options = {disableDefaultUI: true};
+                                    $scope.global.geocode($scope.global.findKey($scope.global.community.locations, location, [])[0].profile.name,
+                                        function (coordinates) {
+                                            $scope.global.map = coordinates;
+                                        });
 
                                     broadcast();
                                 } else {
@@ -144,7 +162,6 @@ function mainCtrl($http, $scope, $location, $auth, userApi, communityApi, result
                 });
         } else broadcast();
 
-        $scope.start_hidden = true;
     };
 
     if ($scope.global.alert) {
