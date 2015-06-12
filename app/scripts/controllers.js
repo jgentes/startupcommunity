@@ -138,11 +138,11 @@ function mainCtrl($http, $scope, $location, $auth, userApi, communityApi, result
                                     $scope.global.community = response;
                                     $scope.global.context.community = community;
                                     $scope.global.context.location = location;
-                                    //$scope.global.map = { center: "44.0611365, -121.3146444" }; //default until geocode replaces it
 
                                     $scope.global.geocode($scope.global.findKey($scope.global.community.locations, location, [])[0].profile.name,
                                         function (coordinates) {
-                                            $scope.global.map = coordinates;
+                                            $scope.global.map = coordinates; // use $broadcast and map-init if this starts failing
+                                            $scope.$apply();
                                         });
 
                                     broadcast();

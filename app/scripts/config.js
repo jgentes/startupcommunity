@@ -13,7 +13,7 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
             url: "/dashboard",
             templateUrl: "views/dashboard.html",
             data: {
-                pageTitle: 'Dashboard',
+                pageTitle: 'Dashboard'
             }
         })
         .state('search', {
@@ -39,8 +39,13 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
             }
         })
         .state('profile', {
-            templateUrl: 'views/user_profile.html',
-            url: "/profile",
+            templateUrl: 'views/profile.html',
+            parent: 'dashboard',
+            url: "^/profile",
+            params: {
+                user: {},
+                test: ''
+            },
             resolve: {
                 authenticated: ['$location', '$auth', function($location, $auth) {
                     if (!$auth.isAuthenticated()) {

@@ -198,6 +198,7 @@ angular
       };
 
       $scope.viewUser = function(user) {
+
           var thisProfile = user.value;
           thisProfile["key"] = user.path.key;
           $scope.global.profile = thisProfile;
