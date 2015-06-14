@@ -1,57 +1,61 @@
 <div class="row">
-    <div class="col-lg-4">
+    <div class="col-lg-12">
         <div class="hpanel hgreen">
             <div class="panel-body">
                 <div class="row">
-                    <div class="col-md-4">
-                        <img class="img-circle m-b m-t-md" ng-src="{{global.profile.profile.avatar || global.profile.profile.linkedin.pictureUrl || '/public/blank_avatar.png'}}" alt="{{::global.profile.profile.name}}">
-                        <h3>{{::global.profile.profile.name | words:0}} {{::global.profile.profile.name | words:1}} {{::global.profile.profile.name | words:2}}
-                        </h3>
-                        <p>
-                            {{::global.profile.profile.linkedin.headline}}
-                        </p>
+                    <div class="col-sm-9">
+                        <div class="col-sm-2">
+                            <img class="img-circle m-b m-t-md" style="height:75px;" ng-src="{{global.profile.profile.avatar || global.profile.profile.linkedin.pictureUrl || '/public/blank_avatar.png'}}" alt="{{::global.profile.profile.name}}">
+                        </div>
+                        <div class="col-sm-10" style="height: 125px;">
+                            <h3>{{::global.profile.profile.name | words:0}} {{::global.profile.profile.name | words:1}} {{::global.profile.profile.name | words:2}}
+                            </h3>
+                            <p>
+                                {{::global.profile.profile.linkedin.headline}}
+                            </p>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-3">
+                                <div class="project-label">Leader of</div>
+                                <small>Vito Company</small>
+                            </div>
+                            <div class="col-sm-3">
+                                <div class="project-label">Founder of</div>
+                                <small>3.0.0</small>
+                            </div>
+                            <div class="col-sm-3">
+                                <div class="project-label">Investor in</div>
+                                <small>16.10.2015</small>
+                            </div>
+                            <div class="col-sm-3">
+                                <div class="project-label">Advisor to</div>
+                                <progressbar value="65" type="warning" class="m-t-xs  full progress-small"></progressbar>
+                            </div>
+                        </div>
                     </div>
-                    <div class="col-md-8">
-                        <div class="pull-right text-right">
-                            <div class="btn-group">
+                    <div class="col-sm-3 project-info">
+                        <div class="project-action m-t-md" style="margin-bottom: 15px;">
+                            <div class="btn-group pull-right">
                                 <a href="#"><i class="fa fa-twitter btn btn-default btn-xs"></i></a>
                                 <a href="{{global.profile.profile.linkedin.publicProfileUrl}}" target="_blank"><i class="fa fa-linkedin btn btn-default btn-xs"></i>
                                 </a>
                             </div>
                         </div>
+
+                        <div class="border-right border-left">
+                            <map id="profile-map" center="Portland, OR" zoom="11" disable-default-u-i="true"></map>
+                        </div>
+
                     </div>
                 </div>
-                <div class="text-muted font-bold m-b-xs" style="  border-bottom: 1px solid #ccc; padding-bottom: 10px; margin-bottom: 0px;">{{::global.profile.profile.linkedin.summary}}</div>
-
-                <div class="border-right border-left">
-                    <section class="profile-map">
-                        <map class="profile-map" center="Portland, OR" zoom="11" disable-default-u-i="true"></map>
-                    </section>
-                </div>
-
-                <div class="panel-body">
-                    <div class="row">
-                        <div class="col-md-6">
-
-                        </div>
-                    </div>
-                </div>
-                <div class="panel-footer contact-footer">
-                    <div class="row">
-                        <div class="col-md-4 border-right">
-                            <div class="contact-stat"><span>Projects: </span> <strong>200</strong></div>
-                        </div>
-                        <div class="col-md-4 border-right">
-                            <div class="contact-stat"><span>Messages: </span> <strong>300</strong></div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="contact-stat"><span>Views: </span> <strong>400</strong></div>
-                        </div>
-                    </div>
-                </div>
-
+            </div>
+            <div class="panel-footer">
+                <h3>Summary</h3>
+                {{::global.profile.profile.linkedin.summary}}
             </div>
         </div>
+    </div>
+
         <div class="col-lg-8">
             <div class="hpanel">
                 <div class="hpanel">

@@ -9,7 +9,7 @@ angular
 
 function mainCtrl($http, $scope, $location, $auth, userApi, communityApi, resultApi, $mixpanel) {
 
-    $scope.global = { alert: {}, community: {}, context: {}, map: []};
+    $scope.global = { alert: {}, community: {}, context: {}};
     window.$scope = $scope; // for console testing to avoid $scope = $('body').scope()
 
     $scope.global.logout = function(error) {
