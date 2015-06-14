@@ -5,15 +5,23 @@
                 <div class="row">
                     <div class="col-sm-9">
                         <div class="col-sm-2">
-                            <img class="img-circle m-b m-t-md" style="height:75px;" ng-src="{{global.profile.profile.avatar || global.profile.profile.linkedin.pictureUrl || '/public/blank_avatar.png'}}" alt="{{::global.profile.profile.name}}">
+                            <img class="img-circle m-b" style="height:75px;" ng-src="{{global.profile.profile.avatar || global.profile.profile.linkedin.pictureUrl || '/public/blank_avatar.png'}}" alt="{{::global.profile.profile.name}}">
                         </div>
                         <div class="col-sm-10" style="height: 125px;">
+                            <div class="project-action" style="margin-right: -15px;">
+                                <div class="btn-group pull-right">
+                                    <a href="#"><i class="fa fa-twitter btn btn-default btn-xs"></i></a>
+                                    <a href="{{global.profile.profile.linkedin.publicProfileUrl}}" target="_blank"><i class="fa fa-linkedin btn btn-default btn-xs"></i>
+                                    </a>
+                                </div>
+                            </div>
                             <h3>{{::global.profile.profile.name | words:0}} {{::global.profile.profile.name | words:1}} {{::global.profile.profile.name | words:2}}
                             </h3>
-                            <p>
+                            <h4>
                                 {{::global.profile.profile.linkedin.headline}}
-                            </p>
+                            </h4>
                         </div>
+
                         <div class="row">
                             <div class="col-sm-3">
                                 <div class="project-label">Leader of</div>
@@ -34,14 +42,6 @@
                         </div>
                     </div>
                     <div class="col-sm-3 project-info">
-                        <div class="project-action m-t-md" style="margin-bottom: 15px;">
-                            <div class="btn-group pull-right">
-                                <a href="#"><i class="fa fa-twitter btn btn-default btn-xs"></i></a>
-                                <a href="{{global.profile.profile.linkedin.publicProfileUrl}}" target="_blank"><i class="fa fa-linkedin btn btn-default btn-xs"></i>
-                                </a>
-                            </div>
-                        </div>
-
                         <div class="border-right border-left">
                             <map id="profile-map" center="Portland, OR" zoom="11" disable-default-u-i="true"></map>
                         </div>
