@@ -103,7 +103,7 @@ function mainCtrl($http, $scope, $location, $auth, userApi, communityApi, result
 
     // Get and set user and location data
     $scope.global.sessionReady = function() {
-        if (!$scope.global.user || !$scope.global.community || !$scope.global.context) {
+        if (!$scope.global.user || $scope.global.community == {} || $scope.global.context == {}) {
             userApi.getProfile()
                 .success(function(response) {
                     if (!response.message) {
