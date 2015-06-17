@@ -7,7 +7,7 @@ angular
     .controller('ProfileController', ProfileController)
     .controller('ErrorPageController', ErrorPageController);
 
-function mainCtrl($http, $scope, $location, $auth, userApi, communityApi, resultApi, $mixpanel) {
+function mainCtrl($scope, $location, $auth, userApi, communityApi, resultApi, $mixpanel) {
 
     $scope.global = { alert: {}, community: {}, context: {}};
     window.$scope = $scope; // for console testing to avoid $scope = $('body').scope()
@@ -125,6 +125,7 @@ function mainCtrl($http, $scope, $location, $auth, userApi, communityApi, result
                         $scope.global.user = response;
                         if (!$scope.global.profile) {
                             $scope.global.profile = response;
+                            $scope.global.profile.activity = {};
                         }
 
                         var community = $scope.global.user.context.community || undefined;

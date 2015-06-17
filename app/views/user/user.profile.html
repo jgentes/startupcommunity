@@ -23,21 +23,37 @@
                         </div>
 
                         <div class="row">
-                            <div class="col-sm-3">
-                                <div class="profile-label">Leader of</div>
-                                <small>3.0.0</small>
+                            <div class="col-sm-3" ng-if="global.profile.activity.leader">
+                                <p class="profile-label font-uppercase" style="font-size: 14px;">Leader:</p>
+                                <ul style="padding-left: 0; margin-left: -5px; margin-top: -8px;">
+                                    <li ng-repeat="item in global.profile.activity.leader" style="list-style: none; display: inline; float: left; padding-left: 5px; padding-top: 3px;">
+                                        <span class="btn btn-xs btn-outline" ng-class="{'btn-danger' : item.type == 'startup', 'btn-info' : item.type == 'network', 'btn-primary' : item.type == 'industry', 'btn-success' : item.type == 'location'}" style="cursor: default;"><i class="fa {{item.profile.icon}}"></i> {{item.profile.name}}</span>
+                                    </li>
+                                </ul>
                             </div>
-                            <div class="col-sm-3">
-                                <div class="profile-label">Founder of</div>
-                                <small>3.0.0</small>
+                            <div class="col-sm-3" ng-if="global.profile.activity.founder">
+                                <p class="profile-label font-uppercase" style="font-size: 14px;">Founder:</p>
+                                <ul style="padding-left: 0; margin-left: -5px; margin-top: -8px;">
+                                    <li ng-repeat="item in global.profile.activity.founder" style="list-style: none; display: inline; float: left; padding-left: 5px; padding-top: 3px;">
+                                        <span class="btn btn-xs btn-outline" ng-class="{'btn-danger' : item.type == 'startup', 'btn-info' : item.type == 'network', 'btn-primary' : item.type == 'industry', 'btn-success' : item.type == 'location'}" style="cursor: default;"><i class="fa {{item.profile.icon}}"></i> {{item.profile.name}}</span>
+                                    </li>
+                                </ul>
                             </div>
-                            <div class="col-sm-3">
-                                <div class="profile-label">Investor in</div>
-                                <small>16.10.2015</small>
+                            <div class="col-sm-3" ng-if="global.profile.activity.investor">
+                                <p class="profile-label font-uppercase" style="font-size: 14px;">Investor:</p>
+                                <ul style="padding-left: 0; margin-left: -5px; margin-top: -8px;">
+                                    <li ng-repeat="item in global.profile.activity.investor" style="list-style: none; display: inline; float: left; padding-left: 5px; padding-top: 3px;">
+                                        <span class="btn btn-xs btn-outline" ng-class="{'btn-danger' : item.type == 'startup', 'btn-info' : item.type == 'network', 'btn-primary' : item.type == 'industry', 'btn-success' : item.type == 'location'}" style="cursor: default;"><i class="fa {{item.profile.icon}}"></i> {{item.profile.name}}</span>
+                                    </li>
+                                </ul>
                             </div>
-                            <div class="col-sm-3">
-                                <div class="profile-label">Advisor to</div>
-                                <progressbar value="65" type="warning" class="m-t-xs  full progress-small"></progressbar>
+                            <div class="col-sm-3" ng-if="global.profile.activity.advisor">
+                                <p class="profile-label font-uppercase" style="font-size: 14px;">Advisor:</p>
+                                <ul style="padding-left: 0; margin-left: -5px; margin-top: -8px;">
+                                    <li ng-repeat="item in global.profile.activity.advisor" style="list-style: none; display: inline; float: left; padding-left: 5px; padding-top: 3px;">
+                                        <span class="btn btn-xs btn-outline" ng-class="{'btn-danger' : item.type == 'startup', 'btn-info' : item.type == 'network', 'btn-primary' : item.type == 'industry', 'btn-success' : item.type == 'location'}" style="cursor: default;"><i class="fa {{item.profile.icon}}"></i> {{item.profile.name}}</span>
+                                    </li>
+                                </ul>
                             </div>
                         </div>
                     </div>
@@ -52,46 +68,9 @@
             <div class="panel-footer">
                 <h3>Summary</h3>
                 <p style="white-space:pre-wrap;" ng-bind-html="::global.profile.profile.linkedin.summary | linky:'_blank'"></p>
+                <h3 ng-show="global.profile.skills">Skills</h3>
+                <li ng-repeat="skill in global.profile.skills" class="label btn-info" style="margin-right: 3px; margin-top: 3px; float:left; padding-bottom: 5px;">{{::skill.name}}</li>
             </div>
-        </div>
-    </div>
-</div>
-<div class="row">
-    <div class="col-md-3">
-        <div class="hpanel hgreen">
-            <div class="panel-body">
-                <div class="table-responsive">
-                    <table class="table table-striped">
-                        <thead>
-                        <tr>
-                            <th>Task</th>
-                            <th>Date</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <tr>
-                            <td>
-                                <span class="text-danger font-bold">Lorem ipsum</span>
-                            </td>
-                            <td>Jul 14, 2013</td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <span class="text-danger font-bold">Lorem ipsum</span>
-                            </td>
-                            <td>Jul 09, 2015</td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <span class="text-danger font-bold">Lorem ipsum</span>
-                            </td>
-                            <td>Jul 24, 2014</td>
-                        </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
         </div>
     </div>
 </div>
