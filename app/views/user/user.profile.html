@@ -51,7 +51,7 @@
             </div>
             <div class="panel-footer">
                 <h3>Summary</h3>
-                {{::global.profile.profile.linkedin.summary}}
+                <p style="white-space:pre-wrap;" ng-bind-html="::global.profile.profile.linkedin.summary | linky:'_blank'"></p>
             </div>
         </div>
     </div>
