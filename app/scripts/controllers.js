@@ -356,7 +356,7 @@ function ProfileController($scope, userApi, communityApi, $location, $auth, $mix
         for (i in activities) {
             search.push(activities[i].key);
         }
-        console.log(activities);
+
         communityApi.getActivity(search)
             .then(function(response) {
                 var activity = {};
