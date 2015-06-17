@@ -48,33 +48,50 @@ function mainCtrl($http, $scope, $location, $auth, userApi, communityApi, result
         $scope.global.alert = undefined;
     };
 
-    $scope.global.findKey = function(obj, key, results, value) {
+    $scope.global.findKey = function(obj, key, values, results, parent) {
         if (!obj) {
             return results;
         }
 
-        var keys = Object.keys(obj);
+        var keys = Object.keys(obj),
+            name = null,
+            subkeys = null,
+            i = 0,
+            j = 0;
 
-        for (var i = 0; (i < keys.length); i++) {
-            var name = keys[i];
-            var subkeys = obj[name];
+        for (i in keys) {
+            name = keys[i];
+            subkeys = obj[name];
 
             if (typeof subkeys === 'object') {
+
                 if (name === key) {
-                    if (value) {
-                        if (obj[name] == value) {
-                            results.push(subkeys);
+                    if (values) {
+                        for (j in subkeys) {
+                            for (k in values) {
+                                if (subkeys[j] == values[k]) {
+                                    results.push(parent);
+                                    console.log("PARENT PUSHED")
+                                    console.log(obj);
+                                }
+                            }
                         }
-                    } else results.push(subkeys);
+                    } else {
+                        results.push(subkeys);
+                        console.log("SUBKEYS PUSHED")
+                    }
                 }
-                $scope.global.findKey(subkeys, key, results, value);
+                var parent = name;
+                $scope.global.findKey(subkeys, key, values, results, parent);
 
             } else {
                 if (name === key) {
                     if (results.indexOf(subkeys) === -1) {
-                        if (value) {
-                            if (obj[name] == value) {
-                                results.push(obj);
+                        if (values) {
+                            for (k in values) {
+                                if (obj[name] == value) {
+                                    results.push(obj);
+                                }
                             }
                         } else results.push(obj);
                     }
@@ -288,7 +305,7 @@ function PeopleController($scope, $location, userApi, resultApi, $sce) {
 
 }
 
-function ProfileController($scope, userApi, $location, $auth, $bootbox, $mixpanel) {
+function ProfileController($scope, userApi, communityApi, $location, $auth, $mixpanel) {
 
     $mixpanel.track('Viewed Profile');
 
@@ -305,7 +322,7 @@ function ProfileController($scope, userApi, $location, $auth, $bootbox, $mixpane
     };
 
     $scope.removeProfile = function(userid, name) {
-        $bootbox.confirm("Are you sure you want to remove " + name + "?", function(result) {
+        notify("Are you sure you want to remove " + name + "?", function(result) { //todo fix notify maybe with sweetalert
             if (result) {
                 userApi.removeProfile(userid, function(response) {
                     $location.path('/people');
@@ -329,9 +346,17 @@ function ProfileController($scope, userApi, $location, $auth, $bootbox, $mixpane
             userApi.getKey()
                 .then(function(response) {
                     $scope.global.user.profile.api_key = response.data;
-                    $bootbox.alert({title: "See our <a href='http://startupcommunity.readme.io?appkey=" + $scope.global.user.profile.api_key + "' target='_blank'>API documentation</a> for help using your key:", message: "<pre>" + $scope.global.user.profile.api_key + "</pre>"});
+                    notify({title: "See our <a href='http://startupcommunity.readme.io?appkey=" + $scope.global.user.profile.api_key + "' target='_blank'>API documentation</a> for help using your key:", message: "<pre>" + $scope.global.user.profile.api_key + "</pre>"});
                 });
-        } else $bootbox.alert({title: "See our <a href='http://startupcommunity.readme.io?appkey=" + $scope.global.user.profile.api_key + "' target='_blank'>API documentation</a> for help using your key:", message: "<pre>" + $scope.global.user.profile.api_key + "</pre>"});
+        } else notify({title: "See our <a href='http://startupcommunity.readme.io?appkey=" + $scope.global.user.profile.api_key + "' target='_blank'>API documentation</a> for help using your key:", message: "<pre>" + $scope.global.user.profile.api_key + "</pre>"});
+    };
+
+    var getActivity = function() {
+        communityApi.getActivity($scope.global.findKey($scope.global.profile.communities, "roles", ["leader", "advisor", "investor"], []))
+            .then(function(response) {
+
+                $scope.global.profile.activity = response;
+            })
     };
 
     $scope.isCityAdvisor = function(status) { //todo needs to be reworked
@@ -438,6 +463,12 @@ function ProfileController($scope, userApi, $location, $auth, $bootbox, $mixpane
                 $scope.global.alert = { type: 'danger', msg: 'Aww, shucks. We ran into this error while unlinking your ' + provider + ' account: ' + response.data.message};
             });
     };
+
+    if (!$scope.global.profile) {
+        $scope.$on('sessionReady', function(event, status) {
+            getActivity();
+        });
+    } else getActivity();
 
 }
 

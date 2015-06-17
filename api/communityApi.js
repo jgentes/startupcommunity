@@ -6,6 +6,7 @@ var config = require('../config.json')[process.env.NODE_ENV || 'development'],
 
 var CommunityApi = function() {
     this.getCommunity = handleGetCommunity;
+    this.getActivity = handleGetActivity;
 };
 
 var convert_state = function(name, to) {
@@ -45,9 +46,55 @@ var convert_state = function(name, to) {
     return returnthis;
 };
 
+function handleGetActivity(req, res) {
+    var keys = JSON.parse(req.query.keys);
+    var searchString = '@path.key: (';
+
+    for (var i in keys) {
+
+        if (i > 0) {
+            searchString += ' OR ';
+        }
+        searchString += keys[i];
+    }
+
+    searchString += ') AND NOT type:user';
+
+    function pullActivity() {
+        var startKey = 0;
+
+        db.newSearchBuilder()
+            .collection(config.db.collections.communities)
+            .limit(100)
+            .offset(startKey)
+            .query(searchString)
+            .then(function (result) {
+                var newresponse = {};
+
+                if (result.body.results.length > 0) {
+                    for (var item in result.body.results) {
+                        newresponse[result.body.results[item].path.key] = result.body.results[item].value;
+                    }
+                    res.status(200).send(newresponse);
+                } else {
+                    console.warn('No keys found!');
+                    res.status(400).send({message: 'Keys not found.'});
+                }
+            })
+            .fail(function(err){
+                console.log("SEARCH FAIL:");
+                console.log(err);
+                res.status(400).send({ message: 'Something went wrong: ' + err});
+            });
+    }
+
+    console.log('Pulling Activity: ' + keys);
+    pullActivity();
+}
+
 function handleGetCommunity(req, res) {
     var community = req.params.community,
-        location = req.params.location;
+        location = req.query.location;
 
     var searchString = '@path.key: ' + (community || location); // grab the primary community object
 
@@ -55,7 +102,7 @@ function handleGetCommunity(req, res) {
     {
         searchString += ' OR (communities.*' + location + '.' + community + '.*:*)'; // grab anything associated with this community in this location
     } else {
-        searchString += ' OR (communities.*' + (location || community) + '.*:*)'; // grab anything in this location
+        searchString += ' OR (communities.*' + community + '.*:*)'; // grab anything in this location
     }
 
     searchString += ' AND NOT (type:startup OR type:user)'
@@ -69,8 +116,7 @@ function handleGetCommunity(req, res) {
           .offset(startKey)
           .query(searchString)
           .then(function (result) {
-              var newitem = {},
-                  newresponse = {
+              var newresponse = {
                       locations: {},
                       industries: {},
                       networks: {}

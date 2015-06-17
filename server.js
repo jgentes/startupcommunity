@@ -65,6 +65,7 @@ app.post('/api/1.0/feedback', userApi.ensureAuthenticated, userApi.feedback);
 
 app.get('/api/1.1/:community/users', userApi.userSearch);
 app.get('/api/1.1/community/:community', communityApi.getCommunity);
+app.get('/api/1.1/community', communityApi.getActivity);
 app.get('/api/1.1/profile', userApi.ensureAuthenticated, userApi.getProfile);
 app.get('/api/1.1/profile/getkey', userApi.ensureAuthenticated, userApi.createAPIToken);
 app.get('/api/1.1/invitePerson', userApi.ensureAuthenticated, userApi.invitePerson);

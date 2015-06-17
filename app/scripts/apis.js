@@ -89,6 +89,10 @@ angular
                       urlString += (location || community);
                   }
                   return $http.get(urlString);
+              },
+              getActivity: function(keys) {
+                  var urlString = '/api/1.1/community?keys=' + encodeURIComponent(JSON.stringify(keys));
+                  return $http.get(urlString);
               }
           };
       })
