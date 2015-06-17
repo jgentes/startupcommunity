@@ -49,42 +49,40 @@ function mainCtrl($http, $scope, $location, $auth, userApi, communityApi, result
     };
 
     $scope.global.findKey = function(obj, key, values, results, parent) {
-        if (!obj) {
-            return results;
-        }
+        if (!obj) { return results; }
 
         var keys = Object.keys(obj),
             name = null,
             subkeys = null,
+            parent,
             i = 0,
-            j = 0;
+            j = 0,
+            k = 0;
 
         for (i in keys) {
             name = keys[i];
             subkeys = obj[name];
 
             if (typeof subkeys === 'object') {
-
                 if (name === key) {
                     if (values) {
                         for (j in subkeys) {
                             for (k in values) {
                                 if (subkeys[j] == values[k]) {
-                                    results.push(parent);
-                                    console.log("PARENT PUSHED")
-                                    console.log(obj);
+                                    results.push({ value : values[k], key : parent});
                                 }
                             }
                         }
                     } else {
                         results.push(subkeys);
-                        console.log("SUBKEYS PUSHED")
                     }
                 }
-                var parent = name;
+
+                parent = name;
                 $scope.global.findKey(subkeys, key, values, results, parent);
 
             } else {
+
                 if (name === key) {
                     if (results.indexOf(subkeys) === -1) {
                         if (values) {
@@ -352,10 +350,22 @@ function ProfileController($scope, userApi, communityApi, $location, $auth, $mix
     };
 
     var getActivity = function() {
-        communityApi.getActivity($scope.global.findKey($scope.global.profile.communities, "roles", ["leader", "advisor", "investor"], []))
-            .then(function(response) {
+        var activities = $scope.global.findKey($scope.global.profile.communities, "roles", ["leader", "advisor", "investor", "founder"], []),
+            search = [];
 
-                $scope.global.profile.activity = response;
+        for (i in activities) {
+            search.push(activities[i].key);
+        }
+        console.log(activities);
+        communityApi.getActivity(search)
+            .then(function(response) {
+                var activity = {};
+                for (j in activities) {
+                    activity[activities[j].value] = activity[activities[j].value] || {};
+                    activity[activities[j].value][activities[j].key] = response.data[activities[j].key];
+                }
+
+                $scope.global.profile.activity = activity;
             })
     };
 
