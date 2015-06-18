@@ -7,7 +7,7 @@ angular
     .controller('ProfileController', ProfileController)
     .controller('ErrorPageController', ErrorPageController);
 
-function mainCtrl($scope, $location, $auth, userApi, communityApi, resultApi, $mixpanel) {
+function mainCtrl($scope, $state, $location, $auth, userApi, communityApi, resultApi, $mixpanel) {
 
     $scope.global = { alert: {}, community: {}, context: {}};
     window.$scope = $scope; // for console testing to avoid $scope = $('body').scope()
@@ -38,10 +38,8 @@ function mainCtrl($scope, $location, $auth, userApi, communityApi, resultApi, $m
             });
     };
 
-    $scope.editProfile = function() { //todo change this to $state.go('user.profile', { user: $scope.global.user });
-        $scope.global.profile = $scope.global.user;
-        $location.path('/profile');
-        //$route.reload(); remove if not needed
+    $scope.editProfile = function() {
+        $state.go('user.profile', { user: $scope.global.user });
     };
 
     $scope.closeAlert = function() {
@@ -123,10 +121,6 @@ function mainCtrl($scope, $location, $auth, userApi, communityApi, resultApi, $m
                 .success(function(response) {
                     if (!response.message) {
                         $scope.global.user = response;
-                        if (!$scope.global.profile) {
-                            $scope.global.profile = response;
-                            $scope.global.profile.activity = {};
-                        }
 
                         var community = $scope.global.user.context.community || undefined;
                         var location = $scope.global.user.context.location || undefined;
@@ -304,7 +298,7 @@ function PeopleController($scope, $location, userApi, resultApi, $sce) {
 
 }
 
-function ProfileController($scope, userApi, communityApi, $location, $auth, $mixpanel) {
+function ProfileController($scope, $state, userApi, communityApi, $location, $auth, $mixpanel) {
 
     $mixpanel.track('Viewed Profile');
 
@@ -351,7 +345,7 @@ function ProfileController($scope, userApi, communityApi, $location, $auth, $mix
     };
 
     var getActivity = function() {
-        var activities = $scope.global.findKey($scope.global.profile.communities, "roles", ["leader", "advisor", "investor", "founder"], []),
+        var activities = $scope.global.findKey($state.params.user.communities, "roles", ["leader", "advisor", "investor", "founder"], []),
             search = [];
 
         for (i in activities) {
@@ -366,32 +360,32 @@ function ProfileController($scope, userApi, communityApi, $location, $auth, $mix
                     activity[activities[j].value][activities[j].key] = response.data[activities[j].key];
                 }
 
-                $scope.global.profile.activity = activity;
+                $state.params.user.profile.activity = activity;
             })
     };
 
     $scope.isCityAdvisor = function(status) { //todo needs to be reworked
-        userApi.setCityAdvisor($scope.global.profile.key, $scope.global.user.context, 'cityAdvisor', status, function(response, rescode) {
+        userApi.setCityAdvisor($state.params.user.key, $scope.global.user.context, 'cityAdvisor', status, function(response, rescode) {
             var sameuser = false;
             var cluster;
             if (rescode == 201) {
-                if ($scope.global.profile.key == $scope.global.user.key) { sameuser = true; }
-                if ($scope.global.profile.cities[$scope.global.user.context].cityAdvisor === undefined) { //need to create key
-                    $scope.global.profile.cities[$scope.global.user.context]['cityAdvisor'] = false;
+                if ($state.params.user.key == $scope.global.user.key) { sameuser = true; }
+                if ($state.params.user.cities[$scope.global.user.context].cityAdvisor === undefined) { //need to create key
+                    $state.params.user.cities[$scope.global.user.context]['cityAdvisor'] = false;
                 }
 
-                $scope.global.profile.cities[$scope.global.user.context].cityAdvisor = status;
+                $state.params.user.cities[$scope.global.user.context].cityAdvisor = status;
 
                 for (cluster in $scope.global.community.location.clusters) {
                     if (status === true) {
-                        if ($scope.global.profile.cities[$scope.global.user.context].clusters[cluster]) {
-                            $scope.global.profile.cities[$scope.global.user.context].clusters[cluster].advisorStatus = true;
+                        if ($state.params.user.cities[$scope.global.user.context].clusters[cluster]) {
+                            $state.params.user.cities[$scope.global.user.context].clusters[cluster].advisorStatus = true;
                         }
                     } else {
-                        if (!$scope.global.profile.cities[$scope.global.user.context].clusters[cluster].roles || ($scope.global.profile.cities[$scope.global.user.context].clusters[cluster].roles.indexOf("Advisor") < 0)) {
-                            $scope.global.profile.cities[$scope.global.user.context].clusters[cluster].advisorStatus = false;
+                        if (!$state.params.user.cities[$scope.global.user.context].clusters[cluster].roles || ($state.params.user.cities[$scope.global.user.context].clusters[cluster].roles.indexOf("Advisor") < 0)) {
+                            $state.params.user.cities[$scope.global.user.context].clusters[cluster].advisorStatus = false;
                         } else {
-                            $scope.global.profile.cities[$scope.global.user.context].clusters[cluster].advisorStatus = true;
+                            $state.params.user.cities[$scope.global.user.context].clusters[cluster].advisorStatus = true;
                         }
                     }
                 }
@@ -407,20 +401,20 @@ function ProfileController($scope, userApi, communityApi, $location, $auth, $mix
     };
 
     $scope.setRole = function(cluster, role, status) { //todo needs to be reworked
-        userApi.setRole($scope.global.profile.key, $scope.global.user.context, cluster, role, status, function(response, rescode) {
+        userApi.setRole($state.params.user.key, $scope.global.user.context, cluster, role, status, function(response, rescode) {
             var sameuser = false;
             if (rescode == 201) {
-                if ($scope.global.profile.key == $scope.global.user.key) { sameuser = true; }
-                if ($scope.global.profile.cities[$scope.global.user.context].clusters === undefined) { //need to create clusters key
-                    $scope.global.profile.cities[$scope.global.user.context]['clusters'] = {};
+                if ($state.params.user.key == $scope.global.user.key) { sameuser = true; }
+                if ($state.params.user.cities[$scope.global.user.context].clusters === undefined) { //need to create clusters key
+                    $state.params.user.cities[$scope.global.user.context]['clusters'] = {};
                 }
-                if ($scope.global.profile.cities[$scope.global.user.context].clusters[cluster] === undefined) { //need to create the cluster in user profile
-                    $scope.global.profile.cities[$scope.global.user.context].clusters[cluster] = { "roles": [] };
+                if ($state.params.user.cities[$scope.global.user.context].clusters[cluster] === undefined) { //need to create the cluster in user profile
+                    $state.params.user.cities[$scope.global.user.context].clusters[cluster] = { "roles": [] };
                 }
-                if ($scope.global.profile.cities[$scope.global.user.context].clusters[cluster].roles === undefined) { //this can happen due to temp local scope variables
-                    $scope.global.profile.cities[$scope.global.user.context].clusters[cluster].roles = [];
+                if ($state.params.user.cities[$scope.global.user.context].clusters[cluster].roles === undefined) { //this can happen due to temp local scope variables
+                    $state.params.user.cities[$scope.global.user.context].clusters[cluster].roles = [];
                 }
-                var thiscluster = $scope.global.profile.cities[$scope.global.user.context].clusters[cluster];
+                var thiscluster = $state.params.user.cities[$scope.global.user.context].clusters[cluster];
 
                 if (status === true) {
                     if (thiscluster.roles.indexOf(role) < 0) {
@@ -432,7 +426,7 @@ function ProfileController($scope, userApi, communityApi, $location, $auth, $mix
                     } // else they do not have the role, no action needed
                 }
 
-                $scope.global.profile.cities[$scope.global.user.context].clusters[cluster] = thiscluster;
+                $state.params.user.cities[$scope.global.user.context].clusters[cluster] = thiscluster;
                 if (sameuser) { $scope.global.user.cities[$scope.global.user.context].clusters[cluster] = thiscluster; }
 
             } else {
@@ -474,8 +468,9 @@ function ProfileController($scope, userApi, communityApi, $location, $auth, $mix
                 $scope.global.alert = { type: 'danger', msg: 'Aww, shucks. We ran into this error while unlinking your ' + provider + ' account: ' + response.data.message};
             });
     };
-
-    if (!$scope.global.profile) {
+    console.log($state.params.user.profile.activity)
+    if (!$state.params.user.profile.activity) {
+        console.log('no activity!')
         $scope.$on('sessionReady', function(event, status) {
             getActivity();
         });

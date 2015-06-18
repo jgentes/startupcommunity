@@ -122,4 +122,4 @@ angular
                   return $scope;
               }
           };
-      });
+      })

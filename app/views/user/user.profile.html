@@ -5,52 +5,52 @@
                 <div class="row">
                     <div class="col-sm-9">
                         <div class="col-sm-2 col-lg-1">
-                            <img class="img-circle m-b" style="height:75px;" ng-src="{{global.profile.profile.avatar || global.profile.profile.linkedin.pictureUrl || '/public/blank_avatar.png'}}" alt="{{::global.profile.profile.name}}">
+                            <img class="img-circle m-b" style="height:75px;" ng-src="{{$state.params.user.profile.avatar || $state.params.user.profile.linkedin.pictureUrl || '/public/blank_avatar.png'}}" alt="{{::$state.params.user.profile.name}}">
                         </div>
                         <div class="col-sm-10 col-lg-11" style="height: 100px;">
                             <div class="project-action" style="margin-right: -15px;">
                                 <div class="btn-group pull-right">
                                     <a href="#"><i class="fa fa-twitter btn btn-default btn-xs"></i></a>
-                                    <a href="{{global.profile.profile.linkedin.publicProfileUrl}}" target="_blank"><i class="fa fa-linkedin btn btn-default btn-xs"></i>
+                                    <a href="{{$state.params.user.profile.linkedin.publicProfileUrl}}" target="_blank"><i class="fa fa-linkedin btn btn-default btn-xs"></i>
                                     </a>
                                 </div>
                             </div>
-                            <h3>{{::global.profile.profile.name | words:0}} {{::global.profile.profile.name | words:1}} {{::global.profile.profile.name | words:2}}
+                            <h3>{{::$state.params.user.profile.name | words:0}} {{::$state.params.user.profile.name | words:1}} {{::$state.params.user.profile.name | words:2}}
                             </h3>
                             <h4>
-                                {{::global.profile.profile.linkedin.headline}}
+                                {{::$state.params.user.profile.linkedin.headline}}
                             </h4>
                         </div>
 
                         <div class="row">
-                            <div class="col-sm-3" ng-if="global.profile.activity.leader">
+                            <div class="col-sm-3" ng-if="$state.params.user.activity.leader">
                                 <p class="profile-label font-uppercase" style="font-size: 14px;">Leader:</p>
                                 <ul style="padding-left: 0; margin-left: -5px; margin-top: -8px;">
-                                    <li ng-repeat="item in global.profile.activity.leader" style="list-style: none; display: inline; float: left; padding-left: 5px; padding-top: 3px;">
+                                    <li ng-repeat="item in $state.params.user.activity.leader" style="list-style: none; display: inline; float: left; padding-left: 5px; padding-top: 3px;">
                                         <a href="{{'/' + item.key}}" class="btn btn-xs btn-outline" ng-class="{'btn-danger' : item.type == 'startup', 'btn-info' : item.type == 'network', 'btn-primary' : item.type == 'industry', 'btn-success' : item.type == 'location'}"><i class="fa {{item.profile.icon}}"></i> {{item.profile.name}}</a>
                                     </li>
                                 </ul>
                             </div>
-                            <div class="col-sm-3" ng-if="global.profile.activity.founder">
+                            <div class="col-sm-3" ng-if="$state.params.user.activity.founder">
                                 <p class="profile-label font-uppercase" style="font-size: 14px;">Founder:</p>
                                 <ul style="padding-left: 0; margin-left: -5px; margin-top: -8px;">
-                                    <li ng-repeat="item in global.profile.activity.founder" style="list-style: none; display: inline; float: left; padding-left: 5px; padding-top: 3px;">
+                                    <li ng-repeat="item in $state.params.user.activity.founder" style="list-style: none; display: inline; float: left; padding-left: 5px; padding-top: 3px;">
                                         <a href="{{'/' + item.key}}" class="btn btn-xs btn-outline" ng-class="{'btn-danger' : item.type == 'startup', 'btn-info' : item.type == 'network', 'btn-primary' : item.type == 'industry', 'btn-success' : item.type == 'location'}"><i class="fa {{item.profile.icon}}"></i> {{item.profile.name}}</a>
                                     </li>
                                 </ul>
                             </div>
-                            <div class="col-sm-3" ng-if="global.profile.activity.investor">
+                            <div class="col-sm-3" ng-if="$state.params.user.activity.investor">
                                 <p class="profile-label font-uppercase" style="font-size: 14px;">Investor:</p>
                                 <ul style="padding-left: 0; margin-left: -5px; margin-top: -8px;">
-                                    <li ng-repeat="item in global.profile.activity.investor" style="list-style: none; display: inline; float: left; padding-left: 5px; padding-top: 3px;">
+                                    <li ng-repeat="item in $state.params.user.activity.investor" style="list-style: none; display: inline; float: left; padding-left: 5px; padding-top: 3px;">
                                         <a href="{{'/' + item.key}}" class="btn btn-xs btn-outline" ng-class="{'btn-danger' : item.type == 'startup', 'btn-info' : item.type == 'network', 'btn-primary' : item.type == 'industry', 'btn-success' : item.type == 'location'}"><i class="fa {{item.profile.icon}}"></i> {{item.profile.name}}</a>
                                     </li>
                                 </ul>
                             </div>
-                            <div class="col-sm-3" ng-if="global.profile.activity.advisor">
+                            <div class="col-sm-3" ng-if="$state.params.user.activity.advisor">
                                 <p class="profile-label font-uppercase" style="font-size: 14px;">Advisor:</p>
                                 <ul style="padding-left: 0; margin-left: -5px; margin-top: -8px;">
-                                    <li ng-repeat="item in global.profile.activity.advisor" style="list-style: none; display: inline; float: left; padding-left: 5px; padding-top: 3px;">
+                                    <li ng-repeat="item in $state.params.user.activity.advisor" style="list-style: none; display: inline; float: left; padding-left: 5px; padding-top: 3px;">
                                         <a href="{{'/' + item.key}}" class="btn btn-xs btn-outline" ng-class="{'btn-danger' : item.type == 'startup', 'btn-info' : item.type == 'network', 'btn-primary' : item.type == 'industry', 'btn-success' : item.type == 'location'}"><i class="fa {{item.profile.icon}}"></i> {{item.profile.name}}</a>
                                     </li>
                                 </ul>
@@ -67,9 +67,9 @@
             </div>
             <div class="panel-footer">
                 <h3>Summary</h3>
-                <p style="white-space:pre-wrap;" ng-bind-html="::global.profile.profile.linkedin.summary | linky:'_blank'"></p>
-                <h3 ng-show="global.profile.skills">Skills</h3>
-                <li ng-repeat="skill in global.profile.skills" class="label btn-info" style="margin-right: 3px; margin-top: 3px; float:left; padding-bottom: 5px;">{{::skill.name}}</li>
+                <p style="white-space:pre-wrap;" ng-bind-html="::$state.params.user.profile.linkedin.summary | linky:'_blank'"></p>
+                <h3 ng-show="$state.params.user.skills">Skills</h3>
+                <li ng-repeat="skill in $state.params.user.skills" class="label btn-info" style="margin-right: 3px; margin-top: 3px; float:left; padding-bottom: 5px;">{{::skill.name}}</li>
             </div>
         </div>
     </div>

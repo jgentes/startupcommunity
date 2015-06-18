@@ -47,6 +47,13 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
             url: "/login",
             templateUrl: 'views/login.html'
         })
+        .state('people', {
+            url: "/people",
+            templateUrl: 'views/common/people.html',
+            data: {
+                pageTitle: 'People'
+            }
+        })
 
         .state('network', {
             templateUrl: 'views/network.html',
