@@ -7,6 +7,7 @@ var config = require('../config.json')[process.env.NODE_ENV || 'development'],
 var CommunityApi = function() {
     this.getCommunity = handleGetCommunity;
     this.getActivity = handleGetActivity;
+    this.getKey = handleGetKey;
 };
 
 var convert_state = function(name, to) {
@@ -153,6 +154,35 @@ function handleGetCommunity(req, res) {
 
     console.log('Pulling ' + community);
     pullCommunity();
+
+};
+
+function handleGetKey(req, res) {
+    var key = req.params.key;
+    var searchString = '@path.key: ' + key;
+
+    function pullKey() {
+        db.newSearchBuilder()
+            .collection(config.db.collections.communities)
+            .limit(1)
+            .query(searchString)
+            .then(function (result) {
+                if (result.body.results.length > 0) {
+                    var newresult = result.body.results[0].value;
+                    res.status(200).send(newresult);
+                } else {
+                    console.warn('Key not found!');
+                    res.status(400).send({message: 'Key not found.'});
+                }
+            })
+            .fail(function(err){
+                console.log("SEARCH FAIL:" + err);
+                res.status(400).send({ message: 'Something went wrong: ' + err});
+            });
+    }
+
+    console.log('Pulling ' + key);
+    pullKey();
 
 };
 

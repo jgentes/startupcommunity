@@ -63,6 +63,7 @@ app.put('/api/1.0/profile/role', userApi.ensureAuthenticated, userApi.setRole);
 app.post('/api/1.0/profile/remove/:userid', userApi.ensureAuthenticated, userApi.removeProfile);
 app.post('/api/1.0/feedback', userApi.ensureAuthenticated, userApi.feedback);
 
+app.get('/api/1.1/key/:key', communityApi.getKey);
 app.get('/api/1.1/:community/users', userApi.userSearch);
 app.get('/api/1.1/community/:community', communityApi.getCommunity);
 app.get('/api/1.1/community', communityApi.getActivity);

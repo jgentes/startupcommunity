@@ -14,6 +14,9 @@ $(window).bind("load", function () {
 
     // Remove splash screen after load
     $('.splash').css('display', 'none');
+    setTimeout(function() {
+        $('footer').css('display', 'block');
+    }, 1000)
 
 })
 

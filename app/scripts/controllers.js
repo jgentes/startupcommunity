@@ -38,7 +38,7 @@ function mainCtrl($scope, $location, $auth, userApi, communityApi, resultApi, $m
             });
     };
 
-    $scope.editProfile = function() {
+    $scope.editProfile = function() { //todo change this to $state.go('user.profile', { user: $scope.global.user });
         $scope.global.profile = $scope.global.user;
         $location.path('/profile');
         //$route.reload(); remove if not needed

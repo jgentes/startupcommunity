@@ -93,6 +93,10 @@ angular
               getActivity: function(keys) {
                   var urlString = '/api/1.1/community?keys=' + encodeURIComponent(JSON.stringify(keys));
                   return $http.get(urlString);
+              },
+              getKey: function(key) {
+                  var urlString = '/api/1.1/key/' + key;
+                  return $http.get(urlString);
               }
           };
       })
@@ -118,4 +122,4 @@ angular
                   return $scope;
               }
           };
-      })
+      });

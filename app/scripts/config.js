@@ -6,6 +6,7 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
     $stateProvider
 
         // Dashboard - Main page
+
         .state('dashboard', {
             url: "/dashboard",
             templateUrl: "views/dashboard.html",
@@ -69,17 +70,15 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
             templateUrl: "views/common/content_small.html",
             data: {
                 pageTitle: 'User'
-            },
+            }
         })
         .state('user.profile', {
-            url: "^/profile",
             templateUrl: "views/user/user.profile.html",
             data: {
                 pageTitle: 'User Profile'
             },
             params: {
-                user: {},
-                test: ''
+                user: {}
             },
             resolve: {
                 authenticated: ['$location', '$auth', function($location, $auth) {
@@ -88,10 +87,25 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                     }
                 }]
             }
-        })
+        });
+
 
     // Set default unmatched url state
-    $urlRouterProvider.otherwise("/dashboard");
+    $urlRouterProvider.otherwise(
+        function($injector, $location) {
+            $injector.invoke(['$state', '$location', 'communityApi', function($state, $location, communityApi) {
+                var path = $location.url().substr(1);
+                communityApi.getKey(path)
+                    .then(function(response) {
+
+                        switch (response.data.type) {
+                            case "user":
+                                $state.go('user.profile', { user : response.data});
+                        }
+                    });
+                //$state.go('dashboard');
+            }]);
+        });
 
     $locationProvider
         .html5Mode(true);
