@@ -21,7 +21,7 @@
         <div class="container side-menu" style="border-bottom: 1px solid #eee; margin-left: -20px;">
             <div class="row side-menu">
                 <div class="col-sm-3">
-                    <a ui-sref="user.profile({user: global.user})"><img class="img-circle m-b" ng-src="{{global.user.profile.avatar || global.user.profile.linkedin.pictureUrl || '/public/blank_avatar.png'}}" alt="{{global.user.profile.name}}" style="height: 40px; width: 40px; "/>
+                    <a ui-sref="user.profile({user: global.user})"><img class="img-circle m-b" ng-src="{{global.user.profile.avatar || global.user.profile.linkedin.pictureUrl || 'images/blank_avatar.png'}}" alt="{{global.user.profile.name}}" style="height: 40px; width: 40px; "/>
                 </div>
                 <div class="col-sm-9">
                     <p>{{global.user.profile.name}}&nbsp;&nbsp;</p>

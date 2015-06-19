@@ -34,8 +34,7 @@
     "mixpanel": "~2.5.1",
     "angular-mixpanel": "~1.1.0",
     "ngmap": "~1.7.11",
-    "angular-sanitize": "~1.4.1",
-    "lodash": "~3.9.3"
+    "angular-sanitize": "~1.4.1"
   },
   "resolutions": {
     "angular": "1.4.1",

@@ -1,5 +1,5 @@
 <td class="text-center" style="width: 58px; vertical-align: top; height: 80px;">
-    <a ui-sref="user.profile({user: global.user, test: 'test'})" title="View {{::item.value.profile.name | words:0}}'s Profile"><img style="height:58px" ng-src="{{item.value.profile.linkedin.pictureUrl || item.value.profile.avatar}}" fallback-src="{{'/public/blank_avater.png'}}" alt="{{::item.value.profile.name}}" class="widget-image img-circle pull-left"/></a>
+    <a ui-sref="user.profile({user: global.user, test: 'test'})" title="View {{::item.value.profile.name | words:0}}'s Profile"><img style="height:58px" ng-src="{{item.value.profile.linkedin.pictureUrl || item.value.profile.avatar || 'images/blank_avatar.png'}}" alt="{{::item.value.profile.name}}" class="widget-image img-circle pull-left"/></a>
 </td>
 <td style="vertical-align: middle; height: 80px;">
     <a ui-sref="user.profile({user: item})" title="View {{::item.value.profile.name | words:0}}'s Profile"><strong>{{::item.value.profile.name}} </strong></a>

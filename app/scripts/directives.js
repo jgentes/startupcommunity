@@ -10,7 +10,6 @@ angular
     .directive('animatePanel', animatePanel)
     .directive('randomQuote', randomQuote)
     .directive('backToTop', backToTop)
-    .directive('fallbackSrc', fallbackSrc)
     .filter('safe_html', safeHTML)
     .filter('words', words)
 
@@ -232,20 +231,6 @@ function backToTop() {
         link: function (scope, element, attr) {
             element.click( function (e) {
                 $('body').scrollTop(0);
-            });
-        }
-    };
-}
-
-function fallbackSrc() {
-    return {
-        restrict: 'A',
-        link: function(scope, element, attrs){
-            if(_.isEmpty(attrs.ngSrc)){
-                element.attr('src', attrs.fallbackSrc);
-            }
-            element.bind('error', function(){
-                element.attr('src', attrs.fallbackSrc);
             });
         }
     };
