@@ -7,7 +7,7 @@
                         <div class="col-sm-2 col-lg-1">
                             <img class="img-circle m-b" style="height:75px;" ng-src="{{$state.params.user.profile.avatar || $state.params.user.profile.linkedin.pictureUrl || '/public/blank_avatar.png'}}" alt="{{::$state.params.user.profile.name}}">
                         </div>
-                        <div class="col-sm-10 col-lg-11" style="height: 100px;">
+                        <div class="col-sm-10 col-lg-11">
                             <div class="project-action" style="margin-right: -15px;">
                                 <div class="btn-group pull-right">
                                     <a href="#"><i class="fa fa-twitter btn btn-default btn-xs"></i></a>
@@ -22,7 +22,7 @@
                             </h4>
                         </div>
 
-                        <div class="row">
+                        <div class="row" style="padding-bottom: 15px;">
                             <div class="col-xs-3 col-sm-3 no-overflow"
                                  ng-if="$state.params.user.profile.activity.leader">
                                 <p class="profile-label font-uppercase" style="font-size: 14px;">Leader:</p>

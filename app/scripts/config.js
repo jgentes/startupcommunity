@@ -49,7 +49,7 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
         })
         .state('people', {
             url: "/people",
-            templateUrl: 'views/common/people.html',
+            templateUrl: 'views/people/people.html',
             data: {
                 pageTitle: 'People'
             }

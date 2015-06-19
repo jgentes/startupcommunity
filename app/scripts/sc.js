@@ -14,11 +14,12 @@ $(window).bind("load", function () {
 
     // Remove splash screen after load
     $('.splash').css('display', 'none');
+
     setTimeout(function() {
         $('footer').css('display', 'block');
     }, 1000)
 
-})
+});
 
 $(window).bind("resize click", function () {
 
@@ -29,7 +30,13 @@ $(window).bind("resize click", function () {
     setTimeout(function () {
         fixWrapperHeight();
     }, 300);
-})
+});
+
+$('.content').load(function() {
+    setTimeout(function () {
+        fixWrapperHeight();
+    }, 300);
+});
 
 function fixWrapperHeight() {
 

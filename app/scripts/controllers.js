@@ -469,12 +469,7 @@ function ProfileController($scope, $state, userApi, communityApi, $location, $au
             });
     };
 
-    if (!$state.params.user.profile.activity) {
-
-        $scope.$on('sessionReady', function(event, status) {
-            getActivity();
-        });
-    } else getActivity();
+   getActivity();
 
 }
 
