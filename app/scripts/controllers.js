@@ -468,9 +468,9 @@ function ProfileController($scope, $state, userApi, communityApi, $location, $au
                 $scope.global.alert = { type: 'danger', msg: 'Aww, shucks. We ran into this error while unlinking your ' + provider + ' account: ' + response.data.message};
             });
     };
-    console.log($state.params.user.profile.activity)
+
     if (!$state.params.user.profile.activity) {
-        console.log('no activity!')
+
         $scope.$on('sessionReady', function(event, status) {
             getActivity();
         });
