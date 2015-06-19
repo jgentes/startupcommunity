@@ -11,7 +11,7 @@ angular
     .directive('randomQuote', randomQuote)
     .directive('backToTop', backToTop)
     .filter('safe_html', safeHTML)
-    .filter('words', words)
+    .filter('words', words);
 
 /**
  * pageTitle - Directive for set Page title - mata title
@@ -31,7 +31,7 @@ function pageTitle($rootScope, $timeout) {
             $rootScope.$on('$stateChangeStart', listener);
         }
     }
-};
+}
 
 /**
  * sideNavigation - Directive for run metisMenu on sidebar navigation
@@ -46,7 +46,7 @@ function sideNavigation($timeout) {
             });
         }
     };
-};
+}
 
 /**
  * minimalizaSidebar - Directive for minimalize sidebar
@@ -66,7 +66,7 @@ function minimalizaMenu($rootScope) {
             }
         }
     };
-};
+}
 
 /**
  * sparkline - Directive for Sparkline chart
@@ -90,7 +90,7 @@ function sparkline() {
             };
         }
     }
-};
+}
 
 /**
  * icheck - Directive for custom checkbox icheck
@@ -164,7 +164,7 @@ function panelTools($timeout) {
 
         }
     };
-};
+}
 
 
 /**

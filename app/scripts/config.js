@@ -47,13 +47,6 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
             url: "/login",
             templateUrl: 'views/login.html'
         })
-        .state('people', {
-            url: "/people",
-            templateUrl: 'views/people/people.html',
-            data: {
-                pageTitle: 'People'
-            }
-        })
 
         .state('network', {
             templateUrl: 'views/network.html',
@@ -71,16 +64,23 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
             templateUrl: 'views/network.resources.html'
         })
 
-         // User views
-        .state('user', {
+         // People views
+        .state('people', {
             abstract: true,
             templateUrl: "views/common/content_small.html",
             data: {
                 pageTitle: 'User'
             }
         })
-        .state('user.profile', {
-            templateUrl: "views/user/user.profile.html",
+        .state('people.dashboard', {
+            url: "/people",
+            templateUrl: 'views/people/people.dashboard.html',
+            data: {
+                pageTitle: 'People'
+            }
+        })
+        .state('people.profile', {
+            templateUrl: "views/people/people.profile.html",
             data: {
                 pageTitle: 'User Profile'
             },
@@ -104,10 +104,9 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                 var path = $location.url().substr(1);
                 communityApi.getKey(path)
                     .then(function(response) {
-
                         switch (response.data.type) {
                             case "user":
-                                $state.go('user.profile', { user : response.data});
+                                $state.go('people.profile', { user : response.data});
                         }
                     });
                 //$state.go('dashboard');
@@ -117,7 +116,7 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
     $locationProvider
         .html5Mode(true);
 
-};
+}
 
 angular
     .module('startupcommunity')

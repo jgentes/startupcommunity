@@ -147,7 +147,8 @@ function handleGetCommunity(req, res) {
               }
           })
           .fail(function(err){
-              console.log("SEARCH FAIL:" + err);
+              console.log("SEARCH FAIL:");
+                console.warn(err);
               res.status(400).send({ message: 'Something went wrong: ' + err});
           });
     }
@@ -155,20 +156,16 @@ function handleGetCommunity(req, res) {
     console.log('Pulling ' + community);
     pullCommunity();
 
-};
+}
 
 function handleGetKey(req, res) {
-    var key = req.params.key;
-    var searchString = '@path.key: ' + key;
+    console.log('pulling ' + req.params.key);
 
     function pullKey() {
-        db.newSearchBuilder()
-            .collection(config.db.collections.communities)
-            .limit(1)
-            .query(searchString)
+        db.get(config.db.collections.communities, req.params.key)
             .then(function (result) {
-                if (result.body.results.length > 0) {
-                    var newresult = result.body.results[0].value;
+                if (result.statusCode == 200) {
+                    var newresult = result.body;
                     res.status(200).send(newresult);
                 } else {
                     console.warn('Key not found!');
@@ -176,14 +173,13 @@ function handleGetKey(req, res) {
                 }
             })
             .fail(function(err){
-                console.log("SEARCH FAIL:" + err);
+                console.log("SEARCH FAIL:");
+                console.warn(err);
                 res.status(400).send({ message: 'Something went wrong: ' + err});
             });
     }
 
-    console.log('Pulling ' + key);
     pullKey();
-
-};
+}
 
 module.exports = CommunityApi;
