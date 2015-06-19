@@ -3,7 +3,7 @@
         <div class="col-lg-12" style="padding-left: 0; padding-right: 0;">
             <div class="col-md-4 animated-panel zoomIn">
             <!-- Navigation Block -->
-                <div class="hpanel">
+                <div class="hpanel hgreen">
                     <div class="panel-footer top" style="font-size: 17px;">
                         <strong>Role</strong> Filters
                         <i ng-show="loadingRole" class="fa fa-refresh fa-spin pull-right" style="padding: 4px; color: #aaa;"></i>
@@ -21,17 +21,17 @@
                             </li>
                             <li ng-class="{'active':global.context.selectedRole.indexOf('Founder') >= 0}" ng-click="filterRole('Founder')">
                                 <a href="javascript:void(0)">
-                                    <i class="fa fa-flag text-danger"></i> <strong>Founders</strong>
+                                    <i class="fa fa-flag text-danger"></i> Founders
                                 </a>
                             </li>
                             <li ng-class="{'active':global.context.selectedRole.indexOf('Advisor') >= 0}" ng-click="filterRole('Advisor')">
                                 <a href="javascript:void(0)">
-                                    <i class="fa fa-graduation-cap text-info"></i> <strong>Advisors</strong>
+                                    <i class="fa fa-graduation-cap text-info"></i> Advisors
                                 </a>
                             </li>
                             <li ng-class="{'active':global.context.selectedRole.indexOf('Investor') >= 0}" ng-click="filterRole('Investor')">
                                 <a href="javascript:void(0)">
-                                    <i class="fa fa-leaf text-success"></i> <strong>Investors</strong>
+                                    <i class="fa fa-leaf text-success"></i> Investors
                                 </a>
                             </li>
                         </ul>
@@ -39,7 +39,7 @@
                 </div>
             </div>
             <div class="col-md-4 animated-panel zoomIn">
-                <div class="hpanel">
+                <div class="hpanel hnavyblue">
                     <div class="panel-footer top" style="font-size: 17px;">
                         <strong>Cluster</strong> Filters
                         <i ng-show="loadingIndustry" class="fa fa-refresh fa-spin pull-right" style="padding: 4px; color: #aaa;"></i>
@@ -53,14 +53,14 @@
                                 <hr style="margin: 10px 0 10px 0;">
                             </li>
                             <li ng-repeat="industry in global.findKey(global.community.industries, global.context.location, null, [])" ng-class="{'active':global.context.selectedIndustry.indexOf(industry) >= 0}" ng-click="filterIndustry(industry);">
-                                <a><i class="fa {{industry.profile.icon}}"></i> <strong>{{industry.profile.name}}</strong></a>
+                                <a><i class="fa {{industry.profile.icon}}"></i> {{industry.profile.name}}</a>
                             </li>
                         </ul>
                     </div>
                 </div>
             </div>
             <div class="col-md-4 animated-panel zoomIn">
-                <div class="hpanel ">
+                <div class="hpanel hblue">
                     <div class="panel-footer top" style="font-size: 17px;">
                         <strong>Network</strong> Filters
                         <i ng-show="loadingNetwork" class="fa fa-refresh fa-spin pull-right" style="padding: 4px; color: #aaa;"></i>
@@ -74,7 +74,7 @@
                                 <hr style="margin: 10px 0 10px 0;">
                             </li>
                             <li ng-repeat="network in global.findKey(global.community.networks, global.context.location, null, [])" ng-class="{'active':global.context.selectedNetwork.indexOf(industry) >= 0}" ng-click="filterNetwork(network);">
-                                <a><i class="fa {{network.profile.icon}}"></i> <strong>{{network.profile.name}}</strong></a>
+                                <a><i class="fa {{network.profile.icon}}"></i> {{network.profile.name}}</a>
                             </li>
                         </ul>
                     </div>

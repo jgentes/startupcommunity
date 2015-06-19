@@ -67,10 +67,7 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
          // People views
         .state('people', {
             abstract: true,
-            templateUrl: "views/common/content_small.html",
-            data: {
-                pageTitle: 'User'
-            }
+            templateUrl: "views/common/content_small.html"
         })
         .state('people.dashboard', {
             url: "/people",
@@ -81,6 +78,7 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
         })
         .state('people.profile', {
             templateUrl: "views/people/people.profile.html",
+            parent: 'people',
             data: {
                 pageTitle: 'User Profile'
             },

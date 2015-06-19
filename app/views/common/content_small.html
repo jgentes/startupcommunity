@@ -11,11 +11,11 @@
         <div class="hpanel">
             <div class="panel-body">
                 <div id="hbreadcrumb" class="pull-right">
-                    <ol class="hbreadcrumb breadcrumb">
-                        <li><a ui-sref="dashboard">Dashboard</a></li>
-                        <li ng-repeat="state in $state.$current.path" ng-switch="$last || !!state.abstract" ng-class="{active: $last}">
-                            <a ng-switch-when="false" href="#{{state.url.format($stateParams)}}">{{state.data.pageTitle}}</a>
-                            <span ng-switch-when="true">{{state.data.pageTitle}}</span>
+                    <ol class="hbreadcrumb">
+                        <li><a ui-sref="dashboard">Dashboard&nbsp;&nbsp;/</a></li>
+                        <li ng-repeat="state in $state.$current.path" ng-class="{active: $last}">
+                            <a ng-if="!(!!state.abstract) && !$last" href="#{{state.url.format($stateParams)}}">&nbsp;&nbsp;{{state.data.pageTitle}}&nbsp;&nbsp;/</a>
+                            <span ng-if="$last">&nbsp;&nbsp;{{state.data.pageTitle}}</span>
                         </li>
                     </ol>
                 </div>
