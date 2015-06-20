@@ -39,7 +39,7 @@ function mainCtrl($scope, $state, $location, $auth, userApi, communityApi, resul
     };
 
     $scope.editProfile = function() {
-        $state.go('user.profile', { user: $scope.global.user });
+        $state.go('people.profile', { user: $scope.global.user });
     };
 
     $scope.closeAlert = function() {
@@ -469,6 +469,7 @@ function ProfileController($scope, $state, userApi, communityApi, $location, $au
             });
     };
 
+    if ($state.params.user.profile.activity)
    getActivity();
 
 }
