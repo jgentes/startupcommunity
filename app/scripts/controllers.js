@@ -1,15 +1,16 @@
 angular
     .module('startupcommunity')
-    .controller('mainCtrl', mainCtrl)
+    .controller('MainController', MainController)
+    .controller('NavigationController', NavigationController)
     .controller('PeopleController', PeopleController)
-    .controller('LoginCtrl', LoginCtrl)
+    .controller('LoginController', LoginController)
     .controller('InvitePeopleController', InvitePeopleController)
     .controller('ProfileController', ProfileController)
     .controller('ErrorPageController', ErrorPageController);
 
-function mainCtrl($scope, $state, $location, $auth, userApi, communityApi, resultApi, $mixpanel) {
+function MainController($scope, $state, $location, $auth, userApi, communityApi, resultApi, $mixpanel) {
 
-    $scope.global = { alert: {}, community: {}, context: {}};
+    $scope.global = { alert: {} };
     window.$scope = $scope; // for console testing to avoid $scope = $('body').scope()
 
     $scope.global.logout = function(error) {
@@ -116,11 +117,12 @@ function mainCtrl($scope, $state, $location, $auth, userApi, communityApi, resul
 
     // Get and set user and location data
     $scope.global.sessionReady = function() {
-        if (!$scope.global.user || $scope.global.community == {} || $scope.global.context == {}) {
+        if (!$scope.global.user || $scope.global.community === undefined || $scope.global.context === undefined) {
             userApi.getProfile()
                 .success(function(response) {
                     if (!response.message) {
                         $scope.global.user = response;
+                        $scope.global.context = {};
 
                         var community = $scope.global.user.context.community || undefined;
                         var location = $scope.global.user.context.location || undefined;
@@ -149,7 +151,10 @@ function mainCtrl($scope, $state, $location, $auth, userApi, communityApi, resul
                 .error(function(response) {
                     $scope.global.logout({ type: 'danger', msg: String(response.message) });
                 });
-        } else broadcast();
+        } else {
+            console.log('no way');
+            broadcast();
+        }
 
     };
 
@@ -159,6 +164,36 @@ function mainCtrl($scope, $state, $location, $auth, userApi, communityApi, resul
 
     $scope.global.sessionReady();
 
+}
+
+function NavigationController($scope) {
+    $scope.locations = {};
+    $scope.industries = {};
+    $scope.networks = {};
+
+    var getNav = function() {
+        for (item in $scope.global.community) {
+
+            switch ($scope.global.community[item].type) {
+                case "location":
+                    $scope.locations[item] = $scope.global.community[item];
+                    break;
+                case "industry":
+                    $scope.industries[item] = $scope.global.community[item];
+                    break;
+                case "network":
+                    $scope.networks[item] = $scope.global.community[item];
+                    break;
+            }
+
+        }
+    };
+
+    if ($scope.global.community === undefined) {
+        $scope.$on('sessionReady', function(event, status) {
+            getNav();
+        });
+    } else getNav();
 }
 
 function PeopleController($scope, $location, userApi, resultApi, $sce) {
@@ -345,6 +380,7 @@ function ProfileController($scope, $state, userApi, communityApi, $location, $au
     };
 
     var getActivity = function() {
+
         var activities = $scope.global.findKey($state.params.user.communities, "roles", ["leader", "advisor", "investor", "founder"], []),
             search = [];
 
@@ -469,7 +505,6 @@ function ProfileController($scope, $state, userApi, communityApi, $location, $au
             });
     };
 
-    if ($state.params.user.profile.activity)
    getActivity();
 
 }
@@ -494,7 +529,7 @@ function InvitePeopleController($scope, $auth, userApi) {
 
 }
 
-function LoginCtrl($scope, $auth, $location, $mixpanel) {
+function LoginController($scope, $auth, $location, $mixpanel) {
 
     $scope.isAuthenticated = function() {
         return $auth.isAuthenticated();

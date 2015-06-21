@@ -118,27 +118,10 @@ function handleGetCommunity(req, res) {
           .offset(startKey)
           .query(searchString)
           .then(function (result) {
-              var newresponse = {
-                      locations: {},
-                      industries: {},
-                      networks: {}
-                  };
-
+                var newresponse = {};
               if (result.body.results.length > 0) {
                   for (item in result.body.results) {
-
-                      switch (result.body.results[item].value.type) {
-                          case "location":
-                              newresponse.locations[result.body.results[item].path.key] = result.body.results[item].value;
-                              break;
-                          case "industry":
-                              newresponse.industries[result.body.results[item].path.key] = result.body.results[item].value;
-                              break;
-                          case "network":
-                              newresponse.networks[result.body.results[item].path.key] = result.body.results[item].value;
-                              break;
-                      }
-
+                      newresponse[result.body.results[item].path.key] = result.body.results[item].value;
                   }
                   res.status(200).send(newresponse);
               } else {
