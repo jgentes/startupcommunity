@@ -15,7 +15,7 @@
     </div>
     <div class="profile-picture">
         <div map-lazy-load="https://maps.googleapis.com/maps/api/js?key=AIzaSyDXO1cNiJac7iP2I3JoXhOd1pWs6gA-f4k">
-            <map id="nav-map" center="{{global.findKey(locations, global.context.location, null, [])[0].profile.name}}" zoom="11" disable-default-u-i="true"></map>
+            <map id="nav-map" center="{{global.findKey(global.community.locations, global.context.location, null, [])[0].profile.name}}" zoom="11" disable-default-u-i="true"></map>
             <div class="side-menu filler"></div>
         </div>
         <div class="container side-menu" style="border-bottom: 1px solid #eee; margin-left: -20px;">
@@ -36,7 +36,7 @@
         <li ng-class="{active: $state.includes('location')}" class="active">
             <a href="#"><span class="nav-label">Locations</span><span class="fa arrow"></span> </a>
             <ul class="nav nav-second-level" ng-class="{in: $state.includes('location')}">
-                <li ui-sref-active="active" ng-repeat="item in global.findKey(locations, global.context.location, null, [])">
+                <li ui-sref-active="active" ng-repeat="item in global.findKey(global.community.locations, global.context.location, null, [])">
                     <a ui-sref="location"><i class="fa fa-globe"></i>&nbsp;&nbsp;{{item.profile.name}}</a>
                 </li>
             </ul>
@@ -44,7 +44,7 @@
         <li ng-class="{active: $state.includes('industry')}" class="active">
             <a href="#"><span class="nav-label">Clusters</span><span class="fa arrow"></span> </a>
             <ul class="nav nav-second-level" ng-class="{in: $state.includes('industry')}">
-                <li ui-sref-active="active" ng-repeat="item in global.findKey(industries, global.context.location, null, [])">
+                <li ui-sref-active="active" ng-repeat="item in global.findKey(global.community.industries, global.context.location, null, [])">
                     <a ui-sref="industry"><i ng-class="'fa ' + item.profile.icon"></i>&nbsp;&nbsp;{{item.profile.name}}</a>
                 </li>
             </ul>
@@ -52,7 +52,7 @@
         <li ng-class="{active: $state.includes('network')}" class="active">
             <a href="#"><span class="nav-label">Networks</span><span class="fa arrow"></span> </a>
             <ul class="nav nav-second-level" ng-class="{in: $state.includes('network')}">
-                <li ui-sref-active="active" ng-repeat="item in global.findKey(networks, global.context.location, null, [])">
+                <li ui-sref-active="active" ng-repeat="item in global.findKey(global.community.networks, global.context.location, null, [])">
                     <a ui-sref="network"><i ng-class="'fa ' + item.profile.icon"></i>&nbsp;&nbsp;{{item.profile.name}}</a>
                 </li>
             </ul>

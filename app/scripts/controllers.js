@@ -8,7 +8,7 @@ angular
     .controller('ProfileController', ProfileController)
     .controller('ErrorPageController', ErrorPageController);
 
-function MainController($scope, $state, $location, $auth, userApi, communityApi, resultApi, $mixpanel) {
+function MainController($scope, $state, $location, $auth, userApis, communityApis, resultApi, $mixpanel) {
 
     $scope.global = { alert: {} };
     window.$scope = $scope; // for console testing to avoid $scope = $('body').scope()
@@ -31,7 +31,7 @@ function MainController($scope, $state, $location, $auth, userApi, communityApi,
     $scope.search = function(query) {
         $scope.global.search.tag = query;
         $scope.global.search.results = undefined;
-        userApi.earch($scope.global.user.context, query)
+        userApis.earch($scope.global.user.context, query)
             .then(function(response) {
                 $scope.global.search = resultApi.setPage(response.data);
                 $scope.global.search.lastQuery = query;
@@ -118,7 +118,7 @@ function MainController($scope, $state, $location, $auth, userApi, communityApi,
     // Get and set user and location data
     $scope.global.sessionReady = function() {
         if (!$scope.global.user || $scope.global.community === undefined || $scope.global.context === undefined) {
-            userApi.getProfile()
+            userApis.getProfile()
                 .success(function(response) {
                     if (!response.message) {
                         $scope.global.user = response;
@@ -129,7 +129,7 @@ function MainController($scope, $state, $location, $auth, userApi, communityApi,
 
                         if (!community && !location) { location = $scope.global.user.profile.linkedin.location.country.code || 'us'} //TODO does private/private block location in linkedin api?
 
-                        communityApi.getCommunity(location, community)
+                        communityApis.getCommunity(location, community)
                             .success(function(response) {
                                 if (response) {
                                     $scope.global.community = response;
@@ -167,22 +167,23 @@ function MainController($scope, $state, $location, $auth, userApi, communityApi,
 }
 
 function NavigationController($scope) {
-    $scope.locations = {};
-    $scope.industries = {};
-    $scope.networks = {};
 
     var getNav = function() {
+        $scope.global.community.locations = {};
+        $scope.global.community.industries = {};
+        $scope.global.community.networks = {};
+
         for (item in $scope.global.community) {
 
             switch ($scope.global.community[item].type) {
                 case "location":
-                    $scope.locations[item] = $scope.global.community[item];
+                    $scope.global.community.locations[item] = $scope.global.community[item];
                     break;
                 case "industry":
-                    $scope.industries[item] = $scope.global.community[item];
+                    $scope.global.community.industries[item] = $scope.global.community[item];
                     break;
                 case "network":
-                    $scope.networks[item] = $scope.global.community[item];
+                    $scope.global.community.networks[item] = $scope.global.community[item];
                     break;
             }
 
@@ -196,10 +197,10 @@ function NavigationController($scope) {
     } else getNav();
 }
 
-function PeopleController($scope, $location, userApi, resultApi, $sce) {
+function PeopleController($scope, $location, userApis, resultApi, $sce) {
 
     $scope.getUsers = function(alturl) {
-        userApi.getUsers($scope.global.context.location, $scope.global.context.community, undefined, undefined, 32, alturl)
+        userApis.getUsers($scope.global.context.location, $scope.global.context.community, undefined, undefined, 32, alturl)
             .then(function(response) {
                 $scope.users = resultApi.setPage(response.data);
                 if ($location.$$path == '/search') {
@@ -235,7 +236,7 @@ function PeopleController($scope, $location, userApi, resultApi, $sce) {
             }
         }
         if ($scope.global.context.selectedIndustry[0] == '*') {
-            industry = $scope.global.community.locations[$scope.global.context.location].profile.name;
+            industry = $scope.global.community[$scope.global.context.location].profile.name;
         } else {
             item = 0;
             for (item in $scope.global.context.selectedIndustry) {
@@ -252,13 +253,13 @@ function PeopleController($scope, $location, userApi, resultApi, $sce) {
         var pageTitle;
 
         if ($scope.global.context.community) {
-            pageTitle = $scope.global.community.networks[$scope.global.context.community].profile.name;
+            pageTitle = $scope.global.community[$scope.global.context.community].profile.name;
         } else {
-            pageTitle = $scope.global.community.locations[$scope.global.context.location].profile.name;
+            pageTitle = $scope.global.community[$scope.global.context.location].profile.name;
         }
 
         if ($scope.global.context.community && $scope.global.context.location) {
-            pageTitle += '<br><small>' + $scope.global.community.locations[$scope.global.context.location].profile.name + '</small>';
+            pageTitle += '<br><small>' + $scope.global.community[$scope.global.context.location].profile.name + '</small>';
         } else {
             pageTitle += '<br><small>Welcome ' + ($scope.global.user.profile.name).split(' ')[0] + '!</small>';
         }
@@ -282,7 +283,7 @@ function PeopleController($scope, $location, userApi, resultApi, $sce) {
             }
         }
 
-        userApi.getUsers($scope.global.context.location, $scope.global.context.community, $scope.global.context.selectedIndustry, $scope.global.context.selectedRole, 32, undefined)
+        userApis.getUsers($scope.global.context.location, $scope.global.context.community, $scope.global.context.selectedIndustry, $scope.global.context.selectedRole, 32, undefined)
             .then(function(response) {
                 $scope.loadingIndustry = false;
                 $scope.users = resultApi.setPage(response.data);
@@ -293,7 +294,7 @@ function PeopleController($scope, $location, userApi, resultApi, $sce) {
     $scope.search = function(query) {
         $scope.global.search.tag = query;
         $scope.global.search.results = undefined;
-        userApi.search($scope.global.user.context, query)
+        userApis.search($scope.global.user.context, query)
             .then(function(response) {
                 $scope.global.search = resultApi.setPage(response.data);
                 $scope.global.search.lastQuery = query;
@@ -317,7 +318,7 @@ function PeopleController($scope, $location, userApi, resultApi, $sce) {
             }
         }
 
-        userApi.getUsers($scope.global.context.location, $scope.global.context.community, $scope.global.context.selectedIndustry, $scope.global.context.selectedRole, 32, undefined)
+        userApis.getUsers($scope.global.context.location, $scope.global.context.community, $scope.global.context.selectedIndustry, $scope.global.context.selectedRole, 32, undefined)
             .then(function(response) {
                 $scope.loadingRole = false;
                 $scope.users = resultApi.setPage(response.data);
@@ -333,12 +334,12 @@ function PeopleController($scope, $location, userApi, resultApi, $sce) {
 
 }
 
-function ProfileController($scope, $state, userApi, communityApi, $location, $auth, $mixpanel) {
+function ProfileController($scope, $state, userApis, communityApis, $location, $auth, $mixpanel) {
 
     $mixpanel.track('Viewed Profile');
 
     $scope.putProfile = function(userid, profile) {
-        userApi.putProfile(userid, profile, function(response) {
+        userApis.putProfile(userid, profile, function(response) {
             if (response.status !== 200) {
                 $scope.global.alert = { type: 'danger', msg: 'There was a problem: ' + String(response.message) };
                 console.warn("WARNING: " +  response.message);
@@ -352,7 +353,7 @@ function ProfileController($scope, $state, userApi, communityApi, $location, $au
     $scope.removeProfile = function(userid, name) {
         notify("Are you sure you want to remove " + name + "?", function(result) { //todo fix notify maybe with sweetalert
             if (result) {
-                userApi.removeProfile(userid, function(response) {
+                userApis.removeProfile(userid, function(response) {
                     $location.path('/people');
                     $scope.global.alert = { type: 'success', msg: "Person removed. Hopefully they'll return some day." };
                 });
@@ -361,7 +362,7 @@ function ProfileController($scope, $state, userApi, communityApi, $location, $au
     };
 
     $scope.updateProfile = function() {
-        userApi.updateProfile({
+        userApis.updateProfile({
             displayName: $scope.global.user.profile.name,
             email: $scope.global.user.profile.email
         }).then(function() {
@@ -371,7 +372,7 @@ function ProfileController($scope, $state, userApi, communityApi, $location, $au
 
     $scope.getKey = function() {
         if (!$scope.global.user.profile.api_key) {
-            userApi.getKey()
+            userApis.getKey()
                 .then(function(response) {
                     $scope.global.user.profile.api_key = response.data;
                     notify({title: "See our <a href='http://startupcommunity.readme.io?appkey=" + $scope.global.user.profile.api_key + "' target='_blank'>API documentation</a> for help using your key:", message: "<pre>" + $scope.global.user.profile.api_key + "</pre>"});
@@ -388,7 +389,7 @@ function ProfileController($scope, $state, userApi, communityApi, $location, $au
             search.push(activities[i].key);
         }
 
-        communityApi.getActivity(search)
+        communityApis.getActivity(search)
             .then(function(response) {
                 var activity = {};
                 for (j in activities) {
@@ -401,7 +402,7 @@ function ProfileController($scope, $state, userApi, communityApi, $location, $au
     };
 
     $scope.isCityAdvisor = function(status) { //todo needs to be reworked
-        userApi.setCityAdvisor($state.params.user.key, $scope.global.user.context, 'cityAdvisor', status, function(response, rescode) {
+        userApis.setCityAdvisor($state.params.user.key, $scope.global.user.context, 'cityAdvisor', status, function(response, rescode) {
             var sameuser = false;
             var cluster;
             if (rescode == 201) {
@@ -437,7 +438,7 @@ function ProfileController($scope, $state, userApi, communityApi, $location, $au
     };
 
     $scope.setRole = function(cluster, role, status) { //todo needs to be reworked
-        userApi.setRole($state.params.user.key, $scope.global.user.context, cluster, role, status, function(response, rescode) {
+        userApis.setRole($state.params.user.key, $scope.global.user.context, cluster, role, status, function(response, rescode) {
             var sameuser = false;
             if (rescode == 201) {
                 if ($state.params.user.key == $scope.global.user.key) { sameuser = true; }
@@ -509,11 +510,11 @@ function ProfileController($scope, $state, userApi, communityApi, $location, $au
 
 }
 
-function InvitePeopleController($scope, $auth, userApi) {
+function InvitePeopleController($scope, $auth, userApis) {
 
     $scope.invitePerson = function(url, email, userid) {
         $scope.disabled = true;
-        userApi.invitePerson(url, email, userid, function(response) {
+        userApis.invitePerson(url, email, userid, function(response) {
             $scope.disabled = false;
             if (response.status !== 200) {
                 $scope.global.alert = { type: 'danger', msg: 'There was a problem: ' + String(response.message) };
@@ -586,13 +587,13 @@ function LoginController($scope, $auth, $location, $mixpanel) {
     };
 }
 
-function ErrorPageController($scope, $location, $window, userApi) {
+function ErrorPageController($scope, $location, $window, userApis) {
 
     $scope.formData = {};
 
     $scope.search = function(query) {
         try {
-            userApi.search($scope.global.user.context, query)
+            userApis.search($scope.global.user.context, query)
                 .then(function(results) {
                     $scope.global.search = results.data;
                     $location.path('/search');

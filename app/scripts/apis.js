@@ -1,27 +1,26 @@
 angular
     .module('apis', [])
 
-    .factory('userApi', function($http, $location) {
+    .factory('userApis', function($http, $location) {
         return {
             search: function(location, community, query) {
-                var urlString = '/api/1.1/';
-                if (location && community) {
-                    urlString += community + '/users?location=' + location;
-                } else {
-                    urlString += (location || community) + '/users';
-                }
-                urlString += (query ? '?search=' + query : '');
+                var urlString = '/api/1.1/users' + jQuery.param({
+                        location: location,
+                        community: community,
+                        search: query
+                    });
                 return $http.get(urlString);
             },
             getUsers: function(location, community, cluster, role, limit, alturl) { //alturl is for next/prev retrieval
                 if (alturl) { return $http.get(alturl) } else {
-                    var urlString = '/api/1.1/';
-                    if (location && community) {
-                        urlString += community + '/users?location=' + location;
-                    } else {
-                        urlString += (location || community) + '/users';
-                    }
-                    urlString += (cluster ? '?cluster=' + cluster : '') + (cluster && role ? '&' : '?') + (role ? 'role=' + role : '') + (limit ? (cluster || role) ? '&limit=' + limit : '?limit=' + limit : '');
+                    var urlString = '/api/1.1/users?' + jQuery.param({
+                            location: location,
+                            community: community,
+                            cluster: cluster,
+                            role: role,
+                            limit: limit
+                        });
+
                     return $http.get(urlString);
                 }
             },
@@ -79,7 +78,7 @@ angular
         };
     })
 
-      .factory('communityApi', function($http) {
+      .factory('communityApis', function($http) {
           return {
               getCommunity: function(location, community) {
                   var urlString = '/api/1.1/community/';

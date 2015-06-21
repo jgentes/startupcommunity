@@ -258,7 +258,7 @@ var searchInCommunity = function(location, community, industry, role, limit, off
 
 
 function handleUserSearch(req, res){
-    var community = req.params.community,
+    var community = req.query.community,
       location = req.query.location,
       cluster = req.query.cluster,
       role = req.query.role,

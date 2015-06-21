@@ -50,38 +50,38 @@ if (process.env.NODE_ENV === "production") {
 }
 
 // ROUTE METHODS
-var userApi = new UserApi(),
-    communityApi = new CommunityApi();
+var userApis = new UserApi(),
+    communityApis = new CommunityApi();
 
 // API
-app.get('/api/1.0/:community/users', userApi.userSearch);
-app.get('/api/1.0/city/:community', communityApi.getCommunity);
-app.get('/api/1.0/profile', userApi.ensureAuthenticated, userApi.getProfile);
-app.get('/api/1.0/profile/getkey', userApi.ensureAuthenticated, userApi.createAPIToken);
-app.get('/api/1.0/invitePerson', userApi.ensureAuthenticated, userApi.invitePerson);
-app.put('/api/1.0/profile/role', userApi.ensureAuthenticated, userApi.setRole);
-app.post('/api/1.0/profile/remove/:userid', userApi.ensureAuthenticated, userApi.removeProfile);
-app.post('/api/1.0/feedback', userApi.ensureAuthenticated, userApi.feedback);
+app.get('/api/1.0/:community/users', userApis.userSearch);
+app.get('/api/1.0/city/:community', communityApis.getCommunity);
+app.get('/api/1.0/profile', userApis.ensureAuthenticated, userApis.getProfile);
+app.get('/api/1.0/profile/getkey', userApis.ensureAuthenticated, userApis.createAPIToken);
+app.get('/api/1.0/invitePerson', userApis.ensureAuthenticated, userApis.invitePerson);
+app.put('/api/1.0/profile/role', userApis.ensureAuthenticated, userApis.setRole);
+app.post('/api/1.0/profile/remove/:userid', userApis.ensureAuthenticated, userApis.removeProfile);
+app.post('/api/1.0/feedback', userApis.ensureAuthenticated, userApis.feedback);
 
-app.get('/api/1.1/key/:key', communityApi.getKey);
-app.get('/api/1.1/:community/users', userApi.userSearch);
-app.get('/api/1.1/community/:community', communityApi.getCommunity);
-app.get('/api/1.1/community', communityApi.getActivity);
-app.get('/api/1.1/profile', userApi.ensureAuthenticated, userApi.getProfile);
-app.get('/api/1.1/profile/getkey', userApi.ensureAuthenticated, userApi.createAPIToken);
-app.get('/api/1.1/invitePerson', userApi.ensureAuthenticated, userApi.invitePerson);
-app.put('/api/1.1/profile/role', userApi.ensureAuthenticated, userApi.setRole);
-app.post('/api/1.1/profile/remove/:userid', userApi.ensureAuthenticated, userApi.removeProfile);
-app.post('/api/1.1/feedback', userApi.ensureAuthenticated, userApi.feedback);
+app.get('/api/1.1/key/:key', communityApis.getKey);
+app.get('/api/1.1/users', userApis.userSearch);
+app.get('/api/1.1/community/:community', communityApis.getCommunity);
+app.get('/api/1.1/community', communityApis.getActivity);
+app.get('/api/1.1/profile', userApis.ensureAuthenticated, userApis.getProfile);
+app.get('/api/1.1/profile/getkey', userApis.ensureAuthenticated, userApis.createAPIToken);
+app.get('/api/1.1/invitePerson', userApis.ensureAuthenticated, userApis.invitePerson);
+app.put('/api/1.1/profile/role', userApis.ensureAuthenticated, userApis.setRole);
+app.post('/api/1.1/profile/remove/:userid', userApis.ensureAuthenticated, userApis.removeProfile);
+app.post('/api/1.1/feedback', userApis.ensureAuthenticated, userApis.feedback);
 
 // Auth
-app.get('/auth/unlink/:provider', userApi.ensureAuthenticated, userApi.unlink);
-app.post('/auth/linkedin', userApi.linkedin);
-app.post('/auth/signup', userApi.signup); //not currently used?
-app.post('/auth/login', userApi.login); //not currently used?
+app.get('/auth/unlink/:provider', userApis.ensureAuthenticated, userApis.unlink);
+app.post('/auth/linkedin', userApis.linkedin);
+app.post('/auth/signup', userApis.signup); //not currently used?
+app.post('/auth/login', userApis.login); //not currently used?
 
 // Maintenance
-app.get('/api/1.1/maint', userApi.maintenance);
+app.get('/api/1.1/maint', userApis.maintenance);
 
 // Frontend Homepage & Blog
 app.get('/', function (req, res, next) {
