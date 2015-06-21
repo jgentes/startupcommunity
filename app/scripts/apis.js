@@ -89,7 +89,7 @@ angular
                   return $http.get(urlString);
               },
               getActivity: function(keys) {
-                  var urlString = '/api/1.1/community?keys=' + encodeURIComponent(JSON.stringify(keys));
+                  var urlString = '/api/1.1/community?' + jQuery.param({ keys: keys});
                   return $http.get(urlString);
               },
               getKey: function(key) {

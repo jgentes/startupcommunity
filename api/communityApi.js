@@ -48,7 +48,7 @@ var convert_state = function(name, to) {
 };
 
 function handleGetActivity(req, res) {
-    var keys = JSON.parse(req.query.keys);
+    var keys = req.query.keys;
     var searchString = '@path.key: (';
 
     for (var i in keys) {

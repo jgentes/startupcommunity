@@ -53,7 +53,7 @@ function MainController($scope, $state, $location, $auth, userApis, communityApi
         var keys = Object.keys(obj),
             name = null,
             subkeys = null,
-            parent,
+            tempkeys = [],
             i = 0,
             j = 0,
             k = 0;
@@ -68,7 +68,10 @@ function MainController($scope, $state, $location, $auth, userApis, communityApi
                         for (j in subkeys) {
                             for (k in values) {
                                 if (subkeys[j] == values[k]) {
-                                    results.push({ value : values[k], key : parent});
+                                    if (results[parent] === undefined) {
+                                        results[parent] = [];
+                                    }
+                                    results[parent].push(values[k]);
                                 }
                             }
                         }
@@ -382,21 +385,18 @@ function ProfileController($scope, $state, userApis, communityApis, $location, $
 
     var getActivity = function() {
 
-        var activities = $scope.global.findKey($state.params.user.communities, "roles", ["leader", "advisor", "investor", "founder"], []),
-            search = [];
+        var activities = $scope.global.findKey($state.params.user.communities, "roles", ["leader", "advisor", "investor", "founder"], {}),
+            list = Object.keys(activities);
 
-        for (i in activities) {
-            search.push(activities[i].key);
-        }
-
-        communityApis.getActivity(search)
+        communityApis.getActivity(list)
             .then(function(response) {
                 var activity = {};
-                for (j in activities) {
-                    activity[activities[j].value] = activity[activities[j].value] || {};
-                    activity[activities[j].value][activities[j].key] = response.data[activities[j].key];
+                for (var j in activities) {
+                    for (var k in activities[j]) {
+                        activity[activities[j][k]] = activity[activities[j][k]] || {}; // create empty object or fill with existing object
+                        activity[activities[j][k]][j] = response.data[j]; // append matched object
+                    }
                 }
-
                 $state.params.user.profile.activity = activity;
             })
     };
