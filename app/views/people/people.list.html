@@ -14,8 +14,8 @@
     </div>
 </td>
 <td style="vertical-align: middle; height: 80px;">
-    <li ng-repeat="global.findKey(item.value.profile.communities, 'roles', null, [])" style="list-style: none; display: inline; float: right; padding-left: 5px;">
-        <a href="{{'/' + item.key}}" class="btn btn-xs btn-outline" ng-class="{'btn-danger' : item.type == 'startup', 'btn-info' : item.type == 'network', 'btn-primary' : item.type == 'industry', 'btn-success' : item.type == 'location'}"><i class="fa {{item.profile.icon}}"></i> {{item.profile.name}}</a>
+    <li ng-repeat="role in global.findKey(item.value.communities, 'roles', null, [])" style="list-style: none; display: inline; float: right; padding-left: 5px;">
+        <a href="{{'/' + role.key}}" class="btn btn-xs btn-outline" ng-class="{'btn-danger' : role.type == 'startup', 'btn-info' : role.type == 'network', 'btn-primary' : role.type == 'industry', 'btn-success' : role.type == 'location'}"><i class="fa {{role.profile.icon}}"></i> {{role.profile.name}}</a>
     </li>
     <div id="skills" ng-show="(showSummary || global.search.count) && item.value.profile.linkedin.summary" style="padding-top:40px">
         <li ng-repeat="skill in item.value.profile.linkedin.skills.values" class="label btn-default" style="margin-right: 3px; margin-top: 3px; float:right; padding-bottom: 5px;">
