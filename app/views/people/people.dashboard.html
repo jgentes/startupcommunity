@@ -1,127 +1,122 @@
-<div class="row" ng-controller="PeopleController" >
-    <div animate-panel effect="zoomIn">
-        <div class="col-lg-12" style="padding-left: 0; padding-right: 0;">
-            <div class="col-md-4 animated-panel zoomIn">
-            <!-- Navigation Block -->
-                <div class="hpanel hgreen">
-                    <div class="panel-footer top" style="font-size: 17px;">
-                        <strong>Role</strong> Filters
-                        <i ng-show="loadingRole" class="fa fa-refresh fa-spin pull-right" style="padding: 4px; color: #aaa;"></i>
-                    </div>
-                    <div class="panel-body filternav">
+<div ng-controller="PeopleController" animate-panel effect="zoomIn">
+    <div class="row">
+        <div class="col-md-4 animated-panel zoomIn">
+        <!-- Navigation Block -->
+            <div class="hpanel hgreen">
+                <div class="panel-footer top" style="font-size: 17px;">
+                    <strong>Role</strong> Filters
+                    <i ng-show="loadingRole" class="fa fa-refresh fa-spin pull-right" style="padding: 4px; color: #aaa;"></i>
+                </div>
+                <div class="panel-body filternav h226">
 
-                        <ul class="panel-list">
-                            <li ng-class="{'active':global.context.selectedRole.indexOf('*') >= 0}" ng-click="filterRole('*')">
-                                <a href="javascript:void(0)">
-                                    <i class="fa fa-fw fa-globe themed-color-dark"></i> <strong>All</strong>
-                                </a>
-                            </li>
-                            <li>
-                                <hr style="margin: 10px 0 10px 0;">
-                            </li>
-                            <li ng-class="{'active':global.context.selectedRole.indexOf('Founder') >= 0}" ng-click="filterRole('Founder')">
-                                <a href="javascript:void(0)">
-                                    <i class="fa fa-flag text-danger"></i> Founders
-                                </a>
-                            </li>
-                            <li ng-class="{'active':global.context.selectedRole.indexOf('Advisor') >= 0}" ng-click="filterRole('Advisor')">
-                                <a href="javascript:void(0)">
-                                    <i class="fa fa-graduation-cap text-info"></i> Advisors
-                                </a>
-                            </li>
-                            <li ng-class="{'active':global.context.selectedRole.indexOf('Investor') >= 0}" ng-click="filterRole('Investor')">
-                                <a href="javascript:void(0)">
-                                    <i class="fa fa-leaf text-success"></i> Investors
-                                </a>
-                            </li>
-                        </ul>
-                    </div>
+                    <ul class="panel-list">
+                        <li ng-class="{'active':global.context.selectedRole.indexOf('*') >= 0}" ng-click="filterRole('*')">
+                            <a href="javascript:void(0)">
+                                <i class="fa fa-fw fa-globe themed-color-dark"></i> <strong>All</strong>
+                            </a>
+                        </li>
+                        <li>
+                            <hr style="margin: 10px 0 10px 0;">
+                        </li>
+                        <li ng-class="{'active':global.context.selectedRole.indexOf('Founder') >= 0}" ng-click="filterRole('Founder')">
+                            <a href="javascript:void(0)">
+                                <i class="fa fa-rocket text-navyblue"></i> Founders
+                            </a>
+                        </li>
+                        <li ng-class="{'active':global.context.selectedRole.indexOf('Leader') >= 0}" ng-click="filterRole('Founder')">
+                            <a href="javascript:void(0)">
+                                <i class="fa fa-flag text-danger"></i> Leaders
+                            </a>
+                        </li>
+                        <li ng-class="{'active':global.context.selectedRole.indexOf('Advisor') >= 0}" ng-click="filterRole('Advisor')">
+                            <a href="javascript:void(0)">
+                                <i class="fa fa-graduation-cap text-info"></i> Advisors
+                            </a>
+                        </li>
+                        <li ng-class="{'active':global.context.selectedRole.indexOf('Investor') >= 0}" ng-click="filterRole('Investor')">
+                            <a href="javascript:void(0)">
+                                <i class="fa fa-leaf text-success"></i> Investors
+                            </a>
+                        </li>
+                    </ul>
                 </div>
-            </div>
-            <div class="col-md-4 animated-panel zoomIn">
-                <div class="hpanel hnavyblue">
-                    <div class="panel-footer top" style="font-size: 17px;">
-                        <strong>Cluster</strong> Filters
-                        <i ng-show="loadingIndustry" class="fa fa-refresh fa-spin pull-right" style="padding: 4px; color: #aaa;"></i>
-                    </div>
-                    <div class="panel-body filternav">
-                        <ul class="panel-list">
-                            <li ng-class="{'active':global.context.selectedIndustry.indexOf('*') >= 0}" ng-click="filterIndustry('*');">
-                                <a><i class="fa fa-fw fa-globe themed-color-dark icon-push"></i> <strong>All</strong></a>
-                            </li>
-                            <li>
-                                <hr style="margin: 10px 0 10px 0;">
-                            </li>
-                            <li ng-repeat="industry in global.findKey(global.community.industries, global.context.location, null, [])" ng-class="{'active':global.context.selectedIndustry.indexOf(industry) >= 0}" ng-click="filterIndustry(industry);">
-                                <a><i class="fa {{industry.profile.icon}}"></i> {{industry.profile.name}}</a>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4 animated-panel zoomIn">
-                <div class="hpanel hblue">
-                    <div class="panel-footer top" style="font-size: 17px;">
-                        <strong>Network</strong> Filters
-                        <i ng-show="loadingNetwork" class="fa fa-refresh fa-spin pull-right" style="padding: 4px; color: #aaa;"></i>
-                    </div>
-                    <div class="panel-body filternav">
-                        <ul class="panel-list">
-                            <li ng-class="{'active':global.context.selectedNetwork.indexOf('*') >= 0}" ng-click="filterNetwork('*');">
-                                <a><i class="fa fa-fw fa-globe themed-color-dark icon-push"></i> <strong>All</strong></a>
-                            </li>
-                            <li>
-                                <hr style="margin: 10px 0 10px 0;">
-                            </li>
-                            <li ng-repeat="network in global.findKey(global.community.networks, global.context.location, null, [])" ng-class="{'active':global.context.selectedNetwork.indexOf(industry) >= 0}" ng-click="filterNetwork(network);">
-                                <a><i class="fa {{network.profile.icon}}"></i> {{network.profile.name}}</a>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-
             </div>
         </div>
-
-        <div class="col-md-12" style="padding-left: 15px; padding-right: 15px;">
-
-            <div class="hpanel">
-                <div class="panel-footer top">
-                    <div class="pull-right">
-                        <strong>{{users.start}} - {{users.end}}</strong> of <strong>{{users.total_count}}&nbsp;&nbsp;</strong>
-                        <div class="btn-group btn-group-sm" style="margin-top: -2px;">
-                            <span ng-if="users.prev"><a ng-click="getUsers(users.prev)" class="btn btn-sm btn-default" style="background-color: #fff;"><i class="fa fa-angle-left"></i></a></span>
-                            <span ng-if="users.next"><a ng-click="getUsers(users.next)" class="btn btn-sm btn-default" style="background-color: #fff;"><i class="fa fa-angle-right"></i></a></span>
-                        </div>
-                    </div>
-                    <span style="font-size: 17px;" ng-bind-html="title"></span>
+        <div class="col-md-4 animated-panel zoomIn">
+            <div class="hpanel hnavyblue">
+                <div class="panel-footer top" style="font-size: 17px;">
+                    <strong>Cluster</strong> Filters
+                    <i ng-show="loadingIndustry" class="fa fa-refresh fa-spin pull-right" style="padding: 4px; color: #aaa;"></i>
                 </div>
+                <div class="panel-body filternav h226">
+                    <ul class="panel-list">
+                        <li ng-class="{'active':global.context.selectedIndustry.indexOf('*') >= 0}" ng-click="filterIndustry('*');">
+                            <a><i class="fa fa-fw fa-globe themed-color-dark icon-push"></i> <strong>All</strong></a>
+                        </li>
+                        <li>
+                            <hr style="margin: 10px 0 10px 0;">
+                        </li>
+                        <li ng-repeat="industry in global.findKey(global.community.industries, global.context.location, null, [])" ng-class="{'active':global.context.selectedIndustry.indexOf(industry) >= 0}" ng-click="filterIndustry(industry);">
+                            <a><i class="fa {{industry.profile.icon}}"></i> {{industry.profile.name}}</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 animated-panel zoomIn">
+            <div class="hpanel hblue">
+                <div class="panel-footer top" style="font-size: 17px;">
+                    <strong>Network</strong> Filters
+                    <i ng-show="loadingNetwork" class="fa fa-refresh fa-spin pull-right" style="padding: 4px; color: #aaa;"></i>
+                </div>
+                <div class="panel-body filternav h226">
+                    <ul class="panel-list">
+                        <li ng-class="{'active':global.context.selectedNetwork.indexOf('*') >= 0}" ng-click="filterNetwork('*');">
+                            <a><i class="fa fa-fw fa-globe themed-color-dark icon-push"></i> <strong>All</strong></a>
+                        </li>
+                        <li>
+                            <hr style="margin: 10px 0 10px 0;">
+                        </li>
+                        <li ng-repeat="network in global.findKey(global.community.networks, global.context.location, null, [])" ng-class="{'active':global.context.selectedNetwork.indexOf(industry) >= 0}" ng-click="filterNetwork(network);">
+                            <a><i class="fa {{network.profile.icon}}"></i> {{network.profile.name}}</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
 
-                <div class="panel-body content">
-                    <div class="table-responsive" style="margin: 0 -10px;">
-                        <table class="table table-vcenter">
-                            <tbody>
-                            <tr>
-                                <td style="border-bottom: 1px solid #fff; border-top: none; padding: 0;" colspan="3"></td>
-                            </tr>
-                            <div ng-show="global.search.tag" style="text-align: center" ng-cloak><h2><br/>Searching for {{global.search.tag}}..</h2></div>
-                            <tr ng-repeat="item in users.results" ng-include="'views/people/people.list.html'"></tr>
+        </div>
+    </div>
 
-                            </tbody>
-                        </table>
+    <div class="row" style="padding-left: 15px; padding-right: 15px;">
+
+        <div class="hpanel">
+            <div class="panel-footer top">
+                <div class="pull-right">
+                    <strong>{{users.start}} - {{users.end}}</strong> of <strong>{{users.total_count}}&nbsp;&nbsp;</strong>
+                    <div class="btn-group btn-group-sm" style="margin-top: -2px;">
+                        <span ng-if="users.prev"><a ng-click="getUsers(users.prev)" class="btn btn-sm btn-default" style="background-color: #fff;"><i class="fa fa-angle-left"></i></a></span>
+                        <span ng-if="users.next"><a ng-click="getUsers(users.next)" class="btn btn-sm btn-default" style="background-color: #fff;"><i class="fa fa-angle-right"></i></a></span>
                     </div>
                 </div>
-                <div class="panel-footer" style="height:45px;">
-                    <div class="pull-right">
-                        <strong>{{users.start}} - {{users.end}}</strong> of <strong>{{users.total_count}}&nbsp;&nbsp;</strong>
-                        <div class="btn-group btn-group-sm" style="margin-top: -2px;">
-                            <span ng-if="users.prev"><a ng-click="getUsers(users.prev)" class="btn btn-sm btn-default" style="background-color: #fff;"><i class="fa fa-angle-left"></i></a></span>
-                            <span ng-if="users.next"><a ng-click="getUsers(users.next)" class="btn btn-sm btn-default" style="background-color: #fff;"><i class="fa fa-angle-right"></i></a></span>
-                        </div>
+                <span style="font-size: 17px;" ng-bind-html="title"></span>
+            </div>
+
+            <div class="panel-body content">
+                <div class="row">
+                    <td style="border-bottom: 1px solid #fff; border-top: none; padding: 0;" colspan="3"></td>
+                </div>
+                <div ng-show="global.search.tag" style="text-align: center" ng-cloak><h2><br/>Searching for {{global.search.tag}}..</h2></div>
+                <div class="row" ng-repeat="item in users.results" ng-include="'views/people/people.list.html'"></div>
+            </div>
+            <div class="panel-footer" style="height:45px;">
+                <div class="pull-right">
+                    <strong>{{users.start}} - {{users.end}}</strong> of <strong>{{users.total_count}}&nbsp;&nbsp;</strong>
+                    <div class="btn-group btn-group-sm" style="margin-top: -2px;">
+                        <span ng-if="users.prev"><a ng-click="getUsers(users.prev)" class="btn btn-sm btn-default" style="background-color: #fff;"><i class="fa fa-angle-left"></i></a></span>
+                        <span ng-if="users.next"><a ng-click="getUsers(users.next)" class="btn btn-sm btn-default" style="background-color: #fff;"><i class="fa fa-angle-right"></i></a></span>
                     </div>
                 </div>
             </div>
         </div>
-
     </div>
 </div>

@@ -48,6 +48,7 @@ function MainController($scope, $state, $location, $auth, userApis, communityApi
     };
 
     $scope.global.findKey = function(obj, key, values, results, parent) {
+        // must use [] for results if value is undefined, otherwise use {}
         if (!obj) { return results; }
 
         var keys = Object.keys(obj),
@@ -213,12 +214,12 @@ function PeopleController($scope, $location, userApis, resultApi, $sce) {
     };
 
     function getData() {
-        console.log('need to update this variable to account for relative paths: ' + $location.$$path)
         if ($location.$$path == '/people' || $scope.global.search === undefined) {
-            $scope.getUsers();
+            $scope.getUsers(); // use defaults
         }
         $scope.global.context.selectedIndustry = ['*'];
         $scope.global.context.selectedRole = ['*'];
+        $scope.global.context.selectedNetwork = ['*'];
         setTitle();
     }
 
@@ -329,7 +330,7 @@ function PeopleController($scope, $location, userApis, resultApi, $sce) {
             });
     };
 
-    if (!$scope.global.user) {
+    if (!$scope.global.user || $scope.global.context === undefined) {
         $scope.$on('sessionReady', function(event, status) {
             getData();
         });

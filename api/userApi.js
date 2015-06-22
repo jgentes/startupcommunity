@@ -14,6 +14,7 @@ require('request-debug')(request); // Very useful for debugging oauth and api re
 var UserApi = function() {
     this.ensureAuthenticated = handleEnsureAuthenticated;
     this.userSearch = handleUserSearch;
+    this.directSearch = handleDirectSearch;
     this.createToken = handleCreateToken;
     this.createAPIToken = handleCreateAPIToken;
     this.invitePerson = handleInvitePerson;
@@ -207,7 +208,7 @@ var searchInCommunity = function(location, community, industry, role, limit, off
 
     var deferred = Q.defer();
     db.newSearchBuilder()
-      .collection(config.db.collections.users)
+      .collection(config.db.collections.communities)
       .limit(Number(limit) || 32)
       .offset(Number(offset) || 0)
       .query(searchstring)
@@ -239,11 +240,11 @@ var searchInCommunity = function(location, community, industry, role, limit, off
 
           if (result.body.next) {
               var getnext = url.parse(result.body.next, true);
-              result.body.next = '/api/1.1/' + community + '/users?limit=' + getnext.query.limit + '&offset=' + getnext.query.offset + (role ? '&role=' + role : '') + (query ? '&search=' + query : '');
+              result.body.next = '/api/1.1/search' + getnext.search;
           }
           if (result.body.prev) {
               var getprev = url.parse(result.body.prev, true);
-              result.body.prev = '/api/1.0/' + community + '/users?limit=' + getprev.query.limit + '&offset=' + getprev.query.offset + (role ? '&role=' + role : '') + (query ? '&search=' + query : '');
+              result.body.prev = '/api/1.1/search' + getprev.search;
           }
           deferred.resolve(result.body);
       })
@@ -256,6 +257,60 @@ var searchInCommunity = function(location, community, industry, role, limit, off
 
 };
 
+function handleDirectSearch(req, res) {
+    //TODO check for key to protect info?
+    db.newSearchBuilder()
+        .collection(config.db.collections.communities)
+        .limit(Number(req.query.limit) || 100)
+        .offset(Number(req.query.offset) || 10)
+        .query(req.query.query)
+        .then(function(result){
+            var i;
+            var item_industry;
+            try {
+                for (i = 0; i < result.body.results.length; i++) {
+                    if (result.body.results[i].value.profile.password) {
+                        delete result.body.results[i].value.profile.password;
+                    }
+                    if (result.body.results[i].value.profile.email) {
+                        delete result.body.results[i].value.profile.email;
+                    }
+                    if (result.body.results[i].value.type) {
+                        delete result.body.results[i].value.type;
+                    }
+                    if (result.body.results[i].value.context) {
+                        delete result.body.results[i].value.context;
+                    }
+
+                    delete result.body.results[i].path.collection;
+                    delete result.body.results[i].path.ref;
+
+                    if (result.body.results[i].value.linkedin) {
+                        delete result.body.results[i].value.profile.linkedin.emailAddress;
+                        delete result.body.results[i].value.profile.linkedin.access_token;
+                    }
+                }
+
+                if (result.body.next) {
+                    var getnext = url.parse(result.body.next, true);
+                    result.body.next = '/api/1.1/search' + getnext.search;
+                }
+                if (result.body.prev) {
+                    var getprev = url.parse(result.body.prev, true);
+                    result.body.prev = '/api/1.1/search' + getprev.search;
+                }
+            } catch (error) {
+                console.warn('WARNING:  Possible database entry corrupted: ');
+                console.log(result.body.results);
+            }
+
+            res.status(200).send(result.body);
+        })
+        .fail(function(err){
+            console.log(err.body.message);
+            res.status(400).send({ message: 'Something went wrong: ' + err});
+        });
+}
 
 function handleUserSearch(req, res){
     var community = req.query.community,
