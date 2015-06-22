@@ -214,7 +214,6 @@ var searchInCommunity = function(location, community, industry, role, limit, off
       .query(searchstring)
       .then(function(result){
           var i;
-          var item_industry;
 
           try {
               for (i=0; i < result.body.results.length; i++) {
@@ -266,7 +265,7 @@ function handleDirectSearch(req, res) {
         .query(req.query.query)
         .then(function(result){
             var i;
-            var item_industry;
+
             try {
                 for (i = 0; i < result.body.results.length; i++) {
                     if (result.body.results[i].value.profile.password) {

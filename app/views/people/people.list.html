@@ -1,13 +1,15 @@
 <div class="col-md-10" style="vertical-align: top; min-height: 80px;">
-    <div>
+    <div ng-init="roles = global.findKey(item.value.communities, 'roles', ['leader', 'founder', 'advisor', 'investor'], {})">
         <a ui-sref="user.profile({user: global.user, test: 'test'})" title="View {{::item.value.profile.name | words:0}}'s Profile"><img style="height:58px" ng-src="{{item.value.profile.linkedin.pictureUrl || item.value.profile.avatar || 'images/blank_avatar.png'}}" alt="{{::item.value.profile.name}}" class="widget-image img-circle pull-left"/></a>
     </div>
     <div style="padding: 10px 0 0 70px;">
-        <a ui-sref="user.profile({user: item})" title="View {{::item.value.profile.name | words:0}}'s Profile"><strong>{{::item.value.profile.name}} </strong></a>
-        <a ng-show="{{(item.value.profile.linkedin.summary).length > 0}}" title="Show Summary" ng-click="showSummary = !showSummary" style="color: #DDDDDD;">
-            <i class="fa fa-chevron-down fa-fw"></i>
+        <a ui-sref="user.profile({user: item})" title="View {{::item.value.profile.name | words:0}}'s Profile" style="float: left; "><strong>{{::item.value.profile.name}} </strong></a>
+        <a ng-show="{{(item.value.profile.linkedin.summary).length > 0}}" title="Show Summary" ng-click="showSummary = !showSummary" style="color: #DDDDDD; float: left; ">&nbsp;&nbsp;<i class="fa fa-chevron-down fa-fw"></i>
         </a>
-        <br>
+        <li ng-repeat="(key, role) in roles" style="list-style: none; display: inline; float: left; padding-left: 10px; margin-top: -3px;">
+            <a href="{{'/' + key}}" class="btn btn-xs btn-outline" ng-class="{'btn-danger' : global.community[key].type == 'startup', 'btn-info' : global.community[key].type == 'network', 'btn-primary' : global.community[key].type == 'industry', 'btn-success' : global.community[key].type == 'location'}"><i class="fa {{global.community[key].profile.icon}}"></i> {{global.community[key].profile.name}}</a>
+        </li>
+        <br><br>
         <span class="text-muted" ng-bind-html="::item.value.profile.linkedin.headline | highlight:global.search.lastQuery"></span>
         <div ng-show="(showSummary || global.search.count) && item.value.profile.linkedin.summary">
             <div style="padding-bottom: 10px;">
@@ -17,10 +19,8 @@
         </div>
     </div>
 </div>
-<div class="col-md-2" style="vertical-align: middle; min-height: 80px;" ng-init="roles = global.findKey(item.value.communities, 'roles', ['leader', 'founder', 'advisor', 'investor'], {})">
-    <li ng-repeat="(key, role) in roles" style="list-style: none; display: inline; float: right; padding-left: 5px;">
-        {{role[0].toUpperCase()}}: <a href="{{'/' + key}}" class="btn btn-xs btn-outline" ng-class="{'btn-success' : global.community[key].type == 'location'}"><i class="fa {{global.community[key].profile.icon}}"></i> {{global.community[key].profile.name}}</a>
-    </li>
+<div class="col-md-2" style="vertical-align: middle; min-height: 80px;" >
+
     <div id="skills" ng-show="(showSummary || global.search.count) && item.value.profile.linkedin.summary" style="padding-top:40px">
         <li ng-repeat="skill in item.value.profile.linkedin.skills.values" class="label btn-default" style="margin-right: 3px; margin-top: 3px; float:right; padding-bottom: 5px;">
             <a><span ng-click="search(skill.skill.name)" ng-bind-html="::skill.skill.name | highlight:global.search.lastQuery"></span></a>
