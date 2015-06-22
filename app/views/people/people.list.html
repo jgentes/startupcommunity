@@ -1,8 +1,8 @@
-<div class="col-md-10" style="vertical-align: top; min-height: 80px;">
+<div class="col-md-12" style="vertical-align: top; min-height: 80px;">
     <div ng-init="roles = global.findKey(item.value.communities, 'roles', ['leader', 'founder', 'advisor', 'investor'], {})">
         <a ui-sref="user.profile({user: global.user, test: 'test'})" title="View {{::item.value.profile.name | words:0}}'s Profile"><img style="height:58px" ng-src="{{item.value.profile.linkedin.pictureUrl || item.value.profile.avatar || 'images/blank_avatar.png'}}" alt="{{::item.value.profile.name}}" class="widget-image img-circle pull-left"/></a>
     </div>
-    <div style="padding: 10px 0 0 70px;">
+    <div style="padding: 10px 0 0 70px; min-height: 64px;">
         <a ui-sref="user.profile({user: item})" title="View {{::item.value.profile.name | words:0}}'s Profile" style="float: left; "><strong>{{::item.value.profile.name}} </strong></a>
         <a ng-show="{{(item.value.profile.linkedin.summary).length > 0}}" title="Show Summary" ng-click="showSummary = !showSummary" style="color: #DDDDDD; float: left; ">&nbsp;&nbsp;<i class="fa fa-chevron-down fa-fw"></i>
         </a>
@@ -15,15 +15,13 @@
             <div style="padding-bottom: 10px;">
                 <hr>
                 <span class="text-muted" style="white-space:pre-wrap;" ng-bind-html="::item.value.profile.linkedin.summary | linky:'_blank' | highlight:global.search.lastQuery | safe_html"></span>
+                <div id="skills" ng-show="(showSummary || global.search.count) && item.value.profile.linkedin.summary" style="padding-top:40px">
+                    <li ng-repeat="skill in item.value.profile.linkedin.skills.values" class="label btn-default" style="margin-right: 3px; margin-top: 3px; float: left; padding-bottom: 5px;">
+                        <a><span ng-click="search(skill.skill.name)" ng-bind-html="::skill.skill.name | highlight:global.search.lastQuery"></span></a>
+                    </li>
+                </div>
             </div>
         </div>
     </div>
-</div>
-<div class="col-md-2" style="vertical-align: middle; min-height: 80px;" >
-
-    <div id="skills" ng-show="(showSummary || global.search.count) && item.value.profile.linkedin.summary" style="padding-top:40px">
-        <li ng-repeat="skill in item.value.profile.linkedin.skills.values" class="label btn-default" style="margin-right: 3px; margin-top: 3px; float:right; padding-bottom: 5px;">
-            <a><span ng-click="search(skill.skill.name)" ng-bind-html="::skill.skill.name | highlight:global.search.lastQuery"></span></a>
-        </li>
-    </div>
+    <hr>
 </div>
