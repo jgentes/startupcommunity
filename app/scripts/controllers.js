@@ -204,7 +204,7 @@ function NavigationController($scope) {
 function PeopleController($scope, $location, userApis, resultApi, $sce) {
 
     $scope.getUsers = function(alturl) {
-        userApis.getUsers($scope.global.context.location, $scope.global.context.community, undefined, undefined, 32, alturl)
+        userApis.getUsers($scope.global.context.location, $scope.global.context.community, undefined, undefined, 30, alturl)
             .then(function(response) {
                 $scope.users = resultApi.setPage(response.data);
                 if ($location.$$path == '/search') {
@@ -287,7 +287,7 @@ function PeopleController($scope, $location, userApis, resultApi, $sce) {
             }
         }
 
-        userApis.getUsers($scope.global.context.location, $scope.global.context.community, $scope.global.context.selectedIndustry, $scope.global.context.selectedRole, 32, undefined)
+        userApis.getUsers($scope.global.context.location, $scope.global.context.community, $scope.global.context.selectedIndustry, $scope.global.context.selectedRole, 30, undefined)
             .then(function(response) {
                 $scope.loadingIndustry = false;
                 $scope.users = resultApi.setPage(response.data);
@@ -322,7 +322,7 @@ function PeopleController($scope, $location, userApis, resultApi, $sce) {
             }
         }
 
-        userApis.getUsers($scope.global.context.location, $scope.global.context.community, $scope.global.context.selectedIndustry, $scope.global.context.selectedRole, 32, undefined)
+        userApis.getUsers($scope.global.context.location, $scope.global.context.community, $scope.global.context.selectedIndustry, $scope.global.context.selectedRole, 30, undefined)
             .then(function(response) {
                 $scope.loadingRole = false;
                 $scope.users = resultApi.setPage(response.data);
