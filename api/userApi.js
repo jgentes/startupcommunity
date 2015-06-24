@@ -982,7 +982,7 @@ function handleUnlink(req, res) {
 
 
 function handleMaintenance(req, res) {
-    var enabled = false;
+    var enabled = true;
     var startKey = '';
     var userlist = [];
 
@@ -1011,6 +1011,15 @@ function handleMaintenance(req, res) {
                               "oregon": {
                                   "deschutes-or": {
                                       "bend-or": {
+                                          "type" : "location",
+                                          "parent" : "deschutes-or",
+                                          "profile" : {
+                                              "country" : "United States",
+                                              "state" : "Oregon",
+                                              "county" : "Deschutes",
+                                              "city" : "Bend",
+                                              "name" : "Bend, OR"
+                                          },
                                           "roles": [
                                               "advisor"
                                           ]
