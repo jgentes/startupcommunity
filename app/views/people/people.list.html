@@ -6,7 +6,7 @@
         <a ui-sref="user.profile({user: item})" title="View {{::item.value.profile.name | words:0}}'s Profile" style="float: left; "><strong>{{::item.value.profile.name}} </strong></a>
         <a ng-show="{{(item.value.profile.linkedin.summary).length > 0}}" title="Show Summary" ng-click="showSummary = !showSummary" style="color: #DDDDDD; float: left; ">&nbsp;&nbsp;<i class="fa fa-chevron-down fa-fw"></i>
         </a>
-        <li ng-repeat="role in roles" style="list-style: none; display: inline; float: left; padding-left: 10px; margin-top: -3px;">
+        <li ng-repeat="role in roles" style="list-style: none; display: inline; float: left; padding-left: 10px; margin-top: -3px;">{{role}}
             <a href="{{'/' + role.parent}}" class="btn btn-xs btn-outline" ng-class="{'btn-danger' : role.type == 'startup', 'btn-info' : role.type == 'network', 'btn-primary' : role.type == 'industry', 'btn-success' : role.type == 'location'}"><i class="fa {{role.profile.icon}}"></i> {{role.profile.name}}</a>
         </li>
         <br>
