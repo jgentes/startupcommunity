@@ -3,6 +3,7 @@
         'ui.router',
         'ui.bootstrap',
         'ui.highlight',
+        'ui.select',
         'ngSanitize',
         'analytics.mixpanel',
         'satellizer',

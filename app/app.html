@@ -16,6 +16,7 @@
     <link rel="stylesheet" href="../bower_components/animate.css/animate.css" />
     <link rel="stylesheet" href="../bower_components/bootstrap/dist/css/bootstrap.css" />
     <link rel="stylesheet" href="../bower_components/sweetalert/lib/sweet-alert.css" />
+    <link rel="stylesheet" href="../bower_components/angular-ui-select/dist/select.min.css" />
     <!-- endbower -->
     <!-- endbuild -->
 
@@ -34,6 +35,15 @@
 <div class="splash"> <div class="bright-line"></div><div class="splash-title"><a href="/"><img src="images/sc_logo.png" style="width: 75%;" alt="StartupCommunity.org Logo"/></a><img src="images/loading-bars.svg" width="64" height="64" /> </div> </div>
 <!--[if lt IE 7]>
 <p class="alert alert-danger">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+<![endif]-->
+<!--[if lt IE 9]>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.js"></script>
+<script src="http://cdnjs.cloudflare.com/ajax/libs/es5-shim/2.2.0/es5-shim.js"></script>
+<script>
+    document.createElement('ui-select');
+    document.createElement('ui-select-match');
+    document.createElement('ui-select-choices');
+</script>
 <![endif]-->
 
     <!-- Page view wrapper -->
@@ -69,6 +79,7 @@
 <script src="../bower_components/mixpanel/mixpanel-jslib-snippet.min.js"></script>
 <script src="../bower_components/angular-mixpanel/dist/angular-mixpanel.min.js"></script>
 <script src="../bower_components/ngmap/build/scripts/ng-map.min.js"></script>
+<script src="../bower_components/angular-ui-select/dist/select.min.js"></script>
 <!-- endbuild -->
 
 <!-- build:js({.tmp,app}) scripts/scripts.js -->
