@@ -106,7 +106,7 @@
                     <td style="border-bottom: 1px solid #fff; border-top: none; padding: 0;" colspan="3"></td>
                 </div>
                 <div ng-show="global.search.tag" style="text-align: center" ng-cloak><h2><br/>Searching for {{global.search.tag}}..</h2></div>
-                <div ng-repeat="item in users.results" ng-switch on="$index % 2" style="padding-top: 10px;">
+                <div ng-repeat="item in users.results" ng-switch on="$index % 2" style="margin-top: 10px;">
                     <div class="col-md-6" ng-switch-when="0">
                         <div class="row"  ng-include="'views/people/people.list.html'"></div>
                     </div>

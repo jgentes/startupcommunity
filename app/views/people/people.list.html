@@ -10,7 +10,9 @@
             <a href="{{'/' + role.parent}}" class="btn btn-xs btn-outline" ng-class="{'btn-danger' : role.type == 'startup', 'btn-info' : role.type == 'network', 'btn-primary' : role.type == 'industry', 'btn-success' : role.type == 'location'}"><i class="fa {{role.profile.icon}}"></i> {{role.profile.name}}</a>
         </li>
         <br>
-        <span class="text-muted" ng-bind-html="::item.value.profile.linkedin.headline | highlight:global.search.lastQuery"></span>
+        <div class="dash-row">
+            <span class="text-muted" ng-bind-html="::item.value.profile.linkedin.headline | highlight:global.search.lastQuery"></span>
+        </div>
         <div ng-show="(showSummary || global.search.count) && item.value.profile.linkedin.summary">
             <div style="padding-bottom: 10px;">
                 <hr>
