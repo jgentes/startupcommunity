@@ -4,13 +4,13 @@
         <!-- Navigation Block -->
             <div class="hpanel hgreen">
                 <div class="panel-footer top" style="font-size: 17px;">
-                    <strong>Role</strong> Filters
-                    <i ng-show="loadingRole" class="fa fa-refresh fa-spin pull-right" style="padding: 4px; color: #aaa;"></i>
+                    <strong>Stage</strong> Filters
+                    <i ng-show="loadingStage" class="fa fa-refresh fa-spin pull-right" style="padding: 4px; color: #aaa;"></i>
                 </div>
                 <div class="panel-body filternav h226">
 
                     <ul class="panel-list">
-                        <li ng-class="{'active':global.context.selectedRole.indexOf('*') >= 0}" ng-click="filterRole('*')">
+                        <li ng-class="{'active':global.context.selectedStage.indexOf('*') >= 0}" ng-click="filterStage('*')">
                             <a href="javascript:void(0)">
                                 <i class="fa fa-fw fa-globe themed-color-dark"></i> <strong>All</strong>
                             </a>
@@ -18,24 +18,29 @@
                         <li>
                             <hr style="margin: 10px 0 10px 0;">
                         </li>
-                        <li ng-class="{'active':global.context.selectedRole.indexOf('Founder') >= 0}" ng-click="filterRole('Founder')">
+                        <li ng-class="{'active':global.context.selectedStage.indexOf('Bootstrap') >= 0}" ng-click="filterStage('Bootstrap')">
                             <a href="javascript:void(0)">
-                                <i class="fa fa-rocket text-navyblue"></i> Founders
+                                (<$10k/yr) Bootstrap
                             </a>
                         </li>
-                        <li ng-class="{'active':global.context.selectedRole.indexOf('Leader') >= 0}" ng-click="filterRole('Founder')">
+                        <li ng-class="{'active':global.context.selectedStage.indexOf('Validation') >= 0}" ng-click="filterStage('Validation')">
                             <a href="javascript:void(0)">
-                                <i class="fa fa-flag text-danger"></i> Leaders
+                                ($10k - $100k) Validation
                             </a>
                         </li>
-                        <li ng-class="{'active':global.context.selectedRole.indexOf('Advisor') >= 0}" ng-click="filterRole('Advisor')">
+                        <li ng-class="{'active':global.context.selectedStage.indexOf('Growth') >= 0}" ng-click="filterStage('Growth')">
                             <a href="javascript:void(0)">
-                                <i class="fa fa-graduation-cap text-info"></i> Advisors
+                                ($100k - $1M) Growth
                             </a>
                         </li>
-                        <li ng-class="{'active':global.context.selectedRole.indexOf('Investor') >= 0}" ng-click="filterRole('Investor')">
+                        <li ng-class="{'active':global.context.selectedStage.indexOf('Scale') >= 0}" ng-click="filterStage('Scale')">
                             <a href="javascript:void(0)">
-                                <i class="fa fa-leaf text-success"></i> Investors
+                                ($1M - $10M) Scale
+                            </a>
+                        </li>
+                        <li ng-class="{'active':global.context.selectedStage.indexOf('Mature') >= 0}" ng-click="filterStage('Mature')">
+                            <a href="javascript:void(0)">
+                                ($10M+) Mature
                             </a>
                         </li>
                     </ul>

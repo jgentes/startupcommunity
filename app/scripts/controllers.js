@@ -46,7 +46,7 @@ function MainController($scope, $state, $location, $auth, userApis, communityApi
     $scope.closeAlert = function() {
         $scope.global.alert = undefined;
     };
-
+/*
     $scope.global.findKey = function(obj, key, values, results, parent) {
         // must use [] for results if value is undefined, otherwise use {}
         if (!obj) { return results; }
@@ -101,6 +101,46 @@ function MainController($scope, $state, $location, $auth, userApis, communityApi
         }
         return results;
     };
+*/
+    $scope.global.findKey = function(obj, key, results, parent) {
+
+        if (!obj) { return results; }
+        if (!results) { results = []; }
+
+        var keys = Object.keys(obj),
+            name = null,
+            subkeys = null,
+            pushme = {},
+            i = 0;
+
+        for (i in keys) {
+            name = keys[i];
+            subkeys = obj[name];
+
+            if (typeof subkeys === 'object') {
+                subkeys["parent"] = name;
+                if (name === key) {
+                    /* This creates an extra parent object
+                    if (parent === undefined) {
+                        results.push(obj);
+                    } else if (parent == obj.parent) {
+                        pushme[parent] = obj;
+                        results.push(pushme);
+                    } else {
+                        pushme[obj.parent] = obj;
+                        results.push(pushme);
+                    }
+                    */
+                    results.push(obj);
+                } else {
+                    parent = name;
+                    $scope.global.findKey(subkeys, key, results, parent);
+                }
+            }
+        }
+
+        return results;
+    };
 
     var broadcast = function() {
         $scope.$broadcast('sessionReady', true);
@@ -140,6 +180,26 @@ function MainController($scope, $state, $location, $auth, userApis, communityApi
                                     $scope.global.context.community = community;
                                     $scope.global.context.location = location;
 
+                                    // for navigation
+                                    $scope.global.community.locations = {};
+                                    $scope.global.community.industries = {};
+                                    $scope.global.community.networks = {};
+
+                                    for (item in $scope.global.community) {
+
+                                        switch ($scope.global.community[item].type) {
+                                            case "location":
+                                                $scope.global.community.locations[item] = $scope.global.community[item];
+                                                break;
+                                            case "industry":
+                                                $scope.global.community.industries[item] = $scope.global.community[item];
+                                                break;
+                                            case "network":
+                                                $scope.global.community.networks[item] = $scope.global.community[item];
+                                                break;
+                                        }
+                                    }
+
                                     broadcast();
                                 } else {
                                     $scope.global.logout({ type: 'danger', msg: String(response.message) });
@@ -172,33 +232,12 @@ function MainController($scope, $state, $location, $auth, userApis, communityApi
 
 function NavigationController($scope) {
 
-    var getNav = function() {
-        $scope.global.community.locations = {};
-        $scope.global.community.industries = {};
-        $scope.global.community.networks = {};
-
-        for (item in $scope.global.community) {
-
-            switch ($scope.global.community[item].type) {
-                case "location":
-                    $scope.global.community.locations[item] = $scope.global.community[item];
-                    break;
-                case "industry":
-                    $scope.global.community.industries[item] = $scope.global.community[item];
-                    break;
-                case "network":
-                    $scope.global.community.networks[item] = $scope.global.community[item];
-                    break;
-            }
-
-        }
-    };
-
-    if ($scope.global.community === undefined) {
-        $scope.$on('sessionReady', function(event, status) {
-            getNav();
-        });
-    } else getNav();
+    $scope.$on('sessionReady', function(event, status) {
+        $scope.maploc = $scope.global.findKey($scope.global.community.locations, $scope.global.context.location)[0][$scope.global.context.location].profile.name;
+        $scope.locations = $scope.global.findKey($scope.global.community.locations, $scope.global.context.location);
+        $scope.industries = $scope.global.findKey($scope.global.community.industries, $scope.global.context.location);
+        $scope.networks = $scope.global.findKey($scope.global.community.networks, $scope.global.context.location);
+    });
 }
 
 function PeopleController($scope, $location, userApis, resultApi, $sce) {
@@ -221,6 +260,9 @@ function PeopleController($scope, $location, userApis, resultApi, $sce) {
         $scope.global.context.selectedRole = ['*'];
         $scope.global.context.selectedNetwork = ['*'];
         setTitle();
+
+        $scope.industries = $scope.global.findKey($scope.global.community.industries, $scope.global.context.location);
+        $scope.networks = $scope.global.findKey($scope.global.community.networks, $scope.global.context.location);
     }
 
     function setTitle() {
@@ -508,6 +550,143 @@ function ProfileController($scope, $state, userApis, communityApis, $location, $
     };
 
    getActivity();
+
+}
+
+function StartupsController($scope, $location, communityApis, resultApi, $sce) {
+
+    $scope.getStartups = function(alturl) {
+        userApis.getUsers($scope.global.context.location, $scope.global.context.community, undefined, undefined, 30, alturl)
+            .then(function(response) {
+                $scope.startups = resultApi.setPage(response.data);
+                if ($location.$$path == '/search') {
+                    $scope.global.search = resultApi.setPage($scope.users);
+                } else { $scope.global.search = undefined }
+            });
+    };
+
+    function getData() {
+        if ($location.$$path == '/startups' || $scope.global.search === undefined) {
+            $scope.getStartups(); // use defaults
+        }
+        $scope.global.context.selectedIndustry = ['*'];
+        $scope.global.context.selectedStage = ['*'];
+        $scope.global.context.selectedNetwork = ['*'];
+        setTitle();
+    }
+
+    function setTitle() {
+        var item,
+            stage = '',
+            industry = '';
+        if ($scope.global.context.selectedStage[0] == '*') {
+            stage = "Startups";
+        } else {
+            for (item in $scope.global.context.selectedStage) {
+                stage += ($scope.global.context.selectedStage[item] + 's');
+                if (item < $scope.global.context.selectedStage.length - 1) {
+                    if (item < $scope.global.context.selectedStage.length - 2 ) {
+                        stage += '</strong>,<strong> ';
+                    } else stage += ' </strong>&<strong> ';
+                }
+            }
+        }
+        if ($scope.global.context.selectedIndustry[0] == '*') {
+            industry = $scope.global.community[$scope.global.context.location].profile.name;
+        } else {
+            item = 0;
+            for (item in $scope.global.context.selectedIndustry) {
+                industry += $scope.global.context.selectedIndustry[item];
+                if (item < $scope.global.context.selectedIndustry.length - 1) {
+                    if (item < $scope.global.context.selectedIndustry.length - 2 ) {
+                        industry += ', ';
+                    } else industry += ' & ';
+                }
+            }
+        }
+        $scope.title = '<strong>' + stage + '</strong> in ' + industry;
+
+        var pageTitle;
+
+        if ($scope.global.context.community) {
+            pageTitle = $scope.global.community[$scope.global.context.community].profile.name;
+        } else {
+            pageTitle = $scope.global.community[$scope.global.context.location].profile.name;
+        }
+
+        if ($scope.global.context.community && $scope.global.context.location) {
+            pageTitle += '<br><small>' + $scope.global.community[$scope.global.context.location].profile.name + '</small>';
+        } else {
+            pageTitle += '<br><small>Welcome ' + ($scope.global.user.profile.name).split(' ')[0] + '!</small>';
+        }
+
+        $scope.pageTitle = $sce.trustAsHtml(pageTitle);
+    }
+
+    $scope.filterIndustry = function(industry) {
+        $scope.loadingIndustry = true;
+        if (industry == '*') {
+            $scope.global.context.selectedIndustry = ['*'];
+        } else {
+            if ($scope.global.context.selectedIndustry.indexOf('*') >= 0) {
+                $scope.global.context.selectedIndustry.splice($scope.global.context.selectedIndustry.indexOf('*'), 1);
+            }
+            if ($scope.global.context.selectedIndustry.indexOf(industry) < 0) {
+                $scope.global.context.selectedIndustry.push(industry);
+            } else $scope.global.context.selectedIndustry.splice($scope.global.context.selectedIndustry.indexOf(industry), 1);
+            if ($scope.global.context.selectedIndustry.length === 0) {
+                $scope.global.context.selectedIndustry = ['*'];
+            }
+        }
+
+        userApis.getUsers($scope.global.context.location, $scope.global.context.community, $scope.global.context.selectedIndustry, $scope.global.context.selectedStage, 30, undefined)
+            .then(function(response) {
+                $scope.loadingIndustry = false;
+                $scope.users = resultApi.setPage(response.data);
+                setTitle();
+            });
+    };
+
+    $scope.search = function(query) {
+        $scope.global.search.tag = query;
+        $scope.global.search.results = undefined;
+        userApis.search($scope.global.user.context, query)
+            .then(function(response) {
+                $scope.global.search = resultApi.setPage(response.data);
+                $scope.global.search.lastQuery = query;
+                $location.path('/search');
+            });
+    };
+
+    $scope.filterStage = function(stage) {
+        $scope.loadingStage = true;
+        if (stage == '*') {
+            $scope.global.context.selectedStage = ['*'];
+        } else {
+            if ($scope.global.context.selectedStage.indexOf('*') >= 0) {
+                $scope.global.context.selectedStage.splice($scope.global.context.selectedStage.indexOf('*'), 1);
+            }
+            if ($scope.global.context.selectedStage.indexOf(stage) < 0) {
+                $scope.global.context.selectedStage.push(stage);
+            } else $scope.global.context.selectedStage.splice($scope.global.context.selectedStage.indexOf(stage), 1);
+            if ($scope.global.context.selectedStage.length === 0) {
+                $scope.global.context.selectedStage = ['*'];
+            }
+        }
+
+        userApis.getUsers($scope.global.context.location, $scope.global.context.community, $scope.global.context.selectedIndustry, $scope.global.context.selectedStage, 30, undefined)
+            .then(function(response) {
+                $scope.loadingStage = false;
+                $scope.users = resultApi.setPage(response.data);
+                setTitle();
+            });
+    };
+
+    if (!$scope.global.user || $scope.global.context === undefined) {
+        $scope.$on('sessionReady', function(event, status) {
+            getData();
+        });
+    } else getData();
 
 }
 

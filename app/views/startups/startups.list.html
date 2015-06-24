@@ -1,6 +1,6 @@
 <div class="col-md-12" style="vertical-align: top; min-height: 80px;">
     <div ng-init="roles = global.findKey(item.value.communities, 'roles')">
-        <a ui-sref="user.profile({user: global.user})" title="View {{::item.value.profile.name | words:0}}'s Profile"><img style="height:58px; max-width: 58px;" ng-src="{{item.value.profile.linkedin.pictureUrl || item.value.profile.avatar || 'images/blank_avatar.png'}}" alt="{{::item.value.profile.name}}" class="widget-image img-circle pull-left"/></a>
+        <a ui-sref="user.profile({user: global.user, test: 'test'})" title="View {{::item.value.profile.name | words:0}}'s Profile"><img style="height:58px; max-width: 58px;" ng-src="{{item.value.profile.linkedin.pictureUrl || item.value.profile.avatar || 'images/blank_avatar.png'}}" alt="{{::item.value.profile.name}}" class="widget-image img-circle pull-left"/></a>
     </div>
     <div style="padding: 2px 0 0 70px; min-height: 64px; line-height: 2;">
         <a ui-sref="user.profile({user: item})" title="View {{::item.value.profile.name | words:0}}'s Profile" style="float: left; "><strong>{{::item.value.profile.name}} </strong></a>
