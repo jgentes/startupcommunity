@@ -101,7 +101,7 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
         })
         .state('startups.dashboard', {
             url: "/startups",
-            templateUrl: 'views/people/startups.dashboard.html',
+            templateUrl: 'views/startups/startups.dashboard.html',
             data: {
                 pageTitle: 'Startups'
             }

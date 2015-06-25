@@ -260,7 +260,6 @@ function PeopleController($scope, $location, user_api, result_api, $sce) {
         $scope.global.context.selectedIndustry = ['*'];
         $scope.global.context.selectedRole = ['*'];
         $scope.global.context.selectedNetwork = ['*'];
-        $scope.global.context.selectedSkill = ['*'];
         setTitle();
 
         $scope.industries = $scope.global.findKey($scope.global.community.industries, $scope.global.context.location);
@@ -565,8 +564,8 @@ function StartupsController($scope, $location, angellist_api, result_api, $sce) 
         console.log('pullling startups')
         angellist_api.getStartups(2300) // need to ask for this going forward or figure out how to resolve it automatically
             .then(function(response) {
-                console.log(response);
-                $scope.startups = response.startups;
+                console.log(response.data.startups);
+                $scope.startups = response.data.startups;
                 if ($location.$$path == '/search') {
                     $scope.global.search = response.startups;
                 } else { $scope.global.search = undefined }
@@ -581,6 +580,9 @@ function StartupsController($scope, $location, angellist_api, result_api, $sce) 
         $scope.global.context.selectedStage = ['*'];
         $scope.global.context.selectedNetwork = ['*'];
         setTitle();
+
+        $scope.industries = $scope.global.findKey($scope.global.community.industries, $scope.global.context.location);
+        $scope.networks = $scope.global.findKey($scope.global.community.networks, $scope.global.context.location);
     }
 
     function setTitle() {

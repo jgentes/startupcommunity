@@ -7,7 +7,7 @@
                     <strong>Stage</strong> Filters
                     <i ng-show="loadingStage" class="fa fa-refresh fa-spin pull-right" style="padding: 4px; color: #aaa;"></i>
                 </div>
-                <div class="panel-body filternav h226">
+                <div class="panel-body filternav h256">
 
                     <ul class="panel-list">
                         <li ng-class="{'active':global.context.selectedStage.indexOf('*') >= 0}" ng-click="filterStage('*')">
@@ -20,27 +20,32 @@
                         </li>
                         <li ng-class="{'active':global.context.selectedStage.indexOf('Bootstrap') >= 0}" ng-click="filterStage('Bootstrap')">
                             <a href="javascript:void(0)">
-                                ($0 - $10k/yr) Bootstrap
+                                Bootstrap
+                                <span class="pull-right">$0 - $10k/yr</span>
                             </a>
                         </li>
                         <li ng-class="{'active':global.context.selectedStage.indexOf('Validation') >= 0}" ng-click="filterStage('Validation')">
                             <a href="javascript:void(0)">
-                                ($10k - $100k) Validation
+                                Validation
+                                <span class="pull-right">$10k - $100k</span>
                             </a>
                         </li>
                         <li ng-class="{'active':global.context.selectedStage.indexOf('Growth') >= 0}" ng-click="filterStage('Growth')">
                             <a href="javascript:void(0)">
-                                ($100k - $1M) Growth
+                                Growth
+                                <span class="pull-right">$100k - $1M</span>
                             </a>
                         </li>
                         <li ng-class="{'active':global.context.selectedStage.indexOf('Scale') >= 0}" ng-click="filterStage('Scale')">
                             <a href="javascript:void(0)">
-                                ($1M - $10M) Scale
+                                Scale
+                                <span class="pull-right">$1M - $10M</span>
                             </a>
                         </li>
                         <li ng-class="{'active':global.context.selectedStage.indexOf('Mature') >= 0}" ng-click="filterStage('Mature')">
                             <a href="javascript:void(0)">
-                                ($10M+) Mature
+                                Mature
+                                <span class="pull-right">$10M+</span>
                             </a>
                         </li>
                     </ul>
@@ -53,7 +58,7 @@
                     <strong>Cluster</strong> Filters
                     <i ng-show="loadingIndustry" class="fa fa-refresh fa-spin pull-right" style="padding: 4px; color: #aaa;"></i>
                 </div>
-                <div class="panel-body filternav h226">
+                <div class="panel-body filternav h256">
                     <ul class="panel-list">
                         <li ng-class="{'active':global.context.selectedIndustry.indexOf('*') >= 0}" ng-click="filterIndustry('*');">
                             <a><i class="fa fa-fw fa-globe themed-color-dark icon-push"></i> <strong>All</strong></a>
@@ -74,7 +79,7 @@
                     <strong>Network</strong> Filters
                     <i ng-show="loadingNetwork" class="fa fa-refresh fa-spin pull-right" style="padding: 4px; color: #aaa;"></i>
                 </div>
-                <div class="panel-body filternav h226">
+                <div class="panel-body filternav h256">
                     <ul class="panel-list">
                         <li ng-class="{'active':global.context.selectedNetwork.indexOf('*') >= 0}" ng-click="filterNetwork('*');">
                             <a><i class="fa fa-fw fa-globe themed-color-dark icon-push"></i> <strong>All</strong></a>
@@ -97,10 +102,15 @@
         <div class="hpanel">
             <div class="panel-footer top">
                 <div class="pull-right">
-                    <strong>{{startups.start}} - {{startups.end}}</strong> of <strong>{{users.total_count}}&nbsp;&nbsp;</strong>
+                    <strong>{{startups.start}} - {{startups.end}}</strong> of <strong>{{startups.total_count}}&nbsp;
+                    &nbsp;</strong>
                     <div class="btn-group btn-group-sm" style="margin-top: -2px;">
-                        <span ng-if="users.prev"><a ng-click="getUsers(users.prev)" class="btn btn-sm btn-default" style="background-color: #fff;"><i class="fa fa-angle-left"></i></a></span>
-                        <span ng-if="users.next"><a ng-click="getUsers(users.next)" class="btn btn-sm btn-default" style="background-color: #fff;"><i class="fa fa-angle-right"></i></a></span>
+                        <span ng-if="startups.prev"><a ng-click="getStartups(startups.prev)"
+                                                    class="btn btn-sm btn-default"
+                                                    style="background-color: #fff;"><i class="fa fa-angle-left"></i></a></span>
+                        <span ng-if="startups.next"><a ng-click="getStartups(startups.next)"
+                                                    class="btn btn-sm btn-default"
+                                                    style="background-color: #fff;"><i class="fa fa-angle-right"></i></a></span>
                     </div>
                 </div>
                 <span style="font-size: 17px;" ng-bind-html="title"></span>
@@ -113,19 +123,24 @@
                 <div ng-show="global.search.tag" style="text-align: center" ng-cloak><h2><br/>Searching for {{global.search.tag}}..</h2></div>
                 <div ng-repeat="item in startups" ng-switch on="$index % 2" style="padding-top: 10px;">
                     <div class="col-md-6" ng-switch-when="0">
-                        <div class="row"  ng-include="'views/people/people.list.html'"></div>
+                        <div class="row"  ng-include="'views/startups/startups.list.html'"></div>
                     </div>
                     <div class="col-md-6" ng-switch-when="1">
-                        <div class="row"  ng-include="'views/people/people.list.html'"></div>
+                        <div class="row"  ng-include="'views/startups/startups.list.html'"></div>
                     </div>
                 </div>
             </div>
             <div class="panel-footer" style="height:45px;">
                 <div class="pull-right">
-                    <strong>{{users.start}} - {{users.end}}</strong> of <strong>{{users.total_count}}&nbsp;&nbsp;</strong>
+                    <strong>{{startups.start}} - {{startups.end}}</strong> of <strong>{{startups.total_count}}&nbsp;
+                    &nbsp;</strong>
                     <div class="btn-group btn-group-sm" style="margin-top: -2px;">
-                        <span ng-if="users.prev"><a ng-click="getUsers(users.prev)" class="btn btn-sm btn-default" style="background-color: #fff;"><i class="fa fa-angle-left"></i></a></span>
-                        <span ng-if="users.next"><a ng-click="getUsers(users.next)" class="btn btn-sm btn-default" style="background-color: #fff;"><i class="fa fa-angle-right"></i></a></span>
+                        <span ng-if="startups.prev"><a ng-click="getStartups(startups.prev)"
+                                                    class="btn btn-sm btn-default"
+                                                    style="background-color: #fff;"><i class="fa fa-angle-left"></i></a></span>
+                        <span ng-if="startups.next"><a ng-click="getStartups(startups.next)"
+                                                       class="btn btn-sm btn-default"
+                                                 style="background-color: #fff;"><i class="fa fa-angle-right"></i></a></span>
                     </div>
                 </div>
             </div>
