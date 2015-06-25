@@ -13,7 +13,7 @@
     },
     "angellist": {
       "clientID": "7d93aaf3f93e48b83e9cfa147004d6a4",
-      "clientSecret": "df04e3b2a392debf2d95424287f28b1b"
+      "clientToken": "40a39cbffa91eecf57031c0ffcd0bc81"
     },
     "token_secret": "2l3knfgqlkn2fvkl23nvklgnvkg23bhva08",
     "API_token_secret": "2lknvqk32nvqknv3qlkvn3kvln234lknvqS",
@@ -36,7 +36,7 @@
     },
     "angellist": {
       "clientID": "7d93aaf3f93e48b83e9cfa147004d6a4",
-      "clientSecret": "df04e3b2a392debf2d95424287f28b1b"
+      "clientToken": "40a39cbffa91eecf57031c0ffcd0bc81"
     },
     "token_secret": "2l3knfgqlkn2fvkl23nvklgnvkg23bhva08",
     "API_token_secret": "2lknvqk32nvqknv3qlkvn3kvln234lknvqS",
@@ -59,7 +59,7 @@
     },
     "angellist": {
       "clientID": "7d93aaf3f93e48b83e9cfa147004d6a4",
-      "clientSecret": "df04e3b2a392debf2d95424287f28b1b"
+      "clientToken": "40a39cbffa91eecf57031c0ffcd0bc81"
     },
     "token_secret": "2l3knfgqlkn2fvkl23nvklgnvkg23bhva08",
     "API_token_secret": "2lknvqk32nvqknv3qlkvn3kvln234lknvqS",
@@ -82,7 +82,7 @@
     },
     "angellist": {
       "clientID": "7d93aaf3f93e48b83e9cfa147004d6a4",
-      "clientSecret": "df04e3b2a392debf2d95424287f28b1b"
+      "clientToken": "40a39cbffa91eecf57031c0ffcd0bc81"
     },
     "token_secret": "2l3knfgqlkn2fvkl23nvklgnvkg23bhva08",
     "API_token_secret": "2lknvqk32nvqknv3qlkvn3kvln234lknvqS",

@@ -100,7 +100,7 @@
                 </div>
                 <div class="pull-right" style="margin-right: 25px; min-width: 175px;">
                     <ui-select multiple ng-model="skills.selected" theme="bootstrap" ng-disabled="disabled" limit="3">
-                        <ui-select-match placeholder="Choose up to 3 skills.." class="skill-input">{{$item}}</ui-select-match>
+                        <ui-select-match placeholder="Search by skill.." class="skill-input">{{$item}}</ui-select-match>
                         <ui-select-choices repeat="skill in skills.list | filter:$select.search | limitTo: 5">
                             {{skill}}
                         </ui-select-choices>

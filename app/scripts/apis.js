@@ -1,7 +1,7 @@
 angular
     .module('apis', [])
 
-    .factory('userApis', function($http, $location) {
+    .factory('user_api', function($http, $location) {
         return {
             search: function(location, community, query) {
                 var urlString = '/api/1.1/users' + jQuery.param({
@@ -77,7 +77,7 @@ angular
         };
     })
 
-      .factory('communityApis', function($http) {
+      .factory('community_api', function($http) {
           return {
               getCommunity: function(location, community) {
                   var urlString = '/api/1.1/community/';
@@ -98,8 +98,18 @@ angular
               }
           };
       })
+    .factory('angellist_api', function($http) {
+        return {
+            getStartups: function(id) {
+                return $http.get('/api/1.1/angel/startups?id=' + id);
+            },
+            getStartup: function(id) {
+                return $http.get('/api/1.1/angel/startup?id=' + id);
+            }
+        };
+    })
 
-      .factory('resultApi', function() {
+      .factory('result_api', function() {
           // This service will eventually handle a variety of functions for multiple views, such as search, cluster view, people view, startup view, etc
           return {
               setPage: function($scope) {

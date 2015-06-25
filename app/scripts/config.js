@@ -92,6 +92,19 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                     }
                 }]
             }
+        })
+
+        // Startup views
+        .state('startups', {
+            abstract: true,
+            templateUrl: "views/common/content_small.html"
+        })
+        .state('startups.dashboard', {
+            url: "/startups",
+            templateUrl: 'views/people/startups.dashboard.html',
+            data: {
+                pageTitle: 'Startups'
+            }
         });
 
 

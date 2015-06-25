@@ -13,6 +13,7 @@ var express = require('express'),
     nodalytics = require('nodalytics'),
     UserApi = require('./api/userApi.js'),
     CommunityApi = require('./api/communityApi.js'),
+    AngelListApi = require('./api/angellistApi.js'),
     ghost = require('ghost'),
     parentApp = express();
 
@@ -51,7 +52,8 @@ if (process.env.NODE_ENV === "production") {
 
 // ROUTE METHODS
 var userApis = new UserApi(),
-    communityApis = new CommunityApi();
+    communityApis = new CommunityApi(),
+    angellistApis = new AngelListApi();
 
 // API
 app.get('/api/1.0/:community/users', userApis.userSearch);
@@ -68,6 +70,8 @@ app.get('/api/1.1/users', userApis.userSearch);
 app.get('/api/1.1/search', userApis.directSearch);
 app.get('/api/1.1/community/:community', communityApis.getCommunity);
 app.get('/api/1.1/community', communityApis.getActivity);
+app.get('/api/1.1/angel/startups', angellistApis.getStartups);
+app.get('/api/1.1/angel/startup', angellistApis.getStartup);
 app.get('/api/1.1/profile', userApis.ensureAuthenticated, userApis.getProfile);
 app.get('/api/1.1/profile/getkey', userApis.ensureAuthenticated, userApis.createAPIToken);
 app.get('/api/1.1/invitePerson', userApis.ensureAuthenticated, userApis.invitePerson);
