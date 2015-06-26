@@ -436,13 +436,23 @@ function PeopleProfileController($scope, $state, user_api, community_api, $locat
 
         var activities = $scope.global.findKey($state.params.user.communities, "roles"),
             activity = {};
-        console.log(activities);
+
         for (var j in activities) {
-            for (var k in activities[j]) {
-                activity[activities[j][k]] = activity[activities[j][k]] || {}; // create empty object or fill with existing object
-                activity[activities[j][k]][j] = activities[j]; // append matched object
-            }
+           if (activities[j].roles.indexOf('advisor') > -1) {
+               activity.advisor = activity.advisor || {};
+               activity.advisor[activities[j].parent] = activities[j];
+           } else if (activities[j].roles.indexOf('leader') > -1) {
+               activity.leader = activity.leader || {};
+               activity.leader[activities[j].parent] = activities[j];
+           } else if (activities[j].roles.indexOf('investor') > -1) {
+               activity.investor = activity.investor || {};
+               activity.investor[activities[j].parent] = activities[j];
+           } else if (activities[j].roles.indexOf('founder') > -1) {
+               activity.founder = activity.founder || {};
+               activity.founder[activities[j].parent] = activities[j];
+           };
         }
+
         $state.params.user.profile.activity = activity;
     };
 
