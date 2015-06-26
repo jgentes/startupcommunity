@@ -804,6 +804,8 @@ function handleLinkedin(req, res) {
 
 function handleGetProfile(req, res) {
     var userid = req.param.userid || req.user;
+    console.log(req.param.userid)
+    console.log(req.user)
 
     db.get(config.db.collections.communities, userid)
       .then(function(response){

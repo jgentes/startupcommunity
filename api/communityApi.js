@@ -155,7 +155,7 @@ function handleGetKey(req, res) {
                     res.status(400).send({message: 'Key not found.'});
                 }
             })
-            .fail(function(err){
+            .fail(function(err){ //todo SEND TO 404 SCREEN DUE TO NO ROUTE
                 console.log("SEARCH FAIL:");
                 console.warn(err);
                 res.status(400).send({ message: 'Something went wrong: ' + err});

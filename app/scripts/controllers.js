@@ -239,6 +239,24 @@ function NavigationController($scope) {
         $scope.locations = $scope.global.findKey($scope.global.community.locations, $scope.global.context.location);
         $scope.industries = $scope.global.findKey($scope.global.community.industries, $scope.global.context.location);
         $scope.networks = $scope.global.findKey($scope.global.community.networks, $scope.global.context.location);
+
+        var roles = $scope.global.findKey($scope.global.user.communities, "roles"),
+            rolelist = [],
+            j,
+            k,
+            role;
+
+        for (var j in roles) {
+            for (var k in roles[j].roles) {
+                role = roles[j].roles[k].toUpperCase();
+                if (rolelist.indexOf(role) == -1 && role !== "ROLES") {
+                    rolelist.push(role);
+                }
+            }
+        }
+
+        $scope.global.user.profile["roles"] = rolelist;
+
     });
 }
 
@@ -265,6 +283,7 @@ function PeopleController($scope, $location, user_api, result_api, $sce) {
 
         $scope.industries = $scope.global.findKey($scope.global.community.industries, $scope.global.context.location);
         $scope.networks = $scope.global.findKey($scope.global.community.networks, $scope.global.context.location);
+
     }
 
     function setTitle() {

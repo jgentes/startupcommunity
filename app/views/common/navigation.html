@@ -21,15 +21,19 @@
         <div class="container side-menu" style="border-bottom: 1px solid #eee; margin-left: -20px;">
             <div class="row side-menu">
                 <div class="col-sm-3">
-                    <a ui-sref="people.profile({user: global.user})"><img class="img-circle m-b" ng-src="{{global.user.profile.avatar || global.user.profile.linkedin.pictureUrl || 'images/blank_avatar.png'}}" alt="{{global.user.profile.name}}" style="height: 40px; width: 40px; "/>
+                    <a ui-sref="people.profile({user: global.user})"><img class="img-circle m-b" ng-src="{{global.user.profile.avatar || global.user.profile.linkedin.pictureUrl || 'images/blank_avatar.png'}}" alt="{{global.user.profile.name}}" style="height: 40px; width: 40px; "/></a>
                 </div>
-                <div class="col-sm-9">
-                    <p>{{global.user.profile.name}}&nbsp;&nbsp;</p>
+                <div class="col-sm-9" style="padding-top: 10px;">
+                    <a ui-sref="people.profile({user: global.user})">{{global.user.profile.name}}</a>
                 </div>
-                </a>
+
+            </div>
+            <div class="row">
+                <div class="col-sm-12" style="margin: -10px 5px 5px 0;">
+                    <span ng-repeat="item in global.user.profile.roles" ng-class="{'text-danger' : item == 'FOUNDER', 'text-primary' : item == 'ADVISOR', 'text-success' : item == 'INVESTOR', 'text-info' : item == 'LEADER'}" style="font-size: 10px;">{{item}}<span ng-if="!$last">,&nbsp;</span></span>
+                </div>
             </div>
         </div>
-
     </div>
 
     <ul side-navigation class="nav" id="side-menu">
