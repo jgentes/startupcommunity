@@ -434,20 +434,16 @@ function PeopleProfileController($scope, $state, user_api, community_api, $locat
 
     var getActivity = function() {
 
-        var activities = $scope.global.findKey($state.params.user.communities, "roles", ["leader", "advisor", "investor", "founder"], {}),
-            list = Object.keys(activities);
-
-        community_api.getActivity(list)
-            .then(function(response) {
-                var activity = {};
-                for (var j in activities) {
-                    for (var k in activities[j]) {
-                        activity[activities[j][k]] = activity[activities[j][k]] || {}; // create empty object or fill with existing object
-                        activity[activities[j][k]][j] = response.data[j]; // append matched object
-                    }
-                }
-                $state.params.user.profile.activity = activity;
-            })
+        var activities = $scope.global.findKey($state.params.user.communities, "roles"),
+            activity = {};
+        console.log(activities);
+        for (var j in activities) {
+            for (var k in activities[j]) {
+                activity[activities[j][k]] = activity[activities[j][k]] || {}; // create empty object or fill with existing object
+                activity[activities[j][k]][j] = activities[j]; // append matched object
+            }
+        }
+        $state.params.user.profile.activity = activity;
     };
 
     $scope.isCityAdvisor = function(status) { //todo needs to be reworked
