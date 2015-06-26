@@ -4,9 +4,10 @@ angular
     .controller('NavigationController', NavigationController)
     .controller('PeopleController', PeopleController)
     .controller('StartupsController', StartupsController)
+    .controller('StartupProfileController', StartupProfileController)
     .controller('LoginController', LoginController)
     .controller('InvitePeopleController', InvitePeopleController)
-    .controller('ProfileController', ProfileController)
+    .controller('PeopleProfileController', PeopleProfileController)
     .controller('ErrorPageController', ErrorPageController);
 
 function MainController($scope, $state, $location, $auth, user_api, community_api, result_api, $mixpanel) {
@@ -385,7 +386,7 @@ function PeopleController($scope, $location, user_api, result_api, $sce) {
 
 }
 
-function ProfileController($scope, $state, user_api, community_api, $location, $auth, $mixpanel) {
+function PeopleProfileController($scope, $state, user_api, community_api, $location, $auth, $mixpanel) {
 
     $mixpanel.track('Viewed Profile');
 
@@ -699,6 +700,108 @@ function StartupsController($scope, $location, angellist_api, result_api, $sce) 
     } else getData();
 
 }
+
+function StartupProfileController($scope, $state, user_api, community_api, $location, $auth, $mixpanel) {
+
+    $mixpanel.track('Viewed Startup');
+
+    $scope.putProfile = function(userid, profile) {
+        user_api.putProfile(userid, profile, function(response) {
+            if (response.status !== 200) {
+                $scope.global.alert = { type: 'danger', msg: 'There was a problem: ' + String(response.message) };
+                console.warn("WARNING: " +  response.message);
+            } else {
+                $scope.profile = response.data; // may need to tell angular to refresh view
+                $scope.global.alert = { type: 'success', msg: 'Person updated! ' + response.data.name + ' is good to go.' };
+            }
+        });
+    };
+
+    $scope.removeProfile = function(userid, name) {
+        notify("Are you sure you want to remove " + name + "?", function(result) { //todo fix notify maybe with sweetalert
+            if (result) {
+                user_api.removeProfile(userid, function(response) {
+                    $location.path('/people');
+                    $scope.global.alert = { type: 'success', msg: "Person removed. Hopefully they'll return some day." };
+                });
+            }
+        });
+    };
+
+    $scope.updateProfile = function() {
+        user_api.updateProfile({
+            displayName: $scope.global.user.profile.name,
+            email: $scope.global.user.profile.email
+        }).then(function() {
+            $scope.global.alert = { type: 'success', msg: "Great news. Your profile has been updated."};
+        });
+    };
+
+    $scope.getKey = function() {
+        if (!$scope.global.user.profile.api_key) {
+            user_apis.getKey()
+                .then(function(response) {
+                    $scope.global.user.profile.api_key = response.data;
+                    notify({title: "See our <a href='http://startupcommunity.readme.io?appkey=" + $scope.global.user.profile.api_key + "' target='_blank'>API documentation</a> for help using your key:", message: "<pre>" + $scope.global.user.profile.api_key + "</pre>"});
+                });
+        } else notify({title: "See our <a href='http://startupcommunity.readme.io?appkey=" + $scope.global.user.profile.api_key + "' target='_blank'>API documentation</a> for help using your key:", message: "<pre>" + $scope.global.user.profile.api_key + "</pre>"});
+    };
+
+    var getActivity = function() {
+
+        var activities = $scope.global.findKey($state.params.user.communities, "roles", ["leader", "advisor", "investor", "founder"], {}),
+            list = Object.keys(activities);
+
+        community_api.getActivity(list)
+            .then(function(response) {
+                var activity = {};
+                for (var j in activities) {
+                    for (var k in activities[j]) {
+                        activity[activities[j][k]] = activity[activities[j][k]] || {}; // create empty object or fill with existing object
+                        activity[activities[j][k]][j] = response.data[j]; // append matched object
+                    }
+                }
+                $state.params.user.profile.activity = activity;
+            })
+    };
+
+
+    /**
+     * Link third-party provider.
+     */
+    $scope.link = function(provider) {
+        $auth.link(provider)
+            .then(function() {
+                $scope.global.alert ={ type: 'success', msg: 'Well done. You have successfully linked your ' + provider + ' account'};
+            })
+            .then(function() {
+                $scope.getProfile();
+            })
+            .catch(function(response) {
+                $scope.global.alert ={ type: 'danger', msg: 'Sorry, but we ran into this error: ' + response.data.message};
+            });
+    };
+
+    /**
+     * Unlink third-party provider.
+     */
+    $scope.unlink = function(provider) {
+        $auth.unlink(provider)
+            .then(function() {
+                $scope.global.alert = { type: 'success', msg: 'Bam. You have successfully unlinked your ' + provider + ' account'};
+            })
+            .then(function() {
+                $scope.getProfile();
+            })
+            .catch(function(response) {
+                $scope.global.alert = { type: 'danger', msg: 'Aww, shucks. We ran into this error while unlinking your ' + provider + ' account: ' + response.data.message};
+            });
+    };
+
+   // getActivity();
+
+}
+
 
 function InvitePeopleController($scope, $auth, user_api) {
 

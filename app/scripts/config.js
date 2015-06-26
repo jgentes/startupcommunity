@@ -105,6 +105,23 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
             data: {
                 pageTitle: 'Startups'
             }
+        })
+        .state('startups.profile', {
+            templateUrl: "views/startups/startups.profile.html",
+            parent: 'startups',
+            data: {
+                pageTitle: 'Startup Profile'
+            },
+            params: {
+                startup: {}
+            },
+            resolve: {
+                authenticated: ['$location', '$auth', function($location, $auth) {
+                    if (!$auth.isAuthenticated()) {
+                        return $location.path('/login');
+                    }
+                }]
+            }
         });
 
 
