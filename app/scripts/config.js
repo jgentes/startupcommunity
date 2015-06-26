@@ -111,9 +111,9 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
     // Set default unmatched url state
     $urlRouterProvider.otherwise(
         function($injector, $location) {
-            $injector.invoke(['$state', '$location', 'communityApis', function($state, $location, communityApis) {
+            $injector.invoke(['$state', '$location', 'community_api', function($state, $location, community_api) {
                 var path = $location.url().substr(1);
-                communityApis.getKey(path)
+                community_api.getKey(path)
                     .then(function(response) {
                         switch (response.data.type) {
                             case "user":

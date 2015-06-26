@@ -561,13 +561,13 @@ function ProfileController($scope, $state, user_api, community_api, $location, $
 function StartupsController($scope, $location, angellist_api, result_api, $sce) {
 
     $scope.getStartups = function() {
-        console.log('pullling startups')
+
         angellist_api.getStartups(2300) // need to ask for this going forward or figure out how to resolve it automatically
             .then(function(response) {
-                console.log(response.data.startups);
-                $scope.startups = response.data.startups;
+
+                $scope.startups = response.data;
                 if ($location.$$path == '/search') {
-                    $scope.global.search = response.startups;
+                    $scope.global.search = response.data;
                 } else { $scope.global.search = undefined }
             });
     };

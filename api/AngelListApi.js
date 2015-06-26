@@ -15,7 +15,16 @@ function handleGetStartups(req, res) {
         function(error, response, body) {
 
             if (!body.status || body.status === 200) {
-                res.status(200).send(JSON.parse(body));
+                var results = JSON.parse(body),
+                    newresponse = [],
+                    s;
+
+                for (s in results.startups) {
+                    if (results.startups[s].hidden == false) {
+                        newresponse.push(results.startups[s]);
+                    }
+                }
+                res.status(200).send(newresponse);
             } else {
                 console.error('Error: ' + body.message);
                 console.log(body);
