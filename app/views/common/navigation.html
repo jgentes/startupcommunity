@@ -23,14 +23,11 @@
                 <div class="col-sm-3">
                     <a ui-sref="people.profile({user: global.user})"><img class="img-circle m-b" ng-src="{{global.user.profile.avatar || global.user.profile.linkedin.pictureUrl || 'images/blank_avatar.png'}}" alt="{{global.user.profile.name}}" style="height: 40px; width: 40px; "/></a>
                 </div>
-                <div class="col-sm-9" style="padding-top: 10px;">
+                <div class="col-sm-9" style="padding-top: 3px;">
                     <a ui-sref="people.profile({user: global.user})">{{global.user.profile.name}}</a>
-                </div>
-
-            </div>
-            <div class="row">
-                <div class="col-sm-12" style="margin: -10px 5px 5px 0;">
-                    <span ng-repeat="item in global.user.profile.roles" ng-class="{'text-danger' : item == 'FOUNDER', 'text-primary' : item == 'ADVISOR', 'text-success' : item == 'INVESTOR', 'text-info' : item == 'LEADER'}" style="font-size: 10px;">{{item}}<span ng-if="!$last">,&nbsp;</span></span>
+                    <div style="margin-left: -10px;">
+                        <span ng-repeat="item in global.user.profile.roles" class="user-role"><i ng-attr-title="{{item}}" ng-class="{'text-primary fa fa-rocket' : item == 'Founder', 'text-info fa fa-graduation-cap' : item == 'Advisor', 'text-success fa fa-leaf' : item == 'Investor', 'text-danger fa fa-flag' : item == 'Leader'}"></i></span>
+                    </div>
                 </div>
             </div>
         </div>

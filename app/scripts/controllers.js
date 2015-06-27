@@ -248,8 +248,8 @@ function NavigationController($scope) {
 
         for (var j in roles) {
             for (var k in roles[j].roles) {
-                role = roles[j].roles[k].toUpperCase();
-                if (rolelist.indexOf(role) == -1 && role !== "ROLES") {
+                role = roles[j].roles[k][0].toUpperCase() + roles[j].roles[k].slice(1);
+                if (rolelist.indexOf(role) == -1 && role !== "Roles") {
                     rolelist.push(role);
                 }
             }
