@@ -25,7 +25,7 @@
                 </div>
                 <div class="col-sm-9" style="padding-top: 3px;">
                     <a ui-sref="people.profile({user: global.user})">{{global.user.profile.name}}</a>
-                    <div style="margin-left: -10px;">
+                    <div style="margin-left: -10px; padding-top: 1px;">
                         <span ng-repeat="item in global.user.profile.roles" class="user-role"><i ng-attr-title="{{item}}" ng-class="{'text-primary fa fa-rocket' : item == 'Founder', 'text-info fa fa-graduation-cap' : item == 'Advisor', 'text-success fa fa-leaf' : item == 'Investor', 'text-danger fa fa-flag' : item == 'Leader'}"></i></span>
                     </div>
                 </div>
