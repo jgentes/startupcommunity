@@ -409,6 +409,10 @@ function PeopleProfileController($scope, $state, user_api, community_api, $locat
 
     $mixpanel.track('Viewed Profile');
 
+    if ($state.params.user.key) {
+        $location.path('/' + $state.params.user.key)
+    }
+
     $scope.putProfile = function(userid, profile) {
         user_api.putProfile(userid, profile, function(response) {
             if (response.status !== 200) {

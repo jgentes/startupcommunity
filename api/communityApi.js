@@ -148,8 +148,8 @@ function handleGetKey(req, res) {
         db.get(config.db.collections.communities, req.params.key)
             .then(function (result) {
                 if (result.statusCode == 200) {
-                    var newresult = result.body;
-                    res.status(200).send(newresult);
+                    result.body["key"] = req.params.key;
+                    res.status(200).send(result.body);
                 } else {
                     console.warn('Key not found!');
                     res.status(400).send({message: 'Key not found.'});

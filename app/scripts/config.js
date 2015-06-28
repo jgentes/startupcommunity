@@ -77,7 +77,6 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
             }
         })
         .state('people.profile', {
-            url: "/{user}",
             templateUrl: "views/people/people.profile.html",
             parent: 'people',
             data: {
