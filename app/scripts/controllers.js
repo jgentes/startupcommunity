@@ -48,63 +48,8 @@ function MainController($scope, $state, $location, $auth, user_api, community_ap
     $scope.closeAlert = function() {
         $scope.global.alert = undefined;
     };
-/*
-    $scope.global.findKey = function(obj, key, values, results, parent) {
-        // must use [] for results if value is undefined, otherwise use {}
-        if (!obj) { return results; }
 
-        var keys = Object.keys(obj),
-            name = null,
-            subkeys = null,
-            tempkeys = [],
-            i = 0,
-            j = 0,
-            k = 0;
-
-        for (i in keys) {
-            name = keys[i];
-            subkeys = obj[name];
-
-            if (typeof subkeys === 'object') {
-                if (name === key) {
-                    if (values) {
-                        for (j in subkeys) {
-                            for (k in values) {
-                                if (subkeys[j] == values[k]) {
-                                    if (results[parent] === undefined) {
-                                        results[parent] = [];
-                                    }
-                                    results[parent].push(values[k]);
-                                }
-                            }
-                        }
-                    } else {
-                        results.push(subkeys);
-                    }
-                }
-
-                parent = name;
-                $scope.global.findKey(subkeys, key, values, results, parent);
-
-            } else {
-
-                if (name === key) {
-                    if (results.indexOf(subkeys) === -1) {
-                        if (values) {
-                            for (k in values) {
-                                if (obj[name] == value) {
-                                    results.push(obj);
-                                }
-                            }
-                        } else results.push(obj);
-                    }
-                }
-            }
-        }
-        return results;
-    };
-*/
-    $scope.global.findKey = function(obj, key, results, parent) {
+    $scope.global.findKey = function(obj, key_to_find, results, key) {
 
         if (!obj) { return results; }
         if (!results) { results = []; }
@@ -120,23 +65,23 @@ function MainController($scope, $state, $location, $auth, user_api, community_ap
             subkeys = obj[name];
 
             if (typeof subkeys === 'object') {
-                subkeys["parent"] = name;
-                if (name === key) {
-                    /* This creates an extra parent object
-                    if (parent === undefined) {
+                subkeys["key"] = name;
+                if (name === key_to_find) {
+                    /* This creates an extra key object
+                    if (key === undefined) {
                         results.push(obj);
-                    } else if (parent == obj.parent) {
-                        pushme[parent] = obj;
+                    } else if (key == obj.key) {
+                        pushme[key] = obj;
                         results.push(pushme);
                     } else {
-                        pushme[obj.parent] = obj;
+                        pushme[obj.key] = obj;
                         results.push(pushme);
                     }
                     */
                     results.push(obj);
                 } else {
-                    parent = name;
-                    $scope.global.findKey(subkeys, key, results, parent);
+                    key = name;
+                    $scope.global.findKey(subkeys, key_to_find, results, key);
                 }
             }
         }
@@ -463,16 +408,16 @@ function PeopleProfileController($scope, $state, user_api, community_api, $locat
         for (var j in activities) {
            if (activities[j].roles.indexOf('advisor') > -1) {
                activity.advisor = activity.advisor || {};
-               activity.advisor[activities[j].parent] = activities[j];
+               activity.advisor[activities[j].key] = activities[j];
            } else if (activities[j].roles.indexOf('leader') > -1) {
                activity.leader = activity.leader || {};
-               activity.leader[activities[j].parent] = activities[j];
+               activity.leader[activities[j].key] = activities[j];
            } else if (activities[j].roles.indexOf('investor') > -1) {
                activity.investor = activity.investor || {};
-               activity.investor[activities[j].parent] = activities[j];
+               activity.investor[activities[j].key] = activities[j];
            } else if (activities[j].roles.indexOf('founder') > -1) {
                activity.founder = activity.founder || {};
-               activity.founder[activities[j].parent] = activities[j];
+               activity.founder[activities[j].key] = activities[j];
            };
         }
 

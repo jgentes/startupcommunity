@@ -75,7 +75,7 @@ function handleGetActivity(req, res) {
                 if (result.body.results.length > 0) {
                     for (var item in result.body.results) {
                         newresponse[result.body.results[item].path.key] = result.body.results[item].value;
-                        result.body.results[item].value["key"] = result.body.results[item].path.key;
+                        result.body.results[item].value["object"] = result.body.results[item].path.key;
                     }
                     res.status(200).send(newresponse);
                 } else {

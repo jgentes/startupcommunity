@@ -48,22 +48,6 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
             templateUrl: 'views/login.html'
         })
 
-        .state('network', {
-            templateUrl: 'views/network.html',
-            url: "/network",
-            resolve: {
-                lazyLoad: ['lazyLoad', function (lazyLoad) {
-                    return lazyLoad.load([
-                        'assets/plugins/fullcalendar/fullcalendar.js'
-                    ]);
-                }]
-            }
-        })
-        .state('network.resources', {
-            url: "/resources",
-            templateUrl: 'views/network.resources.html'
-        })
-
          // People views
         .state('people', {
             abstract: true,
@@ -122,8 +106,46 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                     }
                 }]
             }
-        });
+        })
 
+        // Industry views
+        .state('industry', {
+            abstract: true,
+            templateUrl: "views/common/content_small.html"
+        })
+        .state('industry.dashboard', {
+            url: "/industry",
+            templateUrl: 'views/industries/industry.dashboard.html',
+            data: {
+                pageTitle: 'Industry'
+            }
+        })
+
+        // Location views
+        .state('location', {
+            abstract: true,
+            templateUrl: "views/common/content_small.html"
+        })
+        .state('location.dashboard', {
+            url: "/location",
+            templateUrl: 'views/locations/location.dashboard.html',
+            data: {
+                pageTitle: 'Location'
+            }
+        })
+
+        // Network views
+        .state('network', {
+            abstract: true,
+            templateUrl: "views/common/content_small.html"
+        })
+        .state('network.dashboard', {
+            url: "/network",
+            templateUrl: 'views/networks/network.dashboard.html',
+            data: {
+                pageTitle: 'Network'
+            }
+        });
 
     // Set default unmatched url state
     $urlRouterProvider.otherwise(
