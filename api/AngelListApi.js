@@ -2,7 +2,7 @@ var config = require('../config.json')[process.env.NODE_ENV || 'development'],
   db = require('orchestrate')(config.db.key),
   request = require('request');
 
-require('request-debug')(request); // Very useful for debugging oauth and api req/res
+//require('request-debug')(request); // Very useful for debugging oauth and api req/res
 
 var AngelListApi = function() {
     this.getStartups = handleGetStartups;

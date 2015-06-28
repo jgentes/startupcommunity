@@ -6,6 +6,7 @@
         'ui.select',
         'ngSanitize',
         'analytics.mixpanel',
+        'chart.js',
         'satellizer',
         'apis',
         'ngMap'

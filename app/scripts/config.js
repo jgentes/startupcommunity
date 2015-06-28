@@ -124,7 +124,7 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
         // Location views
         .state('location', {
             abstract: true,
-            templateUrl: "views/common/content_small.html"
+            templateUrl: "views/common/content.html"
         })
         .state('location.dashboard', {
             url: "/location",

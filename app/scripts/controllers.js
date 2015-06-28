@@ -3,6 +3,7 @@ angular
     .controller('MainController', MainController)
     .controller('NavigationController', NavigationController)
     .controller('PeopleController', PeopleController)
+    .controller('LocationController', LocationController)
     .controller('StartupsController', StartupsController)
     .controller('StartupProfileController', StartupProfileController)
     .controller('LoginController', LoginController)
@@ -530,6 +531,10 @@ function PeopleProfileController($scope, $state, user_api, community_api, $locat
     };
 
    getActivity();
+
+}
+
+function LocationController($scope, $location) {
 
 }
 

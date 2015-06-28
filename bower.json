@@ -35,7 +35,8 @@
     "angular-mixpanel": "~1.1.0",
     "ngmap": "~1.7.11",
     "angular-sanitize": "~1.4.1",
-    "angular-ui-select": "~0.12.0"
+    "angular-ui-select": "~0.12.0",
+    "angular-chart.js": "~0.7.2"
   },
   "resolutions": {
     "angular": "1.4.1",
