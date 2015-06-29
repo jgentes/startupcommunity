@@ -147,6 +147,7 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
         function($injector, $location) {
             $injector.invoke(['$state', '$location', 'community_api', function($state, $location, community_api) {
                 var path = $location.url().substr(1);
+
                 community_api.getKey(path)
                     .then(function(response) {
                         switch (response.data.type) {
@@ -154,7 +155,7 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                                 $state.go('people.profile', { user : response.data});
                                 break;
                             case "location":
-                                $state.go('location.dashboard', { location : response.data});
+                                $state.go('location.dashboard', { community : response.data});
                                 break;
                         }
                     });
