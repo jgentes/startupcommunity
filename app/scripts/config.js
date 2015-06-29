@@ -1,6 +1,6 @@
 function configState($stateProvider, $urlRouterProvider, $compileProvider, $locationProvider) {
 
-    // Optimize load start with remove binding information inside the DOM element
+    // Optimize load start
     $compileProvider.debugInfoEnabled(true);
 
     $stateProvider
@@ -10,7 +10,7 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
         .state('dashboard', {
             url: "/dashboard",
             templateUrl: "views/dashboard.html",
-            data: {
+            params: {
                 pageTitle: 'Dashboard'
             },
             resolve: {
@@ -56,18 +56,16 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
         .state('people.dashboard', {
             url: "/people",
             templateUrl: 'views/people/people.dashboard.html',
-            data: {
+            params: {
                 pageTitle: 'People'
             }
         })
         .state('people.profile', {
             templateUrl: "views/people/people.profile.html",
             parent: 'people',
-            data: {
-                pageTitle: 'User Profile'
-            },
             params: {
-                user: {}
+                user: {},
+                pageTitle: 'User Profile'
             },
             resolve: {
                 authenticated: ['$location', '$auth', function($location, $auth) {
@@ -86,18 +84,16 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
         .state('startups.dashboard', {
             url: "/startups",
             templateUrl: 'views/startups/startups.dashboard.html',
-            data: {
+            params: {
                 pageTitle: 'Startups'
             }
         })
         .state('startups.profile', {
             templateUrl: "views/startups/startups.profile.html",
             parent: 'startups',
-            data: {
-                pageTitle: 'Startup Profile'
-            },
             params: {
-                startup: {}
+                startup: {},
+                pageTitle: 'Startup Profile'
             },
             resolve: {
                 authenticated: ['$location', '$auth', function($location, $auth) {
@@ -116,8 +112,8 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
         .state('industry.dashboard', {
             url: "/industry",
             templateUrl: 'views/industries/industry.dashboard.html',
-            data: {
-                pageTitle: 'Industry'
+            params: {
+                community: {}
             }
         })
 
@@ -127,10 +123,9 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
             templateUrl: "views/common/content.html"
         })
         .state('location.dashboard', {
-            url: "/location",
             templateUrl: 'views/locations/location.dashboard.html',
-            data: {
-                pageTitle: 'Location'
+            params: {
+                community: {}
             }
         })
 
@@ -142,8 +137,8 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
         .state('network.dashboard', {
             url: "/network",
             templateUrl: 'views/networks/network.dashboard.html',
-            data: {
-                pageTitle: 'Network'
+            params: {
+                community: {}
             }
         });
 
@@ -157,6 +152,10 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                         switch (response.data.type) {
                             case "user":
                                 $state.go('people.profile', { user : response.data});
+                                break;
+                            case "location":
+                                $state.go('location.dashboard', { location : response.data});
+                                break;
                         }
                     });
                 //$state.go('dashboard');

@@ -10,7 +10,7 @@
 <!-- Main Wrapper -->
 <div id="wrapper">
     <div small-header class="normalheader transition">
-        <div class="hpanel" tour-step order="1" title="Page header" content="Place your page title and breadcrumb. Select small or large header or give the user choice to change the size." placement="bottom">
+        <div class="hpanel">
             <div class="panel-body">
                 <a ng-click="small()" href="">
                     <div class="clip-header">
@@ -19,23 +19,23 @@
                 </a>
 
                 <div id="hbreadcrumb" class="pull-right m-t-lg">
-                    <ol class="hbreadcrumb breadcrumb">
-                        <li><a ui-sref="dashboard">Dashboard</a></li>
-                        <li ng-repeat="state in $state.$current.path" ng-switch="$last || !!state.abstract" ng-class="{active: $last}">
-                            <a ng-switch-when="false" href="#{{state.url.format($stateParams)}}">{{state.data.pageTitle}}</a>
-                            <span ng-switch-when="true">{{state.data.pageTitle}}</span>
+                    <ol class="hbreadcrumb">
+                        <li><a ui-sref="dashboard">Dashboard&nbsp;&nbsp;/</a></li>
+                        <li ng-repeat="state in $state.$current.path" ng-class="{active: $last}">
+                            <a ng-if="!(!!state.abstract) && !$last" href="#{{state.url.format($stateParams)}}">&nbsp;&nbsp;{{state.params.pageTitle.config.value}}&nbsp;&nbsp;/</a>
+                            <span ng-if="$last">&nbsp;&nbsp;{{$state.params.community.profile.name}}</span>
                         </li>
                     </ol>
                 </div>
                 <h2 class="font-light m-b-xs">
-                    {{ $state.current.data.pageTitle }}
+                    {{ $state.params.community.profile.logo || $state.params.community.profile.name }}
                 </h2>
-                <small>{{ $state.current.data.pageDesc }}</small>
+                <small>{{ $state.params.community.profile.description }}</small>
             </div>
         </div>
     </div>
     <div class="content">
-        <div ui-view animate-panel></div>
+        <div ui-view></div>
     </div>
 
 </div>

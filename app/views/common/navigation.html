@@ -38,7 +38,7 @@
             <a href="#"><span class="nav-label">Locations</span><span class="fa arrow"></span> </a>
             <ul class="nav nav-second-level" ng-class="{in: $state.includes('location')}">
                 <li ui-sref-active="active" ng-repeat="item in locations">
-                    <a ui-sref="location.dashboard({location:item.key})"><i class="fa fa-globe"></i>&nbsp;&nbsp;{{item[global.context.location].profile.name}}</a>
+                    <a ui-sref="location.dashboard({community: item[global.context.location]})"><i class="fa fa-globe"></i>&nbsp;&nbsp;{{item[global.context.location].profile.name}}</a>
                 </li>
             </ul>
         </li>
@@ -46,7 +46,7 @@
             <a href="#"><span class="nav-label">Clusters</span><span class="fa arrow"></span> </a>
             <ul class="nav nav-second-level" ng-class="{in: $state.includes('industry')}">
                 <li ui-sref-active="active" ng-repeat="item in industries">
-                    <a ui-sref="industry.dashboard({industry:item.key})"><i ng-class="'fa ' + item[global.context.location].profile.icon"></i>&nbsp;&nbsp;{{item[global.context.location].profile.name}}</a>
+                    <a ui-sref="industry.dashboard({community:item[global.context.location]})"><i ng-class="'fa ' + item[global.context.location].profile.icon"></i>&nbsp;&nbsp;{{item[global.context.location].profile.name}}</a>
                 </li>
             </ul>
         </li>
@@ -54,7 +54,7 @@
             <a href="#"><span class="nav-label">Networks</span><span class="fa arrow"></span> </a>
             <ul class="nav nav-second-level" ng-class="{in: $state.includes('network')}">
                 <li ui-sref-active="active" ng-repeat="item in networks">
-                    <a ui-sref="network.dashboard({network:item.key})"><i ng-class="'fa ' + item[global.context.location].profile.icon"></i>&nbsp;&nbsp;{{item[global.context.location].profile.name}}</a>
+                    <a ui-sref="network.dashboard({community:item[global.context.location]})"><i ng-class="'fa ' + item[global.context.location].profile.icon"></i>&nbsp;&nbsp;{{item[global.context.location].profile.name}}</a>
                 </li>
             </ul>
         </li>

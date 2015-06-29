@@ -23,7 +23,7 @@ function MainController($scope, $state, $location, $auth, user_api, community_ap
                 if (error) {
                     (error.msg == 'undefined' || error.msg) ? $scope.global.alert = undefined : $scope.global.alert = error
                 }
-                $location.path('/login');
+                $state.go('login');
             });
     };
 
@@ -180,7 +180,7 @@ function MainController($scope, $state, $location, $auth, user_api, community_ap
 
 function NavigationController($scope) {
 
-    $scope.$on('sessionReady', function(event, status) {
+    var getNav = function() {
         $scope.maploc = $scope.global.findKey($scope.global.community.locations, $scope.global.context.location)[0][$scope.global.context.location].profile.name;
         $scope.locations = $scope.global.findKey($scope.global.community.locations, $scope.global.context.location);
         $scope.industries = $scope.global.findKey($scope.global.community.industries, $scope.global.context.location);
@@ -192,8 +192,8 @@ function NavigationController($scope) {
             k,
             role;
 
-        for (var j in roles) {
-            for (var k in roles[j].roles) {
+        for (j in roles) {
+            for (k in roles[j].roles) {
                 role = roles[j].roles[k][0].toUpperCase() + roles[j].roles[k].slice(1);
                 if (rolelist.indexOf(role) == -1 && role !== "Roles") {
                     rolelist.push(role);
@@ -203,7 +203,14 @@ function NavigationController($scope) {
 
         $scope.global.user.profile["roles"] = rolelist;
 
-    });
+    };
+
+    if (!$scope.global.community) {
+        $scope.$on('sessionReady', function (event, status) {
+            getNav();
+        });
+    } else getNav();
+
 }
 
 function PeopleController($scope, $location, user_api, result_api, $sce) {
@@ -534,8 +541,11 @@ function PeopleProfileController($scope, $state, user_api, community_api, $locat
 
 }
 
-function LocationController($scope, $location) {
+function LocationController($state, $location) {
 
+    if ($state.params.location) {
+        $location.path('/' + $state.params.location.key)
+    }
 }
 
 function StartupsController($scope, $location, angellist_api, result_api, $sce) {

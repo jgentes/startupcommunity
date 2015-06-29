@@ -14,13 +14,13 @@
                     <ol class="hbreadcrumb">
                         <li><a ui-sref="dashboard">Dashboard&nbsp;&nbsp;/</a></li>
                         <li ng-repeat="state in $state.$current.path" ng-class="{active: $last}">
-                            <a ng-if="!(!!state.abstract) && !$last" href="#{{state.url.format($stateParams)}}">&nbsp;&nbsp;{{state.data.pageTitle}}&nbsp;&nbsp;/</a>
-                            <span ng-if="$last">&nbsp;&nbsp;{{state.data.pageTitle}}</span>
+                            <a ng-if="!(!!state.abstract) && !$last" href="#{{state.url.format($stateParams)}}">&nbsp;&nbsp;{{state.params.pageTitle.config.value}}&nbsp;&nbsp;/</a>
+                            <span ng-if="$last">&nbsp;&nbsp;{{$state.params.pageTitle}}</span>
                         </li>
                     </ol>
                 </div>
                 <h2 class="font-light m-b-xs">
-                    {{ $state.current.data.pageTitle }}
+                    {{ $state.params.pageTitle }}
                 </h2>
             </div>
         </div>

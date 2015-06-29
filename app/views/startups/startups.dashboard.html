@@ -5,9 +5,10 @@
             <div class="hpanel hgreen">
                 <div class="panel-footer top" style="font-size: 17px;">
                     <strong>Stage</strong> Filters
-                    <i ng-show="loadingStage" class="fa fa-refresh fa-spin pull-right" style="padding: 4px; color: #aaa;"></i>
+                    <i ng-show="loadingStage" class="fa fa-refresh fa-spin" style="padding: 4px; color: #aaa;"></i>
+                    <small class="pull-right text-muted" style="padding:7px 2px 0 0; font-size: 12px;">(# Employees)</small>
                 </div>
-                <div class="panel-body filternav h256">
+                <div class="panel-body filternav h226">
 
                     <ul class="panel-list">
                         <li ng-class="{'active':global.context.selectedStage.indexOf('*') >= 0}" ng-click="filterStage('*')">
@@ -21,31 +22,25 @@
                         <li ng-class="{'active':global.context.selectedStage.indexOf('Bootstrap') >= 0}" ng-click="filterStage('Bootstrap')">
                             <a href="javascript:void(0)">
                                 Bootstrap
-                                <span class="pull-right">$0 - $10k/yr</span>
+                                <span class="pull-right">1 - 2</span>
                             </a>
                         </li>
                         <li ng-class="{'active':global.context.selectedStage.indexOf('Validation') >= 0}" ng-click="filterStage('Validation')">
                             <a href="javascript:void(0)">
                                 Validation
-                                <span class="pull-right">$10k - $100k</span>
+                                <span class="pull-right">3 - 10</span>
                             </a>
                         </li>
                         <li ng-class="{'active':global.context.selectedStage.indexOf('Growth') >= 0}" ng-click="filterStage('Growth')">
                             <a href="javascript:void(0)">
                                 Growth
-                                <span class="pull-right">$100k - $1M</span>
+                                <span class="pull-right">11 - 100</span>
                             </a>
                         </li>
                         <li ng-class="{'active':global.context.selectedStage.indexOf('Scale') >= 0}" ng-click="filterStage('Scale')">
                             <a href="javascript:void(0)">
                                 Scale
-                                <span class="pull-right">$1M - $10M</span>
-                            </a>
-                        </li>
-                        <li ng-class="{'active':global.context.selectedStage.indexOf('Mature') >= 0}" ng-click="filterStage('Mature')">
-                            <a href="javascript:void(0)">
-                                Mature
-                                <span class="pull-right">$10M+</span>
+                                <span class="pull-right">100+</span>
                             </a>
                         </li>
                     </ul>
@@ -58,7 +53,7 @@
                     <strong>Cluster</strong> Filters
                     <i ng-show="loadingIndustry" class="fa fa-refresh fa-spin pull-right" style="padding: 4px; color: #aaa;"></i>
                 </div>
-                <div class="panel-body filternav h256">
+                <div class="panel-body filternav h226">
                     <ul class="panel-list">
                         <li ng-class="{'active':global.context.selectedIndustry.indexOf('*') >= 0}" ng-click="filterIndustry('*');">
                             <a><i class="fa fa-fw fa-globe themed-color-dark icon-push"></i> <strong>All</strong></a>
@@ -79,7 +74,7 @@
                     <strong>Network</strong> Filters
                     <i ng-show="loadingNetwork" class="fa fa-refresh fa-spin pull-right" style="padding: 4px; color: #aaa;"></i>
                 </div>
-                <div class="panel-body filternav h256">
+                <div class="panel-body filternav h226">
                     <ul class="panel-list">
                         <li ng-class="{'active':global.context.selectedNetwork.indexOf('*') >= 0}" ng-click="filterNetwork('*');">
                             <a><i class="fa fa-fw fa-globe themed-color-dark icon-push"></i> <strong>All</strong></a>
