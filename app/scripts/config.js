@@ -140,7 +140,12 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
             params: {
                 community: {}
             }
+        })
+
+        .state('404', {
+            templateUrl: "views/common/404.html"
         });
+
 
     // Set default unmatched url state
     $urlRouterProvider.otherwise(
@@ -157,6 +162,14 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                             case "location":
                                 $state.go('location.dashboard', { community : response.data});
                                 break;
+                        }
+                    })
+                    .catch(function(err){
+                        if (err.status == 404) {
+                            $state.go('404')
+                        } else {
+                            console.log("SEARCH FAIL:");
+                            console.warn(err);
                         }
                     });
                 //$state.go('dashboard');
