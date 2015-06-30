@@ -174,7 +174,7 @@ function MainController($scope, $state, $location, $auth, user_api, community_ap
     }
 
     $scope.$on('mapInitialized', function(event, map) {
-        $scope.$broadcast('gotMap', true);
+        $scope.global.mapCenter = "Portland, OR";
     });
 
     $scope.global.sessionReady();
@@ -539,10 +539,6 @@ function PeopleProfileController($scope, $state, user_api, community_api, $locat
                 $scope.global.alert = { type: 'danger', msg: 'Aww, shucks. We ran into this error while unlinking your ' + provider + ' account: ' + response.data.message};
             });
     };
-
-    $scope.$on('gotMap', function(event, map) {
-        $scope.mapCenter = "Portland, OR";
-    });
 
    getActivity();
 
