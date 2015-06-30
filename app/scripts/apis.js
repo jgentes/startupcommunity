@@ -20,6 +20,7 @@ angular
                             role: role,
                             limit: limit
                         });
+
                     return $http.get(urlString);
                 }
             },

@@ -178,7 +178,7 @@ var searchInCommunity = function(location, community, industry, role, limit, off
 
     if (industry && industry[0] !== '*') {
         industry = industry.split(',');
-        searchstring += ' && (';
+        searchstring += ' AND (';
         for (var i in industry) {
             searchstring += 'communities.*.' + industry[i] + '.*:*'; // scope to industry
             if (i < (industry.length - 1)) { searchstring += ' || '; }
@@ -188,17 +188,10 @@ var searchInCommunity = function(location, community, industry, role, limit, off
 
     if (role && role[0] !== '*') {
         role = role.split(',');
-        searchstring += ' && (';
-        if (role.indexOf('Advisor') >= 0) {
-            if (location && community) {
-                searchstring += 'communities.*' + location + '.' + community + '.*:advisor || ';
-            } else {
-                searchstring += 'communities.*' + (location || community) + '.*:advisor || ';
-            }
+        searchstring += ' AND (';
 
-        }
         for (var i in role) {
-            searchstring += 'communities.*.' + community + '.*:' + role[i]; // scope to role
+            searchstring += 'communities.*.' + (location || community) + '.*:' + role[i]; // scope to role
             if (i < (role.length - 1)) { searchstring += ' || '; }
         }
         searchstring += ')';
@@ -315,7 +308,7 @@ function handleUserSearch(req, res){
     var community = req.query.community,
       location = req.query.location,
       cluster = req.query.cluster,
-      role = req.query.role,
+      role = decodeURIComponent(req.query.role),
       query = req.query.search,
       limit = req.query.limit,
       offset = req.query.offset,
