@@ -601,7 +601,7 @@ function LocationController($state, $location, user_api) {
     getLeaders();
 }
 
-function NetworkController($state, $location, user_api) {
+function NetworkController($state, $scope, $location, user_api) {
 
     if ($state.params.community.key) {
         $location.path('/' + $state.params.community.key)
@@ -635,13 +635,15 @@ function NetworkController($state, $location, user_api) {
     };
 
     var getLeaders = function() {
-        user_api.getUsers($state.params.community.key, undefined, undefined, encodeURIComponent(['Advisor']), 30) //todo change to Leader
+
+        user_api.getUsers(undefined, $state.params.community.key, undefined, encodeURIComponent(['Advisor']), 30) //todo change to Leader
             .then( function(result) {
                 $scope.leaders = result.data.results;
             })
     };
 
     getLeaders();
+
 }
 
 function IndustryController($state, $location, user_api) {
@@ -678,13 +680,18 @@ function IndustryController($state, $location, user_api) {
     };
 
     var getLeaders = function() {
-        user_api.getUsers($state.params.community.key, undefined, undefined, encodeURIComponent(['Advisor']), 30) //todo change to Leader
+        console.log($scope.global.context);
+        user_api.getUsers($scope.global.context.location, undefined, $state.params.community.key, encodeURIComponent(['Advisor']), 30) //todo change to Leader
             .then( function(result) {
                 $scope.leaders = result.data.results;
             })
     };
 
-    getLeaders();
+    if (!$scope.global.context || !$scope.global.context.location) {
+        $scope.$on('sessionReady', function(event, status) {
+            getLeaders();
+        });
+    } else getLeaders();
 }
 
 function StartupsController($scope, $location, angellist_api, result_api, $sce) {
