@@ -107,13 +107,13 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
         // Industry views
         .state('industry', {
             abstract: true,
-            templateUrl: "views/common/content_small.html"
+            templateUrl: "views/common/content.html"
         })
         .state('industry.dashboard', {
-            url: "/industry",
             templateUrl: 'views/industries/industry.dashboard.html',
             params: {
-                community: {}
+                community: {},
+                pageTitle: "Industry Profile"
             }
         })
 
@@ -125,20 +125,21 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
         .state('location.dashboard', {
             templateUrl: 'views/locations/location.dashboard.html',
             params: {
-                community: {}
+                community: {},
+                pageTitle: "Location Profile"
             }
         })
 
         // Network views
         .state('network', {
             abstract: true,
-            templateUrl: "views/common/content_small.html"
+            templateUrl: "views/common/content.html"
         })
         .state('network.dashboard', {
-            url: "/network",
             templateUrl: 'views/networks/network.dashboard.html',
             params: {
-                community: {}
+                community: {},
+                pageTitle: "Network Profile"
             }
         })
 
@@ -161,6 +162,15 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                                 break;
                             case "location":
                                 $state.go('location.dashboard', { community : response.data});
+                                break;
+                            case "network":
+                                $state.go('network.dashboard', { community : response.data});
+                                break;
+                            case "industry":
+                                $state.go('industry.dashboard', { community : response.data});
+                                break;
+                            default:
+                                $state.go('404');
                                 break;
                         }
                     })

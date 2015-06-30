@@ -136,13 +136,13 @@ function handleGetCommunity(req, res) {
           });
     }
 
-    console.log('Pulling ' + community);
+    console.log('Pulling community: ' + community);
     pullCommunity();
 
 }
 
 function handleGetKey(req, res) {
-    console.log('pulling ' + req.params.key);
+    console.log('Pulling key: ' + req.params.key);
 
     function pullKey() {
         db.get(config.db.collections.communities, req.params.key)
