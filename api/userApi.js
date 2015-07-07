@@ -333,7 +333,7 @@ function handleEnsureAuthenticated(req, res, next) {
 
     if (!req.headers.authorization) {
         console.log('Session is no longer valid.');
-        return res.status(401).send('');
+        return res.status(401).end();
     }
     try {
 

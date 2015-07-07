@@ -16,7 +16,7 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
             resolve: {
                 authenticated: ['$location', '$auth', function($location, $auth) {
                     if (!$auth.isAuthenticated()) {
-                        return $location.path('/login');
+                        $state.go('login');
                     }
                 }]
             }
@@ -27,7 +27,7 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
             resolve: {
                 authenticated: ['$location', '$auth', function($location, $auth) {
                     if (!$auth.isAuthenticated()) {
-                        return $location.path('/login');
+                        $state.go('login');
                     }
                 }]
             }
@@ -38,7 +38,7 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
             resolve: {
                 authenticated: ['$location', '$auth', function($location, $auth) {
                     if (!$auth.isAuthenticated()) {
-                        return $location.path('/login');
+                        $state.go('login');
                     }
                 }]
             }
@@ -70,7 +70,7 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
             resolve: {
                 authenticated: ['$location', '$auth', function($location, $auth) {
                     if (!$auth.isAuthenticated()) {
-                        return $location.path('/login');
+                        $state.go('login');
                     }
                 }]
             }
@@ -98,7 +98,7 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
             resolve: {
                 authenticated: ['$location', '$auth', function($location, $auth) {
                     if (!$auth.isAuthenticated()) {
-                        return $location.path('/login');
+                        $state.go('login');
                     }
                 }]
             }
@@ -114,6 +114,13 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
             params: {
                 community: {},
                 pageTitle: "Industry Profile"
+            },
+            resolve: {
+                authenticated: ['$location', '$auth', function($location, $auth) {
+                    if (!$auth.isAuthenticated()) {
+                        $state.go('login');
+                    }
+                }]
             }
         })
 
@@ -127,6 +134,13 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
             params: {
                 community: {},
                 pageTitle: "Location Profile"
+            },
+            resolve: {
+                authenticated: ['$location', '$auth', function($location, $auth) {
+                    if (!$auth.isAuthenticated()) {
+                        $state.go('login');
+                    }
+                }]
             }
         })
 
@@ -140,6 +154,13 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
             params: {
                 community: {},
                 pageTitle: "Network Profile"
+            },
+            resolve: {
+                authenticated: ['$location', '$auth', function($location, $auth) {
+                    if (!$auth.isAuthenticated()) {
+                        $state.go('login');
+                    }
+                }]
             }
         })
 
@@ -151,38 +172,45 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
     // Set default unmatched url state
     $urlRouterProvider.otherwise(
         function($injector, $location) {
-            $injector.invoke(['$state', '$location', 'community_api', function($state, $location, community_api) {
-                var path = $location.url().substr(1);
+            $injector.invoke(['$state', '$location', '$auth', 'community_api', function($state, $location, $auth, community_api) {
 
-                community_api.getKey(path)
-                    .then(function(response) {
-                        switch (response.data.type) {
-                            case "user":
-                                $state.go('people.profile', { user : response.data});
-                                break;
-                            case "location":
-                                $state.go('location.dashboard', { community : response.data});
-                                break;
-                            case "network":
-                                $state.go('network.dashboard', { community : response.data});
-                                break;
-                            case "industry":
-                                $state.go('industry.dashboard', { community : response.data});
-                                break;
-                            default:
-                                $state.go('404');
-                                break;
-                        }
-                    })
-                    .catch(function(err){
-                        if (err.status == 404) {
-                            $state.go('404')
-                        } else {
-                            console.log("SEARCH FAIL:");
-                            console.warn(err);
-                        }
-                    });
-                //$state.go('dashboard');
+                if (!$auth.isAuthenticated()) {
+                    $state.go('login');
+                } else {
+                    var path = $location.url().substr(1);
+
+                    community_api.getKey(path)
+                        .then(function(response) {
+                            switch (response.data.type) {
+                                case "user":
+                                    $state.go('people.profile', { user : response.data});
+                                    break;
+                                case "location":
+                                    $state.go('location.dashboard', { community : response.data});
+                                    break;
+                                case "network":
+                                    $state.go('network.dashboard', { community : response.data});
+                                    break;
+                                case "industry":
+                                    $state.go('industry.dashboard', { community : response.data});
+                                    break;
+                                default:
+                                    $state.go('404');
+                                    break;
+                            }
+                        })
+                        .catch(function(err){
+                            if (err.status == 404) {
+                                $state.go('404')
+                            } else {
+                                console.log("SEARCH FAIL:");
+                                console.warn(err);
+                            }
+                        });
+                    //$state.go('dashboard');
+                }
+
+
             }]);
         });
 
