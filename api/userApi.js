@@ -796,7 +796,8 @@ function handleLinkedin(req, res) {
  */
 
 function handleGetProfile(req, res) {
-    var userid = req.param.userid || req.user;
+    var userid = req.param.userid || req.user; //todo need to figure out why req.user doesn't have 'james' and
+    // instead has old uid for my user. I assume my token is somehow old?
 
     db.get(config.db.collections.communities, userid)
       .then(function(response){
