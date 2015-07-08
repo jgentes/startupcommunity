@@ -1,6 +1,5 @@
 angular
     .module('startupcommunity')
-    .factory('sweetAlert', sweetAlert)
     .directive('uiSelect', uiSelect)
     .directive('pageTitle', pageTitle)
     .directive('sideNavigation', sideNavigation)
@@ -15,47 +14,8 @@ angular
     .filter('safe_html', safeHTML)
     .filter('words', words);
 
-function sweetAlert($timeout, $window) {
-    var swal = $window.swal;
-    return {
-        swal: function (arg1, arg2, arg3) {
-            $timeout(function () {
-                if (typeof(arg2) === 'function') {
-                    swal(arg1, function (isConfirm) {
-                        $timeout(function () {
-                            arg2(isConfirm);
-                        });
-                    }, arg3);
-                } else {
-                    swal(arg1, arg2, arg3);
-                }
-            }, 200);
-        },
-        success: function (title, message) {
-            $timeout(function () {
-                swal(title, message, 'success');
-            }, 200);
-        },
-        error: function (title, message) {
-            $timeout(function () {
-                swal(title, message, 'error');
-            }, 200);
-        },
-        warning: function (title, message) {
-            $timeout(function () {
-                swal(title, message, 'warning');
-            }, 200);
-        },
-        info: function (title, message) {
-            $timeout(function () {
-                swal(title, message, 'info');
-            }, 200);
-        }
 
-    };
-}
-
-function uiSelect(sweetAlert){
+function uiSelect(sweet){
     return {
         restrict: 'EA',
         require: 'uiSelect',
@@ -64,7 +24,7 @@ function uiSelect(sweetAlert){
             var superSelect = ctrl.select;
             ctrl.select = function() {
                 if(ctrl.multiple && ctrl.limit !== undefined && ctrl.selected.length >= ctrl.limit) {
-                    sweetAlert.swal({
+                    sweet.show({
                         title: "Sorry, only 3 skills here.",
                         text: "Use the Search field at the top of the page to use more.",
                         type: "warning"

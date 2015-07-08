@@ -1,5 +1,35 @@
 /* Custom */
 
+// Google Map Custom Button
+#change-location {
+  cursor: pointer;
+  direction: ltr;
+  overflow: hidden;
+  text-align: center;
+  position: relative;
+  color: rgb(0, 0, 0);
+  font-family: "Roboto", Arial, sans-serif;
+  -webkit-user-select: none;
+  font-size: 9px !important;
+  background-color: rgb(255, 255, 255);
+  padding: 1px 6px;
+  border-bottom-left-radius: 2px;
+  border-top-left-radius: 2px;
+  -webkit-background-clip: padding-box;
+  background-clip: padding-box;
+  //border: 1px solid rgba(0, 0, 0, 0.14902);
+  -webkit-box-shadow: rgba(0, 0, 0, 0.298039) 0px 1px 4px -1px;
+  box-shadow: rgba(0, 0, 0, 0.298039) 0px 1px 4px -1px;
+  min-width: 28px;
+  font-weight: 400;
+  margin-bottom: 13px;
+  z-index: 9999999 !important;
+}
+
+#change-location:hover {
+  font-weight: 900 !important;
+}
+
 .stats-icon {
   margin-top: 2px;
 }
@@ -341,6 +371,7 @@ footer, .push {
 /* Menu */
 .side-menu {
   width: 180px;
+  height: 72px;
 }
 
 .side-menu.filler {
@@ -349,7 +380,8 @@ footer, .push {
   margin-top: -14px;
   margin-left: -20px;
   position: relative;
-  border-top: 1px solid #DDD;
+  margin-bottom: -14px;
+  //border-top: 1px solid #DDD;
 }
 
 #side-menu {

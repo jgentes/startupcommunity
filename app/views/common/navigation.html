@@ -14,11 +14,7 @@
         </ul>
     </div>
     <div class="profile-picture">
-        <div map-lazy-load="https://maps.googleapis.com/maps/api/js?key=AIzaSyDXO1cNiJac7iP2I3JoXhOd1pWs6gA-f4k">
-            <map id="nav-map" center="{{maploc}}" zoom="11" disable-default-u-i="true"></map>
-            <div class="side-menu filler"></div>
-        </div>
-        <div class="container side-menu" style="border-bottom: 1px solid #eee; margin-left: -20px;">
+        <div class="container side-menu" style="padding-top: 10px; margin-left: -20px;">
             <div class="row side-menu">
                 <div class="col-sm-3">
                     <a ui-sref="people.profile({user: global.user})"><img class="img-circle m-b" ng-src="{{global.user.profile.avatar || global.user.profile.linkedin.pictureUrl || 'images/blank_avatar.png'}}" alt="{{global.user.profile.name}}" style="height: 40px; width: 40px; "/></a>
@@ -30,6 +26,14 @@
                     </div>
                 </div>
             </div>
+        </div>
+        <div map-lazy-load="https://maps.googleapis.com/maps/api/js?key=AIzaSyDXO1cNiJac7iP2I3JoXhOd1pWs6gA-f4k">
+            <map id="nav-map" center="{{maploc}}" zoom="11" disable-default-u-i="true">
+                <custom-control position="BOTTOM_CENTER" on-click="changeLocation()">
+                    <div id="change-location">Change Location</div>
+                </custom-control>
+            </map>
+            <div class="side-menu filler"></div>
         </div>
     </div>
 

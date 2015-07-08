@@ -183,7 +183,26 @@ function MainController($scope, $state, $location, $auth, user_api, community_ap
 
 }
 
-function NavigationController($scope) {
+function NavigationController($scope, sweet) {
+
+    $scope.changeLocation = function() {
+        sweet.show({
+            title: "Change Location!",
+            text: "Type a city, state, and/or county:",
+            type: "input",
+            showCancelButton: true,
+            closeOnConfirm: true,
+            animation: "slide-from-top",
+            inputPlaceholder: "Portland, Oregon"
+        }, function (inputValue) {
+            if (inputValue === false) return false;
+            if (inputValue === "") {
+                sweet.showInputError("You need to write something!");
+                return false
+            }
+            sweet.show("Nice!", "You wrote: " + inputValue, "success");
+        });
+    };
 
     var getNav = function() {
         $scope.maploc = $scope.global.findKey($scope.global.community.locations, $scope.global.context.location)[0][$scope.global.context.location].profile.name;

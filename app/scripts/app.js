@@ -5,6 +5,7 @@
         'ui.highlight',
         'ui.select',
         'ngSanitize',
+        'hSweetAlert',
         'analytics.mixpanel',
         'chart.js',
         'satellizer',
