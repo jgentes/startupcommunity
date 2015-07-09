@@ -183,24 +183,23 @@ function MainController($scope, $state, $location, $auth, user_api, community_ap
 
 }
 
-function NavigationController($scope, sweet) {
+function ChangeLocationController($scope, $modalInstance){
+    $scope.ok = function () {
+        $modalInstance.close();
+    };
+
+    $scope.cancel = function () {
+        $modalInstance.dismiss('cancel');
+    };
+}
+
+function NavigationController($scope, $modal) {
 
     $scope.changeLocation = function() {
-        sweet.show({
-            title: "Change Location!",
-            text: "Type a city, state, and/or county:",
-            type: "input",
-            showCancelButton: true,
-            closeOnConfirm: true,
-            animation: "slide-from-top",
-            inputPlaceholder: "Portland, Oregon"
-        }, function (inputValue) {
-            if (inputValue === false) return false;
-            if (inputValue === "") {
-                sweet.showInputError("You need to write something!");
-                return false
-            }
-            sweet.show("Nice!", "You wrote: " + inputValue, "success");
+        var modalInstance = $modal.open({
+            templateUrl: 'views/common/change_location.html',
+            controller: ChangeLocationController,
+            windowClass: "hmodal-warning"
         });
     };
 
@@ -394,13 +393,15 @@ function PeopleController($scope, $location, user_api, result_api, $sce) {
 
 }
 
-function PeopleProfileController($scope, $state, user_api, community_api, $location, $auth, $mixpanel) {
+function PeopleProfileController($scope, $state, user_api, $location, $auth, $mixpanel) {
 
     $mixpanel.track('Viewed Profile');
 
     if ($state.params.user.key) {
         $location.path('/' + $state.params.user.key)
     }
+
+    console.log($scope.global);
 
     $scope.putProfile = function(userid, profile) {
         user_api.putProfile(userid, profile, function(response) {
