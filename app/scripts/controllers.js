@@ -13,7 +13,7 @@ angular
     .controller('PeopleProfileController', PeopleProfileController)
     .controller('ErrorPageController', ErrorPageController);
 
-function MainController($scope, $state, $location, $auth, user_api, community_api, result_api, $mixpanel) {
+function MainController($rootScope, $scope, $state, $location, $auth, user_api, community_api, result_api, $mixpanel) {
 
     $scope.global = { alert: {} };
     window.$scope = $scope; // for console testing to avoid $scope = $('body').scope()
@@ -36,7 +36,7 @@ function MainController($scope, $state, $location, $auth, user_api, community_ap
     $scope.search = function(query) {
         $scope.global.search.tag = query;
         $scope.global.search.results = undefined;
-        user_api.earch($scope.global.user.context, query)
+        user_api.search($scope.global.user.context, query)
             .then(function(response) {
                 $scope.global.search = result_api.setPage(response.data);
                 $scope.global.search.lastQuery = query;
@@ -70,17 +70,6 @@ function MainController($scope, $state, $location, $auth, user_api, community_ap
             if (typeof subkeys === 'object') {
                 subkeys["key"] = name;
                 if (name === key_to_find) {
-                    /* This creates an extra key object
-                    if (key === undefined) {
-                        results.push(obj);
-                    } else if (key == obj.key) {
-                        pushme[key] = obj;
-                        results.push(pushme);
-                    } else {
-                        pushme[obj.key] = obj;
-                        results.push(pushme);
-                    }
-                    */
                     results.push(obj);
                 } else {
                     key = name;
@@ -92,9 +81,28 @@ function MainController($scope, $state, $location, $auth, user_api, community_ap
         return results;
     };
 
+    $scope.global.findValue = function(obj, value_to_find, results, key) {
+
+        if (!obj) { return results; }
+        if (!results) { results = []; }
+
+        for (i in obj) {
+            if (typeof(obj[i])=="object") {
+                obj[i]["key"] = i;
+                for (subkey in obj[i]) {
+                    if (obj[i][subkey] == value_to_find) {
+                        results.push(obj[i]);
+                    }
+                }
+                key = i;
+                $scope.global.findValue(obj[i], value_to_find, results);
+            }
+        }
+        return results;
+    };
+
     var broadcast = function() {
         $scope.$broadcast('sessionReady', true);
-        //$location.path('/people');
 
         if ($scope.global.user.key) {
             $mixpanel.people.set({
@@ -111,6 +119,68 @@ function MainController($scope, $state, $location, $auth, user_api, community_ap
 
     // Get and set user and location data
     $scope.global.sessionReady = function() {
+
+        var getState = function() {
+            $rootScope.$on('$stateChangeSuccess',
+                function(event, toState, toParams, fromState, fromParams){
+                    var newParams = toParams;
+                    var community = newParams.community;
+
+                    $scope.global.community = community;
+                    $scope.global.context.community = community.key;
+
+                    if (community.type !== "location") {
+                        $scope.global.location = community.profile.location;
+                    } else $scope.global.location = community;
+
+                    // for navigation
+                    $scope.global.community.locations = {};
+                    $scope.global.community.industries = {};
+                    $scope.global.community.networks = {};
+
+                    var locations = $scope.global.findValue(community.communities, "location");
+                    var industries = $scope.global.findValue(community.communities, "industry");
+                    var networks = $scope.global.findValue(community.communities, "network")
+
+                    for (item in locations) {
+                        $scope.global.community.locations[locations[item].key] = locations[item];
+                    }
+                    for (item in industries) {
+                        $scope.global.community.industries[industries[item].key] = industries[item];
+                    }
+                    for (item in networks) {
+                        $scope.global.community.networks[networks[item].key] = networks[item];
+                    }
+                    broadcast();
+                }
+            )
+        }
+
+        if (!$scope.global.user) {
+            user_api.getProfile()
+                .success(function(response) {
+                    if (!response.message) {
+                        $scope.global.user = response;
+                        $scope.global.context = {}; //todo not sure if this is needed
+
+                        getState();
+
+                    } else {
+                        $scope.global.logout({ type: 'danger', msg: String(response.message) });
+                    }
+
+                })
+                .error(function(response) {
+                    $scope.global.logout({ type: 'danger', msg: String(response.message) });
+                });
+        } else {
+            getState();
+        }
+
+    };
+/*
+    $scope.global.sessionReady = function() {
+
         if (!$scope.global.user || $scope.global.community === undefined || $scope.global.context === undefined) {
             user_api.getProfile()
                 .success(function(response) {
@@ -118,49 +188,53 @@ function MainController($scope, $state, $location, $auth, user_api, community_ap
                         $scope.global.user = response;
                         $scope.global.context = {};
 
-                        var community = $scope.global.user.context.community || undefined;
-                        var location = $scope.global.user.context.location || undefined;
 
-                        if (!community && !location) { location = $scope.global.user.profile.linkedin.location.country.code || 'us'} //TODO does private/private block location in linkedin api?
 
-                        community_api.getCommunity(location, community)
-                            .success(function(response) {
-                                if (response) {
-                                    $scope.global.community = response;
-                                    $scope.global.context.community = community;
-                                    $scope.global.context.location = location;
+                         var community = $scope.global.user.context.community || undefined;
+                         var location = $scope.global.user.context.location || undefined;
 
-                                    // for navigation
-                                    $scope.global.community.locations = {};
-                                    $scope.global.community.industries = {};
-                                    $scope.global.community.networks = {};
+                         if (!community && !location) { location = $scope.global.user.profile.linkedin.location.country.code || 'us'} //TODO does private/private block location in linkedin api?
 
-                                    for (item in $scope.global.community) {
+                         community_api.getCommunity(location, community)
+                         .success(function(response) {
+                         if (response) {
+                         $scope.global.community = response;
+                         $scope.global.context.community = community;
+                         $scope.global.context.location = location;
 
-                                        switch ($scope.global.community[item].type) {
-                                            case "location":
-                                                $scope.global.community.locations[item] = $scope.global.community[item];
-                                                break;
-                                            case "industry":
-                                                $scope.global.community.industries[item] = $scope.global.community[item];
-                                                break;
-                                            case "network":
-                                                $scope.global.community.networks[item] = $scope.global.community[item];
-                                                break;
-                                        }
-                                    }
+                         // for navigation
+                         $scope.global.community.locations = {};
+                         $scope.global.community.industries = {};
+                         $scope.global.community.networks = {};
 
-                                    broadcast();
-                                } else {
-                                    $scope.global.logout({ type: 'danger', msg: String(response.message) });
-                                }
-                            })
-                            .error(function(response) {
-                                $scope.global.alert = { type: 'danger', msg: String(response.message) };
-                            });
+                         for (item in $scope.global.community) {
+
+                         switch ($scope.global.community[item].type) {
+                         case "location":
+                         $scope.global.community.locations[item] = $scope.global.community[item];
+                         break;
+                         case "industry":
+                         $scope.global.community.industries[item] = $scope.global.community[item];
+                         break;
+                         case "network":
+                         $scope.global.community.networks[item] = $scope.global.community[item];
+                         break;
+                         }
+                         }
+
+                         broadcast();
+                         } else {
+                         $scope.global.logout({ type: 'danger', msg: String(response.message) });
+                         }
+                         })
+                         .error(function(response) {
+                         $scope.global.alert = { type: 'danger', msg: String(response.message) };
+                         });
+
                     } else {
                         $scope.global.logout({ type: 'danger', msg: String(response.message) });
                     }
+
                 })
                 .error(function(response) {
                     $scope.global.logout({ type: 'danger', msg: String(response.message) });
@@ -170,7 +244,7 @@ function MainController($scope, $state, $location, $auth, user_api, community_ap
         }
 
     };
-
+*/
     if ($scope.global.alert) {
         if ($scope.global.alert.msg == 'undefined' || !$scope.global.alert.msg) { $scope.global.alert = undefined }
     }
@@ -205,21 +279,6 @@ function NavigationController($scope, $modal) {
 
     var getNav = function() {
         $scope.maploc = $scope.global.findKey($scope.global.community.locations, $scope.global.context.location)[0][$scope.global.context.location].profile.name;
-        $scope.locations = {};
-        $scope.industries = {};
-        $scope.networks = {};
-
-        $scope.locations = $scope.global.community.locations;
-
-        for (item in $scope.global.community.industries) {
-            $scope.industries[item] = $scope.global.findKey($scope.global.community.industries[item], $scope.global.context.location)[0];
-            $scope.industries[item]["key"] = item;
-        }
-
-        for (item in $scope.global.community.networks) {
-            $scope.networks[item] = $scope.global.findKey($scope.global.community.networks[item], $scope.global.context.location)[0];
-            $scope.networks[item]["key"] = item;
-        }
 
         var roles = $scope.global.findKey($scope.global.user.communities, "roles"),
             rolelist = [],
@@ -397,11 +456,9 @@ function PeopleProfileController($scope, $state, user_api, $location, $auth, $mi
 
     $mixpanel.track('Viewed Profile');
 
-    if ($state.params.user.key) {
-        $location.path('/' + $state.params.user.key)
+    if ($state.params.community.key) {
+        $location.path('/' + $state.params.community.key)
     }
-
-    console.log($scope.global);
 
     $scope.putProfile = function(userid, profile) {
         user_api.putProfile(userid, profile, function(response) {
@@ -447,7 +504,7 @@ function PeopleProfileController($scope, $state, user_api, $location, $auth, $mi
 
     var getActivity = function() {
 
-        var activities = $scope.global.findKey($state.params.user.communities, "roles"),
+        var activities = $scope.global.findKey($state.params.community.communities, "roles"),
             activity = {};
 
         for (var j in activities) {
@@ -466,7 +523,7 @@ function PeopleProfileController($scope, $state, user_api, $location, $auth, $mi
            };
         }
 
-        $state.params.user.profile.activity = activity;
+        $state.params.community.profile.activity = activity;
     };
 
     $scope.isCityAdvisor = function(status) { //todo needs to be reworked
@@ -904,7 +961,7 @@ function StartupProfileController($scope, $state, user_api, community_api, $loca
 
     var getActivity = function() {
 
-        var activities = $scope.global.findKey($state.params.user.communities, "roles", ["leader", "advisor", "investor", "founder"], {}),
+        var activities = $scope.global.findKey($state.params.community.communities, "roles", ["leader", "advisor", "investor", "founder"], {}),
             list = Object.keys(activities);
 
         community_api.getActivity(list)
@@ -916,7 +973,7 @@ function StartupProfileController($scope, $state, user_api, community_api, $loca
                         activity[activities[j][k]][j] = response.data[j]; // append matched object
                     }
                 }
-                $state.params.user.profile.activity = activity;
+                $state.params.community.profile.activity = activity;
             })
     };
 

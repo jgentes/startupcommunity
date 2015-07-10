@@ -64,7 +64,7 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
             templateUrl: "views/people/people.profile.html",
             parent: 'people',
             params: {
-                user: {},
+                community: {},
                 pageTitle: 'User Profile'
             },
             resolve: {
@@ -92,7 +92,7 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
             templateUrl: "views/startups/startups.profile.html",
             parent: 'startups',
             params: {
-                startup: {},
+                community: {},
                 pageTitle: 'Startup Profile'
             },
             resolve: {
@@ -183,7 +183,7 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                         .then(function(response) {
                             switch (response.data.type) {
                                 case "user":
-                                    $state.go('people.profile', { user : response.data});
+                                    $state.go('people.profile', { community : response.data});
                                     break;
                                 case "location":
                                     $state.go('location.dashboard', { community : response.data});
