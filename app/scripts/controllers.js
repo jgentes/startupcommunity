@@ -123,35 +123,55 @@ function MainController($rootScope, $scope, $state, $location, $auth, user_api, 
         var getState = function() {
             $rootScope.$on('$stateChangeSuccess',
                 function(event, toState, toParams, fromState, fromParams){
+
+                    var setNav = function() {
+                        // for navigation
+                        $scope.global.community.locations = {};
+                        $scope.global.community.industries = {};
+                        $scope.global.community.networks = {};
+
+                        var locations = $scope.global.findValue(community.communities, "location");
+                        var industries = $scope.global.findValue(community.communities, "industry");
+                        var networks = $scope.global.findValue(community.communities, "network")
+
+                        for (item in locations) {
+                            $scope.global.community.locations[locations[item].key] = locations[item];
+                        }
+                        for (item in industries) {
+                            $scope.global.community.industries[industries[item].key] = industries[item];
+                        }
+                        for (item in networks) {
+                            $scope.global.community.networks[networks[item].key] = networks[item];
+                        }
+
+                        if (community.type !== "location") {
+                            $scope.global.location = $scope.global.community.locations[community.profile.home];
+                        } else {
+                            $scope.global.location = community;
+                            $scope.global.context.location = community.key;
+                        }
+
+                        $scope.maploc = $scope.global.location.profile.name || $scope.global.findKey($scope.global.community.locations, $scope.global.context.location)[0][$scope.global.context.location].profile.name;
+
+                        broadcast();
+                    };
+
                     var newParams = toParams;
                     var community = newParams.community;
 
                     $scope.global.community = community;
-                    $scope.global.context.community = community.key;
+                    $scope.global.context.community = community.key || $scope.global.user.context.community || undefined;
+                    $scope.global.context.location = $scope.global.user.context.location || undefined;
 
-                    if (community.type !== "location") {
-                        $scope.global.location = community.profile.location;
-                    } else $scope.global.location = community;
-
-                    // for navigation
-                    $scope.global.community.locations = {};
-                    $scope.global.community.industries = {};
-                    $scope.global.community.networks = {};
-
-                    var locations = $scope.global.findValue(community.communities, "location");
-                    var industries = $scope.global.findValue(community.communities, "industry");
-                    var networks = $scope.global.findValue(community.communities, "network")
-
-                    for (item in locations) {
-                        $scope.global.community.locations[locations[item].key] = locations[item];
-                    }
-                    for (item in industries) {
-                        $scope.global.community.industries[industries[item].key] = industries[item];
-                    }
-                    for (item in networks) {
-                        $scope.global.community.networks[networks[item].key] = networks[item];
-                    }
-                    broadcast();
+                    if (!community.communities) {
+                        community_api.getCommunity(community.key)
+                            .success(function(response) {
+                                if (response) {
+                                    community["communities"] = response;
+                                    setNav();
+                                }
+                            })
+                    } else setNav();
                 }
             )
         }
@@ -267,7 +287,7 @@ function ChangeLocationController($scope, $modalInstance){
     };
 }
 
-function NavigationController($scope, $modal) {
+function NavigationController($scope, $state, $modal) {
 
     $scope.changeLocation = function() {
         var modalInstance = $modal.open({
@@ -277,8 +297,7 @@ function NavigationController($scope, $modal) {
         });
     };
 
-    var getNav = function() {
-        $scope.maploc = $scope.global.findKey($scope.global.community.locations, $scope.global.context.location)[0][$scope.global.context.location].profile.name;
+    var getRoles = function() {
 
         var roles = $scope.global.findKey($scope.global.user.communities, "roles"),
             rolelist = [],
@@ -299,11 +318,11 @@ function NavigationController($scope, $modal) {
 
     };
 
-    if (!$scope.global.community) {
+    if (!$scope.global.user || !$scope.global.user.communities) {
         $scope.$on('sessionReady', function (event, status) {
-            getNav();
+            getRoles();
         });
-    } else getNav();
+    } else getRoles();
 
 }
 

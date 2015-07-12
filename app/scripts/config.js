@@ -232,6 +232,7 @@ angular
 
     .run(function($rootScope, $state) {
         $rootScope.$state = $state;
+        $rootScope.Object = Object; // to allow use of Object in views
         $rootScope.$on("$stateChangeError", console.log.bind(console)) // for debugging of ui-router
     });
 
