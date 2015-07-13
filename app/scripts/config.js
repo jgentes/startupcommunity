@@ -57,6 +57,7 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
             url: "/people",
             templateUrl: 'views/people/people.dashboard.html',
             params: {
+                community: {},
                 pageTitle: 'People'
             }
         })
@@ -85,6 +86,7 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
             url: "/startups",
             templateUrl: 'views/startups/startups.dashboard.html',
             params: {
+                community: {},
                 pageTitle: 'Startups'
             }
         })
@@ -232,7 +234,6 @@ angular
 
     .run(function($rootScope, $state) {
         $rootScope.$state = $state;
-        $rootScope.Object = Object; // to allow use of Object in views
         $rootScope.$on("$stateChangeError", console.log.bind(console)) // for debugging of ui-router
     });
 

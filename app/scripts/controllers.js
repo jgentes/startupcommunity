@@ -122,7 +122,7 @@ function MainController($rootScope, $scope, $state, $location, $auth, user_api, 
 
         var getState = function() {
             $rootScope.$on('$stateChangeSuccess',
-                function(event, toState, toParams, fromState, fromParams){
+                function(event, toState, toParams){
 
                     var setNav = function() {
                         // for navigation
@@ -130,26 +130,31 @@ function MainController($rootScope, $scope, $state, $location, $auth, user_api, 
                         $scope.global.community.industries = {};
                         $scope.global.community.networks = {};
 
-                        var locations = $scope.global.findValue(community.communities, "location");
-                        var industries = $scope.global.findValue(community.communities, "industry");
-                        var networks = $scope.global.findValue(community.communities, "network")
-
-                        for (item in locations) {
-                            $scope.global.community.locations[locations[item].key] = locations[item];
-                        }
-                        for (item in industries) {
-                            $scope.global.community.industries[industries[item].key] = industries[item];
-                        }
-                        for (item in networks) {
-                            $scope.global.community.networks[networks[item].key] = networks[item];
-                        }
-
                         if (community.type !== "location") {
+                            var locations = $scope.global.findValue(community.communities, "location");
+                            for (item in locations) {
+                                $scope.global.community.locations[locations[item].key] = locations[item];
+                            }
                             $scope.global.location = $scope.global.community.locations[community.profile.home];
                         } else {
+                            $scope.global.community.locations[community.key] = community.communities[community.key];
                             $scope.global.location = community;
                             $scope.global.context.location = community.key;
                         }
+
+                        if (community.type !== "industry") {
+                            var industries = $scope.global.findValue(community.communities, "industry");
+                            for (item in industries) {
+                                $scope.global.community.industries[industries[item].key] = industries[item];
+                            }
+                        } else $scope.global.community.industries[community.key] = community;
+
+                        if (community.type !== "networks") {
+                            var networks = $scope.global.findValue(community.communities, "network");
+                            for (item in networks) {
+                                $scope.global.community.networks[networks[item].key] = networks[item];
+                            }
+                        } else $scope.global.community.networks[community.key] = community;
 
                         $scope.maploc = $scope.global.location.profile.name || $scope.global.findKey($scope.global.community.locations, $scope.global.context.location)[0][$scope.global.context.location].profile.name;
 
@@ -171,6 +176,9 @@ function MainController($rootScope, $scope, $state, $location, $auth, user_api, 
                                     setNav();
                                 }
                             })
+                            .error(function(response) {
+                                console.warn(response.message);
+                            });
                     } else setNav();
                 }
             )
@@ -181,7 +189,7 @@ function MainController($rootScope, $scope, $state, $location, $auth, user_api, 
                 .success(function(response) {
                     if (!response.message) {
                         $scope.global.user = response;
-                        $scope.global.context = {}; //todo not sure if this is needed
+                        $scope.global.context = {};
 
                         getState();
 
@@ -369,7 +377,7 @@ function PeopleController($scope, $location, user_api, result_api, $sce) {
             }
         }
         if ($scope.global.context.selectedIndustry[0] == '*') {
-            industry = $scope.global.community[$scope.global.context.location].profile.name;
+            industry = $scope.global.community.profile.name;
         } else {
             item = 0;
             for (item in $scope.global.context.selectedIndustry) {
@@ -386,13 +394,13 @@ function PeopleController($scope, $location, user_api, result_api, $sce) {
         var pageTitle;
 
         if ($scope.global.context.community) {
-            pageTitle = $scope.global.community[$scope.global.context.community].profile.name;
+            pageTitle = $scope.global.community.profile.name;
         } else {
-            pageTitle = $scope.global.community[$scope.global.context.location].profile.name;
+            pageTitle = $scope.global.community.profile.name;
         }
 
         if ($scope.global.context.community && $scope.global.context.location) {
-            pageTitle += '<br><small>' + $scope.global.community[$scope.global.context.location].profile.name + '</small>';
+            pageTitle += '<br><small>' + $scope.global.community.profile.name + '</small>';
         } else {
             pageTitle += '<br><small>Welcome ' + ($scope.global.user.profile.name).split(' ')[0] + '!</small>';
         }
@@ -834,7 +842,7 @@ function StartupsController($scope, $location, angellist_api, result_api, $sce) 
             }
         }
         if ($scope.global.context.selectedIndustry[0] == '*') {
-            industry = $scope.global.community[$scope.global.context.location].profile.name;
+            industry = $scope.global.community.profile.name;
         } else {
             item = 0;
             for (item in $scope.global.context.selectedIndustry) {
@@ -848,16 +856,10 @@ function StartupsController($scope, $location, angellist_api, result_api, $sce) 
         }
         $scope.title = '<strong>' + stage + '</strong> in ' + industry;
 
-        var pageTitle;
-
-        if ($scope.global.context.community) {
-            pageTitle = $scope.global.community[$scope.global.context.community].profile.name;
-        } else {
-            pageTitle = $scope.global.community[$scope.global.context.location].profile.name;
-        }
+        var pageTitle = $scope.global.community.profile.name;
 
         if ($scope.global.context.community && $scope.global.context.location) {
-            pageTitle += '<br><small>' + $scope.global.community[$scope.global.context.location].profile.name + '</small>';
+            pageTitle += '<br><small>' + $scope.global.community.profile.name + '</small>';
         } else {
             pageTitle += '<br><small>Welcome ' + ($scope.global.user.profile.name).split(' ')[0] + '!</small>';
         }

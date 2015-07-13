@@ -169,7 +169,7 @@ var searchInCommunity = function(location, community, industry, role, limit, off
 
     // create searchstring
     var searchstring = 'communities.';
-    if (location && community) {
+    if ((location && community) && (location !== community)) {
         searchstring += '*' + location + '.' + community + '.*:*';
     } else {
         searchstring += '*' + (location || community) + '.*:*';
