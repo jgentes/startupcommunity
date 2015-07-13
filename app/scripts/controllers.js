@@ -147,14 +147,14 @@ function MainController($rootScope, $scope, $state, $location, $auth, user_api, 
                             for (item in industries) {
                                 $scope.global.community.industries[industries[item].key] = industries[item];
                             }
-                        } else $scope.global.community.industries[community.key] = community;
+                        } else $scope.global.community.industries[community.key] = community.communities[community.key];
 
-                        if (community.type !== "networks") {
+                        if (community.type !== "network") {
                             var networks = $scope.global.findValue(community.communities, "network");
                             for (item in networks) {
                                 $scope.global.community.networks[networks[item].key] = networks[item];
                             }
-                        } else $scope.global.community.networks[community.key] = community;
+                        } else $scope.global.community.networks = {}; // will need to change to support sub-networks
 
                         $scope.maploc = $scope.global.location.profile.name || $scope.global.findKey($scope.global.community.locations, $scope.global.context.location)[0][$scope.global.context.location].profile.name;
 
@@ -168,7 +168,7 @@ function MainController($rootScope, $scope, $state, $location, $auth, user_api, 
                     $scope.global.context.community = community.key || $scope.global.user.context.community || undefined;
                     $scope.global.context.location = $scope.global.user.context.location || undefined;
 
-                    if (!community.communities) {
+                    if (1 == 1) {
                         community_api.getCommunity(community.key)
                             .success(function(response) {
                                 if (response) {
@@ -206,73 +206,7 @@ function MainController($rootScope, $scope, $state, $location, $auth, user_api, 
         }
 
     };
-/*
-    $scope.global.sessionReady = function() {
 
-        if (!$scope.global.user || $scope.global.community === undefined || $scope.global.context === undefined) {
-            user_api.getProfile()
-                .success(function(response) {
-                    if (!response.message) {
-                        $scope.global.user = response;
-                        $scope.global.context = {};
-
-
-
-                         var community = $scope.global.user.context.community || undefined;
-                         var location = $scope.global.user.context.location || undefined;
-
-                         if (!community && !location) { location = $scope.global.user.profile.linkedin.location.country.code || 'us'} //TODO does private/private block location in linkedin api?
-
-                         community_api.getCommunity(location, community)
-                         .success(function(response) {
-                         if (response) {
-                         $scope.global.community = response;
-                         $scope.global.context.community = community;
-                         $scope.global.context.location = location;
-
-                         // for navigation
-                         $scope.global.community.locations = {};
-                         $scope.global.community.industries = {};
-                         $scope.global.community.networks = {};
-
-                         for (item in $scope.global.community) {
-
-                         switch ($scope.global.community[item].type) {
-                         case "location":
-                         $scope.global.community.locations[item] = $scope.global.community[item];
-                         break;
-                         case "industry":
-                         $scope.global.community.industries[item] = $scope.global.community[item];
-                         break;
-                         case "network":
-                         $scope.global.community.networks[item] = $scope.global.community[item];
-                         break;
-                         }
-                         }
-
-                         broadcast();
-                         } else {
-                         $scope.global.logout({ type: 'danger', msg: String(response.message) });
-                         }
-                         })
-                         .error(function(response) {
-                         $scope.global.alert = { type: 'danger', msg: String(response.message) };
-                         });
-
-                    } else {
-                        $scope.global.logout({ type: 'danger', msg: String(response.message) });
-                    }
-
-                })
-                .error(function(response) {
-                    $scope.global.logout({ type: 'danger', msg: String(response.message) });
-                });
-        } else {
-            broadcast();
-        }
-
-    };
-*/
     if ($scope.global.alert) {
         if ($scope.global.alert.msg == 'undefined' || !$scope.global.alert.msg) { $scope.global.alert = undefined }
     }
