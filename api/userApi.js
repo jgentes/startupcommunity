@@ -224,6 +224,8 @@ var searchInCommunity = function(location, community, industry, role, limit, off
                       delete result.body.results[i].value.profile.linkedin.emailAddress;
                       delete result.body.results[i].value.profile.linkedin.access_token;
                   }
+
+                  results.body.results[i].value["key"] = results.body.results[i].path.key; //todo haven't verified this works or is needed to solve people list > person view issues
               }
           } catch (error) {
               console.warn('WARNING:  Possible database entry corrupted: ');
