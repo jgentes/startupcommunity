@@ -1,6 +1,187 @@
 <div ng-controller="LocationController">
 
     <div class="row">
+        <div class="col-md-6">
+            <div class="hpanel forum-box">
+
+                <div class="panel-heading" style="border-bottom: 2px solid #34495E;">
+                    <h3>Top Clusters</h3>
+                </div>
+
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-md-7 forum-heading">
+
+                            <a ui-sref="#"><h4><i class="fa fa-code"></i> Tech</h4></a>
+                            <div class="desc" style="margin-bottom:5px;">Software and hardware products and services.</div>
+                            <progressbar value="85" type="success" class="progress-small full"></progressbar>
+                        </div>
+                        <div class="col-md-1 forum-info">
+                            <span class="number">58</span>
+                            <small>People</small>
+                        </div>
+                        <div class="col-md-1 forum-info">
+                            <span class="number">29</span>
+                            <small>Startups</small>
+                        </div>
+                        <div class="col-md-1 forum-info">
+                            <span class="number">167</span>
+                            <small>Jobs</small>
+                        </div>
+                        <div class="col-md-2 project-people">
+                            <p class="profile-label font-uppercase" style="font-size: 13px;  padding-top: 3px; margin-bottom: 7px;">Leaders</p>
+                            <img ng-repeat="leader in leaders.slice(3, 7) | limitTo: 3" title="{{leader.value.profile.name}}" class="img-circle" src="{{leader.value.profile.avatar || 'images/blank_avatar.png'}}"/>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-md-7 forum-heading">
+
+                            <a ui-sref="#"><h4><i class="fa fa-tree"></i> Outdoor</h4></a>
+                            <div class="desc" style="margin-bottom:5px;">Products powered by gravity or human strength.</div>
+                            <progressbar value="62" type="warning" class="progress-small full"></progressbar>
+                        </div>
+                        <div class="col-md-1 forum-info">
+                            <span class="number">32</span>
+                            <small>People</small>
+                        </div>
+                        <div class="col-md-1 forum-info">
+                            <span class="number">9</span>
+                            <small>Startups</small>
+                        </div>
+                        <div class="col-md-1 forum-info">
+                            <span class="number">74</span>
+                            <small>Jobs</small>
+                        </div>
+                        <div class="col-md-2 project-people">
+                            <p class="profile-label font-uppercase" style="font-size: 13px;  padding-top: 3px; margin-bottom: 7px;">Leaders</p>
+                            <img ng-repeat="leader in leaders.slice(11, 15) | limitTo: 3" title="{{leader.value.profile.name}}" class="img-circle" src="{{leader.value.profile.avatar || 'images/blank_avatar.png'}}"/>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-md-7 forum-heading">
+
+                            <a ui-sref="#"><h4><i class="fa fa-flask"></i> Bio-Science</h4></a>
+                            <div class="desc" style="margin-bottom:5px;">Products that leverage biological and pharmaceutical innovations.</div>
+                            <progressbar value="51" type="warning" class="progress-small full"></progressbar>
+                        </div>
+                        <div class="col-md-1 forum-info">
+                            <span class="number">25</span>
+                            <small>People</small>
+                        </div>
+                        <div class="col-md-1 forum-info">
+                            <span class="number">6</span>
+                            <small>Startups</small>
+                        </div>
+                        <div class="col-md-1 forum-info">
+                            <span class="number">74</span>
+                            <small>Jobs</small>
+                        </div>
+                        <div class="col-md-2 project-people">
+                            <p class="profile-label font-uppercase" style="font-size: 13px;  padding-top: 3px; margin-bottom: 7px;">Leaders</p>
+                            <img ng-repeat="leader in leaders.slice(7, 11) | limitTo: 3" title="{{leader.value.profile.name}}" class="img-circle" src="{{leader.value.profile.avatar || 'images/blank_avatar.png'}}"/>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="hpanel forum-box">
+
+                <div class="panel-heading" style="border-bottom: 2px solid #3498DB;">
+                    <h3>Top Networks</h3>
+                </div>
+
+                <div class="panel-body" style="height: 83px;">
+                    <div class="row">
+                        <div class="col-md-7 forum-heading">
+                            <span class="label label-primary pull-left">Advisor Group</span>
+                            <a ui-sref="#"><h4> Stable of Experts</h4></a>
+                            <div class="desc" style="margin-bottom:5px;">Economic Development for Central Oregon (EDCO) list of qualfied startup advisors.</div>
+                        </div>
+                        <div class="col-md-1 forum-info">
+                            <span class="number">134</span>
+                            <small>Advisors</small>
+                        </div>
+                        <div class="col-md-1 forum-info">
+                            <span class="number">22</span>
+                            <small>Investors</small>
+                        </div>
+                        <div class="col-md-1 forum-info">
+                            <span class="number">0</span>
+                            <small>Startups</small>
+                        </div>
+                        <div class="col-md-2 project-people">
+                            <p class="profile-label font-uppercase" style="font-size: 13px;  padding-top: 3px; margin-bottom: 7px;">Leaders</p>
+                            <img ng-repeat="leader in leaders.slice(15, 18) | limitTo: 2" title="{{leader.value.profile.name}}" class="img-circle" src="{{leader.value.profile.avatar || 'images/blank_avatar.png'}}"/>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="panel-body" style="height: 83px;">
+                    <div class="row">
+                        <div class="col-md-7 forum-heading">
+                            <span class="label label-success pull-left">Accelerator</span>
+                            <a ui-sref="#"><h4> FoundersPad</h4></a>
+                            <div class="desc" style="margin-bottom:5px;">Regional accelerator for software startups.</div>
+                        </div>
+                        <div class="col-md-1 forum-info">
+                            <span class="number">18</span>
+                            <small>Advisors</small>
+                        </div>
+                        <div class="col-md-1 forum-info">
+                            <span class="number">12</span>
+                            <small>Investors</small>
+                        </div>
+                        <div class="col-md-1 forum-info">
+                            <span class="number">9</span>
+                            <small>Startups</small>
+                        </div>
+                        <div class="col-md-2 project-people">
+                            <p class="profile-label font-uppercase" style="font-size: 13px;  padding-top: 3px; margin-bottom: 7px;">Leaders</p>
+                            <img ng-repeat="leader in leaders.slice(18, 21) | limitTo: 2" title="{{leader.value.profile.name}}" class="img-circle" src="{{leader.value.profile.avatar || 'images/blank_avatar.png'}}"/>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="panel-body" style="height: 84px;">
+                    <div class="row">
+                        <div class="col-md-7 forum-heading">
+                            <span class="label label-warning pull-left">Coworking</span>
+                            <a ui-sref="#"><h4> BendTECH</h4></a>
+                            <div class="desc" style="margin-bottom:5px;">Coworking space for tech companies.</div>
+                        </div>
+                        <div class="col-md-1 forum-info">
+                            <span class="number">10</span>
+                            <small>Advisors</small>
+                        </div>
+                        <div class="col-md-1 forum-info">
+                            <span class="number">2</span>
+                            <small>Investors</small>
+                        </div>
+                        <div class="col-md-1 forum-info">
+                            <span class="number">25</span>
+                            <small>Startups</small>
+                        </div>
+                        <div class="col-md-2 project-people">
+                            <p class="profile-label font-uppercase" style="font-size: 13px;  padding-top: 3px; margin-bottom: 7px;">Leaders</p>
+                            <img ng-repeat="leader in leaders.slice(25, 28) | limitTo: 3" title="{{leader.value.profile.name}}" class="img-circle" src="{{leader.value.profile.avatar || 'images/blank_avatar.png'}}"/>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+    <div class="row">
         <div class="col-md-4">
             <div class="hpanel hblue" >
                 <div class="panel-body" style="padding: 10px 5px;">
@@ -225,186 +406,7 @@
 
     </div>
 
-    <div class="row">
-        <div class="col-md-6">
-            <div class="hpanel forum-box">
 
-                <div class="panel-heading">
-                    <h3>Top Clusters</h3>
-                </div>
-
-                <div class="panel-body">
-                    <div class="row">
-                        <div class="col-md-7 forum-heading">
-
-                            <a ui-sref="#"><h4><i class="fa fa-code"></i> Tech</h4></a>
-                            <div class="desc" style="margin-bottom:5px;">Software and hardware products and services.</div>
-                            <progressbar value="85" type="success" class="progress-small full"></progressbar>
-                        </div>
-                        <div class="col-md-1 forum-info">
-                            <span class="number">58</span>
-                            <small>People</small>
-                        </div>
-                        <div class="col-md-1 forum-info">
-                            <span class="number">29</span>
-                            <small>Startups</small>
-                        </div>
-                        <div class="col-md-1 forum-info">
-                            <span class="number">167</span>
-                            <small>Jobs</small>
-                        </div>
-                        <div class="col-md-2 project-people">
-                            <p class="profile-label font-uppercase" style="font-size: 13px;  padding-top: 3px; margin-bottom: 7px;">Leaders</p>
-                            <img ng-repeat="leader in leaders.slice(3, 7) | limitTo: 3" title="{{leader.value.profile.name}}" class="img-circle" src="{{leader.value.profile.avatar || 'images/blank_avatar.png'}}"/>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="panel-body">
-                    <div class="row">
-                        <div class="col-md-7 forum-heading">
-
-                            <a ui-sref="#"><h4><i class="fa fa-tree"></i> Outdoor</h4></a>
-                            <div class="desc" style="margin-bottom:5px;">Products powered by gravity or human strength.</div>
-                            <progressbar value="62" type="warning" class="progress-small full"></progressbar>
-                        </div>
-                        <div class="col-md-1 forum-info">
-                            <span class="number">32</span>
-                            <small>People</small>
-                        </div>
-                        <div class="col-md-1 forum-info">
-                            <span class="number">9</span>
-                            <small>Startups</small>
-                        </div>
-                        <div class="col-md-1 forum-info">
-                            <span class="number">74</span>
-                            <small>Jobs</small>
-                        </div>
-                        <div class="col-md-2 project-people">
-                            <p class="profile-label font-uppercase" style="font-size: 13px;  padding-top: 3px; margin-bottom: 7px;">Leaders</p>
-                            <img ng-repeat="leader in leaders.slice(11, 15) | limitTo: 3" title="{{leader.value.profile.name}}" class="img-circle" src="{{leader.value.profile.avatar || 'images/blank_avatar.png'}}"/>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="panel-body">
-                    <div class="row">
-                        <div class="col-md-7 forum-heading">
-
-                            <a ui-sref="#"><h4><i class="fa fa-flask"></i> Bio-Science</h4></a>
-                            <div class="desc" style="margin-bottom:5px;">Products that leverage biological and pharmaceutical innovations.</div>
-                            <progressbar value="51" type="warning" class="progress-small full"></progressbar>
-                        </div>
-                        <div class="col-md-1 forum-info">
-                            <span class="number">25</span>
-                            <small>People</small>
-                        </div>
-                        <div class="col-md-1 forum-info">
-                            <span class="number">6</span>
-                            <small>Startups</small>
-                        </div>
-                        <div class="col-md-1 forum-info">
-                            <span class="number">74</span>
-                            <small>Jobs</small>
-                        </div>
-                        <div class="col-md-2 project-people">
-                            <p class="profile-label font-uppercase" style="font-size: 13px;  padding-top: 3px; margin-bottom: 7px;">Leaders</p>
-                            <img ng-repeat="leader in leaders.slice(7, 11) | limitTo: 3" title="{{leader.value.profile.name}}" class="img-circle" src="{{leader.value.profile.avatar || 'images/blank_avatar.png'}}"/>
-                        </div>
-                    </div>
-                </div>
-
-            </div>
-        </div>
-        <div class="col-md-6">
-            <div class="hpanel forum-box">
-
-                <div class="panel-heading">
-                    <h3>Top Networks</h3>
-                </div>
-
-                <div class="panel-body" style="height: 83px;">
-                    <div class="row">
-                        <div class="col-md-7 forum-heading">
-                            <span class="label label-primary pull-left">Advisor Group</span>
-                            <a ui-sref="#"><h4> Stable of Experts</h4></a>
-                            <div class="desc" style="margin-bottom:5px;">Economic Development for Central Oregon (EDCO) list of qualfied startup advisors.</div>
-                        </div>
-                        <div class="col-md-1 forum-info">
-                            <span class="number">134</span>
-                            <small>Advisors</small>
-                        </div>
-                        <div class="col-md-1 forum-info">
-                            <span class="number">22</span>
-                            <small>Investors</small>
-                        </div>
-                        <div class="col-md-1 forum-info">
-                            <span class="number">0</span>
-                            <small>Startups</small>
-                        </div>
-                        <div class="col-md-2 project-people">
-                            <p class="profile-label font-uppercase" style="font-size: 13px;  padding-top: 3px; margin-bottom: 7px;">Leaders</p>
-                            <img ng-repeat="leader in leaders.slice(15, 18) | limitTo: 2" title="{{leader.value.profile.name}}" class="img-circle" src="{{leader.value.profile.avatar || 'images/blank_avatar.png'}}"/>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="panel-body" style="height: 83px;">
-                    <div class="row">
-                        <div class="col-md-7 forum-heading">
-                            <span class="label label-success pull-left">Accelerator</span>
-                            <a ui-sref="#"><h4> FoundersPad</h4></a>
-                            <div class="desc" style="margin-bottom:5px;">Regional accelerator for software startups.</div>
-                        </div>
-                        <div class="col-md-1 forum-info">
-                            <span class="number">18</span>
-                            <small>Advisors</small>
-                        </div>
-                        <div class="col-md-1 forum-info">
-                            <span class="number">12</span>
-                            <small>Investors</small>
-                        </div>
-                        <div class="col-md-1 forum-info">
-                            <span class="number">9</span>
-                            <small>Startups</small>
-                        </div>
-                        <div class="col-md-2 project-people">
-                            <p class="profile-label font-uppercase" style="font-size: 13px;  padding-top: 3px; margin-bottom: 7px;">Leaders</p>
-                            <img ng-repeat="leader in leaders.slice(18, 21) | limitTo: 2" title="{{leader.value.profile.name}}" class="img-circle" src="{{leader.value.profile.avatar || 'images/blank_avatar.png'}}"/>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="panel-body" style="height: 84px;">
-                    <div class="row">
-                        <div class="col-md-7 forum-heading">
-                            <span class="label label-warning pull-left">Coworking</span>
-                            <a ui-sref="#"><h4> BendTECH</h4></a>
-                            <div class="desc" style="margin-bottom:5px;">Coworking space for tech companies.</div>
-                        </div>
-                        <div class="col-md-1 forum-info">
-                            <span class="number">10</span>
-                            <small>Advisors</small>
-                        </div>
-                        <div class="col-md-1 forum-info">
-                            <span class="number">2</span>
-                            <small>Investors</small>
-                        </div>
-                        <div class="col-md-1 forum-info">
-                            <span class="number">25</span>
-                            <small>Startups</small>
-                        </div>
-                        <div class="col-md-2 project-people">
-                            <p class="profile-label font-uppercase" style="font-size: 13px;  padding-top: 3px; margin-bottom: 7px;">Leaders</p>
-                            <img ng-repeat="leader in leaders.slice(25, 28) | limitTo: 3" title="{{leader.value.profile.name}}" class="img-circle" src="{{leader.value.profile.avatar || 'images/blank_avatar.png'}}"/>
-                        </div>
-                    </div>
-                </div>
-
-            </div>
-        </div>
-
-    </div>
 
 
 
