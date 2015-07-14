@@ -133,7 +133,9 @@ function MainController($rootScope, $scope, $state, $location, $auth, user_api, 
                         if (community.type !== "location") {
                             var locations = $scope.global.findValue(community.communities, "location");
                             for (item in locations) {
-                                $scope.global.community.locations[locations[item].key] = locations[item];
+                                if (locations[item].key !== "location") {
+                                    $scope.global.community.locations[locations[item].key] = locations[item];
+                                }
                             }
                             $scope.global.location = $scope.global.community.locations[community.profile.home];
                         } else {
