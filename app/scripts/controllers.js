@@ -998,16 +998,23 @@ function LoginController($scope, $auth, $location, $mixpanel) {
         return $auth.isAuthenticated();
     };
 
+    var postLogin = function(user) {
+        user.value["key"] = user.path.key;
+        user = user.value;
+
+        $scope.global.user = user;
+        $scope.global.context = {};
+        $scope.global.alert = undefined;
+        $scope.global.sessionReady();
+        $location.path('/' + user.profile.home);
+        $mixpanel.identify(user.key);
+        $mixpanel.track('Logged in');
+    };
+
     $scope.login = function() {
         $auth.login({ email: $scope.email, password: $scope.password })
             .then(function(response) {
-                $scope.global.user = response.data.user;
-                $scope.global.alert = undefined;
-                $scope.global.sessionReady();
-                $location.path('/' + $scope.global.user.value.profile.home);
-                console.log('Logged in!');
-                $mixpanel.identify($scope.global.user.path.key);
-                $mixpanel.track('Logged in');
+                postLogin(response.data.user);
             })
             .catch(function(response) {
                 if (response.data.message && response.data.message !== 'undefined') {
@@ -1020,12 +1027,7 @@ function LoginController($scope, $auth, $location, $mixpanel) {
     $scope.authenticate = function(provider) {
         $auth.authenticate(provider)
             .then(function(response) {
-                $scope.global.user = response.data.user;
-                $scope.global.alert = undefined;
-                $scope.global.sessionReady();
-                $mixpanel.identify($scope.global.user.path.key);
-                $mixpanel.track('Logged in');
-                $location.path('/' + $scope.global.user.value.profile.home);
+                postLogin(response.data.user);
             })
             .catch(function(response) {
                 console.warn("WARNING:");
