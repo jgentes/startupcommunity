@@ -170,18 +170,18 @@ function MainController($rootScope, $scope, $state, $location, $auth, user_api, 
                     $scope.global.context.community = community.key || $scope.global.user.context.community || undefined;
                     $scope.global.context.location = $scope.global.user.context.location || undefined;
 
-                    if (1 == 1) {
-                        community_api.getCommunity(community.key)
-                            .success(function(response) {
-                                if (response) {
-                                    community["communities"] = response;
-                                    setNav();
-                                }
-                            })
-                            .error(function(response) {
-                                console.warn(response.message);
-                            });
-                    } else setNav();
+
+                    community_api.getCommunity(community.key)
+                        .success(function(response) {
+                            if (response) {
+                                community["communities"] = response;
+                                setNav();
+                            }
+                        })
+                        .error(function(response) {
+                            console.warn(response.message);
+                        });
+
                 }
             )
         }
@@ -1004,9 +1004,9 @@ function LoginController($scope, $auth, $location, $mixpanel) {
                 $scope.global.user = response.data.user;
                 $scope.global.alert = undefined;
                 $scope.global.sessionReady();
-                $location.path('/app');
+                $location.path('/' + $scope.global.user.value.profile.home);
                 console.log('Logged in!');
-                $mixpanel.identify($scope.global.user.key);
+                $mixpanel.identify($scope.global.user.path.key);
                 $mixpanel.track('Logged in');
             })
             .catch(function(response) {
@@ -1023,10 +1023,9 @@ function LoginController($scope, $auth, $location, $mixpanel) {
                 $scope.global.user = response.data.user;
                 $scope.global.alert = undefined;
                 $scope.global.sessionReady();
-                $mixpanel.identify($scope.global.user.key);
+                $mixpanel.identify($scope.global.user.path.key);
                 $mixpanel.track('Logged in');
-                $location.path('/app');
-                //$route.reload(); remove if not needed
+                $location.path('/' + $scope.global.user.value.profile.home);
             })
             .catch(function(response) {
                 console.warn("WARNING:");
