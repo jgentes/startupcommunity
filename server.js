@@ -88,6 +88,13 @@ app.post('/auth/login', userApis.login); //not currently used?
 // Maintenance
 app.get('/api/1.1/maint', userApis.maintenance);
 
+// Client logger
+app.post('/api/logger', function (req, res) {
+    console.log('CLIENT ERROR:')
+    console.log(req.body);
+    res.end();
+});
+
 // Frontend Homepage & Blog
 app.get('/', function (req, res, next) {
   res.sendFile("frontend.html", {root: __dirname + config.path});

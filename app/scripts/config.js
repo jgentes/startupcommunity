@@ -221,24 +221,115 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
 
 }
 
+
 angular
     .module('startupcommunity')
     .config(configState)
     .config(function($authProvider) {
 
-      $authProvider.linkedin({
-          clientId: "75bqixdv58z1az"
-      });
+        $authProvider.linkedin({
+            clientId: "75bqixdv58z1az"
+        });
 
     })
 
     .run(function($rootScope, $state) {
         $rootScope.$state = $state;
         $rootScope.$on("$stateChangeError", console.log.bind(console)) // for debugging of ui-router
-    });
+    })
+
+
+    // for Angular client exception logging to server
+    .factory(
+    "traceService",
+    function () {
+        return ({
+            print: printStackTrace
+        });
+    }
+)
+
+    .provider("$exceptionHandler", {
+        $get: function (exceptionLoggingService) {
+            return (exceptionLoggingService);
+        }
+    })
+
+    .factory("exceptionLoggingService", ["$log", "$window", "traceService", function ($log, $window, traceService) {
+        function error(exception, cause) { // preserve the default behaviour which will log the error to the console, and allow the application to continue running.
+            $log.error.apply($log, arguments); // now try to log the error to the server side.
+            try{
+                var errorMessage = exception.toString();
+                // use our traceService to generate a stack trace
+                var stackTrace = traceService.print({e: exception});
+
+                $.ajax({
+                    type: "POST",
+                    url: "/api/logger",
+                    contentType: "application/json",
+                    data: angular.toJson({
+                        url: $window.location.href,
+                        message: errorMessage,
+                        type: "exception",
+                        stackTrace: stackTrace,
+                        cause: ( cause || "")
+                    })
+                });
+            } catch (loggingError) {
+                $log.warn("Error server-side logging failed");
+                $log.log(loggingError);
+            }
+        }
+
+        return (error);
+    }])
+
+    .factory("applicationLoggingService", ["$log", "$window", function ($log, $window) {
+        return ({
+            error: function (message) {
+                $log.error.apply($log, arguments);
+                $.ajax({
+                    type: "POST",
+                    url: "/api/logger",
+                    contentType: "application/json",
+                    data: angular.toJson({url: $window.location.href, message: message, type: "error"})
+                });
+            }, debug: function (message) {
+                $log.log.apply($log, arguments);
+                $.ajax({
+                    type: "POST",
+                    url: "/api/logger",
+                    contentType: "application/json",
+                    data: angular.toJson({url: $window.location.href, message: message, type: "debug"})
+                });
+            }
+        });
+    }])
+
+    .config(['$httpProvider', function($httpProvider) { // this interceptor uses the application logging service to log server-side any errors from $http requests
+
+        $httpProvider.interceptors.push(['$rootScope', '$q', '$injector', '$location', 'applicationLoggingService', function ($rootScope, $q, $injector, $location, applicationLoggingService) {
+            return function (promise) {
+                return promise.then(function (response) {
+                    return response;
+                }, function (response) {
+                    if (response.status === null || response.status === 500) {
+                        var error = {
+                            method: response.config.method,
+                            url: response.config.url,
+                            message: response.data,
+                            status: response.status
+                        };
+                        applicationLoggingService.error(JSON.stringify(error));
+                    }
+                    return $q.reject(response);
+                });
+            };
+        }]);
+    }]);
 
 angular
-  .module('analytics.mixpanel')
-  .config(['$mixpanelProvider', function($mixpanelProvider) {
-      $mixpanelProvider.apiKey("0f110baeb6150d7e3b8968e32d7a5595");
-  }]);
+    .module('analytics.mixpanel')
+    .config(['$mixpanelProvider', function($mixpanelProvider) {
+        $mixpanelProvider.apiKey("0f110baeb6150d7e3b8968e32d7a5595");
+    }]);
