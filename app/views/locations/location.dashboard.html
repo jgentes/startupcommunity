@@ -84,7 +84,7 @@
                         </div>
                         <div class="col-md-2 project-people">
                             <p class="profile-label font-uppercase" style="font-size: 13px;  padding-top: 3px; margin-bottom: 7px;">Leaders</p>
-                            <img ng-repeat="leader in leaders.slice(7, 11) | limitTo: 3" title="{{leader.value.profile.name}}" class="img-circle" src="{{leader.value.profile.avatar || 'images/blank_avatar.png'}}"/>
+                            <img ng-repeat="leader in leaders.slice(7, 11) | limitTo: 2" title="{{leader.value.profile.name}}" class="img-circle" src="{{leader.value.profile.avatar || 'images/blank_avatar.png'}}"/>
                         </div>
                     </div>
                 </div>
@@ -100,7 +100,7 @@
 
                 <div class="panel-body" style="height: 83px;">
                     <div class="row">
-                        <div class="col-md-7 forum-heading">
+                        <div class="col-md-7 forum-heading" style="padding-top: 5px;">
                             <span class="label label-primary pull-left">Advisor Group</span>
                             <a ui-sref="#"><h4> Stable of Experts</h4></a>
                             <div class="desc" style="margin-bottom:5px;">Economic Development for Central Oregon (EDCO) list of qualfied startup advisors.</div>
@@ -126,7 +126,7 @@
 
                 <div class="panel-body" style="height: 83px;">
                     <div class="row">
-                        <div class="col-md-7 forum-heading">
+                        <div class="col-md-7 forum-heading" style="padding-top: 5px;">
                             <span class="label label-success pull-left">Accelerator</span>
                             <a ui-sref="#"><h4> FoundersPad</h4></a>
                             <div class="desc" style="margin-bottom:5px;">Regional accelerator for software startups.</div>
@@ -152,7 +152,7 @@
 
                 <div class="panel-body" style="height: 84px;">
                     <div class="row">
-                        <div class="col-md-7 forum-heading">
+                        <div class="col-md-7 forum-heading" style="padding-top: 5px;">
                             <span class="label label-warning pull-left">Coworking</span>
                             <a ui-sref="#"><h4> BendTECH</h4></a>
                             <div class="desc" style="margin-bottom:5px;">Coworking space for tech companies.</div>

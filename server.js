@@ -50,7 +50,7 @@ if (process.env.NODE_ENV === "production") {
   app.use("/bower_components", express.static(__dirname + "/bower_components"));
 }
 
-// ROUTE METHODS
+// API ROUTE METHODS
 var userApis = new UserApi(),
     communityApis = new CommunityApi(),
     angellistApis = new AngelListApi();

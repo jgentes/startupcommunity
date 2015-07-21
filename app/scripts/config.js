@@ -14,7 +14,7 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                 pageTitle: 'Dashboard'
             },
             resolve: {
-                authenticated: ['$location', '$auth', function($location, $auth) {
+                authenticated: ['$auth', function($auth) {
                     if (!$auth.isAuthenticated()) {
                         $state.go('login');
                     }
@@ -25,7 +25,7 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
             templateUrl: 'views/search.html',
             url: "/search",
             resolve: {
-                authenticated: ['$location', '$auth', function($location, $auth) {
+                authenticated: ['$auth', function($auth) {
                     if (!$auth.isAuthenticated()) {
                         $state.go('login');
                     }
@@ -36,7 +36,7 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
             templateUrl: '../views/invite_people.html',
             url: "/people/invite",
             resolve: {
-                authenticated: ['$location', '$auth', function($location, $auth) {
+                authenticated: ['$auth', function($auth) {
                     if (!$auth.isAuthenticated()) {
                         $state.go('login');
                     }
@@ -69,11 +69,12 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                 pageTitle: 'User Profile'
             },
             resolve: {
-                authenticated: ['$location', '$auth', function($location, $auth) {
+                authenticated: ['$auth', function($auth) {
                     if (!$auth.isAuthenticated()) {
                         $state.go('login');
                     }
-                }]
+                }],
+
             }
         })
 
