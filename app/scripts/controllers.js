@@ -209,12 +209,3 @@ function MainController($rootScope, $scope, $state, $location, $auth, user_api, 
     $scope.global.sessionReady();
 
 }
-
-
-
-
-
-
-
-
-

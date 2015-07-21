@@ -5,22 +5,19 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
 
     $stateProvider
 
-        // Dashboard - Main page
+        // Root
 
-        .state('dashboard', {
-            url: "/dashboard",
-            templateUrl: "views/dashboard.html",
-            params: {
-                pageTitle: 'Dashboard'
-            },
+        .state('sc', {
+            abstract: true,
+            templateUrl: "components/common/nav/nav.html",
             resolve: {
-                authenticated: ['$auth', function($auth) {
-                    if (!$auth.isAuthenticated()) {
-                        $state.go('login');
-                    }
-                }]
+                community: ['$stateParams', 'communityApi',
+                    function($stateParams, communityApi) {
+
+                }
             }
         })
+
         .state('search', {
             templateUrl: 'views/search.html',
             url: "/search",
@@ -45,7 +42,22 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
         })
         .state('login', {
             url: "/login",
+            params: {
+                error: {}
+            },
             templateUrl: 'views/login.html'
+        })
+        .state('logout', {
+            url: "/logout",
+            params: {
+                error: {}
+            },
+            onEnter: function($auth, $stateParams, $state) {
+                $auth.logout()
+                    .then(function() {
+                        $state.go('login', {error: $stateParams.error});
+                    });
+            }
         })
 
          // People views
@@ -129,8 +141,9 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
 
         // Location views
         .state('location', {
+            parent: 'sc',
             abstract: true,
-            templateUrl: "views/common/content.html"
+            templateUrl: "components/common/nav/content_big.html"
         })
         .state('location.dashboard', {
             templateUrl: 'views/locations/location.dashboard.html',
