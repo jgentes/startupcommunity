@@ -5,16 +5,49 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
 
     $stateProvider
 
-        // Root
-
+        // Root Navitation
         .state('sc', {
             abstract: true,
             templateUrl: "components/common/nav/nav.html",
+            controller: "NavigationController as nav",
             resolve: {
-                community: ['$stateParams', 'communityApi',
-                    function($stateParams, communityApi) {
+                user: ['user_api', '$state',
+                    function(user_api, $state) {
+                        return user_api.getProfile()
+                            .success(function(response) {
+                                if (response.message) {
+                                    $state.go('logout', { error: { type: 'danger', msg: String(response.message) }});
+                                }
+                            })
+                            .error(function(response) {
+                                $state.go('logout', { error: { type: 'danger', msg: String(response.message) }});
+                            });
+                    }],
+                community: ['community_api',
+                    function(communityApi) {
 
-                }
+                }]
+            }
+        })
+
+        // Location views
+        .state('location', {
+            parent: 'sc',
+            abstract: true,
+            templateUrl: "components/common/nav/content_big.html"
+        })
+        .state('location.dashboard', {
+            templateUrl: 'views/locations/location.dashboard.html',
+            params: {
+                community: {},
+                pageTitle: "Location Profile"
+            },
+            resolve: {
+                authenticated: ['$location', '$auth', function($location, $auth) {
+                    if (!$auth.isAuthenticated()) {
+                        $state.go('login');
+                    }
+                }]
             }
         })
 
@@ -129,27 +162,6 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
             params: {
                 community: {},
                 pageTitle: "Industry Profile"
-            },
-            resolve: {
-                authenticated: ['$location', '$auth', function($location, $auth) {
-                    if (!$auth.isAuthenticated()) {
-                        $state.go('login');
-                    }
-                }]
-            }
-        })
-
-        // Location views
-        .state('location', {
-            parent: 'sc',
-            abstract: true,
-            templateUrl: "components/common/nav/content_big.html"
-        })
-        .state('location.dashboard', {
-            templateUrl: 'views/locations/location.dashboard.html',
-            params: {
-                community: {},
-                pageTitle: "Location Profile"
             },
             resolve: {
                 authenticated: ['$location', '$auth', function($location, $auth) {

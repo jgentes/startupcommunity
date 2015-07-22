@@ -1,8 +1,11 @@
 angular
     .module('startupcommunity')
-    .controller('NavigationController', NavigationController)
+    .controller('NavigationController', NavigationController);
 
-function NavigationController($scope, $state, $modal) {
+function NavigationController($scope, $modal, user) {
+    // reference 'this' by using 'nav' from 'NavigationController as nav'
+    this.user = user.data;
+    this.context = {};
 
     $scope.changeLocation = function() {
         var modalInstance = $modal.open({
@@ -12,31 +15,21 @@ function NavigationController($scope, $state, $modal) {
         });
     };
 
-    var getRoles = function() {
+    var roles = $scope.global.findKey(this.user.communities, "roles"),
+        rolelist = [],
+        j,
+        k,
+        role;
 
-        var roles = $scope.global.findKey($scope.global.user.communities, "roles"),
-            rolelist = [],
-            j,
-            k,
-            role;
-
-        for (j in roles) {
-            for (k in roles[j].roles) {
-                role = roles[j].roles[k][0].toUpperCase() + roles[j].roles[k].slice(1);
-                if (rolelist.indexOf(role) == -1 && role !== "Roles") {
-                    rolelist.push(role);
-                }
+    for (j in roles) {
+        for (k in roles[j].roles) {
+            role = roles[j].roles[k][0].toUpperCase() + roles[j].roles[k].slice(1);
+            if (rolelist.indexOf(role) == -1 && role !== "Roles") {
+                rolelist.push(role);
             }
         }
+    }
 
-        $scope.global.user.profile["roles"] = rolelist;
-
-    };
-
-    if (!$scope.global.user || !$scope.global.user.communities) {
-        $scope.$on('sessionReady', function (event, status) {
-            getRoles();
-        });
-    } else getRoles();
+    this.user.profile["roles"] = rolelist;
 
 }

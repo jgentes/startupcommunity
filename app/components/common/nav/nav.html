@@ -1,4 +1,4 @@
-<div ng-controller="NavigationController">
+<div>
     <!-- Header -->
     <div id="header">
         <div class="bright-line">
@@ -87,12 +87,12 @@
             <div class="container side-menu" style="padding-top: 10px; margin-left: -20px;">
                 <div class="row side-menu">
                     <div class="col-sm-3">
-                        <a ui-sref="people.profile({community: global.user})"><img class="img-circle m-b" ng-src="{{global.user.profile.avatar || global.user.profile.linkedin.pictureUrl || 'images/blank_avatar.png'}}" alt="{{global.user.profile.name}}" style="height: 40px; width: 40px; "/></a>
+                        <a ui-sref="people.profile({community: nav.user})"><img class="img-circle m-b" ng-src="{{nav.user.profile.avatar || nav.user.profile.linkedin.pictureUrl || 'images/blank_avatar.png'}}" alt="{{nav.user.profile.name}}" style="height: 40px; width: 40px; "/></a>
                     </div>
                     <div class="col-sm-9" style="padding-top: 3px;">
-                        <a ui-sref="people.profile({community: global.user})">{{global.user.profile.name}}</a>
+                        <a ui-sref="people.profile({community: nav.user})">{{nav.user.profile.name}}</a>
                         <div style="margin-left: -10px; padding-top: 1px;">
-                            <span ng-repeat="item in global.user.profile.roles" class="user-role"><i ng-attr-title="{{item}}" ng-class="{'text-primary fa fa-rocket' : item == 'Founder', 'text-info fa fa-graduation-cap' : item == 'Advisor', 'text-success fa fa-leaf' : item == 'Investor', 'text-danger fa fa-flag' : item == 'Leader'}"></i></span>
+                            <span ng-repeat="item in nav.user.profile.roles" class="user-role"><i ng-attr-title="{{item}}" ng-class="{'text-primary fa fa-rocket' : item == 'Founder', 'text-info fa fa-graduation-cap' : item == 'Advisor', 'text-success fa fa-leaf' : item == 'Investor', 'text-danger fa fa-flag' : item == 'Leader'}"></i></span>
                         </div>
                     </div>
                 </div>
