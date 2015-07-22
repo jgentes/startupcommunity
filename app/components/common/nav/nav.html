@@ -13,7 +13,7 @@
                     <div style="margin-top: 15px; margin-left: 0;">
 
                         <div class="header-nav-link">
-                            <a ui-sref="people.dashboard({community: global.community})">
+                            <a ui-sref="people.dashboard({community: nav.community})">
                                     <span>
                                         <div class="col-xs-3 col-sm-1" style="text-align: center;">
                                             <i class="pe-7s-id" style="font-size: 24px; margin-top: 6px;"></i>
@@ -28,7 +28,7 @@
 
 
                         <div class="header-nav-link pushright">
-                            <a ui-sref="startups.dashboard({community: global.community})">
+                            <a ui-sref="startups.dashboard({community: nav.community})">
                                     <span>
                                         <div class="col-xs-3 col-sm-1" style="text-align: center;">
                                             <i class="pe-7s-power" style="font-size: 24px; margin-top: 6px;"></i>
@@ -77,7 +77,7 @@
                     </a>
                 </li>
                 <li class="dropdown" style="display: inline-block;">
-                    <a ng-click="global.logout()">
+                    <a ui-sref="logout">
                         <i class="pe-7s-upload pe-rotate-90"></i>
                     </a>
                 </li>
@@ -112,7 +112,7 @@
             <li ng-class="{active: $state.includes('location')}" class="active">
                 <a href="#"><span class="nav-label">Locations</span><span class="fa arrow"></span> </a>
                 <ul class="nav nav-second-level" ng-class="{in: $state.includes('location')}">
-                    <li ui-sref-active="active" ng-repeat="item in global.community.locations">
+                    <li ui-sref-active="active" ng-repeat="item in nav.locations">
                         <a ui-sref="location.dashboard({community: item})"><i class="fa fa-globe"></i>&nbsp;&nbsp;{{item.profile.name}}</a>
                     </li>
                 </ul>
@@ -121,7 +121,7 @@
             <li ng-class="{active: $state.includes('industry')}" class="active">
                 <a href="#"><span class="nav-label">Clusters</span><span class="fa arrow"></span> </a>
                 <ul class="nav nav-second-level" ng-class="{in: $state.includes('industry')}">
-                    <li ui-sref-active="active" ng-repeat="item in global.community.industries">
+                    <li ui-sref-active="active" ng-repeat="item in nav.industries">
                         <a ui-sref="industry.dashboard({community:item})"><i ng-class="'fa ' + item.profile.icon"></i>&nbsp;&nbsp;{{item.profile.name}}</a>
                     </li>
                 </ul>
@@ -130,7 +130,7 @@
             <li ng-class="{active: $state.includes('network')}" class="active">
                 <a href="#"><span class="nav-label">Networks</span><span class="fa arrow"></span> </a>
                 <ul class="nav nav-second-level" ng-class="{in: $state.includes('network')}">
-                    <li ui-sref-active="active" ng-repeat="item in global.community.networks">
+                    <li ui-sref-active="active" ng-repeat="item in nav.networks">
                         <a ui-sref="network.dashboard({community:item})"><i ng-class="'fa ' + item.profile.icon"></i>&nbsp;&nbsp;{{item.profile.name}}</a>
                     </li>
                 </ul>

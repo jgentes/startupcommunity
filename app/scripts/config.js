@@ -3,6 +3,56 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
     // Optimize load start
     $compileProvider.debugInfoEnabled(true);
 
+    $locationProvider
+        .html5Mode(true);
+
+    // Set default unmatched url state - this runs first for undefined url paths
+    $urlRouterProvider.otherwise(
+        function($injector, $location) {
+            $injector.invoke(['$state', '$location', '$auth', 'community_api', function($state, $location, $auth, community_api) {
+
+                if (!$auth.isAuthenticated()) {
+                    $state.go('login');
+                } else {
+                    var path = $location.url().substr(1);
+
+                    community_api.getKey(path)
+                        .then(function(response) {
+
+                            switch (response.data.type) {
+                                case "user":
+                                    $state.go('people.profile', { community : response.data});
+                                    break;
+                                case "location":
+                                    $state.go('location.dashboard', { community : response.data});
+                                    break;
+                                case "network":
+                                    $state.go('network.dashboard', { community : response.data});
+                                    break;
+                                case "industry":
+                                    $state.go('industry.dashboard', { community : response.data});
+                                    break;
+                                default:
+                                    $state.go('404');
+                                    break;
+                            }
+                        })
+                        .catch(function(err){
+                            if (err.status == 404) {
+                                $state.go('404')
+                            } else {
+                                console.log("SEARCH FAIL:");
+                                console.warn(err);
+                            }
+                        });
+                    //$state.go('dashboard');
+                }
+
+
+            }]);
+        });
+
+
     $stateProvider
 
         // Root Navitation
@@ -10,6 +60,9 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
             abstract: true,
             templateUrl: "components/common/nav/nav.html",
             controller: "NavigationController as nav",
+            params: {
+                community: {}
+            },
             resolve: {
                 authenticated: ['$location', '$auth', function($location, $auth) {
                     if (!$auth.isAuthenticated()) {
@@ -28,9 +81,10 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                                 $state.go('logout', { error: { type: 'danger', msg: String(response.message) }});
                             });
                     }],
-                community: ['community_api',
-                    function(community_api) {
-                        return community_api.getCommunity()
+                communities: ['community_api', '$stateParams',
+                    function(community_api, $stateParams) {
+                        var community_key = $stateParams.community.key;
+                        return community_api.getCommunity(community_key);
                 }]
             }
         })
@@ -39,7 +93,7 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
         .state('location', {
             parent: 'sc',
             abstract: true,
-            templateUrl: "components/common/content_big.html"
+            templateUrl: "components/common/content/content_big.html"
         })
         .state('location.dashboard', {
             templateUrl: 'views/locations/location.dashboard.html',
@@ -50,10 +104,8 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
             },
             resolve: {
                 users: ['user_api', '$stateParams', function(user_api, $stateParams) {
-                    return user_api.getUsers($stateParams.community.key, undefined, undefined, encodeURIComponent(['Advisor']), 30) //todo change to Leader
-                        .error(function(response) {
-                            $state.go('logout', { error: { type: 'danger', msg: String(response.message) }});
-                        });
+                    //todo change to Leader
+                    return user_api.getUsers($stateParams.community.key, undefined, undefined, encodeURIComponent(['Advisor']), 30);
                 }]
             }
         })
@@ -202,55 +254,6 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
         .state('404', {
             templateUrl: "views/common/404.html"
         });
-
-
-    // Set default unmatched url state
-    $urlRouterProvider.otherwise(
-        function($injector, $location) {
-            $injector.invoke(['$state', '$location', '$auth', 'community_api', function($state, $location, $auth, community_api) {
-
-                if (!$auth.isAuthenticated()) {
-                    $state.go('login');
-                } else {
-                    var path = $location.url().substr(1);
-
-                    community_api.getKey(path)
-                        .then(function(response) {
-                            switch (response.data.type) {
-                                case "user":
-                                    $state.go('people.profile', { community : response.data});
-                                    break;
-                                case "location":
-                                    $state.go('location.dashboard', { community : response.data});
-                                    break;
-                                case "network":
-                                    $state.go('network.dashboard', { community : response.data});
-                                    break;
-                                case "industry":
-                                    $state.go('industry.dashboard', { community : response.data});
-                                    break;
-                                default:
-                                    $state.go('404');
-                                    break;
-                            }
-                        })
-                        .catch(function(err){
-                            if (err.status == 404) {
-                                $state.go('404')
-                            } else {
-                                console.log("SEARCH FAIL:");
-                                console.warn(err);
-                            }
-                        });
-                    //$state.go('dashboard');
-                }
-
-
-            }]);
-        });
-
-    $locationProvider
-        .html5Mode(true);
 
 }
 

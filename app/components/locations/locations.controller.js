@@ -3,11 +3,13 @@ angular
     .controller('LocationController', LocationController)
     .controller('ChangeLocationController', ChangeLocationController);
 
-function LocationController($state, $location, users, community) {
+function LocationController($state, $location, users, $stateParams, communities) {
 
-    this.community = community.data;
+    console.log('locationcontroller');
+    console.log($stateParams);
+    this.community = $stateParams.community;
     this.users = users.data.results;
-    community["communities"] = community.data;
+    //community["communities"] = $stateParams.community;
 
     if ($state.params.community.key) {
         $location.path('/' + $state.params.community.key)
