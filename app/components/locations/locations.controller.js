@@ -3,7 +3,9 @@ angular
     .controller('LocationController', LocationController)
     .controller('ChangeLocationController', ChangeLocationController);
 
-function LocationController($state, $location, user_api) {
+function LocationController($state, $location, users) {
+
+    this.users = users.data.results;
 
     if ($state.params.community.key) {
         $location.path('/' + $state.params.community.key)
@@ -36,14 +38,7 @@ function LocationController($state, $location, user_api) {
         showScale: false
     };
 
-    var getLeaders = function() {
-        user_api.getUsers($state.params.community.key, undefined, undefined, encodeURIComponent(['Advisor']), 30) //todo change to Leader
-            .then( function(result) {
-                $scope.leaders = result.data.results;
-            })
-    };
-
-    getLeaders();
+    $scope.leaders = this.users;
 }
 
 function ChangeLocationController($scope, $modalInstance){

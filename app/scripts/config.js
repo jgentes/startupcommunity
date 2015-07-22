@@ -25,7 +25,7 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                     }],
                 community: ['community_api',
                     function(communityApi) {
-
+                        //something really important should go here
                 }]
             }
         })
@@ -34,15 +34,22 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
         .state('location', {
             parent: 'sc',
             abstract: true,
-            templateUrl: "components/common/nav/content_big.html"
+            templateUrl: "components/common/content_big.html"
         })
         .state('location.dashboard', {
             templateUrl: 'views/locations/location.dashboard.html',
+            controller: "LocationController as loc",
             params: {
                 community: {},
                 pageTitle: "Location Profile"
             },
             resolve: {
+                users: ['user_api', '$stateParams', function(user_api, $stateParams) {
+                    return user_api.getUsers($stateParams.community.key, undefined, undefined, encodeURIComponent(['Advisor']), 30) //todo change to Leader
+                        .error(function(response) {
+                            $state.go('logout', { error: { type: 'danger', msg: String(response.message) }});
+                        });
+                }],
                 authenticated: ['$location', '$auth', function($location, $auth) {
                     if (!$auth.isAuthenticated()) {
                         $state.go('login');
