@@ -3,50 +3,52 @@ angular
     .controller('LocationController', LocationController)
     .controller('ChangeLocationController', ChangeLocationController);
 
-function LocationController($state, $location, users) {
+function LocationController($state, $location, users, community) {
 
+    this.community = community.data;
     this.users = users.data.results;
+    community["communities"] = community.data;
 
     if ($state.params.community.key) {
         $location.path('/' + $state.params.community.key)
     }
 
-    $scope.charts = {
+    $state.charts = {
         people: {},
         startups: {},
         jobs: {}
     };
 
-    $scope.charts.people.labels = ["", "", "", ""];
-    $scope.charts.people.series = ['Monthly Growth'];
-    $scope.charts.people.data = [[157, 165, 172, 184]];
-    $scope.charts.people.colors = ["#97BBCD"];
+    $state.charts.people.labels = ["", "", "", ""];
+    $state.charts.people.series = ['Monthly Growth'];
+    $state.charts.people.data = [[157, 165, 172, 184]];
+    $state.charts.people.colors = ["#97BBCD"];
 
-    $scope.charts.startups.labels = ["", "", "", ""];
-    $scope.charts.startups.series = ['Monthly Growth'];
-    $scope.charts.startups.data = [[77, 78, 78, 79]];
-    $scope.charts.startups.colors = ["#A1BE85"];
+    $state.charts.startups.labels = ["", "", "", ""];
+    $state.charts.startups.series = ['Monthly Growth'];
+    $state.charts.startups.data = [[77, 78, 78, 79]];
+    $state.charts.startups.colors = ["#A1BE85"];
 
-    $scope.charts.jobs.labels = ["", "", "", ""];
-    $scope.charts.jobs.series = ['Monthly Growth'];
-    $scope.charts.jobs.data = [[294, 290, 320, 325]];
-    $scope.charts.jobs.colors = ["#FF7D80"];
+    $state.charts.jobs.labels = ["", "", "", ""];
+    $state.charts.jobs.series = ['Monthly Growth'];
+    $state.charts.jobs.data = [[294, 290, 320, 325]];
+    $state.charts.jobs.colors = ["#FF7D80"];
 
-    $scope.charts.options = {
+    $state.charts.options = {
         scaleShowGridLines: false,
         animation: false,
         showScale: false
     };
 
-    $scope.leaders = this.users;
+    $state.leaders = this.users;
 }
 
-function ChangeLocationController($scope, $modalInstance){
-    $scope.ok = function () {
+function ChangeLocationController($state, $modalInstance){
+    $state.ok = function () {
         $modalInstance.close();
     };
 
-    $scope.cancel = function () {
+    $state.cancel = function () {
         $modalInstance.dismiss('cancel');
     };
 }

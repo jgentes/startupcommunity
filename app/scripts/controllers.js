@@ -109,71 +109,54 @@ function MainController($rootScope, $scope, $state, $location, $auth, user_api, 
     // Get and set user and location data
     $scope.global.sessionReady = function() {
 
-        var getState = function() {
-            $rootScope.$on('$stateChangeSuccess',
-                function(event, toState, toParams){
+        var setNav = function() {
+            // for navigation
+            $scope.global.community.locations = {};
+            $scope.global.community.industries = {};
+            $scope.global.community.networks = {};
 
-                    var setNav = function() {
-                        // for navigation
-                        $scope.global.community.locations = {};
-                        $scope.global.community.industries = {};
-                        $scope.global.community.networks = {};
-
-                        if (community.type !== "location") {
-                            var locations = $scope.global.findValue(community.communities, "location");
-                            for (item in locations) {
-                                if (locations[item].key !== "location") {
-                                    $scope.global.community.locations[locations[item].key] = locations[item];
-                                }
-                            }
-                            $scope.global.location = $scope.global.community.locations[community.profile.home];
-                        } else {
-                            $scope.global.community.locations[community.key] = community.communities[community.key];
-                            $scope.global.location = community;
-                            $scope.global.context.location = community.key;
-                        }
-
-                        if (community.type !== "industry") {
-                            var industries = $scope.global.findValue(community.communities, "industry");
-                            for (item in industries) {
-                                $scope.global.community.industries[industries[item].key] = industries[item];
-                            }
-                        } else $scope.global.community.industries[community.key] = community.communities[community.key];
-
-                        if (community.type !== "network") {
-                            var networks = $scope.global.findValue(community.communities, "network");
-                            for (item in networks) {
-                                $scope.global.community.networks[networks[item].key] = networks[item];
-                            }
-                        } else $scope.global.community.networks = {}; // will need to change to support sub-networks
-
-                        $scope.maploc = $scope.global.location.profile.name || $scope.global.findKey($scope.global.community.locations, $scope.global.context.location)[0][$scope.global.context.location].profile.name;
-
-                        broadcast();
-                    };
-
-                    var newParams = toParams;
-                    var community = newParams.community;
-
-                    $scope.global.community = community;
-                    $scope.global.context.community = community.key || $scope.global.user.context.community || undefined;
-                    $scope.global.context.location = $scope.global.user.context.location || undefined;
-
-
-                    community_api.getCommunity(community.key)
-                        .success(function(response) {
-                            if (response) {
-                                community["communities"] = response;
-                                setNav();
-                            }
-                        })
-                        .error(function(response) {
-                            console.warn(response.message);
-                        });
-
+            if (community.type !== "location") {
+                var locations = $scope.global.findValue(community.communities, "location");
+                for (item in locations) {
+                    if (locations[item].key !== "location") {
+                        $scope.global.community.locations[locations[item].key] = locations[item];
+                    }
                 }
-            )
-        }
+                $scope.global.location = $scope.global.community.locations[community.profile.home];
+            } else {
+                $scope.global.community.locations[community.key] = community.communities[community.key];
+                $scope.global.location = community;
+                $scope.global.context.location = community.key;
+            }
+
+            if (community.type !== "industry") {
+                var industries = $scope.global.findValue(community.communities, "industry");
+                for (item in industries) {
+                    $scope.global.community.industries[industries[item].key] = industries[item];
+                }
+            } else $scope.global.community.industries[community.key] = community.communities[community.key];
+
+            if (community.type !== "network") {
+                var networks = $scope.global.findValue(community.communities, "network");
+                for (item in networks) {
+                    $scope.global.community.networks[networks[item].key] = networks[item];
+                }
+            } else $scope.global.community.networks = {}; // will need to change to support sub-networks
+
+            $scope.maploc = $scope.global.location.profile.name || $scope.global.findKey($scope.global.community.locations, $scope.global.context.location)[0][$scope.global.context.location].profile.name;
+
+            broadcast();
+        };
+        /*
+        var newParams = toParams;
+        var community = newParams.community;
+        */
+
+        // ** NEED TO ADD THIS CONTENT TO NAVIGATION CONTROLLER **
+
+        $scope.global.community = community;
+        $scope.global.context.community = community.key || $scope.global.user.context.community || undefined;
+        $scope.global.context.location = $scope.global.user.context.location || undefined;
 
         if (!$scope.global.user) {
             user_api.getProfile()

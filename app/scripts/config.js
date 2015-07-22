@@ -11,6 +11,11 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
             templateUrl: "components/common/nav/nav.html",
             controller: "NavigationController as nav",
             resolve: {
+                authenticated: ['$location', '$auth', function($location, $auth) {
+                    if (!$auth.isAuthenticated()) {
+                        $state.go('login');
+                    }
+                }],
                 user: ['user_api', '$state',
                     function(user_api, $state) {
                         return user_api.getProfile()
@@ -24,8 +29,8 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                             });
                     }],
                 community: ['community_api',
-                    function(communityApi) {
-                        //something really important should go here
+                    function(community_api) {
+                        return community_api.getCommunity()
                 }]
             }
         })
@@ -49,11 +54,6 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                         .error(function(response) {
                             $state.go('logout', { error: { type: 'danger', msg: String(response.message) }});
                         });
-                }],
-                authenticated: ['$location', '$auth', function($location, $auth) {
-                    if (!$auth.isAuthenticated()) {
-                        $state.go('login');
-                    }
                 }]
             }
         })
