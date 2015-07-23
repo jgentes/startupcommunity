@@ -123,6 +123,7 @@ function handleGetCommunity(req, res) {
                   for (item in result.body.results) {
                       newresponse[result.body.results[item].path.key] = result.body.results[item].value;
                   }
+                  newresponse["key"] = (community || location);
                   res.status(200).send(newresponse);
               } else {
                   console.warn('Community not found!');

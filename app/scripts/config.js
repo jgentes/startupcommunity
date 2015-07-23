@@ -69,7 +69,6 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                     function(user_api, $state, $mixpanel) {
                         return user_api.getProfile()
                             .success(function(response) {
-                                console.log('should only run once!') //todo remove once verified state switch doesn't retrigger this
                                 if (response.message) {
                                     $state.go('logout', { error: { type: 'danger', msg: String(response.message) }});
                                 }
@@ -104,14 +103,10 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
             resolve: {
                 communities: ['community_api', '$stateParams',
                     function(community_api, $stateParams) {
-                        console.log('communities run!')
-                        //if ($stateParams.community.key == community.key) // need to determine if current communities are same as target
-                        var community_key = $stateParams.community.key;
-                        return community_api.getCommunity(community_key);
+                        return community_api.getCommunity($stateParams.community.key);
                     }]
             }
         })
-
 
         // Location views
         .state('sc.location', {
@@ -130,12 +125,11 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                     //todo change to Leader
                     return user_api.getUsers($stateParams.community.key, undefined, undefined, encodeURIComponent(['Advisor']), 30);
                 }],
-                communities: ['community_api', '$stateParams',
-                    function(community_api, $stateParams) {
-                        //if ($stateParams.community.key == community.key) // need to determine if current communities are same as target
-                        var community_key = $stateParams.community.key;
-                        return community_api.getCommunity(community_key);
+                communities: ['community_api', '$state', '$stateParams', 'communities',
+                    function(community_api, $state, $stateParams, communities) {
+                        if ($stateParams.community.key !== communities.data.key) return community_api.getCommunity($stateParams.community.key);
                     }]
+
             }
         })
 

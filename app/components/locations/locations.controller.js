@@ -3,15 +3,10 @@ angular
     .controller('LocationController', LocationController)
     .controller('ChangeLocationController', ChangeLocationController);
 
-function LocationController($location, $stateParams, users, communities) {
+function LocationController($stateParams, users) {
 
     this.community = $stateParams.community;
     this.users = users.data.results;
-    /*
-    if (this.community.key) { //todo move this to onstatechange event
-        $location.path('/' + this.community.key)
-    }
-    */
 
     this.charts = {
         people: {},
