@@ -1,61 +1,61 @@
-<div class="row" ng-controller="PeopleProfileController">
+<div class="row">
     <div class="col-lg-12">
         <div class="hpanel hgreen">
             <div class="panel-body">
                 <div class="row">
                     <div class="col-sm-9">
                         <div class="col-sm-2 col-lg-1">
-                            <img class="img-circle m-b" style="height:75px;" ng-src="{{$state.params.community.profile.avatar || $state.params.community.profile.linkedin.pictureUrl || 'images/blank_avatar.png'}}" alt="{{::$state.params.community.profile.name}}">
+                            <img class="img-circle m-b" style="height:75px;" ng-src="{{profile.user.profile.avatar || profile.user.profile.linkedin.pictureUrl || 'images/blank_avatar.png'}}" alt="{{::profile.user.profile.name}}">
                         </div>
                         <div class="col-sm-10 col-lg-11" style="padding-bottom: 15px;">
                             <div class="project-action" style="margin-right: -15px;">
                                 <div class="btn-group pull-right">
                                     <a href="#"><i class="fa fa-twitter btn btn-default btn-xs"></i></a>
-                                    <a href="{{$state.params.community.profile.linkedin.publicProfileUrl}}" target="_blank"><i class="fa fa-linkedin btn btn-default btn-xs"></i>
+                                    <a href="{{profile.user.profile.linkedin.publicProfileUrl}}" target="_blank"><i class="fa fa-linkedin btn btn-default btn-xs"></i>
                                     </a>
                                 </div>
                             </div>
-                            <h3>{{::$state.params.community.profile.name | words:0}} {{::$state.params.community.profile.name |
-                                words:1}} {{::$state.params.community.profile.name | words:2}}
+                            <h3>{{::profile.user.profile.name | words:0}} {{::profile.user.profile.name |
+                                words:1}} {{::profile.user.profile.name | words:2}}
                             </h3>
                             <h4>
-                                {{::$state.params.community.profile.linkedin.headline}}
+                                {{::profile.user.profile.linkedin.headline}}
                             </h4>
                         </div>
 
                         <div class="row" style="padding-bottom: 15px;">
                             <div class="col-xs-3 col-sm-3 no-overflow"
-                                 ng-if="$state.params.community.profile.activity.leader">
+                                 ng-if="profile.activity.leader">
                                 <p class="profile-label font-uppercase" style="font-size: 14px;">Leader:</p>
                                 <ul style="padding-left: 0; margin-left: -5px; margin-top: -8px;">
-                                    <li ng-repeat="item in $state.params.community.profile.activity.leader" style="list-style: none; display: inline; float: left; padding-left: 5px; padding-top: 3px;">
+                                    <li ng-repeat="item in profile.activity.leader" style="list-style: none; display: inline; float: left; padding-left: 5px; padding-top: 3px;">
                                         <a href="{{'/' + item.object}}" class="btn btn-xs btn-outline" ng-class="{'btn-danger' : item.type == 'startup', 'btn-info' : item.type == 'network', 'btn-primary' : item.type == 'industry', 'btn-success' : item.type == 'location'}"><i class="fa {{item.profile.icon}}"></i> {{item.profile.name}}</a>
                                     </li>
                                 </ul>
                             </div>
                             <div class="col-xs-3 col-sm-3 no-overflow"
-                                 ng-if="$state.params.community.profile.activity.founder">
+                                 ng-if="profile.activity.founder">
                                 <p class="profile-label font-uppercase" style="font-size: 14px;">Founder:</p>
                                 <ul style="padding-left: 0; margin-left: -5px; margin-top: -8px;">
-                                    <li ng-repeat="item in $state.params.community.profile.activity.founder"
+                                    <li ng-repeat="item in profile.activity.founder"
                                         style="list-style: none; display: inline; float: left; padding-left: 5px; padding-top: 3px;">
                                         <a href="{{'/' + item.object}}" class="btn btn-xs btn-outline" ng-class="{'btn-danger' : item.type == 'startup', 'btn-info' : item.type == 'network', 'btn-primary' : item.type == 'industry', 'btn-success' : item.type == 'location'}"><i class="fa {{item.profile.icon}}"></i> {{item.profile.name}}</a>
                                     </li>
                                 </ul>
                             </div>
                             <div class="col-xs-3 col-sm-3 no-overflow"
-                                 ng-if="$state.params.community.profile.activity.investor">
+                                 ng-if="profile.activity.investor">
                                 <p class="profile-label font-uppercase" style="font-size: 14px;">Investor:</p>
                                 <ul style="padding-left: 0; margin-left: -5px; margin-top: -8px;">
-                                    <li ng-repeat="item in $state.params.community.profile.activity.investor" style="list-style: none; display: inline; float: left; padding-left: 5px; padding-top: 3px;">
+                                    <li ng-repeat="item in profile.activity.investor" style="list-style: none; display: inline; float: left; padding-left: 5px; padding-top: 3px;">
                                         <a href="{{'/' + item.object}}" class="btn btn-xs btn-outline" ng-class="{'btn-danger' : item.type == 'startup', 'btn-info' : item.type == 'network', 'btn-primary' : item.type == 'industry', 'btn-success' : item.type == 'location'}"><i class="fa {{item.profile.icon}}"></i> {{item.profile.name}}</a>
                                     </li>
                                 </ul>
                             </div>
-                            <div class="col-xs-3 col-sm-3 no-overflow" ng-if="$state.params.community.profile.activity.advisor">
+                            <div class="col-xs-3 col-sm-3 no-overflow" ng-if="profile.activity.advisor">
                                 <p class="profile-label font-uppercase" style="font-size: 14px;">Advisor:</p>
                                 <ul style="padding-left: 0; margin-left: -5px; margin-top: -8px;">
-                                    <li ng-repeat="item in $state.params.community.profile.activity.advisor"
+                                    <li ng-repeat="item in profile.activity.advisor"
                                         style="list-style: none; display: inline; float: left; padding-left: 5px; padding-top: 3px;">
                                         <a href="{{'/' + item.object}}" class="btn btn-xs btn-outline" ng-class="{'btn-danger' : item.type == 'startup', 'btn-info' : item.type == 'network', 'btn-primary' : item.type == 'industry', 'btn-success' : item.type == 'location'}"><i class="fa {{item.profile.icon}}"></i> {{item.profile.name}}</a>
                                     </li>
@@ -73,9 +73,9 @@
             </div>
             <div class="panel-footer">
                 <h3>Summary</h3>
-                <p style="white-space:pre-wrap;" ng-bind-html="::$state.params.community.profile.linkedin.summary | linky:'_blank'"></p>
-                <h3 ng-show="$state.params.community.skills">Skills</h3>
-                <li ng-repeat="skill in $state.params.community.skills" class="label btn-info" style="margin-right: 3px; margin-top: 3px; float:left; padding-bottom: 5px;">{{::skill.name}}</li>
+                <p style="white-space:pre-wrap;" ng-bind-html="::profile.user.profile.linkedin.summary | linky:'_blank'"></p>
+                <h3 ng-show="profile.user.skills">Skills</h3>
+                <li ng-repeat="skill in profile.user.skills" class="label btn-info" style="margin-right: 3px; margin-top: 3px; float:left; padding-bottom: 5px;">{{::skill.name}}</li>
             </div>
         </div>
     </div>

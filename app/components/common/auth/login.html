@@ -12,7 +12,7 @@
                         <h4 class="text-center" style="margin-bottom: 20px; color: #5A5A5A;">Kickstart your city's entrepreneurial ecosystem</h4>
                         <h4 class="text-center" style="margin-bottom: 13px;"><a class="btn btn-info" ng-click="authenticate('linkedin')">Log in using Linkedin</a></h4>
                         <div ng-show="global.alert">
-                            <alert type="{{global.alert.type}}" style="margin: 2px;" close="closeAlert($index)"><span ng-bind-html="global.alert.msg | safe_html"></span></alert>
+                            <alert type="{{global.alert.type}}" style="margin: 2px;" ng-click="global.alert = undefined"><span ng-bind-html="global.alert.msg | safe_html"></span></alert>
                         </div>
                     </div>
                 </div>

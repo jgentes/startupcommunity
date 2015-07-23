@@ -25,8 +25,8 @@ function PeopleController($scope, $location, user_api, result_api, $sce) {
         $scope.global.context.selectedNetwork = ['*'];
         setTitle();
 
-        $scope.industries = $scope.global.findKey($scope.global.community.industries, $scope.global.context.location);
-        $scope.networks = $scope.global.findKey($scope.global.community.networks, $scope.global.context.location);
+        $scope.industries = findKey($scope.global.community.industries, $scope.global.context.location);
+        $scope.networks = findKey($scope.global.community.networks, $scope.global.context.location);
 
     }
 
@@ -149,79 +149,78 @@ function PeopleController($scope, $location, user_api, result_api, $sce) {
 
 }
 
-function PeopleProfileController($scope, $state, user_api, $location, $auth, $mixpanel) {
+function PeopleProfileController($scope, $location, $auth, $mixpanel, user, user_api) {
+
+    this.user = user.data;
 
     $mixpanel.track('Viewed Profile');
-
-    if ($state.params.community.key) {
-        $location.path('/' + $state.params.community.key)
+    /* THIS CAUSES DUPLICATE ROUTES
+    if (this.user.key) {
+        $location.path('/' + this.user.key)
     }
-
-    $scope.putProfile = function(userid, profile) {
+    */
+    this.putProfile = function(userid, profile) {
         user_api.putProfile(userid, profile, function(response) {
             if (response.status !== 200) {
-                $scope.global.alert = { type: 'danger', msg: 'There was a problem: ' + String(response.message) };
+                this.alert = { type: 'danger', msg: 'There was a problem: ' + String(response.message) };
                 console.warn("WARNING: " +  response.message);
             } else {
-                $scope.profile = response.data; // may need to tell angular to refresh view
-                $scope.global.alert = { type: 'success', msg: 'Person updated! ' + response.data.name + ' is good to go.' };
+                this.profile = response.data; // may need to tell angular to refresh view
+                this.alert = { type: 'success', msg: 'Person updated! ' + response.data.name + ' is good to go.' };
             }
         });
     };
 
-    $scope.removeProfile = function(userid, name) {
+    this.removeProfile = function(userid, name) {
         notify("Are you sure you want to remove " + name + "?", function(result) { //todo fix notify maybe with sweetalert
             if (result) {
                 user_api.removeProfile(userid, function(response) {
                     $location.path('/people');
-                    $scope.global.alert = { type: 'success', msg: "Person removed. Hopefully they'll return some day." };
+                    this.alert = { type: 'success', msg: "Person removed. Hopefully they'll return some day." };
                 });
             }
         });
     };
 
-    $scope.updateProfile = function() {
+    this.updateProfile = function() {
         user_api.updateProfile({
-            displayName: $scope.global.user.profile.name,
-            email: $scope.global.user.profile.email
+            displayName: user.profile.name,
+            email: user.profile.email
         }).then(function() {
-            $scope.global.alert = { type: 'success', msg: "Great news. Your profile has been updated."};
+            this.alert = { type: 'success', msg: "Great news. Your profile has been updated."};
         });
     };
 
-    $scope.getKey = function() {
-        if (!$scope.global.user.profile.api_key) {
+    this.getKey = function() {
+        if (!user.profile.api_key) {
             user_apis.getKey()
                 .then(function(response) {
-                    $scope.global.user.profile.api_key = response.data;
-                    notify({title: "See our <a href='http://startupcommunity.readme.io?appkey=" + $scope.global.user.profile.api_key + "' target='_blank'>API documentation</a> for help using your key:", message: "<pre>" + $scope.global.user.profile.api_key + "</pre>"});
+                    var api_key = response.data;
+                    notify({title: "See our <a href='http://startupcommunity.readme.io?appkey=" + api_key + "' target='_blank'>API documentation</a> for help using your key:", message: "<pre>" + api_key + "</pre>"});
                 });
-        } else notify({title: "See our <a href='http://startupcommunity.readme.io?appkey=" + $scope.global.user.profile.api_key + "' target='_blank'>API documentation</a> for help using your key:", message: "<pre>" + $scope.global.user.profile.api_key + "</pre>"});
+        } else notify({title: "See our <a href='http://startupcommunity.readme.io?appkey=" + api_key + "' target='_blank'>API documentation</a> for help using your key:", message: "<pre>" + api_key + "</pre>"});
     };
 
-    var getActivity = function() {
+    var activities = findKey(this.user.communities, "roles"),
+        activity = {};
 
-        var activities = $scope.global.findKey($state.params.community.communities, "roles"),
-            activity = {};
+    for (var j in activities) {
+        if (activities[j].roles.indexOf('advisor') > -1) {
+            activity.advisor = activity.advisor || {};
+            activity.advisor[activities[j].key] = activities[j];
+        } else if (activities[j].roles.indexOf('leader') > -1) {
+            activity.leader = activity.leader || {};
+            activity.leader[activities[j].key] = activities[j];
+        } else if (activities[j].roles.indexOf('investor') > -1) {
+            activity.investor = activity.investor || {};
+            activity.investor[activities[j].key] = activities[j];
+        } else if (activities[j].roles.indexOf('founder') > -1) {
+            activity.founder = activity.founder || {};
+            activity.founder[activities[j].key] = activities[j];
+        };
+    }
 
-        for (var j in activities) {
-            if (activities[j].roles.indexOf('advisor') > -1) {
-                activity.advisor = activity.advisor || {};
-                activity.advisor[activities[j].key] = activities[j];
-            } else if (activities[j].roles.indexOf('leader') > -1) {
-                activity.leader = activity.leader || {};
-                activity.leader[activities[j].key] = activities[j];
-            } else if (activities[j].roles.indexOf('investor') > -1) {
-                activity.investor = activity.investor || {};
-                activity.investor[activities[j].key] = activities[j];
-            } else if (activities[j].roles.indexOf('founder') > -1) {
-                activity.founder = activity.founder || {};
-                activity.founder[activities[j].key] = activities[j];
-            };
-        }
-
-        $state.params.community.profile.activity = activity;
-    };
+    this.activity = activity;
 
     $scope.isCityAdvisor = function(status) { //todo needs to be reworked
         user_api.setCityAdvisor($state.params.user.key, $scope.global.user.context, 'cityAdvisor', status, function(response, rescode) {
@@ -327,8 +326,6 @@ function PeopleProfileController($scope, $state, user_api, $location, $auth, $mi
                 $scope.global.alert = { type: 'danger', msg: 'Aww, shucks. We ran into this error while unlinking your ' + provider + ' account: ' + response.data.message};
             });
     };
-
-    getActivity();
 
 }
 

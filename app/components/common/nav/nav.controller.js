@@ -4,6 +4,7 @@ angular
 
 function NavigationController($scope, $modal, $stateParams, user, communities) {
     // reference 'this' by using 'nav' from 'NavigationController as nav'
+    window.$scope = $scope; // for console testing to avoid $scope = $('body').scope()
 
     this.user = user.data;
     this.community = $stateParams.community;
@@ -17,14 +18,13 @@ function NavigationController($scope, $modal, $stateParams, user, communities) {
     };
     */
 
-    // Nav menu items related to community
     this.locations = {};
     this.industries = {};
     this.networks = {};
 
     // First determine what type of community we are in using $stateParams, then build community nav items
     if (this.community.type !== "location") {
-        var locations = $scope.global.findValue(communities, "location");
+        var locations = findValue(communities, "location");
         for (item in locations) {
             if (locations[item].key !== "location") {
                this.locations[locations[item].key] = locations[item];
@@ -38,31 +38,22 @@ function NavigationController($scope, $modal, $stateParams, user, communities) {
     }
 
     if (this.community.type !== "industry") {
-        var industries = $scope.global.findValue(communities, "industry");
+        var industries = findValue(communities, "industry");
         for (item in industries) {
             this.industries[industries[item].key] = industries[item];
         }
     } else this.industries[this.community.key] = communities[this.community.key];
 
     if (this.community.type !== "network") {
-        var networks = $scope.global.findValue(communities, "network");
+        var networks = findValue(communities, "network");
         for (item in networks) {
             this.networks[networks[item].key] = networks[item];
         }
     } else this.networks = {}; // will need to change to support sub-networks
 
-    $scope.maploc = this.location.profile.name || $scope.global.findKey(this.locations, this.location)[0][this.location].profile.name;
-
-    $scope.changeLocation = function() {
-        var modalInstance = $modal.open({
-            templateUrl: 'views/common/change_location.html',
-            controller: ChangeLocationController,
-            windowClass: "hmodal-warning"
-        });
-    };
 
     // Roles displayed in user profile
-    var roles = $scope.global.findKey(this.user.communities, "roles"),
+    var roles = findKey(this.user.communities, "roles"),
         rolelist = [],
         j,
         k,
@@ -78,5 +69,22 @@ function NavigationController($scope, $modal, $stateParams, user, communities) {
     }
 
     this.user.profile["roles"] = rolelist;
+
+    $scope.maploc = this.location.profile.name || findKey(this.locations, this.location)[0][this.location].profile.name;
+
+    $scope.$on('mapInitialized', function(event, map) {
+        $scope.global = {
+            alert: {},
+            mapCenter: "Bend, OR"
+            };
+    });
+
+    $scope.changeLocation = function() {
+        var modalInstance = $modal.open({
+            templateUrl: 'views/common/change_location.html',
+            controller: ChangeLocationController,
+            windowClass: "hmodal-warning"
+        });
+    };
 
 }

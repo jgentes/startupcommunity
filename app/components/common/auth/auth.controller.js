@@ -4,10 +4,6 @@ angular
 
 function LoginController($scope, $auth, $location, $mixpanel) {
 
-    $scope.isAuthenticated = function() {
-        return $auth.isAuthenticated();
-    };
-
     var postLogin = function(user) {
         user.value["key"] = user.path.key;
         user = user.value;

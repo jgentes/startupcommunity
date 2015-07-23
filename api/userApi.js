@@ -115,7 +115,7 @@ var findKey = function(obj, key, results, value) {
                     }
                 } else results.push(subkeys);
             }
-            $scope.global.findKey(subkeys, key, results, value);
+            findKey(subkeys, key, results, value);
 
         } else {
             if (name === key) {
@@ -210,22 +210,22 @@ var searchInCommunity = function(location, community, industry, role, limit, off
 
           try {
               for (i=0; i < result.body.results.length; i++) {
-                  delete result.body.results[i].path.collection;
-                  delete result.body.results[i].path.ref;
-                  delete result.body.results[i].value.profile.password;
-                  delete result.body.results[i].value.type;
-                  delete result.body.results[i].value.context;
+                  if (result.body.results[i].path.collection) delete result.body.results[i].path.collection;
+                  if (result.body.results[i].path.ref) delete result.body.results[i].path.ref;
+                  if (result.body.results[i].value.profile.password) delete result.body.results[i].value.profile.password;
+                  if (result.body.results[i].value.type) delete result.body.results[i].value.type;
+                  if (result.body.results[i].value.context) delete result.body.results[i].value.context;
 
                   if (!allowed) {
-                      delete result.body.results[i].value.profile.email;
+                      if (result.body.results[i].value.profile.email) delete result.body.results[i].value.profile.email;
                   }
 
                   if (result.body.results[i].value.linkedin) {
-                      delete result.body.results[i].value.profile.linkedin.emailAddress;
-                      delete result.body.results[i].value.profile.linkedin.access_token;
+                      if (delete result.body.results[i].value.profile.linkedin.emailAddress) delete result.body.results[i].value.profile.linkedin.emailAddress;
+                      if (result.body.results[i].value.profile.linkedin.access_token) delete result.body.results[i].value.profile.linkedin.access_token;
                   }
 
-                  results.body.results[i].value["key"] = results.body.results[i].path.key; //todo haven't verified this works or is needed to solve people list > person view issues
+                  result.body.results[i].value["key"] = result.body.results[i].path.key; //todo haven't verified this is needed to solve people list > person view issues
               }
           } catch (error) {
               console.warn('WARNING:  Possible database entry corrupted: ');

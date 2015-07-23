@@ -3,46 +3,44 @@ angular
     .controller('LocationController', LocationController)
     .controller('ChangeLocationController', ChangeLocationController);
 
-function LocationController($state, $location, users, $stateParams, communities) {
+function LocationController($location, $stateParams, users, communities) {
 
-    console.log('locationcontroller');
-    console.log($stateParams);
     this.community = $stateParams.community;
     this.users = users.data.results;
-    //community["communities"] = $stateParams.community;
-
-    if ($state.params.community.key) {
-        $location.path('/' + $state.params.community.key)
+    /*
+    if (this.community.key) { //todo move this to onstatechange event
+        $location.path('/' + this.community.key)
     }
+    */
 
-    $state.charts = {
+    this.charts = {
         people: {},
         startups: {},
         jobs: {}
     };
 
-    $state.charts.people.labels = ["", "", "", ""];
-    $state.charts.people.series = ['Monthly Growth'];
-    $state.charts.people.data = [[157, 165, 172, 184]];
-    $state.charts.people.colors = ["#97BBCD"];
+    this.charts.people.labels = ["", "", "", ""];
+    this.charts.people.series = ['Monthly Growth'];
+    this.charts.people.data = [[157, 165, 172, 184]];
+    this.charts.people.colors = ["#97BBCD"];
 
-    $state.charts.startups.labels = ["", "", "", ""];
-    $state.charts.startups.series = ['Monthly Growth'];
-    $state.charts.startups.data = [[77, 78, 78, 79]];
-    $state.charts.startups.colors = ["#A1BE85"];
+    this.charts.startups.labels = ["", "", "", ""];
+    this.charts.startups.series = ['Monthly Growth'];
+    this.charts.startups.data = [[77, 78, 78, 79]];
+    this.charts.startups.colors = ["#A1BE85"];
 
-    $state.charts.jobs.labels = ["", "", "", ""];
-    $state.charts.jobs.series = ['Monthly Growth'];
-    $state.charts.jobs.data = [[294, 290, 320, 325]];
-    $state.charts.jobs.colors = ["#FF7D80"];
+    this.charts.jobs.labels = ["", "", "", ""];
+    this.charts.jobs.series = ['Monthly Growth'];
+    this.charts.jobs.data = [[294, 290, 320, 325]];
+    this.charts.jobs.colors = ["#FF7D80"];
 
-    $state.charts.options = {
+    this.charts.options = {
         scaleShowGridLines: false,
         animation: false,
         showScale: false
     };
 
-    $state.leaders = this.users;
+    this.leaders = this.users;
 }
 
 function ChangeLocationController($state, $modalInstance){

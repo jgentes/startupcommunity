@@ -26,8 +26,8 @@ function StartupsController($scope, $location, angellist_api, result_api, $sce) 
         $scope.global.context.selectedNetwork = ['*'];
         setTitle();
 
-        $scope.industries = $scope.global.findKey($scope.global.community.industries, $scope.global.context.location);
-        $scope.networks = $scope.global.findKey($scope.global.community.networks, $scope.global.context.location);
+        $scope.industries = findKey($scope.global.community.industries, $scope.global.context.location);
+        $scope.networks = findKey($scope.global.community.networks, $scope.global.context.location);
     }
 
     function setTitle() {
@@ -187,7 +187,7 @@ function StartupProfileController($scope, $state, user_api, community_api, $loca
 
     var getActivity = function() {
 
-        var activities = $scope.global.findKey($state.params.community.communities, "roles", ["leader", "advisor", "investor", "founder"], {}),
+        var activities = findKey($state.params.community.communities, "roles", ["leader", "advisor", "investor", "founder"], {}),
             list = Object.keys(activities);
 
         community_api.getActivity(list)

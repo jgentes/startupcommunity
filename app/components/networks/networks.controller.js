@@ -3,11 +3,11 @@ angular
     .controller('NetworkController', NetworkController);
 
 function NetworkController($state, $scope, $location, user_api) {
-
+    /*
     if ($state.params.community.key) {
         $location.path('/' + $state.params.community.key)
     }
-
+    */
     $scope.charts = {
         people: {},
         startups: {},

@@ -21,10 +21,10 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
 
                             switch (response.data.type) {
                                 case "user":
-                                    $state.go('people.profile', { community : response.data});
+                                    $state.go('sc.people.profile', { community : response.data});
                                     break;
                                 case "location":
-                                    $state.go('location.dashboard', { community : response.data});
+                                    $state.go('sc.location.dashboard', { community : response.data});
                                     break;
                                 case "network":
                                     $state.go('network.dashboard', { community : response.data});
@@ -55,8 +55,46 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
 
     $stateProvider
 
-        // Root Navitation
+        // preload is run once
+        .state('preload', {
+            abstract: true,
+            template: "<ui-view/>",
+            resolve: {
+                authenticated: ['$auth', function($auth) {
+                    if (!$auth.isAuthenticated()) {
+                        $state.go('login');
+                    }
+                }],
+                user: ['user_api', '$state', '$mixpanel',
+                    function(user_api, $state, $mixpanel) {
+                        return user_api.getProfile()
+                            .success(function(response) {
+                                console.log('should only run once!') //todo remove once verified state switch doesn't retrigger this
+                                if (response.message) {
+                                    $state.go('logout', { error: { type: 'danger', msg: String(response.message) }});
+                                }
+
+                                if (response.key) {
+                                    $mixpanel.people.set({
+                                        "$name": response.profile.name,
+                                        "$email": response.profile.email
+                                    });
+                                    UserVoice.push(['identify', {
+                                        id: response.key,
+                                        name: response.profile.name,
+                                        email: response.profile.email
+                                    }]);
+                                }
+                            })
+                            .error(function(response) {
+                                $state.go('logout', { error: { type: 'danger', msg: String(response.message) }});
+                            });
+                    }]
+            }
+        })
+
         .state('sc', {
+            parent: 'preload',
             abstract: true,
             templateUrl: "components/common/nav/nav.html",
             controller: "NavigationController as nav",
@@ -64,39 +102,24 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                 community: {}
             },
             resolve: {
-                authenticated: ['$location', '$auth', function($location, $auth) {
-                    if (!$auth.isAuthenticated()) {
-                        $state.go('login');
-                    }
-                }],
-                user: ['user_api', '$state',
-                    function(user_api, $state) {
-                        return user_api.getProfile()
-                            .success(function(response) {
-                                if (response.message) {
-                                    $state.go('logout', { error: { type: 'danger', msg: String(response.message) }});
-                                }
-                            })
-                            .error(function(response) {
-                                $state.go('logout', { error: { type: 'danger', msg: String(response.message) }});
-                            });
-                    }],
                 communities: ['community_api', '$stateParams',
                     function(community_api, $stateParams) {
+                        console.log('communities run!')
+                        //if ($stateParams.community.key == community.key) // need to determine if current communities are same as target
                         var community_key = $stateParams.community.key;
                         return community_api.getCommunity(community_key);
-                }]
+                    }]
             }
         })
 
+
         // Location views
-        .state('location', {
-            parent: 'sc',
+        .state('sc.location', {
             abstract: true,
             templateUrl: "components/common/content/content_big.html"
         })
-        .state('location.dashboard', {
-            templateUrl: 'views/locations/location.dashboard.html',
+        .state('sc.location.dashboard', {
+            templateUrl: 'components/locations/location.dashboard.html',
             controller: "LocationController as loc",
             params: {
                 community: {},
@@ -106,6 +129,41 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                 users: ['user_api', '$stateParams', function(user_api, $stateParams) {
                     //todo change to Leader
                     return user_api.getUsers($stateParams.community.key, undefined, undefined, encodeURIComponent(['Advisor']), 30);
+                }],
+                communities: ['community_api', '$stateParams',
+                    function(community_api, $stateParams) {
+                        //if ($stateParams.community.key == community.key) // need to determine if current communities are same as target
+                        var community_key = $stateParams.community.key;
+                        return community_api.getCommunity(community_key);
+                    }]
+            }
+        })
+
+        // People views
+        .state('sc.people', {
+            abstract: true,
+            templateUrl: "components/common/content/content_small.html"
+        })
+        .state('sc.people.dashboard', {
+            url: "/people",
+            templateUrl: 'views/people/people.dashboard.html',
+            params: {
+                community: {},
+                pageTitle: 'People'
+            }
+        })
+        .state('sc.people.profile', {
+            templateUrl: "components/people/people.profile.html",
+            controller: 'PeopleProfileController as profile',
+            params: {
+                community: {},
+                pageTitle: 'User Profile'
+            },
+            resolve: {
+                authenticated: ['$auth', function($auth) {
+                    if (!$auth.isAuthenticated()) {
+                        $state.go('login');
+                    }
                 }]
             }
         })
@@ -137,7 +195,7 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
             params: {
                 error: {}
             },
-            templateUrl: 'views/login.html'
+            templateUrl: 'components/common/auth/login.html'
         })
         .state('logout', {
             url: "/logout",
@@ -152,40 +210,10 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
             }
         })
 
-         // People views
-        .state('people', {
-            abstract: true,
-            templateUrl: "views/common/content_small.html"
-        })
-        .state('people.dashboard', {
-            url: "/people",
-            templateUrl: 'views/people/people.dashboard.html',
-            params: {
-                community: {},
-                pageTitle: 'People'
-            }
-        })
-        .state('people.profile', {
-            templateUrl: "views/people/people.profile.html",
-            parent: 'people',
-            params: {
-                community: {},
-                pageTitle: 'User Profile'
-            },
-            resolve: {
-                authenticated: ['$auth', function($auth) {
-                    if (!$auth.isAuthenticated()) {
-                        $state.go('login');
-                    }
-                }],
-
-            }
-        })
-
         // Startup views
         .state('startups', {
             abstract: true,
-            templateUrl: "views/common/content_small.html"
+            templateUrl: "components/common/content/content_small.html"
         })
         .state('startups.dashboard', {
             url: "/startups",
@@ -214,7 +242,7 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
         // Industry views
         .state('industry', {
             abstract: true,
-            templateUrl: "views/common/content.html"
+            templateUrl: "components/common/content/content_big.html"
         })
         .state('industry.dashboard', {
             templateUrl: 'views/industries/industry.dashboard.html',
@@ -234,7 +262,7 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
         // Network views
         .state('network', {
             abstract: true,
-            templateUrl: "views/common/content.html"
+            templateUrl: "components/common/content/content_big.html"
         })
         .state('network.dashboard', {
             templateUrl: 'views/networks/network.dashboard.html',
@@ -252,7 +280,7 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
         })
 
         .state('404', {
-            templateUrl: "views/common/404.html"
+            templateUrl: "components/common/errors/404.html"
         });
 
 }

@@ -31,6 +31,55 @@ $(window).bind("resize click", function () {
     }, 300);
 });
 
+function findKey(obj, key_to_find, results, key) {
+
+    if (!obj) { return results; }
+    if (!results) { results = []; }
+
+    var keys = Object.keys(obj),
+        name = null,
+        subkeys = null,
+        pushme = {},
+        i = 0;
+
+    for (i in keys) {
+        name = keys[i];
+        subkeys = obj[name];
+
+        if (typeof subkeys === 'object') {
+            subkeys["key"] = name;
+            if (name === key_to_find) {
+                results.push(obj);
+            } else {
+                key = name;
+                findKey(subkeys, key_to_find, results, key);
+            }
+        }
+    }
+
+    return results;
+};
+
+function findValue(obj, value_to_find, results, key) {
+
+    if (!obj) { return results; }
+    if (!results) { results = []; }
+
+    for (i in obj) {
+        if (typeof(obj[i])=="object") {
+            obj[i]["key"] = i;
+            for (subkey in obj[i]) {
+                if (obj[i][subkey] == value_to_find) {
+                    results.push(obj[i]);
+                }
+            }
+            key = i;
+            findValue(obj[i], value_to_find, results);
+        }
+    }
+    return results;
+};
+
 function fixWrapperHeight() {
 
     // Get and set current height
@@ -63,3 +112,4 @@ function setBodySmall() {
         $('body').removeClass('show-sidebar');
     }
 }
+
