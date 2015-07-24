@@ -2,14 +2,13 @@ angular
     .module('startupcommunity')
     .controller('NavigationController', NavigationController);
 
-function NavigationController($scope, $modal, $stateParams, user, communities) {
+function NavigationController($scope, $modal, $stateParams, user, community, communities) {
     // reference 'this' by using 'nav' from 'NavigationController as nav'
     window.$scope = $scope; // for console testing to avoid $scope = $('body').scope()
 
     this.user = user.data;
-    this.community = $stateParams.community;
+    this.community = community.data || $stateParams.community;
     communities = communities.data; // not this. because not needed in view
-
 
     /* Can't define context here unless I use $stateParams
     this.context = {
@@ -72,11 +71,13 @@ function NavigationController($scope, $modal, $stateParams, user, communities) {
 
     $scope.maploc = this.location.profile.name || findKey(this.locations, this.location)[0][this.location].profile.name;
 
+    $scope.global = {
+        alert: {},
+        search: undefined
+    };
+
     $scope.$on('mapInitialized', function(event, map) {
-        $scope.global = {
-            alert: {},
-            mapCenter: "Bend, OR"
-            };
+        $scope.global.mapCenter = "Bend, OR";
     });
 
     $scope.changeLocation = function() {

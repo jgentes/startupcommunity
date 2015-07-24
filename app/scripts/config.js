@@ -8,15 +8,14 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
 
     // Set default unmatched url state - this runs first for undefined url paths
     $urlRouterProvider.otherwise(
-        function($injector, $location) {
-            $injector.invoke(['$state', '$location', '$auth', 'community_api', function($state, $location, $auth, community_api) {
+        function($injector) {
+            $injector.invoke(['$state', '$auth', 'community_api', function($state, $auth, community_api) {
 
                 if (!$auth.isAuthenticated()) {
                     $state.go('login');
                 } else {
-                    var path = $location.url().substr(1);
 
-                    community_api.getKey(path)
+                    community_api.getKey(window.location.pathname.split('/')[1])
                         .then(function(response) {
 
                             switch (response.data.type) {
@@ -100,9 +99,15 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                 community: {}
             },
             resolve: {
-                communities: ['community_api', '$stateParams', 'user',
-                    function(community_api, $stateParams, user) {
-                        return community_api.getCommunity($stateParams.community.key || user.profile.home);
+                community: ['community_api', '$stateParams',
+                    function(community_api, $stateParams) {
+                        if (jQuery.isEmptyObject($stateParams.community)) {
+                            return community_api.getKey(window.location.pathname.split('/')[1]);
+                        }
+                    }],
+                communities: ['community_api',
+                    function(community_api) {
+                        return community_api.getCommunity(window.location.pathname.split('/')[1]);
                     }]
             }
         })
@@ -145,8 +150,7 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                 pageTitle: 'People'
             },
             community: ['community_api', '$stateParams', 'community',
-                function(community_api, $stateParams, community_key) {
-                    console.log(community_key);
+                function(community_api, $stateParams, community) {
                     if ($stateParams.community.key !== communities.data.key) return community_api.getCommunity($stateParams.community.key);
                 }]
         })

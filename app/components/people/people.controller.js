@@ -10,6 +10,7 @@ function PeopleController($scope, $location, user_api, result_api, $sce, $stateP
         $location.path('/' + $stateParams.community.key, false)
     }
 */
+
     if ($stateParams.community.type == 'location') {
         this.location = $stateParams.community.key;
     } else this.community = $stateParams.community.key;
