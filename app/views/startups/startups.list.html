@@ -1,10 +1,10 @@
 <div class="col-md-12" style="vertical-align: top; min-height: 80px;">
     <div>
-        <a ui-sref="startups.profile({startup: item})"
+        <a ui-sref="sc.startups.profile({startup: item})"
            title="View {{::item.name}}'s Profile"><img style="height:58px; max-width: 58px;" ng-src="{{item.thumb_url}}" alt="{{::item.name}}" class="widget-image img-circle pull-left"/></a>
     </div>
     <div style="padding: 2px 0 0 70px; min-height: 64px; line-height: 2;">
-        <a ui-sref="startups.profile({startup: item})" title="View {{::item.name}}'s Profile"
+        <a ui-sref="sc.startups.profile({startup: item})" title="View {{::item.name}}'s Profile"
            style="float: left; "><strong>{{::item.name}} </strong></a>
         <a ng-show="{{(item.product_desc).length > 0}}" title="Show Summary" ng-click="showSummary = !showSummary" style="color: #DDDDDD; float: left; ">&nbsp;&nbsp;<i class="fa fa-chevron-down fa-fw"></i>
         </a>

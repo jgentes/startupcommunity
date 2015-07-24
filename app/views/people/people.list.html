@@ -1,10 +1,10 @@
 <div class="col-md-12 dash-table">
     <div ng-init="roles = global.findKey(item.value.communities, 'roles')">
-        <a ui-sref="people.profile({community: item})" title="View {{::item.value.profile.name | words:0}}'s Profile"><img
+        <a ui-sref="sc.people.profile({community: item})" title="View {{::item.value.profile.name | words:0}}'s Profile"><img
                 ng-src="{{item.value.profile.linkedin.pictureUrl || item.value.profile.avatar || 'images/blank_avatar.png'}}" alt="{{::item.value.profile.name}}" class="user-img widget-image img-circle pull-left"/></a>
     </div>
     <div class="user-row">
-        <a ui-sref="people.profile({community: item})" title="View {{::item.value.profile.name | words:0}}'s Profile" style="float: left; "><strong>{{::item.value.profile.name}} </strong></a>
+        <a ui-sref="sc.people.profile({community: item})" title="View {{::item.value.profile.name | words:0}}'s Profile" style="float: left; "><strong>{{::item.value.profile.name}} </strong></a>
         <a ng-show="{{(item.value.profile.linkedin.summary).length > 0}}" title="Show Summary" ng-click="showSummary = !showSummary" class="user-summary">&nbsp;&nbsp;<i class="fa fa-chevron-down fa-fw"></i>
         </a>
         <li ng-repeat="role in roles" class="role-right">

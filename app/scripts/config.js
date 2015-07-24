@@ -27,10 +27,10 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                                     $state.go('sc.location.dashboard', { community : response.data});
                                     break;
                                 case "network":
-                                    $state.go('network.dashboard', { community : response.data});
+                                    $state.go('sc.network.dashboard', { community : response.data});
                                     break;
                                 case "industry":
-                                    $state.go('industry.dashboard', { community : response.data});
+                                    $state.go('sc.industry.dashboard', { community : response.data});
                                     break;
                                 default:
                                     $state.go('404');
@@ -45,7 +45,6 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                                 console.warn(err);
                             }
                         });
-                    //$state.go('dashboard');
                 }
 
 
@@ -101,9 +100,9 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                 community: {}
             },
             resolve: {
-                communities: ['community_api', '$stateParams',
-                    function(community_api, $stateParams) {
-                        return community_api.getCommunity($stateParams.community.key);
+                communities: ['community_api', '$stateParams', 'user',
+                    function(community_api, $stateParams, user) {
+                        return community_api.getCommunity($stateParams.community.key || user.profile.home);
                     }]
             }
         })
@@ -139,12 +138,17 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
             templateUrl: "components/common/content/content_small.html"
         })
         .state('sc.people.dashboard', {
-            url: "/people",
+            url: "/:community_key/people",
             templateUrl: 'views/people/people.dashboard.html',
             params: {
                 community: {},
                 pageTitle: 'People'
-            }
+            },
+            community: ['community_api', '$stateParams', 'community',
+                function(community_api, $stateParams, community_key) {
+                    console.log(community_key);
+                    if ($stateParams.community.key !== communities.data.key) return community_api.getCommunity($stateParams.community.key);
+                }]
         })
         .state('sc.people.profile', {
             templateUrl: "components/people/people.profile.html",
