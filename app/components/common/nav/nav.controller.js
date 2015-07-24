@@ -2,54 +2,19 @@ angular
     .module('startupcommunity')
     .controller('NavigationController', NavigationController);
 
-function NavigationController($scope, $modal, $stateParams, user, community, communities) {
+function NavigationController($scope, $modal, $stateParams, user, community, sorted_communities) {
     // reference 'this' by using 'nav' from 'NavigationController as nav'
     window.$scope = $scope; // for console testing to avoid $scope = $('body').scope()
 
     this.user = user.data;
-    this.community = community.data || $stateParams.community;
-    communities = communities.data; // not this. because not needed in view
 
-    /* Can't define context here unless I use $stateParams
-    this.context = {
-        community: community.data.key,
-        location: community.data.type == "location" ? community.data.key : undefined
-    };
-    */
+    if (jQuery.isEmptyObject($stateParams.community)) {
+        this.community = community.data;
+    } else this.community = $stateParams.community;
 
-    this.locations = {};
-    this.industries = {};
-    this.networks = {};
-
-    // First determine what type of community we are in using $stateParams, then build community nav items
-    if (this.community.type !== "location") {
-        var locations = findValue(communities, "location");
-        for (item in locations) {
-            if (locations[item].key !== "location") {
-               this.locations[locations[item].key] = locations[item];
-            }
-        }
-        this.location = this.locations[this.community.profile.home];
-    } else {
-        this.locations[this.community.key] = communities[this.community.key];
-        this.location = this.community;
-        //$scope.global.context.location = community.key;
-    }
-
-    if (this.community.type !== "industry") {
-        var industries = findValue(communities, "industry");
-        for (item in industries) {
-            this.industries[industries[item].key] = industries[item];
-        }
-    } else this.industries[this.community.key] = communities[this.community.key];
-
-    if (this.community.type !== "network") {
-        var networks = findValue(communities, "network");
-        for (item in networks) {
-            this.networks[networks[item].key] = networks[item];
-        }
-    } else this.networks = {}; // will need to change to support sub-networks
-
+    this.locations = sorted_communities.locations;
+    this.industries = sorted_communities.industries;
+    this.networks = sorted_communities.networks;
 
     // Roles displayed in user profile
     var roles = findKey(this.user.communities, "roles"),
@@ -69,12 +34,14 @@ function NavigationController($scope, $modal, $stateParams, user, community, com
 
     this.user.profile["roles"] = rolelist;
 
-    $scope.maploc = this.location.profile.name || findKey(this.locations, this.location)[0][this.location].profile.name;
+    $scope.maploc = this.community.profile.name;
 
-    $scope.global = {
-        alert: {},
-        search: undefined
-    };
+    if (!$scope.global) {
+        $scope.global = {
+            alert: {},
+            search: undefined
+        };
+    }
 
     $scope.$on('mapInitialized', function(event, map) {
         $scope.global.mapCenter = "Bend, OR";

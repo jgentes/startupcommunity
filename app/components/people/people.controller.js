@@ -4,157 +4,152 @@ angular
     .controller('PeopleProfileController', PeopleProfileController)
     .controller('InvitePeopleController', InvitePeopleController);
 
-function PeopleController($scope, $location, user_api, result_api, $sce, $stateParams) {
-/*
-    if ($stateParams.community.key) {
-        $location.path('/' + $stateParams.community.key, false)
-    }
-*/
+function PeopleController($location, user_api, result_api, $sce, community, user, sorted_communities) {
 
-    if ($stateParams.community.type == 'location') {
-        this.location = $stateParams.community.key;
-    } else this.community = $stateParams.community.key;
+    this.community = community.data;
+    this.user = user.data;
+    this.industries = findKey(sorted_communities.industries, this.community.key);
+    this.networks = findKey(sorted_communities.networks, this.community.key);
+    this.locations = findKey(sorted_communities.locations, this.community.key);
+    this.selectedIndustry = ['*'];
+    this.selectedRole = ['*'];
+    this.selectedNetwork = ['*'];
+
+    var self = this; // for accessing 'this' in child functions
 
     var getUsers = function(alturl) {
-        user_api.getUsers(this.location, this.community, undefined, undefined, 30, alturl)
+        user_api.getUsers(undefined, self.community.key, undefined, undefined, 30, alturl)
             .then(function(response) {
-                this.users = result_api.setPage(response.data);
+                self.users = result_api.setPage(response.data);
                 if ($location.$$path == '/search') {
-                    $scope.global.search = result_api.setPage($scope.users);
-                } else { $scope.global.search = undefined }
+                    self.search = result_api.setPage(self.users);
+                } else { self.search = undefined }
             });
     };
 
-    if ($location.$$path == '/people' || $scope.global.search === undefined) {
-        getUsers(); // use defaults
-    }
+    getUsers();
 
+    // Title of list box changes based on context
     var setTitle = function(){
-        var item,
-            role = '',
-            industry = '';
-        if ($scope.global.context.selectedRole[0] == '*') {
-            role = "People";
+        var item;
+        self.role = '';
+        self.industry = '';
+
+        if (self.selectedRole[0] == '*') {
+            self.role = "People";
         } else {
-            for (item in $scope.global.context.selectedRole) {
-                role += ($scope.global.context.selectedRole[item] + 's');
-                if (item < $scope.global.context.selectedRole.length - 1) {
-                    if (item < $scope.global.context.selectedRole.length - 2 ) {
-                        role += '</strong>,<strong> ';
-                    } else role += ' </strong>&<strong> ';
+            for (item in self.selectedRole) {
+                self.role += (self.selectedRole[item] + 's');
+                if (item < self.selectedRole.length - 1) {
+                    if (item < self.selectedRole.length - 2 ) {
+                        self.role += '</strong>,<strong> ';
+                    } else self.role += ' </strong>&<strong> ';
                 }
             }
         }
-        if ($scope.global.context.selectedIndustry[0] == '*') {
-            industry = $scope.global.community.profile.name;
+        if (self.selectedIndustry[0] == '*') {
+            self.industry = self.community.profile.name;
         } else {
             item = 0;
-            for (item in $scope.global.context.selectedIndustry) {
-                industry += $scope.global.context.selectedIndustry[item];
-                if (item < $scope.global.context.selectedIndustry.length - 1) {
-                    if (item < $scope.global.context.selectedIndustry.length - 2 ) {
-                        industry += ', ';
-                    } else industry += ' & ';
+            for (item in self.selectedIndustry) {
+                self.industry += self.selectedIndustry[item];
+                if (item < self.selectedIndustry.length - 1) {
+                    if (item < self.selectedIndustry.length - 2 ) {
+                        self.industry += ', ';
+                    } else self.industry += ' & ';
                 }
             }
         }
-        $scope.title = '<strong>' + role + '</strong> in ' + industry;
+        self.title = '<strong>' + self.role + '</strong> in ' + self.industry;
 
         var pageTitle;
 
-        if ($scope.global.context.community) {
-            pageTitle = $scope.global.community.profile.name;
+        if (self.community) {
+            pageTitle = self.community.profile.name;
         } else {
-            pageTitle = $scope.global.community.profile.name;
+            pageTitle = self.community.profile.name;
         }
 
-        if ($scope.global.context.community && $scope.global.context.location) {
-            pageTitle += '<br><small>' + $scope.global.community.profile.name + '</small>';
+        if (self.community && self.location) {
+            pageTitle += '<br><small>' + self.community.profile.name + '</small>';
         } else {
-            pageTitle += '<br><small>Welcome ' + ($scope.global.user.profile.name).split(' ')[0] + '!</small>';
+            pageTitle += '<br><small>Welcome ' + (self.user.profile.name).split(' ')[0] + '!</small>';
         }
 
-        $scope.pageTitle = $sce.trustAsHtml(pageTitle);
-    }
+        self.pageTitle = $sce.trustAsHtml(pageTitle);
+    };
 
-    $scope.global.context.selectedIndustry = ['*'];
-    $scope.global.context.selectedRole = ['*'];
-    $scope.global.context.selectedNetwork = ['*'];
     setTitle();
 
-    $scope.industries = findKey($scope.global.community.industries, $scope.global.context.location);
-    $scope.networks = findKey($scope.global.community.networks, $scope.global.context.location);
-
-
-
-    $scope.filterIndustry = function(industry) {
-        $scope.loadingIndustry = true;
+    this.filterIndustry = function(industry) {
+        self.loadingIndustry = true;
         if (industry == '*') {
-            $scope.global.context.selectedIndustry = ['*'];
+            self.selectedIndustry = ['*'];
         } else {
-            if ($scope.global.context.selectedIndustry.indexOf('*') >= 0) {
-                $scope.global.context.selectedIndustry.splice($scope.global.context.selectedIndustry.indexOf('*'), 1);
+            if (self.selectedIndustry.indexOf('*') >= 0) {
+                self.selectedIndustry.splice(self.selectedIndustry.indexOf('*'), 1);
             }
-            if ($scope.global.context.selectedIndustry.indexOf(industry) < 0) {
-                $scope.global.context.selectedIndustry.push(industry);
-            } else $scope.global.context.selectedIndustry.splice($scope.global.context.selectedIndustry.indexOf(industry), 1);
-            if ($scope.global.context.selectedIndustry.length === 0) {
-                $scope.global.context.selectedIndustry = ['*'];
+            if (self.selectedIndustry.indexOf(industry) < 0) {
+                self.selectedIndustry.push(industry);
+            } else self.selectedIndustry.splice(self.selectedIndustry.indexOf(industry), 1);
+            if (self.selectedIndustry.length === 0) {
+                self.selectedIndustry = ['*'];
             }
         }
 
-        user_api.getUsers($scope.global.context.location, $scope.global.context.community, $scope.global.context.selectedIndustry, $scope.global.context.selectedRole, 30, undefined)
+        user_api.getUsers(self.location, self.community, self.selectedIndustry, self.selectedRole, 30, undefined)
             .then(function(response) {
-                $scope.loadingIndustry = false;
-                $scope.users = result_api.setPage(response.data);
+                self.loadingIndustry = false;
+                self.users = result_api.setPage(response.data);
                 setTitle();
             });
     };
 
-    $scope.search = function(query) {
-        $scope.global.search.tag = query;
-        $scope.global.search.results = undefined;
-        user_api.search($scope.global.user.context, query)
+    this.search = function(query) {
+        self.search.tag = query;
+        self.search.results = undefined;
+        user_api.search(self.user.context, query)
             .then(function(response) {
-                $scope.global.search = result_api.setPage(response.data);
-                $scope.global.search.lastQuery = query;
+                self.search = result_api.setPage(response.data);
+                self.search.lastQuery = query;
                 $location.path('/search');
             });
     };
 
-    $scope.filterRole = function(role) {
-        $scope.loadingRole = true;
+    this.filterRole = function(role) {
+        self.loadingRole = true;
         if (role == '*') {
-            $scope.global.context.selectedRole = ['*'];
+            self.selectedRole = ['*'];
         } else {
-            if ($scope.global.context.selectedRole.indexOf('*') >= 0) {
-                $scope.global.context.selectedRole.splice($scope.global.context.selectedRole.indexOf('*'), 1);
+            if (self.selectedRole.indexOf('*') >= 0) {
+                self.selectedRole.splice(self.selectedRole.indexOf('*'), 1);
             }
-            if ($scope.global.context.selectedRole.indexOf(role) < 0) {
-                $scope.global.context.selectedRole.push(role);
-            } else $scope.global.context.selectedRole.splice($scope.global.context.selectedRole.indexOf(role), 1);
-            if ($scope.global.context.selectedRole.length === 0) {
-                $scope.global.context.selectedRole = ['*'];
+            if (self.selectedRole.indexOf(role) < 0) {
+                self.selectedRole.push(role);
+            } else self.selectedRole.splice(self.selectedRole.indexOf(role), 1);
+            if (self.selectedRole.length === 0) {
+                self.selectedRole = ['*'];
             }
         }
 
-        user_api.getUsers($scope.global.context.location, $scope.global.context.community, $scope.global.context.selectedIndustry, $scope.global.context.selectedRole, 30, undefined)
+        user_api.getUsers(self.location, self.community, self.selectedIndustry, self.selectedRole, 30, undefined)
             .then(function(response) {
-                $scope.loadingRole = false;
-                $scope.users = result_api.setPage(response.data);
+                self.loadingRole = false;
+                self.users = result_api.setPage(response.data);
                 setTitle();
             });
     };
 
-    $scope.skills = {};
-    $scope.skills.selected = [];
-    $scope.skills.list = ['.NET', 'Account Management', 'Accounting', 'ActionScript', 'Adobe', 'Adobe Acrobat', 'Adobe After Effects', 'Adobe Creative Suite', 'Adobe Illustrator', 'Adobe Indesign', 'Adobe Photoshop', 'Adobe Premiere', 'Advertising', 'Agile', 'Agile Project Management', 'Agile Software Develoment', 'AJAX', 'Algorithms', 'Amazon EC2', 'Amazon Web Services', 'Analytics', 'Android', 'AngularJS', 'Ant', 'Apache', 'Apache Tomcat', 'APIs', 'Apple', 'Architect', 'Arduino', 'Art Direction', 'Artificial Intelligence', 'ASP.NET', 'Assembly Language', 'Asset Management', 'Autocad', 'Automation', 'Automotive', 'Backbone.js', 'Backend Development', 'Bash', 'Big Data', 'Bilingual', 'Billing', 'Blackberry', 'Blogging', 'Bluetooth', 'Brand Management', 'Branding', 'Budgeting', 'Business Analysis', 'Business Development', 'Business Intelligence', 'Business Management', 'Business Model Innovation', 'Business Objects', 'Business Operations', 'Business Planning', 'Business Strategy', 'Buying', 'C', 'C#', 'C++', 'Cadence', 'CakePHP', 'Call Center', 'Capital Markets', 'CFO', 'Chef', 'Chemistry', 'Cisco', 'Citrix', 'Client Relations', 'Cloud Computing', 'Clustering', 'CMS', 'Coaching', 'Codeigniter', 'Coding', 'Coffeescript', 'Cold Calling', 'Communication Skills', 'Communications', 'Community Management', 'Compensation and Benefits', 'Competitive Analysis', 'Compliance', 'Composer', 'Computer Vision', 'comScore', 'Consulting', 'Consumer Electronics', 'Consumer Internet', 'Consumer Products', 'Content Creation', 'Content Management', 'Content Marketing', 'Content Strategy', 'Contract Negotiations', 'Control Systems', 'Copywriting', 'Corporate Finance', 'Creative Direction', 'Creative Problem Solving', 'Creative Strategy', 'Creative Writing', 'CRM', 'Cross-Functional Team Leadership', 'CSS', 'CSS3', 'Customer Acquisition', 'Customer Development', 'Customer Experience', 'Customer Relationship Management', 'Customer Service', 'CVS', 'D3.js', 'Data Analysis', 'Data Entry', 'Data Management', 'Data Mining', 'Data Visualization', 'Databases', 'DBMS', 'Debian', 'Debugging', 'Derivatives', 'Design', 'Design Management', 'Design Patterns', 'Design Research', 'Design Strategy', 'Design Thinking', 'DevOps', 'Digital Marketing', 'Digital Media', 'Digital Strategy', 'Distributed Systems', 'Distribution', 'Django', 'Documentation', 'Drafting', 'Dreamweaver', 'Drupal', 'Due Diligence', 'E-Commerce', 'Eclipse', 'Economics', 'Electrical Engineering', 'Electronics', 'Email', 'Email Marketing', 'Embedded Systems', 'Ember.js', 'Emerging Markets', 'Encryption', 'Engineering', 'English', 'Enterprise Software', 'Entertainment', 'Entrepreneurship', 'Event Management', 'Event Planning', 'Executive Management', 'Experience Design', 'ExpressJs', 'Fabrication', 'Facebook Advertising', 'Facebook API', 'Filing', 'Final Cut Pro', 'Finance', 'Financial Analysis', 'Financial Management', 'Financial Modeling', 'Financial Modelling & Valuation', 'Financial Reporting', 'Financial Services', 'Financial Statements', 'Firewall', 'Firmware', 'Flash', 'Fluent in Spanish', 'Focus', 'Forecasting', 'FPGA', 'FramerJS', 'Fraud', 'French language', 'Front-End Development', 'Full-Stack Web Development', 'Fundraising', 'Game Design', 'German Language', 'Git', 'Github', 'Go to Market Strategy', 'Google Adwords', 'Google Analytics', 'Google Apps', 'Graphic Design', 'Graphic Designer', 'Graphics Design', 'Growth Hacking', 'Hadoop', 'Haml', 'Hardware Engineering', 'Help Desk', 'Heroku', 'Hibernate', 'Highly Organized', 'Hive', 'HTML', 'HTML/CSS/PHP/MYSQL', 'HTML+CSS', 'HTML5 & CSS3', 'Human Resources', 'IBM DB2', 'IBM Websphere', 'Icon Design', 'Illustration', 'Illustrator', 'Image Processing', 'InDesign', 'Industrial Design', 'Information Architecture', 'Information Security', 'Information Technology', 'Infrastructure', 'Innovation & Growth', 'Inside Sales', 'Insurance', 'Integrity', 'Interaction Design', 'Interface Design', 'International Business', 'Internet', 'Internet Marketing', 'Inventory Management', 'Investment Banking', 'Investment Management', 'iOS', 'iOS Design', 'iOS Development', 'iPhone', 'ITIL', 'Japanese Language', 'Java', 'Java J2EE', 'Javascript', 'Javascript Frameworks', 'JBoss', 'JDBC', 'Jenkins', 'Jira', 'JOOMLA', 'jQuery', 'jQuery Mobile', 'JSON', 'JUNIT', 'Kanban', 'LAMP', 'LaTeX', 'Layout', 'Lead Generation', 'Leadership', 'Leadership and Team Inspiration', 'Leadership Development', 'Lean Startups', 'Legal', 'LESS', 'Licensing', 'Linux', 'Linux System Administration', 'Logistics', 'Lotus Notes', 'Mac OS X', 'Machine Learning', 'MAGENTO', 'Management', 'Management Consulting', 'Manufacturing', 'Market Research', 'Marketing', 'Marketing Communications', 'Marketing Management', 'Marketing Strategy', 'Matlab', 'Maven', 'MBA', 'Mechanical Engineering', 'Media Relations', 'Merchandising', 'Mergers & Acquisitions', 'Messaging', 'Metrics', 'Microsoft', 'Microsoft Access', 'Microsoft Excel', 'Microsoft Exchange', 'Microsoft Office', 'Microsoft Outlook', 'Microsoft Power Point', 'Microsoft PowerPoint', 'Microsoft Project', 'Microsoft SQL Server', 'Microsoft Visio', 'Microsoft Visual Basic', 'Microsoft Visual Studio', 'Microsoft Windows', 'Microsoft Word', 'Middleware', 'Mobile', 'Mobile Advertising', 'Mobile Application Design', 'Mobile Application Development', 'Mobile Design', 'Mobile Development', 'Mobile UI Design', 'Mobile User Experience', 'MongoDB', 'Multimedia', 'Mvc', 'MySQL', 'Natural Language Processing', 'Negotiation', 'Netbeans', 'Network Security', 'Networking', 'New Business Development', 'New Product Development', 'Nginx', 'Node.js', 'noSQL', 'Objective C', 'Objective-C', 'Online Marketing', 'OpenCV', 'OpenGL', 'Operating Systems', 'Operations', 'Operations Management', 'Oracle', 'Oracle 10g', 'Outsourcing', 'Payroll', 'PC', 'People Management', 'PeopleSoft', 'Perl', 'Pharmaceutical', 'Photography', 'Photoshop', 'PHP', 'Planning', 'Portfolio Management', 'PostgreSQL', 'Presentation Skills', 'Pricing', 'Print Design', 'Private Equity', 'Problem Solving', 'Process Improvement', 'Process Management', 'Procurement', 'Product', 'Product Design', 'Product Development', 'Product Launch', 'Product Management', 'Product Marketing', 'Product Strategy', 'Professional Services', 'Program Management', 'Program Manager', 'Programming', 'Programming Languages', 'Project Leader', 'Project Management', 'Project Manager', 'Public Relations', 'Public Speaking', 'Publishing', 'Purchasing', 'Python', 'Quality Assurance', 'Quality Control', 'Quickbooks', 'R', 'Rapid Prototyping', 'RDBMS', 'Real Estate', 'Recruiting', 'Redhat', 'Redis', 'Regression Testing', 'Relational Databases', 'Relationship Building', 'Reliability', 'Requirements Analysis', 'Research', 'Research and Development', 'Responsive Design', 'REST', 'REST APIs', 'RESTful Services', 'Retail', 'Risk Analysis', 'Risk Management', 'Robotics', 'Routers', 'Ruby', 'Ruby on Rails', 'Russian language', 'SaaS', 'Sales', 'Sales and Marketing', 'Sales Strategy and Management', 'Sales Support', 'Sales Training', 'Sales/Marketing and Strategic Partnerships', 'Salesforce', 'SalesForce.com', 'SAP', 'SAS', 'Sass', 'Scala', 'Scheduling', 'Scheme', 'Science', 'SCRUM', 'Scrum Master', 'SCSS/Sass', 'SDK', 'SDLC', 'Search Engine Marketing (SEM)', 'Security', 'Selenium', 'SEO', 'SEO/SEM', 'Servlets', 'SharePoint', 'Shell Scripting', 'Social Media', 'Social Media Marketing', 'Social Media Strategy', 'Social Strategy', 'Software', 'Software Architecture', 'Software Design', 'Software Development', 'Software Engineering', 'Software Testing', 'Solidworks', 'Sourcing', 'Spanish', 'Sports', 'Spring', 'SPSS', 'SQL', 'SQL Server', 'SQLite', 'Start-Up CEO', 'Start-Ups', 'Startup Founder', 'Startups', 'Statistical Analysis', 'Statistics', 'Strategic Partnerships', 'Strategic Planning', 'Strategy', 'Strong Work Ethic', 'Struts', 'Subversion', 'Supply Chain Management', 'Support', 'Svn', 'Swift', 'Swing', 'System Administration', 'System Design', 'Systems Administration', 'Tableau', 'Talent Acquisition', 'TDD', 'Team Building', 'Team Leadership', 'Team Player', 'Teamwork', 'Technical Support', 'Technical Writing', 'Technology', 'Telecommunications', 'Test', 'Test Automation', 'Test Cases', 'Test Plans', 'TFS', 'Training', 'Transportation', 'Travel', 'Twitter Bootstrap', 'Ubuntu', 'UI Design', 'UI/UX Design', 'Unit Testing', 'Unity3D', 'Unix', 'Unix Shell Scripting', 'Usability Testing', 'Use Cases', 'User Experience Design', 'User Interaction Design', 'User Interface', 'User Interface Design', 'User Research', 'User-Centered Design', 'Utilities', 'UX Design', 'UX Design and Strategy', 'UX/UI Designer', 'Vendor Management', 'Venture Capital', 'Venture Fundraising', 'Verilog', 'Version Control', 'VHDL', 'Video', 'Video Editing', 'Video Production', 'Visio', 'Visual Basic', 'Visual Design', 'Wealth Management', 'Web', 'Web Analytics', 'Web Application Design', 'Web Application Frameworks', 'Web Applications', 'Web Design', 'Web Development', 'Web Services', 'Wholesale', 'Windows', 'Wireframing', 'Wireless', 'Wireshark', 'Wordpress', 'Writing', 'Xcode', 'XHTML', 'XML', 'XSLT', 'Zend Framework', 'Zepto'];
+    this.skills = {};
+    this.skills.selected = [];
+    this.skills.list = ['.NET', 'Account Management', 'Accounting', 'ActionScript', 'Adobe', 'Adobe Acrobat', 'Adobe After Effects', 'Adobe Creative Suite', 'Adobe Illustrator', 'Adobe Indesign', 'Adobe Photoshop', 'Adobe Premiere', 'Advertising', 'Agile', 'Agile Project Management', 'Agile Software Develoment', 'AJAX', 'Algorithms', 'Amazon EC2', 'Amazon Web Services', 'Analytics', 'Android', 'AngularJS', 'Ant', 'Apache', 'Apache Tomcat', 'APIs', 'Apple', 'Architect', 'Arduino', 'Art Direction', 'Artificial Intelligence', 'ASP.NET', 'Assembly Language', 'Asset Management', 'Autocad', 'Automation', 'Automotive', 'Backbone.js', 'Backend Development', 'Bash', 'Big Data', 'Bilingual', 'Billing', 'Blackberry', 'Blogging', 'Bluetooth', 'Brand Management', 'Branding', 'Budgeting', 'Business Analysis', 'Business Development', 'Business Intelligence', 'Business Management', 'Business Model Innovation', 'Business Objects', 'Business Operations', 'Business Planning', 'Business Strategy', 'Buying', 'C', 'C#', 'C++', 'Cadence', 'CakePHP', 'Call Center', 'Capital Markets', 'CFO', 'Chef', 'Chemistry', 'Cisco', 'Citrix', 'Client Relations', 'Cloud Computing', 'Clustering', 'CMS', 'Coaching', 'Codeigniter', 'Coding', 'Coffeescript', 'Cold Calling', 'Communication Skills', 'Communications', 'Community Management', 'Compensation and Benefits', 'Competitive Analysis', 'Compliance', 'Composer', 'Computer Vision', 'comScore', 'Consulting', 'Consumer Electronics', 'Consumer Internet', 'Consumer Products', 'Content Creation', 'Content Management', 'Content Marketing', 'Content Strategy', 'Contract Negotiations', 'Control Systems', 'Copywriting', 'Corporate Finance', 'Creative Direction', 'Creative Problem Solving', 'Creative Strategy', 'Creative Writing', 'CRM', 'Cross-Functional Team Leadership', 'CSS', 'CSS3', 'Customer Acquisition', 'Customer Development', 'Customer Experience', 'Customer Relationship Management', 'Customer Service', 'CVS', 'D3.js', 'Data Analysis', 'Data Entry', 'Data Management', 'Data Mining', 'Data Visualization', 'Databases', 'DBMS', 'Debian', 'Debugging', 'Derivatives', 'Design', 'Design Management', 'Design Patterns', 'Design Research', 'Design Strategy', 'Design Thinking', 'DevOps', 'Digital Marketing', 'Digital Media', 'Digital Strategy', 'Distributed Systems', 'Distribution', 'Django', 'Documentation', 'Drafting', 'Dreamweaver', 'Drupal', 'Due Diligence', 'E-Commerce', 'Eclipse', 'Economics', 'Electrical Engineering', 'Electronics', 'Email', 'Email Marketing', 'Embedded Systems', 'Ember.js', 'Emerging Markets', 'Encryption', 'Engineering', 'English', 'Enterprise Software', 'Entertainment', 'Entrepreneurship', 'Event Management', 'Event Planning', 'Executive Management', 'Experience Design', 'ExpressJs', 'Fabrication', 'Facebook Advertising', 'Facebook API', 'Filing', 'Final Cut Pro', 'Finance', 'Financial Analysis', 'Financial Management', 'Financial Modeling', 'Financial Modelling & Valuation', 'Financial Reporting', 'Financial Services', 'Financial Statements', 'Firewall', 'Firmware', 'Flash', 'Fluent in Spanish', 'Focus', 'Forecasting', 'FPGA', 'FramerJS', 'Fraud', 'French language', 'Front-End Development', 'Full-Stack Web Development', 'Fundraising', 'Game Design', 'German Language', 'Git', 'Github', 'Go to Market Strategy', 'Google Adwords', 'Google Analytics', 'Google Apps', 'Graphic Design', 'Graphic Designer', 'Graphics Design', 'Growth Hacking', 'Hadoop', 'Haml', 'Hardware Engineering', 'Help Desk', 'Heroku', 'Hibernate', 'Highly Organized', 'Hive', 'HTML', 'HTML/CSS/PHP/MYSQL', 'HTML+CSS', 'HTML5 & CSS3', 'Human Resources', 'IBM DB2', 'IBM Websphere', 'Icon Design', 'Illustration', 'Illustrator', 'Image Processing', 'InDesign', 'Industrial Design', 'Information Architecture', 'Information Security', 'Information Technology', 'Infrastructure', 'Innovation & Growth', 'Inside Sales', 'Insurance', 'Integrity', 'Interaction Design', 'Interface Design', 'International Business', 'Internet', 'Internet Marketing', 'Inventory Management', 'Investment Banking', 'Investment Management', 'iOS', 'iOS Design', 'iOS Development', 'iPhone', 'ITIL', 'Japanese Language', 'Java', 'Java J2EE', 'Javascript', 'Javascript Frameworks', 'JBoss', 'JDBC', 'Jenkins', 'Jira', 'JOOMLA', 'jQuery', 'jQuery Mobile', 'JSON', 'JUNIT', 'Kanban', 'LAMP', 'LaTeX', 'Layout', 'Lead Generation', 'Leadership', 'Leadership and Team Inspiration', 'Leadership Development', 'Lean Startups', 'Legal', 'LESS', 'Licensing', 'Linux', 'Linux System Administration', 'Logistics', 'Lotus Notes', 'Mac OS X', 'Machine Learning', 'MAGENTO', 'Management', 'Management Consulting', 'Manufacturing', 'Market Research', 'Marketing', 'Marketing Communications', 'Marketing Management', 'Marketing Strategy', 'Matlab', 'Maven', 'MBA', 'Mechanical Engineering', 'Media Relations', 'Merchandising', 'Mergers & Acquisitions', 'Messaging', 'Metrics', 'Microsoft', 'Microsoft Access', 'Microsoft Excel', 'Microsoft Exchange', 'Microsoft Office', 'Microsoft Outlook', 'Microsoft Power Point', 'Microsoft PowerPoint', 'Microsoft Project', 'Microsoft SQL Server', 'Microsoft Visio', 'Microsoft Visual Basic', 'Microsoft Visual Studio', 'Microsoft Windows', 'Microsoft Word', 'Middleware', 'Mobile', 'Mobile Advertising', 'Mobile Application Design', 'Mobile Application Development', 'Mobile Design', 'Mobile Development', 'Mobile UI Design', 'Mobile User Experience', 'MongoDB', 'Multimedia', 'Mvc', 'MySQL', 'Natural Language Processing', 'Negotiation', 'Netbeans', 'Network Security', 'Networking', 'New Business Development', 'New Product Development', 'Nginx', 'Node.js', 'noSQL', 'Objective C', 'Objective-C', 'Online Marketing', 'OpenCV', 'OpenGL', 'Operating Systems', 'Operations', 'Operations Management', 'Oracle', 'Oracle 10g', 'Outsourcing', 'Payroll', 'PC', 'People Management', 'PeopleSoft', 'Perl', 'Pharmaceutical', 'Photography', 'Photoshop', 'PHP', 'Planning', 'Portfolio Management', 'PostgreSQL', 'Presentation Skills', 'Pricing', 'Print Design', 'Private Equity', 'Problem Solving', 'Process Improvement', 'Process Management', 'Procurement', 'Product', 'Product Design', 'Product Development', 'Product Launch', 'Product Management', 'Product Marketing', 'Product Strategy', 'Professional Services', 'Program Management', 'Program Manager', 'Programming', 'Programming Languages', 'Project Leader', 'Project Management', 'Project Manager', 'Public Relations', 'Public Speaking', 'Publishing', 'Purchasing', 'Python', 'Quality Assurance', 'Quality Control', 'Quickbooks', 'R', 'Rapid Prototyping', 'RDBMS', 'Real Estate', 'Recruiting', 'Redhat', 'Redis', 'Regression Testing', 'Relational Databases', 'Relationship Building', 'Reliability', 'Requirements Analysis', 'Research', 'Research and Development', 'Responsive Design', 'REST', 'REST APIs', 'RESTful Services', 'Retail', 'Risk Analysis', 'Risk Management', 'Robotics', 'Routers', 'Ruby', 'Ruby on Rails', 'Russian language', 'SaaS', 'Sales', 'Sales and Marketing', 'Sales Strategy and Management', 'Sales Support', 'Sales Training', 'Sales/Marketing and Strategic Partnerships', 'Salesforce', 'SalesForce.com', 'SAP', 'SAS', 'Sass', 'Scala', 'Scheduling', 'Scheme', 'Science', 'SCRUM', 'Scrum Master', 'SCSS/Sass', 'SDK', 'SDLC', 'Search Engine Marketing (SEM)', 'Security', 'Selenium', 'SEO', 'SEO/SEM', 'Servlets', 'SharePoint', 'Shell Scripting', 'Social Media', 'Social Media Marketing', 'Social Media Strategy', 'Social Strategy', 'Software', 'Software Architecture', 'Software Design', 'Software Development', 'Software Engineering', 'Software Testing', 'Solidworks', 'Sourcing', 'Spanish', 'Sports', 'Spring', 'SPSS', 'SQL', 'SQL Server', 'SQLite', 'Start-Up CEO', 'Start-Ups', 'Startup Founder', 'Startups', 'Statistical Analysis', 'Statistics', 'Strategic Partnerships', 'Strategic Planning', 'Strategy', 'Strong Work Ethic', 'Struts', 'Subversion', 'Supply Chain Management', 'Support', 'Svn', 'Swift', 'Swing', 'System Administration', 'System Design', 'Systems Administration', 'Tableau', 'Talent Acquisition', 'TDD', 'Team Building', 'Team Leadership', 'Team Player', 'Teamwork', 'Technical Support', 'Technical Writing', 'Technology', 'Telecommunications', 'Test', 'Test Automation', 'Test Cases', 'Test Plans', 'TFS', 'Training', 'Transportation', 'Travel', 'Twitter Bootstrap', 'Ubuntu', 'UI Design', 'UI/UX Design', 'Unit Testing', 'Unity3D', 'Unix', 'Unix Shell Scripting', 'Usability Testing', 'Use Cases', 'User Experience Design', 'User Interaction Design', 'User Interface', 'User Interface Design', 'User Research', 'User-Centered Design', 'Utilities', 'UX Design', 'UX Design and Strategy', 'UX/UI Designer', 'Vendor Management', 'Venture Capital', 'Venture Fundraising', 'Verilog', 'Version Control', 'VHDL', 'Video', 'Video Editing', 'Video Production', 'Visio', 'Visual Basic', 'Visual Design', 'Wealth Management', 'Web', 'Web Analytics', 'Web Application Design', 'Web Application Frameworks', 'Web Applications', 'Web Design', 'Web Development', 'Web Services', 'Wholesale', 'Windows', 'Wireframing', 'Wireless', 'Wireshark', 'Wordpress', 'Writing', 'Xcode', 'XHTML', 'XML', 'XSLT', 'Zend Framework', 'Zepto'];
 
 }
 
 function PeopleProfileController($scope, $stateParams, $location, $auth, $mixpanel, user, user_api) {
 
     this.user = user.data;
+    var self = this;
 
     $mixpanel.track('Viewed Profile');
 
@@ -222,56 +217,56 @@ function PeopleProfileController($scope, $stateParams, $location, $auth, $mixpan
     this.activity = activity;
 
     $scope.isCityAdvisor = function(status) { //todo needs to be reworked
-        user_api.setCityAdvisor($state.params.user.key, $scope.global.user.context, 'cityAdvisor', status, function(response, rescode) {
+        user_api.setCityAdvisor($state.params.user.key, self.user.context, 'cityAdvisor', status, function(response, rescode) {
             var sameuser = false;
             var cluster;
             if (rescode == 201) {
-                if ($state.params.user.key == $scope.global.user.key) { sameuser = true; }
-                if ($state.params.user.cities[$scope.global.user.context].cityAdvisor === undefined) { //need to create key
-                    $state.params.user.cities[$scope.global.user.context]['cityAdvisor'] = false;
+                if ($state.params.user.key == self.user.key) { sameuser = true; }
+                if ($state.params.user.cities[self.user.context].cityAdvisor === undefined) { //need to create key
+                    $state.params.user.cities[self.user.context]['cityAdvisor'] = false;
                 }
 
-                $state.params.user.cities[$scope.global.user.context].cityAdvisor = status;
+                $state.params.user.cities[self.user.context].cityAdvisor = status;
 
-                for (cluster in $scope.global.community.location.clusters) {
+                for (cluster in self.community.location.clusters) {
                     if (status === true) {
-                        if ($state.params.user.cities[$scope.global.user.context].clusters[cluster]) {
-                            $state.params.user.cities[$scope.global.user.context].clusters[cluster].advisorStatus = true;
+                        if ($state.params.user.cities[self.user.context].clusters[cluster]) {
+                            $state.params.user.cities[self.user.context].clusters[cluster].advisorStatus = true;
                         }
                     } else {
-                        if (!$state.params.user.cities[$scope.global.user.context].clusters[cluster].roles || ($state.params.user.cities[$scope.global.user.context].clusters[cluster].roles.indexOf("Advisor") < 0)) {
-                            $state.params.user.cities[$scope.global.user.context].clusters[cluster].advisorStatus = false;
+                        if (!$state.params.user.cities[self.user.context].clusters[cluster].roles || ($state.params.user.cities[self.user.context].clusters[cluster].roles.indexOf("Advisor") < 0)) {
+                            $state.params.user.cities[self.user.context].clusters[cluster].advisorStatus = false;
                         } else {
-                            $state.params.user.cities[$scope.global.user.context].clusters[cluster].advisorStatus = true;
+                            $state.params.user.cities[self.user.context].clusters[cluster].advisorStatus = true;
                         }
                     }
                 }
 
                 if (sameuser) {
-                    $scope.global.user.cities[$scope.global.user.context].cityAdvisor = status;
+                    self.user.cities[self.user.context].cityAdvisor = status;
                 }
             } else {
-                $scope.global.alert = { type: 'danger', msg: 'There was a problem: ' + String(response.message) };
+                self.alert = { type: 'danger', msg: 'There was a problem: ' + String(response.message) };
                 console.warn("WARNING: " +  response.message);
             }
         });
     };
 
     $scope.setRole = function(cluster, role, status) { //todo needs to be reworked
-        user_api.setRole($state.params.user.key, $scope.global.user.context, cluster, role, status, function(response, rescode) {
+        user_api.setRole($state.params.user.key, self.user.context, cluster, role, status, function(response, rescode) {
             var sameuser = false;
             if (rescode == 201) {
-                if ($state.params.user.key == $scope.global.user.key) { sameuser = true; }
-                if ($state.params.user.cities[$scope.global.user.context].clusters === undefined) { //need to create clusters key
-                    $state.params.user.cities[$scope.global.user.context]['clusters'] = {};
+                if ($state.params.user.key == self.user.key) { sameuser = true; }
+                if ($state.params.user.cities[self.user.context].clusters === undefined) { //need to create clusters key
+                    $state.params.user.cities[self.user.context]['clusters'] = {};
                 }
-                if ($state.params.user.cities[$scope.global.user.context].clusters[cluster] === undefined) { //need to create the cluster in user profile
-                    $state.params.user.cities[$scope.global.user.context].clusters[cluster] = { "roles": [] };
+                if ($state.params.user.cities[self.user.context].clusters[cluster] === undefined) { //need to create the cluster in user profile
+                    $state.params.user.cities[self.user.context].clusters[cluster] = { "roles": [] };
                 }
-                if ($state.params.user.cities[$scope.global.user.context].clusters[cluster].roles === undefined) { //this can happen due to temp local scope variables
-                    $state.params.user.cities[$scope.global.user.context].clusters[cluster].roles = [];
+                if ($state.params.user.cities[self.user.context].clusters[cluster].roles === undefined) { //this can happen due to temp local scope variables
+                    $state.params.user.cities[self.user.context].clusters[cluster].roles = [];
                 }
-                var thiscluster = $state.params.user.cities[$scope.global.user.context].clusters[cluster];
+                var thiscluster = $state.params.user.cities[self.user.context].clusters[cluster];
 
                 if (status === true) {
                     if (thiscluster.roles.indexOf(role) < 0) {
@@ -283,11 +278,11 @@ function PeopleProfileController($scope, $stateParams, $location, $auth, $mixpan
                     } // else they do not have the role, no action needed
                 }
 
-                $state.params.user.cities[$scope.global.user.context].clusters[cluster] = thiscluster;
-                if (sameuser) { $scope.global.user.cities[$scope.global.user.context].clusters[cluster] = thiscluster; }
+                $state.params.user.cities[self.user.context].clusters[cluster] = thiscluster;
+                if (sameuser) { self.user.cities[self.user.context].clusters[cluster] = thiscluster; }
 
             } else {
-                $scope.global.alert = { type: 'danger', msg: 'There was a problem: ' + String(response.message) };
+                self.alert = { type: 'danger', msg: 'There was a problem: ' + String(response.message) };
                 console.warn("WARNING: " +  response.message);
 
             }
@@ -300,13 +295,13 @@ function PeopleProfileController($scope, $stateParams, $location, $auth, $mixpan
     $scope.link = function(provider) {
         $auth.link(provider)
             .then(function() {
-                $scope.global.alert ={ type: 'success', msg: 'Well done. You have successfully linked your ' + provider + ' account'};
+                self.alert ={ type: 'success', msg: 'Well done. You have successfully linked your ' + provider + ' account'};
             })
             .then(function() {
                 $scope.getProfile();
             })
             .catch(function(response) {
-                $scope.global.alert ={ type: 'danger', msg: 'Sorry, but we ran into this error: ' + response.data.message};
+                self.alert ={ type: 'danger', msg: 'Sorry, but we ran into this error: ' + response.data.message};
             });
     };
 
@@ -316,30 +311,31 @@ function PeopleProfileController($scope, $stateParams, $location, $auth, $mixpan
     $scope.unlink = function(provider) {
         $auth.unlink(provider)
             .then(function() {
-                $scope.global.alert = { type: 'success', msg: 'Bam. You have successfully unlinked your ' + provider + ' account'};
+                self.alert = { type: 'success', msg: 'Bam. You have successfully unlinked your ' + provider + ' account'};
             })
             .then(function() {
                 $scope.getProfile();
             })
             .catch(function(response) {
-                $scope.global.alert = { type: 'danger', msg: 'Aww, shucks. We ran into this error while unlinking your ' + provider + ' account: ' + response.data.message};
+                self.alert = { type: 'danger', msg: 'Aww, shucks. We ran into this error while unlinking your ' + provider + ' account: ' + response.data.message};
             });
     };
 
 }
 
-function InvitePeopleController($scope, $auth, user_api) {
+function InvitePeopleController($scope, user_api) {
+    var self = this;
 
     $scope.invitePerson = function(url, email, userid) {
         $scope.disabled = true;
         user_api.invitePerson(url, email, userid, function(response) {
             $scope.disabled = false;
             if (response.status !== 200) {
-                $scope.global.alert = { type: 'danger', msg: 'There was a problem: ' + String(response.message) };
+                self.alert = { type: 'danger', msg: 'There was a problem: ' + String(response.message) };
                 console.warn("WARNING: ");
                 console.log(response);
             } else {
-                $scope.global.alert = { type: 'success', msg: 'Person imported! ' + response.data.name + ' is good to go.' };
+                self.alert = { type: 'success', msg: 'Person imported! ' + response.data.name + ' is good to go.' };
             }
         });
     };

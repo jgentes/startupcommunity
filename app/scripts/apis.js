@@ -1,7 +1,7 @@
 angular
     .module('apis', [])
 
-    .factory('user_api', function($http, $location) {
+    .factory('user_api', function($http) {
         return {
             search: function(location, community, query) {
                 var urlString = '/api/1.1/users' + jQuery.param({
@@ -12,6 +12,7 @@ angular
                 return $http.get(urlString);
             },
             getUsers: function(location, community, cluster, role, limit, alturl) { //alturl is for next/prev retrieval
+
                 if (alturl) { return $http.get(alturl) } else {
                     var urlString = '/api/1.1/users?' + jQuery.param({
                             location: location,

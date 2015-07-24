@@ -8,10 +8,13 @@ function LoginController($scope, $auth, $location, $mixpanel) {
         user.value["key"] = user.path.key;
         user = user.value;
 
+        if (!$scope.global) {
+            $scope.global = {};
+        }
+
         $scope.global.user = user;
         $scope.global.context = {};
         $scope.global.alert = undefined;
-        $scope.global.sessionReady();
         $location.path('/' + user.profile.home);
         $mixpanel.identify(user.key);
         $mixpanel.track('Logged in');

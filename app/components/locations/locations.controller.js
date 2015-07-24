@@ -3,14 +3,14 @@ angular
     .controller('LocationController', LocationController)
     .controller('ChangeLocationController', ChangeLocationController);
 
-function LocationController($stateParams, $location, users) {
+function LocationController($stateParams, $location, leaders) {
 /*
     if ($stateParams.community.key) {
         $location.path('/' + $stateParams.community.key, false)
     }
 */
     this.community = $stateParams.community;
-    this.users = users.data.results;
+    this.leaders = leaders.data.results;
 
     this.charts = {
         people: {},
@@ -38,8 +38,6 @@ function LocationController($stateParams, $location, users) {
         animation: false,
         showScale: false
     };
-
-    this.leaders = this.users;
 }
 
 function ChangeLocationController($state, $modalInstance){

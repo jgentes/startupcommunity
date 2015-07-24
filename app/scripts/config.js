@@ -65,6 +65,7 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                 }],
                 user: ['user_api', '$state', '$mixpanel',
                     function(user_api, $state, $mixpanel) {
+                        console.log('pulling preload user');
                         return user_api.getProfile()
                             .success(function(response) {
                                 if (response.message) {
@@ -89,7 +90,7 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                     }]
             }
         })
-
+        // the root state with core dependencies for injection in child states
         .state('sc', {
             parent: 'preload',
             abstract: true,
@@ -101,13 +102,56 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
             resolve: {
                 community: ['community_api', '$stateParams',
                     function(community_api, $stateParams) {
+                        console.log('pulling sc.community');
                         if (jQuery.isEmptyObject($stateParams.community)) {
                             return community_api.getKey(window.location.pathname.split('/')[1]);
                         }
                     }],
                 communities: ['community_api',
                     function(community_api) {
+                        console.log('pulling sc.communities');
                         return community_api.getCommunity(window.location.pathname.split('/')[1]);
+                    }],
+                sorted_communities: ['communities',
+                    function(communities) {
+                        console.log('pulling sc.sorted_communities');
+
+                        var communities = communities.data,
+                            sorted_locations = {},
+                            sorted_industries = {},
+                            sorted_networks = {};
+
+                        // First determine what type of community we are in using $stateParams, then build community nav items
+                        if (communities[communities.key].type !== "location") {
+                            var locations = findValue(communities, "location");
+                            for (item in locations) {
+                                if (locations[item].key !== "location") {
+                                    sorted_locations[locations[item].key] = locations[item];
+                                }
+                            }
+                        } else {
+                            sorted_locations[communities.key] = communities[communities.key];
+                        }
+
+                        if (communities[communities.key].type !== "industry") {
+                            var industries = findValue(communities, "industry");
+                            for (item in industries) {
+                                sorted_industries[industries[item].key] = industries[item];
+                            }
+                        } else sorted_industries[communities.key] = communities[communities.key];
+
+                        if (communities[communities.key].type !== "network") {
+                            var networks = findValue(communities, "network");
+                            for (item in networks) {
+                                sorted_networks[networks[item].key] = networks[item];
+                            }
+                        } else sorted_networks = {}; // will need to change to support sub-networks
+
+                        return {
+                            locations: sorted_locations,
+                            industries: sorted_industries,
+                            networks: sorted_networks
+                        }
                     }]
             }
         })
@@ -125,8 +169,8 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                 pageTitle: "Location Profile"
             },
             resolve: {
-                users: ['user_api', '$stateParams', function(user_api, $stateParams) {
-                    //todo change to Leader
+                leaders: ['user_api', '$stateParams', function(user_api, $stateParams) {
+                    //todo change to Leaders once I've updated the user records
                     return user_api.getUsers($stateParams.community.key, undefined, undefined, encodeURIComponent(['Advisor']), 30);
                 }],
                 communities: ['community_api', '$state', '$stateParams', 'communities',
@@ -139,20 +183,20 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
 
         // People views
         .state('sc.people', {
+            parent: 'sc',
+            url: "/:community_key",
             abstract: true,
-            templateUrl: "components/common/content/content_small.html"
+            templateUrl: "components/common/content/content_small.html",
+            controller: "ContentController as content"
         })
         .state('sc.people.dashboard', {
-            url: "/:community_key/people",
-            templateUrl: 'views/people/people.dashboard.html',
+            url: "/people",
+            templateUrl: 'components/people/people.dashboard.html',
+            controller: "PeopleController as people",
             params: {
                 community: {},
                 pageTitle: 'People'
-            },
-            community: ['community_api', '$stateParams', 'community',
-                function(community_api, $stateParams, community) {
-                    if ($stateParams.community.key !== communities.data.key) return community_api.getCommunity($stateParams.community.key);
-                }]
+            }
         })
         .state('sc.people.profile', {
             templateUrl: "components/people/people.profile.html",
