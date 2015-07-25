@@ -158,10 +158,13 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
 
         // Location views
         .state('sc.location', {
+            parent: 'sc',
+            url: "/:community_key",
             abstract: true,
             templateUrl: "components/common/content/content_big.html"
         })
         .state('sc.location.dashboard', {
+            url: "",
             templateUrl: 'components/locations/location.dashboard.html',
             controller: "LocationController as loc",
             params: {
@@ -173,9 +176,9 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                     //todo change to Leaders once I've updated the user records
                     return user_api.getUsers($stateParams.community.key, undefined, undefined, encodeURIComponent(['Advisor']), 30);
                 }],
-                communities: ['community_api', '$state', '$stateParams', 'communities',
-                    function(community_api, $state, $stateParams, communities) {
-                        if ($stateParams.community.key !== communities.data.key) return community_api.getCommunity($stateParams.community.key);
+                communities: ['community_api', '$stateParams', 'communities',
+                    function(community_api, $stateParams, communities) {
+                        if ($stateParams.community_key !== communities.data.key) return community_api.getCommunity($stateParams.community_key);
                     }]
 
             }

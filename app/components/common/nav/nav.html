@@ -113,7 +113,7 @@
                 <a href="#"><span class="nav-label">Locations</span><span class="fa arrow"></span> </a>
                 <ul class="nav nav-second-level" ng-class="{in: $state.includes('location')}">
                     <li ui-sref-active="active" ng-repeat="item in nav.locations">
-                        <a href="{{'/' + item.key}}"><i class="fa fa-globe"></i>&nbsp;&nbsp;{{item.profile.name}}</a>
+                        <a ui-sref="sc.location.dashboard({community_key: item.key})"><i class="fa fa-globe"></i>&nbsp;&nbsp;{{item.profile.name}}</a>
                     </li>
                 </ul>
             </li>
@@ -122,7 +122,7 @@
                 <a href="#"><span class="nav-label">Clusters</span><span class="fa arrow"></span> </a>
                 <ul class="nav nav-second-level" ng-class="{in: $state.includes('industry')}">
                     <li ui-sref-active="active" ng-repeat="item in nav.industries">
-                        <a ui-sref="sc.industry.dashboard({community:item})"><i ng-class="'fa ' + item.profile.icon"></i>&nbsp;&nbsp;{{item.profile.name}}</a>
+                        <a ui-sref="sc.industry.dashboard({community_key: item.key})"><i ng-class="'fa ' + item.profile.icon"></i>&nbsp;&nbsp;{{item.profile.name}}</a>
                     </li>
                 </ul>
             </li>
@@ -131,7 +131,7 @@
                 <a href="#"><span class="nav-label">Networks</span><span class="fa arrow"></span> </a>
                 <ul class="nav nav-second-level" ng-class="{in: $state.includes('network')}">
                     <li ui-sref-active="active" ng-repeat="item in nav.networks">
-                        <a ui-sref="sc.network.dashboard({community:item})"><i ng-class="'fa ' + item.profile.icon"></i>&nbsp;&nbsp;{{item.profile.name}}</a>
+                        <a ui-sref="sc.network.dashboard({community_key: item.key})"><i ng-class="'fa ' + item.profile.icon"></i>&nbsp;&nbsp;{{item.profile.name}}</a>
                     </li>
                 </ul>
             </li>
