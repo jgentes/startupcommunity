@@ -2,7 +2,7 @@ angular
     .module('startupcommunity')
     .controller('NavigationController', NavigationController);
 
-function NavigationController($scope, $modal, $stateParams, user, community, sorted_communities) {
+function NavigationController($scope, $state, $modal, $stateParams, user, community, sorted_communities) {
     // reference 'this' by using 'nav' from 'NavigationController as nav'
     window.$scope = $scope; // for console testing to avoid $scope = $('body').scope()
 
@@ -54,5 +54,20 @@ function NavigationController($scope, $modal, $stateParams, user, community, sor
             windowClass: "hmodal-warning"
         });
     };
+
+    switch (community.data.type) {
+        case "user":
+            $state.go('sc.people.profile');
+            break;
+        case "location":
+            $state.go('sc.location.dashboard');
+            break;
+        case "network":
+            $state.go('sc.network.dashboard');
+            break;
+        case "industry":
+            $state.go('sc.industry.dashboard');
+            break;
+    }
 
 }

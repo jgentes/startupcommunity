@@ -148,7 +148,10 @@ function PeopleController($location, user_api, result_api, $sce, community, user
 
 function PeopleProfileController($scope, $stateParams, $location, $auth, $mixpanel, user, user_api) {
 
-    this.user = user.data;
+    if ($stateParams.community) {
+        this.user = $stateParams.community;
+    } else this.user = user.data;
+
     var self = this;
 
     $mixpanel.track('Viewed Profile');

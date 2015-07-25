@@ -9,44 +9,8 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
     // Set default unmatched url state - this runs first for undefined url paths
     $urlRouterProvider.otherwise(
         function($injector) {
-            $injector.invoke(['$state', '$auth', 'community_api', function($state, $auth, community_api) {
-
-                if (!$auth.isAuthenticated()) {
-                    $state.go('login');
-                } else {
-
-                    community_api.getKey(window.location.pathname.split('/')[1])
-                        .then(function(response) {
-
-                            switch (response.data.type) {
-                                case "user":
-                                    $state.go('sc.people.profile', { community : response.data});
-                                    break;
-                                case "location":
-                                    $state.go('sc.location.dashboard', { community : response.data});
-                                    break;
-                                case "network":
-                                    $state.go('sc.network.dashboard', { community : response.data});
-                                    break;
-                                case "industry":
-                                    $state.go('sc.industry.dashboard', { community : response.data});
-                                    break;
-                                default:
-                                    $state.go('404');
-                                    break;
-                            }
-                        })
-                        .catch(function(err){
-                            if (err.status == 404) {
-                                $state.go('404')
-                            } else {
-                                console.log("SEARCH FAIL:");
-                                console.warn(err);
-                            }
-                        });
-                }
-
-
+            $injector.invoke(['$state', function($state) {
+                $state.go('404');
             }]);
         });
 
@@ -93,78 +57,44 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
         // the root state with core dependencies for injection in child states
         .state('sc', {
             parent: 'preload',
-            abstract: true,
+            url: "/:community_key",
             templateUrl: "components/common/nav/nav.html",
             controller: "NavigationController as nav",
             params: {
                 community: {}
             },
             resolve: {
-                community: ['community_api', '$stateParams',
-                    function(community_api, $stateParams) {
+                authenticated: ['$auth', function($auth) {
+                    if (!$auth.isAuthenticated()) {
+                        $state.go('login');
+                    }
+                }],
+                community: ['$stateParams', 'community_api',
+                    function($stateParams, community_api) {
                         console.log('pulling sc.community');
                         if (jQuery.isEmptyObject($stateParams.community)) {
-                            return community_api.getKey(window.location.pathname.split('/')[1]);
+                            return community_api.getKey($stateParams.community_key);
                         }
                     }],
-                communities: ['community_api',
-                    function(community_api) {
+                communities: ['$stateParams', 'community_api',
+                    function($stateParams, community_api) {
                         console.log('pulling sc.communities');
-                        return community_api.getCommunity(window.location.pathname.split('/')[1]);
+                        return community_api.getCommunity($stateParams.community_key);
                     }],
-                sorted_communities: ['communities',
-                    function(communities) {
+                sorted_communities: ['communities', 'community_api',
+                    function(communities, communities_api) {
                         console.log('pulling sc.sorted_communities');
-
-                        var communities = communities.data,
-                            sorted_locations = {},
-                            sorted_industries = {},
-                            sorted_networks = {};
-
-                        // First determine what type of community we are in using $stateParams, then build community nav items
-                        if (communities[communities.key].type !== "location") {
-                            var locations = findValue(communities, "location");
-                            for (item in locations) {
-                                if (locations[item].key !== "location") {
-                                    sorted_locations[locations[item].key] = locations[item];
-                                }
-                            }
-                        } else {
-                            sorted_locations[communities.key] = communities[communities.key];
-                        }
-
-                        if (communities[communities.key].type !== "industry") {
-                            var industries = findValue(communities, "industry");
-                            for (item in industries) {
-                                sorted_industries[industries[item].key] = industries[item];
-                            }
-                        } else sorted_industries[communities.key] = communities[communities.key];
-
-                        if (communities[communities.key].type !== "network") {
-                            var networks = findValue(communities, "network");
-                            for (item in networks) {
-                                sorted_networks[networks[item].key] = networks[item];
-                            }
-                        } else sorted_networks = {}; // will need to change to support sub-networks
-
-                        return {
-                            locations: sorted_locations,
-                            industries: sorted_industries,
-                            networks: sorted_networks
-                        }
+                        return communities_api.sortCommunities(communities);
                     }]
             }
         })
 
         // Location views
         .state('sc.location', {
-            parent: 'sc',
-            url: "/:community_key",
             abstract: true,
             templateUrl: "components/common/content/content_big.html"
         })
         .state('sc.location.dashboard', {
-            url: "",
             templateUrl: 'components/locations/location.dashboard.html',
             controller: "LocationController as loc",
             params: {
@@ -186,8 +116,6 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
 
         // People views
         .state('sc.people', {
-            parent: 'sc',
-            url: "/:community_key",
             abstract: true,
             templateUrl: "components/common/content/content_small.html",
             controller: "ContentController as content"

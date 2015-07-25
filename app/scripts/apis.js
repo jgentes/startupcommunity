@@ -97,6 +97,44 @@ angular
               getKey: function(key) {
                   var urlString = '/api/1.1/key/' + key;
                   return $http.get(urlString);
+              },
+              sortCommunities: function(communities) {
+                  var communities = communities.data,
+                      sorted_locations = {},
+                      sorted_industries = {},
+                      sorted_networks = {};
+
+                  // First determine what type of community we are in using $stateParams, then build community nav items
+                  if (communities[communities.key].type !== "location") {
+                      var locations = findValue(communities, "location");
+                      for (item in locations) {
+                          if (locations[item].key !== "location") {
+                              sorted_locations[locations[item].key] = locations[item];
+                          }
+                      }
+                  } else {
+                      sorted_locations[communities.key] = communities[communities.key];
+                  }
+
+                  if (communities[communities.key].type !== "industry") {
+                      var industries = findValue(communities, "industry");
+                      for (item in industries) {
+                          sorted_industries[industries[item].key] = industries[item];
+                      }
+                  } else sorted_industries[communities.key] = communities[communities.key];
+
+                  if (communities[communities.key].type !== "network") {
+                      var networks = findValue(communities, "network");
+                      for (item in networks) {
+                          sorted_networks[networks[item].key] = networks[item];
+                      }
+                  } else sorted_networks = {}; // will need to change to support sub-networks
+
+                  return {
+                      locations: sorted_locations,
+                      industries: sorted_industries,
+                      networks: sorted_networks
+                  }
               }
           };
       })
