@@ -178,7 +178,6 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
             }
         })
 
-
         // Startup views
         .state('startups', {
             parent: 'root',
@@ -197,6 +196,7 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
         })
         .state('startups.profile', {
             templateUrl: "components/startups/startups.profile.html",
+            controller: "StartupsProfileController as profile",
             parent: 'startups',
             params: {
                 community: {},

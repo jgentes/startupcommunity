@@ -3,140 +3,139 @@ angular
     .controller('StartupsController', StartupsController)
     .controller('StartupProfileController', StartupProfileController);
 
-function StartupsController($scope, $location, angellist_api, result_api, $sce) {
+function StartupsController($location, angellist_api, result_api, $sce, community, user_api, user, sorted_communities) {
 
-    $scope.getStartups = function() {
+    this.community = community;
+    this.user = user.data;
+    this.industries = findKey(sorted_communities.industries, this.community.key);
+    this.networks = findKey(sorted_communities.networks, this.community.key);
+    this.locations = findKey(sorted_communities.locations, this.community.key);
+    this.selectedIndustry = ['*'];
+    this.selectedStage = ['*'];
+    this.selectedNetwork = ['*'];
 
-        angellist_api.getStartups(2300) // need to ask for this going forward or figure out how to resolve it automatically
+    var self = this; // for accessing 'this' in child functions
+
+    var getStartups = function() {
+        angellist_api.getStartups(2300)
             .then(function(response) {
-
-                $scope.startups = response.data;
-                if ($location.$$path == '/search') {
-                    $scope.global.search = response.data;
-                } else { $scope.global.search = undefined }
-            });
+                self.startups = response.data;
+            })
     };
 
-    function getData() {
-        if ($location.$$path == '/startups' || $scope.global.search === undefined) {
-            $scope.getStartups(); // use defaults
-        }
-        $scope.global.context.selectedIndustry = ['*'];
-        $scope.global.context.selectedStage = ['*'];
-        $scope.global.context.selectedNetwork = ['*'];
-        setTitle();
+    getStartups();
 
-        $scope.industries = findKey($scope.global.community.industries, $scope.global.context.location);
-        $scope.networks = findKey($scope.global.community.networks, $scope.global.context.location);
-    }
+    // Title of list box changes based on context
+    var setTitle = function(){
+        var item;
+        self.stage = '';
+        self.industry = '';
 
-    function setTitle() {
-        var item,
-            stage = '',
-            industry = '';
-        if ($scope.global.context.selectedStage[0] == '*') {
-            stage = "Startups";
+        if (self.selectedStage[0] == '*') {
+            self.stage = "Startups";
         } else {
-            for (item in $scope.global.context.selectedStage) {
-                stage += ($scope.global.context.selectedStage[item] + 's');
-                if (item < $scope.global.context.selectedStage.length - 1) {
-                    if (item < $scope.global.context.selectedStage.length - 2 ) {
-                        stage += '</strong>,<strong> ';
-                    } else stage += ' </strong>&<strong> ';
+            for (item in self.selectedStage) {
+                self.stage += (self.selectedStage[item] + 's');
+                if (item < self.selectedStage.length - 1) {
+                    if (item < self.selectedStage.length - 2 ) {
+                        self.stage += '</strong>,<strong> ';
+                    } else self.stage += ' </strong>&<strong> ';
                 }
             }
         }
-        if ($scope.global.context.selectedIndustry[0] == '*') {
-            industry = $scope.global.community.profile.name;
+        if (self.selectedIndustry[0] == '*') {
+            self.industry = self.community.profile.name;
         } else {
             item = 0;
-            for (item in $scope.global.context.selectedIndustry) {
-                industry += $scope.global.context.selectedIndustry[item];
-                if (item < $scope.global.context.selectedIndustry.length - 1) {
-                    if (item < $scope.global.context.selectedIndustry.length - 2 ) {
-                        industry += ', ';
-                    } else industry += ' & ';
+            for (item in self.selectedIndustry) {
+                self.industry += self.selectedIndustry[item];
+                if (item < self.selectedIndustry.length - 1) {
+                    if (item < self.selectedIndustry.length - 2 ) {
+                        self.industry += ', ';
+                    } else self.industry += ' & ';
                 }
             }
         }
-        $scope.title = '<strong>' + stage + '</strong> in ' + industry;
+        self.title = '<strong>' + self.stage + '</strong> in ' + self.industry;
 
-        var pageTitle = $scope.global.community.profile.name;
+        var pageTitle;
 
-        if ($scope.global.context.community && $scope.global.context.location) {
-            pageTitle += '<br><small>' + $scope.global.community.profile.name + '</small>';
+        if (self.community) {
+            pageTitle = self.community.profile.name;
         } else {
-            pageTitle += '<br><small>Welcome ' + ($scope.global.user.profile.name).split(' ')[0] + '!</small>';
+            pageTitle = self.community.profile.name;
         }
 
-        $scope.pageTitle = $sce.trustAsHtml(pageTitle);
-    }
+        if (self.community && self.location) {
+            pageTitle += '<br><small>' + self.community.profile.name + '</small>';
+        } else {
+            pageTitle += '<br><small>Welcome ' + (self.user.profile.name).split(' ')[0] + '!</small>';
+        }
 
-    $scope.filterIndustry = function(industry) {
-        $scope.loadingIndustry = true;
+        self.pageTitle = $sce.trustAsHtml(pageTitle);
+    };
+
+    setTitle();
+
+    this.filterIndustry = function(industry) {
+        self.loadingIndustry = true;
         if (industry == '*') {
-            $scope.global.context.selectedIndustry = ['*'];
+            self.selectedIndustry = ['*'];
         } else {
-            if ($scope.global.context.selectedIndustry.indexOf('*') >= 0) {
-                $scope.global.context.selectedIndustry.splice($scope.global.context.selectedIndustry.indexOf('*'), 1);
+            if (self.selectedIndustry.indexOf('*') >= 0) {
+                self.selectedIndustry.splice(self.selectedIndustry.indexOf('*'), 1);
             }
-            if ($scope.global.context.selectedIndustry.indexOf(industry) < 0) {
-                $scope.global.context.selectedIndustry.push(industry);
-            } else $scope.global.context.selectedIndustry.splice($scope.global.context.selectedIndustry.indexOf(industry), 1);
-            if ($scope.global.context.selectedIndustry.length === 0) {
-                $scope.global.context.selectedIndustry = ['*'];
+            if (self.selectedIndustry.indexOf(industry) < 0) {
+                self.selectedIndustry.push(industry);
+            } else self.selectedIndustry.splice(self.selectedIndustry.indexOf(industry), 1);
+            if (self.selectedIndustry.length === 0) {
+                self.selectedIndustry = ['*'];
             }
         }
 
-        user_api.getUsers($scope.global.context.location, $scope.global.context.community, $scope.global.context.selectedIndustry, $scope.global.context.selectedStage, 30, undefined)
+        user_api.getUsers(self.location, self.community, self.selectedIndustry, self.selectedStage, 30, undefined)
             .then(function(response) {
-                $scope.loadingIndustry = false;
-                $scope.users = result_api.setPage(response.data);
+                self.loadingIndustry = false;
+                self.users = result_api.setPage(response.data);
                 setTitle();
             });
     };
 
-    $scope.search = function(query) {
-        $scope.global.search.tag = query;
-        $scope.global.search.results = undefined;
-        user_api.search($scope.global.user.context, query)
+    this.search = function(query) {
+        self.search.tag = query;
+        self.search.results = undefined;
+        user_api.search(self.user.context, query)
             .then(function(response) {
-                $scope.global.search = result_api.setPage(response.data);
-                $scope.global.search.lastQuery = query;
+                self.search = result_api.setPage(response.data);
+                self.search.lastQuery = query;
                 $location.path('/search');
             });
     };
 
-    $scope.filterStage = function(stage) {
-        $scope.loadingStage = true;
+    this.filterStage = function(stage) {
+        self.loadingStage = true;
         if (stage == '*') {
-            $scope.global.context.selectedStage = ['*'];
+            self.selectedStage = ['*'];
         } else {
-            if ($scope.global.context.selectedStage.indexOf('*') >= 0) {
-                $scope.global.context.selectedStage.splice($scope.global.context.selectedStage.indexOf('*'), 1);
+            if (self.selectedStage.indexOf('*') >= 0) {
+                self.selectedStage.splice(self.selectedStage.indexOf('*'), 1);
             }
-            if ($scope.global.context.selectedStage.indexOf(stage) < 0) {
-                $scope.global.context.selectedStage.push(stage);
-            } else $scope.global.context.selectedStage.splice($scope.global.context.selectedStage.indexOf(stage), 1);
-            if ($scope.global.context.selectedStage.length === 0) {
-                $scope.global.context.selectedStage = ['*'];
+            if (self.selectedStage.indexOf(stage) < 0) {
+                self.selectedStage.push(stage);
+            } else self.selectedStage.splice(self.selectedStage.indexOf(stage), 1);
+            if (self.selectedStage.length === 0) {
+                self.selectedStage = ['*'];
             }
         }
 
-        user_api.getUsers($scope.global.context.location, $scope.global.context.community, $scope.global.context.selectedIndustry, $scope.global.context.selectedStage, 30, undefined)
+        user_api.getUsers(self.location, self.community, self.selectedIndustry, self.selectedStage, 30, undefined)
             .then(function(response) {
-                $scope.loadingStage = false;
-                $scope.users = result_api.setPage(response.data);
+                self.loadingStage = false;
+                self.users = result_api.setPage(response.data);
                 setTitle();
             });
     };
-
-    if (!$scope.global.user || $scope.global.context === undefined) {
-        $scope.$on('sessionReady', function(event, status) {
-            getData();
-        });
-    } else getData();
-
+  
 }
 
 function StartupProfileController($scope, $state, user_api, community_api, $location, $auth, $mixpanel) {
@@ -187,7 +186,7 @@ function StartupProfileController($scope, $state, user_api, community_api, $loca
 
     var getActivity = function() {
 
-        var activities = findKey($state.params.community.communities, "roles", ["leader", "advisor", "investor", "founder"], {}),
+        var activities = findKey($state.params.community.communities, "stages", ["leader", "advisor", "investor", "founder"], {}),
             list = Object.keys(activities);
 
         community_api.getActivity(list)
