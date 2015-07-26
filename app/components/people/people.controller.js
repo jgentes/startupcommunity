@@ -148,8 +148,8 @@ function PeopleController($location, user_api, result_api, $sce, community, user
 
 function PeopleProfileController($scope, $stateParams, $location, $auth, $mixpanel, user, user_api) {
 
-    if ($stateParams.community) {
-        this.user = $stateParams.community;
+    if (!jQuery.isEmptyObject($stateParams.user)) {
+        this.user = $stateParams.user;
     } else this.user = user.data;
 
     var self = this;

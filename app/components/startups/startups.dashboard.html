@@ -118,10 +118,10 @@
                 <div ng-show="global.search.tag" style="text-align: center" ng-cloak><h2><br/>Searching for {{global.search.tag}}..</h2></div>
                 <div ng-repeat="item in startups" ng-switch on="$index % 2">
                     <div class="col-md-6" ng-switch-when="0">
-                        <div class="row"  ng-include="'views/startups/startups.list.html'"></div>
+                        <div class="row"  ng-include="'components/startups/startups.list.html'"></div>
                     </div>
                     <div class="col-md-6" ng-switch-when="1">
-                        <div class="row"  ng-include="'views/startups/startups.list.html'"></div>
+                        <div class="row"  ng-include="'components/startups/startups.list.html'"></div>
                     </div>
                 </div>
             </div>

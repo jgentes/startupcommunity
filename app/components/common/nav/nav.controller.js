@@ -34,7 +34,7 @@ function NavigationController($scope, $state, $location, $modal, $stateParams, u
 
     this.user.profile["roles"] = rolelist;
 
-    $scope.maploc = this.community.profile.name;
+    this.maploc = this.community.profile.name;
 
     if (!$scope.global) {
         $scope.global = {
@@ -49,7 +49,7 @@ function NavigationController($scope, $state, $location, $modal, $stateParams, u
 
     $scope.changeLocation = function() {
         var modalInstance = $modal.open({
-            templateUrl: 'views/common/change_location.html',
+            templateUrl: 'components/common/nav/nav.change_location.html',
             controller: ChangeLocationController,
             windowClass: "hmodal-warning"
         });

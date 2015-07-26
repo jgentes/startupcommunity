@@ -153,15 +153,6 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
             templateUrl: "components/common/content/content_small.html",
             controller: "ContentController as content"
         })
-        .state('people.dashboard', {
-            url: "/people",
-            templateUrl: 'components/people/people.dashboard.html',
-            controller: "PeopleController as people",
-            params: {
-                community: {},
-                pageTitle: 'People'
-            }
-        })
         .state('people.profile', {
             templateUrl: "components/people/people.profile.html",
             controller: 'PeopleProfileController as profile',
@@ -177,24 +168,35 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                 }]
             }
         })
-
+        .state('people.dashboard', {
+            url: "/people",
+            templateUrl: 'components/people/people.dashboard.html',
+            controller: "PeopleController as people",
+            params: {
+                community: {},
+                pageTitle: 'People'
+            }
+        })
 
 
         // Startup views
         .state('startups', {
+            parent: 'root',
             abstract: true,
-            templateUrl: "components/common/content/content_small.html"
+            templateUrl: "components/common/content/content_small.html",
+            controller: "ContentController as content"
         })
         .state('startups.dashboard', {
             url: "/startups",
-            templateUrl: 'views/startups/startups.dashboard.html',
+            templateUrl: 'components/startups/startups.dashboard.html',
+            controller: "StartupsController as startups",
             params: {
                 community: {},
                 pageTitle: 'Startups'
             }
         })
         .state('startups.profile', {
-            templateUrl: "views/startups/startups.profile.html",
+            templateUrl: "components/startups/startups.profile.html",
             parent: 'startups',
             params: {
                 community: {},
@@ -211,11 +213,13 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
 
         // Industry views
         .state('industry', {
+            parent: "root",
             abstract: true,
-            templateUrl: "components/common/content/content_big.html"
+            templateUrl: "components/common/content/content_big.html",
+            controller: "ContentController as content"
         })
         .state('industry.dashboard', {
-            templateUrl: 'views/industries/industry.dashboard.html',
+            templateUrl: 'components/industries/industry.dashboard.html',
             params: {
                 community: {},
                 pageTitle: "Industry Profile"
@@ -231,8 +235,10 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
 
         // Network views
         .state('network', {
+            parent: "root",
             abstract: true,
-            templateUrl: "components/common/content/content_big.html"
+            templateUrl: "components/common/content/content_big.html",
+            controller: "ContentController as content"
         })
         .state('network.dashboard', {
             templateUrl: 'views/networks/network.dashboard.html',
