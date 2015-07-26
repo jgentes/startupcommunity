@@ -2,7 +2,7 @@ angular
     .module('startupcommunity')
     .controller('NavigationController', NavigationController);
 
-function NavigationController($scope, $state, $modal, $stateParams, user, community, sorted_communities) {
+function NavigationController($scope, $state, $location, $modal, $stateParams, user, community, sorted_communities) {
     // reference 'this' by using 'nav' from 'NavigationController as nav'
     window.$scope = $scope; // for console testing to avoid $scope = $('body').scope()
 
@@ -55,19 +55,21 @@ function NavigationController($scope, $state, $modal, $stateParams, user, commun
         });
     };
 
-    switch (community.type) {
-        case "user":
-            $state.go('sc.people.profile');
-            break;
-        case "location":
-            $state.go('sc.location.dashboard');
-            break;
-        case "network":
-            $state.go('sc.network.dashboard');
-            break;
-        case "industry":
-            $state.go('sc.industry.dashboard');
-            break;
+    this.path = $location.path(); //also used in view
+    if (this.path.split('/').length < 3) { //only for root routes
+        switch (community.type) {
+            case "user":
+                $state.go('people.profile');
+                break;
+            case "location":
+                $state.go('location.dashboard');
+                break;
+            case "network":
+                $state.go('network.dashboard');
+                break;
+            case "industry":
+                $state.go('industry.dashboard');
+                break;
+        }
     }
-
 }

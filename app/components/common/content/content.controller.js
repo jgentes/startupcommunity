@@ -3,5 +3,5 @@ angular
     .controller('ContentController', ContentController);
 
 function ContentController(community) {
-    this.community = community.data;
+    this.community = community;
 }

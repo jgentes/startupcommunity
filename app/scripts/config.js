@@ -89,7 +89,7 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
         })
 
         // the root state with core dependencies for injection in child states
-        .state('sc', {
+        .state('root', {
             parent: 'preload',
             url: "/:community_key",
             templateUrl: "components/common/nav/nav.html",
@@ -105,7 +105,7 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                 }],
                 communities: ['$stateParams', 'community_api',
                     function($stateParams, community_api) {
-                        console.log('pulling sc.communities');
+                        console.log('pulling communities');
                         return community_api.getCommunity($stateParams.community_key);
                     }],
                 sorted_communities: ['communities', 'community_api',
@@ -120,11 +120,13 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
         })
 
         // Location views
-        .state('sc.location', {
+        .state('location', {
+            parent: "root",
             abstract: true,
-            templateUrl: "components/common/content/content_big.html"
+            templateUrl: "components/common/content/content_big.html",
+            controller: "ContentController as content"
         })
-        .state('sc.location.dashboard', {
+        .state('location.dashboard', {
             templateUrl: 'components/locations/location.dashboard.html',
             controller: "LocationController as loc",
             params: {
@@ -145,12 +147,13 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
         })
 
         // People views
-        .state('sc.people', {
+        .state('people', {
+            parent: 'root',
             abstract: true,
             templateUrl: "components/common/content/content_small.html",
             controller: "ContentController as content"
         })
-        .state('sc.people.dashboard', {
+        .state('people.dashboard', {
             url: "/people",
             templateUrl: 'components/people/people.dashboard.html',
             controller: "PeopleController as people",
@@ -159,7 +162,7 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                 pageTitle: 'People'
             }
         })
-        .state('sc.people.profile', {
+        .state('people.profile', {
             templateUrl: "components/people/people.profile.html",
             controller: 'PeopleProfileController as profile',
             params: {
@@ -274,7 +277,17 @@ angular
 
     .run(function($rootScope, $state) {
         $rootScope.$state = $state;
-        $rootScope.$on("$stateChangeError", console.log.bind(console)) // for debugging of ui-router
+        // for debugging of ui-router
+        $rootScope.$on("$stateChangeError", console.log.bind(console));
+        /*
+        $rootScope.$on('$stateChangeStart',
+            function(event, toState, toParams, fromState, fromParams){
+                console.log('from: ')
+                console.log(fromState);
+                console.log('to:');
+                console.log(toState);
+            })
+        */
     })
 
 

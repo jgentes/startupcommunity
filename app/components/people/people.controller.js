@@ -6,7 +6,7 @@ angular
 
 function PeopleController($location, user_api, result_api, $sce, community, user, sorted_communities) {
 
-    this.community = community.data;
+    this.community = community;
     this.user = user.data;
     this.industries = findKey(sorted_communities.industries, this.community.key);
     this.networks = findKey(sorted_communities.networks, this.community.key);
