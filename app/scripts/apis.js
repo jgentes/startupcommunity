@@ -99,8 +99,7 @@ angular
                   return $http.get(urlString);
               },
               sortCommunities: function(communities) {
-                  var communities = communities.data,
-                      sorted_locations = {},
+                  var sorted_locations = {},
                       sorted_industries = {},
                       sorted_networks = {};
 

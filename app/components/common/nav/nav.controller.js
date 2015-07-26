@@ -9,7 +9,7 @@ function NavigationController($scope, $state, $modal, $stateParams, user, commun
     this.user = user.data;
 
     if (jQuery.isEmptyObject($stateParams.community)) {
-        this.community = community.data;
+        this.community = community;
     } else this.community = $stateParams.community;
 
     this.locations = sorted_communities.locations;
@@ -55,7 +55,7 @@ function NavigationController($scope, $state, $modal, $stateParams, user, commun
         });
     };
 
-    switch (community.data.type) {
+    switch (community.type) {
         case "user":
             $state.go('sc.people.profile');
             break;

@@ -6,15 +6,6 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
     $locationProvider
         .html5Mode(true);
 
-    // Set default unmatched url state - this runs first for undefined url paths
-    $urlRouterProvider.otherwise(
-        function($injector) {
-            $injector.invoke(['$state', function($state) {
-                $state.go('404');
-            }]);
-        });
-
-
     $stateProvider
 
         // preload is run once
@@ -54,6 +45,49 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                     }]
             }
         })
+
+        .state('search', {
+            templateUrl: 'views/search.html',
+            url: "/search",
+            resolve: {
+                authenticated: ['$auth', function($auth) {
+                    if (!$auth.isAuthenticated()) {
+                        $state.go('login');
+                    }
+                }]
+            }
+        })
+        .state('invite', {
+            templateUrl: '../views/invite_people.html',
+            url: "/people/invite",
+            resolve: {
+                authenticated: ['$auth', function($auth) {
+                    if (!$auth.isAuthenticated()) {
+                        $state.go('login');
+                    }
+                }]
+            }
+        })
+        .state('login', {
+            url: "/login",
+            params: {
+                error: {}
+            },
+            templateUrl: 'components/common/auth/login.html'
+        })
+        .state('logout', {
+            url: "/logout",
+            params: {
+                error: {}
+            },
+            onEnter: function($auth, $stateParams, $state) {
+                $auth.logout()
+                    .then(function() {
+                        $state.go('login', {error: $stateParams.error});
+                    });
+            }
+        })
+
         // the root state with core dependencies for injection in child states
         .state('sc', {
             parent: 'preload',
@@ -69,13 +103,6 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                         $state.go('login');
                     }
                 }],
-                community: ['$stateParams', 'community_api',
-                    function($stateParams, community_api) {
-                        console.log('pulling sc.community');
-                        if (jQuery.isEmptyObject($stateParams.community)) {
-                            return community_api.getKey($stateParams.community_key);
-                        }
-                    }],
                 communities: ['$stateParams', 'community_api',
                     function($stateParams, community_api) {
                         console.log('pulling sc.communities');
@@ -83,8 +110,11 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                     }],
                 sorted_communities: ['communities', 'community_api',
                     function(communities, communities_api) {
-                        console.log('pulling sc.sorted_communities');
-                        return communities_api.sortCommunities(communities);
+                        return communities_api.sortCommunities(communities.data);
+                    }],
+                community: ['$stateParams', 'communities',
+                    function($stateParams, communities) {
+                        return communities.data[$stateParams.community_key];
                     }]
             }
         })
@@ -145,47 +175,7 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
             }
         })
 
-        .state('search', {
-            templateUrl: 'views/search.html',
-            url: "/search",
-            resolve: {
-                authenticated: ['$auth', function($auth) {
-                    if (!$auth.isAuthenticated()) {
-                        $state.go('login');
-                    }
-                }]
-            }
-        })
-        .state('invite', {
-            templateUrl: '../views/invite_people.html',
-            url: "/people/invite",
-            resolve: {
-                authenticated: ['$auth', function($auth) {
-                    if (!$auth.isAuthenticated()) {
-                        $state.go('login');
-                    }
-                }]
-            }
-        })
-        .state('login', {
-            url: "/login",
-            params: {
-                error: {}
-            },
-            templateUrl: 'components/common/auth/login.html'
-        })
-        .state('logout', {
-            url: "/logout",
-            params: {
-                error: {}
-            },
-            onEnter: function($auth, $stateParams, $state) {
-                $auth.logout()
-                    .then(function() {
-                        $state.go('login', {error: $stateParams.error});
-                    });
-            }
-        })
+
 
         // Startup views
         .state('startups', {
@@ -260,7 +250,15 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
             templateUrl: "components/common/errors/404.html"
         });
 
-}
+    // Set default unmatched url state - this runs first for undefined url paths
+    $urlRouterProvider.otherwise(
+        function($injector) {
+            $injector.invoke(['$state', function($state) {
+                $state.go('404');
+            }]);
+        });
+
+    }
 
 
 angular
