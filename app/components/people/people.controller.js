@@ -146,10 +146,12 @@ function PeopleController($location, user_api, result_api, $sce, community, user
 
 }
 
-function PeopleProfileController($scope, $stateParams, $location, $auth, $mixpanel, user, user_api) {
+function PeopleProfileController($scope, $stateParams, $location, $auth, $mixpanel, user, user_api, community) {
 
     if (!jQuery.isEmptyObject($stateParams.user)) {
         this.user = $stateParams.user;
+    } else if (community.data && community.data.type == "user") {
+        this.user = community.data;
     } else this.user = user.data;
 
     var self = this;

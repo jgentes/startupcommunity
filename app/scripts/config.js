@@ -112,9 +112,13 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                     function(communities, communities_api) {
                         return communities_api.sortCommunities(communities.data);
                     }],
-                community: ['$stateParams', 'communities',
-                    function($stateParams, communities) {
-                        return communities.data[$stateParams.community_key];
+                community: ['$stateParams', 'communities', 'community_api',
+                    function($stateParams, communities, community_api) {
+                        console.log('community key');
+                        console.log($stateParams.community_key);
+                        if (communities.data[$stateParams.community_key]) { // users and startups won't exist in communities
+                            return communities.data[$stateParams.community_key];
+                        } else return community_api.getCommunity(undefined, $stateParams.community_key);
                     }]
             }
         })
@@ -157,7 +161,7 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
             templateUrl: "components/people/people.profile.html",
             controller: 'PeopleProfileController as profile',
             params: {
-                community: {},
+                user: {},
                 pageTitle: 'User Profile'
             },
             resolve: {

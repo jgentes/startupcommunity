@@ -13,8 +13,11 @@ function handleGetStartups(req, res) {
 
     request.get({ url: 'https://api.angel.co/1/tags/' + req.query.id + '/startups?access_token=' + config.angellist.clientToken },
         function(error, response, body) {
-            console.log(error);
-            if (!body.status || body.status === 200) {
+            if (error) {
+                console.log('AngelList API ERROR');
+                console.log(error);
+                res.status(400).send({ message: 'Something went wrong: ' + error});
+            } else if (!body.status || body.status === 200) {
                 var results = JSON.parse(body),
                     newresponse = [],
                     s;
@@ -25,13 +28,8 @@ function handleGetStartups(req, res) {
                     }
                 }
                 res.status(200).send(newresponse);
-            } else {
-                console.error('Error: ' + body.message);
-                console.log(body);
-                res.status(400).send({ message: 'Something went wrong: ' + err});
             }
         });
-
 }
 
 function handleGetStartup(req, res) {
