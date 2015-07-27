@@ -13,7 +13,7 @@ function handleGetStartups(req, res) {
 
     request.get({ url: 'https://api.angel.co/1/tags/' + req.query.id + '/startups?access_token=' + config.angellist.clientToken },
         function(error, response, body) {
-            console.log(response);
+            console.log(error);
             if (!body.status || body.status === 200) {
                 var results = JSON.parse(body),
                     newresponse = [],

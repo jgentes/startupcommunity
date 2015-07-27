@@ -400,14 +400,14 @@ footer, .push {
 }
 
 #side-menu li {
-  //.border-bottom
+  //list-style: none;
 }
 
 #side-menu li:first-child {
   //border-top: 1px solid @border-color;
 }
 
-#side-menu li.active a, #side-menu li:hover a {
+#side-menu li.active a, #side-menu li:hover {
   color: #999;
 }
 
@@ -422,11 +422,43 @@ footer, .push {
   color: #888;
 }
 
-#side-menu li .nav-second-level li.active a {
+#side-menu li .nav-second-level li a.active {
   color: #777;
   border-left: 3px solid #82BC4B;
   background-color: #F6F8F9;
 }
+
+#side-menu li .nav-second-level li:hover {
+  color: #999;
+}
+
+#side-menu li .nav-second-level li ul li {
+  // this is for people and startups sub-nav links
+  margin-left: -40px;
+  padding: 5px 0 5px 20px;
+  border-left: 3px solid #eee;
+}
+
+#side-menu li .nav-second-level li ul li.active {
+  color: #777;
+  border-left: 3px solid #82BC4B;
+  background-color: #F6F8F9;
+}
+
+#side-menu li .nav-second-level li ul li:hover {
+  background-color: #eee;
+  cursor: pointer;
+}
+
+#side-menu li .nav-second-level li ul li:last-child {
+  padding-bottom: 10px;
+}
+
+#side-menu li .nav-second-level li ul li a i {
+  font-size: 11px;
+  color: #bbb;
+}
+
 
 #side-menu.nav > li > a:hover, #side-menu.nav > li > a:focus {
   background: #fff;
