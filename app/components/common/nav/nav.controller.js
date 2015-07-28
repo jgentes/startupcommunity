@@ -12,9 +12,15 @@ function NavigationController($scope, $state, $location, $modal, $stateParams, u
         this.community = community;
     } else this.community = $stateParams.community;
 
-    this.locations = sorted_communities.locations;
-    this.industries = sorted_communities.industries;
-    this.networks = sorted_communities.networks;
+    if (!jQuery.isEmptyObject(sorted_communities.locations)) {
+        this.locations = sorted_communities.locations;
+    }
+    if (!jQuery.isEmptyObject(sorted_communities.industries)) {
+        this.industries = sorted_communities.industries;
+    }
+    if (!jQuery.isEmptyObject(sorted_communities.networks)) {
+        this.networks = sorted_communities.networks;
+    }
 
     // Roles displayed in user profile
     var roles = findKey(this.user.communities, "roles"),

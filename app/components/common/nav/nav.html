@@ -69,7 +69,7 @@
 
         <ul side-navigation class="nav" id="side-menu">
 
-            <li class="active">
+            <li class="active" ng-if="nav.locations">
                 <a href="#"><span class="nav-label">Locations</span><span class="fa arrow"></span> </a>
                 <ul class="nav nav-second-level">
                     <li ng-repeat="item in nav.locations">
@@ -79,7 +79,7 @@
                 </ul>
             </li>
 
-            <li class="active">
+            <li class="active" ng-if="nav.industries">
                 <a href="#"><span class="nav-label">Clusters</span><span class="fa arrow"></span> </a>
                 <ul class="nav nav-second-level">
                     <li ng-repeat="item in nav.industries" ng-class="{active: nav.path.includes(item.key)}">
@@ -89,7 +89,7 @@
                 </ul>
             </li>
 
-            <li class="active">
+            <li class="active" ng-if="nav.networks">
                 <a href="#"><span class="nav-label">Networks</span><span class="fa arrow"></span> </a>
                 <ul class="nav nav-second-level">
                     <li ng-repeat="item in nav.networks" ng-class="{active: nav.path.includes(item.key)}">
