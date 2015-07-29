@@ -978,7 +978,7 @@ function handleUnlink(req, res) {
 
 
 function handleMaintenance(req, res) {
-    var enabled = false;
+    var enabled = true;
     var startKey = '';
     var userlist = [];
 
@@ -992,10 +992,6 @@ function handleMaintenance(req, res) {
 
                   var newdata = {
                       "type": "user",
-                      "context": {
-                          "location": "bend-or",
-                          "community": ""
-                      },
                       "profile": {
                           "name": data.body.results[item].value.name,
                           "email": data.body.results[item].value.email,
@@ -1003,32 +999,16 @@ function handleMaintenance(req, res) {
                           "linkedin": data.body.results[item].value.linkedin
                       },
                       "communities": {
-                          "usa": {
-                              "oregon": {
-                                  "deschutes-or": {
-                                      "bend-or": {
-                                          "type" : "location",
-                                          "parent" : "deschutes-or",
-                                          "profile" : {
-                                              "country" : "United States",
-                                              "state" : "Oregon",
-                                              "county" : "Deschutes",
-                                              "city" : "Bend",
-                                              "name" : "Bend, OR"
-                                          },
-                                          "roles": [
-                                              "advisor"
-                                          ]
-                                      }
-                                  }
-                              }
+                          "bend-or": {
+                              "roles": [
+                                  "advisor"
+                              ]
                           }
                       }
-
                   };
 
                   console.log('Adding record..');
-                  db.post('communities-dev', newdata);
+                  db.post('communities-flat', newdata);
               }
 
               if (data.body.next) {
