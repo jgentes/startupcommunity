@@ -81,13 +81,8 @@ angular
 
       .factory('community_api', function($http) {
           return {
-              getCommunity: function(location, community) {
-                  var urlString = '/api/1.1/community/';
-                  if (location && community) {
-                      urlString += community + '?location=' + location;
-                  } else {
-                      urlString += (location || community);
-                  }
+              getCommunity: function(community) {
+                  var urlString = '/api/1.1/community/' + community;
                   return $http.get(urlString);
               },
               getActivity: function(keys) {

@@ -146,7 +146,7 @@ function PeopleController($location, user_api, result_api, $sce, community, user
 
 }
 
-function PeopleProfileController($scope, $stateParams, $location, $auth, $mixpanel, user, user_api, community) {
+function PeopleProfileController($scope, $stateParams, $location, $auth, $mixpanel, user, user_api, community, communities) {
 
     if (!jQuery.isEmptyObject($stateParams.user)) {
         this.user = $stateParams.user;
@@ -155,6 +155,7 @@ function PeopleProfileController($scope, $stateParams, $location, $auth, $mixpan
     } else this.user = user.data;
 
     var self = this;
+    this.communities = communities.data;
 
     $mixpanel.track('Viewed Profile');
 
@@ -200,23 +201,33 @@ function PeopleProfileController($scope, $stateParams, $location, $auth, $mixpan
         } else notify({title: "See our <a href='http://startupcommunity.readme.io?appkey=" + api_key + "' target='_blank'>API documentation</a> for help using your key:", message: "<pre>" + api_key + "</pre>"});
     };
 
-    var activities = findKey(this.user.communities, "roles"),
-        activity = {};
+    var activity = {};
 
-    for (var j in activities) {
-        if (activities[j].roles.indexOf('advisor') > -1) {
+    for (i in this.user.communities) {
+        var roles = [];
+        if (communities.data[i].type == "location" || communities.data[i].type == "startup") {
+            roles = this.user.communities[i].roles;
+        } else {
+            for (j in this.user.communities[i]) {
+                if (angular.isObject(this.user.communities[i][j])) {
+                    roles = this.user.communities[i][j].roles;
+                }
+            }
+        }
+
+        if (roles.indexOf('advisor') > -1) {
             activity.advisor = activity.advisor || {};
-            activity.advisor[activities[j].key] = activities[j];
-        } else if (activities[j].roles.indexOf('leader') > -1) {
+            activity.advisor[i] = communities.data[i];
+        } else if (roles.indexOf('leader') > -1) {
             activity.leader = activity.leader || {};
-            activity.leader[activities[j].key] = activities[j];
-        } else if (activities[j].roles.indexOf('investor') > -1) {
+            activity.leader[i] = communities.data[i];
+        } else if (roles.indexOf('investor') > -1) {
             activity.investor = activity.investor || {};
-            activity.investor[activities[j].key] = activities[j];
-        } else if (activities[j].roles.indexOf('founder') > -1) {
+            activity.investor[i] = communities.data[i];
+        } else if (roles.indexOf('founder') > -1) {
             activity.founder = activity.founder || {};
-            activity.founder[activities[j].key] = activities[j];
-        };
+            activity.founder[i] = communities.data[i];
+        }
     }
 
     this.activity = activity;

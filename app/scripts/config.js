@@ -114,11 +114,10 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                     }],
                 community: ['$stateParams', 'communities', 'community_api',
                     function($stateParams, communities, community_api) {
-                        console.log('community key');
-                        console.log($stateParams.community_key);
+                        console.log('pulling community');
                         if (communities.data[$stateParams.community_key]) { // users and startups won't exist in communities
                             return communities.data[$stateParams.community_key];
-                        } else return community_api.getCommunity(undefined, $stateParams.community_key);
+                        } else return community_api.getCommunity($stateParams.community_key);
                     }]
             }
         })

@@ -95,36 +95,57 @@ function handleGetActivity(req, res) {
 }
 
 function handleGetCommunity(req, res) {
-    var community = req.params.community,
-        location = req.query.location;
+    var community = req.params.community;
 
-    var searchString = '@path.key: ' + (community || location); // grab the primary community object
-
-    if (location && community)
-    {
-        searchString += ' OR (communities.*' + location + '.' + community + '.*:*)'; // grab anything associated with this community in this location
-    } else {
-        searchString += ' OR (communities.*' + community + '.*:*)'; // grab anything in this location
-    }
-
-    searchString += ' AND NOT (type:startup OR type:user)'
+    var searchString = '@path.key: ' + community; // grab the primary community object, don't use parens here
+    searchString += ' OR (communities: "' + community + '"'; // + grab anything associated with this community in this location
+    searchString += ' AND NOT type:("startup OR user"))'; // exclude startups and users
 
     function pullCommunity() {
-        var startKey = 0;
 
         db.newSearchBuilder()
           .collection(config.db.collections.communities)
           .limit(100)
-          .offset(startKey)
+          .offset(0)
           .query(searchString)
           .then(function (result) {
                 var newresponse = {};
-              if (result.body.results.length > 0) {
-                  for (item in result.body.results) {
-                      newresponse[result.body.results[item].path.key] = result.body.results[item].value;
-                  }
-                  newresponse["key"] = (community || location);
-                  res.status(200).send(newresponse);
+
+                var finalize = function(results) {
+                    for (item in results) {
+                        newresponse[results[item].path.key] = results[item].value;
+                    }
+                    newresponse["key"] = community;
+                    res.status(200).send(newresponse);
+                };
+
+                if (result.body.results.length > 0) {
+                  if (result.body.results[0].value.type == "user") { // user contains communities within record
+                      console.log('Pulling user community..');
+                      var comm_items = [];
+                      for (key in result.body.results[0].value.communities) {
+                          comm_items.push(key);
+                      }
+
+                      var search = community + " OR ";
+                      for (i in comm_items) {
+                          if (i > 0) {
+                              search += ' OR ';
+                          }
+                          search += comm_items[i];
+                      }
+
+                      db.newSearchBuilder()
+                          .collection(config.db.collections.communities)
+                          .limit(100)
+                          .offset(0)
+                          .query("@path.key: (" + search + ")")
+                          .then(function (result) {
+                              finalize(result.body.results);
+                          })
+
+                  } else finalize(result.body.results);
+
               } else {
                   console.warn('Community not found!');
                   res.status(400).send({message: 'Community not found.'});
