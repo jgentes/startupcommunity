@@ -979,7 +979,7 @@ function handleUnlink(req, res) {
 
 function handleMaintenance(req, res) {
     var enabled = true;
-    var startKey = '';
+    var startKey = 0;
     var userlist = [];
 
     function getList(startKey, userlist) {
@@ -1008,12 +1008,12 @@ function handleMaintenance(req, res) {
                   };
 
                   console.log('Adding record..');
-                  db.post('communities-flat', newdata);
+                  //db.post('test', newdata);
               }
 
               if (data.body.next) {
-                  var nextkey = url.parse(data.body.next).query;
-                  startKey = nextkey.substr(18, nextkey.length - 18);
+                  var afterkey = (url.parse(data.body.next).query).split('afterKey=')[1];
+                  startKey = afterkey.substring(0, afterkey.length - 9);
                   console.log('Getting next group..' + startKey);
                   getList(startKey, userlist);
               } else {
