@@ -7,9 +7,9 @@ function StartupsController($location, angellist_api, result_api, $sce, communit
 
     this.community = community;
     this.user = user.data;
-    this.industries = findKey(sorted_communities.industries, this.community.key);
-    this.networks = findKey(sorted_communities.networks, this.community.key);
-    this.locations = findKey(sorted_communities.locations, this.community.key);
+    this.industries = sorted_communities.industries;
+    this.networks = sorted_communities.networks;
+    this.locations = sorted_communities.locations;
     this.selectedIndustry = ['*'];
     this.selectedStage = ['*'];
     this.selectedNetwork = ['*'];

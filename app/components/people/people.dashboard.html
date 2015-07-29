@@ -56,8 +56,8 @@
                         <li>
                             <hr style="margin: 10px 0 10px 0;">
                         </li>
-                        <li ng-repeat="industry in people.industries" ng-class="{'active':people.selectedIndustry.indexOf(industry[people.community.key].profile.name) >= 0}" ng-click="filterIndustry(industry[people.community.key].profile.name);">
-                            <a><i class="fa {{industry[people.community.key].profile.icon}}"></i> {{industry[people.community.key].profile.name}}</a>
+                        <li ng-repeat="industry in people.industries" ng-class="{'active':people.selectedIndustry.indexOf(industry.profile.name) >= 0}" ng-click="filterIndustry(industry.profile.name);">
+                            <a><i class="fa {{industry.profile.icon}}"></i> {{industry.profile.name}}</a>
                         </li>
                     </ul>
                 </div>
@@ -77,8 +77,8 @@
                         <li>
                             <hr style="margin: 10px 0 10px 0;">
                         </li>
-                        <li ng-repeat="network in people.networks" ng-class="{'active':people.selectedNetwork.indexOf(network[people.community.key].profile.name) >= 0}" ng-click="filterNetwork(network[people.community.key].profile.name);">
-                            <a><i class="fa {{network[people.community.key].profile.icon}}"></i> {{network[people.community.key].profile.name}}</a>
+                        <li ng-repeat="network in people.networks" ng-class="{'active':people.selectedNetwork.indexOf(network.profile.name) >= 0}" ng-click="filterNetwork(network.profile.name);">
+                            <a><i class="fa {{network.profile.icon}}"></i> {{network.profile.name}}</a>
                         </li>
                     </ul>
                 </div>

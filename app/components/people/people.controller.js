@@ -8,9 +8,9 @@ function PeopleController($location, user_api, result_api, $sce, community, user
 
     this.community = community;
     this.user = user.data;
-    this.industries = findKey(sorted_communities.industries, this.community.key);
-    this.networks = findKey(sorted_communities.networks, this.community.key);
-    this.locations = findKey(sorted_communities.locations, this.community.key);
+    this.industries = sorted_communities.industries;
+    this.networks = sorted_communities.networks;
+    this.locations = sorted_communities.locations;
     this.selectedIndustry = ['*'];
     this.selectedRole = ['*'];
     this.selectedNetwork = ['*'];
@@ -201,19 +201,16 @@ function PeopleProfileController($scope, $stateParams, $location, $auth, $mixpan
         } else notify({title: "See our <a href='http://startupcommunity.readme.io?appkey=" + api_key + "' target='_blank'>API documentation</a> for help using your key:", message: "<pre>" + api_key + "</pre>"});
     };
 
-    var activity = {};
+    var activity = {},
+        context;
+
+    (community.data && community.data.type == "location") ? context = community.data.key : context = this.user.profile.home;
 
     for (i in this.user.communities) {
         var roles = [];
         if (communities.data[i].type == "location" || communities.data[i].type == "startup") {
             roles = this.user.communities[i].roles;
-        } else {
-            for (j in this.user.communities[i]) {
-                if (angular.isObject(this.user.communities[i][j])) {
-                    roles = this.user.communities[i][j].roles;
-                }
-            }
-        }
+        } else roles = this.user.communities[i][context].roles;
 
         if (roles.indexOf('advisor') > -1) {
             activity.advisor = activity.advisor || {};
