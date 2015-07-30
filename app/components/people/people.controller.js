@@ -201,29 +201,25 @@ function PeopleProfileController($scope, $stateParams, $location, $auth, $mixpan
         } else notify({title: "See our <a href='http://startupcommunity.readme.io?appkey=" + api_key + "' target='_blank'>API documentation</a> for help using your key:", message: "<pre>" + api_key + "</pre>"});
     };
 
-    var activity = {},
-        context;
-
-    (community.data && community.data.type == "location") ? context = community.data.key : context = this.user.profile.home;
+    var activity = {};
 
     for (i in this.user.communities) {
-        var roles = [];
-        if (communities.data[i].type == "location" || communities.data[i].type == "startup") {
-            roles = this.user.communities[i].roles;
-        } else roles = this.user.communities[i][context].roles;
 
-        if (roles.indexOf('advisor') > -1) {
-            activity.advisor = activity.advisor || {};
-            activity.advisor[i] = communities.data[i];
-        } else if (roles.indexOf('leader') > -1) {
-            activity.leader = activity.leader || {};
+        if (this.user.communities[i].leader) {
+            if (!activity.leader) activity.leader = {};
             activity.leader[i] = communities.data[i];
-        } else if (roles.indexOf('investor') > -1) {
-            activity.investor = activity.investor || {};
-            activity.investor[i] = communities.data[i];
-        } else if (roles.indexOf('founder') > -1) {
-            activity.founder = activity.founder || {};
+        }
+        if (this.user.communities[i].founder) {
+            if (!activity.founder) activity.founder = {};
             activity.founder[i] = communities.data[i];
+        }
+        if (this.user.communities[i].investor ) {
+            if (!activity.investor) activity.investor = {};
+            activity.investor[i] = communities.data[i];
+        }
+        if (this.user.communities[i].advisor ) {
+            if (!activity.advisor) activity.advisor = {};
+            activity.advisor[i] = communities.data[i];
         }
     }
 

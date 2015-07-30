@@ -29,7 +29,8 @@
                                 <p class="profile-label font-uppercase" style="font-size: 14px;">Leader:</p>
                                 <ul style="padding-left: 0; margin-left: -5px; margin-top: -8px;">
                                     <li ng-repeat="item in profile.activity.leader" style="list-style: none; display: inline; float: left; padding-left: 5px; padding-top: 3px;">
-                                        <a href="{{'/' + item.object}}" class="btn btn-xs btn-outline" ng-class="{'btn-danger' : item.type == 'startup', 'btn-info' : item.type == 'network', 'btn-primary' : item.type == 'industry', 'btn-success' : item.type == 'location'}"><i class="fa {{item.profile.icon}}"></i> {{item.profile.name}}</a>
+
+                                        <a href="{{'/' + item}}" class="btn btn-xs btn-outline" ng-class="{'btn-danger' : item.type == 'startup', 'btn-info' : item.type == 'network', 'btn-primary' : item.type == 'industry', 'btn-success' : item.type == 'location'}"><i class="fa {{item.profile.icon}}"></i> {{item.profile.name}}</a>
                                     </li>
                                 </ul>
                             </div>

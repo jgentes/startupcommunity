@@ -23,16 +23,15 @@ function NavigationController($scope, $state, $location, $modal, $stateParams, u
     }
 
     // Roles displayed in user profile
-    var roles = findKey(this.user.communities, "roles"),
-        rolelist = [],
+    var rolelist = [],
         j,
         k,
         role;
 
-    for (j in roles) {
-        for (k in roles[j].roles) {
-            role = roles[j].roles[k][0].toUpperCase() + roles[j].roles[k].slice(1);
-            if (rolelist.indexOf(role) == -1 && role !== "Roles") {
+    for (j in this.user.communities) {
+        for (k in this.user.communities[j]) {
+            role = k[0].toUpperCase() + k.slice(1);
+            if (rolelist.indexOf(role) < 0) {
                 rolelist.push(role);
             }
         }
