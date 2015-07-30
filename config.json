@@ -3,8 +3,8 @@
     "db": {
       "key": "be406a43-5cc1-425f-9545-23bd75ec6cfc",
       "collections": {
-        "users": "communities-flat",
-        "communities": "communities-flat"
+        "users": "communities",
+        "communities": "communities"
       }
     },
     "linkedin": {
@@ -26,8 +26,8 @@
     "db": {
       "key": "be406a43-5cc1-425f-9545-23bd75ec6cfc",
       "collections": {
-        "users": "communities-flat",
-        "communities": "communities-flat"
+        "users": "communities-dev",
+        "communities": "communities-dev"
       }
     },
     "linkedin": {
@@ -49,8 +49,8 @@
     "db": {
       "key": "be406a43-5cc1-425f-9545-23bd75ec6cfc",
       "collections": {
-        "users": "communities-flat",
-        "communities": "communities-flat"
+        "users": "communities-dev",
+        "communities": "communities-dev"
       }
     },
     "linkedin": {

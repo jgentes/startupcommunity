@@ -70,6 +70,7 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
         })
         .state('login', {
             url: "/login",
+            controller: "LoginController as auth",
             params: {
                 error: {}
             },

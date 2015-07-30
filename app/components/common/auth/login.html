@@ -1,4 +1,4 @@
-<div class="back-cover" ng-controller="LoginController">
+<div class="back-cover">
     <div class="bright-line"></div>
 
     <div class="login-container">
@@ -10,9 +10,9 @@
                 <div class="hpanel">
                     <div class="panel-body" style="padding: 15px; border-top: 1px solid #82bc4b;">
                         <h4 class="text-center" style="margin-bottom: 20px; color: #5A5A5A;">Kickstart your city's entrepreneurial ecosystem</h4>
-                        <h4 class="text-center" style="margin-bottom: 13px;"><a class="btn btn-info" ng-click="authenticate('linkedin')">Log in using Linkedin</a></h4>
-                        <div ng-show="global.alert">
-                            <alert type="{{global.alert.type}}" style="margin: 2px;" ng-click="global.alert = undefined"><span ng-bind-html="global.alert.msg | safe_html"></span></alert>
+                        <h4 class="text-center" style="margin-bottom: 13px;"><a class="btn btn-info" ng-click="auth.authenticate('linkedin')">Log in using Linkedin</a></h4>
+                        <div ng-show="auth.alert">
+                            <alert type="{{auth.alert.type}}" style="margin: 2px;" ng-click="auth.alert = undefined"><span ng-bind-html="auth.alert.msg | safe_html"></span></alert>
                         </div>
                     </div>
                 </div>

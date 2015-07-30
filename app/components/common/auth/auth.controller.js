@@ -2,45 +2,36 @@ angular
     .module('startupcommunity')
     .controller('LoginController', LoginController);
 
-function LoginController($scope, $auth, $location, $mixpanel) {
+function LoginController($auth, $location, $mixpanel) {
+
+    var self = this;
 
     var postLogin = function(user) {
         user.value["key"] = user.path.key;
-        user = user.value;
-
-        if (!$scope.global) {
-            $scope.global = {};
-        }
-
-        $scope.global.user = user;
-        $scope.global.context = {};
-        $scope.global.alert = undefined;
+        self.user = user.value;
+        self.alert = undefined;
         $location.path('/' + user.profile.home);
         $mixpanel.identify(user.key);
         $mixpanel.track('Logged in');
     };
 
-    $scope.login = function() {
-        $auth.login({ email: $scope.email, password: $scope.password })
+    this.login = function() {
+        $auth.login({ email: this.email, password: this.password })
             .then(function(response) {
                 postLogin(response.data.user);
             })
             .catch(function(response) {
                 if (response.data.message && response.data.message !== 'undefined') {
-                    $scope.global.alert = {type: 'danger', msg: String(response.data.message)};
-                } else $scope.global.alert = undefined;
-                console.warn("WARNING:");
-                console.log(response);
+                    self.alert = {type: 'danger', msg: String(response.data.message)};
+                } else self.alert = undefined;
             });
     };
-    $scope.authenticate = function(provider) {
+    this.authenticate = function(provider) {
         $auth.authenticate(provider)
             .then(function(response) {
                 postLogin(response.data.user);
             })
             .catch(function(response) {
-                console.warn("WARNING:");
-                console.log(response);
                 if (response.data.profile) {
                     $mixpanel.people.set({
                         "$name": response.data.profile.firstName + ' ' + response.data.profile.lastName,
@@ -53,8 +44,8 @@ function LoginController($scope, $auth, $location, $mixpanel) {
                     }]);
                 }
                 if (response.data.message && response.data.message !== 'undefined') {
-                    $scope.global.alert = {type: 'danger', msg: String(response.data.message)};
-                } else $scope.global.alert = undefined;
+                    self.alert = {type: 'danger', msg: String(response.data.message)};
+                } else self.alert = undefined;
             });
     };
 }
