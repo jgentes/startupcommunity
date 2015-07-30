@@ -10,8 +10,8 @@ function LoginController($auth, $location, $mixpanel) {
         user.value["key"] = user.path.key;
         self.user = user.value;
         self.alert = undefined;
-        $location.path('/' + user.profile.home);
-        $mixpanel.identify(user.key);
+        $location.path('/' + self.user.profile.home);
+        $mixpanel.identify(self.user.key);
         $mixpanel.track('Logged in');
     };
 
