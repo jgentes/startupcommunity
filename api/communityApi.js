@@ -122,11 +122,7 @@ function handleGetCommunity(req, res) {
                 if (result.body.results.length > 0) {
                   if (result.body.results[0].value.type == "user") { // user contains communities within record
                       console.log('Pulling user community..');
-                      var comm_items = [];
-                      for (key in result.body.results[0].value.communities) {
-                          comm_items.push(key);
-                      }
-
+                      var comm_items = result.body.results[0].value.communities;
                       var search = community + " OR ";
                       for (i in comm_items) {
                           if (i > 0) {

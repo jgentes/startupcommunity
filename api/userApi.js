@@ -1020,9 +1020,12 @@ function handleMaintenance(res) {
                   if (data.body.results[item].value.avatar) delete data.body.results[item].value.avatar;
                   if (data.body.results[item].value.linkedin) delete data.body.results[item].value.linkedin;
                     */
-                  delete data.body.results[item].value.communities["bend-or"];
+                  delete data.body.results[item].value.roles;
+
                   var newdata = data.body.results[item].value;
-                  //newdata.communities["bend-or"] = { "advisor": [] };
+
+                  //newdata.communities = ["bend-or", "oregon", "us", "edco-stable-of-experts"];
+                  newdata.roles = { "advisor" : { "edco-stable-of-experts": ["bend-or"], "bend-or": []}};
 
                   console.log('Updating record..');
                   console.log(data.body.results[item].path.key);
@@ -1035,7 +1038,7 @@ function handleMaintenance(res) {
                   console.log('Getting next group..' + startKey);
                   getList(startKey, userlist, limit);
               } else {
-                  console.log('Get done!' + userlist.length);
+                  console.log('Job done!' + userlist.length);
                   res.end();
                   /*
                    for (var user in userlist) {

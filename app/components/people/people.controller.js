@@ -228,30 +228,6 @@ function PeopleProfileController($scope, $stateParams, $location, $auth, $mixpan
         } else notify({title: "See our <a href='http://startupcommunity.readme.io?appkey=" + api_key + "' target='_blank'>API documentation</a> for help using your key:", message: "<pre>" + api_key + "</pre>"});
     };
 
-    var activity = {};
-
-    for (i in this.user.communities) {
-
-        if (this.user.communities[i].leader) {
-            if (!activity.leader) activity.leader = {};
-            activity.leader[i] = communities.data[i];
-        }
-        if (this.user.communities[i].founder) {
-            if (!activity.founder) activity.founder = {};
-            activity.founder[i] = communities.data[i];
-        }
-        if (this.user.communities[i].investor ) {
-            if (!activity.investor) activity.investor = {};
-            activity.investor[i] = communities.data[i];
-        }
-        if (this.user.communities[i].advisor ) {
-            if (!activity.advisor) activity.advisor = {};
-            activity.advisor[i] = communities.data[i];
-        }
-    }
-
-    this.activity = activity;
-
     $scope.isCityAdvisor = function(status) { //todo needs to be reworked
         user_api.setCityAdvisor($state.params.user.key, self.user.context, 'cityAdvisor', status, function(response, rescode) {
             var sameuser = false;
