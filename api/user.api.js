@@ -69,7 +69,7 @@ var searchInCommunity = function(communities, roles, limit, offset, query, key) 
 
     if (roles && roles[0] !== '*') {
         roles = roles.split(',');
-        searchstring += ' AND communities*:(';
+        searchstring += ' AND communities.*.role:(';
 
         for (var i in roles) {
             searchstring += '"' + roles[i] + '"'; // scope to role

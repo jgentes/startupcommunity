@@ -37,7 +37,7 @@ function IndustryController($state, $location, user_api) {
 
     var getLeaders = function() {
         console.log($scope.global.context);
-        user_api.getUsers($scope.global.context.location, undefined, $state.params.community.key, encodeURIComponent(['Advisor']), 30) //todo change to Leader
+        user_api.getUsers($state.params.community.key, encodeURIComponent(['advisor']), 30) //todo change to Leader
             .then( function(result) {
                 $scope.leaders = result.data.results;
             })
