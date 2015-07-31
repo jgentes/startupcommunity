@@ -69,7 +69,6 @@ app.get('/api/1.1/key/:key', communityApis.getKey);
 app.get('/api/1.1/users', userApis.userSearch);
 app.get('/api/1.1/search', userApis.directSearch);
 app.get('/api/1.1/community/:community', communityApis.getCommunity);
-app.get('/api/1.1/community', communityApis.getActivity);
 app.get('/api/1.1/angel/startups', angellistApis.getStartups);
 app.get('/api/1.1/angel/startup', angellistApis.getStartup);
 app.get('/api/1.1/profile', userApis.ensureAuthenticated, userApis.getProfile);

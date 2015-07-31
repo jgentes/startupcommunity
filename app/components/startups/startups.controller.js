@@ -3,13 +3,10 @@ angular
     .controller('StartupsController', StartupsController)
     .controller('StartupProfileController', StartupProfileController);
 
-function StartupsController($location, angellist_api, result_api, $sce, community, user_api, user, sorted_communities) {
+function StartupsController($location, angellist_api, result_api, $sce, community, user_api, user) {
 
     this.community = community;
     this.user = user.data;
-    this.industries = sorted_communities.industries;
-    this.networks = sorted_communities.networks;
-    this.locations = sorted_communities.locations;
     this.selectedIndustry = ['*'];
     this.selectedStage = ['*'];
     this.selectedNetwork = ['*'];
@@ -184,25 +181,6 @@ function StartupProfileController($scope, $state, user_api, community_api, $loca
         } else notify({title: "See our <a href='http://startupcommunity.readme.io?appkey=" + $scope.global.user.profile.api_key + "' target='_blank'>API documentation</a> for help using your key:", message: "<pre>" + $scope.global.user.profile.api_key + "</pre>"});
     };
 
-    var getActivity = function() {
-
-        var activities = findKey($state.params.community.communities, "stages", ["leader", "advisor", "investor", "founder"], {}),
-            list = Object.keys(activities);
-
-        community_api.getActivity(list)
-            .then(function(response) {
-                var activity = {};
-                for (var j in activities) {
-                    for (var k in activities[j]) {
-                        activity[activities[j][k]] = activity[activities[j][k]] || {}; // create empty object or fill with existing object
-                        activity[activities[j][k]][j] = response.data[j]; // append matched object
-                    }
-                }
-                $state.params.community.profile.activity = activity;
-            })
-    };
-
-
     /**
      * Link third-party provider.
      */
@@ -234,7 +212,5 @@ function StartupProfileController($scope, $state, user_api, community_api, $loca
                 $scope.global.alert = { type: 'danger', msg: 'Aww, shucks. We ran into this error while unlinking your ' + provider + ' account: ' + response.data.message};
             });
     };
-
-    // getActivity();
 
 }

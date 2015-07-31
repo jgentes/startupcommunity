@@ -2,25 +2,33 @@ angular
     .module('startupcommunity')
     .controller('NavigationController', NavigationController);
 
-function NavigationController($scope, $state, $location, $modal, $stateParams, user, community, sorted_communities) {
-    // reference 'this' by using 'nav' from 'NavigationController as nav'
+function NavigationController($scope, $state, $location, $modal, $stateParams, user, community, communities) {
+    // reference 'this' by using 'nav' from 'NavigationController as nav' - * nav is also usable in child views *
     window.$scope = $scope; // for console testing to avoid $scope = $('body').scope()
 
     this.user = user.data;
 
+    // sort communities for use in nav and child dashboard pages
+    for (item in communities.data) {
+        switch(communities.data[item].type) {
+            case "location":
+                if (!this.locations) this.locations = {};
+                this.locations[item] = communities.data[item];
+                break;
+            case "industry":
+                if (!this.industries) this.industries = {};
+                this.industries[item] = communities.data[item];
+                break;
+            case "network":
+                if (!this.networks) this.networks = {};
+                this.networks[item] = communities.data[item];
+                break;
+        }
+    }
+
     if (jQuery.isEmptyObject($stateParams.community)) {
         this.community = community;
     } else this.community = $stateParams.community;
-
-    if (!jQuery.isEmptyObject(sorted_communities.locations)) {
-        this.locations = sorted_communities.locations;
-    }
-    if (!jQuery.isEmptyObject(sorted_communities.industries)) {
-        this.industries = sorted_communities.industries;
-    }
-    if (!jQuery.isEmptyObject(sorted_communities.networks)) {
-        this.networks = sorted_communities.networks;
-    }
 
     // Roles displayed in user profile
     var rolelist = [],

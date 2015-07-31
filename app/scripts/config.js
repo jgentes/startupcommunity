@@ -109,10 +109,6 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                         console.log('pulling communities');
                         return community_api.getCommunity($stateParams.community_key);
                     }],
-                sorted_communities: ['communities', 'community_api',
-                    function(communities, communities_api) {
-                        return communities_api.sortCommunities(communities.data);
-                    }],
                 community: ['$stateParams', 'communities', 'community_api',
                     function($stateParams, communities, community_api) {
                         console.log('pulling community');

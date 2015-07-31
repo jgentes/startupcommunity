@@ -4,14 +4,11 @@ angular
     .controller('PeopleProfileController', PeopleProfileController)
     .controller('InvitePeopleController', InvitePeopleController);
 
-function PeopleController($location, user_api, result_api, $sce, user, community, communities, sorted_communities) {
+function PeopleController($location, user_api, result_api, $sce, user, community, communities) {
 
     this.community = community;
     this.communities = communities.data;
     this.user = user.data;
-    this.industries = sorted_communities.industries;
-    this.networks = sorted_communities.networks;
-    this.locations = sorted_communities.locations;
     this.selectedIndustry = ['*'];
     this.selectedRole = ['*'];
     this.selectedNetwork = ['*'];
