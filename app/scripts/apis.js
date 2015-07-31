@@ -11,14 +11,12 @@ angular
                     });
                 return $http.get(urlString);
             },
-            getUsers: function(location, community, cluster, role, limit, alturl) { //alturl is for next/prev retrieval
+            getUsers: function(communities, roles, limit, alturl) { //alturl is for next/prev retrieval
 
                 if (alturl) { return $http.get(alturl) } else {
                     var urlString = '/api/1.1/users?' + jQuery.param({
-                            location: location,
-                            community: community,
-                            cluster: cluster,
-                            role: role,
+                            communities: communities,
+                            roles: roles,
                             limit: limit
                         });
 

@@ -11,9 +11,6 @@ var express = require('express'),
     methodOverride = require('method-override'),
     logger = require('morgan'),
     nodalytics = require('nodalytics'),
-    UserApi = require('./api/userApi.js'),
-    CommunityApi = require('./api/communityApi.js'),
-    AngelListApi = require('./api/angellistApi.js'),
     ghost = require('ghost'),
     parentApp = express();
 
@@ -51,19 +48,27 @@ if (process.env.NODE_ENV === "production") {
 }
 
 // API ROUTE METHODS
-var userApis = new UserApi(),
+
+var AuthApi = require('./api/auth.api.js'),
+    auth = new AuthApi(),
+    UserApi = require('./api/user.api.js'),
+    userApis = new UserApi(),
+    CommunityApi = require('./api/community.api.js'),
     communityApis = new CommunityApi(),
-    angellistApis = new AngelListApi();
+    AngelListApi = require('./api/angellist.api.js'),
+    angellistApis = new AngelListApi(),
+    MaintApi = require('./api/maint.api.js'),
+    maint = new MaintApi();
 
 // API
 app.get('/api/1.0/:community/users', userApis.userSearch);
 app.get('/api/1.0/city/:community', communityApis.getCommunity);
-app.get('/api/1.0/profile', userApis.ensureAuthenticated, userApis.getProfile);
-app.get('/api/1.0/profile/getkey', userApis.ensureAuthenticated, userApis.createAPIToken);
-app.get('/api/1.0/invitePerson', userApis.ensureAuthenticated, userApis.invitePerson);
-app.put('/api/1.0/profile/role', userApis.ensureAuthenticated, userApis.setRole);
-app.post('/api/1.0/profile/remove/:userid', userApis.ensureAuthenticated, userApis.removeProfile);
-app.post('/api/1.0/feedback', userApis.ensureAuthenticated, userApis.feedback);
+app.get('/api/1.0/profile', auth.ensureAuthenticated, userApis.getProfile);
+app.get('/api/1.0/profile/getkey', auth.ensureAuthenticated, auth.createAPIToken);
+app.get('/api/1.0/invitePerson', auth.ensureAuthenticated, userApis.invitePerson);
+app.put('/api/1.0/profile/role', auth.ensureAuthenticated, userApis.setRole);
+app.post('/api/1.0/profile/remove/:userid', auth.ensureAuthenticated, userApis.removeProfile);
+app.post('/api/1.0/feedback', auth.ensureAuthenticated, userApis.feedback);
 
 app.get('/api/1.1/key/:key', communityApis.getKey);
 app.get('/api/1.1/users', userApis.userSearch);
@@ -71,25 +76,25 @@ app.get('/api/1.1/search', userApis.directSearch);
 app.get('/api/1.1/community/:community', communityApis.getCommunity);
 app.get('/api/1.1/angel/startups', angellistApis.getStartups);
 app.get('/api/1.1/angel/startup', angellistApis.getStartup);
-app.get('/api/1.1/profile', userApis.ensureAuthenticated, userApis.getProfile);
-app.get('/api/1.1/profile/getkey', userApis.ensureAuthenticated, userApis.createAPIToken);
-app.get('/api/1.1/invitePerson', userApis.ensureAuthenticated, userApis.invitePerson);
-app.put('/api/1.1/profile/role', userApis.ensureAuthenticated, userApis.setRole);
-app.post('/api/1.1/profile/remove/:userid', userApis.ensureAuthenticated, userApis.removeProfile);
-app.post('/api/1.1/feedback', userApis.ensureAuthenticated, userApis.feedback);
+app.get('/api/1.1/profile', auth.ensureAuthenticated, userApis.getProfile);
+app.get('/api/1.1/profile/getkey', auth.ensureAuthenticated, auth.createAPIToken);
+app.get('/api/1.1/invitePerson', auth.ensureAuthenticated, userApis.invitePerson);
+app.put('/api/1.1/profile/role', auth.ensureAuthenticated, userApis.setRole);
+app.post('/api/1.1/profile/remove/:userid', auth.ensureAuthenticated, userApis.removeProfile);
+app.post('/api/1.1/feedback', auth.ensureAuthenticated, userApis.feedback);
 
 // Auth
-app.get('/auth/unlink/:provider', userApis.ensureAuthenticated, userApis.unlink);
-app.post('/auth/linkedin', userApis.linkedin);
-app.post('/auth/signup', userApis.signup); //not currently used?
-app.post('/auth/login', userApis.login); //not currently used?
+app.get('/auth/unlink/:provider', auth.ensureAuthenticated, auth.unlink);
+app.post('/auth/linkedin', auth.linkedin);
+app.post('/auth/signup', auth.signup); //not currently used?
+app.post('/auth/login', auth.login); //not currently used?
 
 // Maintenance
-app.get('/api/1.1/maint', userApis.maintenance);
+app.get('/api/1.1/maint', maint.maintenance);
 
 // Client logger
 app.post('/api/logger', function (req, res) {
-    console.log('CLIENT ERROR:')
+    console.log('CLIENT ERROR:');
     console.log(req.body);
     res.end();
 });

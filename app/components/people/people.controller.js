@@ -17,7 +17,7 @@ function PeopleController($location, user_api, result_api, $sce, user, community
 
     this.getUsers = function(alturl) {
         self.loadingPeople = true;
-        user_api.getUsers(undefined, self.community.key, undefined, undefined, 30, alturl)
+        user_api.getUsers([self.community.key], undefined, 30, alturl)
             .then(function(response) {
                 self.users = result_api.setPage(response.data);
                 self.loadingPeople = false;
