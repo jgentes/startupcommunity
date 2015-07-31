@@ -3,10 +3,9 @@ angular
 
     .factory('user_api', function($http) {
         return {
-            search: function(location, community, query) {
+            search: function(communities, query) {
                 var urlString = '/api/1.1/users' + jQuery.param({
-                        location: location,
-                        community: community,
+                        communities: communities,
                         search: query
                     });
                 return $http.get(urlString);

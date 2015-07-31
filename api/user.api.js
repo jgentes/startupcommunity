@@ -66,20 +66,20 @@ var searchInCommunity = function(communities, roles, limit, offset, query, key) 
     }
 
     searchstring += ') AND type: "user"';
-
+    console.log(roles);
     if (roles && roles[0] !== '*') {
         roles = roles.split(',');
-        searchstring += ' AND communities.*.role:(';
+        searchstring += ' AND (';
 
         for (var i in roles) {
-            searchstring += '"' + roles[i] + '"'; // scope to role
+            searchstring += 'roles.' + roles[i] + '.*:*'; // scope to role
             if (i < (roles.length - 1)) { searchstring += ' OR '; }
         }
         searchstring += ')';
     }
 
     if (query) { searchstring += ' AND ' + '(' + query + ')'; }
-    console.log(searchstring);
+
     var deferred = Q.defer();
     db.newSearchBuilder()
       .collection(config.db.collections.communities)

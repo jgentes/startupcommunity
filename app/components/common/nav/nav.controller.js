@@ -47,7 +47,9 @@ function NavigationController($scope, $state, $location, $modal, $stateParams, u
 
     this.user.profile["roles"] = rolelist;
 
-    this.maploc = this.community.profile.name;
+    if (this.community.type == "location") {
+        this.maploc = this.community.profile.name;
+    } else this.maploc = this.community.profile.home;
 
     if (!$scope.global) {
         $scope.global = {

@@ -50,21 +50,16 @@
                     <div class="col-sm-9" style="padding-top: 3px;">
                         <a ui-sref="people.profile({user: nav.user, community_key: nav.user.key})">{{nav.user.profile.name}}</a>
                         <div style="margin-left: -10px; padding-top: 1px;">
-                            <span ng-repeat="item in nav.user.profile.roles" class="user-role"><i ng-attr-title="{{item}}" ng-class="{'text-primary fa fa-rocket' : item == 'Founder', 'text-info fa fa-graduation-cap' : item == 'Advisor', 'text-success fa fa-leaf' : item == 'Investor', 'text-danger fa fa-flag' : item == 'Leader'}"></i></span>
+                            <span ng-repeat="(item, val) in nav.user.roles" class="user-role"><i ng-attr-title="{{item[0].toUpperCase() + item.slice(1);}}" ng-class="{'text-primary fa fa-rocket' : item == 'founder', 'text-info fa fa-graduation-cap' : item == 'advisor', 'text-success fa fa-leaf' : item == 'investor', 'text-danger fa fa-flag' : item == 'leader'}"></i></span>
                         </div>
                     </div>
                 </div>
             </div>
-            <!--
-            <div map-lazy-load="https://maps.googleapis.com/maps/api/js?key=AIzaSyDXO1cNiJac7iP2I3JoXhOd1pWs6gA-f4k">
-                <map id="nav-map" center="{{nav.maploc}}" zoom="11" disable-default-u-i="true">
-                    <custom-control position="BOTTOM_CENTER" on-click="changeLocation()">
-                        <div id="change-location">Change Location</div>
-                    </custom-control>
-                </map>
-                <div class="side-menu filler"></div>
-            </div>
-            -->
+
+            <gm-map id="nav-map" gm-address="{address:nav.maploc}" options="{zoom: 11, disableDefaultUI: true, draggable: false, disableDoubleClickZoom: true, scrollwheel: false}">
+            </gm-map>
+            <div class="side-menu filler"><a ng-click="changeLocation()">Change Community</a></div>
+
         </div>
 
         <ul side-navigation class="nav" id="side-menu">

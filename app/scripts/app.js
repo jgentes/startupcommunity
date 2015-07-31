@@ -10,7 +10,7 @@
         'chart.js',
         'satellizer',
         'apis',
-        'ngMap',
+        'GoogleMapsNative',
         'angulartics',
         'angulartics.google.analytics'
     ]);

@@ -66,10 +66,8 @@
                         </div>
                     </div>
                     <div class="col-sm-3 project-info">
-                        <div class="border-right border-left" map-lazy-load="https://maps.googleapis.com/maps/api/js?key=AIzaSyDXO1cNiJac7iP2I3JoXhOd1pWs6gA-f4k">
-                            <map id="profile-map" center="{{profile.user.profile.home}}" zoom="11" disable-default-u-i="true"></map>
-                        </div>
-
+                        <gm-map id="profile-map" gm-address="{address:profile.user.profile.home}" options="{zoom: 11, disableDefaultUI: true}">
+                        </gm-map>
                     </div>
                 </div>
             </div>

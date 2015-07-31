@@ -135,8 +135,7 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
             },
             resolve: {
                 leaders: ['user_api', '$stateParams', function(user_api, $stateParams) {
-                    //todo change to Leaders once I've updated the user records
-                    return user_api.getUsers($stateParams.community_key, encodeURIComponent([]), 30);
+                    return user_api.getUsers([$stateParams.community_key], ['leader'], 30);
                 }],
                 communities: ['community_api', '$stateParams', 'communities',
                     function(community_api, $stateParams, communities) {
