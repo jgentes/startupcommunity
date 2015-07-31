@@ -37,7 +37,7 @@ function NetworkController($state, $stateParams, $scope, $location, user_api) {
 
     var getLeaders = function() {
 
-        user_api.getUsers(undefined, $state.params.community.key, undefined, encodeURIComponent(['Advisor']), 30) //todo change to Leader
+        user_api.getUsers($state.params.community.key, encodeURIComponent(['advisor']), 30) //todo change to Leader
             .then( function(result) {
                 $scope.leaders = result.data.results;
             })

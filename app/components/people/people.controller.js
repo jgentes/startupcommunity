@@ -97,7 +97,7 @@ function PeopleController($location, user_api, result_api, $sce, user, community
             }
         }
 
-        user_api.getUsers(self.location, self.community, self.selectedIndustry, self.selectedRole, 30, undefined)
+        user_api.getUsers(self.community, self.selectedRole, 30, undefined)
             .then(function(response) {
                 self.loadingIndustry = false;
                 self.users = result_api.setPage(response.data);
@@ -121,7 +121,7 @@ function PeopleController($location, user_api, result_api, $sce, user, community
             }
         }
 
-        user_api.getUsers(self.location, self.community, self.selectedNetwork, self.selectedRole, 30, undefined)
+        user_api.getUsers(self.community, self.selectedRole, 30, undefined)
             .then(function(response) {
                 self.loadingNetwork = false;
                 self.users = result_api.setPage(response.data);
@@ -156,7 +156,7 @@ function PeopleController($location, user_api, result_api, $sce, user, community
             }
         }
 
-        user_api.getUsers(self.location, self.community, self.selectedIndustry, self.selectedRole, 30, undefined)
+        user_api.getUsers(self.community, self.selectedRole, 30, undefined)
             .then(function(response) {
                 self.loadingRole = false;
                 self.users = result_api.setPage(response.data);
