@@ -4,9 +4,10 @@ angular
     .controller('PeopleProfileController', PeopleProfileController)
     .controller('InvitePeopleController', InvitePeopleController);
 
-function PeopleController($location, user_api, result_api, $sce, community, user, sorted_communities) {
+function PeopleController($location, user_api, result_api, $sce, user, community, communities, sorted_communities) {
 
     this.community = community;
+    this.communities = communities.data;
     this.user = user.data;
     this.industries = sorted_communities.industries;
     this.networks = sorted_communities.networks;
@@ -17,17 +18,19 @@ function PeopleController($location, user_api, result_api, $sce, community, user
 
     var self = this; // for accessing 'this' in child functions
 
-    var getUsers = function(alturl) {
+    this.getUsers = function(alturl) {
+        self.loadingPeople = true;
         user_api.getUsers(undefined, self.community.key, undefined, undefined, 30, alturl)
             .then(function(response) {
                 self.users = result_api.setPage(response.data);
+                self.loadingPeople = false;
                 if ($location.$$path == '/search') {
                     self.search = result_api.setPage(self.users);
                 } else { self.search = undefined }
             });
     };
 
-    getUsers();
+    this.getUsers();
 
     // Title of list box changes based on context
     var setTitle = function(){
@@ -100,6 +103,30 @@ function PeopleController($location, user_api, result_api, $sce, community, user
         user_api.getUsers(self.location, self.community, self.selectedIndustry, self.selectedRole, 30, undefined)
             .then(function(response) {
                 self.loadingIndustry = false;
+                self.users = result_api.setPage(response.data);
+                setTitle();
+            });
+    };
+
+    this.filterNetwork = function(network) {
+        self.loadingNetwork = true;
+        if (network == '*') {
+            self.selectedNetwork = ['*'];
+        } else {
+            if (self.selectedNetwork.indexOf('*') >= 0) {
+                self.selectedNetwork.splice(self.selectedNetwork.indexOf('*'), 1);
+            }
+            if (self.selectedNetwork.indexOf(network) < 0) {
+                self.selectedNetwork.push(network);
+            } else self.selectedNetwork.splice(self.selectedNetwork.indexOf(network), 1);
+            if (self.selectedNetwork.length === 0) {
+                self.selectedNetwork = ['*'];
+            }
+        }
+
+        user_api.getUsers(self.location, self.community, self.selectedNetwork, self.selectedRole, 30, undefined)
+            .then(function(response) {
+                self.loadingNetwork = false;
                 self.users = result_api.setPage(response.data);
                 setTitle();
             });

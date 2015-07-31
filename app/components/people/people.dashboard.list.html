@@ -1,0 +1,30 @@
+<div class="col-md-12 dash-table">
+    <div>
+        <a ui-sref="people.profile({user: item})" title="View {{::item.value.profile.name | words:0}}'s Profile"><img
+                ng-src="{{item.value.profile.linkedin.pictureUrl || item.value.profile.avatar || 'images/blank_avatar.png'}}" alt="{{::item.value.profile.name}}" class="user-img widget-image img-circle pull-left" onerror="this.style.display='none'"/></a>
+    </div>
+    <div class="user-row">
+        <a ui-sref="people.profile({user: item})" title="View {{::item.value.profile.name | words:0}}'s Profile" style="float: left; "><strong>{{::item.value.profile.name}} </strong></a>
+        <a ng-show="{{(item.value.profile.linkedin.summary).length > 0}}" title="Show Summary" ng-click="showSummary = !showSummary" class="user-summary">&nbsp;&nbsp;<i class="fa fa-chevron-down fa-fw"></i>
+        </a>
+        <li ng-repeat="(key, role) in item.value.communities" class="role-right">
+            <a href="{{'/' + key}}" class="btn btn-xs btn-outline" ng-class="{'btn-danger' : people.communities[key].type == 'startup', 'btn-info' : people.communities[key].type == 'network', 'btn-primary' : people.communities[key].type == 'industry', 'btn-success' : people.communities[key].type == 'location'}"><i class="fa {{people.communities[key].profile.icon}}"></i> {{people.communities[key].profile.name}}</a>
+        </li>
+        <br>
+        <div class="dash-row">
+            <span class="text-muted" ng-bind-html="::item.value.profile.linkedin.headline | highlight:people.search.lastQuery"></span>
+        </div>
+        <div ng-show="(showSummary || people.search.count) && item.value.profile.linkedin.summary">
+            <div style="padding-bottom: 10px;">
+                <hr>
+                <span class="text-muted" style="white-space:pre-wrap;" ng-bind-html="::item.value.profile.linkedin.summary | linky:'_blank' | highlight:people.search.lastQuery | safe_html"></span>
+                <div id="skills" ng-show="(showSummary || people.search.count) && item.value.profile.linkedin.summary" class="skills-top">
+                    <li ng-repeat="skill in item.value.profile.linkedin.skills.values" class="label btn-default skills">
+                        <a><span ng-click="people.search(skill.skill.name)" ng-bind-html="::skill.skill.name | highlight:people.search.lastQuery"></span></a>
+                    </li>
+                </div>
+            </div>
+        </div>
+    </div>
+    <hr>
+</div>

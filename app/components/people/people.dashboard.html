@@ -5,12 +5,12 @@
             <div class="hpanel hgreen">
                 <div class="panel-footer top" style="font-size: 17px;">
                     <strong>Role</strong> Filters
-                    <i ng-show="loadingRole" class="fa fa-refresh fa-spin pull-right" style="padding: 4px; color: #aaa;"></i>
+                    <i ng-show="people.loadingRole" class="fa fa-refresh fa-spin pull-right" style="padding: 4px; color: #aaa;"></i>
                 </div>
                 <div class="panel-body filternav h226">
 
                     <ul class="panel-list">
-                        <li ng-class="{'active':people.selectedRole.indexOf('*') >= 0}" ng-click="filterRole('*')">
+                        <li ng-class="{'active':people.selectedRole.indexOf('*') >= 0}" ng-click="people.filterRole('*')">
                             <a href="javascript:void(0)">
                                 <i class="fa fa-fw fa-globe themed-color-dark"></i> <strong>All</strong>
                             </a>
@@ -18,22 +18,22 @@
                         <li>
                             <hr style="margin: 10px 0 10px 0;">
                         </li>
-                        <li ng-class="{'active':people.selectedRole.indexOf('Founder') >= 0}" ng-click="filterRole('Founder')">
+                        <li ng-class="{'active':people.selectedRole.indexOf('Founder') >= 0}" ng-click="people.filterRole('Founder')">
                             <a href="javascript:void(0)">
                                 <i class="fa fa-rocket text-navyblue"></i> Founders
                             </a>
                         </li>
-                        <li ng-class="{'active':people.selectedRole.indexOf('Leader') >= 0}" ng-click="filterRole('Founder')">
+                        <li ng-class="{'active':people.selectedRole.indexOf('Leader') >= 0}" ng-click="people.filterRole('Founder')">
                             <a href="javascript:void(0)">
                                 <i class="fa fa-flag text-danger"></i> Leaders
                             </a>
                         </li>
-                        <li ng-class="{'active':people.selectedRole.indexOf('Advisor') >= 0}" ng-click="filterRole('Advisor')">
+                        <li ng-class="{'active':people.selectedRole.indexOf('Advisor') >= 0}" ng-click="people.filterRole('Advisor')">
                             <a href="javascript:void(0)">
                                 <i class="fa fa-graduation-cap text-info"></i> Advisors
                             </a>
                         </li>
-                        <li ng-class="{'active':people.selectedRole.indexOf('Investor') >= 0}" ng-click="filterRole('Investor')">
+                        <li ng-class="{'active':people.selectedRole.indexOf('Investor') >= 0}" ng-click="people.filterRole('Investor')">
                             <a href="javascript:void(0)">
                                 <i class="fa fa-leaf text-success"></i> Investors
                             </a>
@@ -46,17 +46,17 @@
             <div class="hpanel hnavyblue">
                 <div class="panel-footer top" style="font-size: 17px;">
                     <strong>Cluster</strong> Filters
-                    <i ng-show="loadingIndustry" class="fa fa-refresh fa-spin pull-right" style="padding: 4px; color: #aaa;"></i>
+                    <i ng-show="people.loadingIndustry" class="fa fa-refresh fa-spin pull-right" style="padding: 4px; color: #aaa;"></i>
                 </div>
                 <div class="panel-body filternav h226">
                     <ul class="panel-list">
-                        <li ng-class="{'active':people.selectedIndustry.indexOf('*') >= 0}" ng-click="filterIndustry('*');">
+                        <li ng-class="{'active':people.selectedIndustry.indexOf('*') >= 0}" ng-click="people.filterIndustry('*');">
                             <a><i class="fa fa-fw fa-globe themed-color-dark icon-push"></i> <strong>All</strong></a>
                         </li>
                         <li>
                             <hr style="margin: 10px 0 10px 0;">
                         </li>
-                        <li ng-repeat="industry in people.industries" ng-class="{'active':people.selectedIndustry.indexOf(industry.profile.name) >= 0}" ng-click="filterIndustry(industry.profile.name);">
+                        <li ng-repeat="industry in people.industries" ng-class="{'active':people.selectedIndustry.indexOf(industry.profile.name) >= 0}" ng-click="people.filterIndustry(industry.profile.name);">
                             <a><i class="fa {{industry.profile.icon}}"></i> {{industry.profile.name}}</a>
                         </li>
                     </ul>
@@ -67,17 +67,17 @@
             <div class="hpanel hblue">
                 <div class="panel-footer top" style="font-size: 17px;">
                     <strong>Network</strong> Filters
-                    <i ng-show="loadingNetwork" class="fa fa-refresh fa-spin pull-right" style="padding: 4px; color: #aaa;"></i>
+                    <i ng-show="people.loadingNetwork" class="fa fa-refresh fa-spin pull-right" style="padding: 4px; color: #aaa;"></i>
                 </div>
                 <div class="panel-body filternav h226">
                     <ul class="panel-list">
-                        <li ng-class="{'active':people.selectedNetwork.indexOf('*') >= 0}" ng-click="filterNetwork('*');">
+                        <li ng-class="{'active':people.selectedNetwork.indexOf('*') >= 0}" ng-click="people.filterNetwork('*');">
                             <a><i class="fa fa-fw fa-globe themed-color-dark icon-push"></i> <strong>All</strong></a>
                         </li>
                         <li>
                             <hr style="margin: 10px 0 10px 0;">
                         </li>
-                        <li ng-repeat="network in people.networks" ng-class="{'active':people.selectedNetwork.indexOf(network.profile.name) >= 0}" ng-click="filterNetwork(network.profile.name);">
+                        <li ng-repeat="network in people.networks" ng-class="{'active':people.selectedNetwork.indexOf(network.profile.name) >= 0}" ng-click="people.filterNetwork(network.profile.name);">
                             <a><i class="fa {{network.profile.icon}}"></i> {{network.profile.name}}</a>
                         </li>
                     </ul>
@@ -107,6 +107,7 @@
                     </ui-select>
                 </div>
                 <span style="font-size: 17px;" ng-bind-html="people.title"></span>
+                <i ng-show="people.loadingPeople" class="fa fa-refresh fa-spin pull-right" style="padding: 4px; color: #aaa;"></i>
             </div>
 
             <div class="panel-body content">
@@ -116,10 +117,10 @@
                 <div ng-show="people.search.tag" style="text-align: center" ng-cloak><h2><br/>Searching for {{people.search.tag}}..</h2></div>
                 <div ng-repeat="item in people.users.results" ng-switch on="$index % 2" style="margin-top: 10px;">
                     <div class="col-md-6" ng-switch-when="0">
-                        <div class="row"  ng-include="'components/people/people.list.html'"></div>
+                        <div class="row"  ng-include="'components/people/people.dashboard.list.html'"></div>
                     </div>
                     <div class="col-md-6" ng-switch-when="1">
-                        <div class="row"  ng-include="'components/people/people.list.html'"></div>
+                        <div class="row"  ng-include="'components/people/people.dashboard.list.html'"></div>
                     </div>
                 </div>
             </div>

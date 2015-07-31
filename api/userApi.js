@@ -168,36 +168,44 @@ var searchInCommunity = function(location, community, industry, role, limit, off
     }
 
     // create searchstring
-    var searchstring = 'communities.';
-    if ((location && community) && (location !== community)) {
-        searchstring += '*' + location + '.' + community + '.*:*';
-    } else {
-        searchstring += '*' + (location || community) + '.*:*';
+    searchstring = 'communities*:(';
+
+    if (location) {
+        searchstring += '"' + location + '" ';
     }
-    searchstring += ' AND type:user'; // first argument to scope to community & limit to users
+
+    if (location && community) {
+        searchstring += 'OR ';
+    }
+
+    if (community) {
+        searchstring += '"' + community + '" ';
+    }
+
+    searchstring += ') AND type: "user"';
 
     if (industry && industry[0] !== '*') {
         industry = industry.split(',');
         searchstring += ' AND (';
         for (var i in industry) {
-            searchstring += 'communities.*.' + industry[i] + '.*:*'; // scope to industry
-            if (i < (industry.length - 1)) { searchstring += ' || '; }
+            searchstring += 'communities*: "' + industry[i] + '"'; // scope to industry
+            if (i < (industry.length - 1)) { searchstring += ' OR '; }
         }
         searchstring += ')';
     }
 
     if (role && role[0] !== '*') {
         role = role.split(',');
-        searchstring += ' AND (';
+        searchstring += ' AND communities*:(';
 
         for (var i in role) {
-            searchstring += 'communities.*.' + (location || community) + '.*:' + role[i]; // scope to role
-            if (i < (role.length - 1)) { searchstring += ' || '; }
+            searchstring += '"' + role[i] + '"'; // scope to role
+            if (i < (role.length - 1)) { searchstring += ' OR '; }
         }
         searchstring += ')';
     }
 
-    if (query) { searchstring += ' && ' + '(' + query + ')'; }
+    if (query) { searchstring += ' AND ' + '(' + query + ')'; }
 
     var deferred = Q.defer();
     db.newSearchBuilder()
@@ -213,19 +221,17 @@ var searchInCommunity = function(location, community, industry, role, limit, off
                   if (result.body.results[i].path.collection) delete result.body.results[i].path.collection;
                   if (result.body.results[i].path.ref) delete result.body.results[i].path.ref;
                   if (result.body.results[i].value.profile.password) delete result.body.results[i].value.profile.password;
-                  if (result.body.results[i].value.type) delete result.body.results[i].value.type;
-                  if (result.body.results[i].value.context) delete result.body.results[i].value.context;
 
                   if (!allowed) {
                       if (result.body.results[i].value.profile.email) delete result.body.results[i].value.profile.email;
                   }
 
-                  if (result.body.results[i].value.linkedin) {
-                      if (delete result.body.results[i].value.profile.linkedin.emailAddress) delete result.body.results[i].value.profile.linkedin.emailAddress;
+                  if (result.body.results[i].value.profile.linkedin) {
+                      if (result.body.results[i].value.profile.linkedin.emailAddress) delete result.body.results[i].value.profile.linkedin.emailAddress;
                       if (result.body.results[i].value.profile.linkedin.access_token) delete result.body.results[i].value.profile.linkedin.access_token;
                   }
 
-                  result.body.results[i].value["key"] = result.body.results[i].path.key; //todo haven't verified this is needed to solve people list > person view issues
+                  result.body.results[i].value["key"] = result.body.results[i].path.key;
               }
           } catch (error) {
               console.warn('WARNING:  Possible database entry corrupted: ');
@@ -977,19 +983,21 @@ function handleUnlink(req, res) {
  */
 
 
-function handleMaintenance(req, res) {
-    var enabled = true;
-    var startKey = 0;
-    var userlist = [];
+function handleMaintenance(res) {
+    var enabled = false,
+        startKey = 0,
+        limit = 50,
+        userlist = [];
 
-    function getList(startKey, userlist) {
-        db.list('users', {limit: 50, startKey: startKey})
-          .then( function(data) {
+    function getList(startKey, userlist, limit) {
+        db.newSearchBuilder()
+            .collection(config.db.collections.users)
+            .limit(limit)
+            .offset(startKey)
+            .query('type: "user"')
+            .then(function(data){
               for (var item in data.body.results) {
-                  // be careful to retrieve existing values from target key then append!
-                  //data.body.results[item].value.cities = { "bend-or": { "admin": false, "cityAdvisor": true } };
-                  //userlist.push(data.body.results[item]);
-
+                  /*
                   var newdata = {
                       "type": "user",
                       "profile": {
@@ -999,25 +1007,36 @@ function handleMaintenance(req, res) {
                           "linkedin": data.body.results[item].value.linkedin
                       },
                       "communities": {
-                          "bend-or": {
-                              "roles": [
-                                  "advisor"
-                              ]
+                          "edco-stable-of-experts": {
+                              "advisor": ["bend-or"]
                           }
                       }
                   };
 
-                  console.log('Adding record..');
-                  db.post('communities-dev', newdata);
+                  if (data.body.results[item].value.cities) delete data.body.results[item].value.cities;
+                  if (data.body.results[item].value.beta) delete data.body.results[item].value.beta;
+                  if (data.body.results[item].value.name) delete data.body.results[item].value.name;
+                  if (data.body.results[item].value.email) delete data.body.results[item].value.email;
+                  if (data.body.results[item].value.avatar) delete data.body.results[item].value.avatar;
+                  if (data.body.results[item].value.linkedin) delete data.body.results[item].value.linkedin;
+                    */
+                  delete data.body.results[item].value.communities["bend-or"];
+                  var newdata = data.body.results[item].value;
+                  //newdata.communities["bend-or"] = { "advisor": [] };
+
+                  console.log('Updating record..');
+                  console.log(data.body.results[item].path.key);
+                  console.log(newdata);
+                  db.put('communities-dev', data.body.results[item].path.key, newdata);
               }
 
               if (data.body.next) {
-                  var afterkey = (url.parse(data.body.next).query).split('afterKey=')[1];
-                  startKey = afterkey.substring(0, afterkey.length - 9);
+                 startKey = startKey + limit;
                   console.log('Getting next group..' + startKey);
-                  getList(startKey, userlist);
+                  getList(startKey, userlist, limit);
               } else {
                   console.log('Get done!' + userlist.length);
+                  res.end();
                   /*
                    for (var user in userlist) {
                    console.log('Updating ' + userlist[user].value.name);
@@ -1035,7 +1054,7 @@ function handleMaintenance(req, res) {
 
     if (enabled) {
         console.log('Starting maintenance..');
-        getList(startKey, userlist);
+        getList(startKey, userlist, limit);
     }
 }
 
