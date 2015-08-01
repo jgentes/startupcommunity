@@ -51,6 +51,14 @@ function NavigationController($scope, $state, $location, $modal, $stateParams, u
         this.maploc = this.community.profile.name;
     } else this.maploc = this.community.profile.home;
 
+    this.setCenter = function(center) {
+        this.hideChange = false;
+        this.latlng = {
+            "lat" : center.A,
+            "lng" : center.F
+        };
+    };
+
     if (!$scope.global) {
         $scope.global = {
             alert: {},
