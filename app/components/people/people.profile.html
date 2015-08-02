@@ -23,42 +23,36 @@
                             </h4>
                         </div>
 
-                        <div class="row" style="padding-bottom: 15px;">
-                            <div class="col-xs-3 col-sm-3 no-overflow"
-                                 ng-if="profile.user.roles.leader">
+                        <div class="row">
+                            <div class="col-xs-3 col-sm-3 no-overflow profile-div" ng-if="profile.user.roles.leader">
                                 <p class="profile-label font-uppercase" style="font-size: 14px;">Leader:</p>
-                                <ul style="padding-left: 0; margin-left: -5px; margin-top: -8px;">
-                                    <li ng-repeat="(key, val) in profile.user.roles.leader" style="list-style: none; display: inline; float: left; padding-left: 5px; padding-top: 3px;">
+                                <ul class="profile-ul">
+                                    <li ng-repeat="(key, val) in profile.user.roles.leader" class="profile-roles">
 
                                         <a href="{{'/' + key}}" class="btn btn-xs btn-outline" ng-class="{'btn-danger' : profile.communities[key].type == 'startup', 'btn-info' : profile.communities[key].type == 'network', 'btn-primary' : profile.communities[key].type == 'industry', 'btn-success' : profile.communities[key].type == 'location'}"><i class="fa {{profile.communities[key].profile.icon}}"></i> {{profile.communities[key].profile.name}}</a>
                                     </li>
                                 </ul>
                             </div>
-                            <div class="col-xs-3 col-sm-3 no-overflow"
-                                 ng-if="profile.user.roles.founder">
+                            <div class="col-xs-3 col-sm-3 no-overflow profile-div" ng-if="profile.user.roles.founder">
                                 <p class="profile-label font-uppercase" style="font-size: 14px;">Founder:</p>
-                                <ul style="padding-left: 0; margin-left: -5px; margin-top: -8px;">
-                                    <li ng-repeat="(key, val) in profile.user.roles.founder"
-                                        style="list-style: none; display: inline; float: left; padding-left: 5px; padding-top: 3px;">
+                                <ul class="profile-ul">
+                                    <li ng-repeat="(key, val) in profile.user.roles.founder" class="profile-roles">
                                         <a href="{{'/' + key}}" class="btn btn-xs btn-outline" ng-class="{'btn-danger' : profile.communities[key].type == 'startup', 'btn-info' : profile.communities[key].type == 'network', 'btn-primary' : profile.communities[key].type == 'industry', 'btn-success' : profile.communities[key].type == 'location'}"><i class="fa {{profile.communities[key].profile.icon}}"></i> {{profile.communities[key].profile.name}}</a>
                                     </li>
                                 </ul>
                             </div>
-                            <div class="col-xs-3 col-sm-3 no-overflow"
-                                 ng-if="profile.user.roles.investor">
+                            <div class="col-xs-3 col-sm-3 no-overflow profile-div" ng-if="profile.user.roles.investor">
                                 <p class="profile-label font-uppercase" style="font-size: 14px;">Investor:</p>
-                                <ul style="padding-left: 0; margin-left: -5px; margin-top: -8px;">
-                                    <li ng-repeat="(key, val) in profile.user.roles.investor" style="list-style: none; display: inline; float: left; padding-left: 5px; padding-top: 3px;">
+                                <ul class="profile-ul">
+                                    <li ng-repeat="(key, val) in profile.user.roles.investor" class="profile-roles">
                                         <a href="{{'/' + key}" class="btn btn-xs btn-outline" ng-class="{'btn-danger' : profile.communities[key].type == 'startup', 'btn-info' : profile.communities[key].type == 'network', 'btn-primary' : profile.communities[key].type == 'industry', 'btn-success' : profile.communities[key].type == 'location'}"><i class="fa {{profile.communities[key].profile.icon}}"></i> {{profile.communities[key].profile.name}}</a>
                                     </li>
                                 </ul>
                             </div>
-                            <div class="col-xs-3 col-sm-3 no-overflow" ng-if="profile.user.roles.advisor">
+                            <div class="col-xs-3 col-sm-3 no-overflow profile-div" ng-if="profile.user.roles.advisor">
                                 <p class="profile-label font-uppercase" style="font-size: 14px;">Advisor:</p>
-                                <ul style="padding-left: 0; margin-left: -5px; margin-top: -8px;">
-                                    <li ng-repeat="(key, val) in profile.user.roles.advisor"
-                                        style="list-style: none; display: inline; float: left; padding-left: 5px;
-                                        padding-top: 3px;">
+                                <ul class="profile-ul">
+                                    <li ng-repeat="(key, val) in profile.user.roles.advisor" class="profile-roles">
                                         <a href="{{'/' + key}}" class="btn btn-xs btn-outline" ng-class="{'btn-danger' : profile.communities[key].type == 'startup', 'btn-info' : profile.communities[key].type == 'network', 'btn-primary' : profile.communities[key].type == 'industry', 'btn-success' : profile.communities[key].type == 'location'}"><i class="fa {{profile.communities[key].profile.icon}}"></i> {{profile.communities[key].profile.name}}</a>
                                     </li>
                                 </ul>
