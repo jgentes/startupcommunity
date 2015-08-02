@@ -3,11 +3,7 @@ angular
     .controller('IndustryController', IndustryController);
 
 function IndustryController($state, $location, user_api) {
-    /*
-    if ($state.params.community.key) {
-        $location.path('/' + $state.params.community.key)
-    }
-    */
+
     $scope.charts = {
         people: {},
         startups: {},

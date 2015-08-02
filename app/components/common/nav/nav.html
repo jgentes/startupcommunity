@@ -71,7 +71,7 @@
                 <ul class="nav nav-second-level">
                     <li ng-repeat="item in nav.locations">
                         <a ui-sref="location.dashboard({community_key: item.key})" ng-class="{active: nav.path.includes(item.key)}"><i class="fa fa-globe"></i>&nbsp;&nbsp;{{item.profile.name}}</a>
-                        <ul ng-if="nav.path.includes(item.key)" ng-include="'components/common/nav/nav_subitems.html'"></ul>
+                        <ul ng-if="nav.path.includes(item.key) && $state.current.name=='location.dashboard'" ng-include="'components/common/nav/nav_subitems.html'"></ul>
                     </li>
                 </ul>
             </li>
@@ -79,9 +79,9 @@
             <li class="active" ng-if="nav.industries">
                 <a href="#"><span class="nav-label">Clusters</span><span class="fa arrow"></span> </a>
                 <ul class="nav nav-second-level">
-                    <li ng-repeat="item in nav.industries" ng-class="{active: nav.path.includes(item.key)}">
-                        <a ui-sref="industry.dashboard({community_key: item.key})"><i ng-class="'fa ' + item.profile.icon"></i>&nbsp;&nbsp;{{item.profile.name}}</a>
-                        <ul ng-if="nav.path.includes(item.key)" ng-include="'components/common/nav/nav_subitems.html'"></ul>
+                    <li ng-repeat="item in nav.industries">
+                        <a ui-sref="industry.dashboard({industry_key: item.key, community: item})" ng-class="{active: nav.path.includes(item.key)}"><i ng-class="'fa ' + item.profile.icon"></i>&nbsp;&nbsp;{{item.profile.name}}</a>
+                        <ul ng-if="nav.path.includes(item.key) && $state.current.name=='industry.dashboard'" ng-include="'components/common/nav/nav_subitems.html'"></ul>
                     </li>
                 </ul>
             </li>
@@ -89,9 +89,9 @@
             <li class="active" ng-if="nav.networks">
                 <a href="#"><span class="nav-label">Networks</span><span class="fa arrow"></span> </a>
                 <ul class="nav nav-second-level">
-                    <li ng-repeat="item in nav.networks" ng-class="{active: nav.path.includes(item.key)}">
-                        <a ui-sref="network.dashboard({community_key: item.key})"><i ng-class="'fa ' + item.profile.icon"></i>&nbsp;&nbsp;{{item.profile.name}}</a>
-                        <ul ng-if="nav.path.includes(item.key)" ng-include="'components/common/nav/nav_subitems.html'"></ul>
+                    <li ng-repeat="item in nav.networks">
+                        <a ui-sref="network.dashboard({community_key: item.key})" ng-class="{active: nav.path.includes(item.key)}"><i ng-class="'fa ' + item.profile.icon"></i>&nbsp;&nbsp;{{item.profile.name}}</a>
+                        <ul ng-if="nav.path.includes(item.key) && $state.current.name=='network.dashboard'" ng-include="'components/common/nav/nav_subitems.html'"></ul>
                     </li>
                 </ul>
             </li>

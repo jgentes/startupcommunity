@@ -177,6 +177,29 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
             }
         })
 
+        // Industry views
+        .state('industry', {
+            parent: "root",
+            abstract: true,
+            templateUrl: "components/common/content/content_big.html",
+            controller: "ContentController as content"
+        })
+        .state('industry.dashboard', {
+            url: "/:industry_key",
+            templateUrl: 'components/industries/industry.dashboard.html',
+            params: {
+                community: {},
+                pageTitle: "Industry Profile"
+            },
+            resolve: {
+                authenticated: ['$location', '$auth', function($location, $auth) {
+                    if (!$auth.isAuthenticated()) {
+                        $state.go('login');
+                    }
+                }]
+            }
+        })
+
         // Startup views
         .state('startups', {
             parent: 'root',
@@ -210,27 +233,6 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
             }
         })
 
-        // Industry views
-        .state('industry', {
-            parent: "root",
-            abstract: true,
-            templateUrl: "components/common/content/content_big.html",
-            controller: "ContentController as content"
-        })
-        .state('industry.dashboard', {
-            templateUrl: 'components/industries/industry.dashboard.html',
-            params: {
-                community: {},
-                pageTitle: "Industry Profile"
-            },
-            resolve: {
-                authenticated: ['$location', '$auth', function($location, $auth) {
-                    if (!$auth.isAuthenticated()) {
-                        $state.go('login');
-                    }
-                }]
-            }
-        })
 
         // Network views
         .state('network', {

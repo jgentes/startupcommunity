@@ -66,6 +66,7 @@ function handleGetCommunity(req, res) {
                 var finalize = function(results) {
                     for (item in results) {
                         newresponse[results[item].path.key] = results[item].value;
+                        newresponse[results[item].path.key]["key"] = results[item].path.key;
                     }
                     newresponse["key"] = community;
                     res.status(200).send(newresponse);
