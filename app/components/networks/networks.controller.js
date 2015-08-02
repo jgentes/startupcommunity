@@ -2,11 +2,7 @@ angular
     .module('startupcommunity')
     .controller('NetworkController', NetworkController);
 
-function NetworkController($state, $stateParams, $scope, $location, user_api) {
-
-    if ($stateParams.community.key) {
-        $location.path('/' + $stateParams.community.key, false)
-    }
+function NetworkController($state, $stateParams, $scope, user_api) {
 
     $scope.charts = {
         people: {},

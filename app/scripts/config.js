@@ -112,9 +112,11 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                 community: ['$stateParams', 'communities', 'community_api',
                     function($stateParams, communities, community_api) {
                         console.log('pulling community');
-                        if (communities.data[$stateParams.community_key]) { // users and startups won't exist in communities
-                            return communities.data[$stateParams.community_key];
-                        } else return community_api.getCommunity($stateParams.community_key);
+                        if (jQuery.isEmptyObject($stateParams.community)) {
+                            if (communities.data[$stateParams.community_key]) { // users and startups won't exist in communities
+                                return communities.data[$stateParams.community_key];
+                            } else return community_api.getCommunity($stateParams.community_key).data;
+                        } else this.community = $stateParams.community;
                     }]
             }
         })

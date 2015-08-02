@@ -65,9 +65,7 @@ function NavigationController($state, $location, $modal, $stateParams, user, com
                     this.maploc = this.community.profile.name;
                     break;
                 case "network":
-                    if (jQuery.isEmptyObject($stateParams.community)) {
-                        this.community = community;
-                    } else this.community = $stateParams.community;
+                    this.community = community;
                     this.maploc = this.community.profile.home;
                     break;
                 case "user":
