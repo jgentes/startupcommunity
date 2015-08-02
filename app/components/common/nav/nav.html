@@ -56,12 +56,11 @@
                 </div>
             </div>
 
-            <gm-map ng-init="nav.hideChange = true" id="nav-map" gm-address="{address:nav.maploc}" options="{zoom: 11, disableDefaultUI: true, draggable: false, disableDoubleClickZoom: true, scrollwheel: false}" on-mouseover="nav.setCenter(map.center)" on-mouseout="map.panTo(nav.latlng)">
-                <gm-infowindow ng-if="!nav.hideChange"
-                               options="{content: 'Change Community', position:  map.getCenter(nav.maploc)}"
-                ></gm-infowindow>
+            <gm-map ng-init="nav.hideChange = true" id="nav-map" gm-address="{address:nav.maploc}" options="{zoom: 11, disableDefaultUI: true, draggable: false, disableDoubleClickZoom: true, scrollwheel: false}" on-mouseover="nav.setMap(map.getCenter())" on-mouseclick="nav.setMap(map.getCenter())" on-mouseout="nav.hideChange = true; map.panTo(nav.latlng);">
+                <gm-infowindow ng-if="!nav.hideChange" options="{content: '<div id=&#34;changeLocation&#34; style=&#34;font-size: 12px;
+    padding-right: 10px;&#34;><a nohref>Change Community</a></div>', position: nav.latlng}"></gm-infowindow>
             </gm-map>
-            <div class="side-menu filler"><a ng-click="changeLocation()">Change</a></div>
+            <div class="side-menu filler"></div>
 
         </div>
 
