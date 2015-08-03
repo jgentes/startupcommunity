@@ -112,11 +112,28 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                 community: ['$stateParams', 'communities', 'community_api',
                     function($stateParams, communities, community_api) {
                         console.log('pulling community');
-                        if (jQuery.isEmptyObject($stateParams.community)) {
-                            if (communities.data[$stateParams.community_key]) { // users and startups won't exist in communities
-                                return communities.data[$stateParams.community_key];
-                            } else return community_api.getCommunity($stateParams.community_key).data;
-                        } else this.community = $stateParams.community;
+                        console.log($stateParams)
+
+                        if (jQuery.isEmptyObject($stateParams.community)) { // if community is passed in via ui-sref, just use that
+
+                            var pullCommunity = function () {
+                                if (communities.data[$stateParams.community_key]) { // if community_key has already been pulled, use that
+                                    return communities.data[$stateParams.community_key]; // this should also avoid re-pull for /people and /startups
+                                } else return community_api.getCommunity($stateParams.community_key);
+                            };
+                            // set community based on type, determined by URL
+                            var url = window.location.pathname.split('/'),
+                                lastitem = url.pop();
+
+                            if (lastitem == "people" || lastitem == "startups") {
+                                console.log('/people or /startups!');
+                                return communities.data[url.pop()]; // return preceding url path as community, such as tech for 'bend-or/tech/people'
+                            } else if (communities.data[lastitem].type == "industry") {
+                                console.log('industry!');
+                                return communities.data[lastitem]; // return tech in 'bend-or/tech'
+                            } else return pullCommunity();
+
+                        } else return $stateParams.community;
                     }]
             }
         })

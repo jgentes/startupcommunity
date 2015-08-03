@@ -10,7 +10,7 @@ function NavigationController($state, $location, $modal, $stateParams, user, com
     console.log('communities')
     console.log(communities.data);
     this.user = user.data; // reference 'this' by using 'nav' from 'NavigationController as nav' - * nav is also usable in child views *
-    this.path = $location.path(); //used for routing and used in view
+    this.community = community.data;
 
     window.$state = $state; // used for console
 
@@ -49,34 +49,7 @@ function NavigationController($state, $location, $modal, $stateParams, user, com
         }
     }
 
-    // determine what community or location/community we are in and set map appropriately
-    var current = this.path.split('/').pop();
-    switch(current) {
-        case "people":
-        case "startups":
-            this.community = community;
-            this.maploc = this.community.profile.name;
-            break;
-        default:
-            switch (communities.data[current].type) {
-                case "location":
-                case "industry":
-                    this.community = community;
-                    this.maploc = this.community.profile.name;
-                    break;
-                case "network":
-                    this.community = community;
-                    this.maploc = this.community.profile.home;
-                    break;
-                case "user":
-                case "startup":
-                    this.community = communities.data[community.profile.home];
-                    this.maploc = this.community.profile.home;
-            }
-
-
-
-    }
+    this.maploc = communities.data[community.key].profile.home || communities.data[community.key].profile.name;
 
     // used for the 'change' feature displayed on map
     this.setMap = function(center) {
@@ -97,6 +70,7 @@ function NavigationController($state, $location, $modal, $stateParams, user, com
         });
     });
 
+    this.path = $location.path(); //used for routing and used in view
     // for routing of root routes
     if (this.path.split('/').length < 3) {
         switch (community.type) {
