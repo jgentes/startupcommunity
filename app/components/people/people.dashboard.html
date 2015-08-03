@@ -1,13 +1,13 @@
 <div>
     <div class="row">
-        <div class="col-md-4">
+        <div class="col-lg-2 col-md-3 col-sm-4">
         <!-- Navigation Block -->
             <div class="hpanel hgreen">
                 <div class="panel-footer top" style="font-size: 17px;">
                     <strong>Role</strong> Filters
                     <i ng-show="people.loadingRole" class="fa fa-refresh fa-spin pull-right" style="padding: 4px; color: #aaa;"></i>
                 </div>
-                <div class="panel-body filternav h226">
+                <div class="panel-body filternav">
 
                     <ul class="panel-list">
                         <li ng-class="{'active':people.selectedRole.indexOf('*') >= 0}" ng-click="people.filterRole('*')">
@@ -41,14 +41,13 @@
                     </ul>
                 </div>
             </div>
-        </div>
-        <div class="col-md-4">
-            <div class="hpanel hnavyblue">
+
+            <div class="hpanel hnavyblue" ng-if="people.community.type !== 'industry'">
                 <div class="panel-footer top" style="font-size: 17px;">
                     <strong>Cluster</strong> Filters
                     <i ng-show="people.loadingIndustry" class="fa fa-refresh fa-spin pull-right" style="padding: 4px; color: #aaa;"></i>
                 </div>
-                <div class="panel-body filternav h226">
+                <div class="panel-body filternav">
                     <ul class="panel-list">
                         <li ng-class="{'active':people.selectedIndustry.indexOf('*') >= 0}" ng-click="people.filterIndustry('*');">
                             <a><i class="fa fa-fw fa-globe themed-color-dark icon-push"></i> <strong>All</strong></a>
@@ -62,14 +61,13 @@
                     </ul>
                 </div>
             </div>
-        </div>
-        <div class="col-md-4">
+
             <div class="hpanel hblue">
                 <div class="panel-footer top" style="font-size: 17px;">
                     <strong>Network</strong> Filters
                     <i ng-show="people.loadingNetwork" class="fa fa-refresh fa-spin pull-right" style="padding: 4px; color: #aaa;"></i>
                 </div>
-                <div class="panel-body filternav h226">
+                <div class="panel-body filternav">
                     <ul class="panel-list">
                         <li ng-class="{'active':people.selectedNetwork.indexOf('*') >= 0}" ng-click="people.filterNetwork('*');">
                             <a><i class="fa fa-fw fa-globe themed-color-dark icon-push"></i> <strong>All</strong></a>
@@ -83,11 +81,11 @@
                     </ul>
                 </div>
             </div>
-
         </div>
-    </div>
 
-    <div class="row" style="padding-left: 15px; padding-right: 15px;">
+
+
+    <div class="col-lg-10 col-md-9 col-sm-8" style="padding-left: 15px; padding-right: 15px;">
 
         <div class="hpanel">
             <div class="panel-footer top">

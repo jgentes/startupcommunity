@@ -161,7 +161,7 @@ function panelTools($timeout) {
     return {
         restrict: 'A',
         scope: true,
-        templateUrl: 'components/common/content/panel_tools.html',
+        templateUrl: '../components/common/header/panel_tools.html',
         controller: function ($scope, $element) {
             // Function for collapse ibox
             $scope.showhide = function () {

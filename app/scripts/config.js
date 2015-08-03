@@ -144,16 +144,22 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
         // Location views
         .state('location', {
             parent: "root",
-            abstract: true,
-            templateUrl: "components/common/content/content_big.html",
-            controller: "ContentController as content"
+            abstract: true
         })
         .state('location.dashboard', {
-            templateUrl: 'components/locations/location.dashboard.html',
-            controller: "LocationController as loc",
             params: {
                 community: {},
                 pageTitle: "Location Profile"
+            },
+            views: {
+                'header': {
+                    templateUrl: "../components/common/header/header_big.html",
+                    controller: "ContentController as content"
+                },
+                'content': {
+                    templateUrl: 'components/locations/location.dashboard.html',
+                    controller: "LocationController as loc"
+                }
             },
             resolve: {
                 authenticated: ['$auth', function($auth) {
@@ -171,12 +177,30 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
 
             }
         })
+        .state('location.people', {
+            url: "/people",
+            params: {
+                community: {},
+                pageTitle: 'People'
+            },
+            views: {
+                'header': {
+                    templateUrl: "../components/common/header/header_big.html",
+                    controller: "ContentController as content"
+                },
+                'content': {
+                    templateUrl: 'components/people/people.dashboard.html',
+                    controller: "PeopleController as people"
+                }
+            }
+
+        })
 
         // People views
         .state('people', {
             parent: 'root',
             abstract: true,
-            templateUrl: "components/common/content/content_small.html",
+            templateUrl: "../components/common/header/header_small.html",
             controller: "ContentController as content"
         })
         .state('people.profile', {
@@ -194,21 +218,12 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                 }]
             }
         })
-        .state('people.dashboard', {
-            url: "/people",
-            templateUrl: 'components/people/people.dashboard.html',
-            controller: "PeopleController as people",
-            params: {
-                community: {},
-                pageTitle: 'People'
-            }
-        })
 
         // Industry views
         .state('industry', {
             parent: "root",
             abstract: true,
-            templateUrl: "components/common/content/content_big.html",
+            templateUrl: "../components/common/header/header_big.html",
             controller: "ContentController as content"
         })
         .state('industry.dashboard', {
@@ -235,8 +250,8 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
 
             }
         })
-        .state('industry.dashboard.people', {
-            url: "/people",
+        .state('industry.people', {
+            url: "/:industry_key/people",
             templateUrl: 'components/people/people.dashboard.html',
             controller: "PeopleController as people",
             params: {
@@ -249,7 +264,7 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
         .state('startups', {
             parent: 'root',
             abstract: true,
-            templateUrl: "components/common/content/content_small.html",
+            templateUrl: "../components/common/header/header_small.html",
             controller: "ContentController as content"
         })
         .state('startups.dashboard', {
@@ -283,7 +298,7 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
         .state('network', {
             parent: "root",
             abstract: true,
-            templateUrl: "components/common/content/content_big.html",
+            templateUrl: "../components/common/header/header_big.html",
             controller: "ContentController as content"
         })
         .state('network.dashboard', {
