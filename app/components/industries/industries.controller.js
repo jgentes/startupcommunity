@@ -2,46 +2,35 @@ angular
     .module('startupcommunity')
     .controller('IndustryController', IndustryController);
 
-function IndustryController($state, $location, user_api) {
+function IndustryController($stateParams, leaders) {
 
-    $scope.charts = {
+    this.community = $stateParams.community;
+    this.leaders = leaders.data.results;
+
+    this.charts = {
         people: {},
         startups: {},
         jobs: {}
     };
 
-    $scope.charts.people.labels = ["", "", "", ""];
-    $scope.charts.people.series = ['Monthly Growth'];
-    $scope.charts.people.data = [[157, 165, 172, 184]];
-    $scope.charts.people.colors = ["#97BBCD"];
+    this.charts.people.labels = ["", "", "", ""];
+    this.charts.people.series = ['Monthly Growth'];
+    this.charts.people.data = [[157, 165, 172, 184]];
+    this.charts.people.colors = ["#97BBCD"];
 
-    $scope.charts.startups.labels = ["", "", "", ""];
-    $scope.charts.startups.series = ['Monthly Growth'];
-    $scope.charts.startups.data = [[77, 78, 78, 79]];
-    $scope.charts.startups.colors = ["#A1BE85"];
+    this.charts.startups.labels = ["", "", "", ""];
+    this.charts.startups.series = ['Monthly Growth'];
+    this.charts.startups.data = [[77, 78, 78, 79]];
+    this.charts.startups.colors = ["#A1BE85"];
 
-    $scope.charts.jobs.labels = ["", "", "", ""];
-    $scope.charts.jobs.series = ['Monthly Growth'];
-    $scope.charts.jobs.data = [[294, 290, 320, 325]];
-    $scope.charts.jobs.colors = ["#FF7D80"];
+    this.charts.jobs.labels = ["", "", "", ""];
+    this.charts.jobs.series = ['Monthly Growth'];
+    this.charts.jobs.data = [[294, 290, 320, 325]];
+    this.charts.jobs.colors = ["#FF7D80"];
 
-    $scope.charts.options = {
+    this.charts.options = {
         scaleShowGridLines: false,
         animation: false,
         showScale: false
     };
-
-    var getLeaders = function() {
-        console.log($scope.global.context);
-        user_api.getUsers($state.params.community.key, encodeURIComponent(['advisor']), 30) //todo change to Leader
-            .then( function(result) {
-                $scope.leaders = result.data.results;
-            })
-    };
-
-    if (!$scope.global.context || !$scope.global.context.location) {
-        $scope.$on('sessionReady', function(event, status) {
-            getLeaders();
-        });
-    } else getLeaders();
 }

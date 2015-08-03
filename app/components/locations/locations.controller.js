@@ -1,7 +1,6 @@
 angular
     .module('startupcommunity')
-    .controller('LocationController', LocationController)
-    .controller('ChangeLocationController', ChangeLocationController);
+    .controller('LocationController', LocationController);
 
 function LocationController($stateParams, leaders) {
 
@@ -36,12 +35,3 @@ function LocationController($stateParams, leaders) {
     };
 }
 
-function ChangeLocationController($state, $modalInstance){
-    $state.ok = function () {
-        $modalInstance.close();
-    };
-
-    $state.cancel = function () {
-        $modalInstance.dismiss('cancel');
-    };
-}

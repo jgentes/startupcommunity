@@ -4,7 +4,7 @@ angular
     .controller('PeopleProfileController', PeopleProfileController)
     .controller('InvitePeopleController', InvitePeopleController);
 
-function PeopleController($location, user_api, result_api, $sce, user, community, communities) {
+function PeopleController($location, $stateParams, user_api, result_api, $sce, user, community, communities) {
 
     this.community = community;
     this.communities = communities.data;
@@ -12,7 +12,7 @@ function PeopleController($location, user_api, result_api, $sce, user, community
     this.selectedIndustry = ['*'];
     this.selectedRole = ['*'];
     this.selectedNetwork = ['*'];
-
+    console.log($stateParams);
     var self = this; // for accessing 'this' in child functions
 
     this.getUsers = function(alturl) {

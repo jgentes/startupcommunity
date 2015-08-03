@@ -81,7 +81,14 @@
                 <ul class="nav nav-second-level">
                     <li ng-repeat="item in nav.industries">
                         <a ui-sref="industry.dashboard({industry_key: item.key, community: item})" ng-class="{active: nav.path.includes(item.key)}"><i ng-class="'fa ' + item.profile.icon"></i>&nbsp;&nbsp;{{item.profile.name}}</a>
-                        <ul ng-if="nav.path.includes(item.key) && $state.current.name=='industry.dashboard'" ng-include="'components/common/nav/nav_subitems.html'"></ul>
+                        <ul ng-if="nav.path.includes(item.key) && $state.current.name=='industry.dashboard'">
+                            <li ui-sref="industry.dashboard.people" ui-sref-active="active">
+                                <a><i class="fa fa-caret-right"></i>&nbsp;&nbsp;People</a>
+                            </li>
+                            <li ui-sref="industry.startups" ui-sref-active="active">
+                                <a><i class="fa fa-caret-right"></i>&nbsp;&nbsp;Startups</a>
+                            </li>
+                        </ul>
                     </li>
                 </ul>
             </li>

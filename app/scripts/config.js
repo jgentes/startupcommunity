@@ -109,8 +109,8 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                         console.log('pulling communities');
                         return community_api.getCommunity($stateParams.community_key);
                     }],
-                community: ['$stateParams', 'communities', 'community_api',
-                    function($stateParams, communities, community_api) {
+                community: ['$stateParams', '$location', 'communities', 'community_api',
+                    function($stateParams, $location, communities, community_api) {
                         console.log('pulling community');
                         console.log($stateParams)
 
@@ -122,9 +122,12 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                                 } else return community_api.getCommunity($stateParams.community_key);
                             };
                             // set community based on type, determined by URL
-                            var url = window.location.pathname.split('/'),
-                                lastitem = url.pop();
 
+                            var url = $location.path().replace(/\/$/, "").split('/');
+                            console.log(url);
+                                var lastitem = url.pop();
+
+                            console.log(communities.data);
                             if (lastitem == "people" || lastitem == "startups") {
                                 console.log('/people or /startups!');
                                 return communities.data[url.pop()]; // return preceding url path as community, such as tech for 'bend-or/tech/people'
@@ -153,6 +156,11 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                 pageTitle: "Location Profile"
             },
             resolve: {
+                authenticated: ['$auth', function($auth) {
+                    if (!$auth.isAuthenticated()) {
+                        $state.go('login');
+                    }
+                }],
                 leaders: ['user_api', '$stateParams', function(user_api, $stateParams) {
                     return user_api.getUsers([$stateParams.community_key], ['leader'], 30);
                 }],
@@ -206,16 +214,34 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
         .state('industry.dashboard', {
             url: "/:industry_key",
             templateUrl: 'components/industries/industry.dashboard.html',
+            controller: "IndustryController as ind",
             params: {
                 community: {},
                 pageTitle: "Industry Profile"
             },
             resolve: {
-                authenticated: ['$location', '$auth', function($location, $auth) {
+                authenticated: ['$auth', function($auth) {
                     if (!$auth.isAuthenticated()) {
                         $state.go('login');
                     }
-                }]
+                }],
+                leaders: ['user_api', '$stateParams', function(user_api, $stateParams) {
+                    return user_api.getUsers([$stateParams.community_key], ['leader'], 30);
+                }],
+                communities: ['community_api', '$stateParams', 'communities',
+                    function(community_api, $stateParams, communities) {
+                        if ($stateParams.community_key !== communities.data.key) return community_api.getCommunity($stateParams.community_key);
+                    }]
+
+            }
+        })
+        .state('industry.dashboard.people', {
+            url: "/people",
+            templateUrl: 'components/people/people.dashboard.html',
+            controller: "PeopleController as people",
+            params: {
+                community: {},
+                pageTitle: 'People'
             }
         })
 
