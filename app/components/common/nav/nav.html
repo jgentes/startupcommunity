@@ -84,7 +84,7 @@
             </li>
 
             <li class="active" ng-if="nav.industries">
-                <a href="#"><span class="nav-label">Clusters</span><span class="fa arrow"></span> </a>
+                <a href="#"><span class="nav-label">Industries</span><span class="fa arrow"></span> </a>
                 <ul class="nav nav-second-level">
                     <li ng-repeat="item in nav.industries">
                         <a ui-sref="industry.dashboard({industry_key: item.key, community: item})" ng-class="{active: nav.path.includes(item.key)}"><i ng-class="'fa ' + item.profile.icon"></i>&nbsp;&nbsp;{{item.profile.name}}</a>

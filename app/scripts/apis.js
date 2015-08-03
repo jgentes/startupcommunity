@@ -11,7 +11,6 @@ angular
                 return $http.get(urlString);
             },
             getUsers: function(communities, roles, limit, alturl) { //alturl is for next/prev retrieval
-
                 if (alturl) { return $http.get(alturl) } else {
                     var urlString = '/api/1.1/users?' + jQuery.param({
                             communities: communities,

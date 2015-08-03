@@ -26,6 +26,25 @@ var UserApi = function() {
  |--------------------------------------------------------------------------
  */
 
+
+function handleUserSearch(req, res){
+    var communities = req.query.communities,
+        roles = req.query.roles,
+        query = req.query.search,
+        limit = req.query.limit,
+        offset = req.query.offset,
+        key = req.query.api_key;
+
+    searchInCommunity(communities, roles, limit, offset, query, key)
+        .then(function(userlist){
+            res.send(userlist);
+        })
+        .fail(function(err){
+            console.warn(err);
+            res.send({message:err});
+        });
+}
+
 var searchInCommunity = function(communities, roles, limit, offset, query, key) {
     var allowed = false;
     var userperms;
@@ -66,7 +85,7 @@ var searchInCommunity = function(communities, roles, limit, offset, query, key) 
     }
 
     searchstring += ') AND type: "user"';
-    console.log(roles);
+
     if (roles && roles[0] !== '*') {
         roles = roles.split(',');
         searchstring += ' AND (';
@@ -79,7 +98,7 @@ var searchInCommunity = function(communities, roles, limit, offset, query, key) 
     }
 
     if (query) { searchstring += ' AND ' + '(' + query + ')'; }
-
+    console.log(searchstring);
     var deferred = Q.defer();
     db.newSearchBuilder()
       .collection(config.db.collections.communities)
@@ -184,25 +203,6 @@ function handleDirectSearch(req, res) {
             res.status(400).send({ message: 'Something went wrong: ' + err});
         });
 }
-
-function handleUserSearch(req, res){
-    var communities = req.query.communities,
-      roles = decodeURIComponent(req.query.roles),
-      query = req.query.search,
-      limit = req.query.limit,
-      offset = req.query.offset,
-      key = req.query.api_key;
-
-    searchInCommunity(communities, roles, limit, offset, query, key)
-      .then(function(userlist){
-          res.send(userlist);
-      })
-      .fail(function(err){
-          console.warn(err);
-          res.send({message:err});
-      });
-}
-
 
 
 /*

@@ -20,7 +20,6 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                 }],
                 user: ['user_api', '$state', '$mixpanel',
                     function(user_api, $state, $mixpanel) {
-                        console.log('pulling preload user');
                         return user_api.getProfile()
                             .success(function(response) {
                                 if (response.message) {
@@ -106,14 +105,10 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                 }],
                 communities: ['$stateParams', 'community_api',
                     function($stateParams, community_api) {
-                        console.log('pulling communities');
                         return community_api.getCommunity($stateParams.community_key);
                     }],
                 community: ['$stateParams', '$location', 'communities', 'community_api',
                     function($stateParams, $location, communities, community_api) {
-                        console.log('pulling community');
-                        console.log($stateParams)
-
                         if (jQuery.isEmptyObject($stateParams.community)) { // if community is passed in via ui-sref, just use that
 
                             var pullCommunity = function () {
@@ -123,16 +118,12 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                             };
                             // set community based on type, determined by URL
 
-                            var url = $location.path().replace(/\/$/, "").split('/');
-                            console.log(url);
-                                var lastitem = url.pop();
+                            var url = $location.path().replace(/\/$/, "").split('/'),
+                                lastitem = url.pop();
 
-                            console.log(communities.data);
                             if (lastitem == "people" || lastitem == "startups") {
-                                console.log('/people or /startups!');
                                 return communities.data[url.pop()]; // return preceding url path as community, such as tech for 'bend-or/tech/people'
                             } else if (communities.data[lastitem].type == "industry") {
-                                console.log('industry!');
                                 return communities.data[lastitem]; // return tech in 'bend-or/tech'
                             } else return pullCommunity();
 
@@ -185,7 +176,7 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
             },
             views: {
                 'header': {
-                    templateUrl: "../components/common/header/header_big.html",
+                    templateUrl: "../components/common/header/header_small.html",
                     controller: "ContentController as content"
                 },
                 'content': {
@@ -199,16 +190,22 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
         // People views
         .state('people', {
             parent: 'root',
-            abstract: true,
-            templateUrl: "../components/common/header/header_small.html",
-            controller: "ContentController as content"
+            abstract: true
         })
         .state('people.profile', {
-            templateUrl: "components/people/people.profile.html",
-            controller: 'PeopleProfileController as profile',
             params: {
                 user: {},
                 pageTitle: 'User Profile'
+            },
+            views: {
+                'header': {
+                    templateUrl: "../components/common/header/header_small.html",
+                    controller: "ContentController as content"
+                },
+                'content': {
+                    templateUrl: "components/people/people.profile.html",
+                    controller: 'PeopleProfileController as profile'
+                }
             },
             resolve: {
                 authenticated: ['$auth', function($auth) {
@@ -222,17 +219,23 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
         // Industry views
         .state('industry', {
             parent: "root",
-            abstract: true,
-            templateUrl: "../components/common/header/header_big.html",
-            controller: "ContentController as content"
+            abstract: true
         })
         .state('industry.dashboard', {
             url: "/:industry_key",
-            templateUrl: 'components/industries/industry.dashboard.html',
-            controller: "IndustryController as ind",
             params: {
                 community: {},
                 pageTitle: "Industry Profile"
+            },
+            views: {
+                'header': {
+                    templateUrl: "../components/common/header/header_big.html",
+                    controller: "ContentController as content"
+                },
+                'content': {
+                    templateUrl: 'components/industries/industry.dashboard.html',
+                    controller: "IndustryController as ind"
+                }
             },
             resolve: {
                 authenticated: ['$auth', function($auth) {
@@ -252,11 +255,19 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
         })
         .state('industry.people', {
             url: "/:industry_key/people",
-            templateUrl: 'components/people/people.dashboard.html',
-            controller: "PeopleController as people",
             params: {
                 community: {},
                 pageTitle: 'People'
+            },
+            views: {
+                'header': {
+                    templateUrl: "../components/common/header/header_small.html",
+                    controller: "ContentController as content"
+                },
+                'content': {
+                    templateUrl: 'components/people/people.dashboard.html',
+                    controller: "PeopleController as people"
+                }
             }
         })
 
