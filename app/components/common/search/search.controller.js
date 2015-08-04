@@ -4,7 +4,7 @@ angular
 
 function SearchController($stateParams, community) {
     console.log($stateParams);
-
+    this.lastQuery = 'marketing'; //used to hide filters in search view
     /*
     this.search = function(query) {
         this.search.tag = query;

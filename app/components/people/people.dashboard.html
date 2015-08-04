@@ -1,6 +1,6 @@
 <div>
     <div class="row">
-        <div class="col-lg-2 col-md-3 col-sm-4">
+        <div ng-if="!!(!search.lastQuery)" class="col-lg-2 col-md-3 col-sm-4">
         <!-- Navigation Block -->
             <div class="hpanel hgreen">
                 <div class="panel-footer top" style="font-size: 17px;">
@@ -77,7 +77,7 @@
 
 
 
-    <div class="col-lg-10 col-md-9 col-sm-8" style="padding-left: 15px; padding-right: 15px;">
+    <div ng-class="{'col-lg-10 col-md-9 col-sm-8' : !search.lastQuery}" style="padding-left: 15px; padding-right: 15px;">
 
         <div class="hpanel">
             <div class="panel-footer top">

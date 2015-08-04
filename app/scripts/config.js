@@ -142,7 +142,7 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                 },
                 'content': {
                     templateUrl: 'components/common/search/search.dashboard.html',
-                    controller: "SearchController as sc"
+                    controller: "SearchController as search"
                 }
             }
         })
