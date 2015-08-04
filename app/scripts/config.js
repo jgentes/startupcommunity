@@ -110,6 +110,7 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                     }],
                 community: ['$stateParams', '$location', 'communities', 'community_api',
                     function($stateParams, $location, communities, community_api) {
+                        console.log($stateParams)
                         if (jQuery.isEmptyObject($stateParams.community)) { // if community is passed in via ui-sref, just use that
 
                             var pullCommunity = function () {
@@ -121,20 +122,20 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                                 }
                             };
 
-                            if ($stateParams.profile || $stateParams.startup) {
-                                return pullCommunity();
-                            } else {
+                            if (jQuery.isEmptyObject($stateParams.profile)) {
                                 // set community based on type, determined by URL
                                 var url = $location.path().replace(/\/$/, "").split('/'),
                                     lastitem = url.pop(),
                                     root = url.pop();
-
+                                console.log(lastitem)
+                                console.log(communities.data);
                                 if (lastitem == "people" || lastitem == "startups") {
                                     return communities.data[root]; // return preceding url path as community, such as tech for 'bend-or/tech/people'
                                 } else if (communities.data[lastitem].type == "industry") {
                                     return communities.data[lastitem]; // return tech in 'bend-or/tech'
                                 } else return pullCommunity();
-                            }
+                            } else return pullCommunity();
+
                         } else return $stateParams.community;
                     }]
             }
@@ -301,6 +302,7 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
             controller: "StartupsProfileController as profile",
             parent: 'startups',
             params: {
+                profile: {},
                 community: {},
                 pageTitle: 'Startup Profile'
             },
