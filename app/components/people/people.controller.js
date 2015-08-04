@@ -93,7 +93,7 @@ function PeopleController($location, $stateParams, user_api, result_api, $sce, u
                 self.selectedRole = ['*'];
             }
         }
-        console.log(self.community);
+
         user_api.getUsers(communityFilter, self.selectedRole, 30, undefined)
             .then(function(response) {
                 self.loadingRole = false;
@@ -114,30 +114,6 @@ function PeopleController($location, $stateParams, user_api, result_api, $sce, u
         user_api.getUsers(communityFilter.concat(self.selectedCommunities), self.selectedRole, 30, undefined)
             .then(function(response) {
                 self.loadingIndustry = false;
-                self.loadingNetwork = false;
-                self.users = result_api.setPage(response.data);
-                setTitle();
-            });
-    };
-
-    this.filterNetwork = function(network) {
-        self.loadingNetwork = true;
-        if (network == '*') {
-            self.selectedNetwork = ['*'];
-        } else {
-            if (self.selectedNetwork.indexOf('*') > -1) {
-                self.selectedNetwork.splice(self.selectedNetwork.indexOf('*'), 1);
-            }
-            if (self.selectedNetwork.indexOf(network) < 0) {
-                self.selectedNetwork.push(network);
-            } else self.selectedNetwork.splice(self.selectedNetwork.indexOf(network), 1);
-            if (self.selectedNetwork.length === 0) {
-                self.selectedNetwork = ['*'];
-            }
-        }
-
-        user_api.getUsers(communityFilter, self.selectedRole, 30, undefined)
-            .then(function(response) {
                 self.loadingNetwork = false;
                 self.users = result_api.setPage(response.data);
                 setTitle();

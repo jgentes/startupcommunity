@@ -49,7 +49,7 @@
                 </div>
                 <div class="panel-body filternav">
                     <ul class="panel-list">
-                        <li ng-class="{'active':people.selectedCommunities.length == 0}" ng-click="people.loadingIndustry=true; people.filterCommunities();">
+                        <li ng-class="{'active':people.selectedgit .length == 0}" ng-click="people.loadingIndustry=true; people.filterCommunities();">
                             <a><i class="fa fa-fw fa-globe themed-color-dark icon-push"></i> <strong>All</strong></a>
                         </li>
                         <li>
@@ -69,13 +69,13 @@
                 </div>
                 <div class="panel-body filternav">
                     <ul class="panel-list">
-                        <li ng-class="{'active':people.selectedNetwork.indexOf('*') >= 0}" ng-click="people.filterNetwork('*');">
+                        <li ng-class="{'active':people.selectedCommunities.length == 0}" ng-click="people.loadingNetwork=true; people.filterCommunities();">
                             <a><i class="fa fa-fw fa-globe themed-color-dark icon-push"></i> <strong>All</strong></a>
                         </li>
                         <li>
                             <hr style="margin: 10px 0 10px 0;">
                         </li>
-                        <li ng-repeat="network in nav.networks" ng-class="{'active':people.selectedNetwork.indexOf(network.profile.name.toLowerCase()) >= 0}" ng-click="people.filterNetwork(network.profile.name.toLowerCase());">
+                        <li ng-repeat="network in nav.networks" ng-class="{'active':people.selectedCommunities.indexOf(network.profile.name.toLowerCase()) >= 0}" ng-click="people.filterCommunities(network.profile.name.toLowerCase());">
                             <a><i class="fa {{network.profile.icon}}"></i> {{network.profile.name}}</a>
                         </li>
                     </ul>
