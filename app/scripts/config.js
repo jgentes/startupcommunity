@@ -95,6 +95,7 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
             templateUrl: "components/common/nav/nav.html",
             controller: "NavigationController as nav",
             params: {
+                profile: {},  // must include params for *any* root-level object for inheritance, such as users, startups, networks, etc
                 community: {}
             },
             resolve: {
@@ -114,19 +115,26 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                             var pullCommunity = function () {
                                 if (communities.data[$stateParams.community_key]) { // if community_key has already been pulled, use that
                                     return communities.data[$stateParams.community_key]; // this should also avoid re-pull for /people and /startups
-                                } else return community_api.getCommunity($stateParams.community_key);
+                                } else {
+                                    var communityData = community_api.getCommunity($stateParams.community_key);
+                                    return communityData.data;
+                                }
                             };
-                            // set community based on type, determined by URL
 
-                            var url = $location.path().replace(/\/$/, "").split('/'),
-                                lastitem = url.pop();
+                            if ($stateParams.profile || $stateParams.startup) {
+                                return pullCommunity();
+                            } else {
+                                // set community based on type, determined by URL
+                                var url = $location.path().replace(/\/$/, "").split('/'),
+                                    lastitem = url.pop(),
+                                    root = url.pop();
 
-                            if (lastitem == "people" || lastitem == "startups") {
-                                return communities.data[url.pop()]; // return preceding url path as community, such as tech for 'bend-or/tech/people'
-                            } else if (communities.data[lastitem].type == "industry") {
-                                return communities.data[lastitem]; // return tech in 'bend-or/tech'
-                            } else return pullCommunity();
-
+                                if (lastitem == "people" || lastitem == "startups") {
+                                    return communities.data[root]; // return preceding url path as community, such as tech for 'bend-or/tech/people'
+                                } else if (communities.data[lastitem].type == "industry") {
+                                    return communities.data[lastitem]; // return tech in 'bend-or/tech'
+                                } else return pullCommunity();
+                            }
                         } else return $stateParams.community;
                     }]
             }
@@ -159,7 +167,7 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                     }
                 }],
                 leaders: ['user_api', '$stateParams', function(user_api, $stateParams) {
-                    return user_api.getUsers([$stateParams.community_key], ['leader'], 30);
+                    return user_api.getUsers([$stateParams.community_key], ['leader'], 18);
                 }],
                 communities: ['community_api', '$stateParams', 'communities',
                     function(community_api, $stateParams, communities) {
@@ -194,7 +202,7 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
         })
         .state('people.profile', {
             params: {
-                user: {},
+                profile: {},
                 community: {},
                 pageTitle: 'User Profile'
             },

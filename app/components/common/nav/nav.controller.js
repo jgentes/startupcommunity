@@ -3,17 +3,10 @@ angular
     .controller('NavigationController', NavigationController)
     .controller('ChangeLocationController', ChangeLocationController);
 
-function NavigationController($state, $location, $modal, $stateParams, user, community, communities) {
-    /*
-    console.log('params')
-    console.log($stateParams);
-    console.log('community')
-    console.log(community);
-    console.log('communities')
-    console.log(communities.data);
-    */
+function NavigationController($state, $location, $stateParams, $modal, user, community, communities) {
+
     this.user = user.data; // reference 'this' by using 'nav' from 'NavigationController as nav' - * nav is also usable in child views *
-    this.community = community.data;
+    this.community = community;
 
     // Role icons displayed in user profile
     var rolelist = [],
@@ -52,7 +45,10 @@ function NavigationController($state, $location, $modal, $stateParams, user, com
 
     this.path = $location.path().replace(/\/$/, ""); //used for routing and used in view
 
-    this.maploc = communities.data[this.path.split('/')[1]].profile.home || communities.data[this.path.split('/')[1]].profile.name;
+    //set location, used for map and relative nav for industries
+    if (community.type == "user" || community.type == "network") {
+        this.location = community.profile.home;
+    } else this.location = $stateParams.community_key;
 
     // used for the 'change' feature displayed on map
     this.setMap = function(center) {
@@ -72,7 +68,6 @@ function NavigationController($state, $location, $modal, $stateParams, user, com
             windowClass: "hmodal-warning"
         });
     });
-
 
     // for routing of root routes
     if (this.path.split('/').length < 3) {

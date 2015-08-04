@@ -45,10 +45,10 @@
             <div class="container side-menu" style="padding-top: 10px; margin-left: -20px;">
                 <div class="row side-menu">
                     <div class="col-sm-3">
-                        <a ui-sref="people.profile({user: nav.user, community_key: nav.user.key, community: {}})"><img class="img-circle m-b" ng-src="{{nav.user.profile.avatar || nav.user.profile.linkedin.pictureUrl || 'images/blank_avatar.png'}}" alt="{{nav.user.profile.name}}" style="height: 40px; width: 40px; "/></a>
+                        <a ui-sref="people.profile({profile: nav.user, community_key: nav.user.key, community: {}})"><img class="img-circle m-b" ng-src="{{nav.user.profile.avatar || nav.user.profile.linkedin.pictureUrl || 'images/blank_avatar.png'}}" alt="{{nav.user.profile.name}}" style="height: 40px; width: 40px; "/></a>
                     </div>
                     <div class="col-sm-9" style="padding-top: 3px;">
-                        <a ui-sref="people.profile({user: nav.user, community_key: nav.user.key, community: {}})">{{nav.user.profile.name}}</a>
+                        <a ui-sref="people.profile({profile: nav.user, community_key: nav.user.key, community: {}})">{{nav.user.profile.name}}</a>
                         <div style="margin-left: -10px; padding-top: 1px;">
                             <span ng-repeat="(item, val) in nav.user.roles" class="user-role"><i ng-attr-title="{{item[0].toUpperCase() + item.slice(1);}}" ng-class="{'text-primary fa fa-rocket' : item == 'founder', 'text-info fa fa-graduation-cap' : item == 'advisor', 'text-success fa fa-leaf' : item == 'investor', 'text-danger fa fa-flag' : item == 'leader'}"></i></span>
                         </div>
@@ -56,7 +56,7 @@
                 </div>
             </div>
 
-            <gm-map ng-init="nav.hideChange = true" id="nav-map" gm-address="{address:nav.maploc}" options="{zoom: 11, disableDefaultUI: true, draggable: false, disableDoubleClickZoom: true, scrollwheel: false}" on-mouseover="nav.setMap(map.getCenter())" on-mouseclick="nav.setMap(map.getCenter())" on-mouseout="nav.hideChange = true; map.panTo(nav.latlng);">
+            <gm-map ng-init="nav.hideChange = true" id="nav-map" gm-address="{address:nav.location}" options="{zoom: 11, disableDefaultUI: true, draggable: false, disableDoubleClickZoom: true, scrollwheel: false}" on-mouseover="nav.setMap(map.getCenter())" on-mouseclick="nav.setMap(map.getCenter())" on-mouseout="nav.hideChange = true; map.panTo(nav.latlng);">
                 <gm-infowindow ng-if="!nav.hideChange" options="{content: '<div id=&#34;changeLocation&#34; style=&#34;font-size: 12px;
     padding-right: 10px;&#34;><a nohref>Change Location</a></div>', position: nav.latlng}"></gm-infowindow>
             </gm-map>
@@ -87,7 +87,7 @@
                 <a href="#"><span class="nav-label">Industries</span><span class="fa arrow"></span> </a>
                 <ul class="nav nav-second-level">
                     <li ng-repeat="item in nav.industries">
-                        <a ui-sref="industry.dashboard({industry_key: item.key, community: item})" ng-class="{active: nav.path.includes(item.key)}"><i ng-class="'fa ' + item.profile.icon"></i>&nbsp;&nbsp;{{item.profile.name}}</a>
+                        <a ui-sref="industry.dashboard({community_key: nav.location, industry_key: item.key, community: item})" ng-class="{active: nav.path.includes(item.key)}"><i ng-class="'fa ' + item.profile.icon"></i>&nbsp;&nbsp;{{item.profile.name}}</a>
                         <ul ng-if="nav.path.includes(item.key) && $state.current.name.split('.')[0]=='industry'">
                             <li ui-sref="industry.people({industry_key: item.key})" ui-sref-active="active">
                                 <a><i class="fa fa-caret-right"></i>&nbsp;&nbsp;People</a>

@@ -17,7 +17,7 @@ function PeopleController($location, $stateParams, user_api, result_api, $sce, u
 
     this.getUsers = function(alturl) {
         self.loadingPeople = true;
-        user_api.getUsers([self.communities.key], undefined, 30, alturl)
+        user_api.getUsers([self.communities.key], undefined, 20, alturl)
             .then(function(response) {
                 self.users = result_api.setPage(response.data);
                 self.loadingPeople = false;
@@ -96,7 +96,7 @@ function PeopleController($location, $stateParams, user_api, result_api, $sce, u
             }
         }
 
-        user_api.getUsers(communityFilter, self.selectedRole, 30, undefined)
+        user_api.getUsers(communityFilter, self.selectedRole, 20, undefined)
             .then(function(response) {
                 self.loadingRole = false;
                 self.users = result_api.setPage(response.data);
@@ -131,7 +131,7 @@ function PeopleController($location, $stateParams, user_api, result_api, $sce, u
             } else self.selectedNetworks.splice(self.selectedNetworks.indexOf(selection), 1);
         }
 
-        user_api.getUsers(communityFilter.concat(self.selectedNetworks), self.selectedRole, 30, undefined)
+        user_api.getUsers(communityFilter.concat(self.selectedNetworks), self.selectedRole, 20, undefined)
             .then(function(response) {
                 self.loadingIndustry = false;
                 self.loadingNetwork = false;
@@ -161,8 +161,8 @@ function PeopleProfileController($scope, $stateParams, $location, $auth, $mixpan
 
     if (!jQuery.isEmptyObject($stateParams.user)) {
         this.user = $stateParams.user;
-    } else if (community.data && community.data.type == "user") {
-        this.user = community.data;
+    } else if (community && community.type == "user") {
+        this.user = community;
     } else this.user = user.data;
 
     var self = this;
