@@ -86,11 +86,11 @@ var searchInCommunity = function(communities, roles, limit, offset, query, key) 
 
     searchstring += ') AND type: "user"';
 
-    if (roles && roles[0] !== '*') {
-        roles = roles.split(',');
+    if (roles && roles.length > 0) {
+        roles = roles.splice(',');
         searchstring += ' AND (';
 
-        for (var i in roles) {
+        for (i in roles) {
             searchstring += 'roles.' + roles[i] + '.*:*'; // scope to role
             if (i < (roles.length - 1)) { searchstring += ' OR '; }
         }

@@ -195,6 +195,7 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
         .state('people.profile', {
             params: {
                 user: {},
+                community: {},
                 pageTitle: 'User Profile'
             },
             views: {
