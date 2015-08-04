@@ -69,6 +69,11 @@ function NavigationController($state, $location, $stateParams, $modal, user, com
         });
     });
 
+    // search box
+    this.search = function(query) {
+        $state.go('search.dashboard', {query: query});
+    };
+
     // for routing of root routes
     if (this.path.split('/').length < 3) {
         switch (community.type) {

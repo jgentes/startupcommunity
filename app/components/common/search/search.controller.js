@@ -2,17 +2,18 @@ angular
     .module('startupcommunity')
     .controller('SearchController', SearchController);
 
-function SearchController(user_api, $stateParams, result_api) {
+function SearchController($stateParams, community) {
+    console.log($stateParams);
 
+    /*
     this.search = function(query) {
         this.search.tag = query;
         this.search.results = undefined;
-        user_api.search($stateParams.community.key, query)
+        user_api.search('bend-or', query)
             .then(function(response) {
-                this.search = result_api.setPage(response.data);
+                this.search.results = result_api.setPage(response.data);
                 this.search.lastQuery = query;
-                $location.path('/search');
             });
     };
-
+    */
 }

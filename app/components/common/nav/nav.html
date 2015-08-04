@@ -10,20 +10,19 @@
             <minimaliza-menu></minimaliza-menu>
             <div class="navbar-left">
                 <div class="nav navbar-nav no-borders">
-                    <div style="margin-top: 15px; margin-left: 0;">
-                        <!--
-                       <textarea placeholder="Search.."></textarea>
-                       -->
-                    </div>
+                    <li>
+                        <a onclick="$('#searchform').submit()">
+                            <i class="pe-7s-search"></i>
+                        </a>
+                    </li>
+                    <form id="searchform" ng-submit="nav.search(search.query)" role="search" class="navbar-form-custom" method="post">
+                        <input ng-model="search.query" type="text" placeholder="Search.." class="form-control" name="search">
+                    </form>
                 </div>
             </div>
             <div class="navbar-right">
                 <ul class="nav navbar-nav no-borders">
-                    <li class="dropdown">
-                        <a tooltip-placement="left" tooltip="Search">
-                            <i class="pe-7s-search"></i>
-                        </a>
-                    </li>
+
                     <li class="dropdown">
                         <a tooltip-placement="left" tooltip="Help">
                             <i class="pe-7s-help1"></i>
@@ -58,7 +57,7 @@
 
             <gm-map ng-init="nav.hideChange = true" id="nav-map" gm-address="{address:nav.location}" options="{zoom: 11, disableDefaultUI: true, draggable: false, disableDoubleClickZoom: true, scrollwheel: false}" on-mouseover="nav.setMap(map.getCenter())" on-mouseclick="nav.setMap(map.getCenter())" on-mouseout="nav.hideChange = true; map.panTo(nav.latlng);">
                 <gm-infowindow ng-if="!nav.hideChange" options="{content: '<div id=&#34;changeLocation&#34; style=&#34;font-size: 12px;
-    padding-right: 10px;&#34;><a nohref>Change Location</a></div>', position: nav.latlng}"></gm-infowindow>
+    padding-right: 10px;&#34;><a>Change Location</a></div>', position: nav.latlng}"></gm-infowindow>
             </gm-map>
             <div class="side-menu filler"></div>
 

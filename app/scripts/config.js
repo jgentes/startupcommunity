@@ -44,18 +44,6 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                     }]
             }
         })
-
-        .state('search', {
-            templateUrl: 'views/search.html',
-            url: "/search",
-            resolve: {
-                authenticated: ['$auth', function($auth) {
-                    if (!$auth.isAuthenticated()) {
-                        $state.go('login');
-                    }
-                }]
-            }
-        })
         .state('invite', {
             templateUrl: '../views/invite_people.html',
             url: "/people/invite",
@@ -110,7 +98,6 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                     }],
                 community: ['$stateParams', '$location', 'communities', 'community_api',
                     function($stateParams, $location, communities, community_api) {
-                        console.log($stateParams)
                         if (jQuery.isEmptyObject($stateParams.community)) { // if community is passed in via ui-sref, just use that
 
                             var pullCommunity = function () {
@@ -127,9 +114,8 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                                 var url = $location.path().replace(/\/$/, "").split('/'),
                                     lastitem = url.pop(),
                                     root = url.pop();
-                                console.log(lastitem)
-                                console.log(communities.data);
-                                if (lastitem == "people" || lastitem == "startups") {
+
+                                if (lastitem == "people" || lastitem == "startups" || lastitem == "search") {
                                     return communities.data[root]; // return preceding url path as community, such as tech for 'bend-or/tech/people'
                                 } else if (communities.data[lastitem].type == "industry") {
                                     return communities.data[lastitem]; // return tech in 'bend-or/tech'
@@ -138,6 +124,35 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
 
                         } else return $stateParams.community;
                     }]
+            }
+        })
+
+        .state('search', {
+            parent: 'root',
+            abstract: true,
+            params: {
+                community: {},
+                query: '*',
+                pageTitle: 'Search Results'
+            },
+            views: {
+                'header': {
+                    templateUrl: "../components/common/header/header_small.html",
+                    controller: "ContentController as content"
+                },
+                'content': {
+                    templateUrl: 'components/common/search/search.dashboard.html',
+                    controller: "SearchController as sc"
+                }
+            }
+        })
+        .state('search.dashboard', {
+            url: "/search",
+            views: {
+                "people": {
+                    templateUrl: 'components/people/people.dashboard.html',
+                    controller: "PeopleController as people"
+                }
             }
         })
 
@@ -191,6 +206,25 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                 'content': {
                     templateUrl: 'components/people/people.dashboard.html',
                     controller: "PeopleController as people"
+                }
+            }
+
+        })
+        .state('location.search', {
+            url: "/search",
+            params: {
+                community: {},
+                query: {},
+                pageTitle: 'Search Results'
+            },
+            views: {
+                'header': {
+                    templateUrl: "../components/common/header/header_small.html",
+                    controller: "ContentController as content"
+                },
+                'content': {
+                    templateUrl: '../components/common/search/search.dashboard.html',
+                    controller: "SearchController as sc"
                 }
             }
 

@@ -4,7 +4,7 @@ angular
     .controller('PeopleProfileController', PeopleProfileController)
     .controller('InvitePeopleController', InvitePeopleController);
 
-function PeopleController($location, $stateParams, user_api, result_api, $sce, user, community, communities) {
+function PeopleController($location, user_api, result_api, $sce, user, community, communities) {
 
     this.community = community;
     this.communities = communities.data;

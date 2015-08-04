@@ -521,10 +521,11 @@ footer, .push {
 
 .navbar-nav > li,.navbar-nav > li > a, .navbar-nav > div, .navbar-nav > div > a {
   height: 61px;
+  cursor: pointer;
 }
 
 .navbar-nav > li > a, .navbar-nav > div > a {
-  //padding: 15px 25px;
+  padding-top: 20px;
   font-size: 25px;
 }
 
@@ -640,19 +641,37 @@ a:hover, a:focus {
 .navbar-form-custom {
   float: left;
   height: 52px;
-  padding: 0;
   width: 200px;
+  padding: 7px 0 0 0;
 }
 
 .navbar-form-custom .form-control {
   background: none repeat scroll 0 0 rgba(0, 0, 0, 0);
   border: medium none;
-  font-size: 13px;
+  font-size: 20px;
+  font-weight: 200;
   height: 52px;
   margin: 0;
   z-index: 1060;
   padding: 0;
+
+  &:-moz-placeholder {
+    padding: 3px 0 0 0;
+    font-size: 20px;
+    font-weight: 200;
+  }
+  &:-ms-input-placeholder {
+    padding: 3px 0 0 0;
+    font-size: 20px;
+    font-weight: 200;
+  }
+  &::-webkit-input-placeholder {
+    padding: 3px 0 0 0;
+    font-size: 20px;
+    font-weight: 200;
+  }
 }
+
 
 .form-control, .form-control:focus, .has-error .form-control:focus, .has-success .form-control:focus, .has-warning .form-control:focus, .navbar-collapse, .navbar-form, .navbar-form-custom .form-control:focus, .navbar-form-custom .form-control:hover, .open .btn.dropdown-toggle, .panel, .popover, .progress, .progress-bar {
   box-shadow: none;

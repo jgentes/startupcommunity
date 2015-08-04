@@ -11,26 +11,26 @@
 
                     <ul class="panel-list">
                         <li ng-class="{'active':people.selectedRole.indexOf('*') >= 0}" ng-click="people.filterRole('*')">
-                            <a nohref><i class="fa fa-fw fa-globe themed-color-dark"></i> All</a>
+                            <a><i class="fa fa-fw fa-globe themed-color-dark"></i> All</a>
                         </li>
                         <hr style="margin: 10px 0 10px 0;">
                         <li ng-class="{'active':people.selectedRole.indexOf('founder') >= 0}" ng-click="people.filterRole('founder')">
-                            <a nohref>
+                            <a>
                                 <i class="fa fa-rocket text-navyblue"></i> Founders
                             </a>
                         </li>
                         <li ng-class="{'active':people.selectedRole.indexOf('leader') >= 0}" ng-click="people.filterRole('leader')">
-                            <a nohref>
+                            <a>
                                 <i class="fa fa-flag text-danger"></i> Leaders
                             </a>
                         </li>
                         <li ng-class="{'active':people.selectedRole.indexOf('advisor') >= 0}" ng-click="people.filterRole('advisor')">
-                            <a nohref>
+                            <a>
                                 <i class="fa fa-graduation-cap text-info"></i> Advisors
                             </a>
                         </li>
                         <li ng-class="{'active':people.selectedRole.indexOf('investor') >= 0}" ng-click="people.filterRole('investor')">
-                            <a nohref>
+                            <a>
                                 <i class="fa fa-leaf text-success"></i> Investors
                             </a>
                         </li>
