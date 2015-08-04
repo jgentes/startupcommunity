@@ -96,7 +96,8 @@
                         </ui-select-choices>
                     </ui-select>
                 </div>
-                <span style="font-size: 17px;" ng-bind-html="people.title"></span>
+                <span ng-if="search.lastQuery" style="font-size: 17px;">People matching "<strong>{{search.lastQuery}}</strong>"</span>
+                <span ng-if="!search.lastQuery" style="font-size: 17px;" ng-bind-html="people.title"></span>
                 <span><i ng-show="people.loadingPeople" class="fa fa-refresh fa-spin" style="padding: 4px; color: #aaa; font-size: 17px; margin-left: 5px;"></i></span>
             </div>
 

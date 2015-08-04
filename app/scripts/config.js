@@ -130,11 +130,6 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
         .state('search', {
             parent: 'root',
             abstract: true,
-            params: {
-                community: {},
-                query: '*',
-                pageTitle: 'Search Results'
-            },
             views: {
                 'header': {
                     templateUrl: "../components/common/header/header_small.html",
@@ -148,6 +143,11 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
         })
         .state('search.dashboard', {
             url: "/search",
+            params: {
+                community: {},
+                query: '*',
+                pageTitle: 'Search Results'
+            },
             views: {
                 "people": {
                     templateUrl: 'components/people/people.dashboard.html',
