@@ -9,9 +9,10 @@ function PeopleController($location, $stateParams, user_api, result_api, $sce, u
     this.community = community;
     this.communities = communities.data;
     this.user = user.data;
-    this.selectedCommunities = [];
+    this.selectedIndustries = [];
+    this.selectedNetworks = [];
     this.selectedRole = ['*'];
-    console.log(communities);
+
     var self = this; // for accessing 'this' in child functions
 
     this.getUsers = function(alturl) {
@@ -46,15 +47,16 @@ function PeopleController($location, $stateParams, user_api, result_api, $sce, u
                 }
             }
         }
-        console.log(self.selectedCommunities);
-        if (self.selectedCommunities.length == 0) {
+
+        if (self.selectedIndustries.length == 0 && self.selectedNetworks.length == 0) {
             self.selection = self.community.profile.name;
         } else {
             self.selection = "";
-            for (item in self.selectedCommunities) {
-                self.selection += self.selectedCommunities[item][0].toUpperCase() + self.selectedCommunities[item].slice(1);
-                if (item < self.selectedCommunities.length - 1) {
-                    if (item < self.selectedCommunities.length - 2 ) {
+            var selectedCommunities = self.selectedIndustries.concat(self.selectedNetworks);
+            for (item in selectedCommunities) {
+                self.selection += self.communities[selectedCommunities[item]].profile.name;
+                if (item < selectedCommunities.length - 1) {
+                    if (item < selectedCommunities.length - 2 ) {
                         self.selection += ', ';
                     } else self.selection += ' & ';
                 }
@@ -102,16 +104,34 @@ function PeopleController($location, $stateParams, user_api, result_api, $sce, u
             });
     };
 
-    this.filterCommunities = function(selection) {
+    this.filterIndustries = function(selection) {
         if (selection == undefined) {
-            self.selectedCommunities = [];
+            self.selectedIndustries = [];
         } else {
-            if (self.selectedCommunities.indexOf(selection) < 0) {
-                self.selectedCommunities.push(selection);
-            } else self.selectedCommunities.splice(self.selectedCommunities.indexOf(selection), 1);
+            if (self.selectedIndustries.indexOf(selection) < 0) {
+                self.selectedIndustries.push(selection);
+            } else self.selectedIndustries.splice(self.selectedIndustries.indexOf(selection), 1);
         }
 
-        user_api.getUsers(communityFilter.concat(self.selectedCommunities), self.selectedRole, 30, undefined)
+        user_api.getUsers(communityFilter.concat(self.selectedIndustries), self.selectedRole, 30, undefined)
+            .then(function(response) {
+                self.loadingIndustry = false;
+                self.loadingNetwork = false;
+                self.users = result_api.setPage(response.data);
+                setTitle();
+            });
+    };
+
+    this.filterNetworks = function(selection) {
+        if (selection == undefined) {
+            self.selectedNetworks = [];
+        } else {
+            if (self.selectedNetworks.indexOf(selection) < 0) {
+                self.selectedNetworks.push(selection);
+            } else self.selectedNetworks.splice(self.selectedNetworks.indexOf(selection), 1);
+        }
+
+        user_api.getUsers(communityFilter.concat(self.selectedNetworks), self.selectedRole, 30, undefined)
             .then(function(response) {
                 self.loadingIndustry = false;
                 self.loadingNetwork = false;

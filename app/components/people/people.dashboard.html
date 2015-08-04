@@ -49,13 +49,13 @@
                 </div>
                 <div class="panel-body filternav">
                     <ul class="panel-list">
-                        <li ng-class="{'active':people.selectedgit .length == 0}" ng-click="people.loadingIndustry=true; people.filterCommunities();">
+                        <li ng-init="people.allIndustries=true" ng-class="{'active':people.allIndustries}" ng-click="people.loadingIndustry=true; people.allIndustries=true; people.filterIndustries();">
                             <a><i class="fa fa-fw fa-globe themed-color-dark icon-push"></i> <strong>All</strong></a>
                         </li>
                         <li>
                             <hr style="margin: 10px 0 10px 0;">
                         </li>
-                        <li ng-repeat="industry in nav.industries" ng-class="{'active':people.selectedCommunities.indexOf(industry.profile.name.toLowerCase()) >= 0}" ng-click="people.filterCommunities(industry.profile.name.toLowerCase());">
+                        <li ng-repeat="industry in nav.industries" ng-class="{'active':people.selectedIndustries.indexOf(industry.key) >= 0}" ng-click="people.loadingIndustry=true;  people.allIndustries=false; people.filterIndustries(industry.key);">
                             <a><i class="fa {{industry.profile.icon}}"></i> {{industry.profile.name}}</a>
                         </li>
                     </ul>
@@ -69,13 +69,13 @@
                 </div>
                 <div class="panel-body filternav">
                     <ul class="panel-list">
-                        <li ng-class="{'active':people.selectedCommunities.length == 0}" ng-click="people.loadingNetwork=true; people.filterCommunities();">
+                        <li ng-init="people.allNetworks=true" ng-class="{'active':people.allNetworks}" ng-click="people.loadingNetwork=true; people.allNetworks=true; people.filterNetworks();">
                             <a><i class="fa fa-fw fa-globe themed-color-dark icon-push"></i> <strong>All</strong></a>
                         </li>
                         <li>
                             <hr style="margin: 10px 0 10px 0;">
                         </li>
-                        <li ng-repeat="network in nav.networks" ng-class="{'active':people.selectedCommunities.indexOf(network.profile.name.toLowerCase()) >= 0}" ng-click="people.filterCommunities(network.profile.name.toLowerCase());">
+                        <li ng-repeat="network in nav.networks" ng-class="{'active':people.selectedNetworks.indexOf(network.key) >= 0}" ng-click="people.allNetworks=false; people.filterNetworks(network.key);">
                             <a><i class="fa {{network.profile.icon}}"></i> {{network.profile.name}}</a>
                         </li>
                     </ul>
