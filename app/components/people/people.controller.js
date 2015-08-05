@@ -4,8 +4,8 @@ angular
     .controller('PeopleProfileController', PeopleProfileController)
     .controller('InvitePeopleController', InvitePeopleController);
 
-function PeopleController($location, user_api, result_api, $sce, user, community, communities) {
-
+function PeopleController($location, $stateParams, user_api, result_api, $sce, user, community, communities) {
+    console.log($stateParams);
     this.community = community;
     this.communities = communities.data;
     this.user = user.data;
@@ -21,13 +21,25 @@ function PeopleController($location, user_api, result_api, $sce, user, community
             .then(function(response) {
                 self.users = result_api.setPage(response.data);
                 self.loadingPeople = false;
-                if ($location.path() == '/search') {
-                    self.search = result_api.setPage(self.users);
-                } else { self.search = undefined }
+                self.search = undefined;
             });
     };
 
-    this.getUsers();
+    this.searchUsers = function() {
+        self.loadingPeople = true;
+        self.tag = $stateParams.query;
+        user_api.search([$stateParams.community_key], $stateParams.query)
+            .then(function (response) {
+                self.tag = undefined;
+                self.users = result_api.setPage(response.data);
+                self.loadingPeople = false;
+                self.lastQuery = $stateParams.query;
+            });
+    };
+
+    if ($stateParams.query == "*") { // if not a search
+        this.getUsers();
+    } else this.searchUsers();
 
     // Title of list box changes based on context
     var setTitle = function(){

@@ -12,15 +12,15 @@
         </li>
         <br>
         <div class="dash-row">
-            <span class="text-muted" ng-bind-html="::item.value.profile.linkedin.headline | highlight:search.lastQuery"></span>
+            <span class="text-muted" ng-bind-html="::item.value.profile.linkedin.headline | highlight:people.lastQuery"></span>
         </div>
-        <div ng-show="(showSummary || search.lastQuery) && item.value.profile.linkedin.summary">
+        <div ng-show="(showSummary || people.lastQuery) && item.value.profile.linkedin.summary">
             <div style="padding-bottom: 10px;">
                 <hr>
-                <span class="text-muted" style="white-space:pre-wrap;" ng-bind-html="::item.value.profile.linkedin.summary | linky:'_blank' | highlight:search.lastQuery | safe_html"></span>
-                <div id="skills" ng-show="(showSummary || search.lastQuery) && item.value.profile.linkedin.summary" class="skills-top">
+                <span class="text-muted" style="white-space:pre-wrap;" ng-bind-html="::item.value.profile.linkedin.summary | linky:'_blank' | highlight:people.lastQuery | safe_html"></span>
+                <div id="skills" ng-show="(showSummary || people.lastQuery) && item.value.profile.linkedin.summary" class="skills-top">
                     <li ng-repeat="skill in item.value.profile.linkedin.skills.values" class="label btn-default skills">
-                        <a><span ui-sref="search({query: (skill.skill.name)})" ng-bind-html="::skill.skill.name | highlight:search.lastQuery"></span></a>
+                        <a><span ui-sref="search({query: (skill.skill.name)})" ng-bind-html="::skill.skill.name | highlight:people.lastQuery"></span></a>
                     </li>
                 </div>
             </div>

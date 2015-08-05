@@ -4,9 +4,9 @@ angular
     .factory('user_api', function($http) {
         return {
             search: function(communities, query) {
-                var urlString = '/api/1.1/users' + jQuery.param({
+                var urlString = '/api/1.1/users?' + jQuery.param({
                         communities: communities,
-                        search: query
+                        query: query
                     });
                 return $http.get(urlString);
             },
@@ -98,25 +98,25 @@ angular
         };
     })
 
-      .factory('result_api', function() {
-          // This service will eventually handle a variety of functions for multiple views, such as search, cluster view, people view, startup view, etc
-          return {
-              setPage: function($scope) {
-                  if ($scope !== undefined) {
-                      if ($scope.next) {
-                          $scope.start = Number($scope.next.match(/offset=([^&]+)/)[1]) - Number($scope.count) + 1;
-                          $scope.end = Number($scope.next.match(/offset=([^&]+)/)[1]);
-                      } else if ($scope.prev) {
-                          $scope.start = Number($scope.total_count) - Number($scope.count);
-                          $scope.end = $scope.total_count;
-                      } else if ($scope.count === 0 || $scope === undefined) {
-                          $scope.start = 0;
-                          $scope.end = 0;
-                      } else {
-                          $scope.start = 1; $scope.end = $scope.total_count;
-                      }
+    .factory('result_api', function() {
+      // This service will eventually handle a variety of functions for multiple views, such as search, cluster view, people view, startup view, etc
+      return {
+          setPage: function($scope) {
+              if ($scope !== undefined) {
+                  if ($scope.next) {
+                      $scope.start = Number($scope.next.match(/offset=([^&]+)/)[1]) - Number($scope.count) + 1;
+                      $scope.end = Number($scope.next.match(/offset=([^&]+)/)[1]);
+                  } else if ($scope.prev) {
+                      $scope.start = Number($scope.total_count) - Number($scope.count);
+                      $scope.end = $scope.total_count;
+                  } else if ($scope.count === 0 || $scope === undefined) {
+                      $scope.start = 0;
+                      $scope.end = 0;
+                  } else {
+                      $scope.start = 1; $scope.end = $scope.total_count;
                   }
-                  return $scope;
               }
-          };
-      })
+              return $scope;
+          }
+      };
+    })

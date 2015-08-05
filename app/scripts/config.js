@@ -84,6 +84,7 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
             controller: "NavigationController as nav",
             params: {
                 profile: {},  // must include params for *any* root-level object for inheritance, such as users, startups, networks, etc
+                query: '*',
                 community: {}
             },
             resolve: {
@@ -136,8 +137,7 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                     controller: "ContentController as content"
                 },
                 'content': {
-                    templateUrl: 'components/common/search/search.dashboard.html',
-                    controller: "SearchController as search"
+                    templateUrl: 'components/common/search/search.dashboard.html'
                 }
             }
         })
@@ -210,25 +210,7 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
             }
 
         })
-        .state('location.search', {
-            url: "/search",
-            params: {
-                community: {},
-                query: {},
-                pageTitle: 'Search Results'
-            },
-            views: {
-                'header': {
-                    templateUrl: "../components/common/header/header_small.html",
-                    controller: "ContentController as content"
-                },
-                'content': {
-                    templateUrl: '../components/common/search/search.dashboard.html',
-                    controller: "SearchController as sc"
-                }
-            }
 
-        })
 
         // People views
         .state('people', {
@@ -399,7 +381,7 @@ angular
     })
 
     .run(function($rootScope, $state) {
-        $rootScope.$state = $state;
+        $rootScope.$state = $state; // allows use if $state within views
         // for debugging of ui-router
         $rootScope.$on("$stateChangeError", console.log.bind(console));
         /*

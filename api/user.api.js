@@ -30,7 +30,7 @@ var UserApi = function() {
 function handleUserSearch(req, res){
     var communities = req.query.communities,
         roles = req.query.roles,
-        query = req.query.search,
+        query = req.query.query,
         limit = req.query.limit,
         offset = req.query.offset,
         key = req.query.api_key;
@@ -98,11 +98,11 @@ var searchInCommunity = function(communities, roles, limit, offset, query, key) 
     }
 
     if (query) { searchstring += ' AND ' + '(' + query + ')'; }
-    console.log(searchstring);
+
     var deferred = Q.defer();
     db.newSearchBuilder()
       .collection(config.db.collections.communities)
-      .limit(Number(limit) || 32)
+      .limit(Number(limit) || 18)
       .offset(Number(offset) || 0)
       .query(searchstring)
       .then(function(result){
