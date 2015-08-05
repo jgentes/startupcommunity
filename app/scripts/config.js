@@ -146,7 +146,7 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
             params: {
                 community: {},
                 query: '*',
-                pageTitle: 'Search Results'
+                pageTitle: 'Search'
             },
             views: {
                 "people": {
@@ -291,6 +291,21 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                     controller: "ContentController as content"
                 },
                 'content': {
+                    templateUrl: 'components/people/people.dashboard.html',
+                    controller: "PeopleController as people"
+                }
+            }
+        })
+        .state('industry.search', {
+            parent: 'search',
+            url: "/:industry_key/search",
+            params: {
+                community: {},
+                query: '*',
+                pageTitle: 'Search'
+            },
+            views: {
+                "people": {
                     templateUrl: 'components/people/people.dashboard.html',
                     controller: "PeopleController as people"
                 }

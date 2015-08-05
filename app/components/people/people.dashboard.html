@@ -1,6 +1,6 @@
 <div>
     <div class="row">
-        <div ng-if="!$state.includes('search.dashboard')" class="col-lg-2 col-md-3 col-sm-4">
+        <div ng-if="!$state.includes('search')" class="col-lg-2 col-md-3 col-sm-4">
         <!-- Navigation Block -->
             <div class="hpanel hgreen">
                 <div class="panel-footer top" style="font-size: 17px;">
@@ -77,7 +77,7 @@
 
 
 
-    <div ng-class="{'col-lg-10 col-md-9 col-sm-8' : !$state.includes('search.dashboard')}" style="padding-left: 15px; padding-right: 15px;">
+    <div ng-class="{'col-lg-10 col-md-9 col-sm-8' : !$state.includes('search')}" style="padding-left: 15px; padding-right: 15px;">
 
         <div class="hpanel">
             <div class="panel-footer top">
@@ -96,8 +96,8 @@
                         </ui-select-choices>
                     </ui-select>
                 </div>
-                <span ng-if="nav.lastQuery" style="font-size: 17px;">People matching "<strong>{{nav.lastQuery}}</strong>"</span>
-                <span ng-if="!nav.lastQuery" style="font-size: 17px;" ng-bind-html="people.title"></span>
+                <span ng-if="people.lastQuery" style="font-size: 17px;">People matching "<strong>{{people.lastQuery}}</strong>"</span>
+                <span ng-if="!people.lastQuery" style="font-size: 17px;" ng-bind-html="people.title"></span>
                 <span><i ng-show="people.loadingPeople" class="fa fa-refresh fa-spin" style="padding: 4px; color: #aaa; font-size: 17px; margin-left: 5px;"></i></span>
             </div>
 
@@ -106,6 +106,7 @@
                     <td style="border-bottom: 1px solid #fff; border-top: none; padding: 0;" colspan="3"></td>
                 </div>
                 <div ng-show="people.tag" style="text-align: center" ng-cloak><h2><br/>Searching for {{people.tag}}..</h2><br/><br/></div>
+                <div ng-show="people.users.results.length == 0" style="text-align: center" ng-cloak><h2><br/>No results..</h2><br/><br/></div>
                 <div ng-repeat="item in people.users.results" ng-switch on="$index % 2" style="margin-top: 10px;">
                     <div class="col-md-6" ng-switch-when="0">
                         <div class="row"  ng-include="'components/people/people.dashboard.list.html'"></div>

@@ -81,7 +81,7 @@ var searchInCommunity = function(communities, roles, limit, offset, query, key) 
 
     for (c in communities) {
         searchstring += '"' + communities[c] + '"';
-        if (c < (communities.length - 1)) { searchstring += ' OR '; }
+        if (c < (communities.length - 1)) { searchstring += ' AND '; }
     }
 
     searchstring += ') AND type: "user"';

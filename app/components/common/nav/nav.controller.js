@@ -71,7 +71,9 @@ function NavigationController($state, $location, $stateParams, $modal, user_api,
 
     // for search box
     this.search = function(query) {
-        $state.go('search.dashboard', {query: query});
+        if (community.type == "industry") {
+            $state.go('industry.search', {industry_key: community.key, query: query});
+        } else $state.go('search.dashboard', {query: query});
     };
 
     // for routing of root routes

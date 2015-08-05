@@ -5,7 +5,7 @@ angular
     .controller('InvitePeopleController', InvitePeopleController);
 
 function PeopleController($location, $stateParams, user_api, result_api, $sce, user, community, communities) {
-    console.log($stateParams);
+    console.log($stateParams)
     this.community = community;
     this.communities = communities.data;
     this.user = user.data;
@@ -28,7 +28,10 @@ function PeopleController($location, $stateParams, user_api, result_api, $sce, u
     this.searchUsers = function() {
         self.loadingPeople = true;
         self.tag = $stateParams.query;
-        user_api.search([$stateParams.community_key], $stateParams.query)
+        var searchCommunities = [];
+        searchCommunities.push($stateParams.community_key);
+        if ($stateParams.industry_key) searchCommunities.push($stateParams.industry_key);
+        user_api.search(searchCommunities, $stateParams.query)
             .then(function (response) {
                 self.tag = undefined;
                 self.users = result_api.setPage(response.data);
