@@ -3,7 +3,7 @@ angular
     .controller('NavigationController', NavigationController)
     .controller('ChangeLocationController', ChangeLocationController);
 
-function NavigationController($state, $location, $stateParams, $modal, user_api, result_api, user, community, communities) {
+function NavigationController($state, $location, $stateParams, $modal, user, community, communities) {
 
     this.user = user.data; // reference 'this' by using 'nav' from 'NavigationController as nav' - * nav is also usable in child views *
     this.community = community;
@@ -73,6 +73,8 @@ function NavigationController($state, $location, $stateParams, $modal, user_api,
     this.search = function(query) {
         if (community.type == "industry") {
             $state.go('industry.search', {industry_key: community.key, query: query});
+        } else if (community.type == "user") {
+            $state.go('location.search', {community_key: this.user.profile.home, query: query});
         } else $state.go(community.type + '.search', {query: query});
     };
 

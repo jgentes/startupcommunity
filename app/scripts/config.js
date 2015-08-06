@@ -115,10 +115,9 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                                 var url = $location.path().replace(/\/$/, "").split('/'),
                                     lastitem = url.pop(),
                                     root = url.pop();
-
                                 if (lastitem == "people" || lastitem == "startups" || lastitem == "search") {
                                     return communities.data[root]; // return preceding url path as community, such as tech for 'bend-or/tech/people'
-                                } else if (communities.data[lastitem].type == "industry") {
+                                } else if (communities.data[lastitem] && communities.data[lastitem].type == "industry") {
                                     return communities.data[lastitem]; // return tech in 'bend-or/tech'
                                 } else return pullCommunity();
                             } else return pullCommunity();
@@ -354,22 +353,69 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
         // Network views
         .state('network', {
             parent: "root",
-            abstract: true,
-            templateUrl: "../components/common/header/header_big.html",
-            controller: "ContentController as content"
+            abstract: true
         })
         .state('network.dashboard', {
-            templateUrl: 'views/networks/network.dashboard.html',
             params: {
                 community: {},
                 pageTitle: "Network Profile"
             },
+            views: {
+                'header': {
+                    templateUrl: "../components/common/header/header_big.html",
+                    controller: "ContentController as content"
+                },
+                'content': {
+                    templateUrl: 'components/networks/network.dashboard.html',
+                    controller: "NetworkController as net"
+                }
+            },
             resolve: {
-                authenticated: ['$location', '$auth', function($location, $auth) {
+                authenticated: ['$auth', function($auth) {
                     if (!$auth.isAuthenticated()) {
                         $state.go('login');
                     }
-                }]
+                }],
+                leaders: ['user_api', '$stateParams', function(user_api, $stateParams) {
+                    return user_api.search([$stateParams.community_key], '*', ['leader'], 30);
+                }],
+                communities: ['community_api', '$stateParams', 'communities',
+                    function(community_api, $stateParams, communities) { // check to see if this can be inherited
+                        if ($stateParams.community_key !== communities.data.key) return community_api.getCommunity($stateParams.community_key);
+                    }]
+
+            }
+        })
+        .state('network.people', {
+            url: "/people",
+            params: {
+                community: {},
+                pageTitle: 'People'
+            },
+            views: {
+                'header': {
+                    templateUrl: "../components/common/header/header_small.html",
+                    controller: "ContentController as content"
+                },
+                'content': {
+                    templateUrl: 'components/people/people.dashboard.html',
+                    controller: "PeopleController as people"
+                }
+            }
+        })
+        .state('network.search', {
+            parent: 'search',
+            url: "/search",
+            params: {
+                community: {},
+                query: '*',
+                pageTitle: 'Search'
+            },
+            views: {
+                "people": {
+                    templateUrl: 'components/people/people.dashboard.html',
+                    controller: "PeopleController as people"
+                }
             }
         })
 
