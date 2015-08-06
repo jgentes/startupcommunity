@@ -90,7 +90,7 @@ function StartupsController($location, angellist_api, result_api, $sce, communit
             }
         }
 
-        user_api.getUsers(self.community, self.selectedStage, 30, undefined)
+        user_api.search(self.community, '*', self.selectedStage, 30, undefined)
             .then(function(response) {
                 self.loadingIndustry = false;
                 self.users = result_api.setPage(response.data);
@@ -125,7 +125,7 @@ function StartupsController($location, angellist_api, result_api, $sce, communit
             }
         }
 
-        user_api.getUsers(self.community, self.selectedStage, 30, undefined)
+        user_api.search(self.community, '*', self.selectedStage, 30, undefined)
             .then(function(response) {
                 self.loadingStage = false;
                 self.users = result_api.setPage(response.data);

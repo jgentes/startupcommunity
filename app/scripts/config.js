@@ -183,10 +183,10 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                     }
                 }],
                 leaders: ['user_api', '$stateParams', function(user_api, $stateParams) {
-                    return user_api.getUsers([$stateParams.community_key], ['leader'], 18);
+                    return user_api.search([$stateParams.community_key], '*', ['leader'], 18);
                 }],
                 communities: ['community_api', '$stateParams', 'communities',
-                    function(community_api, $stateParams, communities) {
+                    function(community_api, $stateParams, communities) { //check if communities data can be inherited
                         if ($stateParams.community_key !== communities.data.key) return community_api.getCommunity($stateParams.community_key);
                     }]
 
@@ -270,10 +270,10 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                     }
                 }],
                 leaders: ['user_api', '$stateParams', function(user_api, $stateParams) {
-                    return user_api.getUsers([$stateParams.community_key], ['leader'], 30);
+                    return user_api.search([$stateParams.community_key], '*', ['leader'], 30);
                 }],
                 communities: ['community_api', '$stateParams', 'communities',
-                    function(community_api, $stateParams, communities) {
+                    function(community_api, $stateParams, communities) { // check to see if this can be inherited
                         if ($stateParams.community_key !== communities.data.key) return community_api.getCommunity($stateParams.community_key);
                     }]
 

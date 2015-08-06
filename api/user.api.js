@@ -92,7 +92,7 @@ var searchInCommunity = function(communities, roles, limit, offset, query, key) 
 
         for (i in roles) {
             searchstring += 'roles.' + roles[i] + '.*:*'; // scope to role
-            if (i < (roles.length - 1)) { searchstring += ' OR '; }
+            if (i < (roles.length - 1)) { searchstring += ' AND '; }
         }
         searchstring += ')';
     }

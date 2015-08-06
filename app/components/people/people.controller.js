@@ -5,7 +5,7 @@ angular
     .controller('InvitePeopleController', InvitePeopleController);
 
 function PeopleController($location, $stateParams, user_api, result_api, $sce, user, community, communities) {
-    console.log($stateParams)
+
     this.community = community;
     this.communities = communities.data;
     this.user = user.data;
@@ -15,23 +15,13 @@ function PeopleController($location, $stateParams, user_api, result_api, $sce, u
 
     var self = this; // for accessing 'this' in child functions
 
-    this.getUsers = function(alturl) {
-        self.loadingPeople = true;
-        user_api.getUsers([self.communities.key], undefined, 20, alturl)
-            .then(function(response) {
-                self.users = result_api.setPage(response.data);
-                self.loadingPeople = false;
-                self.search = undefined;
-            });
-    };
+    var communityFilter = [$stateParams.community_key];
+    if ($stateParams.industry_key) communityFilter.push($stateParams.industry_key);
 
-    this.searchUsers = function() {
+    this.searchUsers = function(alturl) {
         self.loadingPeople = true;
         self.tag = $stateParams.query;
-        var searchCommunities = [];
-        searchCommunities.push($stateParams.community_key);
-        if ($stateParams.industry_key) searchCommunities.push($stateParams.industry_key);
-        user_api.search(searchCommunities, $stateParams.query)
+        user_api.search(communityFilter, $stateParams.query, undefined, 20, alturl)
             .then(function (response) {
                 self.tag = undefined;
                 self.users = result_api.setPage(response.data);
@@ -40,9 +30,7 @@ function PeopleController($location, $stateParams, user_api, result_api, $sce, u
             });
     };
 
-    if ($stateParams.query == "*") { // if not a search
-        this.getUsers();
-    } else this.searchUsers();
+    this.searchUsers();
 
     // Title of list box changes based on context
     var setTitle = function(){
@@ -78,7 +66,11 @@ function PeopleController($location, $stateParams, user_api, result_api, $sce, u
             }
         }
 
-        self.title = '<strong>' + self.role + '</strong> in ' + self.selection;
+        if ($stateParams.query == "*") {
+            self.title = '<strong>' + self.role + '</strong> in ' + self.selection;
+        } else self.title = '<strong>People</strong> matching ' + $stateParams.query;
+
+
 
         var pageTitle;
 
@@ -93,7 +85,6 @@ function PeopleController($location, $stateParams, user_api, result_api, $sce, u
 
     setTitle();
 
-    var communityFilter = [self.communities.key];
 
     this.filterRole = function(role) {
         self.loadingRole = true;
@@ -111,7 +102,7 @@ function PeopleController($location, $stateParams, user_api, result_api, $sce, u
             }
         }
 
-        user_api.getUsers(communityFilter, self.selectedRole, 20, undefined)
+        user_api.search(communityFilter, '*', self.selectedRole, 20, undefined)
             .then(function(response) {
                 self.loadingRole = false;
                 self.users = result_api.setPage(response.data);
@@ -128,7 +119,7 @@ function PeopleController($location, $stateParams, user_api, result_api, $sce, u
             } else self.selectedIndustries.splice(self.selectedIndustries.indexOf(selection), 1);
         }
 
-        user_api.getUsers(communityFilter.concat(self.selectedIndustries), self.selectedRole, 30, undefined)
+        user_api.search(communityFilter.concat(self.selectedIndustries), '*', self.selectedRole, 30, undefined)
             .then(function(response) {
                 self.loadingIndustry = false;
                 self.loadingNetwork = false;
@@ -146,7 +137,7 @@ function PeopleController($location, $stateParams, user_api, result_api, $sce, u
             } else self.selectedNetworks.splice(self.selectedNetworks.indexOf(selection), 1);
         }
 
-        user_api.getUsers(communityFilter.concat(self.selectedNetworks), self.selectedRole, 20, undefined)
+        user_api.search(communityFilter.concat(self.selectedNetworks), '*', self.selectedRole, 20, undefined)
             .then(function(response) {
                 self.loadingIndustry = false;
                 self.loadingNetwork = false;

@@ -3,23 +3,14 @@ angular
 
     .factory('user_api', function($http) {
         return {
-            search: function(communities, query) {
+            search: function(communities, query, roles, limit, alturl) { //alturl is for next/prev retrieval
                 var urlString = '/api/1.1/users?' + jQuery.param({
                         communities: communities,
+                        roles: roles,
+                        limit: limit,
                         query: query
                     });
                 return $http.get(urlString);
-            },
-            getUsers: function(communities, roles, limit, alturl) { //alturl is for next/prev retrieval
-                if (alturl) { return $http.get(alturl) } else {
-                    var urlString = '/api/1.1/users?' + jQuery.param({
-                            communities: communities,
-                            roles: roles,
-                            limit: limit
-                        });
-
-                    return $http.get(urlString);
-                }
             },
             putUser: function(userid, profile, callback) {
                 $http.put('/api/1.1/user/' + userid + '?profile=' + profile)
