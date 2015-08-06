@@ -68,9 +68,13 @@ function PeopleController($location, $stateParams, user_api, result_api, $sce, u
 
         if ($stateParams.query == "*") {
             self.title = '<strong>' + self.role + '</strong> in ' + self.selection;
-        } else self.title = '<strong>People</strong> matching ' + $stateParams.query;
-
-
+        } else {
+            self.title = '<strong>';
+            if ($stateParams.industry_key) {
+                self.title += self.communities[$stateParams.industry_key].profile.name;
+            } else self.title += self.communities[$stateParams.community_key].profile.name;
+            self.title += '</strong> people matching <strong>"' + $stateParams.query + '"</strong>';
+        }
 
         var pageTitle;
 

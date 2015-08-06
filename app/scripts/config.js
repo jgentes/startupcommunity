@@ -141,20 +141,6 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                 }
             }
         })
-        .state('search.dashboard', {
-            url: "/search",
-            params: {
-                community: {},
-                query: '*',
-                pageTitle: 'Search'
-            },
-            views: {
-                "people": {
-                    templateUrl: 'components/people/people.dashboard.html',
-                    controller: "PeopleController as people"
-                }
-            }
-        })
 
         // Location views
         .state('location', {
@@ -209,6 +195,24 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                 }
             }
 
+        })
+        .state('location.search', {
+            url: "/search",
+            params: {
+                community: {},
+                query: '*',
+                pageTitle: 'Search'
+            },
+            views: {
+                'header': {
+                    templateUrl: "../components/common/header/header_small.html",
+                    controller: "ContentController as content"
+                },
+                'content': {
+                    templateUrl: 'components/people/people.dashboard.html',
+                    controller: "PeopleController as people"
+                }
+            }
         })
 
 
