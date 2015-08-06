@@ -1,12 +1,12 @@
-<div animate-panel effect="zoomIn">
+<div>
     <div class="row">
-        <div class="col-md-4 animated-panel zoomIn">
+        <div ng-if="!$state.includes('search.*')" class="col-lg-2 col-md-3 col-sm-4">
         <!-- Navigation Block -->
             <div class="hpanel hgreen">
                 <div class="panel-footer top" style="font-size: 17px;">
                     <strong>Stage</strong> Filters
                     <i ng-show="loadingStage" class="fa fa-refresh fa-spin" style="padding: 4px; color: #aaa;"></i>
-                    <small class="pull-right text-muted" style="padding:7px 2px 0 0; font-size: 12px;">(# Employees)</small>
+                    <small class="pull-right text-muted" style="padding:7px 2px 0 0; font-size: 12px;">(Revenue)</small>
                 </div>
                 <div class="panel-body filternav h226">
 
@@ -22,32 +22,31 @@
                         <li ng-class="{'active':startups.selectedStage.indexOf('Bootstrap') >= 0}" ng-click="filterStage('Bootstrap')">
                             <a href="javascript:void(0)">
                                 Bootstrap
-                                <span class="pull-right">1 - 2</span>
+                                <span class="pull-right">0 - 500k</span>
                             </a>
                         </li>
                         <li ng-class="{'active':startups.selectedStage.indexOf('Validation') >= 0}" ng-click="filterStage('Validation')">
                             <a href="javascript:void(0)">
                                 Validation
-                                <span class="pull-right">3 - 10</span>
+                                <span class="pull-right">500k - 1M</span>
                             </a>
                         </li>
                         <li ng-class="{'active':startups.selectedStage.indexOf('Growth') >= 0}" ng-click="filterStage('Growth')">
                             <a href="javascript:void(0)">
                                 Growth
-                                <span class="pull-right">11 - 100</span>
+                                <span class="pull-right">1M - 5M</span>
                             </a>
                         </li>
                         <li ng-class="{'active':startups.selectedStage.indexOf('Scale') >= 0}" ng-click="filterStage('Scale')">
                             <a href="javascript:void(0)">
                                 Scale
-                                <span class="pull-right">100+</span>
+                                <span class="pull-right">5M+</span>
                             </a>
                         </li>
                     </ul>
                 </div>
             </div>
-        </div>
-        <div class="col-md-4 animated-panel zoomIn">
+
             <div class="hpanel hnavyblue">
                 <div class="panel-footer top" style="font-size: 17px;">
                     <strong>Industry</strong> Filters
@@ -67,8 +66,7 @@
                     </ul>
                 </div>
             </div>
-        </div>
-        <div class="col-md-4 animated-panel zoomIn">
+
             <div class="hpanel hblue">
                 <div class="panel-footer top" style="font-size: 17px;">
                     <strong>Network</strong> Filters
@@ -90,9 +88,8 @@
             </div>
 
         </div>
-    </div>
 
-    <div class="row" style="padding-left: 15px; padding-right: 15px;">
+    <div ng-class="{'col-lg-10 col-md-9 col-sm-8' : !$state.includes('search.*')}" style="padding-left: 15px; padding-right: 15px;">
 
         <div class="hpanel">
             <div class="panel-footer top">

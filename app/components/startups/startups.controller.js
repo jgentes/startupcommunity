@@ -3,7 +3,7 @@ angular
     .controller('StartupsController', StartupsController)
     .controller('StartupProfileController', StartupProfileController);
 
-function StartupsController($location, angellist_api, result_api, $sce, community, user_api, user) {
+function StartupsController($location, $stateParams, angellist_api, result_api, $sce, community, communities, user_api, user) {
 
     this.community = community;
     this.user = user.data;
@@ -13,10 +13,19 @@ function StartupsController($location, angellist_api, result_api, $sce, communit
 
     var self = this; // for accessing 'this' in child functions
 
+
+    var communityFilter = [$stateParams.community_key];
+    if ($stateParams.industry_key) communityFilter.push($stateParams.industry_key);
+
     var getStartups = function() {
+        self.loadingStartups = true;
+        self.tag = $stateParams.query;
         angellist_api.getStartups(2300)
             .then(function(response) {
-                self.startups = response.data;
+                self.tag = undefined;
+                self.startups = result_api.setPage(response.data);
+                self.loadingPeople = false;
+                self.lastQuery = $stateParams.query;
             })
     };
 
@@ -181,36 +190,6 @@ function StartupProfileController($scope, $state, user_api, community_api, $loca
         } else notify({title: "See our <a href='http://startupcommunity.readme.io?appkey=" + $scope.global.user.profile.api_key + "' target='_blank'>API documentation</a> for help using your key:", message: "<pre>" + $scope.global.user.profile.api_key + "</pre>"});
     };
 
-    /**
-     * Link third-party provider.
-     */
-    $scope.link = function(provider) {
-        $auth.link(provider)
-            .then(function() {
-                $scope.global.alert ={ type: 'success', msg: 'Well done. You have successfully linked your ' + provider + ' account'};
-            })
-            .then(function() {
-                $scope.getProfile();
-            })
-            .catch(function(response) {
-                $scope.global.alert ={ type: 'danger', msg: 'Sorry, but we ran into this error: ' + response.data.message};
-            });
-    };
 
-    /**
-     * Unlink third-party provider.
-     */
-    $scope.unlink = function(provider) {
-        $auth.unlink(provider)
-            .then(function() {
-                $scope.global.alert = { type: 'success', msg: 'Bam. You have successfully unlinked your ' + provider + ' account'};
-            })
-            .then(function() {
-                $scope.getProfile();
-            })
-            .catch(function(response) {
-                $scope.global.alert = { type: 'danger', msg: 'Aww, shucks. We ran into this error while unlinking your ' + provider + ' account: ' + response.data.message};
-            });
-    };
 
 }

@@ -45,7 +45,7 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
             }
         })
         .state('invite', {
-            templateUrl: '../views/invite_people.html',
+            templateUrl: 'views/invite_people.html',
             url: "/people/invite",
             resolve: {
                 authenticated: ['$auth', function($auth) {
@@ -132,7 +132,7 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
             abstract: true,
             views: {
                 'header': {
-                    templateUrl: "../components/common/header/header_small.html",
+                    templateUrl: "components/common/header/header_small.html",
                     controller: "ContentController as content"
                 },
                 'content': {
@@ -140,7 +140,113 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                 }
             }
         })
+        .state('search.dashboard', {
+            url: "/search",
+            params: {
+                community: {},
+                query: '*',
+                pageTitle: 'Search'
+            },
+            views: {
+                'people': {
+                    templateUrl: 'components/people/people.dashboard.html',
+                    controller: "PeopleController as people"
+                },
+                'startups': {
+                    templateUrl: 'components/startups/startups.dashboard.html',
+                    controller: "StartupsController as startups"
+                }
+            }
+        })
 
+        // People views
+        .state('people', {
+            parent: 'root',
+            abstract: true
+        })
+        .state('people.profile', {
+            params: {
+                profile: {},
+                community: {},
+                pageTitle: 'User Profile'
+            },
+            views: {
+                'header': {
+                    templateUrl: "components/common/header/header_small.html",
+                    controller: "ContentController as content"
+                },
+                'content': {
+                    templateUrl: "components/people/people.profile.html",
+                    controller: 'PeopleProfileController as profile'
+                }
+            },
+            resolve: {
+                authenticated: ['$auth', function($auth) {
+                    if (!$auth.isAuthenticated()) {
+                        $state.go('login');
+                    }
+                }]
+            }
+        })
+        .state('people.dashboard', {
+            url: "/people",
+            params: {
+                community: {},
+                pageTitle: 'People'
+            },
+            views: {
+                'header': {
+                    templateUrl: "components/common/header/header_small.html",
+                    controller: "ContentController as content"
+                },
+                'content': {
+                    templateUrl: 'components/people/people.dashboard.html',
+                    controller: "PeopleController as people"
+                }
+            }
+
+        })
+        
+        // Startup views
+        .state('startups', {
+            parent: 'root',
+            abstract: true
+        })
+        .state('startups.dashboard', {
+            url: "/startups",
+            params: {
+                community: {},
+                pageTitle: 'Startups'
+            },
+            views: {
+                'header': {
+                    templateUrl: "components/common/header/header_small.html",
+                    controller: "ContentController as content"
+                },
+                'content': {
+                    templateUrl: 'components/startups/startups.dashboard.html',
+                    controller: "StartupsController as startups"
+                }
+            }
+        })
+        .state('startups.profile', {
+            templateUrl: "components/startups/startups.profile.html",
+            controller: "StartupsProfileController as profile",
+            parent: 'startups',
+            params: {
+                profile: {},
+                community: {},
+                pageTitle: 'Startup Profile'
+            },
+            resolve: {
+                authenticated: ['$location', '$auth', function($location, $auth) {
+                    if (!$auth.isAuthenticated()) {
+                        $state.go('login');
+                    }
+                }]
+            }
+        })
+        
         // Location views
         .state('location', {
             parent: "root",
@@ -153,7 +259,7 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
             },
             views: {
                 'header': {
-                    templateUrl: "../components/common/header/header_big.html",
+                    templateUrl: "components/common/header/header_big.html",
                     controller: "ContentController as content"
                 },
                 'content': {
@@ -178,72 +284,6 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
             }
         })
 
-        .state('location.search', {
-            url: "/search",
-            params: {
-                community: {},
-                query: '*',
-                pageTitle: 'Search'
-            },
-            views: {
-                'header': {
-                    templateUrl: "../components/common/header/header_small.html",
-                    controller: "ContentController as content"
-                },
-                'content': {
-                    templateUrl: 'components/people/people.dashboard.html',
-                    controller: "PeopleController as people"
-                }
-            }
-        })
-
-
-        // People views
-        .state('people', {
-            parent: 'root',
-            abstract: true
-        })
-        .state('people.profile', {
-            params: {
-                profile: {},
-                community: {},
-                pageTitle: 'User Profile'
-            },
-            views: {
-                'header': {
-                    templateUrl: "../components/common/header/header_small.html",
-                    controller: "ContentController as content"
-                },
-                'content': {
-                    templateUrl: "components/people/people.profile.html",
-                    controller: 'PeopleProfileController as profile'
-                }
-            },
-            resolve: {
-                authenticated: ['$auth', function($auth) {
-                    if (!$auth.isAuthenticated()) {
-                        $state.go('login');
-                    }
-                }]
-            }
-        })
-        .state('people.dashboard', {
-            url: "/people",
-            params: {
-                community: {},
-                pageTitle: 'People'
-            },
-            views: {
-                'header': {
-                    templateUrl: "../components/common/header/header_small.html",
-                    controller: "ContentController as content"
-                },
-                'content': {
-                    templateUrl: 'components/people/people.dashboard.html',
-                    controller: "PeopleController as people"
-                }
-            }
-        })
 
         // Industry views
         .state('industry', {
@@ -258,7 +298,7 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
             },
             views: {
                 'header': {
-                    templateUrl: "../components/common/header/header_big.html",
+                    templateUrl: "components/common/header/header_big.html",
                     controller: "ContentController as content"
                 },
                 'content': {
@@ -290,7 +330,7 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
             },
             views: {
                 'header': {
-                    templateUrl: "../components/common/header/header_small.html",
+                    templateUrl: "components/common/header/header_small.html",
                     controller: "ContentController as content"
                 },
                 'content': {
@@ -299,7 +339,7 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                 }
             }
         })
-        .state('industry.search', {
+        .state('industry.search.dashboard', {
             parent: 'search',
             url: "/:industry_key/search",
             params: {
@@ -315,41 +355,6 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
             }
         })
 
-        // Startup views
-        .state('startups', {
-            parent: 'root',
-            abstract: true,
-            templateUrl: "../components/common/header/header_small.html",
-            controller: "ContentController as content"
-        })
-        .state('startups.dashboard', {
-            url: "/startups",
-            templateUrl: 'components/startups/startups.dashboard.html',
-            controller: "StartupsController as startups",
-            params: {
-                community: {},
-                pageTitle: 'Startups'
-            }
-        })
-        .state('startups.profile', {
-            templateUrl: "components/startups/startups.profile.html",
-            controller: "StartupsProfileController as profile",
-            parent: 'startups',
-            params: {
-                profile: {},
-                community: {},
-                pageTitle: 'Startup Profile'
-            },
-            resolve: {
-                authenticated: ['$location', '$auth', function($location, $auth) {
-                    if (!$auth.isAuthenticated()) {
-                        $state.go('login');
-                    }
-                }]
-            }
-        })
-
-
         // Network views
         .state('network', {
             parent: "root",
@@ -362,7 +367,7 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
             },
             views: {
                 'header': {
-                    templateUrl: "../components/common/header/header_big.html",
+                    templateUrl: "components/common/header/header_big.html",
                     controller: "ContentController as content"
                 },
                 'content': {
@@ -386,7 +391,6 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
 
             }
         })
-
         .state('network.search', {
             parent: 'search',
             url: "/search",

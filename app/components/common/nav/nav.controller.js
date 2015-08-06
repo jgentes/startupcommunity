@@ -72,10 +72,10 @@ function NavigationController($state, $location, $stateParams, $modal, user, com
     // for search box
     this.search = function(query) {
         if (community.type == "industry") {
-            $state.go('industry.search', {industry_key: community.key, query: query});
+            $state.go('industry.search.dashboard', {industry_key: community.key, query: query});
         } else if (community.type == "user") {
-            $state.go('location.search', {community_key: this.user.profile.home, query: query});
-        } else $state.go(community.type + '.search', {query: query});
+            $state.go('search.dashboard', {community_key: this.user.profile.home, query: query});
+        } else $state.go('search.dashboard', {query: query});
     };
 
     // for routing of root routes
