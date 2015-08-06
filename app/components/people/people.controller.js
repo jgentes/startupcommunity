@@ -69,11 +69,10 @@ function PeopleController($location, $stateParams, user_api, result_api, $sce, u
         if ($stateParams.query == "*") {
             self.title = '<strong>' + self.role + '</strong> in ' + self.selection;
         } else {
-            self.title = '<strong>';
+            self.title = 'People matching <strong>"' + $stateParams.query + '"</strong> ';
             if ($stateParams.industry_key) {
-                self.title += self.communities[$stateParams.industry_key].profile.name;
-            } else self.title += self.communities[$stateParams.community_key].profile.name;
-            self.title += '</strong> people matching <strong>"' + $stateParams.query + '"</strong>';
+                self.title += 'in <strong>' + self.communities[$stateParams.industry_key].profile.name + '</strong>';
+            } else self.title += 'in <strong>' + self.communities[$stateParams.community_key].profile.name + '</strong>';
         }
 
         var pageTitle;
