@@ -177,24 +177,7 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
 
             }
         })
-        .state('location.people', {
-            url: "/people",
-            params: {
-                community: {},
-                pageTitle: 'People'
-            },
-            views: {
-                'header': {
-                    templateUrl: "../components/common/header/header_small.html",
-                    controller: "ContentController as content"
-                },
-                'content': {
-                    templateUrl: 'components/people/people.dashboard.html',
-                    controller: "PeopleController as people"
-                }
-            }
 
-        })
         .state('location.search', {
             url: "/search",
             params: {
@@ -242,6 +225,23 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                         $state.go('login');
                     }
                 }]
+            }
+        })
+        .state('people.dashboard', {
+            url: "/people",
+            params: {
+                community: {},
+                pageTitle: 'People'
+            },
+            views: {
+                'header': {
+                    templateUrl: "../components/common/header/header_small.html",
+                    controller: "ContentController as content"
+                },
+                'content': {
+                    templateUrl: 'components/people/people.dashboard.html',
+                    controller: "PeopleController as people"
+                }
             }
         })
 
@@ -377,7 +377,7 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                     }
                 }],
                 leaders: ['user_api', '$stateParams', function(user_api, $stateParams) {
-                    return user_api.search([$stateParams.community_key], '*', ['leader'], 30);
+                    return user_api.search([$stateParams.community_key], '*', ['leader'], 18);
                 }],
                 communities: ['community_api', '$stateParams', 'communities',
                     function(community_api, $stateParams, communities) { // check to see if this can be inherited
@@ -386,23 +386,7 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
 
             }
         })
-        .state('network.people', {
-            url: "/people",
-            params: {
-                community: {},
-                pageTitle: 'People'
-            },
-            views: {
-                'header': {
-                    templateUrl: "../components/common/header/header_small.html",
-                    controller: "ContentController as content"
-                },
-                'content': {
-                    templateUrl: 'components/people/people.dashboard.html',
-                    controller: "PeopleController as people"
-                }
-            }
-        })
+
         .state('network.search', {
             parent: 'search',
             url: "/search",
@@ -447,17 +431,17 @@ angular
 
     .run(function($rootScope, $state) {
         $rootScope.$state = $state; // allows use if $state within views
-        // for debugging of ui-router
-        $rootScope.$on("$stateChangeError", console.log.bind(console));
-        /*
+        window.$state = $state; // allows use of $state within console
+        $rootScope.$on("$stateChangeError", console.log.bind(console)); // for debugging of ui-router
+
         $rootScope.$on('$stateChangeStart',
             function(event, toState, toParams, fromState, fromParams){
-                console.log('from: ')
-                console.log(fromState);
+                //console.log('from: ')
+                //console.log(fromState);
                 console.log('to:');
                 console.log(toState);
             })
-        */
+
     })
 
 
