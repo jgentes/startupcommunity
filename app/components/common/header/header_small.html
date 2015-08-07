@@ -11,7 +11,7 @@
                 </ol>
             </div>
             <h2 class="font-light m-b-xs">
-                <span style="text-transform: none;">{{ $state.params.pageTitle }}&nbsp;<span ng-if="content.community.type !== 'user'">in {{ content.community.profile.name }}</span>
+                <span style="text-transform: none;">{{ $state.params.pageTitle }}&nbsp;<span ng-if="content.community.type !== 'user' && content.community.type !== 'startup'">in {{ content.community.profile.name }}</span>
                 </span>
             </h2>
         </div>

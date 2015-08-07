@@ -9,7 +9,7 @@
         'analytics.mixpanel',
         'chart.js',
         'satellizer',
-        'apis',
+        'services',
         'GoogleMapsNative',
         'angulartics',
         'angulartics.google.analytics'

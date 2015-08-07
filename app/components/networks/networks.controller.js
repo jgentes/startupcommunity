@@ -2,7 +2,7 @@ angular
     .module('startupcommunity')
     .controller('NetworkController', NetworkController);
 
-function NetworkController($state, $stateParams, $scope, user_api) {
+function NetworkController($scope) {
 
     $scope.charts = {
         people: {},

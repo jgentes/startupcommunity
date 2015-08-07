@@ -4,7 +4,7 @@ angular
     .controller('PeopleProfileController', PeopleProfileController)
     .controller('InvitePeopleController', InvitePeopleController);
 
-function PeopleController($stateParams, user_api, result_api, $sce, community, communities) {
+function PeopleController($stateParams, user_service, result_service, $sce, community, communities) {
 
     this.community = community;
     this.communities = communities.data;
@@ -23,10 +23,10 @@ function PeopleController($stateParams, user_api, result_api, $sce, community, c
             self.tag = $stateParams.query;
         } else self.tag = undefined;
 
-        user_api.search(communityFilter, $stateParams.query, undefined, 20, alturl)
+        user_service.search(communityFilter, $stateParams.query, undefined, 20, alturl)
             .then(function (response) {
                 self.tag = undefined;
-                self.users = result_api.setPage(response.data);
+                self.users = result_service.setPage(response.data);
                 self.loadingPeople = false;
                 self.lastQuery = $stateParams.query;
             });
@@ -100,10 +100,10 @@ function PeopleController($stateParams, user_api, result_api, $sce, community, c
             }
         }
 
-        user_api.search(communityFilter, '*', self.selectedRole, 20, undefined)
+        user_service.search(communityFilter, '*', self.selectedRole, 20, undefined)
             .then(function(response) {
                 self.loadingRole = false;
-                self.users = result_api.setPage(response.data);
+                self.users = result_service.setPage(response.data);
                 setTitle();
             });
     };
@@ -118,11 +118,11 @@ function PeopleController($stateParams, user_api, result_api, $sce, community, c
             if (self.selectedIndustries.length == 0) self.allIndustries = true;
         }
 
-        user_api.search(communityFilter.concat(self.selectedIndustries), '*', self.selectedRole, 30, undefined)
+        user_service.search(communityFilter.concat(self.selectedIndustries), '*', self.selectedRole, 30, undefined)
             .then(function(response) {
                 self.loadingIndustry = false;
                 self.loadingNetwork = false;
-                self.users = result_api.setPage(response.data);
+                self.users = result_service.setPage(response.data);
                 setTitle();
             });
     };
@@ -137,11 +137,11 @@ function PeopleController($stateParams, user_api, result_api, $sce, community, c
             if (self.selectedNetworks.length == 0) self.allNetworks = true;
         }
 
-        user_api.search(communityFilter.concat(self.selectedNetworks), '*', self.selectedRole, 20, undefined)
+        user_service.search(communityFilter.concat(self.selectedNetworks), '*', self.selectedRole, 20, undefined)
             .then(function(response) {
                 self.loadingIndustry = false;
                 self.loadingNetwork = false;
-                self.users = result_api.setPage(response.data);
+                self.users = result_service.setPage(response.data);
                 setTitle();
             });
     };
@@ -152,10 +152,10 @@ function PeopleController($stateParams, user_api, result_api, $sce, community, c
 
 }
 
-function PeopleProfileController($scope, $stateParams, $location, $auth, $mixpanel, user, user_api, community, communities) {
+function PeopleProfileController($scope, $stateParams, $location, $auth, $mixpanel, user, user_service, community, communities) {
 
-    if (!jQuery.isEmptyObject($stateParams.user)) {
-        this.user = $stateParams.user;
+    if (!jQuery.isEmptyObject($stateParams.profile)) {
+        this.user = $stateParams.profile;
     } else if (community && community.type == "user") {
         this.user = community;
     } else this.user = user.data;
@@ -166,7 +166,7 @@ function PeopleProfileController($scope, $stateParams, $location, $auth, $mixpan
     $mixpanel.track('Viewed Profile');
 
     this.putProfile = function(userid, profile) {
-        user_api.putProfile(userid, profile, function(response) {
+        user_service.putProfile(userid, profile, function(response) {
             if (response.status !== 200) {
                 this.alert = { type: 'danger', msg: 'There was a problem: ' + String(response.message) };
                 console.warn("WARNING: " +  response.message);
@@ -180,7 +180,7 @@ function PeopleProfileController($scope, $stateParams, $location, $auth, $mixpan
     this.removeProfile = function(userid, name) {
         notify("Are you sure you want to remove " + name + "?", function(result) { //todo fix notify maybe with sweetalert
             if (result) {
-                user_api.removeProfile(userid, function(response) {
+                user_service.removeProfile(userid, function(response) {
                     $location.path('/people');
                     this.alert = { type: 'success', msg: "Person removed. Hopefully they'll return some day." };
                 });
@@ -189,7 +189,7 @@ function PeopleProfileController($scope, $stateParams, $location, $auth, $mixpan
     };
 
     this.updateProfile = function() {
-        user_api.updateProfile({
+        user_service.updateProfile({
             displayName: user.profile.name,
             email: user.profile.email
         }).then(function() {
@@ -199,7 +199,7 @@ function PeopleProfileController($scope, $stateParams, $location, $auth, $mixpan
 
     this.getKey = function() {
         if (!user.profile.api_key) {
-            user_apis.getKey()
+            user_services.getKey()
                 .then(function(response) {
                     var api_key = response.data;
                     notify({title: "See our <a href='http://startupcommunity.readme.io?appkey=" + api_key + "' target='_blank'>API documentation</a> for help using your key:", message: "<pre>" + api_key + "</pre>"});
@@ -208,7 +208,7 @@ function PeopleProfileController($scope, $stateParams, $location, $auth, $mixpan
     };
 
     $scope.isCityAdvisor = function(status) { //todo needs to be reworked
-        user_api.setCityAdvisor($state.params.user.key, self.user.context, 'cityAdvisor', status, function(response, rescode) {
+        user_service.setCityAdvisor($state.params.user.key, self.user.context, 'cityAdvisor', status, function(response, rescode) {
             var sameuser = false;
             var cluster;
             if (rescode == 201) {
@@ -244,7 +244,7 @@ function PeopleProfileController($scope, $stateParams, $location, $auth, $mixpan
     };
 
     $scope.setRole = function(cluster, role, status) { //todo needs to be reworked
-        user_api.setRole($state.params.user.key, self.user.context, cluster, role, status, function(response, rescode) {
+        user_service.setRole($state.params.user.key, self.user.context, cluster, role, status, function(response, rescode) {
             var sameuser = false;
             if (rescode == 201) {
                 if ($state.params.user.key == self.user.key) { sameuser = true; }
@@ -314,12 +314,12 @@ function PeopleProfileController($scope, $stateParams, $location, $auth, $mixpan
 
 }
 
-function InvitePeopleController($scope, user_api) {
+function InvitePeopleController($scope, user_service) {
     var self = this;
 
     $scope.invitePerson = function(url, email, userid) {
         $scope.disabled = true;
-        user_api.invitePerson(url, email, userid, function(response) {
+        user_service.invitePerson(url, email, userid, function(response) {
             $scope.disabled = false;
             if (response.status !== 200) {
                 self.alert = { type: 'danger', msg: 'There was a problem: ' + String(response.message) };

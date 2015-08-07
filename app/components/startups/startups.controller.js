@@ -3,7 +3,7 @@ angular
     .controller('StartupsController', StartupsController)
     .controller('StartupProfileController', StartupProfileController);
 
-function StartupsController($stateParams, startup_api, result_api, $sce, community, communities) {
+function StartupsController($stateParams, startup_service, result_service, $sce, community, communities) {
 
     this.community = community;
     this.communities = communities.data;
@@ -22,9 +22,9 @@ function StartupsController($stateParams, startup_api, result_api, $sce, communi
             self.tag = $stateParams.query;
         } else self.tag = undefined;
 
-        startup_api.search(communityFilter, $stateParams.query, undefined, 20, alturl)
+        startup_service.search(communityFilter, $stateParams.query, undefined, 20, alturl)
             .then(function (response) {
-                self.startups = result_api.setPage(response.data);
+                self.startups = result_service.setPage(response.data);
                 self.tag = undefined;
                 self.loadingStartups = false;
                 self.lastQuery = $stateParams.query;
@@ -100,10 +100,10 @@ function StartupsController($stateParams, startup_api, result_api, $sce, communi
             }
         }
 
-        startup_api.search(communityFilter.concat(self.selectedIndustries).concat(self.selectedNetworks), '*', self.selectedStage, 20, undefined)
+        startup_service.search(communityFilter.concat(self.selectedIndustries).concat(self.selectedNetworks), '*', self.selectedStage, 20, undefined)
             .then(function(response) {
                 self.loadingStage = false;
-                self.startups = result_api.setPage(response.data);
+                self.startups = result_service.setPage(response.data);
                 setTitle();
             });
     };
@@ -118,11 +118,11 @@ function StartupsController($stateParams, startup_api, result_api, $sce, communi
             if (self.selectedIndustries.length == 0) self.allIndustries = true;
         }
 
-        startup_api.search(communityFilter.concat(self.selectedIndustries).concat(self.selectedNetworks), '*', self.selectedStage, 30, undefined)
+        startup_service.search(communityFilter.concat(self.selectedIndustries).concat(self.selectedNetworks), '*', self.selectedStage, 30, undefined)
             .then(function(response) {
                 self.loadingIndustry = false;
                 self.loadingNetwork = false;
-                self.startups = result_api.setPage(response.data);
+                self.startups = result_service.setPage(response.data);
                 setTitle();
             });
     };
@@ -137,52 +137,77 @@ function StartupsController($stateParams, startup_api, result_api, $sce, communi
             if (self.selectedNetworks.length == 0) self.allNetworks = true;
         }
 
-        startup_api.search(communityFilter.concat(self.selectedIndustries).concat(self.selectedNetworks), '*', self.selectedStage, 20, undefined)
+        startup_service.search(communityFilter.concat(self.selectedIndustries).concat(self.selectedNetworks), '*', self.selectedStage, 20, undefined)
             .then(function(response) {
                 self.loadingIndustry = false;
                 self.loadingNetwork = false;
-                self.startups = result_api.setPage(response.data);
+                self.startups = result_service.setPage(response.data);
                 setTitle();
             });
     };
 
 }
 
-function StartupProfileController($scope, startup_api, $location, $mixpanel) {
+function StartupProfileController($stateParams, $location, $mixpanel, user, user_service, team, community, communities) {
 
     $mixpanel.track('Viewed Startup');
 
-    $scope.putProfile = function(userid, profile) {
-        startup_api.putProfile(userid, profile, function(response) {
+    if (!jQuery.isEmptyObject($stateParams.profile)) {
+        this.startup = $stateParams.profile;
+    } else if (community && community.type == "startup") {
+        this.startup = community;
+    }
+
+    var self = this;
+    this.communities = communities.data;
+    this.team = {};
+
+    // sort team members
+
+    for (member in team.data.results) {
+        for (role in team.data.results[member].value.roles) {
+            for (item in team.data.results[member].value.roles[role]) {
+                if (item == this.startup.key) {
+                    if (!this.team[role]) this.team[role] = {};
+                    this.team[role][team.data.results[member].value.key] = team.data.results[member].value;
+                }
+            }
+        }
+    }
+
+    this.putProfile = function(userid, profile) {
+        user_service.putProfile(userid, profile, function(response) {
             if (response.status !== 200) {
-                $scope.global.alert = { type: 'danger', msg: 'There was a problem: ' + String(response.message) };
+                this.alert = { type: 'danger', msg: 'There was a problem: ' + String(response.message) };
                 console.warn("WARNING: " +  response.message);
             } else {
-                $scope.profile = response.data; // may need to tell angular to refresh view
-                $scope.global.alert = { type: 'success', msg: 'Person updated! ' + response.data.name + ' is good to go.' };
+                this.profile = response.data; // may need to tell angular to refresh view
+                this.alert = { type: 'success', msg: 'Person updated! ' + response.data.name + ' is good to go.' };
             }
         });
     };
 
-    $scope.removeProfile = function(userid, name) {
+    this.removeProfile = function(userid, name) {
         notify("Are you sure you want to remove " + name + "?", function(result) { //todo fix notify maybe with sweetalert
             if (result) {
-                startup_api.removeProfile(userid, function(response) {
-                    $location.path('/startups');
-                    $scope.global.alert = { type: 'success', msg: "Person removed. Hopefully they'll return some day." };
+                user_service.removeProfile(userid, function(response) {
+                    $location.path('/people');
+                    this.alert = { type: 'success', msg: "Person removed. Hopefully they'll return some day." };
                 });
             }
         });
     };
 
-    $scope.updateProfile = function() {
-        startup_api.updateProfile({
-            displayName: $scope.global.user.profile.name,
-            email: $scope.global.user.profile.email
+    this.updateProfile = function() {
+        user_service.updateProfile({
+            displayName: user.profile.name,
+            email: user.profile.email
         }).then(function() {
-            $scope.global.alert = { type: 'success', msg: "Great news. Your profile has been updated."};
+            this.alert = { type: 'success', msg: "Great news. Your profile has been updated."};
         });
     };
+
+
 
 
 }

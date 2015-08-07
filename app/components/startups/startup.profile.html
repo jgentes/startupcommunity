@@ -1,0 +1,73 @@
+<div class="row">
+    <div class="col-lg-12">
+        <div class="hpanel hgreen">
+            <div class="panel-body">
+                <div class="row">
+                    <div class="col-sm-9">
+                        <div class="col-sm-2 col-lg-1">
+                            <img style="height:75px;" ng-src="{{profile.startup.profile.avatar || profile.startup.profile.linkedin.pictureUrl || 'images/blank_startup.jpg'}}" alt="{{::profile.startup.profile.name}}">
+                        </div>
+                        <div class="col-sm-10 col-lg-11" style="padding-bottom: 15px;">
+                            <div class="project-action" style="margin-right: -15px;">
+                                <div class="btn-group pull-right">
+                                    <a href="#"><i class="fa fa-twitter btn btn-default btn-xs"></i></a>
+                                    <a href="{{profile.startup.profile.linkedin.publicProfileUrl}}" target="_blank"><i class="fa fa-linkedin btn btn-default btn-xs"></i>
+                                    </a>
+                                </div>
+                            </div>
+                            <h3>{{::profile.startup.profile.name}}
+                            </h3>
+                            <h4>
+                                {{::profile.startup.profile.description}}
+                            </h4>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-xs-3 col-sm-3 no-overflow profile-div" ng-if="profile.team.founder">
+                                <p class="profile-label font-uppercase" style="font-size: 14px;">Founders:</p>
+                                <ul class="profile-ul">
+                                    <li ng-repeat="(key, val) in profile.team.founder" class="profile-team">
+                                        <a href="{{'/' + key}}">
+                                            <img ng-src="{{val.profile.linkedin.pictureUrl || val.profile.avatar || 'images/blank_avatar.png'}}" alt="{{::val.profile.name}}" class="user-img widget-image img-circle pull-left" style="margin-left: 15%; margin-bottom: 5px;" onerror="this.style.display='none'"/>
+                                            <button class="btn btn-xs btn-outline btn-danger" style="display: block !important;">{{val.profile.name}}</button>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="col-xs-3 col-sm-3 no-overflow profile-div" ng-if="profile.team.investor">
+                                <p class="profile-label font-uppercase" style="font-size: 14px;">Investors:</p>
+                                <ul class="profile-ul">
+                                    <li ng-repeat="(key, val) in profile.team.founder" class="profile-team">
+                                        <a href="{{'/' + key}}">
+                                            <img ng-src="{{val.profile.linkedin.pictureUrl || val.profile.avatar || 'images/blank_avatar.png'}}" alt="{{::val.profile.name}}" class="user-img widget-image img-circle pull-left" style="margin-left: 15%; margin-bottom: 5px;" onerror="this.style.display='none'"/>
+                                            <button class="btn btn-xs btn-outline btn-success" style="display: block !important;">{{val.profile.name}}</button>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="col-xs-3 col-sm-3 no-overflow profile-div" ng-if="profile.team.advisor">
+                                <p class="profile-label font-uppercase" style="font-size: 14px;">Advisors:</p>
+                                <ul class="profile-ul">
+                                    <li ng-repeat="(key, val) in profile.team.founder" class="profile-team">
+                                        <a href="{{'/' + key}}">
+                                            <img ng-src="{{val.profile.linkedin.pictureUrl || val.profile.avatar || 'images/blank_avatar.png'}}" alt="{{::val.profile.name}}" class="user-img widget-image img-circle pull-left" style="margin-left: 15%; margin-bottom: 5px;" onerror="this.style.display='none'"/>
+                                            <button class="btn btn-xs btn-outline btn-info" style="display: block !important;">{{val.profile.name}}</button>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-3 project-info">
+                        <gm-map id="profile-map" gm-address="{address:profile.startup.profile.home}" options="{zoom: 11, disableDefaultUI: true}">
+                        </gm-map>
+                    </div>
+                </div>
+            </div>
+            <div class="panel-footer">
+                <h3>Summary</h3>
+                <p style="white-space:pre-wrap;" ng-bind-html="::profile.startup.profile.summary | linky:'_blank'"></p>
+            </div>
+        </div>
+    </div>
+</div>

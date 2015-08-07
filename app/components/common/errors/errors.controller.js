@@ -2,13 +2,13 @@ angular
     .module('startupcommunity')
     .controller('ErrorPageController', ErrorPageController);
 
-function ErrorPageController($scope, $location, $window, user_api) {
+function ErrorPageController($scope, $location, $window, user_service) {
 
     $scope.formData = {};
 
     $scope.search = function(query) {
         try {
-            user_api.search($scope.global.user.context, query)
+            user_service.search($scope.global.user.context, query)
                 .then(function(results) {
                     $scope.global.search = results.data;
                     $location.path('/search');

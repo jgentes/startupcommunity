@@ -1,7 +1,7 @@
 angular
-    .module('apis', [])
+    .module('services', [])
 
-    .factory('user_api', function($http) {
+    .factory('user_service', function($http) {
         return {
             search: function(communities, query, roles, limit, alturl) { //alturl is for next/prev retrieval
                 var urlString = '/api/1.1/users?' + jQuery.param({
@@ -66,7 +66,7 @@ angular
         };
     })
 
-      .factory('community_api', function($http) {
+      .factory('community_service', function($http) {
           return {
               getCommunity: function(community) {
                   var urlString = '/api/1.1/community/' + community;
@@ -78,7 +78,7 @@ angular
               }
           };
       })
-    .factory('startup_api', function($http) {
+    .factory('startup_service', function($http) {
         return {
             search: function(communities, query, stages, limit, alturl) { //alturl is for next/prev retrieval
                 var urlString = '/api/2.0/startups?' + jQuery.param({
@@ -91,7 +91,7 @@ angular
             }
         };
     })
-    .factory('angellist_api', function($http) {
+    .factory('angellist_service', function($http) {
         return {
             getStartups: function(id) {
                 return $http.get('/api/1.1/angel/startups?id=' + id);
@@ -102,7 +102,7 @@ angular
         };
     })
 
-    .factory('result_api', function() {
+    .factory('result_service', function() {
       // This service will eventually handle a variety of functions for multiple views, such as search, cluster view, people view, startup view, etc
       return {
           setPage: function($scope) {
@@ -123,4 +123,4 @@ angular
               return $scope;
           }
       };
-    })
+    });

@@ -46,7 +46,7 @@ function NavigationController($state, $location, $stateParams, $modal, user, com
     this.path = $location.path().replace(/\/$/, ""); //used for routing and used in view
 
     //set location, used for map and relative nav for industries
-    if (community.type == "user" || community.type == "network") {
+    if (community.type == "user" || community.type == "startup" || community.type == "network") {
         this.location = community.profile.home;
     } else this.location = $stateParams.community_key;
 
@@ -73,7 +73,7 @@ function NavigationController($state, $location, $stateParams, $modal, user, com
     this.search = function(query) {
         if (community.type == "industry") {
             $state.go('industry.search.dashboard', {industry_key: community.key, query: query});
-        } else if (community.type == "user") {
+        } else if (community.type == "user" || community.type == "startup") {
             $state.go('search.dashboard', {community_key: this.user.profile.home, query: query});
         } else $state.go('search.dashboard', {query: query});
     };
@@ -88,6 +88,9 @@ function NavigationController($state, $location, $stateParams, $modal, user, com
         switch (community.type) {
             case "user":
                 $state.go('people.profile');
+                break;
+            case "startup":
+                $state.go('startups.profile');
                 break;
             case "location":
                 $state.go('location.dashboard');
