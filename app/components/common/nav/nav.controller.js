@@ -73,13 +73,18 @@ function NavigationController($state, $location, $stateParams, $modal, user, com
     this.search = function(query) {
         if (community.type == "industry") {
             $state.go('industry.search.dashboard', {industry_key: community.key, query: query});
-        } else if (community.type == "user" || community.type == "startup") {
+        } else if (community.type == "user") {
             $state.go('search.dashboard', {community_key: this.user.profile.home, query: query});
+        } else if (community.type == "startup") {
+            $state.go('search.dashboard', {community_key: this.community.profile.home, query: query});
         } else $state.go('search.dashboard', {query: query});
+
     };
 
     if (community.type == "user") {
         this.searchname = communities.data[this.user.profile.home].profile.name;
+    } else if (community.type == "startup") {
+        this.searchname = communities.data[this.community.profile.home].profile.name;
     } else this.searchname = this.community.profile.name;
 
 
