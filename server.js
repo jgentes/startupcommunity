@@ -53,6 +53,8 @@ var AuthApi = require('./api/auth.api.js'),
     auth = new AuthApi(),
     UserApi = require('./api/user.api.js'),
     userApis = new UserApi(),
+    StartupApi = require('./api/startup.api.js'),
+    startupApis = new StartupApi(),
     CommunityApi = require('./api/community.api.js'),
     communityApis = new CommunityApi(),
     AngelListApi = require('./api/angellist.api.js'),
@@ -82,6 +84,8 @@ app.get('/api/1.1/invitePerson', auth.ensureAuthenticated, userApis.invitePerson
 app.put('/api/1.1/profile/role', auth.ensureAuthenticated, userApis.setRole);
 app.post('/api/1.1/profile/remove/:userid', auth.ensureAuthenticated, userApis.removeProfile);
 app.post('/api/1.1/feedback', auth.ensureAuthenticated, userApis.feedback);
+
+app.get('/api/2.0/startups', startupApis.startupSearch);
 
 // Auth
 app.get('/auth/unlink/:provider', auth.ensureAuthenticated, auth.unlink);

@@ -105,7 +105,7 @@
                     <td style="border-bottom: 1px solid #fff; border-top: none; padding: 0;" colspan="3"></td>
                 </div>
                 <div ng-show="people.tag" style="text-align: center" ng-cloak><h2><br/>Searching for {{people.tag}}..</h2><br/><br/></div>
-                <div ng-show="people.users.results.length == 0" style="text-align: center" ng-cloak><h2><br/>No results..</h2><br/><br/></div>
+                <div ng-show="people.users.results.length == 0" style="text-align: center" ng-cloak><h2><br/>Nothing here!</h2><br/><br/></div>
                 <div ng-repeat="item in people.users.results" ng-switch on="$index % 2" style="margin-top: 10px;">
                     <div class="col-md-6" ng-switch-when="0">
                         <div class="row"  ng-include="'components/people/people.dashboard.list.html'"></div>
@@ -126,4 +126,5 @@
             </div>
         </div>
     </div>
+</div>
 </div>

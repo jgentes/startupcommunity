@@ -78,6 +78,19 @@ angular
               }
           };
       })
+    .factory('startup_api', function($http) {
+        return {
+            search: function(communities, query, stages, limit, alturl) { //alturl is for next/prev retrieval
+                var urlString = '/api/2.0/startups?' + jQuery.param({
+                        communities: communities,
+                        stages: stages,
+                        limit: limit,
+                        query: query
+                    });
+                return $http.get(urlString);
+            }
+        };
+    })
     .factory('angellist_api', function($http) {
         return {
             getStartups: function(id) {

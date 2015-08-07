@@ -78,6 +78,11 @@ function NavigationController($state, $location, $stateParams, $modal, user, com
         } else $state.go('search.dashboard', {query: query});
     };
 
+    if (community.type == "user") {
+        this.searchname = communities.data[this.user.profile.home].profile.name;
+    } else this.searchname = this.community.profile.name;
+
+
     // for routing of root routes
     if (this.path.split('/').length < 3) {
         switch (community.type) {

@@ -4,11 +4,10 @@ angular
     .controller('PeopleProfileController', PeopleProfileController)
     .controller('InvitePeopleController', InvitePeopleController);
 
-function PeopleController($location, $stateParams, user_api, result_api, $sce, user, community, communities) {
+function PeopleController($stateParams, user_api, result_api, $sce, community, communities) {
 
     this.community = community;
     this.communities = communities.data;
-    this.user = user.data;
     this.selectedIndustries = [];
     this.selectedNetworks = [];
     this.selectedRole = ['*'];
@@ -20,7 +19,10 @@ function PeopleController($location, $stateParams, user_api, result_api, $sce, u
 
     this.searchUsers = function(alturl) {
         self.loadingPeople = true;
-        self.tag = $stateParams.query;
+        if ($stateParams.query !== '*') {
+            self.tag = $stateParams.query;
+        } else self.tag = undefined;
+
         user_api.search(communityFilter, $stateParams.query, undefined, 20, alturl)
             .then(function (response) {
                 self.tag = undefined;
@@ -75,14 +77,7 @@ function PeopleController($location, $stateParams, user_api, result_api, $sce, u
             } else self.title += 'in <strong>' + self.communities[$stateParams.community_key].profile.name + '</strong>';
         }
 
-        var pageTitle;
-
-        if (self.community) {
-            pageTitle += '<br><small>' + self.community.profile.name + '</small>';
-        } else {
-            pageTitle += '<br><small>Welcome ' + (self.user.profile.name).split(' ')[0] + '!</small>';
-        }
-
+        var pageTitle = '<br><small>' + self.community.profile.name + '</small>';
         self.pageTitle = $sce.trustAsHtml(pageTitle);
     };
 
@@ -120,6 +115,7 @@ function PeopleController($location, $stateParams, user_api, result_api, $sce, u
             if (self.selectedIndustries.indexOf(selection) < 0) {
                 self.selectedIndustries.push(selection);
             } else self.selectedIndustries.splice(self.selectedIndustries.indexOf(selection), 1);
+            if (self.selectedIndustries.length == 0) self.allIndustries = true;
         }
 
         user_api.search(communityFilter.concat(self.selectedIndustries), '*', self.selectedRole, 30, undefined)
@@ -138,6 +134,7 @@ function PeopleController($location, $stateParams, user_api, result_api, $sce, u
             if (self.selectedNetworks.indexOf(selection) < 0) {
                 self.selectedNetworks.push(selection);
             } else self.selectedNetworks.splice(self.selectedNetworks.indexOf(selection), 1);
+            if (self.selectedNetworks.length == 0) self.allNetworks = true;
         }
 
         user_api.search(communityFilter.concat(self.selectedNetworks), '*', self.selectedRole, 20, undefined)
@@ -146,17 +143,6 @@ function PeopleController($location, $stateParams, user_api, result_api, $sce, u
                 self.loadingNetwork = false;
                 self.users = result_api.setPage(response.data);
                 setTitle();
-            });
-    };
-
-    this.search = function(query) {
-        self.search.tag = query;
-        self.search.results = undefined;
-        user_api.search(self.user.context, query)
-            .then(function(response) {
-                self.search = result_api.setPage(response.data);
-                self.search.lastQuery = query;
-                $location.path('/search');
             });
     };
 

@@ -1,0 +1,25 @@
+<div class="col-md-12 dash-table">
+    <div>
+        <a ui-sref="startups.profile({profile: item, community_key: item.value.key, community: {}})" title="View {{::item.value.profile.name | words:0}}'s Profile"><img
+                ng-src="{{item.value.profile.avatar || 'images/blank_startup.jpg'}}" alt="{{::item.value.profile.name}}" class="user-img widget-image pull-left" onerror="this.style.display='none'"/></a>
+    </div>
+    <div class="user-row" ng-class="{'user-row-border': $index % 2 == 0}">
+        <a ui-sref="startups.profile({profile: item, community_key: item.value.key, community: {}})" title="View {{::item.value.profile.name | words:0}}'s Profile" style="float: left; "><strong>{{::item.value.profile.name}} </strong></a>
+        <a ng-show="{{(item.value.profile.summary).length > 0}}" title="Show Summary" ng-click="showSummary = !showSummary" class="user-summary">&nbsp;&nbsp;<i class="fa fa-chevron-down fa-fw"></i>
+        </a>
+        <li ng-repeat="val in item.value.communities" class="role-right">
+            <a href="{{'/' + val}}" ng-class="{'btn-danger' : startups.communities[val].type == 'startup', 'btn-info' : startups.communities[val].type == 'network', 'btn-primary' : startups.communities[val].type == 'industry', 'btn-success' : startups.communities[val].type == 'location'}" class="btn btn-xs btn-outline hidden"><i class="fa {{startups.communities[val].profile.icon}}"></i> {{startups.communities[val].profile.name}}</a>
+        </li>
+        <br>
+        <div class="dash-row">
+            <span class="text-muted" ng-bind-html="::item.value.profile.description | highlight:startups.lastQuery"></span>
+        </div>
+        <div ng-show="(showSummary || $state.includes('search.*')) && item.value.profile.summary">
+            <div style="padding-bottom: 10px;">
+                <hr>
+                <span class="text-muted" style="white-space:pre-wrap;" ng-bind-html="::item.value.profile.summary | linky:'_blank' | highlight:startups.lastQuery | safe_html"></span>
+            </div>
+        </div>
+    </div>
+    <hr>
+</div>
