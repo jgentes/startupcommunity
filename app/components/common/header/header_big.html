@@ -17,7 +17,8 @@
                 </ol>
             </div>
             <h2 class="font-light m-b-xs">
-                {{ content.community.profile.name }}
+                <span ng-if="content.community.community_profiles[nav.location]">{{ content.community.community_profiles[nav.location].name }}</span>
+                <span ng-if="!content.community.community_profiles[nav.location]">{{ content.community.profile.name }}</span>
             </h2>
             <small>{{ content.community.profile.description }}</small>
         </div>
