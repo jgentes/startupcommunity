@@ -49,12 +49,12 @@ function handleMaintenance(res) {
                      if (data.body.results[item].value.avatar) delete data.body.results[item].value.avatar;
                      if (data.body.results[item].value.linkedin) delete data.body.results[item].value.linkedin;
                      */
-                    delete data.body.results[item].value.roles;
 
-                    var newdata = data.body.results[item].value;
+                    var newdata = data.body.results[item].value; // get current record
 
                     //newdata.communities = ["bend-or", "oregon", "us", "edco-stable-of-experts"];
-                    newdata.roles = { "advisor" : { "edco-stable-of-experts": ["bend-or"], "bend-or": []}};
+                    //newdata.roles = { "advisor" : { "edco-stable-of-experts": ["bend-or"], "bend-or": []}};
+                    newdata.profile["home"] = "bend-or";
 
                     console.log('Updating record..');
                     console.log(data.body.results[item].path.key);

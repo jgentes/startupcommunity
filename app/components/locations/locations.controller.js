@@ -2,7 +2,7 @@ angular
     .module('startupcommunity')
     .controller('LocationController', LocationController);
 
-function LocationController($stateParams, leaders) {
+function LocationController($stateParams, community, leaders) {
 
     this.community = $stateParams.community;
     this.leaders = leaders.data.results;

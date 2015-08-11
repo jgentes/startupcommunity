@@ -204,6 +204,23 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                     controller: "PeopleController as people"
                 }
             }
+        })
+        .state('people.add', {
+            url: "/people/add",
+            params: {
+                community: {},
+                pageTitle: 'Add People'
+            },
+            views: {
+                'header': {
+                    templateUrl: "components/common/header/header_small.html",
+                    controller: "ContentController as content"
+                },
+                'content': {
+                    templateUrl: 'components/people/people.invite.html',
+                    controller: "InvitePeopleController as add"
+                }
+            }
 
         })
         
@@ -452,8 +469,8 @@ angular
             function(event, toState, toParams, fromState, fromParams){
                 //console.log('from: ')
                 //console.log(fromState);
-                console.log('to:');
-                console.log(toState);
+                //console.log('to:');
+                //console.log(toState);
             })
 
     })

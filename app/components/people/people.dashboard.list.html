@@ -1,10 +1,10 @@
 <div class="col-md-12 dash-table">
     <div>
-        <a ui-sref="people.profile({profile: item, community_key: item.value.key, community: {}})" title="View {{::item.value.profile.name | words:0}}'s Profile"><img
+        <a ui-sref="people.profile({profile: item.value, community_key: item.value.key, community: {}})" title="View {{::item.value.profile.name | words:0}}'s Profile"><img
                 ng-src="{{item.value.profile.linkedin.pictureUrl || item.value.profile.avatar || 'images/blank_avatar.png'}}" alt="{{::item.value.profile.name}}" class="user-img widget-image img-circle pull-left" onerror="this.style.display='none'"/></a>
     </div>
     <div class="user-row" ng-class="{'user-row-border': $index % 2 == 0}">
-        <a ui-sref="people.profile({profile: item, community_key: item.value.key, community: {}})" title="View {{::item.value.profile.name | words:0}}'s Profile" style="float: left; "><strong>{{::item.value.profile.name}} </strong></a>
+        <a ui-sref="people.profile({profile: item.value, community_key: item.value.key, community: {}})" title="View {{::item.value.profile.name | words:0}}'s Profile" style="float: left; "><strong>{{::item.value.profile.name}} </strong></a>
         <a ng-show="{{(item.value.profile.linkedin.summary).length > 0}}" title="Show Summary" ng-click="showSummary = !showSummary" class="user-summary">&nbsp;&nbsp;<i class="fa fa-chevron-down fa-fw"></i>
         </a>
         <li ng-repeat="val in item.value.communities" class="role-right">

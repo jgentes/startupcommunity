@@ -152,13 +152,18 @@ function PeopleController($stateParams, user_service, result_service, $sce, comm
 
 }
 
-function PeopleProfileController($scope, $stateParams, $location, $auth, $mixpanel, user, user_service, community, communities) {
+function InvitePeopleController($stateParams, user, user_service, community, communities) {
 
+
+
+}
+
+function PeopleProfileController($scope, $stateParams, $location, $auth, $mixpanel, user, user_service, community, communities) {
     if (!jQuery.isEmptyObject($stateParams.profile)) {
         this.user = $stateParams.profile;
     } else if (community && community.type == "user") {
         this.user = community;
-    } else this.user = user.data;
+    } else this.user = user.data.value;
 
     var self = this;
     this.communities = communities.data;

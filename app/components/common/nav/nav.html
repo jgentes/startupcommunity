@@ -46,7 +46,7 @@
                     <div class="col-sm-3">
                         <a ui-sref="people.profile({profile: nav.user, community_key: nav.user.key, community: {}})"><img class="img-circle m-b" ng-src="{{nav.user.profile.avatar || nav.user.profile.linkedin.pictureUrl || 'images/blank_avatar.png'}}" alt="{{nav.user.profile.name}}" style="height: 40px; width: 40px; "/></a>
                     </div>
-                    <div class="col-sm-9" style="padding-top: 3px;">
+                    <div class="col-sm-9" style="padding-top: 3px; white-space: nowrap;">
                         <a ui-sref="people.profile({profile: nav.user, community_key: nav.user.key, community: {}})">{{nav.user.profile.name}}</a>
                         <div style="margin-left: -10px; padding-top: 1px;">
                             <span ng-repeat="(item, val) in nav.user.roles" class="user-role"><i ng-attr-title="{{item[0].toUpperCase() + item.slice(1);}}" ng-class="{'text-primary fa fa-rocket' : item == 'founder', 'text-info fa fa-graduation-cap' : item == 'advisor', 'text-success fa fa-leaf' : item == 'investor', 'text-danger fa fa-flag' : item == 'leader'}"></i></span>
@@ -108,10 +108,13 @@
                 <a href="#"><span class="nav-label">Networks</span><span class="fa arrow"></span> </a>
                 <ul class="nav nav-second-level">
                     <li ng-repeat="item in nav.networks">
-                        <a ui-sref="network.dashboard({community_key: item.key, community: item})" ng-class="{active: nav.path.endsWith('/' + item.key)}"><i ng-class="'fa ' + item.profile.icon"></i>&nbsp;&nbsp;{{item.profile.name}}</a>
+                        <a ui-sref="network.dashboard({community_key: item.key, community: item})" ng-class="{active: nav.path.includes('/' + item.key)}"><i ng-class="'fa ' + item.profile.icon"></i>&nbsp;&nbsp;{{item.profile.name}}</a>
                         <ul ng-if="nav.community.key == item.key">
                             <li ui-sref="people.dashboard({community_key: item.key, query: '*'})" ui-sref-active="active">
                                 <a><i class="fa fa-caret-right"></i>&nbsp;&nbsp;People</a>
+                            </li>
+                            <li ng-if="nav.path.endsWith('/people')" class="nav-third-level" ui-sref="people.invite">
+                                <a>+&nbsp;&nbsp;Invite People</a>
                             </li>
                             <li ui-sref="network.startups" ui-sref-active="active">
                                 <a><i class="fa fa-caret-right"></i>&nbsp;&nbsp;Startups</a>

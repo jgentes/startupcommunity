@@ -85,8 +85,11 @@ function NavigationController($state, $location, $stateParams, $modal, user, com
         this.searchname = communities.data[this.user.profile.home].profile.name;
     } else if (community.type == "startup") {
         this.searchname = communities.data[this.community.profile.home].profile.name;
+    } else if (community.type == "industry") {
+        if (this.community.community_profiles[this.location]) {
+            this.searchname = this.community.community_profiles[this.location].name;
+        } else this.searchname = this.community.profile.name;
     } else this.searchname = this.community.profile.name;
-
 
     // for routing of root routes
     if (this.path.split('/').length < 3) {
