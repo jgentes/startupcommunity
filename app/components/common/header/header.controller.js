@@ -1,7 +1,14 @@
 angular
     .module('startupcommunity')
-    .controller('ContentController', ContentController);
+    .controller('HeaderController', HeaderController);
 
-function ContentController(community) {
+function HeaderController($stateParams, community) {
+
     this.community = community;
+
+    // for embed
+    if (this.community.community_profiles && this.community.community_profiles[$stateParams.community_key]) {
+        this.searchname = this.community.community_profiles[$stateParams.community_key].name;
+    } else this.searchname = this.community.profile.name;
+
 }

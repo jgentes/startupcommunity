@@ -11,6 +11,7 @@ function PeopleController($stateParams, user_service, result_service, $sce, comm
     this.selectedIndustries = [];
     this.selectedNetworks = [];
     this.selectedRole = ['*'];
+    this.embed = $stateParams.embed;
 
     var self = this; // for accessing 'this' in child functions
 

@@ -3,7 +3,7 @@
         <div class="panel-body">
             <div id="hbreadcrumb" class="pull-right">
                 <ol class="hbreadcrumb">
-                    <li><a href="{{'/' + content.community.key}}">{{ content.community.profile.name }}&nbsp;&nbsp;/</a></li>
+                    <li><a href="{{'/' + header.community.key}}">{{ header.community.profile.name }}&nbsp;&nbsp;/</a></li>
                     <li ng-repeat="state in $state.$current.path" ng-class="{active: $last}">
                         <a ng-if="state.params.pageTitle.config.value && !(!!state.abstract) && !$last" href="#{{state.url.format($stateParams)}}">&nbsp;&nbsp;{{state.params.pageTitle.config.value}}&nbsp;&nbsp;/</a>
                         <span ng-if="$last">&nbsp;&nbsp;{{$state.params.pageTitle}}</span>
@@ -11,7 +11,7 @@
                 </ol>
             </div>
             <h2 class="font-light m-b-xs">
-                <span style="text-transform: none;">{{ $state.params.pageTitle }}&nbsp;<span ng-if="content.community.type !== 'user' && content.community.type !== 'startup'">in {{ content.community.profile.name }}</span>
+                <span style="text-transform: none;">{{ $state.params.pageTitle }}&nbsp;<span ng-if="header.community.type !== 'user' && header.community.type !== 'startup'">in {{ header.community.profile.name }}</span>
                 </span>
             </h2>
         </div>

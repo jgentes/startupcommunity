@@ -9,9 +9,9 @@
 
             <div id="hbreadcrumb" class="pull-right m-t-lg">
                 <ol class="hbreadcrumb">
-                    <li><a href="{{'/' + content.community.key}}">
-                        <span ng-if="content.community.community_profiles[nav.location]">{{ content.community.community_profiles[nav.location].name }}</span>
-                        <span ng-if="!content.community.community_profiles[nav.location]">{{ content.community.profile.name }}</span>
+                    <li><a href="{{'/' + header.community.key}}">
+                        <span ng-if="header.community.community_profiles[nav.location]">{{ header.community.community_profiles[nav.location].name }}</span>
+                        <span ng-if="!header.community.community_profiles[nav.location]">{{ header.community.profile.name }}</span>
                             &nbsp;&nbsp;/</a></li>
                     <li ng-repeat="state in $state.$current.path" ng-class="{active: $last}">
                         <a ng-if="state.params.pageTitle.config.value && !(!!state.abstract) && !$last" href="#{{state.url.format($stateParams)}}">&nbsp;&nbsp;{{state.params.pageTitle.config.value}}&nbsp;&nbsp;/</a>
@@ -20,10 +20,10 @@
                 </ol>
             </div>
             <h2 class="font-light m-b-xs">
-                <span ng-if="content.community.community_profiles[nav.location]">{{ content.community.community_profiles[nav.location].name }}</span>
-                <span ng-if="!content.community.community_profiles[nav.location]">{{ content.community.profile.name }}</span>
+                <span ng-if="header.community.community_profiles[nav.location]">{{ header.community.community_profiles[nav.location].name }}</span>
+                <span ng-if="!header.community.community_profiles[nav.location]">{{ header.community.profile.name }}</span>
             </h2>
-            <small>{{ content.community.profile.description }}</small>
+            <small>{{ header.community.profile.description }}</small>
         </div>
     </div>
 </div>

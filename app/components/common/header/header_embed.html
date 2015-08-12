@@ -1,0 +1,29 @@
+<!-- Header -->
+<div id="header">
+    <div class="bright-line">
+    </div>
+    <div id="logo" class="light-version">
+        <img src="images/sc_logo.png"/>
+    </div>
+    <nav role="navigation">
+        <div class="navbar-left">
+            <div class="nav navbar-nav no-borders">
+                <li>
+                    <a onclick="$('#searchform').submit()">
+                        <i class="pe-7s-search"></i>
+                    </a>
+                </li>
+                <form id="searchform" ng-submit="nav.search(search.query)" role="search" class="navbar-form-custom" method="post">
+                    <input ng-model="search.query" type="text" placeholder="Search {{header.searchname}}.." class="form-control" name="search">
+                </form>
+            </div>
+        </div>
+
+    </nav>
+</div>
+
+<!-- Main Content -->
+<div style="padding-top: 87px;">
+    <div class="content" ui-view></div>
+
+</div>
