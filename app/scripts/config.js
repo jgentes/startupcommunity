@@ -127,6 +127,38 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
             }
         })
 
+        .state('search', {
+            parent: 'root',
+            abstract: true,
+            views: {
+                'header': {
+                    templateUrl: "components/common/header/header_small.html",
+                    controller: "HeaderController as header"
+                },
+                'content': {
+                    templateUrl: 'components/common/search/search.dashboard.html'
+                }
+            }
+        })
+        .state('search.dashboard', {
+            url: "/search",
+            params: {
+                community: {},
+                query: '*',
+                pageTitle: 'Search'
+            },
+            views: {
+                'people': {
+                    templateUrl: 'components/people/people.dashboard.html',
+                    controller: "PeopleController as people"
+                },
+                'startups': {
+                    templateUrl: 'components/startups/startups.dashboard.html',
+                    controller: "StartupsController as startups"
+                }
+            }
+        })
+
         .state('embed', {
             parent: 'preload',
             url: "/:community_key",
@@ -178,37 +210,6 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
             controller: "PeopleController as people"
         })
 
-        .state('search', {
-            parent: 'root',
-            abstract: true,
-            views: {
-                'header': {
-                    templateUrl: "components/common/header/header_small.html",
-                    controller: "HeaderController as header"
-                },
-                'content': {
-                    templateUrl: 'components/common/search/search.dashboard.html'
-                }
-            }
-        })
-        .state('search.dashboard', {
-            url: "/search",
-            params: {
-                community: {},
-                query: '*',
-                pageTitle: 'Search'
-            },
-            views: {
-                'people': {
-                    templateUrl: 'components/people/people.dashboard.html',
-                    controller: "PeopleController as people"
-                },
-                'startups': {
-                    templateUrl: 'components/startups/startups.dashboard.html',
-                    controller: "StartupsController as startups"
-                }
-            }
-        })
 
         // People views
         .state('people', {

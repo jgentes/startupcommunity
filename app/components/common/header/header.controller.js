@@ -11,4 +11,8 @@ function HeaderController($stateParams, community) {
         this.searchname = this.community.community_profiles[$stateParams.community_key].name;
     } else this.searchname = this.community.profile.name;
 
+    this.search = function(query) {
+        $state.go('embed.dashboard', {query: query});
+    }
+
 }
