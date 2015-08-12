@@ -127,6 +127,25 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
             }
         })
 
+        .state('embed2', { //need to make this a child to preload, then remove views and create new html frame for embed.dashboard below, then recreate people resolves? bummer.
+            parent: 'root',
+            abstract: true,
+            views: {
+                'header': {
+                    templateUrl: "components/common/header/header_empty.html"
+                },
+                'content': {
+                    template: '<div ui-view></div>'
+                }
+            }
+        })
+        .state('embed', {
+            parent: 'preload',
+            url: "/:community_key/embed",
+            templateUrl: 'components/people/people.dashboard.html',
+            controller: "PeopleController as people"
+        })
+
         .state('search', {
             parent: 'root',
             abstract: true,
@@ -416,33 +435,6 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                         if ($stateParams.community_key !== communities.data.key) return community_service.getCommunity($stateParams.community_key);
                     }]
 
-            }
-        })
-        .state('network.search', {
-            parent: 'search',
-            url: "/search",
-            params: {
-                community: {},
-                query: '*',
-                pageTitle: 'Search'
-            },
-            views: {
-                "people": {
-                    templateUrl: 'components/people/people.dashboard.html',
-                    controller: "PeopleController as people"
-                }
-            }
-        })
-        .state('network.embed', {
-            url: "/embed",
-            views: {
-                'header': {
-                    templateUrl: "components/common/header/header_empty.html"
-                },
-                'content': {
-                    templateUrl: 'components/people/people.dashboard.html',
-                    controller: "PeopleController as people"
-                }
             }
         })
 
