@@ -205,11 +205,11 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                 }
             }
         })
-        .state('people.add', {
-            url: "/people/add",
+        .state('people.invite', {
+            url: "/people/invite",
             params: {
                 community: {},
-                pageTitle: 'Add People'
+                pageTitle: 'Invite People'
             },
             views: {
                 'header': {
@@ -218,7 +218,7 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                 },
                 'content': {
                     templateUrl: 'components/people/people.invite.html',
-                    controller: "InvitePeopleController as add"
+                    controller: "InvitePeopleController as invite"
                 }
             }
 
@@ -428,6 +428,18 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
             },
             views: {
                 "people": {
+                    templateUrl: 'components/people/people.dashboard.html',
+                    controller: "PeopleController as people"
+                }
+            }
+        })
+        .state('network.embed', {
+            url: "/embed",
+            views: {
+                'header': {
+                    templateUrl: "components/common/header/header_empty.html"
+                },
+                'content': {
                     templateUrl: 'components/people/people.dashboard.html',
                     controller: "PeopleController as people"
                 }
