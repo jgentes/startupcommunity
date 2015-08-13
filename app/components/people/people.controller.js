@@ -25,7 +25,7 @@ function PeopleController($stateParams, user_service, result_service, $sce, $mod
             self.tag = $stateParams.query;
         } else self.tag = undefined;
 
-        embed ? limit = 10 : limit = 20;
+        this.embed ? limit = 10 : limit = 20;
 
         user_service.search(communityFilter, $stateParams.query, undefined, limit, alturl)
             .then(function (response) {
@@ -150,18 +150,42 @@ function PeopleController($stateParams, user_service, result_service, $sce, $mod
             });
     };
 
-    this.contact = function(user) {
-        var modalInstance = $modal.open({
-            templateUrl: 'components/common/nav/nav.change_location.html',
-            controller: ContactPeopleController,
-            windowClass: "hmodal-warning"
-        });
-    };
-
     this.skills = {};
     this.skills.selected = [];
     this.skills.list = ['.NET', 'Account Management', 'Accounting', 'ActionScript', 'Adobe', 'Adobe Acrobat', 'Adobe After Effects', 'Adobe Creative Suite', 'Adobe Illustrator', 'Adobe Indesign', 'Adobe Photoshop', 'Adobe Premiere', 'Advertising', 'Agile', 'Agile Project Management', 'Agile Software Develoment', 'AJAX', 'Algorithms', 'Amazon EC2', 'Amazon Web Services', 'Analytics', 'Android', 'AngularJS', 'Ant', 'Apache', 'Apache Tomcat', 'APIs', 'Apple', 'Architect', 'Arduino', 'Art Direction', 'Artificial Intelligence', 'ASP.NET', 'Assembly Language', 'Asset Management', 'Autocad', 'Automation', 'Automotive', 'Backbone.js', 'Backend Development', 'Bash', 'Big Data', 'Bilingual', 'Billing', 'Blackberry', 'Blogging', 'Bluetooth', 'Brand Management', 'Branding', 'Budgeting', 'Business Analysis', 'Business Development', 'Business Intelligence', 'Business Management', 'Business Model Innovation', 'Business Objects', 'Business Operations', 'Business Planning', 'Business Strategy', 'Buying', 'C', 'C#', 'C++', 'Cadence', 'CakePHP', 'Call Center', 'Capital Markets', 'CFO', 'Chef', 'Chemistry', 'Cisco', 'Citrix', 'Client Relations', 'Cloud Computing', 'Clustering', 'CMS', 'Coaching', 'Codeigniter', 'Coding', 'Coffeescript', 'Cold Calling', 'Communication Skills', 'Communications', 'Community Management', 'Compensation and Benefits', 'Competitive Analysis', 'Compliance', 'Composer', 'Computer Vision', 'comScore', 'Consulting', 'Consumer Electronics', 'Consumer Internet', 'Consumer Products', 'Content Creation', 'Content Management', 'Content Marketing', 'Content Strategy', 'Contract Negotiations', 'Control Systems', 'Copywriting', 'Corporate Finance', 'Creative Direction', 'Creative Problem Solving', 'Creative Strategy', 'Creative Writing', 'CRM', 'Cross-Functional Team Leadership', 'CSS', 'CSS3', 'Customer Acquisition', 'Customer Development', 'Customer Experience', 'Customer Relationship Management', 'Customer Service', 'CVS', 'D3.js', 'Data Analysis', 'Data Entry', 'Data Management', 'Data Mining', 'Data Visualization', 'Databases', 'DBMS', 'Debian', 'Debugging', 'Derivatives', 'Design', 'Design Management', 'Design Patterns', 'Design Research', 'Design Strategy', 'Design Thinking', 'DevOps', 'Digital Marketing', 'Digital Media', 'Digital Strategy', 'Distributed Systems', 'Distribution', 'Django', 'Documentation', 'Drafting', 'Dreamweaver', 'Drupal', 'Due Diligence', 'E-Commerce', 'Eclipse', 'Economics', 'Electrical Engineering', 'Electronics', 'Email', 'Email Marketing', 'Embedded Systems', 'Ember.js', 'Emerging Markets', 'Encryption', 'Engineering', 'English', 'Enterprise Software', 'Entertainment', 'Entrepreneurship', 'Event Management', 'Event Planning', 'Executive Management', 'Experience Design', 'ExpressJs', 'Fabrication', 'Facebook Advertising', 'Facebook API', 'Filing', 'Final Cut Pro', 'Finance', 'Financial Analysis', 'Financial Management', 'Financial Modeling', 'Financial Modelling & Valuation', 'Financial Reporting', 'Financial Services', 'Financial Statements', 'Firewall', 'Firmware', 'Flash', 'Fluent in Spanish', 'Focus', 'Forecasting', 'FPGA', 'FramerJS', 'Fraud', 'French language', 'Front-End Development', 'Full-Stack Web Development', 'Fundraising', 'Game Design', 'German Language', 'Git', 'Github', 'Go to Market Strategy', 'Google Adwords', 'Google Analytics', 'Google Apps', 'Graphic Design', 'Graphic Designer', 'Graphics Design', 'Growth Hacking', 'Hadoop', 'Haml', 'Hardware Engineering', 'Help Desk', 'Heroku', 'Hibernate', 'Highly Organized', 'Hive', 'HTML', 'HTML/CSS/PHP/MYSQL', 'HTML+CSS', 'HTML5 & CSS3', 'Human Resources', 'IBM DB2', 'IBM Websphere', 'Icon Design', 'Illustration', 'Illustrator', 'Image Processing', 'InDesign', 'Industrial Design', 'Information Architecture', 'Information Security', 'Information Technology', 'Infrastructure', 'Innovation & Growth', 'Inside Sales', 'Insurance', 'Integrity', 'Interaction Design', 'Interface Design', 'International Business', 'Internet', 'Internet Marketing', 'Inventory Management', 'Investment Banking', 'Investment Management', 'iOS', 'iOS Design', 'iOS Development', 'iPhone', 'ITIL', 'Japanese Language', 'Java', 'Java J2EE', 'Javascript', 'Javascript Frameworks', 'JBoss', 'JDBC', 'Jenkins', 'Jira', 'JOOMLA', 'jQuery', 'jQuery Mobile', 'JSON', 'JUNIT', 'Kanban', 'LAMP', 'LaTeX', 'Layout', 'Lead Generation', 'Leadership', 'Leadership and Team Inspiration', 'Leadership Development', 'Lean Startups', 'Legal', 'LESS', 'Licensing', 'Linux', 'Linux System Administration', 'Logistics', 'Lotus Notes', 'Mac OS X', 'Machine Learning', 'MAGENTO', 'Management', 'Management Consulting', 'Manufacturing', 'Market Research', 'Marketing', 'Marketing Communications', 'Marketing Management', 'Marketing Strategy', 'Matlab', 'Maven', 'MBA', 'Mechanical Engineering', 'Media Relations', 'Merchandising', 'Mergers & Acquisitions', 'Messaging', 'Metrics', 'Microsoft', 'Microsoft Access', 'Microsoft Excel', 'Microsoft Exchange', 'Microsoft Office', 'Microsoft Outlook', 'Microsoft Power Point', 'Microsoft PowerPoint', 'Microsoft Project', 'Microsoft SQL Server', 'Microsoft Visio', 'Microsoft Visual Basic', 'Microsoft Visual Studio', 'Microsoft Windows', 'Microsoft Word', 'Middleware', 'Mobile', 'Mobile Advertising', 'Mobile Application Design', 'Mobile Application Development', 'Mobile Design', 'Mobile Development', 'Mobile UI Design', 'Mobile User Experience', 'MongoDB', 'Multimedia', 'Mvc', 'MySQL', 'Natural Language Processing', 'Negotiation', 'Netbeans', 'Network Security', 'Networking', 'New Business Development', 'New Product Development', 'Nginx', 'Node.js', 'noSQL', 'Objective C', 'Objective-C', 'Online Marketing', 'OpenCV', 'OpenGL', 'Operating Systems', 'Operations', 'Operations Management', 'Oracle', 'Oracle 10g', 'Outsourcing', 'Payroll', 'PC', 'People Management', 'PeopleSoft', 'Perl', 'Pharmaceutical', 'Photography', 'Photoshop', 'PHP', 'Planning', 'Portfolio Management', 'PostgreSQL', 'Presentation Skills', 'Pricing', 'Print Design', 'Private Equity', 'Problem Solving', 'Process Improvement', 'Process Management', 'Procurement', 'Product', 'Product Design', 'Product Development', 'Product Launch', 'Product Management', 'Product Marketing', 'Product Strategy', 'Professional Services', 'Program Management', 'Program Manager', 'Programming', 'Programming Languages', 'Project Leader', 'Project Management', 'Project Manager', 'Public Relations', 'Public Speaking', 'Publishing', 'Purchasing', 'Python', 'Quality Assurance', 'Quality Control', 'Quickbooks', 'R', 'Rapid Prototyping', 'RDBMS', 'Real Estate', 'Recruiting', 'Redhat', 'Redis', 'Regression Testing', 'Relational Databases', 'Relationship Building', 'Reliability', 'Requirements Analysis', 'Research', 'Research and Development', 'Responsive Design', 'REST', 'REST APIs', 'RESTful Services', 'Retail', 'Risk Analysis', 'Risk Management', 'Robotics', 'Routers', 'Ruby', 'Ruby on Rails', 'Russian language', 'SaaS', 'Sales', 'Sales and Marketing', 'Sales Strategy and Management', 'Sales Support', 'Sales Training', 'Sales/Marketing and Strategic Partnerships', 'Salesforce', 'SalesForce.com', 'SAP', 'SAS', 'Sass', 'Scala', 'Scheduling', 'Scheme', 'Science', 'SCRUM', 'Scrum Master', 'SCSS/Sass', 'SDK', 'SDLC', 'Search Engine Marketing (SEM)', 'Security', 'Selenium', 'SEO', 'SEO/SEM', 'Servlets', 'SharePoint', 'Shell Scripting', 'Social Media', 'Social Media Marketing', 'Social Media Strategy', 'Social Strategy', 'Software', 'Software Architecture', 'Software Design', 'Software Development', 'Software Engineering', 'Software Testing', 'Solidworks', 'Sourcing', 'Spanish', 'Sports', 'Spring', 'SPSS', 'SQL', 'SQL Server', 'SQLite', 'Start-Up CEO', 'Start-Ups', 'Startup Founder', 'Startups', 'Statistical Analysis', 'Statistics', 'Strategic Partnerships', 'Strategic Planning', 'Strategy', 'Strong Work Ethic', 'Struts', 'Subversion', 'Supply Chain Management', 'Support', 'Svn', 'Swift', 'Swing', 'System Administration', 'System Design', 'Systems Administration', 'Tableau', 'Talent Acquisition', 'TDD', 'Team Building', 'Team Leadership', 'Team Player', 'Teamwork', 'Technical Support', 'Technical Writing', 'Technology', 'Telecommunications', 'Test', 'Test Automation', 'Test Cases', 'Test Plans', 'TFS', 'Training', 'Transportation', 'Travel', 'Twitter Bootstrap', 'Ubuntu', 'UI Design', 'UI/UX Design', 'Unit Testing', 'Unity3D', 'Unix', 'Unix Shell Scripting', 'Usability Testing', 'Use Cases', 'User Experience Design', 'User Interaction Design', 'User Interface', 'User Interface Design', 'User Research', 'User-Centered Design', 'Utilities', 'UX Design', 'UX Design and Strategy', 'UX/UI Designer', 'Vendor Management', 'Venture Capital', 'Venture Fundraising', 'Verilog', 'Version Control', 'VHDL', 'Video', 'Video Editing', 'Video Production', 'Visio', 'Visual Basic', 'Visual Design', 'Wealth Management', 'Web', 'Web Analytics', 'Web Application Design', 'Web Application Frameworks', 'Web Applications', 'Web Design', 'Web Development', 'Web Services', 'Wholesale', 'Windows', 'Wireframing', 'Wireless', 'Wireshark', 'Wordpress', 'Writing', 'Xcode', 'XHTML', 'XML', 'XSLT', 'Zend Framework', 'Zepto'];
 
+    this.contact = function(user) {
+        var modalInstance = $modal.open({
+            templateUrl: 'components/people/people.contact.html',
+            controller: ContactPeopleController,
+            controllerAs: 'contact',
+            windowClass: "hmodal-warning",
+            resolve: {
+                user: function() {
+                    return user;
+                }
+            }
+        });
+    };
+}
+
+function ContactPeopleController($modalInstance, user){
+    this.user = user;
+    var self = this;
+
+    this.send = function () {
+        if (self.form.$valid) {
+            console.log(self.form.email_value);
+            $modalInstance.close();
+        } else {
+            self.form.submitted = true;
+        }
+
+    };
+
+    this.cancel = function () {
+        $modalInstance.dismiss('cancel');
+    };
 }
 
 function InvitePeopleController($stateParams, user, user_service, community, communities) {
@@ -350,14 +374,4 @@ function InvitePeopleController($scope, user_service) {
 
     $scope.disabled = false;
 
-}
-
-function ContactPeopleController($state, $modalInstance){
-    $state.ok = function () {
-        $modalInstance.close();
-    };
-
-    $state.cancel = function () {
-        $modalInstance.dismiss('cancel');
-    };
 }

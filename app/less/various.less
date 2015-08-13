@@ -671,6 +671,11 @@ a:hover, a:focus {
   margin: 0;
   z-index: 1060;
   padding: 0;
+}
+
+
+.form-control, .form-control:focus, .has-error .form-control:focus, .has-success .form-control:focus, .has-warning .form-control:focus, .navbar-collapse, .navbar-form, .navbar-form-custom .form-control:focus, .navbar-form-custom .form-control:hover, .open .btn.dropdown-toggle, .panel, .popover, .progress, .progress-bar {
+  box-shadow: none;
 
   &:-moz-placeholder {
     padding: 3px 0 0 0;
@@ -687,11 +692,6 @@ a:hover, a:focus {
     font-size: 20px;
     font-weight: 200;
   }
-}
-
-
-.form-control, .form-control:focus, .has-error .form-control:focus, .has-success .form-control:focus, .has-warning .form-control:focus, .navbar-collapse, .navbar-form, .navbar-form-custom .form-control:focus, .navbar-form-custom .form-control:hover, .open .btn.dropdown-toggle, .panel, .popover, .progress, .progress-bar {
-  box-shadow: none;
 }
 
 .vertical-mid {
