@@ -46,13 +46,11 @@ module.exports = function (grunt) {
             test: {
                 options: {
                     port: 9001,
-                    open: true,
                     base: '<%= startupcommunity.dist %>'
                 }
             },
             dist: {
                 options: {
-                    open: true,
                     base: '<%= startupcommunity.dist %>'
                 }
             }

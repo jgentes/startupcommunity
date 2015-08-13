@@ -5,7 +5,7 @@
     </div>
     <div class="user-row" ng-class="{'user-row-border': $index % 2 == 0}">
         <a ui-sref="people.profile({profile: item.value, community_key: item.value.key, community: {}})" title="View {{::item.value.profile.name | words:0}}'s Profile" style="float: left; "><strong>{{::item.value.profile.name}} </strong></a>
-        <a ng-href="people.contact(item.value.key)" title="Contact {{item.value.profile.name}}" class="pull-left" style="margin-left: 6px; margin-top: 4px; padding: 0 8px 0 5px; line-height: 0;">
+        <a onclick="people.contact(item.value.key)" title="Contact {{item.value.profile.name}}" class="pull-left" style="margin-left: 6px; margin-top: 4px; padding: 0 8px 0 5px; line-height: 0;">
             <i class="pe-7s-mail" style="font-size: 18px; opacity: .5;"></i></a>
         <a ng-show="{{(item.value.profile.linkedin.summary).length > 0}}" title="Show Summary" ng-click="showSummary = !showSummary" class="user-summary">&nbsp;<i class="fa fa-chevron-down fa-fw"></i></a>
         <li ng-repeat="val in item.value.communities" class="role-right">

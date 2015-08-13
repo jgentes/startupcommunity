@@ -2,7 +2,8 @@ angular
     .module('startupcommunity')
     .controller('PeopleController', PeopleController)
     .controller('PeopleProfileController', PeopleProfileController)
-    .controller('InvitePeopleController', InvitePeopleController);
+    .controller('InvitePeopleController', InvitePeopleController)
+    .controller('ContactPeopleController', ContactPeopleController);
 
 function PeopleController($stateParams, user_service, result_service, $sce, $modal, community, communities) {
 
@@ -150,7 +151,7 @@ function PeopleController($stateParams, user_service, result_service, $sce, $mod
     this.contact = function(user) {
         var modalInstance = $modal.open({
             templateUrl: 'components/common/nav/nav.change_location.html',
-            controller: ChangeLocationController,
+            controller: ContactPeopleController,
             windowClass: "hmodal-warning"
         });
     };
@@ -347,4 +348,14 @@ function InvitePeopleController($scope, user_service) {
 
     $scope.disabled = false;
 
+}
+
+function ContactPeopleController($state, $modalInstance){
+    $state.ok = function () {
+        $modalInstance.close();
+    };
+
+    $state.cancel = function () {
+        $modalInstance.dismiss('cancel');
+    };
 }
