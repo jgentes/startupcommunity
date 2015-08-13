@@ -25,7 +25,9 @@ function PeopleController($stateParams, user_service, result_service, $sce, $mod
             self.tag = $stateParams.query;
         } else self.tag = undefined;
 
-        user_service.search(communityFilter, $stateParams.query, undefined, 20, alturl)
+        embed ? limit = 10 : limit = 20;
+
+        user_service.search(communityFilter, $stateParams.query, undefined, limit, alturl)
             .then(function (response) {
                 self.tag = undefined;
                 self.users = result_service.setPage(response.data);
