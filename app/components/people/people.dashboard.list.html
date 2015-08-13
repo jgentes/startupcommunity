@@ -5,8 +5,8 @@
     </div>
     <div class="user-row" ng-class="{'user-row-border': $index % 2 == 0}">
         <a ui-sref="people.profile({profile: item.value, community_key: item.value.key, community: {}})" title="View {{::item.value.profile.name | words:0}}'s Profile" style="float: left; "><strong>{{::item.value.profile.name}} </strong></a>
-        <a ng-click="people.contact(item.value.key)" title="Contact {{item.value.profile.name}}" class="pull-left" style="margin-left: 6px; margin-top: 4px; padding: 0 8px 0 5px; line-height: 0;">
-            <i class="pe-7s-mail" style="font-size: 18px; opacity: .5;"></i></a>
+        <a ng-click="people.contact(item.value.key)" title="Contact {{item.value.profile.name}}" class="pull-left" style="margin-left: 6px; margin-top: 3px; padding: 0 8px 0 5px; line-height: 0;">
+            <i class="pe-7s-mail" style="font-size: 20px; opacity: .5;"></i></a>
         <a ng-show="{{(item.value.profile.linkedin.summary).length > 0}}" title="Show Summary" ng-click="showSummary = !showSummary" class="user-summary">&nbsp;<i class="fa fa-chevron-down fa-fw"></i></a>
         <li ng-repeat="val in item.value.communities" class="role-right">
             <a href="{{'/' + val}}" ng-class="{'btn-danger' : people.communities[val].type == 'startup', 'btn-info' : people.communities[val].type == 'network', 'btn-primary' : people.communities[val].type == 'industry', 'btn-success' : people.communities[val].type == 'location'}" class="btn btn-xs btn-outline hidden"><i class="fa {{people.communities[val].profile.icon}}"></i> {{people.communities[val].profile.name}}</a>
