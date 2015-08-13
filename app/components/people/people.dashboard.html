@@ -88,6 +88,7 @@
                         <span ng-if="people.users.next"><a ng-click="people.search(people.users.next)" class="btn btn-sm btn-default" style="background-color: #fff;"><i class="fa fa-angle-right"></i></a></span>
                     </div>
                 </div>
+                <!--
                 <div class="pull-right" style="margin-right: 25px; min-width: 175px;">
                     <ui-select multiple ng-model="people.skills.selected" theme="bootstrap" ng-disabled="disabled" limit="3">
                         <ui-select-match placeholder="Search by skill.." class="skill-input">{{$item}}</ui-select-match>
@@ -96,6 +97,7 @@
                         </ui-select-choices>
                     </ui-select>
                 </div>
+                -->
                 <span style="font-size: 17px;" ng-bind-html="people.title"></span>
                 <span><i ng-show="people.loadingPeople" class="fa fa-refresh fa-spin" style="padding: 4px; color: #aaa; font-size: 17px; margin-left: 5px;"></i></span>
             </div>
