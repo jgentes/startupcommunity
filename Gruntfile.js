@@ -240,8 +240,8 @@ module.exports = function (grunt) {
         //'protractor:run'
     ]);
 
-    grunt.registerTask('heroku:development', 'build');
+    //grunt.registerTask('heroku:development', 'build');
 
-    grunt.registerTask('heroku:production', 'build');
+    //grunt.registerTask('heroku:production', 'build');
 
 };
