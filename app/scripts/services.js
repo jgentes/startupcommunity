@@ -10,7 +10,7 @@ angular
                         limit: limit,
                         query: query
                     });
-                return $http.get(urlString);
+                return $http.get(alturl || urlString);
             },
             putUser: function(userid, profile, callback) {
                 $http.put('/api/1.1/user/' + userid + '?profile=' + profile)
@@ -87,7 +87,7 @@ angular
                         limit: limit,
                         query: query
                     });
-                return $http.get(urlString);
+                return $http.get(alturl || urlString);
             }
         };
     })
