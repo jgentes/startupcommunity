@@ -81,7 +81,7 @@
 
         <div class="hpanel">
             <div class="panel-footer top">
-                <div class="pull-right">
+                <div ng-show="!people.tag" class="pull-right">
                     <strong>{{people.users.start}} - {{people.users.end}}</strong> of <strong>{{people.users.total_count}}&nbsp;&nbsp;</strong>
                     <div class="btn-group btn-group-sm" style="margin-top: -2px;">
                         <span ng-if="people.users.prev"><a ng-click="people.searchUsers(people.users.prev)" class="btn btn-sm btn-default" style="background-color: #fff;"><i class="fa fa-angle-left"></i></a></span>
@@ -118,7 +118,7 @@
                 </div>
             </div>
             <div class="panel-footer" style="height:45px;">
-                <div class="pull-right">
+                <div ng-show="!people.tag" class="pull-right">
                     <strong>{{people.users.start}} - {{people.users.end}}</strong> of <strong>{{people.users.total_count}}&nbsp;&nbsp;</strong>
                     <div class="btn-group btn-group-sm" style="margin-top: -2px;">
                         <span ng-if="people.users.prev"><a ng-click="people.searchUsers(people.users.prev)" class="btn btn-sm btn-default" style="background-color: #fff;"><i class="fa fa-angle-left"></i></a></span>
