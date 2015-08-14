@@ -2,16 +2,14 @@ angular
     .module('startupcommunity')
     .controller('LoginController', LoginController);
 
-function LoginController($auth, $location, $mixpanel) {
+function LoginController($auth, $state, $mixpanel) {
 
     var self = this;
 
     var postLogin = function(user) {
         user.value["key"] = user.path.key;
-        self.user = user.value;
-        self.alert = undefined;
-        $location.path('/' + self.user.profile.home);
-        $mixpanel.identify(self.user.key);
+        $state.go('people.profile', {profile: user.value});
+        $mixpanel.identify(user.path.key);
         $mixpanel.track('Logged in');
     };
 

@@ -3,20 +3,21 @@ angular
     .controller('NavigationController', NavigationController)
     .controller('ChangeLocationController', ChangeLocationController);
 
-function NavigationController($state, $location, $stateParams, $modal, user, community, communities) {
+function NavigationController($auth, $state, $location, $stateParams, $modal, user, community, communities) {
 
-    // test for iframe embed
+    // test for iframe embed, true if embedded
     try {
-        url = window.self !== window.top;
+        this.embedded = window.self !== window.top;
     } catch (e) {
-        url = true;
+        this.embedded = true;
+        this.referrer = document.referrer;
     }
 
-    console.log(url);
-    this.user = user.data; // reference 'this' by using 'nav' from 'NavigationController as nav' - * nav is also usable in child views *
     this.community = community;
 
-    if (this.user) {
+    if ($auth.isAuthenticated()) {
+
+        this.user = user.data; // reference 'this' by using 'nav' from 'NavigationController as nav' - * nav is also usable in child views *
 
         // Role icons displayed in user profile
         var rolelist = [],

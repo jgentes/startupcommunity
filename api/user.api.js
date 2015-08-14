@@ -285,10 +285,9 @@ function handleGetProfile(req, res) {
             });
     } else {
         // anonymous user
-        res.end(); // this returns an empty string to the client
+        console.log('ping');
+        res.status(200).send({});
     }
-
-
 
 }
 

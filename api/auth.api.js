@@ -103,6 +103,7 @@ function handleEnsureAuthenticated(req, res, next) {
         }
 
         if (req.user === undefined) {
+            console.log('ping');
             req.user = {}; //required step to pursue auth through refresh
         } else {
             console.log('Existing user in request:');

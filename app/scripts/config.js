@@ -12,34 +12,7 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
         // preload is run once
         .state('preload', {
             abstract: true,
-            template: "<ui-view/>",
-            resolve: {
-                user: ['user_service', '$state', '$mixpanel',
-                    function(user_service, $state, $mixpanel) {
-                        return user_service.getProfile()
-                            .success(function(response) {
-
-                                if (response.message) {
-                                    $state.go('logout', { error: { type: 'danger', msg: String(response.message) }});
-                                }
-
-                                if (response.key) {
-                                    $mixpanel.people.set({
-                                        "$name": response.profile.name,
-                                        "$email": response.profile.email
-                                    });
-                                    UserVoice.push(['identify', {
-                                        id: response.key,
-                                        name: response.profile.name,
-                                        email: response.profile.email
-                                    }]);
-                                }
-                            })
-                            .error(function(response) {
-                                $state.go('logout', { error: { type: 'danger', msg: String(response.message) }});
-                            });
-                    }]
-            }
+            template: "<ui-view/>"
         })
         .state('invite', {
             templateUrl: 'views/invite_people.html',
@@ -65,17 +38,13 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
             params: {
                 error: {}
             },
-            onEnter: function($auth, $stateParams, $state) {
-                $auth.logout()
-                    .then(function() {
-                        $state.go('login', {error: $stateParams.error});
-                    });
+            onEnter: function($auth) {
+                $auth.logout('/login')
             }
         })
 
         // the root state with core dependencies for injection in child states
         .state('root', {
-            parent: 'preload',
             url: "/:community_key",
             templateUrl: "components/common/nav/nav.html",
             controller: "NavigationController as nav",
@@ -85,10 +54,30 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                 community: {}
             },
             resolve: {
-                authenticated: ['$auth', function($auth) {
-                    if (!$auth.isAuthenticated()) {
-                        $state.go('login');
-                    }
+                user: ['user_service', '$state', '$mixpanel',
+                    function(user_service, $state, $mixpanel) {
+                        return user_service.getProfile()
+                            .success(function(response) {
+
+                                if (response.message) {
+                                    $state.go('logout', { error: { type: 'danger', msg: String(response.message) }});
+                                }
+
+                                if (response.key) {
+                                    $mixpanel.people.set({
+                                        "$name": response.profile.name,
+                                        "$email": response.profile.email
+                                    });
+                                    UserVoice.push(['identify', {
+                                        id: response.key,
+                                        name: response.profile.name,
+                                        email: response.profile.email
+                                    }]);
+                                }
+                            })
+                            .error(function(response) {
+                                $state.go('logout', { error: { type: 'danger', msg: String(response.message) }});
+                            });
                 }],
                 communities: ['$stateParams', 'community_service',
                     function($stateParams, community_service) {
