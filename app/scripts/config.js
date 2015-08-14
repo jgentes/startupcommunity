@@ -146,7 +146,6 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
         })
 
         .state('embed', {
-            parent: 'preload',
             url: "/:community_key",
             abstract: true,
             templateUrl: 'components/common/header/header_embed.html',
@@ -217,13 +216,6 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                     templateUrl: "components/people/people.profile.html",
                     controller: 'PeopleProfileController as profile'
                 }
-            },
-            resolve: {
-                authenticated: ['$auth', function($auth) {
-                    if (!$auth.isAuthenticated()) {
-                        $state.go('login');
-                    }
-                }]
             }
         })
         .state('people.dashboard', {
@@ -478,7 +470,7 @@ angular
     .config(function($authProvider) {
 
         $authProvider.linkedin({
-            clientId: "75bqixdv58z1az"
+            clientId: "75bqixdv58z1az" // move this to server please
         });
 
     })

@@ -8,6 +8,7 @@ function LoginController($auth, $state, $mixpanel) {
 
     var postLogin = function(user) {
         user.value["key"] = user.path.key;
+        console.log(user.path.key);
         $state.go('people.profile', {profile: user.value});
         $mixpanel.identify(user.path.key);
         $mixpanel.track('Logged in');
