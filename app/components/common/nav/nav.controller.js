@@ -5,6 +5,14 @@ angular
 
 function NavigationController($state, $location, $stateParams, $modal, user, community, communities) {
 
+    // test for iframe embed
+    try {
+        url = window.self !== window.top;
+    } catch (e) {
+        url = true;
+    }
+
+    console.log(url);
     this.user = user.data; // reference 'this' by using 'nav' from 'NavigationController as nav' - * nav is also usable in child views *
     this.community = community;
 
