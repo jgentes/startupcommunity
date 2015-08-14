@@ -1,7 +1,8 @@
 function configState($stateProvider, $urlRouterProvider, $compileProvider, $locationProvider) {
 
     // Optimize load start
-    $compileProvider.debugInfoEnabled(true);
+    $compileProvider
+        .debugInfoEnabled(true);
 
     $locationProvider
         .html5Mode(true);
@@ -13,15 +14,11 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
             abstract: true,
             template: "<ui-view/>",
             resolve: {
-                authenticated: ['$auth', function($auth) {
-                    if (!$auth.isAuthenticated()) {
-                        $state.go('login');
-                    }
-                }],
                 user: ['user_service', '$state', '$mixpanel',
                     function(user_service, $state, $mixpanel) {
                         return user_service.getProfile()
                             .success(function(response) {
+
                                 if (response.message) {
                                     $state.go('logout', { error: { type: 'danger', msg: String(response.message) }});
                                 }

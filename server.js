@@ -78,7 +78,7 @@ app.get('/api/1.1/search', userApis.directSearch);
 app.get('/api/1.1/community/:community', communityApis.getCommunity);
 app.get('/api/1.1/angel/startups', angellistApis.getStartups);
 app.get('/api/1.1/angel/startup', angellistApis.getStartup);
-app.get('/api/1.1/profile', auth.ensureAuthenticated, userApis.getProfile);
+app.get('/api/1.1/profile', userApis.getProfile);
 app.get('/api/1.1/profile/getkey', auth.ensureAuthenticated, auth.createAPIToken);
 app.get('/api/1.1/invitePerson', auth.ensureAuthenticated, userApis.invitePerson);
 app.put('/api/1.1/profile/role', auth.ensureAuthenticated, userApis.setRole);

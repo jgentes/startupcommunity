@@ -8,22 +8,26 @@ function NavigationController($state, $location, $stateParams, $modal, user, com
     this.user = user.data; // reference 'this' by using 'nav' from 'NavigationController as nav' - * nav is also usable in child views *
     this.community = community;
 
-    // Role icons displayed in user profile
-    var rolelist = [],
-        j,
-        k,
-        role;
+    if (this.user) {
 
-    for (j in this.user.communities) {
-        for (k in this.user.communities[j]) {
-            role = k[0].toUpperCase() + k.slice(1);
-            if (rolelist.indexOf(role) < 0) {
-                rolelist.push(role);
+        // Role icons displayed in user profile
+        var rolelist = [],
+            j,
+            k,
+            role;
+
+        for (j in this.user.communities) {
+            for (k in this.user.communities[j]) {
+                role = k[0].toUpperCase() + k.slice(1);
+                if (rolelist.indexOf(role) < 0) {
+                    rolelist.push(role);
+                }
             }
         }
-    }
 
-    this.user.profile["roles"] = rolelist;
+        this.user.profile["roles"] = rolelist;
+
+    }
 
     // sort communities for use in nav and child dashboard pages
     for (item in communities.data) {
@@ -73,17 +77,13 @@ function NavigationController($state, $location, $stateParams, $modal, user, com
     this.search = function(query) {
         if (community.type == "industry") {
             $state.go('industry.search.dashboard', {industry_key: community.key, query: query});
-        } else if (community.type == "user") {
-            $state.go('search.dashboard', {community_key: this.user.profile.home, query: query});
-        } else if (community.type == "startup") {
+        } else if (community.type == "user" || community.type == "startup") {
             $state.go('search.dashboard', {community_key: this.community.profile.home, query: query});
         } else $state.go('search.dashboard', {query: query});
 
     };
 
-    if (community.type == "user") {
-        this.searchname = communities.data[this.user.profile.home].profile.name;
-    } else if (community.type == "startup") {
+    if (community.type == "user" || community.type == "startup") {
         this.searchname = communities.data[this.community.profile.home].profile.name;
     } else if (community.type == "industry") {
         if (this.community.community_profiles[this.location]) {

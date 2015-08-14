@@ -13,6 +13,11 @@ function HeaderController($stateParams, community) {
 
     this.search = function(query) {
         $state.go('embed.dashboard', {query: query});
+    };
+
+    if ($stateParams.embed) {
+        // assume there's an 'embed settings' somewhere in the network configuration screen which can be used to set color
+        $('#main_content').css('background-color:', '#fff');
     }
 
 }

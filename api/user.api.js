@@ -228,11 +228,11 @@ function handleInvitePerson(req, res) {
                           callback(access_token);
                       } else {
                           console.log("User does not have Linkedin access_token!");
-                          return res.status(401).send({ message: 'Sorry, you need to login to StartupCommunity.org with Linkedin first.' });
+                          res.status(401).send({ message: 'Sorry, you need to login to StartupCommunity.org with Linkedin first.' });
                       }
                   } else {
                       console.log("COULD NOT FIND USER IN DB");
-                      return res.status(401).send({ message: 'Something went wrong, please login again.' });
+                      res.status(401).send({ message: 'Something went wrong, please login again.' });
                   }
               })
               .fail(function(err){
@@ -263,24 +263,32 @@ function handleInvitePerson(req, res) {
 
 function handleGetProfile(req, res) {
     var userid = req.param.userid || req.user;
-    console.log('Pulling user profile: ' + userid);
 
-    db.get(config.db.collections.communities, userid)
-      .then(function(response){
-          if (response.body.code !== "items_not_found") {
-              response.body["key"] = userid;
-              res.status(200).send(response.body);
-          } else {
-              console.warn('WARNING:  User not found.');
-              return res.status(200).send({ message: 'User not found.' });
-          }
-      })
+    if (userid) {
+        console.log('Pulling user profile: ' + userid);
 
-      .fail(function(err){
-          console.warn("WARNING: SEARCH FAIL:");
-          console.warn(err);
-          res.status(400).send({ message: 'Something went wrong: ' + err});
-      });
+        db.get(config.db.collections.communities, userid)
+            .then(function(response){
+                if (response.body.code !== "items_not_found") {
+                    response.body["key"] = userid;
+                    res.status(200).send(response.body);
+                } else {
+                    console.warn('WARNING:  User not found.');
+                    res.status(200).send({ message: 'User not found.' });
+                }
+            })
+
+            .fail(function(err){
+                console.warn("WARNING: SEARCH FAIL:");
+                console.warn(err);
+                res.status(400).send({ message: 'Something went wrong: ' + err});
+            });
+    } else {
+        // anonymous user
+        res.end(); // this returns an empty string to the client
+    }
+
+
 
 }
 
