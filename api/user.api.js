@@ -262,32 +262,26 @@ function handleInvitePerson(req, res) {
  */
 
 function handleGetProfile(req, res) {
+    // req data is guaranteed by ensureauth
     var userid = req.param.userid || req.user;
+    console.log('Pulling user profile: ' + userid);
 
-    if (userid) {
-        console.log('Pulling user profile: ' + userid);
+    db.get(config.db.collections.communities, userid)
+        .then(function(response){
+            if (response.body.code !== "items_not_found") {
+                response.body["key"] = userid;
+                res.status(200).send(response.body);
+            } else {
+                console.warn('WARNING:  User not found.');
+                res.status(200).send({ message: 'User not found.' });
+            }
+        })
 
-        db.get(config.db.collections.communities, userid)
-            .then(function(response){
-                if (response.body.code !== "items_not_found") {
-                    response.body["key"] = userid;
-                    res.status(200).send(response.body);
-                } else {
-                    console.warn('WARNING:  User not found.');
-                    res.status(200).send({ message: 'User not found.' });
-                }
-            })
-
-            .fail(function(err){
-                console.warn("WARNING: SEARCH FAIL:");
-                console.warn(err);
-                res.status(400).send({ message: 'Something went wrong: ' + err});
-            });
-    } else {
-        // anonymous user
-        console.log('ping');
-        res.status(200).send({});
-    }
+        .fail(function(err){
+            console.warn("WARNING: SEARCH FAIL:");
+            console.warn(err);
+            res.status(400).send({ message: 'Something went wrong: ' + err});
+        });
 
 }
 

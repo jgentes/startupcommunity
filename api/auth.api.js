@@ -89,8 +89,8 @@ var schema = {
 function handleEnsureAuthenticated(req, res, next) {
 
     if (!req.headers.authorization) {
-        console.log('Session is no longer valid.');
-        return res.status(401).end();
+        console.log('Session is anonymous.');
+        return res.status(204).end();
     }
     try {
 
@@ -103,7 +103,6 @@ function handleEnsureAuthenticated(req, res, next) {
         }
 
         if (req.user === undefined) {
-            console.log('ping');
             req.user = {}; //required step to pursue auth through refresh
         } else {
             console.log('Existing user in request:');

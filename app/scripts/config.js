@@ -38,8 +38,11 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
             params: {
                 error: {}
             },
-            onEnter: function($auth) {
-                $auth.logout('/login')
+            onEnter: function($auth, $state) {
+                $auth.logout()
+                    .then(function() {
+                        $state.go('login');
+                    })
             }
         })
 
@@ -146,7 +149,6 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
         })
 
         .state('embed', {
-            url: "/:community_key",
             abstract: true,
             templateUrl: 'components/common/header/header_embed.html',
             controller: 'HeaderController as header',
@@ -468,9 +470,9 @@ angular
     .module('startupcommunity')
     .config(configState)
     .config(function($authProvider) {
-
+        $authProvider.loginRedirect = false; //otherwise will go home
         $authProvider.linkedin({
-            clientId: "75bqixdv58z1az" // move this to server please
+            clientId: "75bqixdv58z1az"
         });
 
     })

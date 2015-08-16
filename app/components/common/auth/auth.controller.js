@@ -6,10 +6,9 @@ function LoginController($auth, $state, $mixpanel) {
 
     var self = this;
 
-    var postLogin = function(user) {
+    var postLogin = function(user) { // was using global scope, but now I use resolve of user, which is getprofile
         user.value["key"] = user.path.key;
-        console.log(user.path.key);
-        $state.go('people.profile', {profile: user.value});
+        $state.go('people.profile', {profile: user.value, community_key: user.value.key});
         $mixpanel.identify(user.path.key);
         $mixpanel.track('Logged in');
     };

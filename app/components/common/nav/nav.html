@@ -22,24 +22,22 @@
             </div>
             <div class="navbar-right">
                 <ul class="nav navbar-nav no-borders">
-
+                    <li ng-if="!nav.user" class="dropdown">
+                        <div style="padding-top: 21px;" ng-controller="LoginController as login">
+                            <a tooltip-placement="left" tooltip="Login" ng-click="login.authenticate('linkedin')">
+                                <div style="font-size: 16px;">Log In</div>
+                            </a>
+                        </div>
+                    </li>
                     <li class="dropdown">
                         <a tooltip-placement="left" tooltip="Help">
                             <i class="pe-7s-help1"></i>
                         </a>
                     </li>
                     <li ng-if="nav.user" class="dropdown">
-                        <a tooltip-placement="left" tooltip="Log Out" ui-sref="logout" style="padding-right: 30px;">
+                        <a tooltip-placement="left" tooltip="Logout" ui-sref="logout" style="padding-right: 30px;">
                             <i class="pe-7s-upload pe-rotate-90"></i>
                         </a>
-                    </li>
-                    <li ng-if="!nav.user" class="dropdown">
-                        <div style="margin-right: 8px;">
-                            <a tooltip-placement="left" tooltip="Log In" ui-sref="login" style="padding-right: 30px;">
-                                <i class="pe-7s-id" style="font-size: 28px; padding-left: 5px; padding-top: 6px;"></i>
-                                <div style="font-size: 12px;">Log In</div>
-                            </a>
-                        </div>
                     </li>
                 </ul>
             </div>

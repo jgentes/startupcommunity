@@ -14,7 +14,7 @@ function NavigationController($auth, $state, $location, $stateParams, $modal, us
     }
 
     this.community = community;
-    console.log($auth.isAuthenticated())
+
     if ($auth.isAuthenticated()) {
 
         this.user = user.data; // reference 'this' by using 'nav' from 'NavigationController as nav' - * nav is also usable in child views *
