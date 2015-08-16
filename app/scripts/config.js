@@ -472,9 +472,11 @@ angular
     .config(function($authProvider) {
         $authProvider.loginRedirect = false; //otherwise will go home
         $authProvider.linkedin({
-            clientId: "75bqixdv58z1az"
+            clientId: "75bqixdv58z1az",
+            state: function() {
+                return window.location.pathname;
+            }
         });
-
     })
 
     .run(function($rootScope, $state) {

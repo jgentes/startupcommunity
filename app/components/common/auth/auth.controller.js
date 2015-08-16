@@ -6,10 +6,13 @@ function LoginController($auth, $state, $mixpanel) {
 
     var self = this;
 
-    var postLogin = function(user) { // was using global scope, but now I use resolve of user, which is getprofile
-        user.value["key"] = user.path.key;
-        $state.go('people.profile', {profile: user.value, community_key: user.value.key});
-        $mixpanel.identify(user.path.key);
+    var postLogin = function(auth_response) { // was using global scope, but now I use resolve of user, which is getprofile
+        auth_response.data.user.value["key"] = auth_response.data.user.path.key;
+        if (auth_response.config.data.state !== '/login') {
+            $state.go($state.current, {}, {reload: true});
+        } else $state.go('people.profile', {profile: auth_response.data.user.value, community_key: auth_response.data.user.value.key});
+
+        $mixpanel.identify(auth_response.data.user.path.key);
         $mixpanel.track('Logged in');
     };
 
@@ -27,7 +30,7 @@ function LoginController($auth, $state, $mixpanel) {
     this.authenticate = function(provider) {
         $auth.authenticate(provider)
             .then(function(response) {
-                postLogin(response.data.user);
+                postLogin(response);
             })
             .catch(function(response) {
                 if (response.data.profile) {
