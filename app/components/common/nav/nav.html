@@ -143,8 +143,8 @@
 
 <!-- Main Content -->
 <div ui-view>
-    <div ng-class="{'embed_content' : nav.embedded, 'wrapper' : !nav.embedded}">
-        <div ng-if="!nav.embedded" ui-view="header"></div>
+    <div ng-class="{'wrapper' : !nav.embedded}">
+        <div ng-class="{'embed_header' : nav.embedded}" ui-view="header"></div>
         <div ng-class="{'content' : !nav.embedded}">
             <div ui-view="content"></div>
         </div>

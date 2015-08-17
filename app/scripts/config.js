@@ -88,6 +88,7 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                     }],
                 community: ['$stateParams', '$location', 'communities', 'community_service',
                     function($stateParams, $location, communities, community_service) {
+
                         if (jQuery.isEmptyObject($stateParams.community)) { // if community is passed in via ui-sref, just use that
 
                             var pullCommunity = function () {
@@ -264,6 +265,7 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
         .state('location.dashboard', {
             params: {
                 community: {},
+                community_key: "",
                 pageTitle: "Location Profile"
             },
             views: {
@@ -286,8 +288,11 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                     return user_service.search([$stateParams.community_key], '*', ['leader'], 18);
                 }],
                 communities: ['community_service', '$stateParams', 'communities',
-                    function(community_service, $stateParams, communities) { //check if communities data can be inherited
-                        if ($stateParams.community_key !== communities.data.key) return community_service.getCommunity($stateParams.community_key);
+                    function(community_service, $stateParams, communities) {
+
+                        if ($stateParams.community_key !== communities.data.key) {
+                            return community_service.getCommunity($stateParams.community_key);
+                        } else return communities;
                     }]
 
             }
@@ -325,8 +330,11 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                     return user_service.search([$stateParams.community_key], '*', ['leader'], 30);
                 }],
                 communities: ['community_service', '$stateParams', 'communities',
-                    function(community_service, $stateParams, communities) { // check to see if this can be inherited
-                        if ($stateParams.community_key !== communities.data.key) return community_service.getCommunity($stateParams.community_key);
+                    function(community_service, $stateParams, communities) {
+
+                        if ($stateParams.community_key !== communities.data.key) {
+                            return community_service.getCommunity($stateParams.community_key);
+                        } else return communities;
                     }]
 
             }
@@ -394,8 +402,10 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                     return user_service.search([$stateParams.community_key], '*', ['leader'], 18);
                 }],
                 communities: ['community_service', '$stateParams', 'communities',
-                    function(community_service, $stateParams, communities) { // check to see if this can be inherited
-                        if ($stateParams.community_key !== communities.data.key) return community_service.getCommunity($stateParams.community_key);
+                    function(community_service, $stateParams, communities) {
+                        if ($stateParams.community_key !== communities.data.key) {
+                            return community_service.getCommunity($stateParams.community_key);
+                        } else return communities;
                     }]
 
             }
