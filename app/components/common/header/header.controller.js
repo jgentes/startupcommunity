@@ -3,12 +3,20 @@ angular
     .controller('HeaderController', HeaderController);
 
 function HeaderController($stateParams, community, communities) {
-
+    console.log($stateParams);
+    console.log(community);
+    console.log(communities);
     this.community = community;
 
     switch(community.type) {
         case "user":
+            this.back = 'people.dashboard';
+            this.location = communities.data[community.profile.home];
+            break;
         case "startup":
+            this.back = 'startups.dashboard';
+            this.location = communities.data[community.profile.home];
+            break;
         case "network":
             this.location = communities.data[community.profile.home];
             break;
@@ -17,28 +25,41 @@ function HeaderController($stateParams, community, communities) {
             this.location = communities.data[community.key];
             break;
     }
-    console.log(this.location.type);
-    switch(this.location.type) {
-        case "user":
-            this.parent_url = "people.profile({community_key: header.location.key})";
-            break;
-        case "startup":
-            this.parent_url = "startup.profile({community_key: header.location.key})";
-            break;
-        case "network":
-            this.parent_url = "network.dashboard({community_key: headerlocation.key})";
-            break;
-        case "industry":
-            this.parent_url = "industry.dashboard({community_key: header.location.key, industry_key: header.community.key})";
-            break;
-        case "location":
-            this.parent_url = "location.dashboard({community_key: header.location.key})";
-            break;
+
+    if (this.back) {
+        switch(this.location.type) {
+            case "network":
+                this.parent_url = "network.dashboard({community_key: header.location.key})";
+                break;
+            case "industry":
+                this.parent_url = "industry.dashboard({community_key: header.location.key, industry_key: header.community.key})";
+                break;
+            case "location":
+                this.parent_url = this.back + "({community_key: header.location.key})";
+                break;
+        }
+    } else {
+        switch(this.location.type) {
+            case "user":
+                this.parent_url = "people.profile({community_key: header.location.key})";
+                break;
+            case "startup":
+                this.parent_url = "startup.profile({community_key: header.location.key})";
+                break;
+            case "network":
+                this.parent_url = "network.dashboard({community_key: header.location.key})";
+                break;
+            case "industry":
+                this.parent_url = "industry.dashboard({community_key: header.location.key, industry_key: header.community.key})";
+                break;
+            case "location":
+                if (this.back) {
+                    this.parent_url = this.back + "({community_key: header.location.key})";
+                } else this.parent_url = "location.dashboard({community_key: header.location.key})";
+                break;
+        }
     }
-    console.log(this.location.profile.name);
-    console.log(this.community.key);
-    console.log(this.location.key);
-    console.log(this.parent_url)
+
 
 
     if ($stateParams.embed) {
