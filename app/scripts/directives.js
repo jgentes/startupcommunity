@@ -75,13 +75,14 @@ function sideNavigation($timeout) {
 /**
  * minimalizaSidebar - Directive for minimalize sidebar
  */
-function minimalizaMenu($rootScope) {
+function minimalizaMenu() {
     return {
         restrict: 'EA',
-        template: '<div class="header-link hide-menu" ng-click="minimalize()"><i class="fa fa-bars"></i></div>',
-        controller: function ($scope, $element) {
+        template: '<div class="header-link hide-menu" ng-click="menu.minimalize()"><i class="fa fa-bars"></i></div>',
+        controllerAs: 'menu',
+        controller: function () {
 
-            $scope.minimalize = function () {
+            this.minimalize = function () {
             if ($(window).width() < 769) {
                     $("body").toggleClass("show-sidebar");
                 } else {

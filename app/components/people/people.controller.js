@@ -12,7 +12,6 @@ function PeopleController($stateParams, user_service, result_service, $sce, $mod
     this.selectedIndustries = [];
     this.selectedNetworks = [];
     this.selectedRole = ['*'];
-    this.embed = $stateParams.embed;
 
     var self = this; // for accessing 'this' in child functions
 
@@ -25,9 +24,7 @@ function PeopleController($stateParams, user_service, result_service, $sce, $mod
             self.tag = $stateParams.query;
         } else self.tag = undefined;
 
-        this.embed ? limit = 10 : limit = 20;
-
-        user_service.search(communityFilter, $stateParams.query, undefined, limit, alturl)
+        user_service.search(communityFilter, $stateParams.query, undefined, 16, alturl)
             .then(function (response) {
                 self.tag = undefined;
                 self.users = result_service.setPage(response.data);

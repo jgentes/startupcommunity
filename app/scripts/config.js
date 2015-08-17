@@ -148,56 +148,6 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
             }
         })
 
-        .state('embed', {
-            abstract: true,
-            templateUrl: 'components/common/header/header_embed.html',
-            controller: 'HeaderController as header',
-            params: {
-                query: '*',
-                community: {},
-                embed: true
-            },
-            resolve: {
-                communities: ['$stateParams', 'community_service',
-                    function($stateParams, community_service) {
-                        return community_service.getCommunity($stateParams.community_key);
-                    }],
-                community: ['$stateParams', '$location', 'communities', 'community_service',
-                    function($stateParams, $location, communities, community_service) {
-                        if (jQuery.isEmptyObject($stateParams.community)) { // if community is passed in via ui-sref, just use that
-
-                            var pullCommunity = function () {
-                                if (communities.data[$stateParams.community_key]) { // if community_key has already been pulled, use that
-                                    return communities.data[$stateParams.community_key]; // this should also avoid re-pull for /people and /startups
-                                } else {
-                                    var communityData = community_service.getCommunity($stateParams.community_key);
-                                    return communityData.data;
-                                }
-                            };
-
-                            if (jQuery.isEmptyObject($stateParams.profile)) {
-                                // set community based on type, determined by URL
-                                var url = $location.path().replace(/\/$/, "").split('/'),
-                                    lastitem = url.pop(),
-                                    root = url.pop();
-                                if (lastitem == "people" || lastitem == "startups" || lastitem == "search") {
-                                    return communities.data[root]; // return preceding url path as community, such as tech for 'bend-or/tech/people'
-                                } else if (communities.data[lastitem] && communities.data[lastitem].type == "industry") {
-                                    return communities.data[lastitem]; // return tech in 'bend-or/tech'
-                                } else return pullCommunity();
-                            } else return pullCommunity();
-
-                        } else return $stateParams.community;
-                    }]
-            }
-        })
-        .state('embed.dashboard', {
-            url: "/embed",
-            templateUrl: 'components/people/people.dashboard.html',
-            controller: "PeopleController as people"
-        })
-
-
         // People views
         .state('people', {
             parent: 'root',

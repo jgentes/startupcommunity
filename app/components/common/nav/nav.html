@@ -4,10 +4,10 @@
         <div ng-class="{'bright-line' : !nav.embedded, 'grey-line' : nav.embedded}">
         </div>
         <div id="logo" class="light-version">
-            <img src="images/sc_logo.png"/>
+            <a href="https://startupcommunity.org" target="_blank"><img src="images/sc_logo.png"/></a>
         </div>
         <nav role="navigation">
-            <minimaliza-menu></minimaliza-menu>
+            <minimaliza-menu ng-if="!nav.embedded"></minimaliza-menu>
             <div class="navbar-left">
                 <div class="nav navbar-nav no-borders" style="white-space: nowrap;">
                     <li style="float: left;">
@@ -20,7 +20,7 @@
                     </form>
                 </div>
             </div>
-            <div class="navbar-right">
+            <div ng-if="!nav.embedded" class="navbar-right">
                 <ul class="nav navbar-nav no-borders">
                     <li ng-if="!nav.user" class="dropdown">
                         <div style="padding-top: 21px;" ng-controller="LoginController as login">
@@ -30,7 +30,7 @@
                         </div>
                     </li>
                     <li class="dropdown">
-                        <a tooltip-placement="left" tooltip="Help">
+                        <a>
                             <i class="pe-7s-help1"></i>
                         </a>
                     </li>
@@ -45,7 +45,7 @@
     </div>
 
     <!-- Navigation -->
-    <aside id="menu">
+    <aside id="menu" ng-if="!nav.embedded">
         <div class="profile-picture">
             <div ng-if="nav.user" class="container side-menu" style="padding-top: 10px; margin-left: -20px;">
                 <div class="row side-menu">
@@ -143,9 +143,9 @@
 
 <!-- Main Content -->
 <div ui-view>
-    <div id="wrapper">
-        <div ui-view="header"></div>
-        <div class="content">
+    <div ng-class="{'embed_content' : nav.embedded, 'wrapper' : !nav.embedded}">
+        <div ng-if="!nav.embedded" ui-view="header"></div>
+        <div ng-class="{'content' : !nav.embedded}">
             <div ui-view="content"></div>
         </div>
     </div>
