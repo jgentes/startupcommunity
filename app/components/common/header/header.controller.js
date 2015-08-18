@@ -3,9 +3,7 @@ angular
     .controller('HeaderController', HeaderController);
 
 function HeaderController($stateParams, community, communities) {
-    console.log($stateParams);
-    console.log(community);
-    console.log(communities);
+
     this.community = community;
 
     switch(community.type) {

@@ -62,7 +62,7 @@ function pageTitle($rootScope, $timeout) {
  */
 function sideNavigation($timeout) {
     return {
-        restrict: 'A',
+        restrict: 'EA',
         link: function(scope, element) {
             // Call the metisMenu plugin and plug it to sidebar navigation
             element.metisMenu({

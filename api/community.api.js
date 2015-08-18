@@ -50,7 +50,8 @@ function handleGetCommunity(req, res) {
     var community = req.params.community;
 
     var searchString = '@path.key: ' + community; // grab the primary community object, don't use parens here
-    searchString += ' OR (communities: "' + community + '"'; // + grab anything associated with this community in this location
+    searchString += ' OR ((communities: "' + community + '"'; // + grab anything associated with this community in this location
+    searchString += ' OR parents: "' + community + '")'; // + grab anything associated with this community as a parent
     searchString += ' AND NOT type:("startup" OR "user"))'; // exclude startups and users
 
     function pullCommunity() {

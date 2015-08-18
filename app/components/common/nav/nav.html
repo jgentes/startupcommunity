@@ -47,7 +47,7 @@
     <!-- Navigation -->
     <aside id="menu" ng-if="!nav.embedded">
         <div class="profile-picture">
-            <div ng-if="nav.user" class="container side-menu" style="padding-top: 10px; margin-left: -20px;">
+            <div ng-if="nav.user" class="container side-menu" style="padding-top: 10px; margin-left: -20px; border-bottom: 1px solid #eee;    margin-bottom: -5px;">
                 <div class="row side-menu">
                     <div class="col-sm-3">
                         <a ui-sref="people.profile({profile: nav.user, community_key: nav.user.key, community: {}})"><img class="img-circle m-b" ng-src="{{nav.user.profile.avatar || nav.user.profile.linkedin.pictureUrl || 'images/blank_avatar.png'}}" alt="{{nav.user.profile.name}}" style="height: 40px; width: 40px; "/></a>
@@ -60,21 +60,50 @@
                     </div>
                 </div>
             </div>
-
-            <gm-map ng-init="nav.hideChange = true" id="nav-map" gm-address="{address:nav.location}" options="{zoom: 11, disableDefaultUI: true, draggable: false, disableDoubleClickZoom: true, scrollwheel: false}" on-mouseover="nav.setMap(map.getCenter())" on-mouseclick="nav.setMap(map.getCenter())" on-mouseout="nav.hideChange = true; map.panTo(nav.latlng);">
+            <div ng-if="nav.community.profile.logo" style="margin-left: -19px;"><img style="width:176px;" ng-src="{{nav.community.profile.logo}}"/></div>
+            <gm-map ng-if="!nav.community.profile.logo" ng-init="nav.hideChange = true" id="nav-map" gm-address="{address:nav.location}" options="{zoom: 4, disableDefaultUI: true, draggable: false, disableDoubleClickZoom: true, scrollwheel: false}" on-mouseover="nav.setMap(map.getCenter())" on-mouseclick="nav.setMap(map.getCenter())" on-mouseout="nav.hideChange = true; map.panTo(nav.latlng);">
+                <gm-marker position="map.getCenter()" options="{icon: '/public/Green-map-pin.png'}"></gm-marker>
                 <gm-infowindow ng-if="!nav.hideChange" options="{content: '<div id=&#34;changeLocation&#34; style=&#34;font-size: 12px;
     padding-right: 10px;&#34;><a>Change Location</a></div>', position: nav.latlng}"></gm-infowindow>
             </gm-map>
-            <div class="side-menu filler"></div>
-
+            <div ng-if="!nav.community.profile.logo" class="side-menu filler"></div>
         </div>
 
-        <ul side-navigation class="nav" id="side-menu">
+        <ul side-navigation class="nav" id="side-menu" style="border-top: 1px solid #eee;">
+
+            <li class="active" ng-if="1==1">
+                <p style="cursor: default;"><span class="pe-7s-angle-down" style="padding-top: 4px;
+    padding-right: 7px;"></span><span class="nav-label">Community</span></p>
+                <ul class="nav nav-second-level">
+                    <li>
+                        <a style="cursor: default;" ng-class="{active: nav.path.includes('/' + nav.community.key)}">
+                            <span class="fa fa-gear pull-right" ng-click="nav.changeLocation()" tooltip="Change" style="opacity: .6; margin-top: 3px; cursor: pointer;"></span>
+                            <span ng-if="nav.community.community_profiles[nav.location]">
+                                <i ng-if="nav.community.community_profiles[nav.location].icon" ng-class="'fa ' + nav.community.community_profiles[nav.location].icon"></i>
+                                <i ng-if="!nav.community.community_profiles[nav.location].icon" class="fa fa-globe"></i>
+                                &nbsp;&nbsp;{{nav.community.community_profiles[nav.location].name}}</span>
+                            <span ng-if="!nav.community.community_profiles[nav.location]">
+                                <i ng-if="nav.community.profile.icon" ng-class="'fa ' + nav.community.profile.icon"></i>
+                                <i ng-if="!nav.community.profile.icon" class="fa fa-globe"></i>
+                                    &nbsp;&nbsp;{{nav.community.profile.name}}</span>
+                            </a>
+                        <ul style="display: block;">
+                            <li ui-sref="people.dashboard({community_key: nav.community.key, query: '*'})" ui-sref-active="active">
+                                <a><i class="fa fa-caret-right"></i>&nbsp;&nbsp;People</a>
+                            </li>
+                            <li ui-sref="startups.dashboard({community_key: nav.community.key, query: '*'})" ui-sref-active="active">
+                                <a><i class="fa fa-caret-right"></i>&nbsp;&nbsp;Startups</a>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </li>
 
             <li class="active" ng-if="nav.locations">
-                <a href="#"><span class="nav-label">Locations</span><span class="fa arrow"></span> </a>
+                <p style="cursor: default;"><span class="pe-7s-angle-down" style="padding-top: 4px;
+    padding-right: 7px;"></span><span class="nav-label">Locations</span></p>
                 <ul class="nav nav-second-level">
-                    <li ng-repeat="item in nav.locations">
+                    <li ng-repeat="item in nav.locations" ng-if="item.key !== nav.community.key">
                         <a ui-sref="location.dashboard({community_key: item.key, community: item})" ng-class="{active: nav.path.includes('/' + item.key)}"><i class="fa fa-globe"></i>&nbsp;&nbsp;{{item.profile.name}}</a>
                         <ul ng-if="nav.community.key == item.key">
                             <li ui-sref="people.dashboard({community_key: item.key, query: '*'})" ui-sref-active="active">
@@ -89,7 +118,8 @@
             </li>
 
             <li class="active" ng-if="nav.industries">
-                <a href="#"><span class="nav-label">Industries</span><span class="fa arrow"></span> </a>
+                <p style="cursor: default;"><span class="pe-7s-angle-down" style="padding-top: 4px;
+    padding-right: 7px;"></span><span class="nav-label">Industries</span></p>
                 <ul class="nav nav-second-level">
                     <li ng-repeat="item in nav.industries">
                         <a ui-sref="industry.dashboard({community_key: nav.location, industry_key: item.key, community: item})" ng-class="{active: nav.path.endsWith('/' + item.key)}">
@@ -111,7 +141,8 @@
             </li>
 
             <li class="active" ng-if="nav.networks">
-                <a href="#"><span class="nav-label">Networks</span><span class="fa arrow"></span> </a>
+                <p style="cursor: default;"><span class="pe-7s-angle-down" style="padding-top: 4px;
+    padding-right: 7px;"></span><span class="nav-label">Networks</span></p>
                 <ul class="nav nav-second-level">
                     <li ng-repeat="item in nav.networks">
                         <a ui-sref="network.dashboard({community_key: item.key, community: item})" ng-class="{active: nav.path.includes('/' + item.key)}"><i ng-class="'fa ' + item.profile.icon"></i>&nbsp;&nbsp;{{item.profile.name}}</a>

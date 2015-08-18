@@ -12,7 +12,7 @@ function NavigationController($auth, $state, $location, $stateParams, $modal, us
         this.embedded = true;
         this.referrer = document.referrer;
     }
-    this.embedded = true; // for testing
+    this.embedded = false; // for testing
     this.community = community;
 
     if ($auth.isAuthenticated()) {
@@ -40,28 +40,28 @@ function NavigationController($auth, $state, $location, $stateParams, $modal, us
 
     // sort communities for use in nav and child dashboard pages
     for (item in communities.data) {
-        switch(communities.data[item].type) {
-            case "location":
-                if (!this.locations) this.locations = {};
-                this.locations[item] = communities.data[item];
-                break;
-            case "industry":
-                if (!this.industries) this.industries = {};
-                this.industries[item] = communities.data[item];
-                break;
-            case "network":
-                if (!this.networks) this.networks = {};
-                this.networks[item] = communities.data[item];
-                break;
+        if (communities.data[item].key !== community.key) {
+            switch(communities.data[item].type) {
+                case "location":
+                    if (!this.locations) this.locations = {};
+                    this.locations[item] = communities.data[item];
+                    break;
+                case "industry":
+                    if (!this.industries) this.industries = {};
+                    this.industries[item] = communities.data[item];
+                    break;
+                case "network":
+                    if (!this.networks) this.networks = {};
+                    this.networks[item] = communities.data[item];
+                    break;
+            }
         }
     }
 
     this.path = $location.path().replace(/\/$/, ""); //used for routing and used in view
 
     //set location, used for map and relative nav for industries
-    if (community.type == "user" || community.type == "startup" || community.type == "network") {
-        this.location = community.profile.home;
-    } else this.location = $stateParams.community_key;
+    community.profile.home ? this.location = community.profile.home : this.location = $stateParams.community_key;
 
     // used for the 'change' feature displayed on map
     this.setMap = function(center) {
@@ -74,6 +74,14 @@ function NavigationController($auth, $state, $location, $stateParams, $modal, us
         }
     };
 
+    this.changeLocation = function() {
+        var modalInstance = $modal.open({
+            templateUrl: 'components/common/nav/nav.change_location.html',
+            controller: ChangeLocationController,
+            windowClass: "hmodal-warning"
+        });
+    };
+    //todo remove the below if the above is used?
     $('body').on('click', '#changeLocation', function() {
         var modalInstance = $modal.open({
             templateUrl: 'components/common/nav/nav.change_location.html',
