@@ -33,7 +33,7 @@ function HeaderController($stateParams, community, communities) {
                 this.parent_url = "industry.dashboard({community_key: header.location.key, industry_key: header.community.key})";
                 break;
             case "location":
-                this.parent_url = this.back + "({community_key: header.location.key})";
+                this.parent_url = this.back + "({community_key: header.location.key, community: " + communities.data[community.key] + "})";
                 break;
         }
     } else {
@@ -52,7 +52,7 @@ function HeaderController($stateParams, community, communities) {
                 break;
             case "location":
                 if (this.back) {
-                    this.parent_url = this.back + "({community_key: header.location.key})";
+                    this.parent_url = this.back + "({community_key: header.location.key, community: " + communities.data[community.key] + "})";
                 } else this.parent_url = "location.dashboard({community_key: header.location.key})";
                 break;
         }

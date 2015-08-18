@@ -61,23 +61,19 @@
                 </div>
             </div>
             <div ng-if="nav.community.profile.logo" style="margin-left: -21px;"><img style="width:181px; border: 1px solid #ddd;" ng-src="{{nav.community.profile.logo}}"/></div>
-            <gm-map ng-if="!nav.community.profile.logo" ng-init="nav.hideChange = true" id="nav-map" gm-address="{address:nav.location}" options="{zoom: 4, disableDefaultUI: true, draggable: false, disableDoubleClickZoom: true, scrollwheel: false}" on-mouseover="nav.setMap(map.getCenter())" on-mouseclick="nav.setMap(map.getCenter())" on-mouseout="nav.hideChange = true; map.panTo(nav.latlng);">
-                <gm-marker position="map.getCenter()" options="{icon: '/public/Green-map-pin.png'}"></gm-marker>
-                <gm-infowindow ng-if="!nav.hideChange" options="{content: '<div id=&#34;changeLocation&#34; style=&#34;font-size: 12px;
-    padding-right: 10px;&#34;><a>Change Location</a></div>', position: nav.latlng}"></gm-infowindow>
-            </gm-map>
-            <div ng-if="!nav.community.profile.logo" class="side-menu filler"></div>
         </div>
 
         <ul side-navigation class="nav" id="side-menu" style="border-top: 1px solid #eee;">
 
             <li class="active" ng-if="1==1">
                 <p style="cursor: default;"><span class="pe-7s-angle-down" style="padding-top: 4px;
-    padding-right: 7px;"></span><span class="nav-label">Community</span></p>
+    padding-right: 7px;"></span><span class="nav-label">Community</span>
+                    <span class="fa fa-gear pull-right" ng-click="nav.changeLocation()" tooltip="Change" style="opacity: .6; margin-top: 4px; cursor: pointer;"></span>
+                </p>
                 <ul class="nav nav-second-level">
                     <li>
                         <a style="cursor: default;" ng-class="{active: nav.path.includes('/' + nav.community.key)}">
-                            <span class="fa fa-gear pull-right" ng-click="nav.changeLocation()" tooltip="Change" style="opacity: .6; margin-top: 3px; cursor: pointer;"></span>
+
                             <span ng-if="nav.community.community_profiles[nav.location]">
                                 <i ng-if="nav.community.community_profiles[nav.location].icon" ng-class="'fa ' + nav.community.community_profiles[nav.location].icon"></i>
                                 <i ng-if="!nav.community.community_profiles[nav.location].icon" class="fa fa-globe"></i>
@@ -88,10 +84,10 @@
                                     &nbsp;&nbsp;{{nav.community.profile.name}}</span>
                             </a>
                         <ul style="display: block;">
-                            <li ui-sref="people.dashboard({community_key: nav.community.key, query: '*'})" ui-sref-active="active">
+                            <li ui-sref="people.dashboard({community_key: nav.location, parent_key: nav.community.key, query: '*'})" ui-sref-active="active">
                                 <a><i class="fa fa-caret-right"></i>&nbsp;&nbsp;People</a>
                             </li>
-                            <li ui-sref="startups.dashboard({community_key: nav.community.key, query: '*'})" ui-sref-active="active">
+                            <li ui-sref="startups.dashboard({community_key: nav.community.key, parent_key: nav.parent_key, query: '*'})" ui-sref-active="active">
                                 <a><i class="fa fa-caret-right"></i>&nbsp;&nbsp;Startups</a>
                             </li>
                         </ul>
@@ -122,14 +118,14 @@
     padding-right: 7px;"></span><span class="nav-label">Industries</span></p>
                 <ul class="nav nav-second-level">
                     <li ng-repeat="item in nav.industries">
-                        <a ui-sref="industry.dashboard({community_key: nav.location, industry_key: item.key, community: item})" ng-class="{active: nav.path.endsWith('/' + item.key)}">
+                        <a ui-sref="industry.dashboard({community_key: nav.community.key, parent_key: item.key, community: item})" ng-class="{active: nav.path.endsWith('/' + item.key)}">
                             <span ng-if="item.community_profiles[nav.location]">
                                 <i ng-class="'fa ' + item.community_profiles[nav.location].icon"></i>&nbsp;&nbsp;{{item.community_profiles[nav.location].name}}</span>
                             <span ng-if="!item.community_profiles[nav.location]">
                                 <i ng-class="'fa ' + item.profile.icon"></i>&nbsp;&nbsp;{{item.profile.name}}</span>
                         </a>
                         <ul ng-if="nav.community.key == item.key">
-                            <li ui-sref="industry.people({industry_key: item.key, query: '*'})" ui-sref-active="active">
+                            <li ui-sref="industry.people({parent_key: item.key, query: '*'})" ui-sref-active="active">
                                 <a><i class="fa fa-caret-right"></i>&nbsp;&nbsp;People</a>
                             </li>
                             <li ui-sref="industry.startups" ui-sref-active="active">

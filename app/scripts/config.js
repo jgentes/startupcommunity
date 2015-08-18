@@ -54,7 +54,11 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
             params: {
                 profile: {},  // must include params for *any* root-level object for inheritance, such as users, startups, networks, etc
                 query: '*',
-                community: {}
+                community: {},
+                community_key: {
+                    value: null,
+                    squash: true
+                }
             },
             resolve: {
                 user: ['user_service', '$state', '$mixpanel',
@@ -172,9 +176,13 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
             }
         })
         .state('people.dashboard', {
-            url: "/people",
+            url: "/:parent_key/people",
             params: {
                 community: {},
+                parent_key: {
+                    value: null,
+                    squash: true
+                },
                 pageTitle: 'People'
             },
             views: {
@@ -305,7 +313,7 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
             abstract: true
         })
         .state('industry.dashboard', {
-            url: "/:industry_key",
+            url: "/:parent_key",
             params: {
                 community: {},
                 pageTitle: "Industry Profile"
@@ -340,7 +348,7 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
             }
         })
         .state('industry.people', {
-            url: "/:industry_key/people",
+            url: "/:parent_key/people",
             params: {
                 community: {},
                 pageTitle: 'People'
@@ -358,7 +366,7 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
         })
         .state('industry.search.dashboard', {
             parent: 'search',
-            url: "/:industry_key/search",
+            url: "/:parent_key/search",
             params: {
                 community: {},
                 query: '*',

@@ -47,12 +47,16 @@ function NavigationController($auth, $state, $location, $stateParams, $modal, us
                     this.locations[item] = communities.data[item];
                     break;
                 case "industry":
-                    if (!this.industries) this.industries = {};
-                    this.industries[item] = communities.data[item];
+                    if (community.type !== "industry") {
+                        if (!this.industries) this.industries = {};
+                        this.industries[item] = communities.data[item];
+                    }
                     break;
                 case "network":
                     if (!this.networks) this.networks = {};
                     this.networks[item] = communities.data[item];
+                    break;
+                default:
                     break;
             }
         }
@@ -60,45 +64,7 @@ function NavigationController($auth, $state, $location, $stateParams, $modal, us
 
     this.path = $location.path().replace(/\/$/, ""); //used for routing and used in view
 
-    //set location, used for map and relative nav for industries
-    community.profile.home ? this.location = community.profile.home : this.location = $stateParams.community_key;
-
-    // used for the 'change' feature displayed on map
-    this.setMap = function(center) {
-        this.hideChange = false;
-        if (!this.latlng) {
-            this.latlng = {
-                "lat": center.A,
-                "lng": center.F
-            };
-        }
-    };
-
-    this.changeLocation = function() {
-        var modalInstance = $modal.open({
-            templateUrl: 'components/common/nav/nav.change_location.html',
-            controller: ChangeLocationController,
-            windowClass: "hmodal-warning"
-        });
-    };
-    //todo remove the below if the above is used?
-    $('body').on('click', '#changeLocation', function() {
-        var modalInstance = $modal.open({
-            templateUrl: 'components/common/nav/nav.change_location.html',
-            controller: ChangeLocationController,
-            windowClass: "hmodal-warning"
-        });
-    });
-
-    // for search box
-    this.search = function(query) {
-        if (community.type == "industry") {
-            $state.go('industry.search.dashboard', {industry_key: community.key, query: query});
-        } else if (community.type == "user" || community.type == "startup") {
-            $state.go('search.dashboard', {community_key: this.community.profile.home, query: query});
-        } else $state.go('search.dashboard', {query: query});
-
-    };
+    this.community.key == $stateParams.community_key ? this.location = undefined : this.location = $stateParams.community_key;
 
     if (community.type == "user" || community.type == "startup") {
         this.searchname = communities.data[this.community.profile.home].profile.name;
@@ -107,6 +73,24 @@ function NavigationController($auth, $state, $location, $stateParams, $modal, us
             this.searchname = this.community.community_profiles[this.location].name;
         } else this.searchname = this.community.profile.name;
     } else this.searchname = this.community.profile.name;
+
+    this.changeLocation = function() {
+        var modalInstance = $modal.open({
+            templateUrl: 'components/common/nav/nav.change_location.html',
+            controller: ChangeLocationController,
+            windowClass: "hmodal-warning"
+        });
+    };
+
+    // for search box
+    this.search = function(query) {
+        if (community.type == "industry") {
+            $state.go('industry.search.dashboard', {parent_key: community.key, query: query});
+        } else if (community.type == "user" || community.type == "startup") {
+            $state.go('search.dashboard', {community_key: this.community.profile.home, query: query});
+        } else $state.go('search.dashboard', {query: query});
+
+    };
 
     // for routing of root routes
     if (this.path.split('/').length < 3) {
