@@ -60,7 +60,7 @@
                     </div>
                 </div>
             </div>
-            <div ng-if="nav.community.profile.logo" style="margin-left: -19px;"><img style="width:176px;" ng-src="{{nav.community.profile.logo}}"/></div>
+            <div ng-if="nav.community.profile.logo" style="margin-left: -21px;"><img style="width:181px; border: 1px solid #ddd;" ng-src="{{nav.community.profile.logo}}"/></div>
             <gm-map ng-if="!nav.community.profile.logo" ng-init="nav.hideChange = true" id="nav-map" gm-address="{address:nav.location}" options="{zoom: 4, disableDefaultUI: true, draggable: false, disableDoubleClickZoom: true, scrollwheel: false}" on-mouseover="nav.setMap(map.getCenter())" on-mouseclick="nav.setMap(map.getCenter())" on-mouseout="nav.hideChange = true; map.panTo(nav.latlng);">
                 <gm-marker position="map.getCenter()" options="{icon: '/public/Green-map-pin.png'}"></gm-marker>
                 <gm-infowindow ng-if="!nav.hideChange" options="{content: '<div id=&#34;changeLocation&#34; style=&#34;font-size: 12px;
