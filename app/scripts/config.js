@@ -54,11 +54,7 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
             params: {
                 profile: {},  // must include params for *any* root-level object for inheritance, such as users, startups, networks, etc
                 query: '*',
-                community: {},
-                community_key: {
-                    value: null,
-                    squash: true
-                }
+                community: {}
             },
             resolve: {
                 user: ['user_service', '$state', '$mixpanel',
@@ -176,9 +172,13 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
             }
         })
         .state('people.dashboard', {
-            url: "/:parent_key/people",
+            url: "^/:parent_key/:community_key/people",
             params: {
                 community: {},
+                community_key: {
+                    value: null,
+                    squash: true
+                },
                 parent_key: {
                     value: null,
                     squash: true

@@ -84,10 +84,10 @@
                                     &nbsp;&nbsp;{{nav.community.profile.name}}</span>
                             </a>
                         <ul style="display: block;">
-                            <li ui-sref="people.dashboard({community_key: nav.location, parent_key: nav.community.key, query: '*'})" ui-sref-active="active">
+                            <li ui-sref="people.dashboard({community_key: nav.community.key, parent_key: nav.location, query: '*'})" ui-sref-active="active">
                                 <a><i class="fa fa-caret-right"></i>&nbsp;&nbsp;People</a>
                             </li>
-                            <li ui-sref="startups.dashboard({community_key: nav.community.key, parent_key: nav.parent_key, query: '*'})" ui-sref-active="active">
+                            <li ui-sref="startups.dashboard({community_key: nav.community.key, parent_key: nav.location, query: '*'})" ui-sref-active="active">
                                 <a><i class="fa fa-caret-right"></i>&nbsp;&nbsp;Startups</a>
                             </li>
                         </ul>

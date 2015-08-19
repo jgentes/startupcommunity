@@ -65,6 +65,8 @@ function NavigationController($auth, $state, $location, $stateParams, $modal, us
     this.path = $location.path().replace(/\/$/, ""); //used for routing and used in view
 
     this.community.key == $stateParams.community_key ? this.location = undefined : this.location = $stateParams.community_key;
+    console.log(this.location);
+    console.log(this.community.key);
 
     if (community.type == "user" || community.type == "startup") {
         this.searchname = communities.data[this.community.profile.home].profile.name;
