@@ -3,16 +3,16 @@
         <div class="panel-body">
             <div id="hbreadcrumb" class="pull-left">
                 <ol class="hbreadcrumb">
-                    <li ng-if="header.location.profile.name"><a ui-sref="{{header.parent_url}}">
-                        <span ng-if="header.location.key !== header.community.key">{{ header.location.profile.name }}&nbsp;&nbsp;/</span></a>
+                    <li ng-if="header.location.key !== header.community.key"><a ui-sref="{{header.parent_state}}">
+                        <span ng-if="header.location.profile.name">&nbsp;&nbsp;{{ header.location.profile.name }}&nbsp;&nbsp;/</span></a>
                     </li>
-                    <li ui-sref="{{header.community.key}}"><span ng-if="header.community.community_profiles[nav.location]">&nbsp;{{ header.community.community_profiles[nav.location].name }}</span>
-                        <span ng-if="!header.community.community_profiles[nav.location]">&nbsp;{{ header.community.profile.name }}</span>
+                    <li ui-sref="{{header.community.key}}"><span ng-if="header.community.community_profiles[nav.location]">&nbsp;&nbsp;{{ header.community.community_profiles[nav.location].name }}</span>
+                        <span ng-if="!header.community.community_profiles[nav.location]">&nbsp;&nbsp;{{ header.community.profile.name }}</span>
                         &nbsp;&nbsp;/
                     </li>
                     <li ng-repeat="state in $state.$current.path" ng-class="{active: $last}">
                         <a ng-if="state.params.pageTitle.config.value && !(!!state.abstract) && !$last" href="#{{state.url.format($stateParams)}}">&nbsp;&nbsp;{{state.params.pageTitle.config.value}}&nbsp;&nbsp;/</a>
-                        <span ng-if="$last">&nbsp;{{$state.params.pageTitle}}</span>
+                        <span ng-if="$last">&nbsp;&nbsp;{{$state.params.pageTitle}}</span>
                     </li>
                 </ol>
             </div>

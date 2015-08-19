@@ -64,15 +64,15 @@ function NavigationController($auth, $state, $location, $stateParams, $modal, us
 
     this.path = $location.path().replace(/\/$/, ""); //used for routing and used in view
 
-    this.community.key == $stateParams.community_key ? this.location = undefined : this.location = $stateParams.community_key;
-    console.log(this.location);
-    console.log(this.community.key);
+    this.location_key = $stateParams.location ? $stateParams.location.key : (this.community.key == $stateParams.community_key ? undefined : $stateParams.community_key);
 
     if (community.type == "user" || community.type == "startup") {
-        this.searchname = communities.data[this.community.profile.home].profile.name;
+        if (!this.location_key) {
+            this.searchname = communities.data[this.community.profile.home].profile.name;
+        } else this.searchname = communities.data[this.location_key].profile.name;
     } else if (community.type == "industry") {
-        if (this.community.community_profiles[this.location]) {
-            this.searchname = this.community.community_profiles[this.location].name;
+        if (this.community.community_profiles[this.location_key]) {
+            this.searchname = this.community.community_profiles[this.location_key].name;
         } else this.searchname = this.community.profile.name;
     } else this.searchname = this.community.profile.name;
 

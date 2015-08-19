@@ -5,37 +5,44 @@ angular
 function HeaderController($stateParams, community, communities) {
 
     this.community = community;
+    this.parent_key = $stateParams.parent_key;
+    this.location = $stateParams.location;
 
     switch(community.type) {
         case "user":
-            this.back = 'people.dashboard';
-            this.location = communities.data[community.profile.home];
+            this.parent_state = "people.dashboard({community_key: header.location.key || header.community.profile.home})";
+            if (!this.location) this.location = communities.data[community.profile.home];
             break;
         case "startup":
-            this.back = 'startups.dashboard';
-            this.location = communities.data[community.profile.home];
+            this.parent_state = 'startups.dashboard({community_key: header.community.profile.home})';
+            if (!this.location) this.location = communities.data[community.profile.home];
             break;
         case "network":
+            this.parent_state = 'location.dashboard({community_key: header.community.profile.home})';
             this.location = communities.data[community.profile.home];
             break;
         case "industry":
+            this.parent_state = 'location.dashboard({community_key: header.parent_key})';
+            this.location = (parent_key ? communities.data[parent_key] : communities.data[community.key]);
+            break;
         case "location":
+            this.parent_state = 'location.dashboard({community_key: header.community.key})';
             this.location = communities.data[community.key];
             break;
     }
-
-    if (this.back) {
+    /*
+    if (this.parent_state) {
         switch(this.location.type) {
             case "network":
-                this.parent_url = "network.dashboard({community_key: header.location.key})";
+                this.parent_state = "network.dashboard({community_key: header.location.key})";
                 break;
             case "industry":
-                this.parent_url = "industry.dashboard({community_key: header.location.key, industry_key: header.community.key})";
+                this.parent_state = "industry.dashboard({community_key: header.location.key, parent_key: header.community.key})";
                 break;
             case "location":
             case "user":
             case "startup":
-                this.parent_url = this.back + "({community_key: header.location.key, community: " + communities.data[community.key] + "})";
+                this.parent_state = "({community_key: header.location.key, community: " + communities.data[community.key] + "})";
                 break;
         }
     } else {
@@ -60,7 +67,7 @@ function HeaderController($stateParams, community, communities) {
         }
     }
 
-
+ */
 
     if ($stateParams.embed) {
         // assume there's an 'embed settings' somewhere in the network configuration screen which can be used to set color

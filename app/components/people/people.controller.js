@@ -16,7 +16,7 @@ function PeopleController($stateParams, user_service, result_service, $sce, $mod
     var self = this; // for accessing 'this' in child functions
 
     var communityFilter = [$stateParams.community_key];
-    if ($stateParams.industry_key) communityFilter.push($stateParams.industry_key);
+    if ($stateParams.parent_key) communityFilter.push($stateParams.parent_key);
 
     this.searchUsers = function(alturl) {
         self.loadingPeople = true;
@@ -73,8 +73,8 @@ function PeopleController($stateParams, user_service, result_service, $sce, $mod
             self.title = '<strong>' + self.role + '</strong> in ' + self.selection;
         } else {
             self.title = 'People matching <strong>"' + $stateParams.query + '"</strong> ';
-            if ($stateParams.industry_key) {
-                self.title += 'in <strong>' + self.communities[$stateParams.industry_key].profile.name + '</strong>';
+            if ($stateParams.parent_key) {
+                self.title += 'in <strong>' + self.communities[$stateParams.parent_key].profile.name + '</strong>';
             } else self.title += 'in <strong>' + self.communities[$stateParams.community_key].profile.name + '</strong>';
         }
 
@@ -200,6 +200,7 @@ function PeopleProfileController($scope, $stateParams, $location, $auth, $mixpan
 
     var self = this;
     this.communities = communities.data;
+    this.location = $stateParams.location;
 
     $mixpanel.track('Viewed Profile');
 
