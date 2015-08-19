@@ -33,6 +33,8 @@ function HeaderController($stateParams, community, communities) {
                 this.parent_url = "industry.dashboard({community_key: header.location.key, industry_key: header.community.key})";
                 break;
             case "location":
+            case "user":
+            case "startup":
                 this.parent_url = this.back + "({community_key: header.location.key, community: " + communities.data[community.key] + "})";
                 break;
         }

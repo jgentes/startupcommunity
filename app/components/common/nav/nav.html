@@ -65,7 +65,7 @@
 
         <ul side-navigation class="nav" id="side-menu" style="border-top: 1px solid #eee;">
 
-            <li class="active" ng-if="1==1">
+            <li class="active" ng-if="nav.community.type !== 'user' && nav.community.type !== 'startup'">
                 <p style="cursor: default;"><span class="pe-7s-angle-down" style="padding-top: 4px;
     padding-right: 7px;"></span><span class="nav-label">Community</span>
                     <span class="fa fa-gear pull-right" ng-click="nav.changeLocation()" tooltip="Change" style="opacity: .6; margin-top: 4px; cursor: pointer;"></span>
