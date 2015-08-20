@@ -5,7 +5,6 @@ angular
 function HeaderController($stateParams, community, communities) {
 
     this.community = community;
-    this.parent_key = $stateParams.parent_key;
     this.location = $stateParams.location;
 
     switch(community.type) {
@@ -22,8 +21,8 @@ function HeaderController($stateParams, community, communities) {
             this.location = communities.data[community.profile.home];
             break;
         case "industry":
-            this.parent_state = 'location.dashboard({community_key: header.parent_key})';
-            this.location = (parent_key ? communities.data[parent_key] : communities.data[community.key]);
+            this.parent_state = 'location.dashboard({community_key: header.location.key})';
+            this.location = ($stateParams.location.key ? communities.data[$stateParams.location.key] : communities.data[community.key]);
             break;
         case "location":
             this.parent_state = 'location.dashboard({community_key: header.community.key})';
@@ -37,7 +36,7 @@ function HeaderController($stateParams, community, communities) {
                 this.parent_state = "network.dashboard({community_key: header.location.key})";
                 break;
             case "industry":
-                this.parent_state = "industry.dashboard({community_key: header.location.key, parent_key: header.community.key})";
+                this.parent_state = "industry.dashboard({community_key: header.location.key, location.key: header.community.key})";
                 break;
             case "location":
             case "user":

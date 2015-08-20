@@ -55,7 +55,11 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                 profile: {},  // must include params for *any* root-level object for inheritance, such as users, startups, networks, etc
                 query: '*',
                 community: {},
-                location: {}
+                location: {},
+                location_key: {
+                    value: null,
+                    squash: true
+                }
             },
             resolve: {
                 user: ['user_service', '$state', '$mixpanel',
@@ -85,7 +89,7 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                 }],
                 communities: ['$stateParams', 'community_service',
                     function($stateParams, community_service) {
-                        return community_service.getCommunity($stateParams.parent_key || $stateParams.community_key);
+                        return community_service.getCommunity($stateParams.community_key);
                     }],
                 community: ['$stateParams', '$location', 'communities', 'community_service',
                     function($stateParams, $location, communities, community_service) {
@@ -93,10 +97,10 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                         if (jQuery.isEmptyObject($stateParams.community)) { // if community is passed in via ui-sref, just use that
 
                             var pullCommunity = function () {
-                                if (communities.data[$stateParams.parent_key || $stateParams.community_key]) { // if community_key has already been pulled, use that
-                                    return communities.data[$stateParams.parent_key || $stateParams.community_key]; // this should also avoid re-pull for /people and /startups
+                                if (communities.data[$stateParams.community_key]) { // if community_key has already been pulled, use that
+                                    return communities.data[$stateParams.community_key]; // this should also avoid re-pull for /people and /startups
                                 } else {
-                                    var communityData = community_service.getCommunity($stateParams.parent_key || $stateParams.community_key);
+                                    var communityData = community_service.getCommunity($stateParams.community_key);
                                     return communityData.data;
                                 }
                             };
@@ -174,13 +178,9 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
             }
         })
         .state('people.dashboard', {
-            url: "/:parent_key/people",
+            url: "^/:location_key/:community_key/people",
             params: {
                 community: {},
-                parent_key: {
-                    value: null,
-                    squash: true
-                },
                 pageTitle: 'People'
             },
             views: {

@@ -83,10 +83,10 @@
                                     &nbsp;&nbsp;{{nav.community.profile.name}}</span>
                         </a>
                         <ul style="display: block;">
-                            <li ui-sref="people.dashboard({community_key: nav.community.key, parent_key: nav.location_key, query: '*'})" ui-sref-active="active">
+                            <li ui-sref="people.dashboard({community_key: nav.community.key, location_key: nav.location_key, query: '*'})" ui-sref-active="active">
                                 <a><i class="fa fa-caret-right"></i>&nbsp;&nbsp;People</a>
                             </li>
-                            <li ui-sref="startups.dashboard({community_key: nav.community.key, parent_key: nav.location_key, query: '*'})" ui-sref-active="active">
+                            <li ui-sref="startups.dashboard({community_key: nav.community.key, location_key: nav.location_key, query: '*'})" ui-sref-active="active">
                                 <a><i class="fa fa-caret-right"></i>&nbsp;&nbsp;Startups</a>
                             </li>
                         </ul>
@@ -100,14 +100,6 @@
                 <ul class="nav nav-second-level">
                     <li ng-repeat="item in nav.locations" ng-if="item.key !== nav.community.key">
                         <a ui-sref="location.dashboard({community_key: item.key, community: item})" ng-class="{active: nav.path.includes('/' + item.key)}"><i class="fa fa-globe"></i>&nbsp;&nbsp;{{item.profile.name}}</a>
-                        <ul ng-if="nav.community.key == item.key">
-                            <li ui-sref="people.dashboard({community_key: item.key, query: '*'})" ui-sref-active="active">
-                                <a><i class="fa fa-caret-right"></i>&nbsp;&nbsp;People</a>
-                            </li>
-                            <li ui-sref="startups.dashboard({community_key: item.key, query: '*'})" ui-sref-active="active">
-                                <a><i class="fa fa-caret-right"></i>&nbsp;&nbsp;Startups</a>
-                            </li>
-                        </ul>
                     </li>
                 </ul>
             </li>
@@ -123,14 +115,6 @@
                             <span ng-if="!item.community_profiles[nav.location_key]">
                                 <i ng-class="'fa ' + item.profile.icon"></i>&nbsp;&nbsp;{{item.profile.name}}</span>
                         </a>
-                        <ul ng-if="nav.community.key == item.key">
-                            <li ui-sref="industry.people({parent_key: item.key, query: '*'})" ui-sref-active="active">
-                                <a><i class="fa fa-caret-right"></i>&nbsp;&nbsp;People</a>
-                            </li>
-                            <li ui-sref="industry.startups" ui-sref-active="active">
-                                <a><i class="fa fa-caret-right"></i>&nbsp;&nbsp;Startups</a>
-                            </li>
-                        </ul>
                     </li>
                 </ul>
             </li>
@@ -141,19 +125,13 @@
                 <ul class="nav nav-second-level">
                     <li ng-repeat="item in nav.networks">
                         <a ui-sref="network.dashboard({community_key: item.key, community: item})" ng-class="{active: nav.path.includes('/' + item.key)}"><i ng-class="'fa ' + item.profile.icon"></i>&nbsp;&nbsp;{{item.profile.name}}</a>
-                        <ul ng-if="nav.community.key == item.key">
-                            <li ui-sref="people.dashboard({community_key: item.key, query: '*'})" ui-sref-active="active">
-                                <a><i class="fa fa-caret-right"></i>&nbsp;&nbsp;People</a>
-                            </li>
+
                             <!--
                             <li ng-if="nav.path.endsWith('/people')" class="nav-third-level" ui-sref="people.invite">
                                 <a>+&nbsp;&nbsp;Invite People</a>
                             </li>
                             -->
-                            <li ui-sref="network.startups" ui-sref-active="active">
-                                <a><i class="fa fa-caret-right"></i>&nbsp;&nbsp;Startups</a>
-                            </li>
-                        </ul>
+
                     </li>
                 </ul>
             </li>

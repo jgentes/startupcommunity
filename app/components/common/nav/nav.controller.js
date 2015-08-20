@@ -64,7 +64,7 @@ function NavigationController($auth, $state, $location, $stateParams, $modal, us
 
     this.path = $location.path().replace(/\/$/, ""); //used for routing and used in view
 
-    this.location_key = $stateParams.location ? $stateParams.location.key : (this.community.key == $stateParams.community_key ? undefined : $stateParams.community_key);
+    this.location_key = $stateParams.location.key ? $stateParams.location.key : (this.community.key == $stateParams.community_key ? undefined : $stateParams.community_key);
 
     if (community.type == "user" || community.type == "startup") {
         if (!this.location_key) {
