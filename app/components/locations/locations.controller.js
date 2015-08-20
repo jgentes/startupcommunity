@@ -2,9 +2,8 @@ angular
     .module('startupcommunity')
     .controller('LocationController', LocationController);
 
-function LocationController($stateParams, community, leaders) {
+function LocationController(leaders) {
 
-    this.community = $stateParams.community;
     this.leaders = leaders.data.results;
 
     this.charts = {

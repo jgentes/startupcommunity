@@ -9,11 +9,6 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
 
     $stateProvider
 
-        // preload is run once
-        .state('preload', {
-            abstract: true,
-            template: "<ui-view/>"
-        })
         .state('invite', {
             templateUrl: 'views/invite_people.html',
             url: "/people/invite",
@@ -48,18 +43,14 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
 
         // the root state with core dependencies for injection in child states
         .state('root', {
-            url: "/:community_key",
+            url: "/:location_path",
             templateUrl: "components/common/nav/nav.html",
             controller: "NavigationController as nav",
             params: {
                 profile: {},  // must include params for *any* root-level object for inheritance, such as users, startups, networks, etc
                 query: '*',
                 community: {},
-                location: {},
-                location_key: {
-                    value: null,
-                    squash: true
-                }
+                location: {}
             },
             resolve: {
                 user: ['user_service', '$state', '$mixpanel',
@@ -86,21 +77,20 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                             .error(function(response) {
                                 $state.go('logout', { error: { type: 'danger', msg: String(response.message) }});
                             });
-                }],
+                    }],
                 communities: ['$stateParams', 'community_service',
                     function($stateParams, community_service) {
-                        return community_service.getCommunity($stateParams.community_key);
+                        return community_service.getCommunity($stateParams.location_path);
                     }],
                 community: ['$stateParams', '$location', 'communities', 'community_service',
                     function($stateParams, $location, communities, community_service) {
-
                         if (jQuery.isEmptyObject($stateParams.community)) { // if community is passed in via ui-sref, just use that
 
                             var pullCommunity = function () {
-                                if (communities.data[$stateParams.community_key]) { // if community_key has already been pulled, use that
-                                    return communities.data[$stateParams.community_key]; // this should also avoid re-pull for /people and /startups
+                                if (communities.data[$stateParams.location_path]) { // if location_path has already been pulled, use that
+                                    return communities.data[$stateParams.location_path]; // this should also avoid re-pull for /people and /startups
                                 } else {
-                                    var communityData = community_service.getCommunity($stateParams.community_key);
+                                    var communityData = community_service.getCommunity($stateParams.location_path);
                                     return communityData.data;
                                 }
                             };
@@ -118,6 +108,12 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                             } else return pullCommunity();
 
                         } else return $stateParams.community;
+                    }],
+                location: ['$stateParams', 'community',
+                    function($stateParams, community) {
+                        if (community.type == "location" || community.type == "network") {
+                            return community;
+                        } else return $stateParams.location;
                     }]
             }
         })
@@ -127,8 +123,7 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
             abstract: true,
             views: {
                 'header': {
-                    templateUrl: "components/common/header/header_small.html",
-                    controller: "HeaderController as header"
+                    templateUrl: "components/common/header/header_small.html"
                 },
                 'content': {
                     templateUrl: 'components/common/search/search.dashboard.html'
@@ -168,8 +163,7 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
             },
             views: {
                 'header': {
-                    templateUrl: "components/common/header/header_small.html",
-                    controller: "HeaderController as header"
+                    templateUrl: "components/common/header/header_small.html"
                 },
                 'content': {
                     templateUrl: "components/people/people.profile.html",
@@ -178,10 +172,10 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
             }
         })
         .state('people.dashboard', {
-            url: "^/:location_key/:community_key/people",
+            url: "^/:location_path/:community_path/people",
             params: {
                 community: {},
-                location_key: {
+                community_path: {
                     value: null,
                     squash: true
                 },
@@ -189,8 +183,7 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
             },
             views: {
                 'header': {
-                    templateUrl: "components/common/header/header_small.html",
-                    controller: "HeaderController as header"
+                    templateUrl: "components/common/header/header_small.html"
                 },
                 'content': {
                     templateUrl: 'components/people/people.dashboard.html',
@@ -206,8 +199,7 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
             },
             views: {
                 'header': {
-                    templateUrl: "components/common/header/header_small.html",
-                    controller: "HeaderController as header"
+                    templateUrl: "components/common/header/header_small.html"
                 },
                 'content': {
                     templateUrl: 'components/people/people.invite.html',
@@ -230,8 +222,7 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
             },
             views: {
                 'header': {
-                    templateUrl: "components/common/header/header_small.html",
-                    controller: "HeaderController as header"
+                    templateUrl: "components/common/header/header_small.html"
                 },
                 'content': {
                     templateUrl: 'components/startups/startups.dashboard.html',
@@ -247,8 +238,7 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
             },
             views: {
                 'header': {
-                    templateUrl: "components/common/header/header_small.html",
-                    controller: "HeaderController as header"
+                    templateUrl: "components/common/header/header_small.html"
                 },
                 'content': {
                     templateUrl: "components/startups/startup.profile.html",
@@ -262,7 +252,7 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                     }
                 }],
                 team: ['user_service', '$stateParams', function(user_service, $stateParams) {
-                    return user_service.search([$stateParams.community_key], '*', ['*'], 18);
+                    return user_service.search([$stateParams.location_path], '*', ['*'], 18);
                 }]
             }
         })
@@ -274,14 +264,12 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
         })
         .state('location.dashboard', {
             params: {
-                community: {},
-                community_key: "",
+                location_path: "",
                 pageTitle: "Location Profile"
             },
             views: {
                 'header': {
-                    templateUrl: "components/common/header/header_big.html",
-                    controller: "HeaderController as header"
+                    templateUrl: "components/common/header/header_big.html"
                 },
                 'content': {
                     templateUrl: 'components/locations/location.dashboard.html',
@@ -295,13 +283,13 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                     }
                 }],
                 leaders: ['user_service', '$stateParams', function(user_service, $stateParams) {
-                    return user_service.search([$stateParams.community_key], '*', ['leader'], 18);
+                    return user_service.search([$stateParams.location_path], '*', ['leader'], 18);
                 }],
                 communities: ['community_service', '$stateParams', 'communities',
                     function(community_service, $stateParams, communities) {
 
-                        if ($stateParams.community_key !== communities.data.key) {
-                            return community_service.getCommunity($stateParams.community_key);
+                        if ($stateParams.location_path !== communities.data.key) {
+                            return community_service.getCommunity($stateParams.location_path);
                         } else return communities;
                     }]
 
@@ -315,15 +303,14 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
             abstract: true
         })
         .state('industry.dashboard', {
-            url: "/:parent_key",
+            url: "/:community_path",
             params: {
                 community: {},
                 pageTitle: "Industry Profile"
             },
             views: {
                 'header': {
-                    templateUrl: "components/common/header/header_big.html",
-                    controller: "HeaderController as header"
+                    templateUrl: "components/common/header/header_big.html"
                 },
                 'content': {
                     templateUrl: 'components/industries/industry.dashboard.html',
@@ -337,28 +324,27 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                     }
                 }],
                 leaders: ['user_service', '$stateParams', function(user_service, $stateParams) {
-                    return user_service.search([$stateParams.community_key], '*', ['leader'], 30);
+                    return user_service.search([$stateParams.location_path], '*', ['leader'], 30);
                 }],
                 communities: ['community_service', '$stateParams', 'communities',
                     function(community_service, $stateParams, communities) {
 
-                        if ($stateParams.community_key !== communities.data.key) {
-                            return community_service.getCommunity($stateParams.community_key);
+                        if ($stateParams.location_path !== communities.data.key) {
+                            return community_service.getCommunity($stateParams.location_path);
                         } else return communities;
                     }]
 
             }
         })
         .state('industry.people', {
-            url: "/:parent_key/people",
+            url: "/:community_path/people",
             params: {
                 community: {},
                 pageTitle: 'People'
             },
             views: {
                 'header': {
-                    templateUrl: "components/common/header/header_small.html",
-                    controller: "HeaderController as header"
+                    templateUrl: "components/common/header/header_small.html"
                 },
                 'content': {
                     templateUrl: 'components/people/people.dashboard.html',
@@ -368,7 +354,7 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
         })
         .state('industry.search.dashboard', {
             parent: 'search',
-            url: "/:parent_key/search",
+            url: "/:community_path/search",
             params: {
                 community: {},
                 query: '*',
@@ -394,8 +380,7 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
             },
             views: {
                 'header': {
-                    templateUrl: "components/common/header/header_big.html",
-                    controller: "HeaderController as header"
+                    templateUrl: "components/common/header/header_big.html"
                 },
                 'content': {
                     templateUrl: 'components/networks/network.dashboard.html',
@@ -409,12 +394,12 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                     }
                 }],
                 leaders: ['user_service', '$stateParams', function(user_service, $stateParams) {
-                    return user_service.search([$stateParams.community_key], '*', ['leader'], 18);
+                    return user_service.search([$stateParams.location_path], '*', ['leader'], 18);
                 }],
                 communities: ['community_service', '$stateParams', 'communities',
                     function(community_service, $stateParams, communities) {
-                        if ($stateParams.community_key !== communities.data.key) {
-                            return community_service.getCommunity($stateParams.community_key);
+                        if ($stateParams.location_path !== communities.data.key) {
+                            return community_service.getCommunity($stateParams.location_path);
                         } else return communities;
                     }]
 

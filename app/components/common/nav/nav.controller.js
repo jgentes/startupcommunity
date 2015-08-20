@@ -3,9 +3,29 @@ angular
     .controller('NavigationController', NavigationController)
     .controller('ChangeLocationController', ChangeLocationController);
 
-function NavigationController($auth, $state, $location, $stateParams, $modal, user, community, communities) {
+function NavigationController($auth, $state, $location, $stateParams, $modal, user, location, community, communities) {
 
-    // test for iframe embed, true if embedded
+    if (!jQuery.isEmptyObject(location)) { // if no location is passed in, get it from communities.data
+        this.location = location;
+    } this.location = communities.data[$stateParams.location_path];
+
+    if (community.key !== this.location.key) { // if no community is passed in, set community equal to location (but nullify community.key to squash url path)
+        this.community = community;
+    } else {
+        this.community = this.location;
+    }
+
+    this.community_path = $stateParams.community_path;
+
+    // SUB-NAVIGATION TO INDUSTRIES AND /PEOPLE AND /STARTUPS
+
+    if (!$stateParams.location_path) {
+        this.location_path = $stateParams.location.key ? $stateParams.location.key : (this.location.key == this.community_path ? undefined : this.community_path);
+    } else this.location_path = $stateParams.location_path;
+
+
+    // CHECK FOR IFRAME
+
     try {
         this.embedded = window.self !== window.top;
     } catch (e) {
@@ -13,8 +33,8 @@ function NavigationController($auth, $state, $location, $stateParams, $modal, us
         this.referrer = document.referrer;
     }
     //this.embedded = false; // for testing
-    this.community = community;
-    this.location = $stateParams.location;
+
+    // ANONYMOUS ACCESS OR PROFILE DISPLAY
 
     if ($auth.isAuthenticated()) {
 
@@ -37,46 +57,60 @@ function NavigationController($auth, $state, $location, $stateParams, $modal, us
 
         this.user.profile["roles"] = rolelist;
 
+    } else {
+        // assume there's an 'embed settings' somewhere in the network configuration screen which can be used to set color
+        $('#main_content').css('background-color:', '#fff');
     }
+
+    // PRIMARY LEFT-NAV ITEM LIST
 
     // sort communities for use in nav and child dashboard pages
     for (item in communities.data) {
-        if (communities.data[item].key !== community.key) {
-            switch(communities.data[item].type) {
-                case "location":
+        switch(communities.data[item].type) {
+            case "location":
+                if (item !== this.location.key) {
                     if (!this.locations) this.locations = {};
                     this.locations[item] = communities.data[item];
-                    break;
-                case "industry":
-                    if (community.type !== "industry") {
-                        if (!this.industries) this.industries = {};
-                        this.industries[item] = communities.data[item];
-                    }
-                    break;
-                case "network":
+                }
+                break;
+            case "industry":
+                if (!this.industries) this.industries = {};
+                this.industries[item] = communities.data[item];
+                break;
+            case "network":
+                if (item !== this.location.key) {
                     if (!this.networks) this.networks = {};
                     this.networks[item] = communities.data[item];
-                    break;
-                default:
-                    break;
-            }
+                }
+                break;
+            default:
+                break;
         }
+
     }
 
-    this.path = $location.path().replace(/\/$/, ""); //used for routing and used in view
-    if (!$stateParams.location_key) {
-        this.location_key = $stateParams.location.key ? $stateParams.location.key : (this.community.key == $stateParams.community_key ? undefined : $stateParams.community_key);
-    } else this.location_key = $stateParams.location_key;
+    // SEARCH
 
-    if (community.type == "user" || community.type == "startup") {
-        if (!this.location_key) {
+    if (this.community.type == "user" || this.community.type == "startup") {
+        if (!this.location_path) {
             this.searchname = communities.data[this.community.profile.home].profile.name;
-        } else this.searchname = communities.data[this.location_key].profile.name;
-    } else if (community.type == "industry") {
-        if (this.community.community_profiles[this.location_key]) {
-            this.searchname = this.community.community_profiles[this.location_key].name;
+        } else this.searchname = communities.data[this.location_path].profile.name;
+    } else if (this.community.type == "industry") {
+        if (this.community.community_profiles[this.location_path]) {
+            this.searchname = this.community.community_profiles[this.location_path].name;
         } else this.searchname = this.community.profile.name;
-    } else this.searchname = this.community.profile.name;
+    } else this.searchname = this.location.profile.name;
+
+    this.search = function(query) {
+        if (this.community.type == "industry") {
+            $state.go('industry.search.dashboard', {location_path: this.location_path, community_path: this.community_path, query: query});
+        } else if (this.community.type == "user" || this.community.type == "startup") {
+            $state.go('search.dashboard', {community_path: this.community.profile.home, query: query});
+        } else $state.go('search.dashboard', {query: query});
+
+    };
+
+    // CHANGE LOCATION
 
     this.changeLocation = function() {
         var modalInstance = $modal.open({
@@ -86,19 +120,25 @@ function NavigationController($auth, $state, $location, $stateParams, $modal, us
         });
     };
 
-    // for search box
-    this.search = function(query) {
-        if (community.type == "industry") {
-            $state.go('industry.search.dashboard', {parent_key: community.key, query: query});
-        } else if (community.type == "user" || community.type == "startup") {
-            $state.go('search.dashboard', {community_key: this.community.profile.home, query: query});
-        } else $state.go('search.dashboard', {query: query});
 
+    console.log('location: ' + this.location.key);
+    console.log('community: ' + this.community.key);
+    console.log('communities:')
+    console.log(communities.data);
+    console.log('stateParams:');
+    console.log($stateParams);
+    console.log('nav.community_path: '+ this.community_path);
+    console.log('nav.location_path: ' + this.location_path);
+
+
+    // ROUTING OF ROOT PATHS
+
+    this.path = function() {
+        return $location.path().replace(/\/$/, ""); //used for routing and used in view
     };
 
-    // for routing of root routes
-    if (this.path.split('/').length < 3) {
-        switch (community.type) {
+    if (this.path().split('/').length < 3) {
+        switch (this.location.type) {
             case "user":
                 $state.go('people.profile');
                 break;
@@ -116,12 +156,9 @@ function NavigationController($auth, $state, $location, $stateParams, $modal, us
                 break;
         }
     }
-    console.log('stateParams:');
-    console.log($stateParams);
-    console.log('community.key: '+ this.community.key);
-    console.log('location_key: ' + this.location_key);
 
-}
+
+};
 
 function ChangeLocationController($state, $modalInstance){
     $state.ok = function () {

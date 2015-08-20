@@ -10,7 +10,7 @@ function LoginController($auth, $state, $mixpanel) {
         auth_response.data.user.value["key"] = auth_response.data.user.path.key;
         if (auth_response.config.data.state !== '/login') {
             $state.go($state.current, {}, {reload: true});
-        } else $state.go('people.profile', {profile: auth_response.data.user.value, community_key: auth_response.data.user.value.key});
+        } else $state.go('people.profile', {profile: auth_response.data.user.value, community_path: auth_response.data.user.value.key});
 
         $mixpanel.identify(auth_response.data.user.path.key);
         $mixpanel.track('Logged in');
