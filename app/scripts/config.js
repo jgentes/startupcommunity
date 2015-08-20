@@ -181,6 +181,10 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
             url: "^/:location_key/:community_key/people",
             params: {
                 community: {},
+                location_key: {
+                    value: null,
+                    squash: true
+                },
                 pageTitle: 'People'
             },
             views: {

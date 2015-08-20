@@ -60,7 +60,7 @@
                     </div>
                 </div>
             </div>
-            <div ng-if="nav.community.profile.logo" style="margin-left: -21px;"><img style="width:181px; border: 1px solid #ddd;" ng-src="{{nav.community.profile.logo}}"/></div>
+            <div ng-if="nav.community.profile.logo" style="margin-left: -21px;"><img style="width:182px; border: 1px solid #ddd;" ng-src="{{nav.community.profile.logo}}"/></div>
         </div>
 
         <ul side-navigation class="nav" id="side-menu" style="border-top: 1px solid #eee;">
@@ -83,10 +83,10 @@
                                     &nbsp;&nbsp;{{nav.community.profile.name}}</span>
                         </a>
                         <ul style="display: block;">
-                            <li ui-sref="people.dashboard({community_key: nav.community.key, location_key: nav.location_key, query: '*'})" ui-sref-active="active">
+                            <li ui-sref="people.dashboard({community_key: nav.community.key, location: nav.location, location_key: nav.location_key, query: '*'})" ui-sref-active="active">
                                 <a><i class="fa fa-caret-right"></i>&nbsp;&nbsp;People</a>
                             </li>
-                            <li ui-sref="startups.dashboard({community_key: nav.community.key, location_key: nav.location_key, query: '*'})" ui-sref-active="active">
+                            <li ui-sref="startups.dashboard({community_key: nav.community.key, location, nav.location, location_key: nav.location_key, query: '*'})" ui-sref-active="active">
                                 <a><i class="fa fa-caret-right"></i>&nbsp;&nbsp;Startups</a>
                             </li>
                         </ul>
