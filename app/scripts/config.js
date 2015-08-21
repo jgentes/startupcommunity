@@ -143,11 +143,11 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
             },
             views: {
                 'people': {
-                    templateUrl: '../components/users/user.dashboard.html',
+                    templateUrl: '../components/users/user.list.html',
                     controller: "UserController as users"
                 },
                 'startups': {
-                    templateUrl: '../components/startups/startup.dashboard.html',
+                    templateUrl: '../components/startups/startup.list.html',
                     controller: "StartupsController as startups"
                 }
             }
@@ -158,7 +158,7 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
             parent: 'root',
             abstract: true
         })
-        .state('user.profile', {
+        .state('user.dashboard', {
             params: {
                 profile: {},
                 community: {},
@@ -170,12 +170,12 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                     templateUrl: "components/common/header/header_small.html"
                 },
                 'content': {
-                    templateUrl: "../components/users/user.profile.html",
+                    templateUrl: "../components/users/user.dashboard.html",
                     controller: 'UserProfileController as profile'
                 }
             }
         })
-        .state('user.dashboard', {
+        .state('user.list', {
             url: "^/:location_path/:community_path/people",
             params: {
                 community: {},
@@ -190,7 +190,7 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                     templateUrl: "components/common/header/header_small.html"
                 },
                 'content': {
-                    templateUrl: '../components/users/user.dashboard.html',
+                    templateUrl: '../components/users/user.list.html',
                     controller: "UserController as users"
                 }
             }
@@ -218,7 +218,7 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
             parent: 'root',
             abstract: true
         })
-        .state('startup.dashboard', {
+        .state('startup.list', {
             url: "/startups",
             params: {
                 community: {},
@@ -229,12 +229,12 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                     templateUrl: "components/common/header/header_small.html"
                 },
                 'content': {
-                    templateUrl: '../components/startups/startup.dashboard.html',
+                    templateUrl: '../components/startups/startup.list.html',
                     controller: "StartupsController as startups"
                 }
             }
         })
-        .state('startups.profile', {
+        .state('startups.dashboard', {
             params: {
                 profile: {},
                 community: {},
@@ -245,7 +245,7 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                     templateUrl: "components/common/header/header_small.html"
                 },
                 'content': {
-                    templateUrl: "components/startups/startup.profile.html",
+                    templateUrl: "components/startups/startup.dashboard.html",
                     controller: 'StartupProfileController as profile'
                 }
             },
@@ -351,7 +351,7 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                     templateUrl: "components/common/header/header_small.html"
                 },
                 'content': {
-                    templateUrl: '../components/users/user.dashboard.html',
+                    templateUrl: '../components/users/user.list.html',
                     controller: "UserController as users"
                 }
             }
@@ -366,7 +366,7 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
             },
             views: {
                 "people": {
-                    templateUrl: '../components/users/user.dashboard.html',
+                    templateUrl: '../components/users/user.list.html',
                     controller: "UserController as users"
                 }
             }

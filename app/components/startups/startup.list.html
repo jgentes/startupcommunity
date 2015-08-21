@@ -1,0 +1,131 @@
+<div>
+    <div class="row">
+        <div ng-if="!$state.includes('search.*')" class="col-lg-2 col-md-3 col-sm-4">
+            <!-- Navigation Block -->
+            <div class="hpanel hgreen">
+                <div class="panel-footer top" style="font-size: 17px;">
+                    <strong>Stage</strong> Filters
+                    <i ng-show="startups.loadingStage" class="fa fa-refresh fa-spin" style="padding: 4px; color: #aaa;"></i>
+                    <small class="pull-right text-muted" style="padding:7px 2px 0 0; font-size: 12px;">(Revenue)</small>
+                </div>
+                <div class="panel-body filternav">
+
+                    <ul class="panel-list">
+                        <li ng-class="{'active':startups.selectedStage.indexOf('*') >= 0}" ng-click="startups.filterStage('*')">
+                            <a>
+                                <i class="fa fa-fw fa-globe themed-color-dark"></i> <strong>All</strong>
+                            </a>
+                        </li>
+                        <li>
+                            <hr style="margin: 10px 0 10px 0;">
+                        </li>
+                        <li ng-class="{'active':startups.selectedStage.indexOf('bootstrap') >= 0}" ng-click="startups.filterStage('bootstrap')">
+                            <a>
+                                Bootstrap
+                                <span class="pull-right">0 - 500k</span>
+                            </a>
+                        </li>
+                        <li ng-class="{'active':startups.selectedStage.indexOf('validation') >= 0}" ng-click="startups.filterStage('validation')">
+                            <a>
+                                Validation
+                                <span class="pull-right">500k - 1M</span>
+                            </a>
+                        </li>
+                        <li ng-class="{'active':startups.selectedStage.indexOf('growth') >= 0}" ng-click="startups.filterStage('growth')">
+                            <a>
+                                Growth
+                                <span class="pull-right">1M - 5M</span>
+                            </a>
+                        </li>
+                        <li ng-class="{'active':startups.selectedStage.indexOf('scale') >= 0}" ng-click="startups.filterStage('scale')">
+                            <a>
+                                Scale
+                                <span class="pull-right">5M+</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="hpanel hnavyblue" ng-if="startups.community.type !== 'industry'">
+                <div class="panel-footer top" style="font-size: 17px;">
+                    <strong>Industry</strong> Filters
+                    <i ng-show="startups.loadingIndustry" class="fa fa-refresh fa-spin pull-right" style="padding: 4px; color: #aaa;"></i>
+                </div>
+                <div class="panel-body filternav">
+                    <ul class="panel-list">
+                        <li ng-init="startups.allIndustries=true" ng-class="{'active':startups.allIndustries}" ng-click="startups.loadingIndustry=true; startups.allIndustries=true; startups.filterIndustries();">
+                            <a><i class="fa fa-fw fa-globe themed-color-dark icon-push"></i> All</a>
+                        </li>
+                        <hr style="margin: 10px 0 10px 0;">
+                        <li ng-repeat="industry in nav.industries" ng-class="{'active':startups.selectedIndustries.indexOf(industry.key) >= 0}" ng-click="startups.loadingIndustry=true;  startups.allIndustries=false; startups.filterIndustries(industry.key);">
+                            <a><i class="fa {{industry.profile.icon}}"></i> {{industry.profile.name}}</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="hpanel hblue">
+                <div class="panel-footer top" style="font-size: 17px;">
+                    <strong>Network</strong> Filters
+                    <i ng-show="startups.loadingNetwork" class="fa fa-refresh fa-spin pull-right" style="padding: 4px; color: #aaa;"></i>
+                </div>
+                <div class="panel-body filternav">
+                    <ul class="panel-list">
+                        <li ng-init="startups.allNetworks=true" ng-class="{'active':startups.allNetworks}" ng-click="startups.loadingNetwork=true; startups.allNetworks=true; startups.filterNetworks();">
+                            <a><i class="fa fa-fw fa-globe themed-color-dark icon-push"></i> All</a>
+                        </li>
+                        <hr style="margin: 10px 0 10px 0;">
+                        <li ng-repeat="network in nav.networks" ng-class="{'active':startups.selectedNetworks.indexOf(network.key) >= 0}" ng-click="startups.allNetworks=false; startups.filterNetworks(network.key);">
+                            <a><i class="fa {{network.profile.icon}}"></i> {{network.profile.name}}</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+
+
+        <div ng-class="{'col-lg-10 col-md-9 col-sm-8' : !$state.includes('search.*')}" style="padding-left: 15px; padding-right: 15px;">
+
+            <div class="hpanel">
+                <div class="panel-footer top">
+                    <div class="pull-right">
+                        <strong>{{startups.startups.start}} - {{startups.startups.end}}</strong> of <strong>{{startups.startups.total_count}}&nbsp;&nbsp;</strong>
+                        <div class="btn-group btn-group-sm" style="margin-top: -2px;">
+                            <span ng-if="startups.startups.prev"><a ng-click="startups.search(startups.startups.prev)" class="btn btn-sm btn-default" style="background-color: #fff;"><i class="fa fa-angle-left"></i></a></span>
+                            <span ng-if="startups.startups.next"><a ng-click="startups.search(startups.startups.next)" class="btn btn-sm btn-default" style="background-color: #fff;"><i class="fa fa-angle-right"></i></a></span>
+                        </div>
+                    </div>
+                    <span style="font-size: 17px;" ng-bind-html="startups.title"></span>
+                    <span><i ng-show="startups.loadingStartups" class="fa fa-refresh fa-spin" style="padding: 4px; color: #aaa; font-size: 17px; margin-left: 5px;"></i></span>
+                </div>
+
+                <div class="panel-body content">
+                    <div class="row">
+                        <td style="border-bottom: 1px solid #fff; border-top: none; padding: 0;" colspan="3"></td>
+                    </div>
+                    <div ng-show="startups.tag" style="text-align: center" ng-cloak><h2><br/>Searching for {{startups.tag}}..</h2><br/><br/></div>
+                    <div ng-show="startups.startups.results.length == 0" style="text-align: center" ng-cloak><h2><br/>Nothing here!</h2><br/><br/></div>
+                    <div ng-repeat="item in startups.startups.results" ng-switch on="$index % 2" style="margin-top: 10px;">
+                        <div class="col-md-6" ng-switch-when="0">
+                            <div class="row"  ng-include="'components/startups/startup.list.item.html'"></div>
+                        </div>
+                        <div class="col-md-6" ng-switch-when="1">
+                            <div class="row"  ng-include="'components/startups/startup.list.item.html'"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="panel-footer" style="height:45px;">
+                    <div class="pull-right">
+                        <strong>{{startups.startups.start}} - {{startups.startups.end}}</strong> of <strong>{{startups.startups.total_count}}&nbsp;&nbsp;</strong>
+                        <div class="btn-group btn-group-sm" style="margin-top: -2px;">
+                            <span ng-if="startups.startups.prev"><a ng-click="startups.search(startups.startups.prev)" class="btn btn-sm btn-default" style="background-color: #fff;"><i class="fa fa-angle-left"></i></a></span>
+                            <span ng-if="startups.startups.next"><a ng-click="startups.search(startups.startups.next)" class="btn btn-sm btn-default" style="background-color: #fff;"><i class="fa fa-angle-right"></i></a></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

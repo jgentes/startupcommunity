@@ -7,14 +7,14 @@ function NavigationController($auth, $state, $location, $stateParams, $modal, us
 
     // SENSITIVE VARIABLES THAT AFFECT NAVIGATION AND ALL CHILD TEMPLATES
     console.log($stateParams);
-    this.location = $stateParams.location || (jQuery.isEmptyObject(location) ? communities.data[$stateParams.location_path] : location);
-    this.community = $stateParams.community || ((community.key !== this.location.key ? community : this.location));
+    this.location = jQuery.isEmptyObject($stateParams.location) ? (jQuery.isEmptyObject(location) ? communities.data[$stateParams.location_path] : location) : $stateParams.location;
+    this.community = jQuery.isEmptyObject($stateParams.community) ? (community.key !== this.location.key ? community : this.location) : $stateParams.community;
     this.community_path = $stateParams.community_path;
     this.location_path = $stateParams.location_path || $stateParams.location.key || this.community_path;
     console.log(this.location_path);
     console.log($stateParams.location.key);
-    console.log(this.location.key);
-    console.log(this.community.key);
+    console.log('location.key: ' + this.location.key);
+    console.log('community.key: ' + this.community.key);
 
     // CHECK FOR IFRAME
 
@@ -84,9 +84,10 @@ function NavigationController($auth, $state, $location, $stateParams, $modal, us
     // SEARCH
 
     if (this.community.type == "user" || this.community.type == "startup") {
-        if (!this.location_path) {
+        this.searchname = communities.data[this.community.profile.home].profile.name;
+        /*if (!this.location_path) {
             this.searchname = communities.data[this.community.profile.home].profile.name;
-        } else this.searchname = communities.data[this.location_path].profile.name;
+        } else this.searchname = communities.data[this.location_path].profile.name; */
     } else if (this.community.type == "industry") {
         if (this.community.community_profiles[this.location_path]) {
             this.searchname = this.community.community_profiles[this.location_path].name;
@@ -120,25 +121,8 @@ function NavigationController($auth, $state, $location, $stateParams, $modal, us
     };
 
     if (this.path().split('/').length < 3) {
-        switch (this.location.type) {
-            case "user":
-                $state.go('user.profile');
-                break;
-            case "startup":
-                $state.go('startups.profile');
-                break;
-            case "location":
-                $state.go('location.dashboard');
-                break;
-            case "network":
-                $state.go('network.dashboard');
-                break;
-            case "industry":
-                $state.go('industry.dashboard');
-                break;
-        }
+        $state.go(this.community.type + '.dashboard');
     }
-
 
 };
 
