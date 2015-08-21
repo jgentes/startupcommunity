@@ -7,11 +7,12 @@ function NavigationController($auth, $state, $location, $stateParams, $modal, us
 
     // SENSITIVE VARIABLES THAT AFFECT NAVIGATION AND ALL CHILD TEMPLATES
     console.log($stateParams);
-    this.location = $stateParams.location || jQuery.isEmptyObject(location) ? communities.data[$stateParams.location_path] : location;
-    this.community = $stateParams.community || (community.key !== this.location.key ? community : this.location);
+    this.location = $stateParams.location || (jQuery.isEmptyObject(location) ? communities.data[$stateParams.location_path] : location);
+    this.community = $stateParams.community || ((community.key !== this.location.key ? community : this.location));
     this.community_path = $stateParams.community_path;
     this.location_path = $stateParams.location_path || $stateParams.location.key || this.community_path;
     console.log(this.location_path);
+    console.log($stateParams.location.key);
     console.log(this.location.key);
     console.log(this.community.key);
 
