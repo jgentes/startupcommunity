@@ -87,10 +87,10 @@
                                     &nbsp;&nbsp;{{nav.location.profile.name}}</span>
                         </a>
                         <ul ng-show="nav.path().endsWith(nav.location_path + '/people') || nav.path().endsWith(nav.location_path + '/startups') || nav.path().endsWith(nav.location_path)" style="display: block;">
-                            <li ui-sref="user.list" ng-class="{ 'active' : nav.path().endsWith(nav.location_path + '/people') }">
+                            <li ui-sref="user.list({location_path: nav.location.key, community: nav.location, query: '*'})" ng-class="{ 'active' : nav.path().endsWith(nav.location_path + '/people') }">
                                 <a><i class="fa fa-caret-right"></i>&nbsp;&nbsp;People</a>
                             </li>
-                            <li ui-sref="startup.list" ng-class="{ 'active' : nav.path().endsWith(nav.location_path + '/startups') }">
+                            <li ui-sref="startup.list({location_path: nav.location.key, community: nav.location, query: '*'})" ng-class="{ 'active' : nav.path().endsWith(nav.location_path + '/startups') }">
                                 <a><i class="fa fa-caret-right"></i>&nbsp;&nbsp;Startups</a>
                             </li>
                         </ul>

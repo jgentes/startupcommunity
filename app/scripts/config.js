@@ -111,7 +111,7 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                     }],
                 location: ['$stateParams', 'community',
                     function($stateParams, community) {
-                        if (community.type == "location" || community.type == "network") {
+                        if (community && (community.type == "location" || community.type == "network")) {
                             return community;
                         } else return $stateParams.location;
                     }]

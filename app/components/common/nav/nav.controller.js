@@ -6,15 +6,12 @@ angular
 function NavigationController($auth, $state, $location, $stateParams, $modal, user, location, community, communities) {
 
     // SENSITIVE VARIABLES THAT AFFECT NAVIGATION AND ALL CHILD TEMPLATES
-    console.log($stateParams);
+    // When used in ui-sref links: location_path affects the url, location affects header and content, community affects header and secondary url
+
     this.location = jQuery.isEmptyObject($stateParams.location) ? (jQuery.isEmptyObject(location) ? communities.data[$stateParams.location_path] : location) : $stateParams.location;
     this.community = jQuery.isEmptyObject($stateParams.community) ? (community.key !== this.location.key ? community : this.location) : $stateParams.community;
     this.community_path = $stateParams.community_path;
     this.location_path = $stateParams.location_path || $stateParams.location.key || this.community_path;
-    console.log(this.location_path);
-    console.log($stateParams.location.key);
-    console.log('location.key: ' + this.location.key);
-    console.log('community.key: ' + this.community.key);
 
     // CHECK FOR IFRAME
 
@@ -81,8 +78,21 @@ function NavigationController($auth, $state, $location, $stateParams, $modal, us
 
     }
 
+    // BREADCRUMBS
+
+    if (this.community.type == "user") {
+        if (this.location.key == this.community.key) this.location = communities.data[this.community.profile.home];
+    }
+
     // SEARCH
-    this.searchname = this.location.profile.name;
+    //this.searchname = this.location.profile.name;
+
+    if (this.community.type == "industry") {
+        if (this.community.community_profiles && this.community.community_profiles[this.location_path]) {
+            this.searchname = this.community.community_profiles[this.location_path].name;
+        } else this.searchname = this.community.profile.name;
+    } else this.searchname = this.location.profile.name;
+
     /*
     if (this.community.type == "user" || this.community.type == "startup") {
         this.searchname = communities.data[this.community.profile.home].profile.name;
@@ -96,10 +106,11 @@ function NavigationController($auth, $state, $location, $stateParams, $modal, us
     } else this.searchname = this.location.profile.name;
 */
     this.search = function(query) {
+
         if (this.community.type == "industry") {
-            $state.go('search.dashboard', {community_path: this.community.key, location_path: this.location_path, query: query});
+            $state.go('search.dashboard', {community_path: this.community.key, query: query});
         } else if (this.community.type == "user" || this.community.type == "startup") {
-            $state.go('search.dashboard', {community_path: this.community.profile.home, query: query});
+            $state.go('search.dashboard', {location_path: this.community.profile.home, query: query});
         } else $state.go('search.dashboard', {query: query});
 
     };
