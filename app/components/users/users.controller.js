@@ -1,11 +1,11 @@
 angular
     .module('startupcommunity')
-    .controller('PeopleController', PeopleController)
-    .controller('PeopleProfileController', PeopleProfileController)
-    .controller('InvitePeopleController', InvitePeopleController)
-    .controller('ContactPeopleController', ContactPeopleController);
+    .controller('UserController', UserController)
+    .controller('UserProfileController', UserProfileController)
+    .controller('InviteUserController', InviteUserController)
+    .controller('ContactUserController', ContactUserController);
 
-function PeopleController($stateParams, user_service, result_service, $sce, $modal, community, communities) {
+function UserController($stateParams, user_service, result_service, $sce, $modal, community, communities) {
 
     this.community = community;
     this.communities = communities.data;
@@ -15,11 +15,11 @@ function PeopleController($stateParams, user_service, result_service, $sce, $mod
 
     var self = this; // for accessing 'this' in child functions
 
-    var communityFilter = [$stateParams.community_path];
-    if ($stateParams.parent_key) communityFilter.push($stateParams.parent_key);
+    var communityFilter = [$stateParams.location_path];
+    if ($stateParams.community_path) communityFilter.push($stateParams.community_path);
 
     this.searchUsers = function(alturl) {
-        self.loadingPeople = true;
+        self.loadingUser = true;
         if ($stateParams.query !== '*') {
             self.tag = $stateParams.query;
         } else self.tag = undefined;
@@ -28,7 +28,7 @@ function PeopleController($stateParams, user_service, result_service, $sce, $mod
             .then(function (response) {
                 self.tag = undefined;
                 self.users = result_service.setPage(response.data);
-                self.loadingPeople = false;
+                self.loadingUser = false;
                 self.lastQuery = $stateParams.query;
             });
     };
@@ -73,9 +73,9 @@ function PeopleController($stateParams, user_service, result_service, $sce, $mod
             self.title = '<strong>' + self.role + '</strong> in ' + self.selection;
         } else {
             self.title = 'People matching <strong>"' + $stateParams.query + '"</strong> ';
-            if ($stateParams.parent_key) {
-                self.title += 'in <strong>' + self.communities[$stateParams.parent_key].profile.name + '</strong>';
-            } else self.title += 'in <strong>' + self.communities[$stateParams.community_path].profile.name + '</strong>';
+            if ($stateParams.location_path) {
+                self.title += 'in <strong>' + self.communities[$stateParams.location_path].profile.name + '</strong>';
+            } else self.title += 'in <strong>' + self.communities[$stateParams.community.key].profile.name + '</strong>';
         }
 
         var pageTitle = '<br><small>' + self.community.profile.name + '</small>';
@@ -153,8 +153,8 @@ function PeopleController($stateParams, user_service, result_service, $sce, $mod
 
     this.contact = function(user) {
         var modalInstance = $modal.open({
-            templateUrl: 'components/people/people.contact.html',
-            controller: ContactPeopleController,
+            templateUrl: 'user.contact.html',
+            controller: ContactUserController,
             controllerAs: 'contact',
             windowClass: "hmodal-warning",
             resolve: {
@@ -166,7 +166,7 @@ function PeopleController($stateParams, user_service, result_service, $sce, $mod
     };
 }
 
-function ContactPeopleController($modalInstance, user){
+function ContactUserController($modalInstance, user){
     this.user = user;
     var self = this;
 
@@ -185,22 +185,22 @@ function ContactPeopleController($modalInstance, user){
     };
 }
 
-function InvitePeopleController($stateParams, user, user_service, community, communities) {
+function InviteUserController($stateParams, user, user_service, community, communities) {
 
 
 
 }
 
-function PeopleProfileController($scope, $stateParams, $location, $auth, $mixpanel, user, user_service, community, communities) {
+function UserProfileController($scope, $stateParams, $location, $auth, $mixpanel, user, user_service, location, communities) {
+
     if (!jQuery.isEmptyObject($stateParams.profile)) {
         this.user = $stateParams.profile;
-    } else if (community && community.type == "user") {
-        this.user = community;
+    } else if (location && location.type == "user") {
+        this.user = location;
     } else this.user = user.data.value;
 
     var self = this;
     this.communities = communities.data;
-    this.location = $stateParams.location;
 
     $mixpanel.track('Viewed Profile');
 
@@ -353,7 +353,7 @@ function PeopleProfileController($scope, $stateParams, $location, $auth, $mixpan
 
 }
 
-function InvitePeopleController($scope, user_service) {
+function InviteUserController($scope, user_service) {
     var self = this;
 
     $scope.invitePerson = function(url, email, userid) {

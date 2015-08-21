@@ -10,8 +10,8 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
     $stateProvider
 
         .state('invite', {
-            templateUrl: 'views/invite_people.html',
-            url: "/people/invite",
+            templateUrl: 'views/invite_user.html',
+            url: "/users/invite",
             resolve: {
                 authenticated: ['$auth', function($auth) {
                     if (!$auth.isAuthenticated()) {
@@ -131,30 +131,34 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
             }
         })
         .state('search.dashboard', {
-            url: "/search",
+            url: "^/:location_path/:community_path/search",
             params: {
                 community: {},
+                community_path: {
+                    value: null,
+                    squash: true
+                },
                 query: '*',
                 pageTitle: 'Search'
             },
             views: {
                 'people': {
-                    templateUrl: 'components/people/people.dashboard.html',
-                    controller: "PeopleController as people"
+                    templateUrl: '../components/users/user.dashboard.html',
+                    controller: "UserController as users"
                 },
                 'startups': {
-                    templateUrl: 'components/startups/startups.dashboard.html',
+                    templateUrl: '../components/startups/startup.dashboard.html',
                     controller: "StartupsController as startups"
                 }
             }
         })
 
-        // People views
-        .state('people', {
+        // User views
+        .state('user', {
             parent: 'root',
             abstract: true
         })
-        .state('people.profile', {
+        .state('user.profile', {
             params: {
                 profile: {},
                 community: {},
@@ -166,12 +170,12 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                     templateUrl: "components/common/header/header_small.html"
                 },
                 'content': {
-                    templateUrl: "components/people/people.profile.html",
-                    controller: 'PeopleProfileController as profile'
+                    templateUrl: "../components/users/user.profile.html",
+                    controller: 'UserProfileController as profile'
                 }
             }
         })
-        .state('people.dashboard', {
+        .state('user.dashboard', {
             url: "^/:location_path/:community_path/people",
             params: {
                 community: {},
@@ -186,13 +190,13 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                     templateUrl: "components/common/header/header_small.html"
                 },
                 'content': {
-                    templateUrl: 'components/people/people.dashboard.html',
-                    controller: "PeopleController as people"
+                    templateUrl: '../components/users/user.dashboard.html',
+                    controller: "UserController as users"
                 }
             }
         })
-        .state('people.invite', {
-            url: "/people/invite",
+        .state('user.invite', {
+            url: "/users/invite",
             params: {
                 community: {},
                 pageTitle: 'Invite People'
@@ -202,19 +206,19 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                     templateUrl: "components/common/header/header_small.html"
                 },
                 'content': {
-                    templateUrl: 'components/people/people.invite.html',
-                    controller: "InvitePeopleController as invite"
+                    templateUrl: '../components/users/user.invite.html',
+                    controller: "InviteUserController as invite"
                 }
             }
 
         })
         
         // Startup views
-        .state('startups', {
+        .state('startup', {
             parent: 'root',
             abstract: true
         })
-        .state('startups.dashboard', {
+        .state('startup.dashboard', {
             url: "/startups",
             params: {
                 community: {},
@@ -225,7 +229,7 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                     templateUrl: "components/common/header/header_small.html"
                 },
                 'content': {
-                    templateUrl: 'components/startups/startups.dashboard.html',
+                    templateUrl: '../components/startups/startup.dashboard.html',
                     controller: "StartupsController as startups"
                 }
             }
@@ -347,8 +351,8 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                     templateUrl: "components/common/header/header_small.html"
                 },
                 'content': {
-                    templateUrl: 'components/people/people.dashboard.html',
-                    controller: "PeopleController as people"
+                    templateUrl: '../components/users/user.dashboard.html',
+                    controller: "UserController as users"
                 }
             }
         })
@@ -362,8 +366,8 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
             },
             views: {
                 "people": {
-                    templateUrl: 'components/people/people.dashboard.html',
-                    controller: "PeopleController as people"
+                    templateUrl: '../components/users/user.dashboard.html',
+                    controller: "UserController as users"
                 }
             }
         })
@@ -443,8 +447,8 @@ angular
             function(event, toState, toParams, fromState, fromParams){
                 //console.log('from: ')
                 //console.log(fromState);
-                console.log('to:');
-                console.log(toState);
+                //console.log('to:');
+                //console.log(toState);
             })
 
     })

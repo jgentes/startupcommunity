@@ -5,24 +5,15 @@ angular
 
 function NavigationController($auth, $state, $location, $stateParams, $modal, user, location, community, communities) {
 
-    if (!jQuery.isEmptyObject(location)) { // if no location is passed in, get it from communities.data
-        this.location = location;
-    } this.location = communities.data[$stateParams.location_path];
-
-    if (community.key !== this.location.key) { // if no community is passed in, set community equal to location (but nullify community.key to squash url path)
-        this.community = community;
-    } else {
-        this.community = this.location;
-    }
-
+    // SENSITIVE VARIABLES THAT AFFECT NAVIGATION AND ALL CHILD TEMPLATES
+    console.log($stateParams);
+    this.location = $stateParams.location || jQuery.isEmptyObject(location) ? communities.data[$stateParams.location_path] : location;
+    this.community = $stateParams.community || (community.key !== this.location.key ? community : this.location);
     this.community_path = $stateParams.community_path;
-
-    // SUB-NAVIGATION TO INDUSTRIES AND /PEOPLE AND /STARTUPS
-
-    if (!$stateParams.location_path) {
-        this.location_path = $stateParams.location.key ? $stateParams.location.key : (this.location.key == this.community_path ? undefined : this.community_path);
-    } else this.location_path = $stateParams.location_path;
-
+    this.location_path = $stateParams.location_path || $stateParams.location.key || this.community_path;
+    console.log(this.location_path);
+    console.log(this.location.key);
+    console.log(this.community.key);
 
     // CHECK FOR IFRAME
 
@@ -103,7 +94,7 @@ function NavigationController($auth, $state, $location, $stateParams, $modal, us
 
     this.search = function(query) {
         if (this.community.type == "industry") {
-            $state.go('industry.search.dashboard', {location_path: this.location_path, community_path: this.community_path, query: query});
+            $state.go('search.dashboard', {community_path: this.community.key, location_path: this.location_path, query: query});
         } else if (this.community.type == "user" || this.community.type == "startup") {
             $state.go('search.dashboard', {community_path: this.community.profile.home, query: query});
         } else $state.go('search.dashboard', {query: query});
@@ -121,16 +112,6 @@ function NavigationController($auth, $state, $location, $stateParams, $modal, us
     };
 
 
-    console.log('location: ' + this.location.key);
-    console.log('community: ' + this.community.key);
-    console.log('communities:')
-    console.log(communities.data);
-    console.log('stateParams:');
-    console.log($stateParams);
-    console.log('nav.community_path: '+ this.community_path);
-    console.log('nav.location_path: ' + this.location_path);
-
-
     // ROUTING OF ROOT PATHS
 
     this.path = function() {
@@ -140,7 +121,7 @@ function NavigationController($auth, $state, $location, $stateParams, $modal, us
     if (this.path().split('/').length < 3) {
         switch (this.location.type) {
             case "user":
-                $state.go('people.profile');
+                $state.go('user.profile');
                 break;
             case "startup":
                 $state.go('startups.profile');

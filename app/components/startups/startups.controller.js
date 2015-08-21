@@ -72,9 +72,9 @@ function StartupsController($stateParams, startup_service, result_service, $sce,
             self.title = '<strong>' + self.stage + '</strong> in ' + self.selection;
         } else {
             self.title = 'Startups matching <strong>"' + $stateParams.query + '"</strong> ';
-            if ($stateParams.industry_key) {
-                self.title += 'in <strong>' + self.communities[$stateParams.industry_key].profile.name + '</strong>';
-            } else self.title += 'in <strong>' + self.communities[$stateParams.community_path].profile.name + '</strong>';
+            if ($stateParams.location_path) {
+                self.title += 'in <strong>' + self.communities[$stateParams.location_path].profile.name + '</strong>';
+            } else self.title += 'in <strong>' + self.communities[$stateParams.community.key].profile.name + '</strong>';
         }
 
         var pageTitle = '<br><small>' + self.community.profile.name + '</small>';

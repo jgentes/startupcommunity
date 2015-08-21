@@ -1,0 +1,132 @@
+<div>
+    <div class="row">
+        <div ng-if="!$state.includes('search.*') && !nav.embedded" class="col-lg-2 col-md-3 col-sm-4">
+        <!-- Navigation Block -->
+            <div class="hpanel hgreen">
+                <div class="panel-footer top" style="font-size: 17px;">
+                    <strong>Role</strong> Filters
+                    <i ng-show="users.loadingRole" class="fa fa-refresh fa-spin pull-right" style="padding: 4px; color: #aaa;"></i>
+                </div>
+                <div class="panel-body filternav">
+
+                    <ul class="panel-list">
+                        <li ng-class="{'active':users.selectedRole.indexOf('*') >= 0}" ng-click="users.filterRole('*')">
+                            <a><i class="fa fa-fw fa-globe themed-color-dark"></i> All</a>
+                        </li>
+                        <hr style="margin: 10px 0 10px 0;">
+                        <li ng-class="{'active':users.selectedRole.indexOf('founder') >= 0}" ng-click="users.filterRole('founder')">
+                            <a>
+                                <i class="fa fa-rocket text-navyblue"></i> Founders
+                            </a>
+                        </li>
+                        <li ng-class="{'active':users.selectedRole.indexOf('leader') >= 0}" ng-click="users.filterRole('leader')">
+                            <a>
+                                <i class="fa fa-flag text-danger"></i> Leaders
+                            </a>
+                        </li>
+                        <li ng-class="{'active':users.selectedRole.indexOf('advisor') >= 0}" ng-click="users.filterRole('advisor')">
+                            <a>
+                                <i class="fa fa-graduation-cap text-info"></i> Advisors
+                            </a>
+                        </li>
+                        <li ng-class="{'active':users.selectedRole.indexOf('investor') >= 0}" ng-click="users.filterRole('investor')">
+                            <a>
+                                <i class="fa fa-leaf text-success"></i> Investors
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="hpanel hnavyblue" ng-if="users.community.type !== 'industry'">
+                <div class="panel-footer top" style="font-size: 17px;">
+                    <strong>Industry</strong> Filters
+                    <i ng-show="users.loadingIndustry" class="fa fa-refresh fa-spin pull-right" style="padding: 4px; color: #aaa;"></i>
+                </div>
+                <div class="panel-body filternav">
+                    <ul class="panel-list">
+                        <li ng-init="users.allIndustries=true" ng-class="{'active':users.allIndustries}" ng-click="users.loadingIndustry=true; users.allIndustries=true; users.filterIndustries();">
+                            <a><i class="fa fa-fw fa-globe themed-color-dark icon-push"></i> All</a>
+                        </li>
+                        <hr style="margin: 10px 0 10px 0;">
+                        <li ng-repeat="industry in nav.industries" ng-class="{'active':users.selectedIndustries.indexOf(industry.key) >= 0}" ng-click="users.loadingIndustry=true;  users.allIndustries=false; users.filterIndustries(industry.key);">
+                            <a><i class="fa {{industry.profile.icon}}"></i> {{industry.profile.name}}</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="hpanel hblue">
+                <div class="panel-footer top" style="font-size: 17px;">
+                    <strong>Network</strong> Filters
+                    <i ng-show="users.loadingNetwork" class="fa fa-refresh fa-spin pull-right" style="padding: 4px; color: #aaa;"></i>
+                </div>
+                <div class="panel-body filternav">
+                    <ul class="panel-list">
+                        <li ng-init="users.allNetworks=true" ng-class="{'active':users.allNetworks}" ng-click="users.loadingNetwork=true; users.allNetworks=true; users.filterNetworks();">
+                            <a><i class="fa fa-fw fa-globe themed-color-dark icon-push"></i> All</a>
+                        </li>
+                        <hr style="margin: 10px 0 10px 0;">
+                        <li ng-repeat="network in nav.networks" ng-class="{'active':users.selectedNetworks.indexOf(network.key) >= 0}" ng-click="users.allNetworks=false; users.filterNetworks(network.key);">
+                            <a><i class="fa {{network.profile.icon}}"></i> {{network.profile.name}}</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+
+
+    <div ng-class="{'col-lg-10 col-md-9 col-sm-8' : !$state.includes('search.*') && !nav.embedded}" style="padding-left: 15px; padding-right: 15px;">
+
+        <div class="hpanel">
+            <div class="panel-footer top">
+                <div ng-show="!users.tag" class="pull-right">
+                    <strong>{{users.users.start}} - {{users.users.end}}</strong> of <strong>{{users.users.total_count}}&nbsp;&nbsp;</strong>
+                    <div class="btn-group btn-group-sm" style="margin-top: -2px;">
+                        <span ng-if="users.users.prev"><a ng-click="users.searchUsers(users.users.prev)" class="btn btn-sm btn-default" style="background-color: #fff;"><i class="fa fa-angle-left"></i></a></span>
+                        <span ng-if="users.users.next"><a ng-click="users.searchUsers(users.users.next)" class="btn btn-sm btn-default" style="background-color: #fff;"><i class="fa fa-angle-right"></i></a></span>
+                    </div>
+                </div>
+                <!--
+                <div class="pull-right" style="margin-right: 25px; min-width: 175px;">
+                    <ui-select multiple ng-model="users.skills.selected" theme="bootstrap" ng-disabled="disabled" limit="3">
+                        <ui-select-match placeholder="Search by skill.." class="skill-input">{{$item}}</ui-select-match>
+                        <ui-select-choices repeat="skill in users.skills.list | filter:$select.search | limitTo: 5">
+                            {{skill}}
+                        </ui-select-choices>
+                    </ui-select>
+                </div>
+                -->
+                <span style="font-size: 17px;" ng-bind-html="users.title"></span>
+                <span><i ng-show="users.loadingUser" class="fa fa-refresh fa-spin" style="padding: 4px; color: #aaa; font-size: 17px; margin-left: 5px;"></i></span>
+            </div>
+
+            <div class="panel-body content">
+                <div class="row">
+                    <td style="border-bottom: 1px solid #fff; border-top: none; padding: 0;" colspan="3"></td>
+                </div>
+                <div ng-show="users.tag" style="text-align: center;" ng-cloak><h2><br/>Searching for {{users.tag}}..</h2><br/><br/></div>
+                <div ng-show="users.users.results.length == 0" style="text-align: center;" ng-cloak><h2><br/>Nothing here!</h2><br/><br/></div>
+                <div ng-repeat="item in users.users.results" ng-switch on="$index % 2" style="margin-top: 10px;">
+                    <div class="col-md-6" ng-switch-when="0">
+                        <div class="row"  ng-include="'components/users/user.dashboard.list.html'"></div>
+                    </div>
+                    <div class="col-md-6" ng-switch-when="1">
+                        <div class="row"  ng-include="'components/users/user.dashboard.list.html'"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="panel-footer" style="height:45px;">
+                <div ng-show="!users.tag" class="pull-right">
+                    <strong>{{users.users.start}} - {{users.users.end}}</strong> of <strong>{{users.users.total_count}}&nbsp;&nbsp;</strong>
+                    <div class="btn-group btn-group-sm" style="margin-top: -2px;">
+                        <span ng-if="users.users.prev"><a ng-click="users.searchUsers(users.users.prev)" class="btn btn-sm btn-default" style="background-color: #fff;"><i class="fa fa-angle-left"></i></a></span>
+                        <span ng-if="users.users.next"><a ng-click="users.searchUsers(users.users.next)" class="btn btn-sm btn-default" style="background-color: #fff;"><i class="fa fa-angle-right"></i></a></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>

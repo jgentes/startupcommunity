@@ -109,10 +109,10 @@
                     <div ng-show="startups.startups.results.length == 0" style="text-align: center" ng-cloak><h2><br/>Nothing here!</h2><br/><br/></div>
                     <div ng-repeat="item in startups.startups.results" ng-switch on="$index % 2" style="margin-top: 10px;">
                         <div class="col-md-6" ng-switch-when="0">
-                            <div class="row"  ng-include="'components/startups/startups.dashboard.list.html'"></div>
+                            <div class="row"  ng-include="'components/startups/startup.dashboard.list.html'"></div>
                         </div>
                         <div class="col-md-6" ng-switch-when="1">
-                            <div class="row"  ng-include="'components/startups/startups.dashboard.list.html'"></div>
+                            <div class="row"  ng-include="'components/startups/startup.dashboard.list.html'"></div>
                         </div>
                     </div>
                 </div>
