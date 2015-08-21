@@ -70,7 +70,7 @@ function UserController($stateParams, user_service, result_service, $sce, $modal
                 }
             }
         }
-        console.log($stateParams);
+
         if ($stateParams.query == "*") {
             self.title = '<strong>' + self.role + '</strong> in ' + self.selection;
         } else {
