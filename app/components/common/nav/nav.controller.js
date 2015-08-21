@@ -21,7 +21,7 @@ function NavigationController($auth, $state, $location, $stateParams, $modal, us
         this.embedded = true;
         this.referrer = document.referrer;
     }
-    //this.embedded = false; // for testing
+    //this.embedded = true; // for testing
 
     // ANONYMOUS ACCESS OR PROFILE DISPLAY
 
