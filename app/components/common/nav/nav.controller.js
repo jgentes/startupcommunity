@@ -94,6 +94,8 @@ function NavigationController($auth, $state, $location, $stateParams, $modal, us
 
     this.search = function(query) {
 
+        if (!query) query = "*";
+
         if (this.community.type == "industry") {
             $state.go('search.dashboard', {community_path: this.community.key, query: query});
         } else if (this.community.type == "user" || this.community.type == "startup") {
