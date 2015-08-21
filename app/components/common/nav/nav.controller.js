@@ -85,7 +85,6 @@ function NavigationController($auth, $state, $location, $stateParams, $modal, us
     }
 
     // SEARCH
-    //this.searchname = this.location.profile.name;
 
     if (this.community.type == "industry") {
         if (this.community.community_profiles && this.community.community_profiles[this.location_path]) {
@@ -93,18 +92,6 @@ function NavigationController($auth, $state, $location, $stateParams, $modal, us
         } else this.searchname = this.community.profile.name;
     } else this.searchname = this.location.profile.name;
 
-    /*
-    if (this.community.type == "user" || this.community.type == "startup") {
-        this.searchname = communities.data[this.community.profile.home].profile.name;
-        if (!this.location_path) {
-            this.searchname = communities.data[this.community.profile.home].profile.name;
-        } else this.searchname = communities.data[this.location_path].profile.name;
-    } else if (this.community.type == "industry") {
-        if (this.community.community_profiles[this.location_path]) {
-            this.searchname = this.community.community_profiles[this.location_path].name;
-        } else this.searchname = this.community.profile.name;
-    } else this.searchname = this.location.profile.name;
-*/
     this.search = function(query) {
 
         if (this.community.type == "industry") {
@@ -136,7 +123,7 @@ function NavigationController($auth, $state, $location, $stateParams, $modal, us
         $state.go(this.community.type + '.dashboard');
     }
 
-};
+}
 
 function ChangeLocationController($state, $modalInstance){
     $state.ok = function () {

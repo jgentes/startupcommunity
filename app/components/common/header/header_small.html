@@ -1,6 +1,6 @@
 <div class="small-header">
     <div class="hpanel">
-        <div class="panel-body">
+        <div class="panel-body" ng-class="'header-embedded' : nav.embedded">
             <div id="hbreadcrumb" class="pull-left">
                 <ol class="hbreadcrumb">
                     <li ng-if="nav.location_path && (nav.location.key !== nav.community.key)"><a ui-sref="{{nav.location.type + '.dashboard({location_path: nav.location.key, community: nav.location})'}}">
