@@ -82,18 +82,19 @@ function NavigationController($auth, $state, $location, $stateParams, $modal, us
     }
 
     // SEARCH
-
+    this.searchname = this.location.profile.name;
+    /*
     if (this.community.type == "user" || this.community.type == "startup") {
         this.searchname = communities.data[this.community.profile.home].profile.name;
-        /*if (!this.location_path) {
+        if (!this.location_path) {
             this.searchname = communities.data[this.community.profile.home].profile.name;
-        } else this.searchname = communities.data[this.location_path].profile.name; */
+        } else this.searchname = communities.data[this.location_path].profile.name;
     } else if (this.community.type == "industry") {
         if (this.community.community_profiles[this.location_path]) {
             this.searchname = this.community.community_profiles[this.location_path].name;
         } else this.searchname = this.community.profile.name;
     } else this.searchname = this.location.profile.name;
-
+*/
     this.search = function(query) {
         if (this.community.type == "industry") {
             $state.go('search.dashboard', {community_path: this.community.key, location_path: this.location_path, query: query});
