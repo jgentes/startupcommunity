@@ -218,10 +218,31 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
             parent: 'root',
             abstract: true
         })
+        .state('startups.dashboard', {
+            params: {
+                profile: {},
+                community: {},
+                location: {},
+                pageTitle: 'Startup Profile'
+            },
+            views: {
+                'header': {
+                    templateUrl: "components/common/header/header_small.html"
+                },
+                'content': {
+                    templateUrl: "components/startups/startup.dashboard.html",
+                    controller: 'StartupProfileController as profile'
+                }
+            }
+        })
         .state('startup.list', {
-            url: "/startups",
+            url: "^/:location_path/:community_path/startups",
             params: {
                 community: {},
+                community_path: {
+                    value: null,
+                    squash: true
+                },
                 pageTitle: 'Startups'
             },
             views: {
@@ -234,32 +255,7 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                 }
             }
         })
-        .state('startups.dashboard', {
-            params: {
-                profile: {},
-                community: {},
-                pageTitle: 'Startup Profile'
-            },
-            views: {
-                'header': {
-                    templateUrl: "components/common/header/header_small.html"
-                },
-                'content': {
-                    templateUrl: "components/startups/startup.dashboard.html",
-                    controller: 'StartupProfileController as profile'
-                }
-            },
-            resolve: {
-                authenticated: ['$auth', function($auth) {
-                    if (!$auth.isAuthenticated()) {
-                        $state.go('login');
-                    }
-                }],
-                team: ['user_service', '$stateParams', function(user_service, $stateParams) {
-                    return user_service.search([$stateParams.location_path], '*', ['*'], 18);
-                }]
-            }
-        })
+
         
         // Location views
         .state('location', {
