@@ -1,6 +1,17 @@
 angular
     .module('services', [])
 
+    .factory('notify_service', function($http) {
+        return {
+            contact: function(data) {
+                return $http.post('/api/2.0/contact?' + jQuery.param({
+                        data: data
+                        })
+                )
+            }
+        }
+    })
+
     .factory('user_service', function($http) {
         return {
             search: function(communities, query, roles, limit, alturl) { //alturl is for next/prev retrieval

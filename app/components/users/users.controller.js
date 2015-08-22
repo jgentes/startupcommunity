@@ -167,14 +167,26 @@ function UserController($stateParams, user_service, result_service, $sce, $modal
     };
 }
 
-function ContactUserController($modalInstance, user){
-    this.user = user;
+function ContactUserController($stateParams, $modalInstance, notify_service, community, user_service){
+
     var self = this;
+    console.log($stateParams);
+    console.log(community);
 
     this.send = function () {
         if (self.form.$valid) {
-            console.log(self.form.email_value);
-            $modalInstance.close();
+            var formdata = {
+                "name" : self.form.name_value,
+                "email" : self.form.email_value,
+                "company" : self.form.comnpany_value,
+                "reason" : self.form.reason_value
+            };
+            // need to get leader data into contact call...
+
+            user_service.search()
+
+            notify_service.contact(formdata);
+            $modalInstance.close(); //todo ideally validate the success of the POST then alert the user
         } else {
             self.form.submitted = true;
         }
