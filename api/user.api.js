@@ -307,21 +307,45 @@ function handleContactUser(req, res) {
                                 })
                             }
 
-                            knowtifyClient.contacts.add({
+                            knowtifyClient.contacts.upsert({
                                     "event" : "contact_request",
                                     "contacts": contacts
                                 },
                                 function(success){
-                                    console.log("result: ");
+                                    console.log(success);
+                                    res.status(200).end();
+                                },
+                                function(err){
+                                    console.log('error');
+                                    console.log(err);
+                                    res.status(403).send({ message: err });
+                                }
+                            );
+
+                            knowtifyClient.contacts.upsert({
+                                    "event" : "contact_receipt",
+                                    "contacts": [{
+                                        "email": formdata.email,
+                                        "data" : {
+                                            "source_name": formdata.name,
+                                            "source_email" : formdata.email,
+                                            "source_company" : formdata.company,
+                                            "source_reason" : formdata.reason,
+                                            "target_name" : response.body.profile.name,
+                                            "target_email" : response.body.profile.email,
+                                            "target_avatar" : response.body.profile.avatar
+                                        }
+                                    }]
+                                },
+                                function(success){
                                     console.log(success);
                                 },
                                 function(err){
                                     console.log('error');
                                     console.log(err);
                                 }
-                        );
+                            );
 
-                            res.status(200).end();
                         } else {
                             console.warn('WARNING:  User not found.');
                             res.status(403).send({ message: "Sorry, we weren't able to find this user's record, which is really odd. Please contact us." });

@@ -174,12 +174,13 @@ function UserController($stateParams, user_service, result_service, $sce, $modal
     };
 }
 
-function ContactUserController($modalInstance, notify_service, community_key, location_key, user, user_service){
+function ContactUserController($modalInstance, notify_service, sweet, community_key, location_key, user){
 
     var self = this;
     this.user = user; //used in view
 
     this.send = function () {
+
         if (self.form.$valid) {
             var formdata = {
                 "name" : self.form.name_value,
@@ -188,15 +189,22 @@ function ContactUserController($modalInstance, notify_service, community_key, lo
                 "reason" : self.form.reason_value
             };
 
+            $modalInstance.close();
+
             notify_service.contact(user.key, formdata, community_key, location_key)
                 .then(function(response) {
                     console.log(response);
+                    sweet.show({
+                        title: "Connection Request Sent!",
+                        text: "Expect to hear a response soon.",
+                        type: "success"
+                    });
+                    // if 200 then good, otherwise 403 and get message
                 });
-
-            $modalInstance.close(); //todo ideally validate the success of the POST then alert the user
         } else {
             self.form.submitted = true;
         }
+
 
     };
 
