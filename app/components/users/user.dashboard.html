@@ -10,8 +10,9 @@
                         <div class="col-sm-10 col-lg-11" style="padding-bottom: 15px;">
                             <div style="margin-right: -15px;">
                                 <div class="btn-group pull-right">
-                                    <a href="#"><i class="fa fa-twitter btn btn-default btn-xs"></i></a>
-                                    <a href="{{profile.user.profile.linkedin.publicProfileUrl}}" target="_blank"><i class="fa fa-linkedin btn btn-default btn-xs"></i>
+                                    <a ng-click="profile.contact(profile.user)" title="Contact {{item.value.profile.name}}" class="pull-left" style="padding-right: 8px;">
+                                        <i class="pe-7s-mail" style="font-size: 24px; opacity: .45;"></i></a>
+                                    <a href="{{::profile.user.profile.linkedin.publicProfileUrl}}" target="_blank"><i class="fa fa-linkedin btn btn-default btn-xs"></i>
                                     </a>
                                 </div>
                             </div>

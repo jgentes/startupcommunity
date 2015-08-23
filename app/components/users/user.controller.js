@@ -185,7 +185,7 @@ function ContactUserController($modalInstance, notify_service, sweet, community_
             var formdata = {
                 "name" : self.form.name_value,
                 "email" : self.form.email_value,
-                "company" : self.form.comnpany_value,
+                "company" : self.form.company_value,
                 "reason" : self.form.reason_value
             };
 
@@ -193,13 +193,23 @@ function ContactUserController($modalInstance, notify_service, sweet, community_
 
             notify_service.contact(user.key, formdata, community_key, location_key)
                 .then(function(response) {
-                    console.log(response);
-                    sweet.show({
-                        title: "Connection Request Sent!",
-                        text: "Expect to hear a response soon.",
-                        type: "success"
-                    });
-                    // if 200 then good, otherwise 403 and get message
+
+                    if (response.status !== 200) {
+                        sweet.show({
+                            title: "Sorry, something went wrong.",
+                            text: "Here's what we know: " + response.data.message,
+                            type: "error"
+                        });
+                        console.warn("WARNING: ");
+                        console.log(response);
+                    } else {
+                        sweet.show({
+                            title: "Connection Request Sent!",
+                            text: "Expect to hear a response soon.",
+                            type: "success"
+                        });
+                    }
+
                 });
         } else {
             self.form.submitted = true;
@@ -219,7 +229,7 @@ function InviteUserController($stateParams, user, user_service, community, commu
 
 }
 
-function UserProfileController($scope, $stateParams, $location, $auth, $mixpanel, user, user_service, community, communities) {
+function UserProfileController($scope, $stateParams, $location, $auth, $modal, $mixpanel, user, user_service, community, communities) {
 
     if (!jQuery.isEmptyObject($stateParams.profile)) {
         this.user = $stateParams.profile;
@@ -228,9 +238,31 @@ function UserProfileController($scope, $stateParams, $location, $auth, $mixpanel
     } else this.user = user.data.value;
 
     var self = this;
+    this.community = community;
     this.communities = communities.data;
 
     $mixpanel.track('Viewed Profile');
+
+    this.contact = function(user) {
+
+        var modalInstance = $modal.open({
+            templateUrl: 'components/users/user.contact.html',
+            controller: ContactUserController,
+            controllerAs: 'contact',
+            windowClass: "hmodal-warning",
+            resolve: {
+                user: function() {
+                    return user;
+                },
+                community_key: function() {
+                    return self.community.key;
+                },
+                location_key: function() {
+                    return $stateParams.location_path;
+                }
+            }
+        });
+    };
 
     this.putProfile = function(userid, profile) {
         user_service.putProfile(userid, profile, function(response) {

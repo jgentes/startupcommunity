@@ -312,11 +312,11 @@ function handleContactUser(req, res) {
                                     "contacts": contacts
                                 },
                                 function(success){
-                                    console.log(success);
+                                    console.log('Contact request sent to ' + leaders[leader].profile.name);
                                     res.status(200).end();
                                 },
                                 function(err){
-                                    console.log('error');
+                                    console.warn('error');
                                     console.log(err);
                                     res.status(403).send({ message: err });
                                 }
@@ -338,10 +338,10 @@ function handleContactUser(req, res) {
                                     }]
                                 },
                                 function(success){
-                                    console.log(success);
+                                    console.log('Contact receipt sent to ' + formdata.name);
                                 },
                                 function(err){
-                                    console.log('error');
+                                    console.warn('error');
                                     console.log(err);
                                 }
                             );

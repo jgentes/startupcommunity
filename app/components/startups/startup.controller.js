@@ -1,9 +1,9 @@
 angular
     .module('startupcommunity')
-    .controller('StartupsController', StartupsController)
+    .controller('StartupController', StartupController)
     .controller('StartupProfileController', StartupProfileController);
 
-function StartupsController($stateParams, startup_service, result_service, $sce, community, communities) {
+function StartupController($stateParams, startup_service, result_service, $sce, community, communities) {
 
     this.community = community;
     this.communities = communities.data;

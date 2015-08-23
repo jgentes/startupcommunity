@@ -2,7 +2,7 @@
     <div class="color-line"></div>
     <div class="modal-header">
         <h4 class="modal-title">Contact {{contact.user.profile.name}}</h4>
-        <p class="font-bold">Before we connect you, we will need to know a few things:</p>
+        <p class="font-bold">Before we connect you with {{contact.user.profile.name.split(" ")[0]}}, we will need to know a few things:</p>
     </div>
     <div class="modal-body">
         <form role="form" name="contact.form" novalidate ng-submit="contact.send()">
@@ -27,6 +27,7 @@
                     <span class="text-danger" ng-show="contact.form.reason.$error">&nbsp;&nbsp;<i class="fa fa-exclamation-triangle"></i> Please tell us why you would like to get in touch with {{contact.user.profile.name.split(" ")[0]}}.</span>
                 </div>
             </div>
+            <div class="hidden-submit"><input type="submit" tabindex="-1"/></div>
         </form>
     </div>
     <div class="modal-footer">

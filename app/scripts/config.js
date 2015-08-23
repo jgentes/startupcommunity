@@ -143,12 +143,12 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
             },
             views: {
                 'people': {
-                    templateUrl: '../components/users/user.list.html',
+                    templateUrl: 'components/users/user.list.html',
                     controller: "UserController as users"
                 },
                 'startups': {
-                    templateUrl: '../components/startups/startup.list.html',
-                    controller: "StartupsController as startups"
+                    templateUrl: 'components/startups/startup.list.html',
+                    controller: "StartupController as startups"
                 }
             }
         })
@@ -170,7 +170,7 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                     templateUrl: "components/common/header/header_small.html"
                 },
                 'content': {
-                    templateUrl: "../components/users/user.dashboard.html",
+                    templateUrl: "components/users/user.dashboard.html",
                     controller: 'UserProfileController as profile'
                 }
             }
@@ -190,7 +190,7 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                     templateUrl: "components/common/header/header_small.html"
                 },
                 'content': {
-                    templateUrl: '../components/users/user.list.html',
+                    templateUrl: 'components/users/user.list.html',
                     controller: "UserController as users"
                 }
             }
@@ -206,7 +206,7 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                     templateUrl: "components/common/header/header_small.html"
                 },
                 'content': {
-                    templateUrl: '../components/users/user.invite.html',
+                    templateUrl: 'components/users/user.invite.html',
                     controller: "InviteUserController as invite"
                 }
             }
@@ -250,8 +250,8 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                     templateUrl: "components/common/header/header_small.html"
                 },
                 'content': {
-                    templateUrl: '../components/startups/startup.list.html',
-                    controller: "StartupsController as startups"
+                    templateUrl: 'components/startups/startup.list.html',
+                    controller: "StartupController as startups"
                 }
             }
         })
@@ -260,39 +260,26 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
         // Location views
         .state('location', {
             parent: "root",
-            abstract: true
-        })
-        .state('location.dashboard', {
-            params: {
-                location_path: "",
-                pageTitle: "Location Profile"
-            },
+            abstract: true,
             views: {
                 'header': {
                     templateUrl: "components/common/header/header_big.html"
                 },
                 'content': {
-                    templateUrl: 'components/locations/location.dashboard.html',
-                    controller: "LocationController as loc"
+                    template: "<div ui-view='people'></div>"
                 }
+            }
+        })
+        .state('location.dashboard', {
+            params: {
+                location_path: "",
+                pageTitle: "Location"
             },
-            resolve: {
-                authenticated: ['$auth', function($auth) {
-                    if (!$auth.isAuthenticated()) {
-                        $state.go('login');
-                    }
-                }],
-                leaders: ['user_service', '$stateParams', function(user_service, $stateParams) {
-                    return user_service.search([$stateParams.location_path], '*', ['leader'], 18);
-                }],
-                communities: ['community_service', '$stateParams', 'communities',
-                    function(community_service, $stateParams, communities) {
-
-                        if ($stateParams.location_path !== communities.data.key) {
-                            return community_service.getCommunity($stateParams.location_path);
-                        } else return communities;
-                    }]
-
+            views: {
+                'people': {
+                    templateUrl: 'components/users/user.list.html',
+                    controller: "UserController as users"
+                }
             }
         })
 
@@ -300,40 +287,27 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
         // Industry views
         .state('industry', {
             parent: "root",
-            abstract: true
+            abstract: true,
+            views: {
+                'header': {
+                    templateUrl: "components/common/header/header_small.html"
+                },
+                'content': {
+                    template: "<div ui-view='people'></div>"
+                }
+            }
         })
         .state('industry.dashboard', {
             url: "/:community_path",
             params: {
                 community: {},
-                pageTitle: "Industry Profile"
+                pageTitle: "Industry"
             },
             views: {
-                'header': {
-                    templateUrl: "components/common/header/header_big.html"
-                },
-                'content': {
-                    templateUrl: 'components/industries/industry.dashboard.html',
-                    controller: "IndustryController as ind"
+                'people': {
+                    templateUrl: 'components/users/user.list.html',
+                    controller: "UserController as users"
                 }
-            },
-            resolve: {
-                authenticated: ['$auth', function($auth) {
-                    if (!$auth.isAuthenticated()) {
-                        $state.go('login');
-                    }
-                }],
-                leaders: ['user_service', '$stateParams', function(user_service, $stateParams) {
-                    return user_service.search([$stateParams.location_path], '*', ['leader'], 30);
-                }],
-                communities: ['community_service', '$stateParams', 'communities',
-                    function(community_service, $stateParams, communities) {
-
-                        if ($stateParams.location_path !== communities.data.key) {
-                            return community_service.getCommunity($stateParams.location_path);
-                        } else return communities;
-                    }]
-
             }
         })
         .state('industry.people', {
@@ -347,7 +321,7 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                     templateUrl: "components/common/header/header_small.html"
                 },
                 'content': {
-                    templateUrl: '../components/users/user.list.html',
+                    templateUrl: 'components/users/user.list.html',
                     controller: "UserController as users"
                 }
             }
@@ -362,7 +336,7 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
             },
             views: {
                 "people": {
-                    templateUrl: '../components/users/user.list.html',
+                    templateUrl: 'components/users/user.list.html',
                     controller: "UserController as users"
                 }
             }
@@ -371,38 +345,26 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
         // Network views
         .state('network', {
             parent: "root",
-            abstract: true
-        })
-        .state('network.dashboard', {
-            params: {
-                community: {},
-                pageTitle: "Network Profile"
-            },
+            abstract: true,
             views: {
                 'header': {
                     templateUrl: "components/common/header/header_big.html"
                 },
                 'content': {
-                    templateUrl: 'components/networks/network.dashboard.html',
-                    controller: "NetworkController as net"
+                    template: "<div ui-view='people'></div>"
                 }
+            }
+        })
+        .state('network.dashboard', {
+            params: {
+                community: {},
+                pageTitle: "Network"
             },
-            resolve: {
-                authenticated: ['$auth', function($auth) {
-                    if (!$auth.isAuthenticated()) {
-                        $state.go('login');
-                    }
-                }],
-                leaders: ['user_service', '$stateParams', function(user_service, $stateParams) {
-                    return user_service.search([$stateParams.location_path], '*', ['leader'], 18);
-                }],
-                communities: ['community_service', '$stateParams', 'communities',
-                    function(community_service, $stateParams, communities) {
-                        if ($stateParams.location_path !== communities.data.key) {
-                            return community_service.getCommunity($stateParams.location_path);
-                        } else return communities;
-                    }]
-
+            views: {
+                'people': {
+                    templateUrl: 'components/users/user.list.html',
+                    controller: "UserController as users"
+                }
             }
         })
 
