@@ -99,7 +99,7 @@ app.post('/api/2.0/profile/remove/:userid', auth.ensureAuthenticated, userApis.r
 app.post('/api/2.0/feedback', auth.ensureAuthenticated, userApis.feedback);
 // new for 2.0
 app.get('/api/2.0/startups', startupApis.startupSearch);
-app.get('/api/2.0/contact', startupApis.startupSearch);
+app.post('/api/2.0/contact', userApis.contactUser);
 
 // Auth
 app.get('/auth/unlink/:provider', auth.ensureAuthenticated, auth.unlink);

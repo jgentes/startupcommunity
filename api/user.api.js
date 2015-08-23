@@ -1,11 +1,10 @@
 var Q = require('q'),
-  request = require('request'),
-  url = require('url'),
-  jwt = require('jwt-simple'),
-  config = require('../config.json')[process.env.NODE_ENV || 'development'],
-  db = require('orchestrate')(config.db.key),
-  mandrill = require('mandrill-api/mandrill'),
-  mandrill_client = new mandrill.Mandrill(config.mandrill);
+    request = require('request'),
+    url = require('url'),
+    jwt = require('jwt-simple'),
+    config = require('../config.json')[process.env.NODE_ENV || 'development'],
+    db = require('orchestrate')(config.db.key),
+    knowtify = require('knowtify-node');
 
 //require('request-debug')(request); // Very useful for debugging oauth and api req/res
 
@@ -13,6 +12,7 @@ var UserApi = function() {
     this.userSearch = handleUserSearch;
     this.directSearch = handleDirectSearch;
     this.invitePerson = handleInvitePerson;
+    this.contactUser = handleContactUser;
     this.getProfile = handleGetProfile;
     this.setRole = handleSetRole;
     this.removeProfile = handleRemoveProfile;
@@ -254,6 +254,102 @@ function handleInvitePerson(req, res) {
     }
 }
 
+/*
+ |--------------------------------------------------------------------------
+ | Contact User
+ |--------------------------------------------------------------------------
+ */
+
+function handleContactUser(req, res) {
+
+    var user_key = req.query.user_key,
+        formdata = req.query.formdata,
+        community_key = req.query.community_key,
+        location_key = req.query.location_key;
+
+    // search format is 'roles.leader[community]: location'
+
+    // create searchstring to get leader of community
+    var searchstring = '(roles.leader.' + community_key + ': "' + location_key + '") AND type: "user"';
+
+    db.newSearchBuilder()
+        .collection(config.db.collections.communities)
+        .limit(10)
+        .query(searchstring)
+        .then(function(result){
+            if (result.body.results.length > 0) {
+                console.log("Found leader(s)");
+                var leaders = [];
+                for (item in result.body.results) {
+                    leaders.push(result.body.results[item].value);
+                }
+
+                // now get user record for email address
+                db.get(config.db.collections.communities, user_key)
+                    .then(function(response){
+                        if (response.body.code !== "items_not_found") {
+                            var contacts = [],
+                                knowtifyClient = new knowtify.Knowtify(config.knowtify, false);
+
+                            for (leader in leaders) {
+                                contacts.push({
+                                    "name" : leaders[leader].profile.name,
+                                    "email" : leaders[leader].profile.email,
+                                    "data" : {
+                                        "source_name": formdata.name,
+                                        "source_email" : formdata.email,
+                                        "source_company" : formdata.company,
+                                        "source_reason" : formdata.reason,
+                                        "target_name" : response.body.profile.name,
+                                        "target_email" : response.body.profile.email,
+                                        "target_avatar" : response.body.profile.avatar
+                                    }
+                                })
+                            }
+
+                            knowtifyClient.contacts.add({
+                                    "event" : "contact_request",
+                                    "contacts": contacts
+                                },
+                                function(success){
+                                    console.log("result: ");
+                                    console.log(success);
+                                },
+                                function(err){
+                                    console.log('error');
+                                    console.log(err);
+                                }
+                        );
+
+                            res.status(200).end();
+                        } else {
+                            console.warn('WARNING:  User not found.');
+                            res.status(403).send({ message: "Sorry, we weren't able to find this user's record, which is really odd. Please contact us." });
+                        }
+                    })
+
+                    .fail(function(err){
+                        console.warn("WARNING: SEARCH FAIL:");
+                        console.warn(err);
+                        res.status(400).send({ message: 'Something went wrong: ' + err});
+                    });
+
+
+
+
+            } else {
+                console.log("COULD NOT FIND LEADER FOR THIS COMMUNITY");
+                //todo add email to support@startupcommunity.org with details of request.
+                res.status(403).send({ message: "Sorry, we can't seem to find a leader for this community. We took note of your request and we'll look into this and get back to you via email ASAP." });
+            }
+        })
+        .fail(function(err){
+            console.log("SEARCH FAIL:" + err);
+            res.status(400).send({ message: 'Something went wrong: ' + err});
+        });
+
+
+}
 
 /*
  |--------------------------------------------------------------------------

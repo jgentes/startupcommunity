@@ -3,9 +3,12 @@ angular
 
     .factory('notify_service', function($http) {
         return {
-            contact: function(data) {
+            contact: function(user_key, formdata, community_key, location_key) {
                 return $http.post('/api/2.0/contact?' + jQuery.param({
-                        data: data
+                        user_key: user_key,
+                        formdata: formdata,
+                        community_key: community_key,
+                        location_key: location_key
                         })
                 )
             }

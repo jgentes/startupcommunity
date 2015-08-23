@@ -153,6 +153,7 @@ function UserController($stateParams, user_service, result_service, $sce, $modal
     };
 
     this.contact = function(user) {
+
         var modalInstance = $modal.open({
             templateUrl: 'components/users/user.contact.html',
             controller: ContactUserController,
@@ -161,17 +162,22 @@ function UserController($stateParams, user_service, result_service, $sce, $modal
             resolve: {
                 user: function() {
                     return user;
+                },
+                community_key: function() {
+                    return self.community.key;
+                },
+                location_key: function() {
+                    return $stateParams.location_path;
                 }
             }
         });
     };
 }
 
-function ContactUserController($stateParams, $modalInstance, notify_service, community, user_service){
+function ContactUserController($modalInstance, notify_service, community_key, location_key, user, user_service){
 
     var self = this;
-    console.log($stateParams);
-    console.log(community);
+    this.user = user; //used in view
 
     this.send = function () {
         if (self.form.$valid) {
@@ -181,11 +187,12 @@ function ContactUserController($stateParams, $modalInstance, notify_service, com
                 "company" : self.form.comnpany_value,
                 "reason" : self.form.reason_value
             };
-            // need to get leader data into contact call...
 
-            user_service.search()
+            notify_service.contact(user.key, formdata, community_key, location_key)
+                .then(function(response) {
+                    console.log(response);
+                });
 
-            notify_service.contact(formdata);
             $modalInstance.close(); //todo ideally validate the success of the POST then alert the user
         } else {
             self.form.submitted = true;
