@@ -7,7 +7,6 @@ var bcrypt = require('bcryptjs'),
 
 var AuthApi = function() {
     this.ensureAuthenticated = handleEnsureAuthenticated;
-    this.validateRole = handleValidateRole;
     this.createAPIToken = handleCreateAPIToken;
     this.createToken = handleCreateToken;
     this.invitePerson = handleInvitePerson;
@@ -118,37 +117,6 @@ function handleEnsureAuthenticated(req, res, next) {
         console.log(e);
         return res.status(401).send({ message: 'Please logout or clear your local browser storage and try again.' });
     }
-}
-
-function handleValidateRole(req, res, next) {
-    console.log(req.user);
-    /*
-    try {
-
-        var token = req.headers.authorization.split(' ')[1];
-        var payload = jwt.decode(token, config.token_secret);
-
-        if (payload.exp <= Date.now()) {
-            console.log('Token has expired');
-            return res.status(401).send({ message: 'Your session has expired. Please log in again.' });
-        }
-
-        if (req.user === undefined) {
-            req.user = {}; //required step to pursue auth through refresh
-        } else {
-            console.log('Existing user in request:');
-        }
-
-        req.user = payload.sub;
-        next();
-    }
-    catch (e) {
-        console.log('EnsureAuth failure: ');
-        console.log(e);
-        return res.status(401).send({ message: 'Please logout or clear your local browser storage and try again.' });
-    }
-    */
-    return res.status(401).send({ message: 'Sorry, your roles do not allow you to do that.' });
 }
 
 /*
@@ -539,7 +507,10 @@ function handleLinkedin(req, res) {
 
 function handleInvitePerson(req, res) {
 
-    var invitePerson= JSON.parse(req.query.user);
+    var invitePerson = req.query;
+    // validate user has leader role within the location/community
+    console.log(invitePerson);
+
     if (invitePerson) {
         // user must have valid Linkedin access token to pull other user's profile details
         var gettoken = function(invitePerson, callback) {
@@ -568,7 +539,7 @@ function handleInvitePerson(req, res) {
 
 
         };
-
+/*
         gettoken(invitePerson, function(access_token) {
 
             getLinkedinProfile(invitePerson.url, invitePerson.email, access_token, function(result) {
@@ -576,7 +547,7 @@ function handleInvitePerson(req, res) {
             });
 
         });
-
+*/
     }
 }
 

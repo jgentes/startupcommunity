@@ -19,7 +19,7 @@
     </div>
         <div class="panel-body">
             <div style="padding: 20px 20px 60px 20px;">
-                <form role="form" name="invite.form" novalidate ng-submit="invite.invitePerson(nav.user.key)">
+                <form role="form" name="invite.form" novalidate ng-submit="invite.invitePerson(nav.location_path, nav.community.key)">
                     <div class="form-group">
                         <label>Email Address:</label>
                         <input type="email" placeholder="new@mentor.com" class="form-control input-lg" required name="email" ng-model="invite.form.email_value">

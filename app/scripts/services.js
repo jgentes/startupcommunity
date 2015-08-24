@@ -44,8 +44,15 @@ angular
                       callback(response);
                   })
             },
-            invitePerson: function(url, email, userid) {
-                return $http.get('/api/1.1/invitePerson?user={"url":"' + url + '","email":"' + email + '","userid":"' + userid + '"}');
+            invitePerson: function(linkedin_url, email, location_key, community_key) {
+                return $http.get('/api/1.1/invitePerson', {
+                    params: {
+                        linkedin_url: linkedin_url,
+                        email: email,
+                        location_key: location_key,
+                        community_key: community_key
+                    }
+                });
             },
             getKey: function() {
                 return $http.get('/api/1.1/profile/getkey');

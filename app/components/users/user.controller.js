@@ -409,17 +409,17 @@ function UserProfileController($scope, $stateParams, $location, $auth, $modal, $
 function InviteUserController(user_service) {
     var self = this;
 
-    this.invitePerson = function(userid) {
+    this.invitePerson = function(location_key, community_key) {
 
         this.working = true;
 
         if (self.form.$valid) {
             var formdata = {
                 "email" : self.form.email_value,
-                "url" : self.form.url_value
+                "linkedin_url" : self.form.url_value
             };
 
-            user_service.invitePerson(formdata.url, formdata.email, userid)
+            user_service.invitePerson(formdata.linkedin_url, formdata.email, location_key, community_key)
                 .then(function(response) {
                     self.working = false;
                     if (response.status !== 200) {
