@@ -50,14 +50,8 @@ angular
                       callback(response);
                   });
             },
-            invitePerson: function(url, email, userid, callback) {
-                $http.get('/api/1.1/invitePerson?user={"url":"' + url + '","email":"' + email + '","userid":"' + userid + '"}')
-                  .success( function(response) {
-                      callback(response);
-                  })
-                  .error( function(response) {
-                      callback(response);
-                  });
+            invitePerson: function(url, email, userid) {
+                return $http.get('/api/1.1/invitePerson?user={"url":"' + url + '","email":"' + email + '","userid":"' + userid + '"}');
             },
             getKey: function() {
                 return $http.get('/api/1.1/profile/getkey');

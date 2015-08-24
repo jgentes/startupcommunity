@@ -1,0 +1,44 @@
+<div ng-class="{'header-embedded' : nav.embedded}">
+    <div class="hpanel">
+        <div class="panel-body">
+            <h2 class="font-light m-b-xs">
+                <span>{{ $state.params.pageTitle }}</span>
+                <i class="pull-right" ng-class="{'fa fa-circle-o-notch fa-spin' : invite.working, 'pe-7s-id' : !invite.working}" style="font-size: 50px;"></i>
+            </h2>
+            <small>{{ $state.params.pageDescription }}</small>
+        </div>
+    </div>
+</div>
+
+<div class="hpanel">
+    <div class="panel-heading hbuilt">
+        * This process currently <b>does not</b> notify the user (or invite them) in any way.
+    </div>
+    <div ng-show="invite.alert" class="alert" ng-class="{'alert-success' : invite.alert.type == 'success', 'alert-danger' : invite.alert.type == 'danger'}">
+        <i class="fa fa-exclamation"></i> {{ invite.alert.message }}
+    </div>
+        <div class="panel-body">
+            <div style="padding: 20px 20px 60px 20px;">
+                <form role="form" name="invite.form" novalidate ng-submit="invite.invitePerson(nav.user.key)">
+                    <div class="form-group">
+                        <label>Email Address:</label>
+                        <input type="email" placeholder="new@mentor.com" class="form-control input-lg" required name="email" ng-model="invite.form.email_value">
+                        <div class="m-t-xs" ng-show="invite.form.email.$invalid && invite.form.submitted">
+                            <span class="text-danger" ng-show="invite.form.email.$error">&nbsp;&nbsp;<i class="fa fa-exclamation-triangle"></i> Please enter a valid email address..</span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Linkedin URL:</label>
+                        <input type="text" placeholder="http://www.linkedin.com/in/bfeld" class="form-control input-lg" name="url" required ng-model="invite.form.url_value">
+                        <div class="m-t-xs" ng-show="invite.form.url.$invalid && invite.form.submitted">
+                            <span class="text-danger" ng-show="invite.form.url.$error">&nbsp;&nbsp;<i class="fa fa-exclamation-triangle"></i> We can't import their profile without a Linkedin URL..</span>
+                        </div>
+                    </div>
+                    <input type="submit" style="float:left" class="finish btn-success btn" ng-class="{'disabled' : disabled}" value="Submit" />
+                </form>
+            </div>
+    </div>
+    <div class="panel-footer">
+        To import a full spreadsheet, please <a href="mailto:james@startupcommunity.org">email James</a>.
+    </div>
+</div>

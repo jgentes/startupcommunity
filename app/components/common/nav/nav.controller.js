@@ -21,7 +21,7 @@ function NavigationController($auth, $state, $location, $stateParams, $modal, us
         this.embedded = true;
         this.referrer = document.referrer;
     }
-    this.embedded = true; // for testing
+    //this.embedded = true; // for testing
 
     // ANONYMOUS ACCESS OR PROFILE DISPLAY
 
@@ -47,6 +47,7 @@ function NavigationController($auth, $state, $location, $stateParams, $modal, us
         this.user.profile["roles"] = rolelist;
 
     } else {
+
         // assume there's an 'embed settings' somewhere in the network configuration screen which can be used to set color
         $('#main_content').css('background-color:', '#fff');
     }

@@ -11,7 +11,6 @@ var Q = require('q'),
 var UserApi = function() {
     this.userSearch = handleUserSearch;
     this.directSearch = handleDirectSearch;
-    this.invitePerson = handleInvitePerson;
     this.contactUser = handleContactUser;
     this.getProfile = handleGetProfile;
     this.setRole = handleSetRole;
@@ -207,55 +206,6 @@ function handleDirectSearch(req, res) {
 
 /*
  |--------------------------------------------------------------------------
- | Invite Person
- |--------------------------------------------------------------------------
- */
-
-function handleInvitePerson(req, res) {
-
-    var invitePerson= JSON.parse(req.query.user);
-    if (invitePerson) {
-        var gettoken = function(invitePerson, callback) {
-            db.newSearchBuilder()
-              .collection(config.db.collections.users)
-              .limit(1)
-              .query('profile.linkedin.id: "' + invitePerson.userid + '"')
-              .then(function(result){
-                  if (result.body.results.length > 0) {
-                      console.log("Found user, pulling access_token");
-                      if (result.body.results[0].value.profile.linkedin.access_token) {
-                          var access_token = result.body.results[0].value.profile.linkedin.access_token;
-                          callback(access_token);
-                      } else {
-                          console.log("User does not have Linkedin access_token!");
-                          res.status(401).send({ message: 'Sorry, you need to login to StartupCommunity.org with Linkedin first.' });
-                      }
-                  } else {
-                      console.log("COULD NOT FIND USER IN DB");
-                      res.status(401).send({ message: 'Something went wrong, please login again.' });
-                  }
-              })
-              .fail(function(err){
-                  console.log("SEARCH FAIL:" + err);
-                  res.status(202).send({ message: 'Something went wrong: ' + err});
-              });
-
-
-        };
-
-        gettoken(invitePerson, function(access_token) {
-
-            getLinkedinProfile(invitePerson.url, invitePerson.email, access_token, function(result) {
-                res.status(result.status).send(result);
-            });
-
-        });
-
-    }
-}
-
-/*
- |--------------------------------------------------------------------------
  | Contact User
  |--------------------------------------------------------------------------
  */
@@ -341,7 +291,7 @@ function handleContactUser(req, res) {
                                         }
                                     );
 
-                                    // create event in user record
+                                    // create event in user record for tracking purposes
                                     db.newEventBuilder()
                                         .from(config.db.collections.communities, user_key)
                                         .type('contact_request')

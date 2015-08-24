@@ -222,12 +222,6 @@ function ContactUserController($modalInstance, notify_service, sweet, community_
     };
 }
 
-function InviteUserController($stateParams, user, user_service, community, communities) {
-
-
-
-}
-
 function UserProfileController($scope, $stateParams, $location, $auth, $modal, $mixpanel, user, user_service, community, communities) {
 
     if (!jQuery.isEmptyObject($stateParams.profile)) {
@@ -412,23 +406,38 @@ function UserProfileController($scope, $stateParams, $location, $auth, $modal, $
 
 }
 
-function InviteUserController($scope, user_service) {
+function InviteUserController(user_service) {
     var self = this;
 
-    $scope.invitePerson = function(url, email, userid) {
-        $scope.disabled = true;
-        user_service.invitePerson(url, email, userid, function(response) {
-            $scope.disabled = false;
-            if (response.status !== 200) {
-                self.alert = { type: 'danger', msg: 'There was a problem: ' + String(response.message) };
-                console.warn("WARNING: ");
-                console.log(response);
-            } else {
-                self.alert = { type: 'success', msg: 'Person imported! ' + response.data.name + ' is good to go.' };
-            }
-        });
+    this.invitePerson = function(userid) {
+
+        this.working = true;
+
+        if (self.form.$valid) {
+            var formdata = {
+                "email" : self.form.email_value,
+                "url" : self.form.url_value
+            };
+
+            user_service.invitePerson(formdata.url, formdata.email, userid)
+                .then(function(response) {
+                    self.working = false;
+                    if (response.status !== 200) {
+                        self.alert = { type: 'danger', message: 'There was a problem: ' + String(response.data.message) };
+                        console.warn("WARNING: ");
+                        console.log(response);
+                    } else {
+                        self.alert = { type: 'success', message: 'Person imported! ' + response.data.name + ' is good to go.' };
+                    }
+                });
+
+        } else {
+            this.working = false;
+            self.form.submitted = true;
+        }
+
     };
 
-    $scope.disabled = false;
+    this.working = false;
 
 }

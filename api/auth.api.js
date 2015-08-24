@@ -9,6 +9,7 @@ var AuthApi = function() {
     this.ensureAuthenticated = handleEnsureAuthenticated;
     this.createAPIToken = handleCreateAPIToken;
     this.createToken = handleCreateToken;
+    this.invitePerson = handleInvitePerson;
     this.linkedin = handleLinkedin;
     this.signup = handleSignup;
     this.login = handleLogin;
@@ -496,6 +497,55 @@ function handleLinkedin(req, res) {
 
         }
     });
+}
+
+/*
+ |--------------------------------------------------------------------------
+ | Invite Person
+ |--------------------------------------------------------------------------
+ */
+
+function handleInvitePerson(req, res) {
+
+    var invitePerson= JSON.parse(req.query.user);
+    if (invitePerson) {
+        // user must have valid Linkedin access token to pull other user's profile details
+        var gettoken = function(invitePerson, callback) {
+
+            db.get(config.db.collections.communities, invitePerson.userid)
+                .then(function(result){
+                    if (result.body.code !== "items_not_found") {
+                        console.log("Found user, pulling access_token");
+                        console.log(result.body);
+                        if (result.body.profile.linkedin.access_token) {
+                            var access_token = result.body.profile.linkedin.access_token;
+                            callback(access_token);
+                        } else {
+                            console.log("User does not have Linkedin access_token!");
+                            res.status(202).send({ message: 'Sorry, you need to login to StartupCommunity.org with Linkedin first.' });
+                        }
+                    } else {
+                        console.log("COULD NOT FIND USER IN DB");
+                        res.status(401).send({ message: 'Something went wrong, please login again.' });
+                    }
+                })
+                .fail(function(err){
+                    console.log("SEARCH FAIL:" + err);
+                    res.status(202).send({ message: 'Something went wrong: ' + err});
+                });
+
+
+        };
+
+        gettoken(invitePerson, function(access_token) {
+
+            getLinkedinProfile(invitePerson.url, invitePerson.email, access_token, function(result) {
+                res.status(result.status).send(result);
+            });
+
+        });
+
+    }
 }
 
 /*
