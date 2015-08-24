@@ -7,6 +7,7 @@ var bcrypt = require('bcryptjs'),
 
 var AuthApi = function() {
     this.ensureAuthenticated = handleEnsureAuthenticated;
+    this.validateRole = handleValidateRole;
     this.createAPIToken = handleCreateAPIToken;
     this.createToken = handleCreateToken;
     this.invitePerson = handleInvitePerson;
@@ -119,6 +120,37 @@ function handleEnsureAuthenticated(req, res, next) {
     }
 }
 
+function handleValidateRole(req, res, next) {
+    console.log(req.user);
+    /*
+    try {
+
+        var token = req.headers.authorization.split(' ')[1];
+        var payload = jwt.decode(token, config.token_secret);
+
+        if (payload.exp <= Date.now()) {
+            console.log('Token has expired');
+            return res.status(401).send({ message: 'Your session has expired. Please log in again.' });
+        }
+
+        if (req.user === undefined) {
+            req.user = {}; //required step to pursue auth through refresh
+        } else {
+            console.log('Existing user in request:');
+        }
+
+        req.user = payload.sub;
+        next();
+    }
+    catch (e) {
+        console.log('EnsureAuth failure: ');
+        console.log(e);
+        return res.status(401).send({ message: 'Please logout or clear your local browser storage and try again.' });
+    }
+    */
+    return res.status(401).send({ message: 'Sorry, your roles do not allow you to do that.' });
+}
+
 /*
  |--------------------------------------------------------------------------
  | Generate JSON Web Token
@@ -127,7 +159,7 @@ function handleEnsureAuthenticated(req, res, next) {
 function handleCreateToken(req, user) {
     var payload = {
         iss: req.hostname,
-        sub: user.path.key,
+        sub: user,
         iat: moment().valueOf(),
         exp: moment().add(14, 'days').valueOf()
     };
@@ -143,13 +175,13 @@ function handleCreateAPIToken(req, res) {
     };
     res.status(201).send(jwt.encode(payload, config.API_token_secret));
 
-    db.get(config.db.collections.users, req.user)
+    db.get(config.db.collections.users, req.user.path.key)
         .then(function(response){
             if (response.body.code !== "items_not_found") {
                 console.log('Matching user found.');
                 if (response.body.profile.api_key === undefined) {
                     response.body.profile["api_key"] = jwt.encode(payload, config.API_token_secret); // get user account and re-upload with api_key
-                    db.put(config.db.collections.users, req.user, response.body)
+                    db.put(config.db.collections.users, req.user.path.key, response.body)
                         .then(function () {
                             console.log("Profile updated.");
                         })
@@ -556,11 +588,11 @@ function handleInvitePerson(req, res) {
 
 function handleUnlink(req, res) {
     var provider = req.params.provider;
-    db.get(config.db.collections.users, req.user)
+    db.get(config.db.collections.users, req.user.path.key)
         .then(function(response){
             if (response.body.code !== "items_not_found") {
                 response.body[provider] = undefined;
-                db.put(config.db.collections.users, req.user, response.body)
+                db.put(config.db.collections.users, req.user.path.key, response.body)
                     .then(function() {
                         console.log('Successfully unlinked provider!');
                         res.status(200).end();

@@ -350,7 +350,7 @@ function handleContactUser(req, res) {
 
 function handleGetProfile(req, res) {
     // req data is guaranteed by ensureauth
-    var userid = req.param.userid || req.user;
+    var userid = req.param.userid || req.user.path.key;
     console.log('Pulling user profile: ' + userid);
 
     db.get(config.db.collections.communities, userid)
@@ -388,7 +388,7 @@ function handleSetRole(req, res) {
 
     function checkperms(allowed, callback) {
         if (!allowed) {
-            db.get(config.db.collections.users, req.user)
+            db.get(config.db.collections.users, req.user.path.key)
               .then(function (response) {
                   userperms = findKey(response.body.communities, community, []); //todo this would mean an admin of anything would work, need to validate location + community
                   if (userperms[0].roles.indexOf("admin") > -1) { allowed=true; }
@@ -402,7 +402,7 @@ function handleSetRole(req, res) {
     }
 
     //check perms!
-    if (userkey == req.user) { allowed = true; }
+    if (userkey == req.user.path.key) { allowed = true; }
     checkperms(allowed, function (allowed) {
         if (allowed) {
             db.get(config.db.collections.users, userkey)
@@ -448,7 +448,7 @@ function handleSetRole(req, res) {
 }
 
 function handleFeedback(req, res) {
-    var userkey = req.user,
+    var userkey = req.user.path.key,
       data = JSON.parse(decodeURIComponent(req.query.data));
 
     db.get(config.db.collections.users, userkey)

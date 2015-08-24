@@ -28,12 +28,9 @@ angular
             },
             putUser: function(userid, profile, callback) {
                 $http.put('/api/1.1/user/' + userid + '?profile=' + profile)
-                  .success( function(response) {
+                  .then( function(response) {
                       callback(response);
                   })
-                  .error( function(response) {
-                      callback(response);
-                  });
             },
             getProfile: function(userid) {
                 return $http.get(userid ? '/api/1.1/profile/' + userid : '/api/1.1/profile');
@@ -43,12 +40,9 @@ angular
             },
             removeProfile: function(userid, callback) {
                 $http.post('/api/1.1/profile/remove/' + userid)
-                  .success( function(response) {
+                  .then( function(response) {
                       callback(response);
                   })
-                  .error( function(response) {
-                      callback(response);
-                  });
             },
             invitePerson: function(url, email, userid) {
                 return $http.get('/api/1.1/invitePerson?user={"url":"' + url + '","email":"' + email + '","userid":"' + userid + '"}');
@@ -58,12 +52,9 @@ angular
             },
             setRole: function(userkey, communitykey, cluster, role, status, callback) {
                 $http.put('/api/1.1/profile/role?userkey=' + userkey + '&communitykey=' + communitykey + '&cluster=' + cluster + '&role=' + role + '&status=' + status)
-                  .success( function(data, status) {
+                  .then( function(data, status) {
                       callback(data, status);
                   })
-                  .error( function(data, status) {
-                      callback(data, status);
-                  });
             },
             feedback: function(data) {
                 $http.post('/api/1.1/feedback?data=' + encodeURIComponent(JSON.stringify(data)));
