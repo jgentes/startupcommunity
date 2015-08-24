@@ -163,7 +163,7 @@ function handleCreateAPIToken(req, res) {
         })
         .fail(function(err){
             console.log("SEARCH FAIL:" + err);
-            res.status(400).send({ message: 'Something went wrong: ' + err});
+            res.status(202).send({ message: 'Something went wrong: ' + err});
         });
 
 }
@@ -204,18 +204,18 @@ function handleSignup(req, res) {
                             })
                             .fail(function(err){
                                 console.log("SEARCH FAIL:" + err);
-                                res.status(400).send({ message: 'Something went wrong: ' + err});
+                                res.status(202).send({ message: 'Something went wrong: ' + err});
                             })
                             .fail(function (err) {
                                 console.log("POST FAIL:" + err.body);
-                                res.status(400).send({ message: 'Something went wrong: ' + err});
+                                res.status(202).send({ message: 'Something went wrong: ' + err});
                             });
                     });
             }
         })
         .fail(function(err){
             console.log("SEARCH FAIL:" + err);
-            res.status(400).send({ message: 'Something went wrong: ' + err});
+            res.status(202).send({ message: 'Something went wrong: ' + err});
         });
 }
 
@@ -248,7 +248,7 @@ function handleLogin(req, res) {
         })
         .fail(function(err){
             console.log("SEARCH FAIL:" + err);
-            res.status(400).send('Something went wrong: ' + err);
+            res.status(202).send('Something went wrong: ' + err);
         });
 }
 
@@ -307,7 +307,7 @@ var linkedinPull = function (linkedinuser, pullcallback) {
         })
         .fail(function(err){
             console.log("SEARCH FAIL:" + err);
-            res.status(400).send({ message: 'Something went wrong: ' + err});
+            res.status(202).send({ message: 'Something went wrong: ' + err});
         });
 
 };
@@ -386,13 +386,13 @@ function handleLinkedin(req, res) {
                                     })
                                     .fail(function(err){
                                         console.log("SEARCH FAIL:" + err);
-                                        res.status(400).send({ message: 'Something went wrong: ' + err});
+                                        res.status(202).send({ message: 'Something went wrong: ' + err});
                                     });
                             }
                         })
                         .fail(function(err){
                             console.log("SEARCH FAIL:" + err);
-                            res.status(400).send({ message: 'Something went wrong: ' + err});
+                            res.status(202).send({ message: 'Something went wrong: ' + err});
                         });
 
 
@@ -452,7 +452,7 @@ function handleLinkedin(req, res) {
                                     })
                                     .fail(function(err){
                                         console.log("SEARCH FAIL:" + err);
-                                        res.status(400).send({ message: 'Something went wrong: ' + err});
+                                        res.status(202).send({ message: 'Something went wrong: ' + err});
                                     });
 
                                 /* Do this to create a user account if no user exists
@@ -517,16 +517,16 @@ function handleUnlink(req, res) {
                     })
                     .fail(function(err) {
                         console.log('user update failed');
-                        res.status(400).send({ message: 'Something went wrong! ' + err });
+                        res.status(202).send({ message: 'Something went wrong! ' + err });
                     });
             } else {
                 console.log('User not found.');
-                return res.status(400).send({ message: 'User not found' });
+                return res.status(202).send({ message: 'User not found' });
             }
         })
         .fail(function(err){
             console.log("SEARCH FAIL:" + err);
-            res.status(400).send({ message: 'Something went wrong: ' + err});
+            res.status(202).send({ message: 'Something went wrong: ' + err});
         });
 }
 

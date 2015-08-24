@@ -200,7 +200,7 @@ function handleDirectSearch(req, res) {
         })
         .fail(function(err){
             console.log(err.body.message);
-            res.status(400).send({ message: 'Something went wrong: ' + err});
+            res.status(202).send({ message: 'Something went wrong: ' + err});
         });
 }
 
@@ -237,7 +237,7 @@ function handleInvitePerson(req, res) {
               })
               .fail(function(err){
                   console.log("SEARCH FAIL:" + err);
-                  res.status(400).send({ message: 'Something went wrong: ' + err});
+                  res.status(202).send({ message: 'Something went wrong: ' + err});
               });
 
 
@@ -307,6 +307,7 @@ function handleContactUser(req, res) {
                                 })
                             }
 
+                            // send notification to leaders
                             knowtifyClient.contacts.upsert({
                                     "event" : "contact_request",
                                     "contacts": contacts
@@ -314,62 +315,78 @@ function handleContactUser(req, res) {
                                 function(success){
                                     console.log('Contact request sent to ' + leaders[leader].profile.name);
                                     res.status(200).end();
-                                },
-                                function(err){
-                                    console.warn('error');
-                                    console.log(err);
-                                    res.status(403).send({ message: err });
-                                }
-                            );
 
-                            knowtifyClient.contacts.upsert({
-                                    "event" : "contact_receipt",
-                                    "contacts": [{
-                                        "email": formdata.email,
-                                        "data" : {
-                                            "source_name": formdata.name,
+                                    // send notification to requestor
+                                    knowtifyClient.contacts.upsert({
+                                            "event" : "contact_receipt",
+                                            "contacts": [{
+                                                "email": formdata.email,
+                                                "data" : {
+                                                    "source_name": formdata.name,
+                                                    "source_email" : formdata.email,
+                                                    "source_company" : formdata.company,
+                                                    "source_reason" : formdata.reason,
+                                                    "target_name" : response.body.profile.name,
+                                                    "target_email" : response.body.profile.email,
+                                                    "target_avatar" : response.body.profile.avatar
+                                                }
+                                            }]
+                                        },
+                                        function(success){
+                                            console.log('Contact receipt sent to ' + formdata.name);
+                                        },
+                                        function(err){
+                                            console.warn('WARNING');
+                                            console.log(err);
+                                        }
+                                    );
+
+                                    // create event in user record
+                                    db.newEventBuilder()
+                                        .from(config.db.collections.communities, user_key)
+                                        .type('contact_request')
+                                        .data({
+                                            "community_key" : community_key,
+                                            "location_key" : location_key,
+                                            "leaders" : contacts,
+                                            "source_name" : formdata.name,
                                             "source_email" : formdata.email,
                                             "source_company" : formdata.company,
-                                            "source_reason" : formdata.reason,
-                                            "target_name" : response.body.profile.name,
-                                            "target_email" : response.body.profile.email,
-                                            "target_avatar" : response.body.profile.avatar
-                                        }
-                                    }]
-                                },
-                                function(success){
-                                    console.log('Contact receipt sent to ' + formdata.name);
+                                            "source_reason" : formdata.reason
+                                        })
+                                        .create();
+
                                 },
                                 function(err){
-                                    console.warn('error');
+                                    console.warn('WARNING');
                                     console.log(err);
+                                    res.status(202).send({ message: err });
                                 }
                             );
 
                         } else {
                             console.warn('WARNING:  User not found.');
-                            res.status(403).send({ message: "Sorry, we weren't able to find this user's record, which is really odd. Please contact us." });
+                            res.status(202).send({ message: "Sorry, we weren't able to find this user's record, which is really odd. Please contact us." });
                         }
                     })
 
                     .fail(function(err){
                         console.warn("WARNING: SEARCH FAIL:");
                         console.warn(err);
-                        res.status(400).send({ message: 'Something went wrong: ' + err});
+                        res.status(202).send({ message: 'Something went wrong: ' + err});
                     });
 
 
 
 
             } else {
-                console.log("COULD NOT FIND LEADER FOR THIS COMMUNITY");
-                //todo add email to support@startupcommunity.org with details of request.
-                res.status(403).send({ message: "Sorry, we can't seem to find a leader for this community. We took note of your request and we'll look into this and get back to you via email ASAP." });
+                console.warn("WARNING: COULD NOT FIND LEADER FOR THIS COMMUNITY");
+                res.status(202).send({ message: "Sorry, we can't seem to find a leader for this community. We took note of your request and we'll look into this and get back to you via email ASAP." });
             }
         })
         .fail(function(err){
             console.log("SEARCH FAIL:" + err);
-            res.status(400).send({ message: 'Something went wrong: ' + err});
+            res.status(202).send({ message: 'Something went wrong: ' + err});
         });
 
 
@@ -400,7 +417,7 @@ function handleGetProfile(req, res) {
         .fail(function(err){
             console.warn("WARNING: SEARCH FAIL:");
             console.warn(err);
-            res.status(400).send({ message: 'Something went wrong: ' + err});
+            res.status(202).send({ message: 'Something went wrong: ' + err});
         });
 
 }
@@ -429,7 +446,7 @@ function handleSetRole(req, res) {
               })
               .fail(function(err){
                   console.warn("WARNING: SEARCH FAIL:" + err);
-                  res.status(400).send({ message: 'Something went wrong: ' + err});
+                  res.status(202).send({ message: 'Something went wrong: ' + err});
               });
         } else callback(allowed);
     }
@@ -466,13 +483,13 @@ function handleSetRole(req, res) {
                     })
                     .fail(function (err) {
                         console.warn('WARNING:  Problem with put: ' + err);
-                        res.status(400).send({ message: 'Something went wrong: ' + err});
+                        res.status(202).send({ message: 'Something went wrong: ' + err});
                     });
 
               })
               .fail(function (err) {
                   console.warn('WARNING:  Problem with get: ' + err);
-                  res.status(400).send({ message: 'Something went wrong: ' + err});
+                  res.status(202).send({ message: 'Something went wrong: ' + err});
               });
         } else {
             res.status(401).send({ message: 'You do not have permission to change this role.'});
@@ -494,13 +511,13 @@ function handleFeedback(req, res) {
             })
             .fail(function (err) {
                 console.warn('WARNING:  Problem with put: ' + err);
-                res.status(400).send({ message: 'Something went wrong: ' + err});
+                res.status(202).send({ message: 'Something went wrong: ' + err});
             });
 
       })
       .fail(function (err) {
           console.warn('WARNING:  Problem with get: ' + err);
-          res.status(400).send({ message: 'Something went wrong: ' + err});
+          res.status(202).send({ message: 'Something went wrong: ' + err});
       });
 }
 
@@ -519,7 +536,7 @@ function handleRemoveProfile(req, res) {
       })
       .fail(function(err){
           console.log("Remove FAIL:" + err);
-          res.status(400).send({ message: 'Something went wrong: ' + err });
+          res.status(202).send({ message: 'Something went wrong: ' + err });
       });
 }
 

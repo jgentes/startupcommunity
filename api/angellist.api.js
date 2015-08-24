@@ -16,7 +16,7 @@ function handleGetStartups(req, res) {
             if (error) {
                 console.log('AngelList API ERROR');
                 console.log(error);
-                res.status(400).send({ message: 'Something went wrong: ' + error});
+                res.status(202).send({ message: 'Something went wrong: ' + error});
             } else if (!body.status || body.status === 200) {
                 var results = JSON.parse(body),
                     newresponse = [],
@@ -42,7 +42,7 @@ function handleGetStartup(req, res) {
             } else {
                 console.error('Error: ' + body.message);
                 console.log(body);
-                res.status(400).send({ message: 'Something went wrong: ' + err});
+                res.status(202).send({ message: 'Something went wrong: ' + err});
             }
         });
 

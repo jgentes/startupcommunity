@@ -97,14 +97,14 @@ function handleGetCommunity(req, res) {
                   } else finalize(result.body.results);
 
               } else {
-                  console.warn('Community not found!');
-                  res.status(400).send({message: 'Community not found.'});
+                  console.warn('WARNING: Community not found!');
+                  res.status(202).send({message: 'Community not found.'});
               }
           })
           .fail(function(err){
               console.log("SEARCH FAIL:");
                 console.warn(err);
-              res.status(400).send({ message: 'Something went wrong: ' + err});
+              res.status(202).send({ message: 'Something went wrong: ' + err});
           });
     }
 
@@ -123,8 +123,8 @@ function handleGetKey(req, res) {
                     result.body["key"] = req.params.key;
                     res.status(200).send(result.body);
                 } else {
-                    console.warn('Key not found!');
-                    res.status(400).send({message: 'Key not found.'});
+                    console.warn('WARNING: Key not found!');
+                    res.status(202).send({message: 'Key not found.'});
                 }
             })
             .fail(function(err){
@@ -133,7 +133,7 @@ function handleGetKey(req, res) {
                 } else {
                     console.log("SEARCH FAIL:");
                     console.warn(err);
-                    res.status(400).send({ message: 'Something went wrong: ' + err});
+                    res.status(202).send({ message: 'Something went wrong: ' + err});
                 }
             });
     }

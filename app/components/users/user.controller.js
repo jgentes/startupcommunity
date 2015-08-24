@@ -200,8 +200,7 @@ function ContactUserController($modalInstance, notify_service, sweet, community_
                             text: "Here's what we know: " + response.data.message,
                             type: "error"
                         });
-                        console.warn("WARNING: ");
-                        console.log(response);
+
                     } else {
                         sweet.show({
                             title: "Connection Request Sent!",
