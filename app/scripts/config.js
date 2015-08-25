@@ -102,7 +102,7 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                                     root = url.pop();
                                 if (lastitem == "people" || lastitem == "startups" || lastitem == "search") {
                                     return communities.data[root]; // return preceding url path as community, such as tech for 'bend-or/tech/people'
-                                } else if (communities.data[lastitem] && communities.data[lastitem].type == "industry") {
+                                } else if (communities.data[lastitem] && (communities.data[lastitem].type == "industry" || communities.data[lastitem].type == "network")) {
                                     return communities.data[lastitem]; // return tech in 'bend-or/tech'
                                 } else return pullCommunity();
                             } else return pullCommunity();
@@ -362,12 +362,29 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
             }
         })
         .state('network.dashboard', {
+            url: "/:community_path",
             params: {
                 community: {},
                 pageTitle: "Network"
             },
             views: {
                 'people': {
+                    templateUrl: 'components/users/user.list.html',
+                    controller: "UserController as users"
+                }
+            }
+        })
+        .state('network.people', {
+            url: "/:community_path/people",
+            params: {
+                community: {},
+                pageTitle: 'People'
+            },
+            views: {
+                'header': {
+                    templateUrl: "components/common/header/header_small.html"
+                },
+                'content': {
                     templateUrl: 'components/users/user.list.html',
                     controller: "UserController as users"
                 }

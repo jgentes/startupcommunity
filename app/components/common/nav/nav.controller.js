@@ -56,27 +56,24 @@ function NavigationController($auth, $state, $location, $stateParams, $modal, us
 
     // sort communities for use in nav and child dashboard pages
     for (item in communities.data) {
-        switch(communities.data[item].type) {
-            case "location":
-                if (item !== this.location.key) {
+        if (item !== this.community.key) {
+            switch (communities.data[item].type) {
+                case "location":
                     if (!this.locations) this.locations = {};
                     this.locations[item] = communities.data[item];
-                }
-                break;
-            case "industry":
-                if (!this.industries) this.industries = {};
-                this.industries[item] = communities.data[item];
-                break;
-            case "network":
-                if (item !== this.location.key) {
+                    break;
+                case "industry":
+                    if (!this.industries) this.industries = {};
+                    this.industries[item] = communities.data[item];
+                    break;
+                case "network":
                     if (!this.networks) this.networks = {};
                     this.networks[item] = communities.data[item];
-                }
-                break;
-            default:
-                break;
+                    break;
+                default:
+                    break;
+            }
         }
-
     }
 
     // BREADCRUMBS
