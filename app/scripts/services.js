@@ -44,8 +44,8 @@ angular
                       callback(response);
                   })
             },
-            invitePerson: function(linkedin_url, email, location_key, community_key) {
-                return $http.get('/api/1.1/invitePerson', {
+            inviteUser: function(linkedin_url, email, location_key, community_key) {
+                return $http.get('/api/1.1/invite', {
                     params: {
                         linkedin_url: linkedin_url,
                         email: email,

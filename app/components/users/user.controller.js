@@ -409,7 +409,7 @@ function UserProfileController($scope, $stateParams, $location, $auth, $modal, $
 function InviteUserController(user_service) {
     var self = this;
 
-    this.invitePerson = function(location_key, community_key) {
+    this.inviteUser = function(location_key, community_key) {
 
         this.working = true;
 
@@ -419,15 +419,14 @@ function InviteUserController(user_service) {
                 "linkedin_url" : self.form.url_value
             };
 
-            user_service.invitePerson(formdata.linkedin_url, formdata.email, location_key, community_key)
+            user_service.inviteUser(formdata.linkedin_url, formdata.email, location_key, community_key)
                 .then(function(response) {
                     self.working = false;
+
                     if (response.status !== 200) {
                         self.alert = { type: 'danger', message: 'There was a problem: ' + String(response.data.message) };
-                        console.warn("WARNING: ");
-                        console.log(response);
                     } else {
-                        self.alert = { type: 'success', message: 'Person imported! ' + response.data.name + ' is good to go.' };
+                        self.alert = { type: 'success', message: 'Congrats, ' + response.data.profile.name + ' has been imported and is good to go!' };
                     }
                 });
 

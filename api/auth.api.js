@@ -9,7 +9,7 @@ var AuthApi = function() {
     this.ensureAuthenticated = handleEnsureAuthenticated;
     this.createAPIToken = handleCreateAPIToken;
     this.createToken = handleCreateToken;
-    this.invitePerson = handleInvitePerson;
+    this.inviteUser = handleInviteUser;
     this.linkedin = handleLinkedin;
     this.signup = handleSignup;
     this.login = handleLogin;
@@ -23,32 +23,24 @@ var AuthApi = function() {
  */
 
 var schema = {
-    linkedin: function(profile, email) {
+    linkedin: function(profile, email, location_key, community_key) {
+
+        var communities = location_key == community_key ? [location_key] : [location_key, community_key],
+            roles = { "advisor" : {} };
+
+        roles.advisor[community_key] = [location_key];
+
         return {
             "type": "user",
-            "context": {
-                "location": "us",
-                "community": ""
-            },
             "profile": {
+                "home": location_key,
                 "name": profile.firstName + " " + profile.lastName,
                 "email": profile.emailAddress || email,
                 "linkedin": profile,
                 "avatar": profile.pictureUrl || ""
             },
-            "communities": {
-                "usa": {
-                    "oregon": {
-                        "deschutes-or": {
-                            "bend-or": {
-                                "roles": [
-                                    "supporter"
-                                ]
-                            }
-                        }
-                    }
-                }
-            }
+            "communities": communities,
+            "roles" : roles
         };
     },
     signupform: function(formdata) {
@@ -259,13 +251,13 @@ function handleLogin(req, res) {
  |--------------------------------------------------------------------------
  */
 
-var getLinkedinProfile = function(url, email, access_token, profilecallback) {
+var getLinkedinProfile = function(url, email, access_token, location_key, community_key, profilecallback) {
     var querystring = require('querystring');
     request.get({ url: 'https://api.linkedin.com/v1/people/url=' + querystring.escape(url) + ':(id,first-name,last-name,picture-url;secure=true,headline,location,summary,public-profile-url)', qs: { oauth2_access_token: access_token, format: 'json' }, json: true },
         function(error, response, body) {
             if (!body.status || body.status === 200) {
                 if (body.id !== undefined) {
-                    var linkedinuser = schema.linkedin(body, email);
+                    var linkedinuser = schema.linkedin(body, email, location_key, community_key);
                     console.log('LINKEDIN USER:');
                     console.log(linkedinuser);
                     linkedinPull(linkedinuser, profilecallback);
@@ -288,7 +280,7 @@ var linkedinPull = function (linkedinuser, pullcallback) {
             if (result.body.results.length > 0){
                 if (result.body.results[0].value.profile.linkedin.id == linkedinuser.profile.linkedin.id){
                     console.log("Matched Linkedin user to database user: " + linkedinuser.profile.name);
-                    pullcallback({ "status": 409, "message": "It looks like " + linkedinuser.profile.name + " is already in the system.", "data": result.body.results[0].value });
+                    pullcallback({ "status": 202, "message": "It looks like " + linkedinuser.profile.name + " is already in the system.", "data": result.body.results[0].value });
                 } else {
                     console.warn("WARNING: There's already an existing user with that public Linkedin profile.");
                     pullcallback({ "status": 200, "data": result.body.results[0].value });
@@ -505,49 +497,27 @@ function handleLinkedin(req, res) {
  |--------------------------------------------------------------------------
  */
 
-function handleInvitePerson(req, res) {
+function handleInviteUser(req, res) {
+    // always use ensureAuth before this (to acquire req.user)
+    var inviteUser = req.query;
 
-    var invitePerson = req.query;
     // validate user has leader role within the location/community
-    console.log(invitePerson);
+    if (req.user.value.roles.leader[inviteUser.community_key] && req.user.value.roles.leader[inviteUser.community_key].indexOf(inviteUser.location_key) > -1) {
 
-    if (invitePerson) {
         // user must have valid Linkedin access token to pull other user's profile details
-        var gettoken = function(invitePerson, callback) {
-
-            db.get(config.db.collections.communities, invitePerson.userid)
-                .then(function(result){
-                    if (result.body.code !== "items_not_found") {
-                        console.log("Found user, pulling access_token");
-                        console.log(result.body);
-                        if (result.body.profile.linkedin.access_token) {
-                            var access_token = result.body.profile.linkedin.access_token;
-                            callback(access_token);
-                        } else {
-                            console.log("User does not have Linkedin access_token!");
-                            res.status(202).send({ message: 'Sorry, you need to login to StartupCommunity.org with Linkedin first.' });
-                        }
-                    } else {
-                        console.log("COULD NOT FIND USER IN DB");
-                        res.status(401).send({ message: 'Something went wrong, please login again.' });
-                    }
-                })
-                .fail(function(err){
-                    console.log("SEARCH FAIL:" + err);
-                    res.status(202).send({ message: 'Something went wrong: ' + err});
-                });
-
-
-        };
-/*
-        gettoken(invitePerson, function(access_token) {
-
-            getLinkedinProfile(invitePerson.url, invitePerson.email, access_token, function(result) {
-                res.status(result.status).send(result);
+        if (req.user.value.profile.linkedin.access_token) {
+            var access_token = req.user.value.profile.linkedin.access_token;
+            getLinkedinProfile(inviteUser.linkedin_url, inviteUser.email, access_token, inviteUser.location_key, inviteUser.community_key, function(result) {
+                res.status(result.status).send(result.data);
             });
+        } else {
+            console.warn("User does not have Linkedin access_token!");
+            res.status(202).send({ message: 'Sorry, you need to login to StartupCommunity.org with Linkedin first.' });
+        }
 
-        });
-*/
+    } else {
+        console.warn("User is not a leader in location: " + inviteUser.location_key + " and community: " + inviteUser.community_key + "!");
+        res.status(202).send({ message: 'Sorry, you must be a Leader in this community to add people to it.' });
     }
 }
 

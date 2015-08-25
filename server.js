@@ -67,7 +67,7 @@ app.get('/api/1.0/:community/users', userApis.userSearch);
 app.get('/api/1.0/city/:community', communityApis.getCommunity);
 app.get('/api/1.0/profile', auth.ensureAuthenticated, userApis.getProfile);
 app.get('/api/1.0/profile/getkey', auth.ensureAuthenticated, auth.createAPIToken);
-app.get('/api/1.0/invitePerson', auth.ensureAuthenticated, auth.invitePerson);
+app.get('/api/1.0/inviteUser', auth.ensureAuthenticated, auth.inviteUser);
 app.put('/api/1.0/profile/role', auth.ensureAuthenticated, userApis.setRole);
 app.post('/api/1.0/profile/remove/:userid', auth.ensureAuthenticated, userApis.removeProfile);
 app.post('/api/1.0/feedback', auth.ensureAuthenticated, userApis.feedback);
@@ -80,7 +80,7 @@ app.get('/api/1.1/angel/startups', angellistApis.getStartups);
 app.get('/api/1.1/angel/startup', angellistApis.getStartup);
 app.get('/api/1.1/profile', auth.ensureAuthenticated, userApis.getProfile); // must ensureAuth to send userid to getProfile
 app.get('/api/1.1/profile/getkey', auth.ensureAuthenticated, auth.createAPIToken);
-app.get('/api/1.1/invitePerson', auth.ensureAuthenticated, auth.invitePerson);
+app.get('/api/1.1/invite', auth.ensureAuthenticated, auth.inviteUser);
 app.put('/api/1.1/profile/role', auth.ensureAuthenticated, userApis.setRole);
 app.post('/api/1.1/profile/remove/:userid', auth.ensureAuthenticated, userApis.removeProfile);
 app.post('/api/1.1/feedback', auth.ensureAuthenticated, userApis.feedback);
@@ -93,7 +93,7 @@ app.get('/api/2.0/angel/startups', angellistApis.getStartups);
 app.get('/api/2.0/angel/startup', angellistApis.getStartup);
 app.get('/api/2.0/profile', auth.ensureAuthenticated, userApis.getProfile); // must ensureAuth to send userid to getProfile
 app.get('/api/2.0/profile/getkey', auth.ensureAuthenticated, auth.createAPIToken);
-app.get('/api/2.0/invitePerson', auth.ensureAuthenticated, auth.invitePerson);
+app.get('/api/2.0/invite', auth.ensureAuthenticated, auth.inviteUser);
 app.put('/api/2.0/profile/role', auth.ensureAuthenticated, userApis.setRole);
 app.post('/api/2.0/profile/remove/:userid', auth.ensureAuthenticated, userApis.removeProfile);
 app.post('/api/2.0/feedback', auth.ensureAuthenticated, userApis.feedback);
