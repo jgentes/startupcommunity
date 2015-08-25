@@ -12,7 +12,7 @@
 
 <div class="hpanel">
     <div class="panel-heading hbuilt">
-        * This process currently <b>does not</b> notify the user (or invite them) in any way.
+        * This process currently <b>does not</b> notify the user (or invite them) in any way, it simply adds them to the community.
     </div>
     <div ng-show="invite.alert" class="alert" ng-class="{'alert-success' : invite.alert.type == 'success', 'alert-danger' : invite.alert.type == 'danger'}">
         &nbsp;{{ invite.alert.message }}
@@ -34,7 +34,7 @@
                             <span class="text-danger" ng-show="invite.form.url.$error">&nbsp;&nbsp;<i class="fa fa-exclamation-triangle"></i> We can't import their profile without a Linkedin URL..</span>
                         </div>
                     </div>
-                    <input type="submit" style="float:left" class="finish btn-success btn" ng-class="{'disabled' : disabled}" value="Submit" />
+                    <input type="submit" style="float:left" class="finish btn-success btn" ng-class="{'disabled' : disabled}" value="Add User" />
                 </form>
             </div>
     </div>

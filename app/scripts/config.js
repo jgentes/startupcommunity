@@ -296,7 +296,7 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
             abstract: true,
             views: {
                 'header': {
-                    templateUrl: "components/common/header/header_small.html"
+                    templateUrl: "components/common/header/header_big.html"
                 },
                 'content': {
                     template: "<div ui-view='people'></div>"
@@ -405,16 +405,19 @@ angular
     .run(function($rootScope, $state) {
         $rootScope.$state = $state; // allows use if $state within views
         window.$state = $state; // allows use of $state within console
-        $rootScope.$on("$stateChangeError", console.log.bind(console)); // for debugging of ui-router
-
+        //$rootScope.$on("$stateChangeError", console.log.bind(console)); // for debugging of ui-router
+        $rootScope.$on('$stateChangeSuccess',function(){
+            $("html, body").animate({ scrollTop: 0 }, 200);
+        });
+        /*
         $rootScope.$on('$stateChangeStart',
             function(event, toState, toParams, fromState, fromParams){
-                //console.log('from: ')
-                //console.log(fromState);
+                console.log('from: ')
+                console.log(fromState);
                 //console.log('to:');
                 //console.log(toState);
             })
-
+        */
     })
 
 

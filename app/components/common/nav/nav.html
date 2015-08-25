@@ -94,8 +94,8 @@
                         <ul ng-show="nav.path().endsWith(nav.location_path + '/people') || nav.path().endsWith(nav.location_path + '/startups') || nav.path().endsWith(nav.location_path + '/search') || nav.path().endsWith(nav.location_path)" style="display: block;">
                             <li ui-sref="user.list({location_path: nav.location.key, community: nav.location, query: '*'})" ng-class="{ 'active' : nav.path().endsWith(nav.location_path + '/people') }">
                                 <a><i class="fa fa-caret-right"></i>&nbsp;&nbsp;People</a>
-                                <li ng-if="nav.user.roles.leader[nav.community.key].indexOf(nav.community.key) > -1" class="nav-third-level" ui-sref="user.invite">
-                                    <a>+&nbsp;&nbsp;Invite People</a>
+                                <li ng-if="nav.user.roles.leader[nav.community.key].indexOf(nav.location_path) > -1" class="nav-third-level" ui-sref="user.invite">
+                                    <a style="color: #aaa;">+&nbsp;&nbsp;Invite People</a>
                                 </li>
                             </li>
                             <li ui-sref="startup.list({location_path: nav.location.key, community: nav.location, query: '*'})" ng-class="{ 'active' : nav.path().endsWith(nav.location_path + '/startups') }">
@@ -138,6 +138,9 @@
                         <ul ng-if="nav.path().includes('/' + item.key)">
                             <li ui-sref="user.list({location_path: nav.location_path, community_path: item.key, query: '*'})" ng-class="{ 'active' : nav.path().endsWith('/people') }">
                                 <a><i class="fa fa-caret-right"></i>&nbsp;&nbsp;People</a>
+                                <li ng-if="nav.user.roles.leader[nav.community.key]" class="nav-third-level" ui-sref="user.invite">
+                                    <a style="color: #aaa;">+&nbsp;&nbsp;Invite People</a>
+                                </li>
                             </li>
                             <li ui-sref="startup.list({location_path: nav.location_path, community_path: item.key, query: '*'})" ng-class="{ 'active' : nav.path().endsWith('/startups') }">
                                 <a><i class="fa fa-caret-right"></i>&nbsp;&nbsp;Startups</a>
@@ -157,21 +160,12 @@
                 <ul class="nav nav-second-level">
                     <li ng-repeat="item in nav.networks">
                         <a ui-sref="network.dashboard({location_path: item.key, community: item})" ng-class="{active: nav.path().includes('/' + item.key)}"><i ng-class="'fa ' + item.profile.icon"></i>&nbsp;&nbsp;{{item.profile.name}}</a>
-
-
-                            <li ng-if="nav.path().endsWith('/people') && nav.user.roles.leader[nav.community].indexOf(nav.community) > -1" class="nav-third-level" ui-sref="user.invite">
-                                <a>+&nbsp;&nbsp;Invite People</a>
-                            </li>
-
-
                     </li>
                 </ul>
             </li>
         </ul>
         <div>
             <ul id="sidebar" sticky-scroll="40">
-
-
             </ul>
         </div>
     </aside>
