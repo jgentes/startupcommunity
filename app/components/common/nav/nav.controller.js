@@ -20,28 +20,33 @@ function NavigationController($auth, $state, $location, $stateParams, $modal, us
     var self = this;
 
     // CHECK FOR IFRAME
-
+    console.log(document.referrer);
     try {
         this.embedded = window.self !== window.top;
     } catch (e) {
         this.embedded = true;
         this.referrer = document.referrer;
+        var verified = false;
+        var embed = this.community.profile.embed;
 
         if (this.community.type === 'network' || this.community.type === 'industry') {
             if (this.community.community_profiles[this.community_path] && this.community.community_profiles[this.community_path].embed) {
-                var urls = this.community.community_profiles[this.community_path].embed;
+                embed = this.community.community_profiles[this.community_path].embed;
             }
-        } else urls = this.community.profile.embed;
+        }
 
-        if (urls) {
-            for (u in urls) {
-                if (urls[u].indexOf(document.referrer) == -1) {
-                    $state.go('500');
+        if (embed) {
+            for (u in embed) {
+                if (embed[u].indexOf(document.referrer) > -1) {
+                    verified = true;
+                    if (embed[u].color) $('#main_content').css('background-color:', embed[u].color);
                 }
             }
-        } else $state.go('500');
+        }
+
+        if (!verified) $state.go('500');
     }
-    console.log(document.referrer);
+
     //this.embedded = true; // for testing
 
     // ANONYMOUS ACCESS OR PROFILE DISPLAY
@@ -67,10 +72,6 @@ function NavigationController($auth, $state, $location, $stateParams, $modal, us
 
         this.user.profile["roles"] = rolelist;
 
-    } else {
-
-        // assume there's an 'embed settings' somewhere in the network configuration screen which can be used to set color
-        $('#main_content').css('background-color:', '#fff');
     }
 
     // PRIMARY LEFT-NAV ITEM LIST
