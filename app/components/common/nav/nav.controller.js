@@ -24,10 +24,23 @@ function NavigationController($auth, $state, $location, $stateParams, $modal, us
     try {
         this.embedded = window.self !== window.top;
     } catch (e) {
-        this.embedded = true;
-        this.referrer = document.referrer;
         var verified = false;
         var embed = this.community.profile.embed;
+        this.embedded = true;
+
+        var domain;
+        //find & remove protocol (http, ftp, etc.) and get domain
+        if (document.referrer.indexOf("://") > -1) {
+            domain = document.referrer.split('/')[2];
+        }
+        else {
+            domain = document.referrer.split('/')[0];
+        }
+
+        //find & remove port number
+        domain = domain.split(':')[0];
+
+        console.log(domain);
 
         if (this.community.type === 'network' || this.community.type === 'industry') {
             if (this.community.community_profiles[this.community_path] && this.community.community_profiles[this.community_path].embed) {
@@ -37,7 +50,8 @@ function NavigationController($auth, $state, $location, $stateParams, $modal, us
 
         if (embed) {
             for (u in embed) {
-                if (embed[u].indexOf(document.referrer) > -1) {
+                if (embed[u].indexOf(domain) > -1) {
+                    console.log('verified!');
                     verified = true;
                     if (embed[u].color) $('#main_content').css('background-color:', embed[u].color);
                 }
