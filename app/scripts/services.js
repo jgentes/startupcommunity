@@ -82,12 +82,10 @@ angular
                   var urlString = '/api/2.0/key/' + key;
                   return $http.get(urlString);
               },
-              setSettings: function(embed, embed_color, embed_url, location_key, community_key) {
+              setSettings: function(embed, location_key, community_key) {
                   return $http.put('/api/2.0/settings', {
                       params: {
                           embed: embed,
-                          embed_color: embed_color,
-                          embed_url: embed_url,
                           location_key: location_key,
                           community_key: community_key
                       }

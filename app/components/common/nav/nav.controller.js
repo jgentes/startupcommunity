@@ -162,43 +162,49 @@ function ChangeLocationController($modalInstance){
 function CommunitySettingsController($modalInstance, sweet, community_service, community, location_key){
 
     this.community = community;
-    this.formdata = {
-        "embed_value": community.profile.embed_value,
-        "embed_color_value" : community.profile.embed_color,
-        "embed_url_value" : community.profile.embed_url_value
-    };
-
     var self = this;
 
-    this.save = function () {
-
+    this.addEmbed = function() {
         if (self.form.$valid) {
-
-            $modalInstance.close();
-
-            community_service.setSettings(self.form.embed_value, self.form.embed_color_value, self.form.embed_url_value, location_key, self.community.key)
-                .then(function(response) {
-
-                    if (response.status !== 201) {
-                        sweet.show({
-                            title: "Sorry, something went wrong.",
-                            text: "Here's what we know: " + response.data.message,
-                            type: "error"
-                        });
-
-                    } else {
-                        sweet.show({
-                            title: "Settings Saved!",
-                            type: "success"
-                        });
-
-                        $state.go($state.current, {}, {reload: true});
-                    }
-                });
+            if (!self.community.profile.embed) {
+                self.community.profile["embed"] = [];
+            }
+            self.community.profile.embed.push({
+                "url" : self.formdata.embed_url_value,
+                "color" : self.formdata.embed_color_value
+            })
         } else {
             self.form.submitted = true;
         }
+    };
 
+    this.removeEmbed = function(index) {
+        self.community.profile.embed.splice(index, 1);
+    };
+
+    this.save = function () {
+
+        $modalInstance.close();
+
+        community_service.setSettings(self.community.profile.embed, location_key, self.community.key)
+            .then(function(response) {
+
+                if (response.status !== 201) {
+                    sweet.show({
+                        title: "Sorry, something went wrong.",
+                        text: "Here's what we know: " + response.data.message,
+                        type: "error"
+                    });
+
+                } else {
+                    sweet.show({
+                        title: "Settings Saved!",
+                        type: "success"
+                    });
+
+                    $state.go($state.current, {reload: true});
+                }
+            });
     };
 
     this.cancel = function () {

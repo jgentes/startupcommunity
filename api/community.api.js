@@ -135,23 +135,13 @@ function handleSetCommunity(req, res) {
                             "name": response.body.profile.name,
                             "icon": response.body.profile.icon,
                             "logo": response.body.profile.logo,
-                            "embed" : settings.embed,
-                            "embed_color" : settings.embed_color,
-                            "embed_urls" : [settings.embed_url]
+                            "embed" : settings.embed
                         };
                     } else {
                         response.body.community_profiles[location_key]["embed"] = settings.embed;
-                        response.body.community_profiles[location_key]["embed_color"] = settings.embed_color;
-                        if (response.body.community_profiles[location_key].embed_urls === undefined) {
-                            response.body.community_profiles[location_key]["embed_urls"] = [settings.embed_url];
-                        } else response.body.community_profiles[location_key].embed_urls.push(settings.embed_url);
                     }
                 } else {
                     response.body.profile["embed"] = settings.embed;
-                    response.body.profile["embed_color"] = settings.embed_color;
-                    if (response.body.profile.embed_urls === undefined) {
-                        response.body.profile["embed_urls"] = [settings.embed_url];
-                    } else response.body.profile.embed_urls.push(settings.embed_url);
                 }
 
                 db.put(config.db.collections.communities, settings.community_key, response.body)

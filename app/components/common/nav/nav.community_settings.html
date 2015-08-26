@@ -5,30 +5,74 @@
         <p class="font-bold">Note: These settings can be modified by other Leaders of this community.</p>
     </div>
     <div class="modal-body">
-        <form role="form" name="settings.form" novalidate ng-submit="settings.save()">
-            <div class="checkbox checkbox-info">
-                <input id="embed" name="embed" type="checkbox" ng-model="settings.formdata.embed_value">
-                <label for="embed">Embed this community in another website</label>
-            </div>
-            <div ng-show="settings.formdata.embed_value">
-                <div class="form-group">
+        <form role="form" name="settings.form" novalidate ng-submit="settings.addEmbed()">
+            <div class="hpanel">
+                <div class="panel-heading" style="font-size: 20px;">Embed this community in another website:</div>
+                <div class="panel-body">
+                    <table style="border-collapse:separate; border-spacing:0 8px;">
+                        <tr>
+                            <td style="width:60%;">
+                                <label>Your website domain:</label>
+                            </td>
+                            <td style="width:40%; padding-left: 20px;">
+                                <label>Custom background color:</label>
+                            </td>
+                            <td style="width:10%;"></td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <input type="text" placeholder="yourdomain.com (no http://)" class="form-control input-lg" required name="embed_url" ng-model="settings.formdata.embed_url_value">
+                            </td>
+                            <td style="padding-left: 20px;">
+                                <input type="text" placeholder="#F1F3F6" class="form-control input-lg" name="embed_color" ng-model="settings.formdata.embed_color_value">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="m-t-xs" ng-show="settings.form.embed_url.$invalid && settings.form.submitted">
+                                    <span class="text-danger" ng-show="settings.form.embed_url.$error">&nbsp;&nbsp;<i class="fa fa-exclamation-triangle"></i> Domain is required.</span>
+                                </div>
+                            </td>
+                            <td></td>
+                        </tr>
+                    </table>
+                    <button type="submit" class="btn w-xs btn-success pull-right" ng-submit="settings.addEmbed()">Add</button>
+                </div>
+
+                <div class="panel-heading" style="font-size: 20px; margin-top: 15px;">Current domains:</div>
+                <div class="panel-body">
+                    <h3 ng-show="!settings.community.profile.embed || settings.community.profile.embed.length == 0">None yet!</h3>
+                    <table ng-show="settings.community.profile.embed.length > 0" style="border-collapse:separate; border-spacing:0 8px;">
+                        <tr>
+                            <td style="width:60%;">
+                                <label>Domain:</label>
+                            </td>
+                            <td style="width:30%; padding-left: 20px;">
+                                <label>Color:</label>
+                            </td>
+                            <td style="width:10%;"></td>
+                        </tr>
+                        <tr ng-repeat="domain in settings.community.profile.embed">
+                            <td>
+                                <input type="text" class="form-control input-lg" placeholder="{{domain.url}}" disabled>
+                            </td>
+                            <td style="padding-left: 20px;">
+                                <input type="text" class="form-control input-lg" placeholder="{{domain.color}}" disabled>
+                            </td>
+                            <td style="padding-left: 20px;">
+                                <i class="pe-7s-close-circle" ng-click="settings.removeEmbed($index)" style="font-size: 28px;"></i>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+
+                <div class="form-group" style="margin-top: 25px;">
                     <label>Use this code to embed this community:</label>
                     <pre>[iframe src="https://startupcommunity.org/<em>your-community-page</em>" width="100%" height="1500"]</pre>
                     <em>We recommend a minimum width of 1000px and minimum height of 1500px for the iframe.</em>
                 </div>
-                <div class="form-group">
-                    <label>Custom background color:</label>
-                    <input type="text" placeholder="#F1F3F6" class="form-control input-lg" name="embed_color" ng-model="settings.formdata.embed_color_value">
-                </div>
-                <div class="form-group">
-                    <label>Your website domain:</label>
-                    <input type="text" placeholder="yourdomain.com (no http://)" class="form-control input-lg" required name="embed_url" ng-model="settings.formdata.embed_url_value">
-                    <div class="m-t-xs" ng-show="settings.form.embed_url.$invalid && settings.form.submitted">
-                        <span class="text-danger" ng-show="settings.form.embed_url.$error">&nbsp;&nbsp;<i class="fa fa-exclamation-triangle"></i> We need a domain name for security purposes.</span>
-                    </div>
-                </div>
             </div>
-            <div class="hidden-submit"><input type="submit" tabindex="-1"/></div>
+
         </form>
     </div>
     <div class="modal-footer">
