@@ -20,7 +20,7 @@ function NavigationController($auth, $state, $location, $stateParams, $modal, us
     var self = this;
 
     // CHECK FOR IFRAME
-
+    this.embedded = false;
     try {
         this.embedded = window.self !== window.top;
     } catch (e) {
@@ -120,7 +120,7 @@ function NavigationController($auth, $state, $location, $stateParams, $modal, us
 
     // SEARCH
 
-    if (this.community.type == "industry") {
+    if (this.community.type == "industry" || this.community.type == "network") {
         if (this.community.community_profiles && this.community.community_profiles[this.location_path]) {
             this.searchname = this.community.community_profiles[this.location_path].name;
         } else this.searchname = this.community.profile.name;
@@ -130,7 +130,7 @@ function NavigationController($auth, $state, $location, $stateParams, $modal, us
 
         if (!query) query = "*";
 
-        if (this.community.type == "industry") {
+        if (this.community.type == "industry" || this.community.type == "network") {
             $state.go('search.dashboard', {community_path: this.community.key, query: query});
         } else if (this.community.type == "user" || this.community.type == "startup") {
             $state.go('search.dashboard', {location_path: this.community.profile.home, query: query});
