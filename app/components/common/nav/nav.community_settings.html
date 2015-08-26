@@ -7,10 +7,10 @@
     <div class="modal-body">
         <form role="form" name="settings.form" novalidate ng-submit="settings.save()">
             <div class="checkbox checkbox-info">
-                <input id="embed" name="embed" type="checkbox" ng-model="settings.form.embed_value">
+                <input id="embed" name="embed" type="checkbox" ng-model="settings.formdata.embed_value">
                 <label for="embed">Embed this community in another website</label>
             </div>
-            <div ng-show="settings.form.embed_value">
+            <div ng-show="settings.formdata.embed_value">
                 <div class="form-group">
                     <label>Use this code to embed this community:</label>
                     <pre>[iframe src="https://startupcommunity.org/<em>your-community-page</em>" width="100%" height="1500"]</pre>
@@ -18,13 +18,13 @@
                 </div>
                 <div class="form-group">
                     <label>Custom background color:</label>
-                    <input type="text" placeholder="#F1F3F6" class="form-control input-lg" name="embed_color" ng-model="settings.form.embed_color_value">
+                    <input type="text" placeholder="#F1F3F6" class="form-control input-lg" name="embed_color" ng-model="settings.formdata.embed_color_value">
                 </div>
                 <div class="form-group">
                     <label>Your website domain:</label>
-                    <input type="text" placeholder="yourdomain.com (no http://)" class="form-control input-lg" required name="url" ng-model="settings.form.url_value">
-                    <div class="m-t-xs" ng-show="settings.form.url.$invalid && settings.form.submitted">
-                        <span class="text-danger" ng-show="settings.form.url.$error">&nbsp;&nbsp;<i class="fa fa-exclamation-triangle"></i> We need a domain name for security purposes.</span>
+                    <input type="text" placeholder="yourdomain.com (no http://)" class="form-control input-lg" required name="embed_url" ng-model="settings.formdata.embed_url_value">
+                    <div class="m-t-xs" ng-show="settings.form.embed_url.$invalid && settings.form.submitted">
+                        <span class="text-danger" ng-show="settings.form.embed_url.$error">&nbsp;&nbsp;<i class="fa fa-exclamation-triangle"></i> We need a domain name for security purposes.</span>
                     </div>
                 </div>
             </div>

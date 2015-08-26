@@ -162,20 +162,21 @@ function ChangeLocationController($modalInstance){
 function CommunitySettingsController($modalInstance, sweet, community_service, community, location_key){
 
     this.community = community;
+    this.formdata = {
+        "embed_value": community.profile.embed_value,
+        "embed_color_value" : community.profile.embed_color,
+        "embed_url_value" : community.profile.embed_url_value
+    };
+
     var self = this;
 
     this.save = function () {
 
         if (self.form.$valid) {
-            var formdata = {
-                "embed" : self.form.embed_value,
-                "embed_color" : self.form.embed_color_value,
-                "url" : self.form.url_value
-            };
 
             $modalInstance.close();
 
-            community_service.setSettings(formdata.embed, formdata.embed_color, formdata.url, location_key, self.community.key)
+            community_service.setSettings(self.form.embed_value, self.form.embed_color_value, self.form.embed_url_value, location_key, self.community.key)
                 .then(function(response) {
 
                     if (response.status !== 201) {
@@ -190,8 +191,9 @@ function CommunitySettingsController($modalInstance, sweet, community_service, c
                             title: "Settings Saved!",
                             type: "success"
                         });
-                    }
 
+                        $state.go($state.current, {}, {reload: true});
+                    }
                 });
         } else {
             self.form.submitted = true;
