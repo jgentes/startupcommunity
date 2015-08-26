@@ -20,15 +20,14 @@ function NavigationController($auth, $state, $location, $stateParams, $modal, us
     var self = this;
 
     // CHECK FOR IFRAME
-    console.log(window.self);
-    console.log(window.top);
+
     try {
         this.embedded = window.self !== window.top;
     } catch (e) {
-        var verified = false;
-        var embed = this.community.profile.embed;
         this.embedded = true;
+    }
 
+    if (this.embedded) {
         var domain;
         //find & remove protocol (http, ftp, etc.) and get domain
         if (document.referrer.indexOf("://") > -1) {
