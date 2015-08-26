@@ -112,7 +112,9 @@ function NavigationController($auth, $state, $location, $stateParams, $modal, us
     }
 
     // to avoid duplicate location_path / community_path when navigating to people & startups
-    this.list_url = this.location_path == this.community.key ? ".list({location_path: nav.location_path, community: nav.community, query: '*'})" : ".list({location_path: nav.location_path, community_path: nav.community.key, community: nav.community, query: '*'})";
+    this.list_url = this.location_path == this.community.key ?
+        ".list({location_path: nav.location_path, community: nav.community, query: '*'})" :
+        ".list({location_path: nav.location_path, community_path: nav.community.key, community: nav.community, query: '*'})";
 
 
     // BREADCRUMBS
@@ -133,10 +135,12 @@ function NavigationController($auth, $state, $location, $stateParams, $modal, us
 
         if (!query) query = "*";
 
-        if (this.community.type == "industry" || this.community.type == "network") {
-            $state.go('search.dashboard', {community_path: this.community.key, query: query});
-        } else if (this.community.type == "user" || this.community.type == "startup") {
-            $state.go('search.dashboard', {location_path: this.community.profile.home, query: query});
+        if (self.community.type == "industry" || self.community.type == "network") {
+            self.location_path == self.community.key ?
+                $state.go('search.dashboard', {location_path: self.location_path, community: self.community, query: query}) :
+                $state.go('search.dashboard', {location_path: self.location_path, community_path: self.community.key, community: self.community, query: query});
+        } else if (self.community.type == "user" || self.community.type == "startup") {
+            $state.go('search.dashboard', {location_path: self.community.profile.home, query: query});
         } else $state.go('search.dashboard', {query: query});
 
     };

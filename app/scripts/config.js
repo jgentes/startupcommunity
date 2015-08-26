@@ -48,7 +48,6 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
             controller: "NavigationController as nav",
             params: {
                 profile: {},  // must include params for *any* root-level object for inheritance, such as users, startups, networks, etc
-                query: '*',
                 community: {},
                 location: {}
             },

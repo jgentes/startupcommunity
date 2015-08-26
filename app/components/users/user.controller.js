@@ -14,22 +14,25 @@ function UserController($stateParams, user_service, result_service, $sce, $modal
     this.selectedRole = ['*'];
 
     var self = this; // for accessing 'this' in child functions
-
+    var query;
     var communityFilter = [$stateParams.location_path];
     if ($stateParams.community_path) communityFilter.push($stateParams.community_path);
 
+    $stateParams.query ? query = $stateParams.query : query = '*';
+
     this.searchUsers = function(alturl) {
         self.loadingUser = true;
-        if ($stateParams.query !== '*') {
-            self.tag = $stateParams.query;
+
+        if (query !== '*') {
+            self.tag = query;
         } else self.tag = undefined;
 
-        user_service.search(communityFilter, $stateParams.query, undefined, 16, alturl)
+        user_service.search(communityFilter, query, undefined, 16, alturl)
             .then(function (response) {
                 self.tag = undefined;
                 self.users = result_service.setPage(response.data);
                 self.loadingUser = false;
-                self.lastQuery = $stateParams.query;
+                self.lastQuery = query;
             });
     };
 
@@ -71,10 +74,10 @@ function UserController($stateParams, user_service, result_service, $sce, $modal
             }
         }
 
-        if ($stateParams.query == "*") {
+        if (query == "*") {
             self.title = '<strong>' + self.role + '</strong> in ' + self.selection;
         } else {
-            self.title = 'People matching <strong>"' + $stateParams.query + '"</strong> ';
+            self.title = 'People matching <strong>"' + query + '"</strong> ';
             self.title += 'in <strong>';
             if ($stateParams.community_path && $stateParams.location_path) {
                 if (self.community.community_profiles && self.community.community_profiles[$stateParams.location_path]) {

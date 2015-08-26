@@ -90,7 +90,7 @@ var searchInCommunity = function(communities, stages, limit, offset, query, key)
         }
 
         if (query) { searchstring += ' AND ' + '(' + query + ')'; }
-    console.log(searchstring);
+
         var deferred = Q.defer();
         db.newSearchBuilder()
             .collection(config.db.collections.communities)
@@ -98,7 +98,7 @@ var searchInCommunity = function(communities, stages, limit, offset, query, key)
             .offset(Number(offset) || 0)
             .query(searchstring)
             .then(function(result){
-                console.log(result.body);
+
                     var i;
 
                     try {
