@@ -20,7 +20,8 @@ function NavigationController($auth, $state, $location, $stateParams, $modal, us
     var self = this;
 
     // CHECK FOR IFRAME
-    console.log(document.referrer);
+    console.log(window.self);
+    console.log(window.top);
     try {
         this.embedded = window.self !== window.top;
     } catch (e) {
