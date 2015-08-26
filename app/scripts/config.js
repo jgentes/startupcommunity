@@ -199,10 +199,6 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
             url: "^/:location_path/:community_path/people/invite",
             params: {
                 community: {},
-                community_path: {
-                    value: null,
-                    squash: true
-                },
                 pageTitle: 'Invite People',
                 pageDescription: 'Linkedin URL is required to pull the photo, headline, and summary for each person.',
                 icon: 'pe-7s-id'
@@ -245,10 +241,6 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
             url: "^/:location_path/:community_path/startups",
             params: {
                 community: {},
-                community_path: {
-                    value: null,
-                    squash: true
-                },
                 pageTitle: 'Startups'
             },
             views: {
@@ -316,37 +308,6 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                 }
             }
         })
-        .state('industry.people', {
-            url: "/:community_path/people",
-            params: {
-                community: {},
-                pageTitle: 'People'
-            },
-            views: {
-                'header': {
-                    templateUrl: "components/common/header/header_small.html"
-                },
-                'content': {
-                    templateUrl: 'components/users/user.list.html',
-                    controller: "UserController as users"
-                }
-            }
-        })
-        .state('industry.search.dashboard', {
-            parent: 'search',
-            url: "/:community_path/search",
-            params: {
-                community: {},
-                query: '*',
-                pageTitle: 'Search'
-            },
-            views: {
-                "people": {
-                    templateUrl: 'components/users/user.list.html',
-                    controller: "UserController as users"
-                }
-            }
-        })
 
         // Network views
         .state('network', {
@@ -369,22 +330,6 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
             },
             views: {
                 'people': {
-                    templateUrl: 'components/users/user.list.html',
-                    controller: "UserController as users"
-                }
-            }
-        })
-        .state('network.people', {
-            url: "/:community_path/people",
-            params: {
-                community: {},
-                pageTitle: 'People'
-            },
-            views: {
-                'header': {
-                    templateUrl: "components/common/header/header_small.html"
-                },
-                'content': {
                     templateUrl: 'components/users/user.list.html',
                     controller: "UserController as users"
                 }

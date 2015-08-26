@@ -10,11 +10,10 @@ function NavigationController($auth, $state, $location, $stateParams, $modal, us
     try { // catch any initial db connectivity problems
         this.location = jQuery.isEmptyObject($stateParams.location) ? (jQuery.isEmptyObject(location) ? communities.data[$stateParams.location_path] : location) : $stateParams.location;
         this.community = jQuery.isEmptyObject($stateParams.community) ? (community.key !== this.location.key ? community : this.location) : $stateParams.community;
-        this.community_path = $stateParams.community_path;
-        this.location_path = $stateParams.location_path || $stateParams.location.key || this.community_path;
+        this.location_path = $stateParams.location_path || $stateParams.location.key || this.community.key;
     }
     catch(err) {
-        $state.go('500');
+        $state.go('404');
     }
 
     var self = this;
@@ -111,6 +110,10 @@ function NavigationController($auth, $state, $location, $stateParams, $modal, us
             }
         }
     }
+
+    // to avoid duplicate location_path / community_path when navigating to people & startups
+    this.list_url = this.location_path == this.community.key ? ".list({location_path: nav.location_path, community: nav.community, query: '*'})" : ".list({location_path: nav.location_path, community_path: nav.community.key, community: nav.community, query: '*'})";
+
 
     // BREADCRUMBS
 

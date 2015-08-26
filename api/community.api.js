@@ -99,7 +99,7 @@ function handleGetCommunity(req, res) {
 
               } else {
                   console.warn('WARNING: Community not found!');
-                  res.status(202).send({message: 'Community not found.'});
+                  res.status(404).send({message: 'Community not found.'});
               }
           })
           .fail(function(err){
