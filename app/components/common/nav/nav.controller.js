@@ -26,7 +26,22 @@ function NavigationController($auth, $state, $location, $stateParams, $modal, us
     } catch (e) {
         this.embedded = true;
         this.referrer = document.referrer;
+
+        if (this.community.type === 'network' || this.community.type === 'industry') {
+            if (this.community.community_profiles[this.community_path] && this.community.community_profiles[this.community_path].embed) {
+                var urls = this.community.community_profiles[this.community_path].embed;
+            }
+        } else urls = this.community.profile.embed;
+
+        if (urls) {
+            for (u in urls) {
+                if (urls[u].indexOf(document.referrer) == -1) {
+                    $state.go('500');
+                }
+            }
+        } else $state.go('500');
     }
+    console.log(document.referrer);
     //this.embedded = true; // for testing
 
     // ANONYMOUS ACCESS OR PROFILE DISPLAY
@@ -162,6 +177,7 @@ function ChangeLocationController($modalInstance){
 function CommunitySettingsController($modalInstance, sweet, community_service, community, location_key){
 
     this.community = community;
+    this.location_key = location_key;
     var self = this;
 
     this.addEmbed = function() {
@@ -186,7 +202,7 @@ function CommunitySettingsController($modalInstance, sweet, community_service, c
 
         $modalInstance.close();
 
-        community_service.setSettings(self.community.profile.embed, location_key, self.community.key)
+        community_service.setSettings(self.community.profile.embed, self.location_key, self.community.key)
             .then(function(response) {
 
                 if (response.status !== 201) {

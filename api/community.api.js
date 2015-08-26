@@ -130,15 +130,15 @@ function handleSetCommunity(req, res) {
                     if (response.body.community_profiles === undefined) { // create community_profiles
                         response.body['community_profiles'] = {};
                     }
-                    if (response.body.community_profiles[location_key] === undefined) { // create this location
-                        response.body.community_profiles[location_key] = {
+                    if (response.body.community_profiles[settings.location_key] === undefined) { // create this location
+                        response.body.community_profiles[settings.location_key] = {
                             "name": response.body.profile.name,
                             "icon": response.body.profile.icon,
                             "logo": response.body.profile.logo,
                             "embed" : settings.embed
                         };
                     } else {
-                        response.body.community_profiles[location_key]["embed"] = settings.embed;
+                        response.body.community_profiles[settings.location_key]["embed"] = settings.embed;
                     }
                 } else {
                     response.body.profile["embed"] = settings.embed;
