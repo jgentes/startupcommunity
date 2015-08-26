@@ -393,6 +393,10 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
 
         .state('404', {
             templateUrl: "components/common/errors/404.html"
+        })
+
+        .state('500', {
+            templateUrl: "components/common/errors/500.html"
         });
 
     // Set default unmatched url stat

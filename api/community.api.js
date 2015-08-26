@@ -6,6 +6,7 @@ var config = require('../config.json')[process.env.NODE_ENV || 'development'],
 
 var CommunityApi = function() {
     this.getCommunity = handleGetCommunity;
+    this.setCommunity = handleSetCommunity;
     this.getKey = handleGetKey;
 };
 
@@ -111,6 +112,67 @@ function handleGetCommunity(req, res) {
     console.log('Pulling community: ' + community);
     pullCommunity();
 
+}
+
+function handleSetCommunity(req, res) {
+
+    // always use ensureAuth before this (to acquire req.user)
+    var settings = req.body.params;
+
+    console.log('Updating settings for ' + settings.location_key + ' / ' + settings.community_key);
+    // validate user has leader role within the location/community
+    if (req.user.value.roles.leader[settings.community_key] && req.user.value.roles.leader[settings.community_key].indexOf(settings.location_key) > -1) {
+
+        db.get(config.db.collections.communities, settings.community_key)
+            .then(function (response) {
+
+                if (response.body.type !== 'location') { // use community_profiles
+                    if (response.body.community_profiles === undefined) { // create community_profiles
+                        response.body['community_profiles'] = {};
+                    }
+                    if (response.body.community_profiles[location_key] === undefined) { // create this location
+                        response.body.community_profiles[location_key] = {
+                            "name": response.body.profile.name,
+                            "icon": response.body.profile.icon,
+                            "logo": response.body.profile.logo,
+                            "embed" : settings.embed,
+                            "embed_color" : settings.embed_color,
+                            "embed_urls" : [settings.embed_url]
+                        };
+                    } else {
+                        response.body.community_profiles[location_key]["embed"] = settings.embed;
+                        response.body.community_profiles[location_key]["embed_color"] = settings.embed_color;
+                        if (response.body.community_profiles[location_key].embed_urls === undefined) {
+                            response.body.community_profiles[location_key]["embed_urls"] = [settings.embed_url];
+                        } else response.body.community_profiles[location_key].embed_urls.push(settings.embed_url);
+                    }
+                } else {
+                    response.body.profile["embed"] = settings.embed;
+                    response.body.profile["embed_color"] = settings.embed_color;
+                    if (response.body.profile.embed_urls === undefined) {
+                        response.body.profile["embed_urls"] = [settings.embed_url];
+                    } else response.body.profile.embed_urls.push(settings.embed_url);
+                }
+
+                db.put(config.db.collections.communities, settings.community_key, response.body)
+                    .then(function (finalres) {
+                        res.status(201).send({ message: 'Community settings updated.'});
+                    })
+                    .fail(function (err) {
+                        console.warn('WARNING:  Problem with put: ' + err);
+                        res.status(202).send({ message: 'Something went wrong: ' + err});
+                    });
+
+            })
+            .fail(function (err) {
+                console.warn('WARNING:  Problem with get: ' + err);
+                res.status(202).send({ message: 'Something went wrong: ' + err});
+            });
+
+    } else {
+        console.warn("User is not a leader in location: " + settings.location_key + " and community: " + settings.community_key + "!");
+        res.status(202).send({ message: 'Sorry, you must be a Leader in this community to change these settings.' });
+    }
 }
 
 function handleGetKey(req, res) {

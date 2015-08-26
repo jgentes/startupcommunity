@@ -93,12 +93,13 @@ app.get('/api/2.0/angel/startups', angellistApis.getStartups);
 app.get('/api/2.0/angel/startup', angellistApis.getStartup);
 app.get('/api/2.0/profile', auth.ensureAuthenticated, userApis.getProfile); // must ensureAuth to send userid to getProfile
 app.get('/api/2.0/profile/getkey', auth.ensureAuthenticated, auth.createAPIToken);
-app.get('/api/2.0/invite', auth.ensureAuthenticated, auth.inviteUser);
+app.post('/api/2.0/invite', auth.ensureAuthenticated, auth.inviteUser);
 app.put('/api/2.0/profile/role', auth.ensureAuthenticated, userApis.setRole);
 app.post('/api/2.0/profile/remove/:userid', auth.ensureAuthenticated, userApis.removeProfile);
 app.post('/api/2.0/feedback', auth.ensureAuthenticated, userApis.feedback);
 // new for 2.0
 app.get('/api/2.0/startups', startupApis.startupSearch);
+app.put('/api/2.0/settings', auth.ensureAuthenticated, communityApis.setCommunity);
 app.post('/api/2.0/contact', userApis.contactUser);
 
 // Auth

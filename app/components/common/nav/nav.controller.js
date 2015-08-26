@@ -7,11 +7,17 @@ function NavigationController($auth, $state, $location, $stateParams, $modal, us
 
     // SENSITIVE VARIABLES THAT AFFECT NAVIGATION AND ALL CHILD TEMPLATES
     // When used in ui-sref links: location_path affects the url, location affects header and content, community affects header and secondary url
+    try { // catch any initial db connectivity problems
+        this.location = jQuery.isEmptyObject($stateParams.location) ? (jQuery.isEmptyObject(location) ? communities.data[$stateParams.location_path] : location) : $stateParams.location;
+        this.community = jQuery.isEmptyObject($stateParams.community) ? (community.key !== this.location.key ? community : this.location) : $stateParams.community;
+        this.community_path = $stateParams.community_path;
+        this.location_path = $stateParams.location_path || $stateParams.location.key || this.community_path;
+    }
+    catch(err) {
+        $state.go('500');
+    }
 
-    this.location = jQuery.isEmptyObject($stateParams.location) ? (jQuery.isEmptyObject(location) ? communities.data[$stateParams.location_path] : location) : $stateParams.location;
-    this.community = jQuery.isEmptyObject($stateParams.community) ? (community.key !== this.location.key ? community : this.location) : $stateParams.community;
-    this.community_path = $stateParams.community_path;
-    this.location_path = $stateParams.location_path || $stateParams.location.key || this.community_path;
+    var self = this;
 
     // CHECK FOR IFRAME
 
@@ -112,6 +118,24 @@ function NavigationController($auth, $state, $location, $stateParams, $modal, us
         });
     };
 
+    // COMMUNITY SETTINGS
+
+    this.communitySettings = function() {
+        var modalInstance = $modal.open({
+            templateUrl: 'components/common/nav/nav.community_settings.html',
+            controller: CommunitySettingsController,
+            controllerAs: 'settings',
+            windowClass: "hmodal-success",
+            resolve: {
+                community: function() {
+                    return self.community;
+                },
+                location_key: function() {
+                    return $stateParams.location_path;
+                }
+            }
+        });
+    };
 
     // ROUTING OF ROOT PATHS
 
@@ -125,12 +149,57 @@ function NavigationController($auth, $state, $location, $stateParams, $modal, us
 
 }
 
-function ChangeLocationController($state, $modalInstance){
-    $state.ok = function () {
+function ChangeLocationController($modalInstance){
+    this.ok = function () {
         $modalInstance.close();
     };
 
-    $state.cancel = function () {
+    this.cancel = function () {
+        $modalInstance.dismiss('cancel');
+    };
+}
+
+function CommunitySettingsController($modalInstance, sweet, community_service, community, location_key){
+
+    this.community = community;
+    var self = this;
+
+    this.save = function () {
+
+        if (self.form.$valid) {
+            var formdata = {
+                "embed" : self.form.embed_value,
+                "embed_color" : self.form.embed_color_value,
+                "url" : self.form.url_value
+            };
+
+            $modalInstance.close();
+
+            community_service.setSettings(formdata.embed, formdata.embed_color, formdata.url, location_key, self.community.key)
+                .then(function(response) {
+
+                    if (response.status !== 201) {
+                        sweet.show({
+                            title: "Sorry, something went wrong.",
+                            text: "Here's what we know: " + response.data.message,
+                            type: "error"
+                        });
+
+                    } else {
+                        sweet.show({
+                            title: "Settings Saved!",
+                            type: "success"
+                        });
+                    }
+
+                });
+        } else {
+            self.form.submitted = true;
+        }
+
+    };
+
+    this.cancel = function () {
         $modalInstance.dismiss('cancel');
     };
 }

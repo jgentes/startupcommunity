@@ -176,8 +176,8 @@ function UserController($stateParams, user_service, result_service, $sce, $modal
 
 function ContactUserController($modalInstance, notify_service, sweet, community_key, location_key, user){
 
-    var self = this;
     this.user = user; //used in view
+    var self = this;
 
     this.send = function () {
 
