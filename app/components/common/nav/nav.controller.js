@@ -50,7 +50,7 @@ function NavigationController($auth, $state, $location, $stateParams, $modal, us
 
         if (embed) {
             for (u in embed) {
-                if (embed[u].indexOf(domain) > -1) {
+                if (embed[u].url == domain) {
                     console.log('verified!');
                     verified = true;
                     if (embed[u].color) $('#main_content').css('background-color:', embed[u].color);
