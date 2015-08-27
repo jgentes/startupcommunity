@@ -25,7 +25,9 @@ var AuthApi = function() {
 var schema = {
     linkedin: function(profile, email, location_key, community_key) {
 
-        var communities = location_key == community_key ? [location_key] : [location_key, community_key],
+        var communities = location_key == community_key ?
+                [location_key] :
+                [location_key, community_key],
             roles = { "advisor" : {} };
 
         roles.advisor[community_key] = [location_key];
@@ -499,7 +501,9 @@ function handleLinkedin(req, res) {
 
 function handleInviteUser(req, res) {
     // always use ensureAuth before this (to acquire req.user)
-    var inviteUser = req.query;
+    var inviteUser = req.body.params;
+
+    console.log('Inviting ' + inviteUser.email + ' to ' + inviteUser.location_key + ' / ' + inviteUser.community_key);
 
     // validate user has leader role within the location/community
     if (req.user.value.roles.leader[inviteUser.community_key] && req.user.value.roles.leader[inviteUser.community_key].indexOf(inviteUser.location_key) > -1) {

@@ -99,8 +99,10 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                                 var url = $location.path().replace(/\/$/, "").split('/'),
                                     lastitem = url.pop(),
                                     root = url.pop();
-                                if (lastitem == "people" || lastitem == "startups" || lastitem == "search") {
-                                    return communities.data[root]; // return preceding url path as community, such as tech for 'bend-or/tech/people'
+                                if (lastitem == "people" || lastitem == "startups" || lastitem == "search" || lastitem == "invite") {
+                                    if (lastitem == "invite") {
+                                        return communities.data[url.pop()];
+                                    } else return communities.data[root]; // return preceding url path as community, such as tech for 'bend-or/tech/people'
                                 } else if (communities.data[lastitem] && (communities.data[lastitem].type == "industry" || communities.data[lastitem].type == "network")) {
                                     return communities.data[lastitem]; // return tech in 'bend-or/tech'
                                 } else return pullCommunity();
@@ -250,6 +252,7 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
         .state('user.invite', {
             url: "/:community_path/people/invite",
             params: {
+                community: {},
                 community_path: {
                     value: null,
                     squash: true
