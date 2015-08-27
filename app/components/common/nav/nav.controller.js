@@ -25,7 +25,7 @@ function NavigationController($auth, $state, $location, $stateParams, $modal, us
     } catch (e) {
         this.embedded = true;
     }
-
+    console.log(this.community);
     if (this.embedded) {
         var verified = false;
         var domain;
@@ -58,7 +58,9 @@ function NavigationController($auth, $state, $location, $stateParams, $modal, us
                     if (this.embed[u].color) $('#main_content').css('background-color:', this.embed[u].color);
                 }
             }
-        } else $state.go('500');
+        }
+
+        if (!verified) $state.go('500', {location_path: null});
     }
 
     //this.embedded = true; // for testing
