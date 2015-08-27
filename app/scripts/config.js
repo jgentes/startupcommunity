@@ -117,6 +117,8 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
             }
         })
 
+        // ORDER MATTERS.. first matching url wins!
+
         .state('search', {
             parent: 'root',
             abstract: true,
@@ -132,7 +134,6 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
         .state('search.dashboard', {
             url: "^/:location_path/:community_path/search",
             params: {
-                community: {},
                 community_path: {
                     value: null,
                     squash: true
@@ -160,7 +161,6 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
         .state('user.dashboard', {
             params: {
                 profile: {},
-                community: {},
                 location: {},
                 pageTitle: 'User Profile'
             },
@@ -177,7 +177,6 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
         .state('user.list', {
             url: "^/:location_path/:community_path/people",
             params: {
-                community: {},
                 community_path: {
                     value: null,
                     squash: true
@@ -197,7 +196,6 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
         .state('user.invite', {
             url: "^/:location_path/:community_path/people/invite",
             params: {
-                community: {},
                 pageTitle: 'Invite People',
                 pageDescription: 'Linkedin URL is required to pull the photo, headline, and summary for each person.',
                 icon: 'pe-7s-id'
@@ -222,7 +220,6 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
         .state('startups.dashboard', {
             params: {
                 profile: {},
-                community: {},
                 location: {},
                 pageTitle: 'Startup Profile'
             },
@@ -239,7 +236,6 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
         .state('startup.list', {
             url: "^/:location_path/:community_path/startups",
             params: {
-                community: {},
                 pageTitle: 'Startups'
             },
             views: {
@@ -269,36 +265,7 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
         })
         .state('location.dashboard', {
             params: {
-                location_path: "",
                 pageTitle: "Location"
-            },
-            views: {
-                'people': {
-                    templateUrl: 'components/users/user.list.html',
-                    controller: "UserController as users"
-                }
-            }
-        })
-
-
-        // Industry views
-        .state('industry', {
-            parent: "root",
-            abstract: true,
-            views: {
-                'header': {
-                    templateUrl: "components/common/header/header_big.html"
-                },
-                'content': {
-                    template: "<div ui-view='people'></div>"
-                }
-            }
-        })
-        .state('industry.dashboard', {
-            url: "/:community_path",
-            params: {
-                community: {},
-                pageTitle: "Industry"
             },
             views: {
                 'people': {
@@ -324,7 +291,10 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
         .state('network.dashboard', {
             url: "/:community_path",
             params: {
-                community: {},
+                community_path: {
+                    value: null,
+                    squash: true
+                },
                 pageTitle: "Network"
             },
             views: {
@@ -334,6 +304,34 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                 }
             }
         })
+
+        // Industry views
+        .state('industry', {
+            parent: "root",
+            abstract: true,
+            views: {
+                'header': {
+                    templateUrl: "components/common/header/header_big.html"
+                },
+                'content': {
+                    template: "<div ui-view='people'></div>"
+                }
+            }
+        })
+        .state('industry.dashboard', {
+            url: "/:community_path",
+            params: {
+                pageTitle: "Industry"
+            },
+            views: {
+                'people': {
+                    templateUrl: 'components/users/user.list.html',
+                    controller: "UserController as users"
+                }
+            }
+        })
+
+
 
         .state('404', {
             templateUrl: "components/common/errors/404.html"
@@ -374,15 +372,15 @@ angular
         $rootScope.$on('$stateChangeSuccess',function(){
             $("html, body").animate({ scrollTop: 0 }, 200);
         });
-        /*
+
         $rootScope.$on('$stateChangeStart',
             function(event, toState, toParams, fromState, fromParams){
-                console.log('from: ')
+                console.log('from: ');
                 console.log(fromState);
-                //console.log('to:');
-                //console.log(toState);
+                console.log('to:');
+                console.log(toState);
             })
-        */
+
     })
 
 
