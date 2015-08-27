@@ -46,7 +46,8 @@ function NavigationController($auth, $state, $location, $stateParams, $modal, us
                 embed = this.community.community_profiles[this.location_path].embed;
             }
         }
-
+    console.log(domain);
+        console.log(this.community);
         if (embed) {
             for (u in embed) {
                 if (embed[u].url == domain) {
