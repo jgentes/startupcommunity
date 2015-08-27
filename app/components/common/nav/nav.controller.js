@@ -47,6 +47,7 @@ function NavigationController($auth, $state, $location, $stateParams, $modal, us
             }
         }
         console.log(this.embedded);
+        console.log(this.embed);
     console.log(domain);
         console.log(this.community);
         if (this.embed) {
