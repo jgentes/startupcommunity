@@ -161,7 +161,7 @@ function NavigationController($auth, $state, $location, $stateParams, $modal, us
         //find & remove port number
         domain = domain.split(':')[0];
 
-        if (this.community.community_profiles[this.location_path] && this.community.community_profiles[this.location_path].embed) {
+        if ((this.community.type === 'network' || this.community.type === 'industry') && (this.community.community_profiles[this.location_path] && this.community.community_profiles[this.location_path].embed)) {
             this.embed = this.community.community_profiles[this.location_path].embed;
         } else this.embed = this.community.profile.embed;
 
@@ -192,22 +192,22 @@ function ChangeLocationController($modalInstance){
     };
 }
 
-function CommunitySettingsController($modalInstance, sweet, community_service, community, location_key){
+function CommunitySettingsController($modalInstance, $state, sweet, community_service, community, location_key){
 
     this.community = community;
     this.location_key = location_key;
     var self = this;
 
     if (community.type == 'industry' && self.community.community_profiles[location_key] && self.community.community_profiles[location_key].embed) {
-        self.community.profile["embed"] = self.community.community_profiles[location_key].embed;
-    }
+        this.embed = self.community.community_profiles[location_key].embed;
+    } else this.embed = this.community.profile.embed;
 
     this.addEmbed = function() {
         if (self.form.$valid) {
-            if (!self.community.profile.embed) {
-                self.community.profile["embed"] = [];
+            if (!self.embed) {
+                self.embed = [];
             }
-            self.community.profile.embed.push({
+            self.embed.push({
                 "url" : self.formdata.embed_url_value,
                 "color" : self.formdata.embed_color_value
             })
@@ -217,14 +217,14 @@ function CommunitySettingsController($modalInstance, sweet, community_service, c
     };
 
     this.removeEmbed = function(index) {
-        self.community.profile.embed.splice(index, 1);
+        self.embed.splice(index, 1);
     };
 
     this.save = function () {
 
         $modalInstance.close();
 
-        community_service.setSettings(self.community.profile.embed, self.location_key, self.community.key)
+        community_service.setSettings(self.embed, self.location_key, self.community.key)
             .then(function(response) {
 
                 if (response.status !== 201) {
@@ -240,12 +240,13 @@ function CommunitySettingsController($modalInstance, sweet, community_service, c
                         type: "success"
                     });
 
-                    $state.go($state.current, {reload: true});
+                    $state.reload();
                 }
             });
     };
 
     this.cancel = function () {
         $modalInstance.dismiss('cancel');
+        $state.reload();
     };
 }

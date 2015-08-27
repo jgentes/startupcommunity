@@ -1,15 +1,12 @@
-function configState($stateProvider, $urlRouterProvider, $urlMatcherFactoryProvider, $compileProvider, $locationProvider) {
+function configState($stateProvider, $urlRouterProvider, $compileProvider, $locationProvider) {
 
     // Optimize load start
     $compileProvider
-        .debugInfoEnabled(false);
+        .debugInfoEnabled(true); // set to false for production
 
     $locationProvider
         .html5Mode(true);
-/*
-    $urlMatcherFactoryProvider
-        .strictMode(false); // to allow trailing slashes
-*/
+
     $stateProvider
 
         .state('invite', {
