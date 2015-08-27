@@ -3,7 +3,7 @@ angular
     .controller('NavigationController', NavigationController)
     .controller('ChangeLocationController', ChangeLocationController);
 
-function NavigationController($auth, $state, $location, $stateParams, $modal, user, location, community, communities) {
+function NavigationController($auth, $state, $location, $stateParams, $modal, user, location, community, communities, embed) {
 
     // SENSITIVE VARIABLES THAT AFFECT NAVIGATION AND ALL CHILD TEMPLATES
     // When used in ui-sref links: location_path affects the url, location affects header and content, community affects header and secondary url
@@ -138,47 +138,14 @@ function NavigationController($auth, $state, $location, $stateParams, $modal, us
         $state.go(this.community.type + '.dashboard');
     }
 
-    // CHECK FOR IFRAME (redirect, if needed, must happen after routing)
-    this.embedded = false;
-    try {
-        this.embedded = window.self !== window.top;
-    } catch (e) {
+    // for embed
+
+    if (embed.embedded) {
         this.embedded = true;
+        this.color = embed.color;
+
+        if (!embed.verified) $state.go('500');
     }
-
-    if (this.embedded) {
-        var verified = false;
-        var domain;
-
-        //find & remove protocol (http, ftp, etc.) and get domain
-        if (document.referrer.indexOf("://") > -1) {
-            domain = document.referrer.split('/')[2];
-        }
-        else {
-            domain = document.referrer.split('/')[0];
-        }
-
-        //find & remove port number
-        domain = domain.split(':')[0];
-
-        if ((this.community.type === 'network' || this.community.type === 'industry') && (this.community.community_profiles[this.location_path] && this.community.community_profiles[this.location_path].embed)) {
-            this.embed = this.community.community_profiles[this.location_path].embed;
-        } else this.embed = this.community.profile.embed;
-
-        if (this.embed) {
-            for (u in this.embed) {
-                if (this.embed[u].url == domain) {
-                    verified = true;
-                    this.color = this.embed[u].color;
-                }
-            }
-        }
-
-        if (!verified) $state.go('500');
-
-    }
-
-    //this.embedded = true; // for testing
 
 }
 
