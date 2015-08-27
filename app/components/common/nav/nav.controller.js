@@ -29,7 +29,7 @@ function NavigationController($auth, $state, $location, $stateParams, $modal, us
     if (this.embedded) {
         var verified = false;
         var domain;
-        this.embed = this.community.profile.embed;
+        this.embed = this.community;
 
         //find & remove protocol (http, ftp, etc.) and get domain
         if (document.referrer.indexOf("://") > -1) {
