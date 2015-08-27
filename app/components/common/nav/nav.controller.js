@@ -58,9 +58,7 @@ function NavigationController($auth, $state, $location, $stateParams, $modal, us
                     if (this.embed[u].color) $('#main_content').css('background-color:', this.embed[u].color);
                 }
             }
-        }
-
-        if (!verified) $state.go('500');
+        } else $state.go('500');
     }
 
     //this.embedded = true; // for testing
