@@ -27,9 +27,10 @@ function NavigationController($auth, $state, $location, $stateParams, $modal, us
     }
 
     if (this.embedded) {
-        var verified = false,
-            embed = this.community.profile.embed,
-            domain;
+        var verified = false;
+        var domain;
+        this.embed = this.community.profile.embed;
+
         //find & remove protocol (http, ftp, etc.) and get domain
         if (document.referrer.indexOf("://") > -1) {
             domain = document.referrer.split('/')[2];
@@ -46,16 +47,14 @@ function NavigationController($auth, $state, $location, $stateParams, $modal, us
                 this.embed = this.community.community_profiles[this.location_path].embed;
             }
         }
-        console.log(this.embedded);
         console.log(this.embed);
-    console.log(domain);
-        console.log(this.community);
+
         if (this.embed) {
-            for (u in this.embed) {
-                if (this.embed[u].url == domain) {
+            for (u in this.embedd) {
+                if (this.embedd[u].url == domain) {
                     console.log('verified!');
                     verified = true;
-                    if (this.embed[u].color) $('#main_content').css('background-color:', this.embed[u].color);
+                    if (this.embedd[u].color) $('#main_content').css('background-color:', this.embed[u].color);
                 }
             }
         }
