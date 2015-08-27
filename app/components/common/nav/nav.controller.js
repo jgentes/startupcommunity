@@ -25,11 +25,10 @@ function NavigationController($auth, $state, $location, $stateParams, $modal, us
     } catch (e) {
         this.embedded = true;
     }
-    console.log(this.community);
+
     if (this.embedded) {
         var verified = false;
         var domain;
-        this.embed = this.community;
 
         //find & remove protocol (http, ftp, etc.) and get domain
         if (document.referrer.indexOf("://") > -1) {
@@ -42,11 +41,9 @@ function NavigationController($auth, $state, $location, $stateParams, $modal, us
         //find & remove port number
         domain = domain.split(':')[0];
 
-        if (this.community.type === 'network' || this.community.type === 'industry') {
-            if (this.community.community_profiles[this.location_path] && this.community.community_profiles[this.location_path].embed) {
-                this.embed = this.community.community_profiles[this.location_path].embed;
-            } else this.embed = this.community.embed
-        }
+        if (this.community.community_profiles[this.location_path] && this.community.community_profiles[this.location_path].embed) {
+            this.embed = this.community.community_profiles[this.location_path].embed;
+        } else this.embed = this.community.profile.embed;
 
         console.log(this.embed);
 
