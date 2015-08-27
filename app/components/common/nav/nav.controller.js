@@ -46,15 +46,15 @@ function NavigationController($auth, $state, $location, $stateParams, $modal, us
                 embed = this.community.community_profiles[this.location_path].embed;
             }
         }
-        console.log(embed);
+        console.log(this.embed);
     console.log(domain);
         console.log(this.community);
-        if (embed) {
-            for (u in embed) {
-                if (embed[u].url == domain) {
+        if (this.embed) {
+            for (u in this.embed) {
+                if (this.embed[u].url == domain) {
                     console.log('verified!');
                     verified = true;
-                    if (embed[u].color) $('#main_content').css('background-color:', embed[u].color);
+                    if (this.embed[u].color) $('#main_content').css('background-color:', this.embed[u].color);
                 }
             }
         }
