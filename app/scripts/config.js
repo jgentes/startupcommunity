@@ -117,7 +117,7 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                         } else return $stateParams.location;
                     }],
                 embed: ['community', 'location',
-                    function(community, location) {
+                    function(community, location, $state) {
                         // CHECK FOR IFRAME (redirect, if needed, must happen after routing)
                         var embedded = false,
                             embed;
@@ -142,7 +142,7 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                             //find & remove port number
                             domain = domain.split(':')[0];
 
-                            if ((community.type === 'network' || community.type === 'industry') && (community.community_profiles[location.key] && community.community_profiles[location.key].embed)) {
+                            if (community.type === 'industry' && community.community_profiles[location.key] && community.community_profiles[location.key].embed) {
                                 embed = community.community_profiles[location.key].embed;
                             } else embed = community.profile.embed;
 
@@ -159,11 +159,7 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                                 }
                             }
 
-                            if (!verified) return {
-                                "embedded" : true,
-                                "verified": false
-                            }
-
+                            if (!verified) $state.go('500');
 
                         } else return { "embedded" : false }
 

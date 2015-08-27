@@ -3,7 +3,7 @@ angular
     .controller('NavigationController', NavigationController)
     .controller('ChangeLocationController', ChangeLocationController);
 
-function NavigationController($auth, $state, $location, $stateParams, $modal, user, location, community, communities, embed) {
+function NavigationController($auth, $state, $location, $stateParams, $modal, user, location, community, communities) {
 
     // SENSITIVE VARIABLES THAT AFFECT NAVIGATION AND ALL CHILD TEMPLATES
     // When used in ui-sref links: location_path affects the url, location affects header and content, community affects header and secondary url
@@ -140,11 +140,16 @@ function NavigationController($auth, $state, $location, $stateParams, $modal, us
 
     // for embed
 
-    if (embed.embedded) {
-        this.embedded = true;
-        this.color = embed.color;
+    var embedded = false;
+    try {
+        embedded = window.self !== window.top;
+    } catch (e) {
+        embedded = true;
+    }
 
-        if (!embed.verified) $state.go('500');
+    if (embedded) {
+        this.embedded = true;
+       // this.color = embed.color;
     }
 
 }
