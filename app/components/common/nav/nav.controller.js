@@ -27,9 +27,11 @@ function NavigationController($auth, $state, $location, $stateParams, $modal, us
     }
 
     if (this.embedded) {
+        console.log('embedded');
         var verified = false;
         var domain;
         this.embed = this.community.profile.embed;
+        console.log(this.community);
 
         //find & remove protocol (http, ftp, etc.) and get domain
         if (document.referrer.indexOf("://") > -1) {
@@ -47,6 +49,7 @@ function NavigationController($auth, $state, $location, $stateParams, $modal, us
                 this.embed = this.community.community_profiles[this.location_path].embed;
             }
         }
+
         console.log(this.embed);
 
         if (this.embed) {
