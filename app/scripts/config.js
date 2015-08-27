@@ -2,7 +2,7 @@ function configState($stateProvider, $urlRouterProvider, $urlMatcherFactoryProvi
 
     // Optimize load start
     $compileProvider
-        .debugInfoEnabled(true);
+        .debugInfoEnabled(false);
 
     $locationProvider
         .html5Mode(true);
