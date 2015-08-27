@@ -45,7 +45,7 @@ function NavigationController($auth, $state, $location, $stateParams, $modal, us
         if (this.community.type === 'network' || this.community.type === 'industry') {
             if (this.community.community_profiles[this.location_path] && this.community.community_profiles[this.location_path].embed) {
                 this.embed = this.community.community_profiles[this.location_path].embed;
-            }
+            } else this.embed = this.community.embed
         }
 
         console.log(this.embed);
@@ -202,6 +202,10 @@ function CommunitySettingsController($modalInstance, sweet, community_service, c
     this.community = community;
     this.location_key = location_key;
     var self = this;
+
+    if (community.type == 'industry' && self.community.community_profiles[location_key] && self.community.community_profiles[location_key].embed) {
+        self.community.profile["embed"] = self.community.community_profiles[location_key].embed;
+    }
 
     this.addEmbed = function() {
         if (self.form.$valid) {

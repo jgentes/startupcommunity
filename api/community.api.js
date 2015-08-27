@@ -127,7 +127,7 @@ function handleSetCommunity(req, res) {
         db.get(config.db.collections.communities, settings.community_key)
             .then(function (response) {
 
-                if (response.body.type !== 'location') { // use community_profiles
+                if (response.body.type == 'industry') { // use community_profiles
                     if (response.body.community_profiles === undefined) { // create community_profiles
                         response.body['community_profiles'] = {};
                     }
@@ -141,9 +141,7 @@ function handleSetCommunity(req, res) {
                     } else {
                         response.body.community_profiles[settings.location_key]["embed"] = settings.embed;
                     }
-                } else {
-                    response.body.profile["embed"] = settings.embed;
-                }
+                } else response.body.profile["embed"] = settings.embed;
 
                 db.put(config.db.collections.communities, settings.community_key, response.body)
                     .then(function (finalres) {
