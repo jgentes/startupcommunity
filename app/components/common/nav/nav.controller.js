@@ -18,50 +18,6 @@ function NavigationController($auth, $state, $location, $stateParams, $modal, us
 
     var self = this;
 
-    // CHECK FOR IFRAME
-    this.embedded = false;
-    try {
-        this.embedded = window.self !== window.top;
-    } catch (e) {
-        this.embedded = true;
-    }
-
-    if (this.embedded) {
-        var verified = false;
-        var domain;
-
-        //find & remove protocol (http, ftp, etc.) and get domain
-        if (document.referrer.indexOf("://") > -1) {
-            domain = document.referrer.split('/')[2];
-        }
-        else {
-            domain = document.referrer.split('/')[0];
-        }
-
-        //find & remove port number
-        domain = domain.split(':')[0];
-
-        if (this.community.community_profiles[this.location_path] && this.community.community_profiles[this.location_path].embed) {
-            this.embed = this.community.community_profiles[this.location_path].embed;
-        } else this.embed = this.community.profile.embed;
-
-        console.log(this.embed);
-
-        if (this.embed) {
-            for (u in this.embed) {
-                if (this.embed[u].url == domain) {
-                    console.log('verified!');
-                    verified = true;
-                    if (this.embed[u].color) $('#main_content').css('background-color:', this.embed[u].color);
-                }
-            }
-        }
-
-        if (!verified) $state.go('500', {location_path: null});
-    }
-
-    //this.embedded = true; // for testing
-
     // ANONYMOUS ACCESS OR PROFILE DISPLAY
 
     if ($auth.isAuthenticated()) {
@@ -181,6 +137,49 @@ function NavigationController($auth, $state, $location, $stateParams, $modal, us
     if (this.path.split('/').length < 3) {
         $state.go(this.community.type + '.dashboard');
     }
+
+    // CHECK FOR IFRAME (redirect, if needed, must happen after routing)
+    this.embedded = false;
+    try {
+        this.embedded = window.self !== window.top;
+    } catch (e) {
+        this.embedded = true;
+    }
+
+    if (this.embedded) {
+        var verified = false;
+        var domain;
+
+        //find & remove protocol (http, ftp, etc.) and get domain
+        if (document.referrer.indexOf("://") > -1) {
+            domain = document.referrer.split('/')[2];
+        }
+        else {
+            domain = document.referrer.split('/')[0];
+        }
+
+        //find & remove port number
+        domain = domain.split(':')[0];
+
+        if (this.community.community_profiles[this.location_path] && this.community.community_profiles[this.location_path].embed) {
+            this.embed = this.community.community_profiles[this.location_path].embed;
+        } else this.embed = this.community.profile.embed;
+
+        if (this.embed) {
+            for (u in this.embed) {
+                if (this.embed[u].url == domain) {
+                    console.log('verified!');
+                    verified = true;
+                    if (this.embed[u].color) $('#main-content').css('background-color', this.embed[u].color);
+                }
+            }
+        }
+
+        if (!verified) $state.go('500');
+
+    }
+
+    //this.embedded = true; // for testing
 
 }
 
