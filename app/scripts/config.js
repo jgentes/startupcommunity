@@ -294,10 +294,6 @@ function configState($stateProvider, $urlRouterProvider, $urlMatcherFactoryProvi
         .state('network.dashboard', {
             url: "/:community_path",
             params: {
-                community_path: {
-                    value: null,
-                    squash: true
-                },
                 pageTitle: "Network"
             },
             views: {
@@ -375,15 +371,15 @@ angular
         $rootScope.$on('$stateChangeSuccess',function(){
             $("html, body").animate({ scrollTop: 0 }, 200);
         });
-/*
+
         $rootScope.$on('$stateChangeStart',
             function(event, toState, toParams, fromState, fromParams){
-                console.log('from: ');
-                console.log(fromState);
+                //console.log('from: ');
+                //console.log(fromState);
                 console.log('to:');
                 console.log(toState);
             })
-*/
+
     })
 
 

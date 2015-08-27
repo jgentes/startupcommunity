@@ -81,7 +81,7 @@
                 </a>
                 <ul class="nav nav-second-level">
                     <li>
-                        <a ui-sref="{{nav.community.type + '.dashboard({location_path: nav.location.key, community: nav.location})'}}" ng-class="{active: nav.path().includes('/' + nav.location.key)}">
+                        <a ui-sref="{{nav.community.type + '.dashboard' + nav.nav_url}}" ng-class="{active: nav.path().includes('/' + nav.location.key)}">
                             <span ng-if="nav.community.community_profiles[nav.location_path]">
                                 <i ng-if="nav.community.community_profiles[nav.location_path].icon" ng-class="'fa ' + nav.community.community_profiles[nav.location_path].icon"></i>
                                 <i ng-if="!nav.community.community_profiles[nav.location_path].icon" class="fa fa-globe"></i>
@@ -93,13 +93,13 @@
                         </a>
                         <div ng-if="nav.user.roles.leader[nav.community.key].indexOf(nav.location_path) > -1" class="fa fa-gear pull-right" ng-click="nav.communitySettings()" tooltip-placement="left" tooltip="Settings" style="opacity: .6; cursor: pointer; padding-right: 15px; margin-top: -25px;"></div>
                         <ul ng-if="nav.community.type !== 'user' && nav.community.type !== 'startup'" style="display: block;">
-                            <li ui-sref="{{'user' + nav.list_url}}" ng-class="{ 'active' : nav.path().endsWith(nav.community.key + '/people') }">
+                            <li ui-sref="{{'user.list' + nav.nav_url}}" ng-class="{ 'active' : nav.path().endsWith(nav.community.key + '/people') }">
                                 <a><i class="fa fa-caret-right"></i>&nbsp;&nbsp;People</a>
                                 <li ng-if="nav.user.roles.leader[nav.community.key].indexOf(nav.location_path) > -1" class="nav-third-level" ui-sref="user.invite">
                                     <a style="color: #aaa;">+&nbsp;&nbsp;Invite People</a>
                                 </li>
                             </li>
-                            <li ui-sref="{{'startup' + nav.list_url}}" ng-class="{ 'active' : nav.path().endsWith(nav.community.key + '/startups') }">
+                            <li ui-sref="{{'startup.list' + nav.nav_url}}" ng-class="{ 'active' : nav.path().endsWith(nav.community.key + '/startups') }">
                                 <a><i class="fa fa-caret-right"></i>&nbsp;&nbsp;Startups</a>
                             </li>
                         </ul>

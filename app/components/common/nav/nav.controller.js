@@ -113,9 +113,9 @@ function NavigationController($auth, $state, $location, $stateParams, $modal, us
     }
 
     // to avoid duplicate location_path / community_path when navigating to people & startups
-    this.list_url = this.location_path == this.community.key ?
-        ".list({location_path: nav.location_path, community: nav.community, query: '*'})" :
-        ".list({location_path: nav.location_path, community_path: nav.community.key, community: nav.community, query: '*'})";
+    this.nav_url = this.location_path == this.community.key ?
+        "({location_path: nav.location_path, community: nav.community, query: '*'})" :
+        "({location_path: nav.location_path, community_path: nav.community.key, community: nav.community, query: '*'})";
 
 
     // BREADCRUMBS
@@ -182,7 +182,7 @@ function NavigationController($auth, $state, $location, $stateParams, $modal, us
     };
 
     if (this.path().split('/').length < 3) {
-        $state.go(this.community.type + '.dashboard');
+        $state.go(this.community.type + '.dashboard', {location_path: this.location_path, community: this.community, query: '*'});
     }
 
 }
