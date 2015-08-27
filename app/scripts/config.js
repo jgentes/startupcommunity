@@ -197,8 +197,12 @@ function configState($stateProvider, $urlRouterProvider, $urlMatcherFactoryProvi
             }
         })
         .state('user.invite', {
-            url: "^/:location_path/:community_path/people/invite",
+            url: "/:community_path/people/invite",
             params: {
+                community_path: {
+                    value: null,
+                    squash: true
+                },
                 pageTitle: 'Invite People',
                 pageDescription: 'Linkedin URL is required to pull the photo, headline, and summary for each person.',
                 icon: 'pe-7s-id'
@@ -373,7 +377,7 @@ angular
         $rootScope.$on('$stateChangeSuccess',function(){
             $("html, body").animate({ scrollTop: 0 }, 200);
         });
-
+/*
         $rootScope.$on('$stateChangeStart',
             function(event, toState, toParams, fromState, fromParams){
                 //console.log('from: ');
@@ -381,7 +385,7 @@ angular
                 console.log('to:');
                 console.log(toState);
             })
-
+*/
     })
 
 

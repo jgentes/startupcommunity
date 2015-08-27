@@ -168,9 +168,8 @@ function NavigationController($auth, $state, $location, $stateParams, $modal, us
         if (this.embed) {
             for (u in this.embed) {
                 if (this.embed[u].url == domain) {
-                    console.log('verified!');
                     verified = true;
-                    if (this.embed[u].color) $('#main-content').css('background-color', this.embed[u].color);
+                    if (this.embed[u].color) $(document).ready(function() { $('#main-content').css('background-color', this.embed[u].color); });
                 }
             }
         }
