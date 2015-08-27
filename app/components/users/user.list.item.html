@@ -9,7 +9,7 @@
             <i class="pe-7s-mail" style="font-size: 20px; opacity: .45;"></i></a>
         <a ng-show="{{(item.value.profile.linkedin.summary).length > 0}}" title="Show Summary" ng-click="showSummary = !showSummary" class="user-summary">&nbsp;<i class="fa fa-chevron-down fa-fw"></i></a>
         <li ng-repeat="val in item.value.communities" class="role-right">
-            <a ui-sref="{{users.communities[val].type + '.dashboard({community_path: val, community: users.communities[val], query: &quot;&#42;&quot;})'}}" ng-class="{'btn-danger' : users.communities[val].type == 'startup', 'btn-info' : users.communities[val].type == 'network', 'btn-primary' : users.communities[val].type == 'industry', 'btn-success' : users.communities[val].type == 'location'}" class="btn btn-xs btn-outline hidden"><i class="fa {{users.communities[val].profile.icon}}"></i> {{users.communities[val].profile.name}}</a>
+            <a ui-sref="{{users.communities[val].type + '.dashboard' + users.url}}" ng-class="{'btn-danger' : users.communities[val].type == 'startup', 'btn-info' : users.communities[val].type == 'network', 'btn-primary' : users.communities[val].type == 'industry', 'btn-success' : users.communities[val].type == 'location'}" class="btn btn-xs btn-outline hidden"><i class="fa {{users.communities[val].profile.icon}}"></i> {{users.communities[val].profile.name}}</a>
         </li>
         <br>
         <div class="dash-row">

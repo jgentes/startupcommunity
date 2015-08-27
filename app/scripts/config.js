@@ -6,10 +6,10 @@ function configState($stateProvider, $urlRouterProvider, $urlMatcherFactoryProvi
 
     $locationProvider
         .html5Mode(true);
-
+/*
     $urlMatcherFactoryProvider
         .strictMode(false); // to allow trailing slashes
-
+*/
     $stateProvider
 
         .state('invite', {
@@ -294,6 +294,7 @@ function configState($stateProvider, $urlRouterProvider, $urlMatcherFactoryProvi
         .state('network.dashboard', {
             url: "/:community_path",
             params: {
+                community: {}, // root url goes blank without this because it needs community passed in
                 pageTitle: "Network"
             },
             views: {
@@ -320,6 +321,7 @@ function configState($stateProvider, $urlRouterProvider, $urlMatcherFactoryProvi
         .state('industry.dashboard', {
             url: "/:community_path",
             params: {
+                community: {},
                 pageTitle: "Industry"
             },
             views: {

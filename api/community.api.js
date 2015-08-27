@@ -76,7 +76,7 @@ function handleGetCommunity(req, res) {
 
                 if (result.body.results.length > 0) {
                   if (result.body.results[0].value.type == "user" || result.body.results[0].value.type == "startup" || result.body.results[0].value.type == "network") { // user contains communities within record
-                      console.log('Pulling user community..');
+                      console.log('Pulling community for ' + result.body.results[0].value.profile.name);
                       var comm_items = result.body.results[0].value.communities;
                       var search = community + " OR ";
                       for (i in comm_items) {

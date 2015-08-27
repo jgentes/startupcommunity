@@ -20,6 +20,10 @@ function UserController($stateParams, user_service, result_service, $sce, $modal
 
     $stateParams.query ? query = $stateParams.query : query = '*';
 
+    this.url = $stateParams.community_path && $stateParams.location_path ?
+        "({community_path: val, community: users.communities[val], query: '*'})" :
+        "({location_path: val, community: users.communities[val], query: '*'})";
+
     this.searchUsers = function(alturl) {
         self.loadingUser = true;
 
