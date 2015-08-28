@@ -153,20 +153,22 @@ function NavigationController($auth, $state, $window, $location, $stateParams, $
         var verified = false,
             domain;
 
+        //find & remove protocol (http, ftp, etc.) and get domain
+        if (document.referrer.indexOf("://") > -1) {
+            domain = document.referrer.split('/')[2];
+        }
+        else {
+            domain = document.referrer.split('/')[0];
+        }
+
+        //find & remove port number
+        domain = domain.split(':')[0];
+
         // use localStorage to persist 'allowed to embed' across communities if the initial referral domain is verified
-        if ($window.localStorage) verified = $window.localStorage.getItem('embed_verified');
+        if ($window.localStorage) verified = $window.localStorage.getItem(domain + '_embed_verified');
 
         if (!verified) {
-            //find & remove protocol (http, ftp, etc.) and get domain
-            if (document.referrer.indexOf("://") > -1) {
-                domain = document.referrer.split('/')[2];
-            }
-            else {
-                domain = document.referrer.split('/')[0];
-            }
 
-            //find & remove port number
-            domain = domain.split(':')[0];
 
             if (this.community.type === 'industry' && this.community.community_profiles[this.location_path] && this.community.community_profiles[this.location_path].embed) {
                 embed = this.community.community_profiles[this.location_path].embed;
@@ -177,15 +179,15 @@ function NavigationController($auth, $state, $window, $location, $stateParams, $
                     if (embed[u].url == domain) {
                         verified = true;
                         this.color = embed[u].color;
-                        $window.localStorage && $window.localStorage.setItem('embed_verified', true);
-                        $window.localStorage && $window.localStorage.setItem('embed_color', this.color);
+                        $window.localStorage && $window.localStorage.setItem(domain + '_embed_verified', true);
+                        $window.localStorage && $window.localStorage.setItem(domain + '_embed_color', this.color);
                     }
                 }
             }
 
             if (!verified) $state.go('500');
         } else {
-            this.color = $window.localStorage.getItem('embed_color');
+            this.color = $window.localStorage.getItem(domain + '_embed_color');
         }
     }
 
