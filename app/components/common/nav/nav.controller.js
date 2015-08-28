@@ -4,7 +4,7 @@ angular
     .controller('ChangeLocationController', ChangeLocationController);
 
 function NavigationController($auth, $state, $window, $location, $stateParams, $modal, user, location, community, communities) {
-    console.log($window.localStorage && $window.localStorage.getItem('embed'));
+
     // SENSITIVE VARIABLES THAT AFFECT NAVIGATION AND ALL CHILD TEMPLATES
     // When used in ui-sref links: location_path affects the url, location affects header and content, community affects header and secondary url
     try { // catch any initial db connectivity problems
@@ -138,19 +138,58 @@ function NavigationController($auth, $state, $window, $location, $stateParams, $
         $state.go(this.community.type + '.dashboard');
     }
 
-    // for embed
 
-    var embedded = false;
+    // CHECK FOR IFRAME (redirect, if needed, must happen after routing)
+    var embed;
+    this.embedded = false;
+
     try {
-        embedded = window.self !== window.top;
+        this.embedded = window.self !== window.top;
     } catch (e) {
-        embedded = true;
+        this.embedded = true;
     }
 
-    if (embedded) {
-        this.embedded = true;
-       // this.color = embed.color;
+    if (this.embedded) {
+        var verified = false,
+            domain;
+
+        // use localStorage to persist 'allowed to embed' across communities if the initial referral domain is verified
+        if ($window.localStorage) verified = $window.localStorage.getItem('embed_verified');
+
+        if (!verified) {
+            //find & remove protocol (http, ftp, etc.) and get domain
+            if (document.referrer.indexOf("://") > -1) {
+                domain = document.referrer.split('/')[2];
+            }
+            else {
+                domain = document.referrer.split('/')[0];
+            }
+
+            //find & remove port number
+            domain = domain.split(':')[0];
+
+            if (this.community.type === 'industry' && this.community.community_profiles[this.location_path] && this.community.community_profiles[this.location_path].embed) {
+                embed = this.community.community_profiles[this.location_path].embed;
+            } else embed = this.community.profile.embed;
+
+            if (embed) {
+                for (u in embed) {
+                    if (embed[u].url == domain) {
+                        verified = true;
+                        this.color = embed[u].color;
+                        $window.localStorage && $window.localStorage.setItem('embed_verified', true);
+                        $window.localStorage && $window.localStorage.setItem('embed_color', this.color);
+                    }
+                }
+            }
+
+            if (!verified) $state.go('500');
+        } else {
+            this.color = $window.localStorage.getItem('embed_color');
+        }
     }
+
+    //this.embedded = true; // for testing
 
 }
 
@@ -212,7 +251,7 @@ function CommunitySettingsController($modalInstance, $window, $state, sweet, com
                         type: "success"
                     });
 
-                    $window.localStorage && $window.localStorage.setItem('embed', 1);
+                    $window.localStorage && $window.localStorage.setItem('embed_verified', true);
 
                     $state.reload();
                 }

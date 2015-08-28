@@ -115,57 +115,7 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                         if (community && (community.type == "location" || community.type == "network")) {
                             return community;
                         } else return $stateParams.location;
-                    }],
-                embed: ['community', 'location',
-                    function(community, location, $state) {
-                        // CHECK FOR IFRAME (redirect, if needed, must happen after routing)
-                        var embedded = false,
-                            embed;
-                        try {
-                            embedded = window.self !== window.top;
-                        } catch (e) {
-                            embedded = true;
-                        }
-
-                        if (embedded) {
-                            var verified = false;
-                            var domain;
-
-                            //find & remove protocol (http, ftp, etc.) and get domain
-                            if (document.referrer.indexOf("://") > -1) {
-                                domain = document.referrer.split('/')[2];
-                            }
-                            else {
-                                domain = document.referrer.split('/')[0];
-                            }
-
-                            //find & remove port number
-                            domain = domain.split(':')[0];
-
-                            if (community.type === 'industry' && community.community_profiles[location.key] && community.community_profiles[location.key].embed) {
-                                embed = community.community_profiles[location.key].embed;
-                            } else embed = community.profile.embed;
-
-                            if (embed) {
-                                for (u in embed) {
-                                    if (embed[u].url == domain) {
-                                        verified = true;
-                                        return {
-                                            "embedded" : true,
-                                            "verified": true,
-                                            "color": embed[u].color
-                                        }
-                                    }
-                                }
-                            }
-
-                            if (!verified) $state.go('500');
-
-                        } else return { "embedded" : false }
-
-                        //this.embedded = true; // for testing
-
-                }]
+                    }]
             }
         })
 
