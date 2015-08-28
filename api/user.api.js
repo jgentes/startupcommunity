@@ -220,7 +220,7 @@ function handleContactUser(req, res) {
     // search format is 'roles.leader[community]: location'
 
     // create searchstring to get leader of community
-    var searchstring = '(roles.leader.' + community_key + ': "' + location_key + '") AND type: "user"';
+    var searchstring = '(roles.leader.' + community_key + ': *) AND type: "user"';
 
     db.newSearchBuilder()
         .collection(config.db.collections.communities)
