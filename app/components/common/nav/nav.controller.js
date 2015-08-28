@@ -253,8 +253,6 @@ function CommunitySettingsController($modalInstance, $window, $state, sweet, com
                         type: "success"
                     });
 
-                    $window.localStorage && $window.localStorage.setItem('embed_verified', true);
-
                     $state.reload();
                 }
             });

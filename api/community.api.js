@@ -120,6 +120,7 @@ function handleSetCommunity(req, res) {
     var settings = req.body.params;
 
     console.log('Updating settings for ' + settings.location_key + ' / ' + settings.community_key);
+    console.log(req.user.value.roles.leader);
 
     // validate user has leader role within the location/community
     if (req.user.value.roles.leader[settings.community_key] && req.user.value.roles.leader[settings.community_key].indexOf(settings.location_key) > -1) {

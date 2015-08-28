@@ -9,7 +9,7 @@ function LoginController($auth, $state, $mixpanel) {
     var postLogin = function(auth_response) { // was using global scope, but now I use resolve of user, which is getprofile
         auth_response.data.user.value["key"] = auth_response.data.user.path.key;
         if (auth_response.config.data.state !== '/login') {
-            $state.go($state.current, {}, {reload: true});
+            $state.reload();
         } else $state.go('user.dashboard', {profile: auth_response.data.user.value, location_path: auth_response.data.user.value.key, community: {}});
 
         $mixpanel.identify(auth_response.data.user.path.key);
@@ -39,10 +39,7 @@ function LoginController($auth, $state, $mixpanel) {
                         "$email": response.data.profile.emailAddress
                     });
                     $mixpanel.track('Attempted Login');
-                    UserVoice.push(['identify', {
-                        name: response.data.profile.firstName + ' ' + response.data.profile.lastName,
-                        email: response.data.profile.emailAddress
-                    }]);
+
                 }
                 if (response.data.message && response.data.message !== 'undefined') {
                     self.alert = {type: 'danger', msg: String(response.data.message)};

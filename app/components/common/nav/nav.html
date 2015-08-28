@@ -77,6 +77,7 @@
                     Community
 
                 </span>
+                    <div ng-if="nav.user.roles.leader[nav.community.key].indexOf(nav.location_path) > -1" class="fa fa-gear pull-right" ng-click="nav.communitySettings()" tooltip-placement="left" tooltip="Settings" style="opacity: .6; cursor: pointer; margin-top: 5px;"></div>
                     <!--<span class="fa fa-gear pull-right" ng-click="nav.changeLocation()" tooltip-placement="left" tooltip="Change Location" style="opacity: .6; margin-top: 4px; cursor: pointer;"></span>-->
                 </a>
                 <ul class="nav nav-second-level">
@@ -91,7 +92,6 @@
                                 <i ng-if="!nav.community.profile.icon" class="fa fa-globe"></i>
                                     &nbsp;&nbsp;{{nav.community.profile.name}}</span>
                         </a>
-                        <div ng-if="nav.user.roles.leader[nav.community.key].indexOf(nav.location_path) > -1" class="fa fa-gear pull-right" ng-click="nav.communitySettings()" tooltip-placement="left" tooltip="Settings" style="opacity: .6; cursor: pointer; padding-right: 15px; margin-top: -25px;"></div>
                         <ul ng-if="nav.community.type !== 'user' && nav.community.type !== 'startup'" style="display: block;">
                             <li ui-sref="{{'user.list' + nav.nav_url}}" ng-class="{ 'active' : nav.path.endsWith(nav.community.key + '/people') }">
                                 <a><i class="fa fa-caret-right"></i>&nbsp;&nbsp;People</a>

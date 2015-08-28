@@ -41,8 +41,8 @@
 
                 <div class="panel-heading" style="font-size: 20px; margin-top: 15px;">Current domains:</div>
                 <div class="panel-body">
-                    <h3 ng-show="!settings.community.profile.embed || settings.community.profile.embed.length == 0">None yet!</h3>
-                    <table ng-show="settings.community.profile.embed.length > 0" style="border-collapse:separate; border-spacing:0 8px;">
+                    <h3 ng-show="!settings.embed || settings.embed.length == 0">None yet!</h3>
+                    <table ng-show="settings.embed.length > 0" style="border-collapse:separate; border-spacing:0 8px;">
                         <tr>
                             <td style="width:60%;">
                                 <label>Domain:</label>
@@ -52,7 +52,7 @@
                             </td>
                             <td style="width:10%;"></td>
                         </tr>
-                        <tr ng-repeat="domain in settings.community.profile.embed">
+                        <tr ng-repeat="domain in settings.embed">
                             <td>
                                 <input type="text" class="form-control input-lg" placeholder="{{domain.url}}" disabled>
                             </td>

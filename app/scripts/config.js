@@ -66,11 +66,7 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                                         "$name": response.profile.name,
                                         "$email": response.profile.email
                                     });
-                                    UserVoice.push(['identify', {
-                                        id: response.key,
-                                        name: response.profile.name,
-                                        email: response.profile.email
-                                    }]);
+
                                 }
                             })
                             .error(function(response) {
@@ -176,6 +172,7 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                 }
             }
         })
+
         .state('user.list', {
             url: "^/:location_path/:community_path/people",
             params: {
