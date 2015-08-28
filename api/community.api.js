@@ -123,10 +123,9 @@ function handleSetCommunity(req, res) {
 
     // validate user has leader role within the location/community
     if (req.user.value.roles.leader[settings.community_key] && req.user.value.roles.leader[settings.community_key].indexOf(settings.location_key) > -1) {
-
+        // update the community
         db.get(config.db.collections.communities, settings.community_key)
             .then(function (response) {
-
                 if (response.body.type == 'industry') { // use community_profiles
                     if (response.body.community_profiles === undefined) { // create community_profiles
                         response.body['community_profiles'] = {};

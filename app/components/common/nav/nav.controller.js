@@ -3,8 +3,8 @@ angular
     .controller('NavigationController', NavigationController)
     .controller('ChangeLocationController', ChangeLocationController);
 
-function NavigationController($auth, $state, $location, $stateParams, $modal, user, location, community, communities) {
-
+function NavigationController($auth, $state, $window, $location, $stateParams, $modal, user, location, community, communities) {
+    console.log($window.localStorage && $window.localStorage.getItem('embed'));
     // SENSITIVE VARIABLES THAT AFFECT NAVIGATION AND ALL CHILD TEMPLATES
     // When used in ui-sref links: location_path affects the url, location affects header and content, community affects header and secondary url
     try { // catch any initial db connectivity problems
@@ -164,7 +164,7 @@ function ChangeLocationController($modalInstance){
     };
 }
 
-function CommunitySettingsController($modalInstance, $state, sweet, community_service, community, location_key){
+function CommunitySettingsController($modalInstance, $window, $state, sweet, community_service, community, location_key){
 
     this.community = community;
     this.location_key = location_key;
@@ -211,6 +211,8 @@ function CommunitySettingsController($modalInstance, $state, sweet, community_se
                         title: "Settings Saved!",
                         type: "success"
                     });
+
+                    $window.localStorage && $window.localStorage.setItem('embed', 1);
 
                     $state.reload();
                 }
