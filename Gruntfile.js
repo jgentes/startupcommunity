@@ -232,6 +232,8 @@ module.exports = function (grunt) {
         'less',
         'useminPrepare',
         'concat',
+        'copy:backstyles',
+        'copy:frontstyles',
         'copy:dist',
         'cssmin',
         'uglify',
