@@ -37,7 +37,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use("/", express.static(__dirname + config.path));
 app.use("/public", express.static(__dirname + '/public'));
-
+console.log(process.env.NODE_ENV);
 if (process.env.NODE_ENV === "production") {
   // production-only things go here
   app.use(enforce.HTTPS(true));
