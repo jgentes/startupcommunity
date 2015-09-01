@@ -216,7 +216,8 @@ module.exports = function (grunt) {
 
     grunt.registerTask('live', [
         'clean:server',
-        'copy:styles',
+        'copy:backstyles',
+        'copy:frontstyles',
         'connect:livereload',
         'watch'
     ]);
@@ -241,7 +242,8 @@ module.exports = function (grunt) {
 
     grunt.registerTask('test', [
         'clean:server',
-        'copy:styles',
+        'copy:backstyles',
+        'copy:frontstyles',
         'connect'
         //'protractor:run'
     ]);
