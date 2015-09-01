@@ -128,7 +128,8 @@ module.exports = function (grunt) {
                             '*.html',
                             'views/{,*/}*.html',
                             'styles/img/*.*',
-                            'images/{,*/}*.*'
+                            'images/{,*/}*.*',
+                            'frontend/**'
                         ]
                     },
                     {
@@ -154,10 +155,16 @@ module.exports = function (grunt) {
                     }
                 ]
             },
-            styles: {
+            backstyles: {
                 expand: true,
                 cwd: '<%= startupcommunity.app %>/styles',
                 dest: '.tmp/styles/',
+                src: '{,*/}*.css'
+            },
+            frontstyles: {
+                expand: true,
+                cwd: '<%= startupcommunity.app %>/frontend/css',
+                dest: '.tmp/frontend/css',
                 src: '{,*/}*.css'
             }
         },
@@ -167,6 +174,7 @@ module.exports = function (grunt) {
                 src: [
                     '<%= startupcommunity.dist %>/scripts/{,*/}*.js',
                     '<%= startupcommunity.dist %>/styles/{,*/}*.css',
+                    '<%= startupcommunity.dist %>/frontend/css/{,*/}*.css',
                     '<%= startupcommunity.dist %>/styles/fonts/*'
                 ]
             }
@@ -189,13 +197,13 @@ module.exports = function (grunt) {
             }
         },
         useminPrepare: {
-            html: 'app/app.html',
+            html: ['app/app.html', 'app/frontend.html'],
             options: {
                 dest: 'dist'
             }
         },
         usemin: {
-            html: ['dist/app.html']
+            html: ['<%= startupcommunity.dist %>/{,*/}*.html']
         },
         protractor: {
             options: {

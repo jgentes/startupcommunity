@@ -117,7 +117,7 @@ config = {
     // ### Testing
     // Used when developing Ghost to run tests and check the health of Ghost
     // Uses a different port number
-    testing: {
+    test: {
         url: 'http://127.0.0.1:2369',
         database: {
             client: 'sqlite3',
