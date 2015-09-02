@@ -137,13 +137,13 @@ function handleCreateAPIToken(req, res) {
     };
     res.status(201).send(jwt.encode(payload, config.API_token_secret));
 
-    db.get(config.db.collections.users, req.user.path.key)
+    db.get(config.db.communities, req.user.path.key)
         .then(function(response){
             if (response.body.code !== "items_not_found") {
                 console.log('Matching user found.');
                 if (response.body.profile.api_key === undefined) {
                     response.body.profile["api_key"] = jwt.encode(payload, config.API_token_secret); // get user account and re-upload with api_key
-                    db.put(config.db.collections.users, req.user.path.key, response.body)
+                    db.put(config.db.communities, req.user.path.key, response.body)
                         .then(function () {
                             console.log("Profile updated.");
                         })
@@ -172,7 +172,7 @@ function handleSignup(req, res) {
     var user = schema.signupform(req.body);
 
     db.newSearchBuilder()
-        .collection(config.db.collections.users)
+        .collection(config.db.communities)
         .limit(1)
         .query('profile.email: "' + req.body.profile.email + '"')
         .then(function(result){
@@ -181,10 +181,10 @@ function handleSignup(req, res) {
                 res.status(401).send({ message: 'That email address is already registered to a user.'}); //username already exists
             } else {
                 console.log('Email is free for use');
-                db.post(config.db.collections.users, user)
+                db.post(config.db.communities, user)
                     .then(function () {
                         db.newSearchBuilder()
-                            .collection(config.db.collections.users)
+                            .collection(config.db.communities)
                             .limit(1)
                             .query('profile.email: "' + req.body.profile.email + '"')
                             .then(function(result){
@@ -223,7 +223,7 @@ function handleSignup(req, res) {
 
 function handleLogin(req, res) {
     db.newSearchBuilder()
-        .collection(config.db.collections.users)
+        .collection(config.db.communities)
         .limit(1)
         .query('profile.email: "' + req.body.profile.email + '"')
         .then(function(result){
@@ -276,7 +276,7 @@ var linkedinPull = function (linkedinuser, pullcallback) {
 
     console.log('Looking for existing user based on public Linkedin profile.');
 
-    db.search(config.db.collections.users, 'profile.linkedin.publicProfileUrl: "' + linkedinuser.profile.linkedin.publicProfileUrl + '"')
+    db.search(config.db.communities, 'profile.linkedin.publicProfileUrl: "' + linkedinuser.profile.linkedin.publicProfileUrl + '"')
         .then(function (result){
             console.log('Result of db search: ' + result.body.total_count);
             if (result.body.results.length > 0){
@@ -289,7 +289,7 @@ var linkedinPull = function (linkedinuser, pullcallback) {
                 }
             } else {
                 console.log('No existing linkedin user found!');
-                db.post(config.db.collections.users, linkedinuser)
+                db.post(config.db.communities, linkedinuser)
                     .then(function () {
                         console.log("REGISTERED: " + linkedinuser.profile.email);
                         pullcallback({ "status": 200, "data": linkedinuser });
@@ -348,7 +348,7 @@ function handleLinkedin(req, res) {
                 if (req.headers.authorization) { // isloggedin already? [this use case is for linking a linkedin profile to an existing account
 
                     db.newSearchBuilder()
-                        .collection(config.db.collections.users)
+                        .collection(config.db.communities)
                         .limit(1)
                         .query('profile.linkedin.id: "' + profile.id + '"')
                         .then(function (result){
@@ -361,12 +361,12 @@ function handleLinkedin(req, res) {
                                 var token = req.headers.authorization.split(' ')[1];
                                 var payload = jwt.decode(token, config.token_secret);
 
-                                db.get(config.db.collections.users, payload.sub)
+                                db.get(config.db.communities, payload.sub)
                                     .then(function(response){
                                         if (response.body.code !== "items_not_found") {
                                             console.log('Matching user found.');
                                             response.body.profile["linkedin"] = profile; // get user account and re-upload with linkedin data
-                                            db.put(config.db.collections.users, payload.sub, response.body)
+                                            db.put(config.db.communities, payload.sub, response.body)
                                                 .then(function () {
                                                     console.log("Profile updated: " + userprofile.profile.email);
                                                 })
@@ -394,7 +394,7 @@ function handleLinkedin(req, res) {
                 } else {
 
                     db.newSearchBuilder()
-                        .collection(config.db.collections.users)
+                        .collection(config.db.communities)
                         .limit(1)
                         .query('profile.linkedin.id: "' + profile.id + '"')
                         .then(function (result){
@@ -411,7 +411,7 @@ function handleLinkedin(req, res) {
                                     result.body.results[0].value.profile.email = result.body.results[0].value.profile.linkedin.emailAddress;
                                 }
 
-                                db.put(config.db.collections.users, result.body.results[0].path.key, result.body.results[0].value)
+                                db.put(config.db.communities, result.body.results[0].path.key, result.body.results[0].value)
                                     .then(function () {
                                         console.log("Profile updated: " + userprofile.profile.email);
                                     })
@@ -422,15 +422,16 @@ function handleLinkedin(req, res) {
 
                                 res.send({ token: handleCreateToken(req, result.body.results[0]), user: result.body.results[0] });
                             } else {
+                                console.log(profile);
                                 db.newSearchBuilder()
-                                    .collection(config.db.collections.users)
+                                    .collection(config.db.communities)
                                     .limit(1)
                                     .query('profile.email: "' + profile.emailAddress + '"')
                                     .then(function(result){
                                         if (result.body.results.length > 0) {
                                             console.log("Found user: " + profile.firstName + ' ' + profile.lastName);
                                             result.body.results[0].value.profile["linkedin"] = profile; // get user account and re-upload with linkedin data
-                                            db.put(config.db.collections.users, result.body.results[0].path.key, result.body.results[0].value)
+                                            db.put(config.db.communities, result.body.results[0].path.key, result.body.results[0].value)
                                                 .then(function () {
                                                     console.log("Profile updated: " + userprofile.profile.email);
                                                 })
@@ -442,7 +443,7 @@ function handleLinkedin(req, res) {
 
                                         } else {
                                             console.log('No existing user found!');
-                                            res.status(401).send({ profile: profile, message: "Sorry, we couldn't find you in our system. Please <a href='/' target='_self'>click here to request an invitation</a>." });
+                                            res.status(401).send({ profile: profile, message: "Sorry, we couldn't find " + profile.firstName + " " + profile.lastName + " with email address '" + profile.emailAddress + "' in our system. <br/><br/>Please <a href='/' target='_self'>click here to request an invitation</a>." });
                                         }
                                     })
                                     .fail(function(err){
@@ -452,7 +453,7 @@ function handleLinkedin(req, res) {
 
                                 /* Do this to create a user account if no user exists
                                  db.newSearchBuilder()
-                                 .collection(config.db.collections.users)
+                                 .collection(config.db.communities)
                                  .limit(1)
                                  .query('value.email: "' + profile.emailAddress + '"')
                                  .then(function(result){
@@ -461,7 +462,7 @@ function handleLinkedin(req, res) {
                                  res.status(409).send({ message: "Sorry, there's already a user with your email address." });
 
                                  } else {
-                                 db.post(config.db.collections.users, userprofile)
+                                 db.post(config.db.communities, userprofile)
                                  .then(function () {
                                  console.log("Profile created: " + JSON.stringify(userprofile));
                                  res.send({ token: handleCreateToken(req, userprofile) });
@@ -533,11 +534,11 @@ function handleInviteUser(req, res) {
 
 function handleUnlink(req, res) {
     var provider = req.params.provider;
-    db.get(config.db.collections.users, req.user.path.key)
+    db.get(config.db.communities, req.user.path.key)
         .then(function(response){
             if (response.body.code !== "items_not_found") {
                 response.body[provider] = undefined;
-                db.put(config.db.collections.users, req.user.path.key, response.body)
+                db.put(config.db.communities, req.user.path.key, response.body)
                     .then(function() {
                         console.log('Successfully unlinked provider!');
                         res.status(200).end();

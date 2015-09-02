@@ -48,7 +48,7 @@ var searchInCommunity = function(communities, stages, limit, offset, query, key)
                         //check perms!
                         console.log('test then remove me')
                         //todo THIS SECTION NEEDS TO BE REWRITTEN
-                        db.get(config.db.collections.users, payload.sub)
+                        db.get(config.db.communities, payload.sub)
                             .then(function (response) {
                                     /*
                                      if (location && community) {
@@ -93,7 +93,7 @@ var searchInCommunity = function(communities, stages, limit, offset, query, key)
 
         var deferred = Q.defer();
         db.newSearchBuilder()
-            .collection(config.db.collections.communities)
+            .collection(config.db.communities)
             .limit(Number(limit) || 18)
             .offset(Number(offset) || 0)
             .query(searchstring)
@@ -113,11 +113,11 @@ var searchInCommunity = function(communities, stages, limit, offset, query, key)
 
                     if (result.body.next) {
                             var getnext = url.parse(result.body.next, true);
-                            result.body.next = '/api/1.1/search' + getnext.search;
+                            result.body.next = '/api/2.0/search' + getnext.search;
                     }
                     if (result.body.prev) {
                             var getprev = url.parse(result.body.prev, true);
-                            result.body.prev = '/api/1.1/search' + getprev.search;
+                            result.body.prev = '/api/2.0/search' + getprev.search;
                     }
                     deferred.resolve(result.body);
             })

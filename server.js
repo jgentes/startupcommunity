@@ -37,7 +37,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use("/", express.static(__dirname + config.path));
 app.use("/public", express.static(__dirname + '/public'));
-console.log(process.env.NODE_ENV);
+
 if (process.env.NODE_ENV === "production") {
   // production-only things go here
   app.use(enforce.HTTPS(true));
@@ -63,28 +63,6 @@ var AuthApi = require('./api/auth.api.js'),
     maint = new MaintApi();
 
 // API
-app.get('/api/1.0/:community/users', userApis.userSearch);
-app.get('/api/1.0/city/:community', communityApis.getCommunity);
-app.get('/api/1.0/profile', auth.ensureAuthenticated, userApis.getProfile);
-app.get('/api/1.0/profile/getkey', auth.ensureAuthenticated, auth.createAPIToken);
-app.get('/api/1.0/inviteUser', auth.ensureAuthenticated, auth.inviteUser);
-app.put('/api/1.0/profile/role', auth.ensureAuthenticated, userApis.setRole);
-app.post('/api/1.0/profile/remove/:userid', auth.ensureAuthenticated, userApis.removeProfile);
-app.post('/api/1.0/feedback', auth.ensureAuthenticated, userApis.feedback);
-
-app.get('/api/1.1/key/:key', communityApis.getKey);
-app.get('/api/1.1/users', userApis.userSearch);
-app.get('/api/1.1/search', userApis.directSearch);
-app.get('/api/1.1/community/:community', communityApis.getCommunity);
-app.get('/api/1.1/angel/startups', angellistApis.getStartups);
-app.get('/api/1.1/angel/startup', angellistApis.getStartup);
-app.get('/api/1.1/profile', auth.ensureAuthenticated, userApis.getProfile); // must ensureAuth to send userid to getProfile
-app.get('/api/1.1/profile/getkey', auth.ensureAuthenticated, auth.createAPIToken);
-app.get('/api/1.1/invite', auth.ensureAuthenticated, auth.inviteUser);
-app.put('/api/1.1/profile/role', auth.ensureAuthenticated, userApis.setRole);
-app.post('/api/1.1/profile/remove/:userid', auth.ensureAuthenticated, userApis.removeProfile);
-app.post('/api/1.1/feedback', auth.ensureAuthenticated, userApis.feedback);
-
 app.get('/api/2.0/key/:key', communityApis.getKey);
 app.get('/api/2.0/users', userApis.userSearch);
 app.get('/api/2.0/search', userApis.directSearch);
@@ -109,7 +87,7 @@ app.post('/auth/signup', auth.signup); //not currently used?
 app.post('/auth/login', auth.login); //not currently used?
 
 // Maintenance
-app.get('/api/1.1/maint', maint.maintenance);
+app.get('/api/maint', maint.maintenance);
 
 // Client logger
 app.post('/api/logger', function (req, res) {

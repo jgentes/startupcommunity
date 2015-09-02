@@ -2,10 +2,7 @@
   "local": {
     "db": {
       "key": "be406a43-5cc1-425f-9545-23bd75ec6cfc",
-      "collections": {
-        "users": "communities-dev",
-        "communities": "communities-dev"
-      }
+      "communities": "communities"
     },
     "linkedin": {
       "clientID": "75bqixdv58z1az",
@@ -25,10 +22,7 @@
    "test": {
      "db": {
        "key": "be406a43-5cc1-425f-9545-23bd75ec6cfc",
-       "collections": {
-         "users": "communities-dev",
-         "communities": "communities-dev"
-       }
+       "communities": "communities"
      },
      "linkedin": {
        "clientID": "75bqixdv58z1az",
@@ -48,10 +42,7 @@
   "theme": {
     "db": {
       "key": "be406a43-5cc1-425f-9545-23bd75ec6cfc",
-      "collections": {
-        "users": "communities-dev",
-        "communities": "communities-dev"
-      }
+      "communities": "communities"
     },
     "linkedin": {
       "clientID": "75bqixdv58z1az",
@@ -71,10 +62,7 @@
   "development": {
     "db": {
       "key": "be406a43-5cc1-425f-9545-23bd75ec6cfc",
-      "collections": {
-        "users": "communities-dev",
-        "communities": "communities-dev"
-      }
+      "communities": "communities"
     },
     "linkedin": {
       "clientID": "75bqixdv58z1az",
@@ -94,10 +82,7 @@
   "production": {
     "db": {
       "key": "be406a43-5cc1-425f-9545-23bd75ec6cfc",
-      "collections": {
-        "users": "users",
-        "cities": "cities"
-      }
+      "communities": "communities"
     },
     "linkedin": {
       "clientID": "75bqixdv58z1az",

@@ -55,7 +55,7 @@ var searchInCommunity = function(communities, roles, limit, offset, query, key) 
             //check perms!
             console.log('test then remove me')
             //todo THIS SECTION NEEDS TO BE REWRITTEN
-            db.get(config.db.collections.users, payload.sub)
+            db.get(config.db.communities, payload.sub)
               .then(function (response) {
                     /*
                   if (location && community) {
@@ -100,7 +100,7 @@ var searchInCommunity = function(communities, roles, limit, offset, query, key) 
 
     var deferred = Q.defer();
     db.newSearchBuilder()
-      .collection(config.db.collections.communities)
+      .collection(config.db.communities)
       .limit(Number(limit) || 18)
       .offset(Number(offset) || 0)
       .query(searchstring)
@@ -131,11 +131,11 @@ var searchInCommunity = function(communities, roles, limit, offset, query, key) 
 
           if (result.body.next) {
               var getnext = url.parse(result.body.next, true);
-              result.body.next = '/api/1.1/search' + getnext.search;
+              result.body.next = '/api/2.0/search' + getnext.search;
           }
           if (result.body.prev) {
               var getprev = url.parse(result.body.prev, true);
-              result.body.prev = '/api/1.1/search' + getprev.search;
+              result.body.prev = '/api/2.0/search' + getprev.search;
           }
           deferred.resolve(result.body);
       })
@@ -151,7 +151,7 @@ var searchInCommunity = function(communities, roles, limit, offset, query, key) 
 function handleDirectSearch(req, res) {
     //TODO check for key to protect info?
     db.newSearchBuilder()
-        .collection(config.db.collections.communities)
+        .collection(config.db.communities)
         .limit(Number(req.query.limit) || 100)
         .offset(Number(req.query.offset) || 10)
         .query(req.query.query)
@@ -184,11 +184,11 @@ function handleDirectSearch(req, res) {
 
                 if (result.body.next) {
                     var getnext = url.parse(result.body.next, true);
-                    result.body.next = '/api/1.1/search' + getnext.search;
+                    result.body.next = '/api/2.0/search' + getnext.search;
                 }
                 if (result.body.prev) {
                     var getprev = url.parse(result.body.prev, true);
-                    result.body.prev = '/api/1.1/search' + getprev.search;
+                    result.body.prev = '/api/2.0/search' + getprev.search;
                 }
             } catch (error) {
                 console.warn('WARNING:  Possible database entry corrupted: ');
@@ -223,7 +223,7 @@ function handleContactUser(req, res) {
     var searchstring = '(roles.leader.' + community_key + ': *) AND type: "user"';
 
     db.newSearchBuilder()
-        .collection(config.db.collections.communities)
+        .collection(config.db.communities)
         .limit(10)
         .query(searchstring)
         .then(function(result){
@@ -235,7 +235,7 @@ function handleContactUser(req, res) {
                 }
 
                 // now get user record for email address
-                db.get(config.db.collections.communities, user_key)
+                db.get(config.db.communities, user_key)
                     .then(function(response){
                         if (response.body.code !== "items_not_found") {
                             var contacts = [],
@@ -293,7 +293,7 @@ function handleContactUser(req, res) {
 
                                     // create event in user record for tracking purposes
                                     db.newEventBuilder()
-                                        .from(config.db.collections.communities, user_key)
+                                        .from(config.db.communities, user_key)
                                         .type('contact_request')
                                         .data({
                                             "community_key" : community_key,
@@ -353,7 +353,7 @@ function handleGetProfile(req, res) {
     var userid = req.param.userid || req.user.path.key;
     console.log('Pulling user profile: ' + userid);
 
-    db.get(config.db.collections.communities, userid)
+    db.get(config.db.communities, userid)
         .then(function(response){
             if (response.body.code !== "items_not_found") {
                 response.body["key"] = userid;
@@ -388,7 +388,7 @@ function handleSetRole(req, res) {
 
     function checkperms(allowed, callback) {
         if (!allowed) {
-            db.get(config.db.collections.users, req.user.path.key)
+            db.get(config.db.communities, req.user.path.key)
               .then(function (response) {
                   userperms = findKey(response.body.communities, community, []); //todo this would mean an admin of anything would work, need to validate location + community
                   if (userperms[0].roles.indexOf("admin") > -1) { allowed=true; }
@@ -405,7 +405,7 @@ function handleSetRole(req, res) {
     if (userkey == req.user.path.key) { allowed = true; }
     checkperms(allowed, function (allowed) {
         if (allowed) {
-            db.get(config.db.collections.users, userkey)
+            db.get(config.db.communities, userkey)
               .then(function (response) {
                   if (response.body.cities[community].clusters === undefined) { //need to create clusters key
                       response.body.cities[community]['clusters'] = {};
@@ -427,7 +427,7 @@ function handleSetRole(req, res) {
                   }
                   response.body.cities[community].clusters[industry] = thisindustry;
 
-                  db.put(config.db.collections.users, userkey, response.body)
+                  db.put(config.db.communities, userkey, response.body)
                     .then(function (finalres) {
                         res.status(201).send({ message: 'Profile updated.'});
                     })
@@ -451,11 +451,11 @@ function handleFeedback(req, res) {
     var userkey = req.user.path.key,
       data = JSON.parse(decodeURIComponent(req.query.data));
 
-    db.get(config.db.collections.users, userkey)
+    db.get(config.db.communities, userkey)
       .then(function (response) {
           response.body['beta'] = data;
 
-          db.put(config.db.collections.users, userkey, response.body)
+          db.put(config.db.communities, userkey, response.body)
             .then(function (finalres) {
                 res.status(201).send({ message: 'Profile updated.'});
             })
@@ -479,7 +479,7 @@ function handleFeedback(req, res) {
 
 function handleRemoveProfile(req, res) {
     var userid = req.params.userid;
-    db.remove(config.db.collections.users, userid) // ideally I should store an undo option
+    db.remove(config.db.communities, userid) // ideally I should store an undo option
       .then(function(result){
           console.log('User removed.');
           res.status(200).send({ message: 'User removed' });

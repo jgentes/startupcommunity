@@ -58,7 +58,7 @@ function handleGetCommunity(req, res) {
     function pullCommunity() {
 
         db.newSearchBuilder()
-          .collection(config.db.collections.communities)
+          .collection(config.db.communities)
           .limit(100)
           .offset(0)
           .query(searchString)
@@ -87,7 +87,7 @@ function handleGetCommunity(req, res) {
                       }
 
                       db.newSearchBuilder()
-                          .collection(config.db.collections.communities)
+                          .collection(config.db.communities)
                           .limit(100)
                           .offset(0)
                           .query("@path.key: (" + search + ")")
@@ -125,7 +125,7 @@ function handleSetCommunity(req, res) {
     // validate user has leader role within the location/community
     if (req.user.value.roles.leader[settings.community_key] && req.user.value.roles.leader[settings.community_key].indexOf(settings.location_key) > -1) {
         // update the community
-        db.get(config.db.collections.communities, settings.community_key)
+        db.get(config.db.communities, settings.community_key)
             .then(function (response) {
                 if (response.body.type == 'industry') { // use community_profiles
                     if (response.body.community_profiles === undefined) { // create community_profiles
@@ -143,7 +143,7 @@ function handleSetCommunity(req, res) {
                     }
                 } else response.body.profile["embed"] = settings.embed;
 
-                db.put(config.db.collections.communities, settings.community_key, response.body)
+                db.put(config.db.communities, settings.community_key, response.body)
                     .then(function (finalres) {
                         res.status(201).send({ message: 'Community settings updated.'});
                     })
@@ -168,7 +168,7 @@ function handleGetKey(req, res) {
     console.log('Pulling key: ' + req.params.key);
 
     function pullKey() {
-        db.get(config.db.collections.communities, req.params.key)
+        db.get(config.db.communities, req.params.key)
             .then(function (result) {
                 if (result.statusCode == 200) {
                     result.body["key"] = req.params.key;
