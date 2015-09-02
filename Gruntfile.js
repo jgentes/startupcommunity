@@ -45,7 +45,6 @@ module.exports = function (grunt) {
             */
             test: {
                 options: {
-                    port: 9001,
                     base: '<%= startupcommunity.dist %>'
                 }
             },
@@ -126,7 +125,7 @@ module.exports = function (grunt) {
                             '*.{ico,png,txt}',
                             '.htaccess',
                             '*.html',
-                            'views/{,*/}*.html',
+                            'components/**',
                             'styles/img/*.*',
                             'images/{,*/}*.*',
                             'frontend/**'
@@ -175,6 +174,7 @@ module.exports = function (grunt) {
                     '<%= startupcommunity.dist %>/scripts/{,*/}*.js',
                     '<%= startupcommunity.dist %>/styles/{,*/}*.css',
                     '<%= startupcommunity.dist %>/frontend/css/{,*/}*.css',
+                    '<%= startupcommunity.dist %>/frontend/js/{,*/}*.js',
                     '<%= startupcommunity.dist %>/styles/fonts/*'
                 ]
             }
@@ -203,7 +203,7 @@ module.exports = function (grunt) {
             }
         },
         usemin: {
-            html: ['<%= startupcommunity.dist %>/{,*/}*.html']
+            html: ['dist/app.html', 'dist/frontend.html']
         },
         protractor: {
             options: {
@@ -232,8 +232,6 @@ module.exports = function (grunt) {
         'less',
         'useminPrepare',
         'concat',
-        'copy:backstyles',
-        'copy:frontstyles',
         'copy:dist',
         'cssmin',
         'uglify',

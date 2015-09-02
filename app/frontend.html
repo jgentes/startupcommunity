@@ -26,6 +26,18 @@
         for(g=0;g<i.length;g++)f(c,i[g]);b._i.push([a,e,d])};b.__SV=1.2;a=f.createElement("script");a.type="text/javascript";a.async=!0;a.src="undefined"!==typeof MIXPANEL_CUSTOM_LIB_URL?MIXPANEL_CUSTOM_LIB_URL:"//cdn.mxpnl.com/libs/mixpanel-2-latest.min.js";e=f.getElementsByTagName("script")[0];e.parentNode.insertBefore(a,e)}})(document,window.mixpanel||[]);
       mixpanel.init("0f110baeb6150d7e3b8968e32d7a5595");</script><!-- end Mixpanel -->
 
+        <!-- build:js frontend/scripts/vendor.js -->
+        <script src="frontend/js/vendor/modernizr-respond.min.js"></script>
+        <script src="frontend/js/vendor/jquery-1.11.2.min.js"></script>
+        <script src="frontend/js/vendor/bootstrap.min.js"></script>
+        <script src="frontend/js/helpers/jquery.geocomplete.min.js"></script>
+        <!-- endbuild -->
+
+        <!-- build:js({.tmp,app}) frontend/scripts/scripts.js -->
+        <script src="frontend/js/plugins.js"></script>
+        <script src="frontend/js/frontend.js"></script>
+        <!-- endbuild -->
+
     </head>
     <body>
         <!-- Page Container -->
@@ -208,18 +220,6 @@
 
         <a href="#" id="to-top" class="to-top"><i class="icon-angle-circled-up"></i></a>
 
-        <!-- build:js frontend/scripts/vendor.js -->
-        <script src="frontend/js/vendor/modernizr-respond.min.js"></script>
-        <script src="frontend/js/vendor/jquery-1.11.2.min.js"></script>
-        <script src="frontend/js/vendor/bootstrap.min.js"></script>
-        <script src="frontend/js/helpers/jquery.geocomplete.min.js"></script>
-        <!-- endbuild -->
-
-        <!-- build:js({.tmp,app}) frontend/scripts/scripts.js -->
-        <script src="frontend/js/plugins.js"></script>
-        <script src="frontend/js/frontend.js"></script>
-        <!-- endbuild -->
-
         <script>
           $(document).ready(function(){
 
@@ -285,4 +285,5 @@
         </script>
 
     </body>
+
 </html>
