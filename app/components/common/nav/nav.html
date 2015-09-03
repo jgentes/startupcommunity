@@ -130,7 +130,7 @@
                 </span></p>
                 <ul class="nav nav-second-level">
                     <li ng-repeat="item in nav.industries">
-                        <a ui-sref="industry.dashboard({community_path: item.key, community: item, query: '*'})" ng-class="{active: nav.path.includes('/' + item.key)}">
+                        <a ui-sref="{{'industry.dashboard' + nav.nav_jump}}" ng-class="{active: nav.path.includes('/' + item.key)}">
                             <span ng-if="item.community_profiles[nav.location_path]">
                                 <i ng-class="'fa ' + item.community_profiles[nav.location_path].icon"></i>&nbsp;&nbsp;{{item.community_profiles[nav.location_path].name}}</span>
                             <span ng-if="!item.community_profiles[nav.location_path]">
@@ -149,7 +149,7 @@
                 </span></p>
                 <ul class="nav nav-second-level">
                     <li ng-repeat="item in nav.networks">
-                        <a ui-sref="network.dashboard({community_path: item.key, community: item, query: '*'})" ng-class="{active: nav.path.includes('/' + item.key)}"><i ng-class="'fa ' + item.profile.icon"></i>&nbsp;&nbsp;{{item.profile.name}}</a>
+                        <a ui-sref="{{'network.dashboard' + nav.nav_jump}}" ng-class="{active: nav.path.includes('/' + item.key)}"><i ng-class="'fa ' + item.profile.icon"></i>&nbsp;&nbsp;{{item.profile.name}}</a>
                     </li>
                 </ul>
             </li>

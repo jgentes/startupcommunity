@@ -2,8 +2,9 @@ angular
     .module('startupcommunity')
     .controller('LoginController', LoginController);
 
-function LoginController($auth, $state, $mixpanel) {
+function LoginController($auth, $state, $mixpanel, $stateParams) {
 
+    if ($stateParams.alert) this.alert = {type: 'danger', msg: $stateParams.alert};
     var self = this;
 
     var postLogin = function(auth_response) { // was using global scope, but now I use resolve of user, which is getprofile

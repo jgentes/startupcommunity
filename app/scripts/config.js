@@ -24,19 +24,19 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
             url: "/login",
             controller: "LoginController as auth",
             params: {
-                error: {}
+                alert: {}
             },
             templateUrl: 'components/common/auth/login.html'
         })
         .state('logout', {
             url: "/logout",
             params: {
-                error: {}
+                alert: {}
             },
-            onEnter: function($auth, $state) {
+            onEnter: function($auth, $state, $stateParams) {
                 $auth.logout()
                     .then(function() {
-                        $state.go('login');
+                        $state.go('login', { alert: $stateParams.message });
                     })
             }
         })
@@ -58,7 +58,7 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                             .success(function(response) {
 
                                 if (response.message) {
-                                    $state.go('logout', { error: { type: 'danger', msg: String(response.message) }});
+                                    $state.go('logout', { message: String(response.message) });
                                 }
 
                                 if (response.key) {
@@ -70,7 +70,7 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                                 }
                             })
                             .error(function(response) {
-                                $state.go('logout', { error: { type: 'danger', msg: String(response.message) }});
+                                $state.go('logout', { message: String(response.message) });
                             });
                     }],
                 communities: ['$stateParams', 'community_service',

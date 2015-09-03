@@ -24,6 +24,14 @@ function UserController($stateParams, user_service, result_service, $sce, $modal
         "({community_path: val, community: users.communities[val], query: '*'})" :
         "({location_path: val, community: users.communities[val], query: '*'})";
 
+    // THIS IS A DUPLICATE OF NAV.EMBEDDED, SHOULD MOVE TO A SERVICE AND INJECT IN NAV AND USER CONTROLLERS
+    try {
+        this.embedded = window.self !== window.top;
+    } catch (e) {
+        this.embedded = true;
+    }
+    this.usercount = this.embedded ? 8 : 16;
+
     this.searchUsers = function(alturl) {
         self.loadingUser = true;
 
@@ -31,7 +39,7 @@ function UserController($stateParams, user_service, result_service, $sce, $modal
             self.tag = query;
         } else self.tag = undefined;
 
-        user_service.search(communityFilter, query, undefined, 16, alturl)
+        user_service.search(communityFilter, query, undefined, self.usercount, alturl)
             .then(function (response) {
                 self.tag = undefined;
                 self.users = result_service.setPage(response.data);
