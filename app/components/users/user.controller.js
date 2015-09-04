@@ -421,7 +421,7 @@ function UserProfileController($scope, $stateParams, $location, $auth, $modal, $
 
 }
 
-function InviteUserController(user_service) {
+function InviteUserController(user_service, community) {
     var self = this;
 
     this.inviteUser = function(location_key, community_key) {
@@ -441,7 +441,7 @@ function InviteUserController(user_service) {
                     if (response.status !== 200) {
                         self.alert = { type: 'danger', message: 'There was a problem: ' + String(response.data.message) };
                     } else {
-                        self.alert = { type: 'success', message: 'Congrats, ' + response.data.profile.name + ' has been imported and is good to go!' };
+                        self.alert = { type: 'success', message: 'Congrats, ' + response.data.profile.name + ' has been added to the ' + community.profile.name + ' community.' };
                     }
                 });
 
