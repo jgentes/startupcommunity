@@ -10,7 +10,7 @@
     "debug-trace": "~0.2.3",
     "express": "~4.8.5",
     "express-sslify": "^0.1.1",
-    "ghost": "^0.6.4",
+    "ghost": "^0.7.0",
     "grunt": "^0.4.5",
     "http-proxy": "^1.9.0",
     "jwt-simple": "~0.2.0",

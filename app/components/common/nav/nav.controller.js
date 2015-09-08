@@ -196,7 +196,7 @@ function NavigationController($auth, $state, $window, $location, $stateParams, $
         }
     }
 
-    this.embedded = true; // for testing
+    //this.embedded = true; // for testing
 
 }
 
