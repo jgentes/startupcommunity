@@ -66,7 +66,7 @@
                     </div>
                 </div>
             </div>
-            <div class="panel-footer">
+            <div ng-show="profile.user.profile.linkedin.summary" class="panel-footer">
                 <h3>Summary</h3>
                 <p style="white-space:pre-wrap;" ng-bind-html="::profile.user.profile.linkedin.summary | linky:'_blank'"></p>
                 <h3 ng-show="profile.user.skills">Skills</h3>

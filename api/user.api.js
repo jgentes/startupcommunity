@@ -6,7 +6,7 @@ var Q = require('q'),
     db = require('orchestrate')(config.db.key),
     knowtify = require('knowtify-node');
 
-//require('request-debug')(request); // Very useful for debugging oauth and api req/res
+require('request-debug')(request); // Very useful for debugging oauth and api req/res
 
 var UserApi = function() {
     this.userSearch = handleUserSearch;
@@ -150,36 +150,32 @@ var searchInCommunity = function(communities, roles, limit, offset, query, key) 
 
 function handleDirectSearch(req, res) {
     //TODO check for key to protect info?
+    var allowed = false;
+
     db.newSearchBuilder()
         .collection(config.db.communities)
         .limit(Number(req.query.limit) || 100)
-        .offset(Number(req.query.offset) || 10)
+        .offset(Number(req.query.offset))
         .query(req.query.query)
         .then(function(result){
             var i;
 
             try {
-                for (i = 0; i < result.body.results.length; i++) {
-                    if (result.body.results[i].value.profile.password) {
-                        delete result.body.results[i].value.profile.password;
-                    }
-                    if (result.body.results[i].value.profile.email) {
-                        delete result.body.results[i].value.profile.email;
-                    }
-                    if (result.body.results[i].value.type) {
-                        delete result.body.results[i].value.type;
-                    }
-                    if (result.body.results[i].value.context) {
-                        delete result.body.results[i].value.context;
+                for (i=0; i < result.body.results.length; i++) {
+                    if (result.body.results[i].path.collection) delete result.body.results[i].path.collection;
+                    if (result.body.results[i].path.ref) delete result.body.results[i].path.ref;
+                    if (result.body.results[i].value.profile.password) delete result.body.results[i].value.profile.password;
+
+                    if (!allowed) {
+                        if (result.body.results[i].value.profile.email) delete result.body.results[i].value.profile.email;
                     }
 
-                    delete result.body.results[i].path.collection;
-                    delete result.body.results[i].path.ref;
-
-                    if (result.body.results[i].value.linkedin) {
-                        delete result.body.results[i].value.profile.linkedin.emailAddress;
-                        delete result.body.results[i].value.profile.linkedin.access_token;
+                    if (result.body.results[i].value.profile.linkedin) {
+                        if (result.body.results[i].value.profile.linkedin.emailAddress) delete result.body.results[i].value.profile.linkedin.emailAddress;
+                        if (result.body.results[i].value.profile.linkedin.access_token) delete result.body.results[i].value.profile.linkedin.access_token;
                     }
+
+                    result.body.results[i].value["key"] = result.body.results[i].path.key;
                 }
 
                 if (result.body.next) {
@@ -191,8 +187,8 @@ function handleDirectSearch(req, res) {
                     result.body.prev = '/api/2.0/search' + getprev.search;
                 }
             } catch (error) {
-                console.warn('WARNING:  Possible database entry corrupted: ');
-                console.log(result.body.results);
+                console.warn('WARNING:');
+                console.log(error);
             }
 
             res.status(200).send(result.body);

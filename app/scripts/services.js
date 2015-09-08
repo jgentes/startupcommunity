@@ -118,24 +118,24 @@ angular
     })
 
     .factory('result_service', function() {
-      // This service will eventually handle a variety of functions for multiple views, such as search, cluster view, people view, startup view, etc
       return {
-          setPage: function($scope) {
-              if ($scope !== undefined) {
-                  if ($scope.next) {
-                      $scope.start = Number($scope.next.match(/offset=([^&]+)/)[1]) - Number($scope.count) + 1;
-                      $scope.end = Number($scope.next.match(/offset=([^&]+)/)[1]);
-                  } else if ($scope.prev) {
-                      $scope.start = Number($scope.total_count) - Number($scope.count);
-                      $scope.end = $scope.total_count;
-                  } else if ($scope.count === 0 || $scope === undefined) {
-                      $scope.start = 0;
-                      $scope.end = 0;
+          setPage: function(results) {
+
+              if (results !== undefined) {
+                  if (results.next) {
+                      results.start = Number(results.next.match(/offset=([^&]+)/)[1]) - Number(results.count) + 1;
+                      results.end = Number(results.next.match(/offset=([^&]+)/)[1]);
+                  } else if (results.prev) {
+                      results.start = Number(results.total_count) - Number(results.count);
+                      results.end = results.total_count;
+                  } else if (results.count === 0 || results === undefined) {
+                      results.start = 0;
+                      results.end = 0;
                   } else {
-                      $scope.start = 1; $scope.end = $scope.total_count;
+                      results.start = 1; results.end = results.total_count;
                   }
               }
-              return $scope;
+              return results;
           }
       };
     });
