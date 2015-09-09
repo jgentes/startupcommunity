@@ -75,28 +75,31 @@ function handleGetCommunity(req, res) {
                 };
 
                 if (result.body.results.length > 0) {
-                  if (result.body.results[0].value.type == "user" || result.body.results[0].value.type == "startup" || result.body.results[0].value.type == "network") { // user contains communities within record
-                      console.log('Pulling community for ' + result.body.results[0].value.profile.name);
-                      var comm_items = result.body.results[0].value.communities;
-                      var search = community + " OR ";
-                      for (i in comm_items) {
-                          if (i > 0) {
-                              search += ' OR ';
-                          }
-                          search += comm_items[i];
-                      }
+                    for (comm in result.body.results) {
+                        if (result.body.results[comm].path.key == community) {
+                            if (result.body.results[comm].value.type == "user" || result.body.results[comm].value.type == "startup" || result.body.results[comm].value.type == "network") { // user contains communities within record
+                                console.log('Pulling community for ' + result.body.results[comm].value.profile.name);
+                                var comm_items = result.body.results[comm].value.communities;
+                                var search = community + " OR ";
+                                for (i in comm_items) {
+                                    if (i > 0) {
+                                        search += ' OR ';
+                                    }
+                                    search += comm_items[i];
+                                }
 
-                      db.newSearchBuilder()
-                          .collection(config.db.communities)
-                          .limit(100)
-                          .offset(0)
-                          .query("@path.key: (" + search + ")")
-                          .then(function (result) {
-                              finalize(result.body.results);
-                          })
+                                db.newSearchBuilder()
+                                    .collection(config.db.communities)
+                                    .limit(100)
+                                    .offset(0)
+                                    .query("@path.key: (" + search + ")")
+                                    .then(function (result) {
+                                        finalize(result.body.results);
+                                    })
 
-                  } else finalize(result.body.results);
-
+                            } else finalize(result.body.results);
+                        }
+                    }
               } else {
                   console.warn('WARNING: Community not found!');
                   res.status(404).send({message: 'Community not found.'});

@@ -27,7 +27,7 @@
                         <div class="row" style="float: left;">
                             <div class="no-overflow profile-div" ng-if="profile.user.roles.leader">
                                 <ul class="profile-ul">
-                                    <p class="profile-label font-uppercase" style="font-size: 14px; padding: 2px 5px 0 20px; float: left;">Leader:</p>
+                                    <p style="font-size: 14px; padding: 2px 5px 0 20px; float: left;">Leader:</p>
                                     <li ng-repeat="(key, val) in profile.user.roles.leader" class="profile-roles">
                                         <a ui-sref="{{profile.communities[key].type + '.dashboard({location_path: key, community: profile.communities[key], query: &quot;&#42;&quot;})'}}" class="btn btn-xs btn-outline" ng-class="{'btn-danger' : profile.communities[key].type == 'startup', 'btn-info' : profile.communities[key].type == 'network', 'btn-primary' : profile.communities[key].type == 'industry', 'btn-success' : profile.communities[key].type == 'location'}"><i class="fa {{profile.communities[key].profile.icon}}"></i> {{profile.communities[key].profile.name}}</a>
                                     </li>
@@ -35,7 +35,7 @@
                             </div>
                             <div class="no-overflow profile-div" ng-if="profile.user.roles.founder">
                                 <ul class="profile-ul">
-                                    <p class="profile-label font-uppercase" style="font-size: 14px; padding: 2px 5px 0 20px; float: left;">Founder:</p>
+                                    <p style="font-size: 14px; padding: 2px 5px 0 20px; float: left;">Founder:</p>
                                     <li ng-repeat="(key, val) in profile.user.roles.founder" class="profile-roles">
                                         <a ui-sref="{{profile.communities[key].type + '.dashboard({location_path: key, community: profile.communities[key], query: &quot;&#42;&quot;})'}}" class="btn btn-xs btn-outline" ng-class="{'btn-danger' : profile.communities[key].type == 'startup', 'btn-info' : profile.communities[key].type == 'network', 'btn-primary' : profile.communities[key].type == 'industry', 'btn-success' : profile.communities[key].type == 'location'}"><i class="fa {{profile.communities[key].profile.icon}}"></i> {{profile.communities[key].profile.name}}</a>
                                     </li>
@@ -43,7 +43,7 @@
                             </div>
                             <div class="no-overflow profile-div" ng-if="profile.user.roles.investor">
                                 <ul class="profile-ul">
-                                    <p class="profile-label font-uppercase" style="font-size: 14px; padding: 2px 5px 0 20px; float: left;">Investor:</p>
+                                    <p style="font-size: 14px; padding: 2px 5px 0 20px; float: left;">Investor:</p>
                                     <li ng-repeat="(key, val) in profile.user.roles.investor" class="profile-roles">
                                         <a ui-sref="{{profile.communities[key].type + '.dashboard({location_path: key, community: profile.communities[key], query: &quot;&#42;&quot;})'}}" class="btn btn-xs btn-outline" ng-class="{'btn-danger' : profile.communities[key].type == 'startup', 'btn-info' : profile.communities[key].type == 'network', 'btn-primary' : profile.communities[key].type == 'industry', 'btn-success' : profile.communities[key].type == 'location'}"><i class="fa {{profile.communities[key].profile.icon}}"></i> {{profile.communities[key].profile.name}}</a>
                                     </li>
@@ -51,7 +51,7 @@
                             </div>
                             <div ng-if="profile.user.roles.advisor">
                                 <ul class="profile-ul">
-                                    <p class="profile-label font-uppercase" style="font-size: 14px; padding: 2px 5px 0 20px; float: left;">Advisor:</p>
+                                    <p style="font-size: 14px; padding: 2px 5px 0 20px; float: left;">Advisor:</p>
                                     <li ng-repeat="(key, val) in profile.user.roles.advisor" class="profile-roles">
                                         <a ui-sref="{{profile.communities[key].type + '.dashboard({location_path: key, community: profile.communities[key], query: &quot;&#42;&quot;})'}}" class="btn btn-xs btn-outline" ng-class="{'btn-danger' : profile.communities[key].type == 'startup', 'btn-info' : profile.communities[key].type == 'network', 'btn-primary' : profile.communities[key].type == 'industry', 'btn-success' : profile.communities[key].type == 'location'}"><i class="fa {{profile.communities[key].profile.icon}}"></i> {{profile.communities[key].profile.name}}</a>
                                     </li>

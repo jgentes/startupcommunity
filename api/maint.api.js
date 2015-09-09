@@ -23,7 +23,7 @@ function handleMaintenance(res) {
             .collection(config.db.communities)
             .limit(limit)
             .offset(startKey)
-            .query('linkedin*:*')
+            .query('*')
             .then(function(data){
                 for (var item in data.body.results) {
                     /*
@@ -48,20 +48,20 @@ function handleMaintenance(res) {
                     if (data.body.results[item].value.email) delete data.body.results[item].value.email;
                     if (data.body.results[item].value.avatar) delete data.body.results[item].value.avatar;
                     if (data.body.results[item].value.linkedin) delete data.body.results[item].value.linkedin;
-                    */
+
 
                     var newdata = data.body.results[item].value; // get current record
 
                     newdata.communities = ["bend-or", "oregon", "us", "edco-stable-of-experts"];
                     newdata.roles = { "advisor" : { "edco-stable-of-experts": ["bend-or"], "bend-or": []}};
                     newdata.profile["home"] = "bend-or";
-
+                     */
                     console.log('Updating record..');
                     console.log(data.body.results[item].path.key);
-                    console.log(newdata);
+                    //console.log(newdata);
 
                     // IMPORTANT! TEST FIRST BY COMMENTING OUT BELOW..
-                    //db.put('communities', data.body.results[item].path.key, newdata);
+                    //db.put('communities-dev', data.body.results[item].path.key, data.body.results[item].value);
                 }
 
                 if (data.body.next) {

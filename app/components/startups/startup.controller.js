@@ -12,22 +12,37 @@ function StartupController($stateParams, startup_service, result_service, $sce, 
     this.selectedStage = ['*'];
 
     var self = this; // for accessing 'this' in child functions
+    var query;
+    var communityFilter = [$stateParams.location_path];
+    if ($stateParams.community_path) communityFilter.push($stateParams.community_path);
 
-    var communityFilter = [$stateParams.community_path];
-    if ($stateParams.industry_key) communityFilter.push($stateParams.industry_key);
+    $stateParams.query ? query = $stateParams.query : query = '*';
+
+    this.url = $stateParams.community_path && $stateParams.location_path ?
+        "({community_path: val, community: startups.communities[val], query: '*'})" :
+        "({location_path: val, community: startups.communities[val], query: '*'})";
+
+    // THIS IS A DUPLICATE OF NAV.EMBEDDED, SHOULD MOVE TO A SERVICE AND INJECT IN NAV AND USER CONTROLLERS
+    try {
+        this.embedded = window.self !== window.top;
+    } catch (e) {
+        this.embedded = true;
+    }
+    this.usercount = this.embedded ? 8 : 16;
 
     this.searchStartups = function(alturl) {
-        self.loadingStartups = true;
-        if ($stateParams.query !== '*') {
-            self.tag = $stateParams.query;
+        self.loadingUser = true;
+
+        if (query !== '*') {
+            self.tag = query;
         } else self.tag = undefined;
 
-        startup_service.search(communityFilter, $stateParams.query, undefined, 20, alturl)
+        startup_service.search(communityFilter, query, undefined, self.usercount, alturl)
             .then(function (response) {
-                self.startups = result_service.setPage(response.data);
                 self.tag = undefined;
-                self.loadingStartups = false;
-                self.lastQuery = $stateParams.query;
+                self.startups = result_service.setPage(response.data);
+                self.loadingUser = false;
+                self.lastQuery = query;
             });
     };
 
@@ -43,18 +58,19 @@ function StartupController($stateParams, startup_service, result_service, $sce, 
             self.stage = "Startups";
         } else {
             for (item in self.selectedStage) {
-                self.stage += self.selectedStage[item][0].toUpperCase() + self.selectedStage[item].slice(1);
+                self.stage += (self.selectedStage[item][0].toUpperCase() + self.selectedStage[item].slice(1) + 's');
                 if (item < self.selectedStage.length - 1) {
                     if (item < self.selectedStage.length - 2 ) {
                         self.stage += '</strong>,<strong> ';
                     } else self.stage += ' </strong>&<strong> ';
                 }
             }
-            self.stage += ' Startups';
         }
 
         if (self.selectedIndustries.length == 0 && self.selectedNetworks.length == 0) {
-            self.selection = self.community.profile.name;
+            if (self.community.community_profiles && self.community.community_profiles[$stateParams.location_path]) {
+                self.selection = self.community.community_profiles[$stateParams.location_path].name;
+            } else self.selection = self.community.profile.name;
         } else {
             self.selection = "";
             var selectedCommunities = self.selectedIndustries.concat(self.selectedNetworks);
@@ -68,13 +84,16 @@ function StartupController($stateParams, startup_service, result_service, $sce, 
             }
         }
 
-        if ($stateParams.query == "*") {
+        if (query == "*") {
             self.title = '<strong>' + self.stage + '</strong> in ' + self.selection;
         } else {
-            self.title = 'Startups matching <strong>"' + $stateParams.query + '"</strong> ';
-            if ($stateParams.location_path) {
-                self.title += 'in <strong>' + self.communities[$stateParams.location_path].profile.name + '</strong>';
-            } else self.title += 'in <strong>' + self.communities[$stateParams.community.key].profile.name + '</strong>';
+            self.title = 'Startups matching <strong>"' + query + '"</strong> ';
+            self.title += 'in <strong>';
+            if ($stateParams.community_path && $stateParams.location_path) {
+                if (self.community.community_profiles && self.community.community_profiles[$stateParams.location_path]) {
+                    self.title += self.community.community_profiles[$stateParams.location_path].name +'</strong>';
+                } else self.title += self.community.profile.name +'</strong>';
+            } else self.title += self.communities[$stateParams.location_path].profile.name + '</strong>';
         }
 
         var pageTitle = '<br><small>' + self.community.profile.name + '</small>';
@@ -100,7 +119,7 @@ function StartupController($stateParams, startup_service, result_service, $sce, 
             }
         }
 
-        startup_service.search(communityFilter.concat(self.selectedIndustries).concat(self.selectedNetworks), '*', self.selectedStage, 20, undefined)
+        startup_service.search(communityFilter, '*', self.selectedStage, 20, undefined)
             .then(function(response) {
                 self.loadingStage = false;
                 self.startups = result_service.setPage(response.data);
@@ -118,7 +137,7 @@ function StartupController($stateParams, startup_service, result_service, $sce, 
             if (self.selectedIndustries.length == 0) self.allIndustries = true;
         }
 
-        startup_service.search(communityFilter.concat(self.selectedIndustries).concat(self.selectedNetworks), '*', self.selectedStage, 30, undefined)
+        startup_service.search(communityFilter.concat(self.selectedIndustries), '*', self.selectedStage, 30, undefined)
             .then(function(response) {
                 self.loadingIndustry = false;
                 self.loadingNetwork = false;
@@ -137,7 +156,7 @@ function StartupController($stateParams, startup_service, result_service, $sce, 
             if (self.selectedNetworks.length == 0) self.allNetworks = true;
         }
 
-        startup_service.search(communityFilter.concat(self.selectedIndustries).concat(self.selectedNetworks), '*', self.selectedStage, 20, undefined)
+        startup_service.search(communityFilter.concat(self.selectedNetworks), '*', self.selectedStage, 20, undefined)
             .then(function(response) {
                 self.loadingIndustry = false;
                 self.loadingNetwork = false;
@@ -148,7 +167,7 @@ function StartupController($stateParams, startup_service, result_service, $sce, 
 
 }
 
-function StartupProfileController($stateParams, $location, $mixpanel, user, user_service, team, community, communities) {
+function StartupProfileController($stateParams, $location, $mixpanel, user, startup_service, team, community, communities) {
 
     $mixpanel.track('Viewed Startup');
 
@@ -176,7 +195,7 @@ function StartupProfileController($stateParams, $location, $mixpanel, user, user
     }
 
     this.putProfile = function(userid, profile) {
-        user_service.putProfile(userid, profile, function(response) {
+        startup_service.putProfile(userid, profile, function(response) {
             if (response.status !== 200) {
                 this.alert = { type: 'danger', msg: 'There was a problem: ' + String(response.message) };
                 console.warn("WARNING: " +  response.message);
@@ -190,7 +209,7 @@ function StartupProfileController($stateParams, $location, $mixpanel, user, user
     this.removeProfile = function(userid, name) {
         notify("Are you sure you want to remove " + name + "?", function(result) { //todo fix notify maybe with sweetalert
             if (result) {
-                user_service.removeProfile(userid, function(response) {
+                startup_service.removeProfile(userid, function(response) {
                     $location.path('/people');
                     this.alert = { type: 'success', msg: "Person removed. Hopefully they'll return some day." };
                 });
@@ -199,7 +218,7 @@ function StartupProfileController($stateParams, $location, $mixpanel, user, user
     };
 
     this.updateProfile = function() {
-        user_service.updateProfile({
+        startup_service.updateProfile({
             displayName: user.profile.name,
             email: user.profile.email
         }).then(function() {
