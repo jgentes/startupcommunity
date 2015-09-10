@@ -49,19 +49,25 @@ function handleMaintenance(res) {
                     if (data.body.results[item].value.avatar) delete data.body.results[item].value.avatar;
                     if (data.body.results[item].value.linkedin) delete data.body.results[item].value.linkedin;
 
-
+                     */
                     var newdata = data.body.results[item].value; // get current record
 
-                    newdata.communities = ["bend-or", "oregon", "us", "edco-stable-of-experts"];
-                    newdata.roles = { "advisor" : { "edco-stable-of-experts": ["bend-or"], "bend-or": []}};
-                    newdata.profile["home"] = "bend-or";
-                     */
+                    if (newdata.roles && newdata.roles.advisor && newdata.roles.advisor["bend-or"] && newdata.roles.advisor["bend-or"].length < 1) {
+                        console.log('update!');
+                        newdata.roles.advisor["bend-or"] = ["bend-or"];
+                    }
+
+                    //newdata.communities = ["bend-or", "oregon", "us", "edco-stable-of-experts"];
+                    //newdata.roles = { "advisor" : { "edco-stable-of-experts": ["bend-or"], "bend-or": ["bend-or"]}};
+                    //newdata.profile["home"] = "bend-or";
+
                     console.log('Updating record..');
                     console.log(data.body.results[item].path.key);
                     //console.log(newdata);
 
                     // IMPORTANT! TEST FIRST BY COMMENTING OUT BELOW..
-                    //db.put('communities-dev', data.body.results[item].path.key, data.body.results[item].value);
+                    // ALSO BE CAREFUL TO NOT PULL FROM -DEV AND PUT INTO PRODUCTION DB!!
+                    //db.put('communities', data.body.results[item].path.key, newdata);
                 }
 
                 if (data.body.next) {

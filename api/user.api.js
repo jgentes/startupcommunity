@@ -6,7 +6,7 @@ var Q = require('q'),
     db = require('orchestrate')(config.db.key),
     knowtify = require('knowtify-node');
 
-require('request-debug')(request); // Very useful for debugging oauth and api req/res
+//require('request-debug')(request); // Very useful for debugging oauth and api req/res
 
 var UserApi = function() {
     this.userSearch = handleUserSearch;
