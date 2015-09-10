@@ -137,13 +137,13 @@ function handleCreateAPIToken(req, res) {
     };
     res.status(201).send(jwt.encode(payload, config.API_token_secret));
 
-    db.get(config.db.communities, req.user.path.key)
+    db.get(config.db.communities, req.user.value.key || req.user.path.key)
         .then(function(response){
             if (response.body.code !== "items_not_found") {
                 console.log('Matching user found.');
                 if (response.body.profile.api_key === undefined) {
                     response.body.profile["api_key"] = jwt.encode(payload, config.API_token_secret); // get user account and re-upload with api_key
-                    db.put(config.db.communities, req.user.path.key, response.body)
+                    db.put(config.db.communities, req.user.value.key || req.user.path.key, response.body)
                         .then(function () {
                             console.log("Profile updated.");
                         })
@@ -374,7 +374,8 @@ function handleLinkedin(req, res) {
                                                     console.error("Profile update failed:");
                                                     console.error(err.body);
                                                 });
-                                            res.send({ token: handleCreateToken(req, response.body), user: response.body });
+                                            var newresponse = { "value" : response.body };
+                                            res.send({ token: handleCreateToken(req, newresponse), user: newresponse });
                                         } else {
                                             return res.status(401).send({ message: "Sorry, we couldn't find you in our system. Please <a href='/' target='_self'>click here to request an invitation</a>." });
                                         }
@@ -505,7 +506,7 @@ function handleInviteUser(req, res) {
     var inviteUser = req.body.params;
 
     console.log('Inviting ' + inviteUser.email + ' to ' + inviteUser.location_key + ' / ' + inviteUser.community_key);
-
+    console.log(req.user.value);
     // validate user has leader role within the location/community
     if (req.user.value.roles.leader[inviteUser.community_key] && req.user.value.roles.leader[inviteUser.community_key].indexOf(inviteUser.location_key) > -1) {
 
@@ -521,7 +522,7 @@ function handleInviteUser(req, res) {
         }
 
     } else {
-        console.warn("User is not a leader in location: " + inviteUser.location_key + " and community: " + inviteUser.community_key + "!");
+        console.warn("User is not a leader in community: " + inviteUser.community_key + " for location: " + inviteUser.location_key + "!");
         res.status(202).send({ message: 'Sorry, you must be a Leader in this community to add people to it.' });
     }
 }
@@ -534,11 +535,11 @@ function handleInviteUser(req, res) {
 
 function handleUnlink(req, res) {
     var provider = req.params.provider;
-    db.get(config.db.communities, req.user.path.key)
+    db.get(config.db.communities, req.user.value.key || req.user.path.key)
         .then(function(response){
             if (response.body.code !== "items_not_found") {
                 response.body[provider] = undefined;
-                db.put(config.db.communities, req.user.path.key, response.body)
+                db.put(config.db.communities, req.user.value.key ||  req.user.path.key, response.body)
                     .then(function() {
                         console.log('Successfully unlinked provider!');
                         res.status(200).end();

@@ -243,7 +243,7 @@ function UserProfileController($scope, $stateParams, $location, $auth, $modal, $
         this.user = $stateParams.profile;
     } else if (community && community.type == "user") {
         this.user = community;
-    } else this.user = user.data.value;
+    } else this.user = user.data.user.value;
 
     var self = this;
     this.community = community;

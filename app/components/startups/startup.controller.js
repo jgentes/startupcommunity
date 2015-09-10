@@ -219,8 +219,8 @@ function StartupProfileController($stateParams, $location, $mixpanel, user, star
 
     this.updateProfile = function() {
         startup_service.updateProfile({
-            displayName: user.profile.name,
-            email: user.profile.email
+            displayName: user.data.user.value.profile.name,
+            email: user.data.user.value.profile.email
         }).then(function() {
             this.alert = { type: 'success', msg: "Great news. Your profile has been updated."};
         });

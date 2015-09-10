@@ -7,7 +7,7 @@ function LoginController($auth, $state, $mixpanel, $stateParams) {
     if (!jQuery.isEmptyObject($stateParams.alert)) this.alert = {type: 'danger', msg: $stateParams.alert};
     var self = this;
 
-    var postLogin = function(auth_response) { // was using global scope, but now I use resolve of user, which is getprofile
+    var postLogin = function(auth_response) { // from getprofile
         auth_response.data.user.value["key"] = auth_response.data.user.path.key;
         if (auth_response.config.data.state !== '/login') {
             $state.reload();

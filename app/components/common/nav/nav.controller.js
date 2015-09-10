@@ -4,6 +4,7 @@ angular
     .controller('ChangeLocationController', ChangeLocationController);
 
 function NavigationController($auth, $state, $window, $location, $stateParams, $modal, user, location, community, communities) {
+    $auth.setToken(user.data.token); // update local storage with latest user profile
 
     // SENSITIVE VARIABLES THAT AFFECT NAVIGATION AND ALL CHILD TEMPLATES
     // When used in ui-sref links: location_path affects the url, location affects header and content, community affects header and secondary url
@@ -22,7 +23,7 @@ function NavigationController($auth, $state, $window, $location, $stateParams, $
 
     if ($auth.isAuthenticated()) {
 
-        this.user = user.data; // reference 'this' by using 'nav' from 'NavigationController as nav' - * nav is also usable in child views *
+        this.user = user.data.user; // reference 'this' by using 'nav' from 'NavigationController as nav' - * nav is also usable in child views *
 
         // Role icons displayed in user profile
         var rolelist = [],
@@ -119,6 +120,7 @@ function NavigationController($auth, $state, $window, $location, $stateParams, $
     // COMMUNITY SETTINGS
 
     this.communitySettings = function() {
+
         var modalInstance = $modal.open({
             templateUrl: 'components/common/nav/nav.community_settings.html',
             controller: CommunitySettingsController,

@@ -1,5 +1,6 @@
 var Q = require('q'),
     request = require('request'),
+    moment = require('moment'),
     url = require('url'),
     jwt = require('jwt-simple'),
     config = require('../config.json')[process.env.NODE_ENV || 'development'],
@@ -346,14 +347,23 @@ function handleContactUser(req, res) {
 
 function handleGetProfile(req, res) {
     // req data is guaranteed by ensureauth
-    var userid = req.param.userid || req.user.path.key;
+    var userid = req.param.userid || req.user.value.key || req.user.path.key;
     console.log('Pulling user profile: ' + userid);
 
     db.get(config.db.communities, userid)
         .then(function(response){
             if (response.body.code !== "items_not_found") {
                 response.body["key"] = userid;
-                res.status(200).send(response.body);
+                var user = { "value" : response.body };
+                var payload = {
+                    iss: req.hostname,
+                    sub: user,
+                    iat: moment().valueOf(),
+                    exp: moment().add(14, 'days').valueOf()
+                };
+
+                res.status(200).send({ token: jwt.encode(payload, config.token_secret), user: user.value });
+
             } else {
                 console.warn('WARNING:  User not found.');
                 res.status(200).send({ message: 'User not found.' });
@@ -384,7 +394,7 @@ function handleSetRole(req, res) {
 
     function checkperms(allowed, callback) {
         if (!allowed) {
-            db.get(config.db.communities, req.user.path.key)
+            db.get(config.db.communities, req.user.value.key || req.user.path.key)
               .then(function (response) {
                   userperms = findKey(response.body.communities, community, []); //todo this would mean an admin of anything would work, need to validate location + community
                   if (userperms[0].roles.indexOf("admin") > -1) { allowed=true; }
@@ -398,7 +408,7 @@ function handleSetRole(req, res) {
     }
 
     //check perms!
-    if (userkey == req.user.path.key) { allowed = true; }
+    if (userkey == req.user.value.key || userkey == req.user.path.key) { allowed = true; }
     checkperms(allowed, function (allowed) {
         if (allowed) {
             db.get(config.db.communities, userkey)
@@ -444,7 +454,7 @@ function handleSetRole(req, res) {
 }
 
 function handleFeedback(req, res) {
-    var userkey = req.user.path.key,
+    var userkey = req.user.value.key || req.user.path.key,
       data = JSON.parse(decodeURIComponent(req.query.data));
 
     db.get(config.db.communities, userkey)
