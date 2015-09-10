@@ -282,9 +282,11 @@ var linkedinPull = function (linkedinuser, pullcallback) {
             if (result.body.results.length > 0){
                 if (result.body.results[0].value.profile.linkedin.id == linkedinuser.profile.linkedin.id){
                     console.log("Matched Linkedin user to database user: " + linkedinuser.profile.name);
-                    pullcallback({ "status": 202, "message": "It looks like " + linkedinuser.profile.name + " is already in the system.", "data": result.body.results[0].value });
+                    result.body.results[0].value["message"] = "It looks like " + linkedinuser.profile.name + " is already in the system.";
+                    pullcallback({ "status": 202, "data": result.body.results[0].value });
                 } else {
                     console.warn("WARNING: There's already an existing user with that public Linkedin profile.");
+                    result.body.results[0].value["message"] = "It looks like " + linkedinuser.profile.name + " is already in the system.";
                     pullcallback({ "status": 200, "data": result.body.results[0].value });
                 }
             } else {
