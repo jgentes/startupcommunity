@@ -30,6 +30,7 @@ var schema = {
                 [location_key, community_key],
             roles = { "advisor" : {} };
 
+        roles.advisor[location_key] = [location_key];
         roles.advisor[community_key] = [location_key];
 
         return {
