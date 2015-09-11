@@ -75,7 +75,10 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                     }],
                 communities: ['$stateParams', 'community_service',
                     function($stateParams, community_service) {
-                        return community_service.getCommunity($stateParams.location_path);
+                        return community_service.getCommunity($stateParams.location_path)
+                            .error(function(response) {
+                                $state.go('404', { message: String(response.message) });
+                            });
                     }],
                 community: ['$stateParams', '$location', 'communities', 'community_service',
                     function($stateParams, $location, communities, community_service) {
@@ -95,8 +98,8 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                                 var url = $location.path().replace(/\/$/, "").split('/'),
                                     lastitem = url.pop(),
                                     root = url.pop();
-                                if (lastitem == "people" || lastitem == "startups" || lastitem == "search" || lastitem == "invite") {
-                                    if (lastitem == "invite") {
+                                if (lastitem == "people" || lastitem == "startups" || lastitem == "search" || lastitem == "invite" || lastitem == "add") {
+                                    if (lastitem == "invite" || lastitem == "add") {
                                         return communities.data[url.pop()];
                                     } else return communities.data[root]; // return preceding url path as community, such as tech for 'bend-or/tech/people'
                                 } else if (communities.data[lastitem] && (communities.data[lastitem].type == "industry" || communities.data[lastitem].type == "network")) {

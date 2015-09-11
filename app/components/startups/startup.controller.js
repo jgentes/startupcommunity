@@ -169,7 +169,7 @@ function StartupController($stateParams, startup_service, result_service, $sce, 
 }
 
 function StartupProfileController($stateParams, $location, $mixpanel, user, startup_service, community, communities) {
-
+    console.log('ping')
     $mixpanel.track('Viewed Startup');
 
     if (!jQuery.isEmptyObject($stateParams.profile)) {
