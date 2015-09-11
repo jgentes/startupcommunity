@@ -9,15 +9,29 @@ var Q = require('q'),
 
 var StartupApi = function() {
         this.startupSearch = handleStartupSearch;
+        this.addStartup = handleAddStartup;
 };
 
+var schema = {
+    angellist: function (profile, location_key, community_key) {
 
-/*
- |--------------------------------------------------------------------------
- | Search API
- |--------------------------------------------------------------------------
- */
+        var communities = location_key == community_key ?
+            [location_key] :
+            [location_key, community_key];
 
+        return {
+            "type": "startup",
+            "profile": {
+                "home": location_key,
+                "name": profile.name,
+                "angellist": profile,
+                "avatar": profile.thumb_url || "",
+                "logo": profile.logo_url || ""
+            },
+            "communities": communities
+        };
+    }
+};
 
 function handleStartupSearch(req, res){
         var communities = req.query.communities,
@@ -127,6 +141,88 @@ var searchInCommunity = function(communities, stages, limit, offset, query, key)
             });
 
         return deferred.promise;
+
+};
+
+function handleAddStartup(req, res) {
+    // always use ensureAuth before this (to acquire req.user)
+    var addStartup = req.body.params;
+
+    console.log('Inviting ' + addStartup.angellist_url + ' to ' + addStartup.location_key + ' / ' + addStartup.community_key);
+
+    // validate user has leader role within the location/community
+    if (req.user.value.roles.leader[addStartup.community_key] && req.user.value.roles.leader[addStartup.community_key].indexOf(addStartup.location_key) > -1) {
+        // use the slug to get the startup id
+        request.get({ url: 'https://api.angel.co/1/search/slugs?query=' + addStartup.angellist_url + '&access_token=' + config.angellist.clientToken },
+            function(error, response, body) {
+
+                if (!body.status || body.status === 200) {
+
+                    // get the startp profile based on the id
+                    request.get({ url: 'https://api.angel.co/1/startups/' + JSON.parse(body).id + '?access_token=' + config.angellist.clientToken },
+                        function(error, response, body) {
+                            if (!body.status || body.status === 200) {
+                                var startup = schema.angellist(JSON.parse(body), addStartup.location_key, addStartup.community_key);
+                                console.log('AngelList Startup:');
+                                console.log(startup);
+                                startupPull(startup, function(result) {
+                                    res.status(result.status).send(result.data);
+                                });
+                            } else {
+                                console.error('Error: ' + body.message);
+                                console.log(body);
+                                res.status(202).send({ message: 'Something went wrong: ' + err});
+                            }
+                        }
+                    );
+
+                } else {
+                    console.error('Error: ' + body.message);
+                    console.log(body);
+                    res.status(202).send({ message: 'Something went wrong: ' + err});
+                }
+            });
+
+    } else {
+        console.warn("User is not a leader in community: " + addStartup.community_key + " for location: " + addStartup.location_key + "!");
+        res.status(202).send({ message: 'Sorry, you must be a Leader in this community to add people to it.' });
+    }
+}
+
+var startupPull = function (startup, callback) {
+
+    console.log('Looking for existing startup based on AngelList profile.');
+
+    db.search(config.db.communities, 'profile.angellist.id: ' + startup.profile.angellist.id) // no quotes due to number not string
+        .then(function (result){
+            console.log('Result of db search: ' + result.body.total_count);
+            if (result.body.results.length > 0){
+                if (result.body.results[0].value.profile.angellist.id == startup.profile.angellist.id){
+                    console.log("Matched AngelList startup to database startup: " + startup.profile.name);
+                    result.body.results[0].value["message"] = "It looks like " + startup.profile.name + " is already in the system.";
+                    callback({ "status": 202, "data": result.body.results[0].value });
+                } else {  // in this case we know a startup exists but for some reason the id doesn't match
+                    console.warn("WARNING: There's already an existing user with that public Linkedin profile.");
+                    result.body.results[0].value["message"] = "It looks like " + startup.profile.name + " is already in the system.";
+                    callback({ "status": 200, "data": result.body.results[0].value });
+                }
+            } else {
+                console.log('No existing startup found!');
+                db.post(config.db.communities, startup)
+                    .then(function () {
+                        console.log("REGISTERED: " + startup.profile.name);
+                        callback({ "status": 200, "data": startup });
+                    })
+                    .fail(function (err) {
+                        console.error("POST FAIL:");
+                        console.error(err);
+                    });
+            }
+        })
+        .fail(function(err){
+            console.log("SEARCH FAIL:" + err);
+            res.status(202).send({ message: 'Something went wrong: ' + err});
+        });
 
 };
 

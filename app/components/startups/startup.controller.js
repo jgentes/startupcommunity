@@ -1,7 +1,8 @@
 angular
     .module('startupcommunity')
     .controller('StartupController', StartupController)
-    .controller('StartupProfileController', StartupProfileController);
+    .controller('StartupProfileController', StartupProfileController)
+    .controller('AddStartupController', AddStartupController);
 
 function StartupController($stateParams, startup_service, result_service, $sce, community, communities) {
 
@@ -167,7 +168,7 @@ function StartupController($stateParams, startup_service, result_service, $sce, 
 
 }
 
-function StartupProfileController($stateParams, $location, $mixpanel, user, startup_service, team, community, communities) {
+function StartupProfileController($stateParams, $location, $mixpanel, user, startup_service, community, communities) {
 
     $mixpanel.track('Viewed Startup');
 
@@ -180,7 +181,7 @@ function StartupProfileController($stateParams, $location, $mixpanel, user, star
     var self = this;
     this.communities = communities.data;
     this.team = {};
-
+    /*
     // sort team members
 
     for (member in team.data.results) {
@@ -193,7 +194,7 @@ function StartupProfileController($stateParams, $location, $mixpanel, user, star
             }
         }
     }
-
+*/
     this.putProfile = function(userid, profile) {
         startup_service.putProfile(userid, profile, function(response) {
             if (response.status !== 200) {
@@ -228,5 +229,39 @@ function StartupProfileController($stateParams, $location, $mixpanel, user, star
 
 
 
+
+}
+
+function AddStartupController(startup_service, community) {
+    var self = this;
+
+    this.addStartup = function(location_key, community_key) {
+
+        this.working = true;
+
+        if (self.form.$valid) {
+            var formdata = {
+                "angellist_url" : self.form.url_value.split('/').pop()
+            };
+
+            startup_service.addStartup(formdata.angellist_url, location_key, community_key)
+                .then(function(response) {
+                    self.working = false;
+
+                    if (response.status !== 200) {
+                        self.alert = { type: 'danger', message: 'There was a problem: ' + String(response.data.message) };
+                    } else {
+                        self.alert = { type: 'success', message: 'Congrats, ' + response.data.profile.name + ' has been added to the ' + community.profile.name + ' community.' };
+                    }
+                });
+
+        } else {
+            this.working = false;
+            self.form.submitted = true;
+        }
+
+    };
+
+    this.working = false;
 
 }

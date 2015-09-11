@@ -509,7 +509,7 @@ function handleInviteUser(req, res) {
     var inviteUser = req.body.params;
 
     console.log('Inviting ' + inviteUser.email + ' to ' + inviteUser.location_key + ' / ' + inviteUser.community_key);
-    console.log(req.user.value);
+
     // validate user has leader role within the location/community
     if (req.user.value.roles.leader[inviteUser.community_key] && req.user.value.roles.leader[inviteUser.community_key].indexOf(inviteUser.location_key) > -1) {
 

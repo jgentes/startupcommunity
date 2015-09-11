@@ -99,6 +99,9 @@
                             </li>
                             <li ui-sref="{{'startup.list' + nav.nav_url}}" ng-class="{ 'active' : nav.path.endsWith(nav.community.key + '/startups') }">
                                 <a><i class="fa fa-caret-right"></i>Startups</a>
+                                <li ng-if="nav.user.roles.leader[nav.community.key].indexOf(nav.location_path) > -1" class="nav-third-level" ui-sref="{{'startup.add' + nav.nav_url}}">
+                                    <a style="color: #aaa;">+&nbsp;&nbsp;Add Startup</a>
+                                </li>
                             </li>
                         </ul>
                     </li>

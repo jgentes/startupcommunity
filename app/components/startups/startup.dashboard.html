@@ -5,58 +5,58 @@
                 <div class="row">
                     <div class="col-sm-9">
                         <div class="col-sm-2 col-lg-1">
-                            <img style="height:75px;" ng-src="{{profile.startup.profile.avatar || profile.startup.profile.linkedin.pictureUrl || 'images/blank_startup.jpg'}}" alt="{{::profile.startup.profile.name}}">
+                            <img style="height:75px;" ng-src="{{profile.startup.profile.avatar || profile.startup.profile.angellist.thumb_url || 'images/blank_startup.jpg'}}" alt="{{::profile.startup.profile.name}}">
                         </div>
                         <div class="col-sm-10 col-lg-11" style="padding-bottom: 15px;">
                             <div class="project-action" style="margin-right: -15px;">
                                 <div class="btn-group pull-right">
-                                    <a href="#"><i class="fa fa-twitter btn btn-default btn-xs"></i></a>
-                                    <a href="{{profile.startup.profile.linkedin.publicProfileUrl}}" target="_blank"><i class="fa fa-linkedin btn btn-default btn-xs"></i>
+                                    <a href="#"><i class="fa fa-angellist btn btn-default btn-xs"></i></a>
+                                    <a href="{{profile.startup.profile.angellist.angellist_url}}" target="_blank"><i class="fa fa-linkedin btn btn-default btn-xs"></i>
                                     </a>
                                 </div>
                             </div>
                             <h3>{{::profile.startup.profile.name}}
                             </h3>
                             <h4>
-                                {{::profile.startup.profile.description}}
+                                {{::profile.startup.profile.angellist.high_concept}}
                             </h4>
                         </div>
 
-                        <div class="row">
-                            <div class="col-xs-3 col-sm-3 no-overflow profile-div" ng-if="profile.team.founder">
-                                <p class="profile-label font-uppercase" style="font-size: 14px;">Founders:</p>
+                        <div class="row" style="float: left;">
+                            <div class="no-overflow profile-div" ng-if="profile.user.roles.leader">
                                 <ul class="profile-ul">
-                                    <li ng-repeat="(key, val) in profile.team.founder" class="profile-team">
-                                        <a href="{{'/' + key}}">
-                                            <img ng-src="{{val.profile.linkedin.pictureUrl || val.profile.avatar || 'images/blank_avatar.png'}}" alt="{{::val.profile.name}}" class="user-img widget-image img-circle pull-left" style="margin-left: 15%; margin-bottom: 5px;" onerror="this.style.display='none'"/>
-                                            <button class="btn btn-xs btn-outline btn-danger" style="display: block !important;">{{val.profile.name}}</button>
-                                        </a>
+                                    <p style="font-size: 14px; padding: 2px 5px 0 20px; float: left;">Leader:</p>
+                                    <li ng-repeat="(key, val) in profile.user.roles.leader" class="profile-roles">
+                                        <a ui-sref="{{profile.communities[key].type + '.dashboard({location_path: key, community: profile.communities[key], query: &quot;&#42;&quot;})'}}" class="btn btn-xs btn-outline" ng-class="{'btn-danger' : profile.communities[key].type == 'startup', 'btn-info' : profile.communities[key].type == 'network', 'btn-primary' : profile.communities[key].type == 'industry', 'btn-success' : profile.communities[key].type == 'location'}"><i class="fa {{profile.communities[key].profile.icon}}"></i> {{profile.communities[key].profile.name}}</a>
                                     </li>
                                 </ul>
                             </div>
-                            <div class="col-xs-3 col-sm-3 no-overflow profile-div" ng-if="profile.team.investor">
-                                <p class="profile-label font-uppercase" style="font-size: 14px;">Investors:</p>
+                            <div class="no-overflow profile-div" ng-if="profile.user.roles.founder">
                                 <ul class="profile-ul">
-                                    <li ng-repeat="(key, val) in profile.team.founder" class="profile-team">
-                                        <a href="{{'/' + key}}">
-                                            <img ng-src="{{val.profile.linkedin.pictureUrl || val.profile.avatar || 'images/blank_avatar.png'}}" alt="{{::val.profile.name}}" class="user-img widget-image img-circle pull-left" style="margin-left: 15%; margin-bottom: 5px;" onerror="this.style.display='none'"/>
-                                            <button class="btn btn-xs btn-outline btn-success" style="display: block !important;">{{val.profile.name}}</button>
-                                        </a>
+                                    <p style="font-size: 14px; padding: 2px 5px 0 20px; float: left;">Founder:</p>
+                                    <li ng-repeat="(key, val) in profile.user.roles.founder" class="profile-roles">
+                                        <a ui-sref="{{profile.communities[key].type + '.dashboard({location_path: key, community: profile.communities[key], query: &quot;&#42;&quot;})'}}" class="btn btn-xs btn-outline" ng-class="{'btn-danger' : profile.communities[key].type == 'startup', 'btn-info' : profile.communities[key].type == 'network', 'btn-primary' : profile.communities[key].type == 'industry', 'btn-success' : profile.communities[key].type == 'location'}"><i class="fa {{profile.communities[key].profile.icon}}"></i> {{profile.communities[key].profile.name}}</a>
                                     </li>
                                 </ul>
                             </div>
-                            <div class="col-xs-3 col-sm-3 no-overflow profile-div" ng-if="profile.team.advisor">
-                                <p class="profile-label font-uppercase" style="font-size: 14px;">Advisors:</p>
+                            <div class="no-overflow profile-div" ng-if="profile.user.roles.investor">
                                 <ul class="profile-ul">
-                                    <li ng-repeat="(key, val) in profile.team.founder" class="profile-team">
-                                        <a href="{{'/' + key}}">
-                                            <img ng-src="{{val.profile.linkedin.pictureUrl || val.profile.avatar || 'images/blank_avatar.png'}}" alt="{{::val.profile.name}}" class="user-img widget-image img-circle pull-left" style="margin-left: 15%; margin-bottom: 5px;" onerror="this.style.display='none'"/>
-                                            <button class="btn btn-xs btn-outline btn-info" style="display: block !important;">{{val.profile.name}}</button>
-                                        </a>
+                                    <p style="font-size: 14px; padding: 2px 5px 0 20px; float: left;">Investor:</p>
+                                    <li ng-repeat="(key, val) in profile.user.roles.investor" class="profile-roles">
+                                        <a ui-sref="{{profile.communities[key].type + '.dashboard({location_path: key, community: profile.communities[key], query: &quot;&#42;&quot;})'}}" class="btn btn-xs btn-outline" ng-class="{'btn-danger' : profile.communities[key].type == 'startup', 'btn-info' : profile.communities[key].type == 'network', 'btn-primary' : profile.communities[key].type == 'industry', 'btn-success' : profile.communities[key].type == 'location'}"><i class="fa {{profile.communities[key].profile.icon}}"></i> {{profile.communities[key].profile.name}}</a>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div ng-if="profile.user.roles.advisor">
+                                <ul class="profile-ul">
+                                    <p style="font-size: 14px; padding: 2px 5px 0 20px; float: left;">Advisor:</p>
+                                    <li ng-repeat="(key, val) in profile.user.roles.advisor" class="profile-roles">
+                                        <a ui-sref="{{profile.communities[key].type + '.dashboard({location_path: key, community: profile.communities[key], query: &quot;&#42;&quot;})'}}" class="btn btn-xs btn-outline" ng-class="{'btn-danger' : profile.communities[key].type == 'startup', 'btn-info' : profile.communities[key].type == 'network', 'btn-primary' : profile.communities[key].type == 'industry', 'btn-success' : profile.communities[key].type == 'location'}"><i class="fa {{profile.communities[key].profile.icon}}"></i> {{profile.communities[key].profile.name}}</a>
                                     </li>
                                 </ul>
                             </div>
                         </div>
+
                     </div>
                     <div class="col-sm-3 project-info">
                         <gm-map id="profile-map" gm-address="{address:profile.startup.profile.home}" options="{zoom: 11, disableDefaultUI: true}">
@@ -66,7 +66,7 @@
             </div>
             <div class="panel-footer">
                 <h3>Summary</h3>
-                <p style="white-space:pre-wrap;" ng-bind-html="::profile.startup.profile.summary | linky:'_blank'"></p>
+                <p style="white-space:pre-wrap;" ng-bind-html="::profile.startup.profile.angellist.product_desc | linky:'_blank'"></p>
             </div>
         </div>
     </div>

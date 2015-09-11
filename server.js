@@ -80,6 +80,8 @@ app.get('/api/2.0/startups', startupApis.startupSearch);
 app.put('/api/2.0/settings', auth.ensureAuthenticated, communityApis.setCommunity);
 app.post('/api/2.0/contact', userApis.contactUser);
 
+app.post('/api/2.1/startups/add', auth.ensureAuthenticated, startupApis.addStartup);
+
 // Auth
 app.get('/auth/unlink/:provider', auth.ensureAuthenticated, auth.unlink);
 app.post('/auth/linkedin', auth.linkedin);
