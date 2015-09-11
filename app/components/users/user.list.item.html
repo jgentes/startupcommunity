@@ -1,7 +1,8 @@
 <div class="col-md-12 dash-table">
     <div>
-        <a ui-sref="user.dashboard({profile: item.value, location_path: item.value.key, location: item.value, community: users.community })" title="View {{::item.value.profile.name | words:0}}'s Profile"><img
-                ng-src="{{item.value.profile.linkedin.pictureUrl || item.value.profile.avatar || 'images/blank_avatar.png'}}" alt="{{::item.value.profile.name}}" class="user-img widget-image img-circle pull-left" onerror="this.style.display='none'"/></a>
+        <a ui-sref="user.dashboard({profile: item.value, location_path: item.value.key, location: item.value, community: users.community })" title="View {{::item.value.profile.name | words:0}}'s Profile">
+            <img ng-src="{{item.value.profile.linkedin.pictureUrl || item.value.profile.avatar || 'images/blank_avatar.png'}}" alt="{{::item.value.profile.name}}" class="user-img widget-image img-circle pull-left" onerror="this.src='images/blank_avatar.png'"/>
+        </a>
     </div>
     <div class="user-row" ng-class="{'user-row-border': $index % 2 == 0}">
         <a ui-sref="user.dashboard({profile: item.value, location_path: item.value.key, community: item.value, location: nav.location })" title="View {{::item.value.profile.name | words:0}}'s Profile" style="float: left; "><strong>{{::item.value.profile.name}} </strong></a>

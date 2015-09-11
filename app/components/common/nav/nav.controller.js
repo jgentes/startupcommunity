@@ -4,7 +4,7 @@ angular
     .controller('ChangeLocationController', ChangeLocationController);
 
 function NavigationController($auth, $state, $window, $location, $stateParams, $modal, user, location, community, communities) {
-    if (user.data & user.data.token) $auth.setToken(user.data.token); // update local storage with latest user profile
+    if (user.data && user.data.token) $auth.setToken(user.data.token); // update local storage with latest user profile
 
     // SENSITIVE VARIABLES THAT AFFECT NAVIGATION AND ALL CHILD TEMPLATES
     // When used in ui-sref links: location_path affects the url, location affects header and content, community affects header and secondary url
