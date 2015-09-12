@@ -75,7 +75,10 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                     }],
                 communities: ['$stateParams', 'community_service',
                     function($stateParams, community_service) {
-                        return community_service.getCommunity($stateParams.location_path);
+                        return community_service.getCommunity($stateParams.location_path)
+                            .error(function(response) {
+                                $state.go('404', { message: String(response.message) });
+                            });
                     }],
                 community: ['$stateParams', '$location', 'communities', 'community_service',
                     function($stateParams, $location, communities, community_service) {
@@ -95,8 +98,8 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                                 var url = $location.path().replace(/\/$/, "").split('/'),
                                     lastitem = url.pop(),
                                     root = url.pop();
-                                if (lastitem == "people" || lastitem == "startups" || lastitem == "search" || lastitem == "invite") {
-                                    if (lastitem == "invite") {
+                                if (lastitem == "people" || lastitem == "startups" || lastitem == "search" || lastitem == "invite" || lastitem == "add") {
+                                    if (lastitem == "invite" || lastitem == "add") {
                                         return communities.data[url.pop()];
                                     } else return communities.data[root]; // return preceding url path as community, such as tech for 'bend-or/tech/people'
                                 } else if (communities.data[lastitem] && (communities.data[lastitem].type == "industry" || communities.data[lastitem].type == "network")) {
@@ -213,7 +216,6 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                     controller: "InviteUserController as invite"
                 }
             }
-
         })
         
         // Startup views
@@ -221,7 +223,7 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
             parent: 'root',
             abstract: true
         })
-        .state('startups.dashboard', {
+        .state('startup.dashboard', {
             params: {
                 profile: {},
                 location: {},
@@ -240,6 +242,10 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
         .state('startup.list', {
             url: "^/:location_path/:community_path/startups",
             params: {
+                community_path: {
+                    value: null,
+                    squash: true
+                },
                 pageTitle: 'Startups'
             },
             views: {
@@ -251,6 +257,29 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                     controller: "StartupController as startups"
                 }
             }
+        })
+        .state('startup.add', {
+            url: "/:community_path/startups/add",
+            params: {
+                community: {},
+                community_path: {
+                    value: null,
+                    squash: true
+                },
+                pageTitle: 'Add Startup',
+                pageDescription: 'AngelList URL is required to pull the logo, headline, and summary for each startup.',
+                icon: 'pe-7s-id'
+            },
+            views: {
+                'header': {
+                    templateUrl: "components/common/header/header_small.html"
+                },
+                'content': {
+                    templateUrl: 'components/startups/startup.add.html',
+                    controller: "AddStartupController as add"
+                }
+            }
+
         })
 
         
@@ -336,11 +365,13 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
 
 
         .state('404', {
-            templateUrl: "components/common/errors/404.html"
+            templateUrl: "components/common/errors/404.html",
+            controller: "ErrorPageController as error"
         })
 
         .state('500', {
-            templateUrl: "components/common/errors/500.html"
+            templateUrl: "components/common/errors/500.html",
+            controller: "ErrorPageController as error"
         });
 
     // Set default unmatched url stat
@@ -374,7 +405,7 @@ angular
         $rootScope.$on('$stateChangeSuccess',function(){
             $("html, body").animate({ scrollTop: 0 }, 200);
         });
-/*
+
         $rootScope.$on('$stateChangeStart',
             function(event, toState, toParams, fromState, fromParams){
                 //console.log('from: ');
@@ -382,7 +413,7 @@ angular
                 console.log('to:');
                 console.log(toState);
             })
-*/
+
     })
 
 

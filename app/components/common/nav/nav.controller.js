@@ -140,7 +140,6 @@ function NavigationController($auth, $state, $window, $location, $stateParams, $
     // ROUTING OF ROOT PATHS
 
     this.path = $location.path().replace(/\/$/, ""); //used for routing and used in view
-
     if (this.path.split('/').length < 3) {
         $state.go(this.community.type + '.dashboard');
     }

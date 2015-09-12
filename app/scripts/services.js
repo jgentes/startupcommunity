@@ -103,6 +103,15 @@ angular
                         query: query
                     });
                 return $http.get(alturl || urlString);
+            },
+            addStartup: function(angellist_url, location_key, community_key) {
+                return $http.post('/api/2.1/startups/add', {
+                    params: {
+                        angellist_url: angellist_url,
+                        location_key: location_key,
+                        community_key: community_key
+                    }
+                });
             }
         };
     })

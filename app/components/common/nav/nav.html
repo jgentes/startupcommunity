@@ -65,7 +65,7 @@
                     </div>
                 </div>
             </div>
-            <div ng-if="nav.location.profile.logo" style="margin-left: -21px;"><img style="width:182px; border: 1px solid #ddd;" ng-src="{{nav.location.profile.logo}}"/></div>
+            <div ng-if="nav.location.profile.sc_logo" style="margin-left: -21px;"><img style="width:182px; border: 1px solid #ddd;" ng-src="{{nav.location.profile.sc_logo}}"/></div>
         </div>
 
         <ul side-navigation class="nav" id="side-menu" style="border-top: 1px solid #eee;">
@@ -99,6 +99,9 @@
                             </li>
                             <li ui-sref="{{'startup.list' + nav.nav_url}}" ng-class="{ 'active' : nav.path.endsWith(nav.community.key + '/startups') }">
                                 <a><i class="fa fa-caret-right"></i>Startups</a>
+                                <li ng-if="nav.user.roles.leader[nav.community.key].indexOf(nav.location_path) > -1" class="nav-third-level" ui-sref="{{'startup.add' + nav.nav_url}}">
+                                    <a style="color: #aaa;">+&nbsp;&nbsp;Add Startup</a>
+                                </li>
                             </li>
                         </ul>
                     </li>
@@ -114,7 +117,7 @@
                 </span></p>
                 <ul class="nav nav-second-level">
                     <li ng-repeat="item in nav.locations" ng-if="item.key !== nav.community.key">
-                        <a ui-sref="location.dashboard({location_path: item.key, community: item, query: '*'})" ng-class="{active: nav.path.includes('/' + item.key)}"><i class="fa fa-globe"></i> {{item.profile.name}}</a>
+                        <a ui-sref="location.dashboard({location_path: item.key, location: item, query: '*'})" ng-class="{active: nav.path.includes('/' + item.key)}"><i class="fa fa-globe"></i> {{item.profile.name}}</a>
                     </li>
                 </ul>
             </li>
