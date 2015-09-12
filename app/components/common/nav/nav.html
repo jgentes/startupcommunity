@@ -65,7 +65,7 @@
                     </div>
                 </div>
             </div>
-            <div ng-if="nav.community.profile.sc_logo" style="margin-left: -21px;"><img style="width:182px; border: 1px solid #ddd;" ng-src="{{nav.community.profile.sc_logo}}"/></div>
+            <div ng-if="nav.location.profile.sc_logo" style="margin-left: -21px;"><img style="width:182px; border: 1px solid #ddd;" ng-src="{{nav.location.profile.sc_logo}}"/></div>
         </div>
 
         <ul side-navigation class="nav" id="side-menu" style="border-top: 1px solid #eee;">
@@ -117,7 +117,7 @@
                 </span></p>
                 <ul class="nav nav-second-level">
                     <li ng-repeat="item in nav.locations" ng-if="item.key !== nav.community.key">
-                        <a ui-sref="location.dashboard({location_path: item.key, community: item, query: '*'})" ng-class="{active: nav.path.includes('/' + item.key)}"><i class="fa fa-globe"></i> {{item.profile.name}}</a>
+                        <a ui-sref="location.dashboard({location_path: item.key, location: item, query: '*'})" ng-class="{active: nav.path.includes('/' + item.key)}"><i class="fa fa-globe"></i> {{item.profile.name}}</a>
                     </li>
                 </ul>
             </li>
