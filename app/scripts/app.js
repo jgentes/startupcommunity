@@ -12,7 +12,8 @@
         'services',
         'GoogleMapsNative',
         'angulartics',
-        'angulartics.google.analytics'
+        'angulartics.google.analytics',
+        'knowtify'
     ]);
 })();
 
