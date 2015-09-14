@@ -3,7 +3,7 @@ angular
     .controller('NavigationController', NavigationController)
     .controller('ChangeLocationController', ChangeLocationController);
 
-function NavigationController($auth, $state, $window, $location, $stateParams, $modal, user, location, community, communities) {
+function NavigationController($auth, $state, $window, $location, $stateParams, $modal, user, location, community, communities, knowtify) {
     if (user.data && user.data.token) $auth.setToken(user.data.token); // update local storage with latest user profile
 
     // SENSITIVE VARIABLES THAT AFFECT NAVIGATION AND ALL CHILD TEMPLATES
@@ -41,6 +41,8 @@ function NavigationController($auth, $state, $window, $location, $stateParams, $
         }
 
         this.user.profile["roles"] = rolelist;
+
+        knowtify.push(['load_inbox', 'knowtify', {email: this.user.profile.email, id: this.user.profile.api_key }]);
 
     }
 

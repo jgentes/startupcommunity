@@ -5,6 +5,8 @@ var bcrypt = require('bcryptjs'),
     config = require('../config.json')[process.env.NODE_ENV || 'development'],
     db = require('orchestrate')(config.db.key);
 
+require('request-debug')(request); // Very useful for debugging oauth and api req/res
+
 var AuthApi = function() {
     this.ensureAuthenticated = handleEnsureAuthenticated;
     this.createAPIToken = handleCreateAPIToken;

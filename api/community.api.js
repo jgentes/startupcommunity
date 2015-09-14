@@ -1,44 +1,77 @@
 var config = require('../config.json')[process.env.NODE_ENV || 'development'],
-  db = require('orchestrate')(config.db.key);
+    db = require('orchestrate')(config.db.key);
 //request = require('request');
 
 //require('request-debug')(request); // Very useful for debugging oauth and api req/res
 
-var CommunityApi = function() {
+var CommunityApi = function () {
     this.getCommunity = handleGetCommunity;
     this.setCommunity = handleSetCommunity;
     this.getKey = handleGetKey;
 };
 
-var convert_state = function(name, to) {
+var convert_state = function (name, to) {
     name = name.toUpperCase();
-    var states = new Array(                         {'name':'Alabama', 'abbrev':'AL'},          {'name':'Alaska', 'abbrev':'AK'},
-      {'name':'Arizona', 'abbrev':'AZ'},          {'name':'Arkansas', 'abbrev':'AR'},         {'name':'California', 'abbrev':'CA'},
-      {'name':'Colorado', 'abbrev':'CO'},         {'name':'Connecticut', 'abbrev':'CT'},      {'name':'Delaware', 'abbrev':'DE'},
-      {'name':'Florida', 'abbrev':'FL'},          {'name':'Georgia', 'abbrev':'GA'},          {'name':'Hawaii', 'abbrev':'HI'},
-      {'name':'Idaho', 'abbrev':'ID'},            {'name':'Illinois', 'abbrev':'IL'},         {'name':'Indiana', 'abbrev':'IN'},
-      {'name':'Iowa', 'abbrev':'IA'},             {'name':'Kansas', 'abbrev':'KS'},           {'name':'Kentucky', 'abbrev':'KY'},
-      {'name':'Louisiana', 'abbrev':'LA'},        {'name':'Maine', 'abbrev':'ME'},            {'name':'Maryland', 'abbrev':'MD'},
-      {'name':'Massachusetts', 'abbrev':'MA'},    {'name':'Michigan', 'abbrev':'MI'},         {'name':'Minnesota', 'abbrev':'MN'},
-      {'name':'Mississippi', 'abbrev':'MS'},      {'name':'Missouri', 'abbrev':'MO'},         {'name':'Montana', 'abbrev':'MT'},
-      {'name':'Nebraska', 'abbrev':'NE'},         {'name':'Nevada', 'abbrev':'NV'},           {'name':'New Hampshire', 'abbrev':'NH'},
-      {'name':'New Jersey', 'abbrev':'NJ'},       {'name':'New Mexico', 'abbrev':'NM'},       {'name':'New York', 'abbrev':'NY'},
-      {'name':'North Carolina', 'abbrev':'NC'},   {'name':'North Dakota', 'abbrev':'ND'},     {'name':'Ohio', 'abbrev':'OH'},
-      {'name':'Oklahoma', 'abbrev':'OK'},         {'name':'Oregon', 'abbrev':'OR'},           {'name':'Pennsylvania', 'abbrev':'PA'},
-      {'name':'Rhode Island', 'abbrev':'RI'},     {'name':'South Carolina', 'abbrev':'SC'},   {'name':'South Dakota', 'abbrev':'SD'},
-      {'name':'Tennessee', 'abbrev':'TN'},        {'name':'Texas', 'abbrev':'TX'},            {'name':'Utah', 'abbrev':'UT'},
-      {'name':'Vermont', 'abbrev':'VT'},          {'name':'Virginia', 'abbrev':'VA'},         {'name':'Washington', 'abbrev':'WA'},
-      {'name':'West Virginia', 'abbrev':'WV'},    {'name':'Wisconsin', 'abbrev':'WI'},        {'name':'Wyoming', 'abbrev':'WY'}
+    var states = new Array({'name': 'Alabama', 'abbrev': 'AL'}, {'name': 'Alaska', 'abbrev': 'AK'},
+        {'name': 'Arizona', 'abbrev': 'AZ'}, {'name': 'Arkansas', 'abbrev': 'AR'}, {
+            'name': 'California',
+            'abbrev': 'CA'
+        },
+        {'name': 'Colorado', 'abbrev': 'CO'}, {'name': 'Connecticut', 'abbrev': 'CT'}, {
+            'name': 'Delaware',
+            'abbrev': 'DE'
+        },
+        {'name': 'Florida', 'abbrev': 'FL'}, {'name': 'Georgia', 'abbrev': 'GA'}, {'name': 'Hawaii', 'abbrev': 'HI'},
+        {'name': 'Idaho', 'abbrev': 'ID'}, {'name': 'Illinois', 'abbrev': 'IL'}, {'name': 'Indiana', 'abbrev': 'IN'},
+        {'name': 'Iowa', 'abbrev': 'IA'}, {'name': 'Kansas', 'abbrev': 'KS'}, {'name': 'Kentucky', 'abbrev': 'KY'},
+        {'name': 'Louisiana', 'abbrev': 'LA'}, {'name': 'Maine', 'abbrev': 'ME'}, {'name': 'Maryland', 'abbrev': 'MD'},
+        {'name': 'Massachusetts', 'abbrev': 'MA'}, {'name': 'Michigan', 'abbrev': 'MI'}, {
+            'name': 'Minnesota',
+            'abbrev': 'MN'
+        },
+        {'name': 'Mississippi', 'abbrev': 'MS'}, {'name': 'Missouri', 'abbrev': 'MO'}, {
+            'name': 'Montana',
+            'abbrev': 'MT'
+        },
+        {'name': 'Nebraska', 'abbrev': 'NE'}, {'name': 'Nevada', 'abbrev': 'NV'}, {
+            'name': 'New Hampshire',
+            'abbrev': 'NH'
+        },
+        {'name': 'New Jersey', 'abbrev': 'NJ'}, {'name': 'New Mexico', 'abbrev': 'NM'}, {
+            'name': 'New York',
+            'abbrev': 'NY'
+        },
+        {'name': 'North Carolina', 'abbrev': 'NC'}, {'name': 'North Dakota', 'abbrev': 'ND'}, {
+            'name': 'Ohio',
+            'abbrev': 'OH'
+        },
+        {'name': 'Oklahoma', 'abbrev': 'OK'}, {'name': 'Oregon', 'abbrev': 'OR'}, {
+            'name': 'Pennsylvania',
+            'abbrev': 'PA'
+        },
+        {'name': 'Rhode Island', 'abbrev': 'RI'}, {'name': 'South Carolina', 'abbrev': 'SC'}, {
+            'name': 'South Dakota',
+            'abbrev': 'SD'
+        },
+        {'name': 'Tennessee', 'abbrev': 'TN'}, {'name': 'Texas', 'abbrev': 'TX'}, {'name': 'Utah', 'abbrev': 'UT'},
+        {'name': 'Vermont', 'abbrev': 'VT'}, {'name': 'Virginia', 'abbrev': 'VA'}, {
+            'name': 'Washington',
+            'abbrev': 'WA'
+        },
+        {'name': 'West Virginia', 'abbrev': 'WV'}, {'name': 'Wisconsin', 'abbrev': 'WI'}, {
+            'name': 'Wyoming',
+            'abbrev': 'WY'
+        }
     );
     var returnthis = false;
-    for (var i=0; i < states.length; i++) {
+    for (var i = 0; i < states.length; i++) {
         if (to == 'name') {
-            if (states[i].abbrev == name){
+            if (states[i].abbrev == name) {
                 returnthis = states[i].name;
                 break;
             }
         } else if (to == 'abbrev') {
-            if (states[i].name.toUpperCase() == name){
+            if (states[i].name.toUpperCase() == name) {
                 returnthis = states[i].abbrev;
                 break;
             }
@@ -58,14 +91,15 @@ function handleGetCommunity(req, res) {
     function pullCommunity() {
 
         db.newSearchBuilder()
-          .collection(config.db.communities)
-          .limit(100)
-          .offset(0)
-          .query(searchString)
-          .then(function (result) {
+            .collection(config.db.communities)
+            .limit(100)
+            .offset(0)
+            .query(searchString)
+            .then(function (result) {
                 var newresponse = {};
 
-                var finalize = function(results) {
+                var finalize = function (results) {
+
                     for (item in results) {
                         newresponse[results[item].path.key] = results[item].value;
                         newresponse[results[item].path.key]["key"] = results[item].path.key;
@@ -75,8 +109,10 @@ function handleGetCommunity(req, res) {
                 };
 
                 if (result.body.results.length > 0) {
+                    var found = false;
                     for (comm in result.body.results) {
                         if (result.body.results[comm].path.key == community) {
+                            found = true;
                             if (result.body.results[comm].value.type == "user" || result.body.results[comm].value.type == "startup" || result.body.results[comm].value.type == "network") { // user contains communities within record
                                 console.log('Pulling community for ' + result.body.results[comm].value.profile.name);
                                 var comm_items = result.body.results[comm].value.communities;
@@ -100,16 +136,20 @@ function handleGetCommunity(req, res) {
                             } else finalize(result.body.results);
                         }
                     }
-              } else {
-                  console.warn('WARNING: Community not found!');
-                  res.status(404).send({message: 'Community not found.'});
-              }
-          })
-          .fail(function(err){
-              console.log("SEARCH FAIL:");
+                    if (!found) {
+                        console.warn('WARNING: Community not found!');
+                        res.status(404).send({message: 'Community not found.'});
+                    }
+                } else {
+                    console.warn('WARNING: Community not found!');
+                    res.status(404).send({message: 'Community not found.'});
+                }
+            })
+            .fail(function (err) {
+                console.log("SEARCH FAIL:");
                 console.warn(err);
-              res.status(202).send({ message: 'Something went wrong: ' + err});
-          });
+                res.status(202).send({message: 'Something went wrong: ' + err});
+            });
     }
 
     console.log('Pulling community: ' + community);
@@ -139,7 +179,7 @@ function handleSetCommunity(req, res) {
                             "name": response.body.profile.name,
                             "icon": response.body.profile.icon,
                             "logo": response.body.profile.logo,
-                            "embed" : settings.embed
+                            "embed": settings.embed
                         };
                     } else {
                         response.body.community_profiles[settings.location_key]["embed"] = settings.embed;
@@ -148,22 +188,22 @@ function handleSetCommunity(req, res) {
 
                 db.put(config.db.communities, settings.community_key, response.body)
                     .then(function (finalres) {
-                        res.status(201).send({ message: 'Community settings updated.'});
+                        res.status(201).send({message: 'Community settings updated.'});
                     })
                     .fail(function (err) {
                         console.warn('WARNING:  Problem with put: ' + err);
-                        res.status(202).send({ message: 'Something went wrong: ' + err});
+                        res.status(202).send({message: 'Something went wrong: ' + err});
                     });
 
             })
             .fail(function (err) {
                 console.warn('WARNING:  Problem with get: ' + err);
-                res.status(202).send({ message: 'Something went wrong: ' + err});
+                res.status(202).send({message: 'Something went wrong: ' + err});
             });
 
     } else {
         console.warn("User is not a leader in location: " + settings.location_key + " and community: " + settings.community_key + "!");
-        res.status(202).send({ message: 'Sorry, you must be a Leader in this community to change these settings.' });
+        res.status(202).send({message: 'Sorry, you must be a Leader in this community to change these settings.'});
     }
 }
 
@@ -181,13 +221,13 @@ function handleGetKey(req, res) {
                     res.status(202).send({message: 'Key not found.'});
                 }
             })
-            .fail(function(err){
+            .fail(function (err) {
                 if (err.statusCode == 404) {
                     res.status(404).end();
                 } else {
                     console.log("SEARCH FAIL:");
                     console.warn(err);
-                    res.status(202).send({ message: 'Something went wrong: ' + err});
+                    res.status(202).send({message: 'Something went wrong: ' + err});
                 }
             });
     }
