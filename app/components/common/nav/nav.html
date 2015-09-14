@@ -117,7 +117,7 @@
                 </span></p>
                 <ul class="nav nav-second-level">
                     <li ng-repeat="item in nav.locations" ng-if="item.key !== nav.community.key">
-                        <a ui-sref="location.dashboard({location_path: item.key, location: item, query: '*'})" ng-class="{active: nav.path.includes('/' + item.key)}"><i class="fa fa-globe"></i> {{item.profile.name}}</a>
+                        <a ui-sref="location.dashboard({location_path: item.key, community: item, location: item, query: '*'})" ng-class="{active: nav.path.includes('/' + item.key)}"><i class="fa fa-globe"></i> {{item.profile.name}}</a>
                     </li>
                 </ul>
             </li>
