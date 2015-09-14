@@ -27,11 +27,11 @@ angular.module('knowtfiy', [])
          */
         function init() {
             //TODO verify this by removing library call
-            if (!Object.prototype.hasOwnProperty.call(window, 'knowtify')) {
+            if (!Object.prototype.hasOwnProperty.call(window, '_knowtify')) {
                 throw 'Global `knowtify` not available. Did you forget to include the library on your app page?';
             };
 
-            konwtify.init(apiKey);
+            knowtify.init(apiKey);
             /* Not sure what superproperties are all about
             waitTillAsyncApiLoaded(function () {
                 if (superProperties) knowtify.register(superProperties);
@@ -46,7 +46,7 @@ angular.module('knowtfiy', [])
          * @param callback to be called once the API has finished loading
          */
         function waitTillAsyncApiLoaded(callback) {
-            if (!Object.prototype.hasOwnProperty.call(window, 'knowtify') || (window.knowtify['__loaded'] === undefined)) {
+            if (!Object.prototype.hasOwnProperty.call(window, '_knowtify') || (window._knowtify['__loaded'] === undefined)) {
                 setTimeout(function () {
                     waitTillAsyncApiLoaded(callback);
                 }, 500);
@@ -63,7 +63,7 @@ angular.module('knowtfiy', [])
          */
         function callKnowtifyFn(name) {
             return function () {
-                var fn = window.knowtify,
+                var fn = window._knowtify,
                     parts = name.split('.'),
                     scope, i;
 
