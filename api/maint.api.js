@@ -13,14 +13,15 @@ var MaintApi = function() {
 
 
 function handleMaintenance(res) {
-    var enabled = true,
+    var enabled = false,
         startKey = 0,
         limit = 50,
-        userlist = [];
+        userlist = [],
+        collection = 'communities-dev';
 
     function getList(startKey, userlist, limit) {
         db.newSearchBuilder()
-            .collection('communities')
+            .collection(collection)
             .limit(limit)
             .offset(startKey)
             .query('*')
@@ -69,7 +70,7 @@ function handleMaintenance(res) {
 
                     // IMPORTANT! TEST FIRST BY COMMENTING OUT BELOW..
                     // ALSO BE CAREFUL TO NOT PULL FROM -DEV AND PUT INTO PRODUCTION DB!!
-                    db.put('communities', data.body.results[item].path.key, newdata);
+                    db.put(collection, data.body.results[item].path.key, newdata);
                 }
 
                 if (data.body.next) {
