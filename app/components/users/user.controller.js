@@ -332,7 +332,7 @@ function UserProfileController($scope, $stateParams, $location, $auth, $modal, $
                             $state.params.user.cities[self.user.context].clusters[cluster].advisorStatus = true;
                         }
                     } else {
-                        if (!$state.params.user.cities[self.user.context].clusters[cluster].roles || ($state.params.user.cities[self.user.context].clusters[cluster].roles.indexOf("Advisor") < 0)) {
+                        if (!$state.params.user.cities[self.user.context].clusters[cluster].roles || ($state.params.user.cities[self.user.context].clusters[cluster].roles.indexOf("Mentor") < 0)) {
                             $state.params.user.cities[self.user.context].clusters[cluster].advisorStatus = false;
                         } else {
                             $state.params.user.cities[self.user.context].clusters[cluster].advisorStatus = true;

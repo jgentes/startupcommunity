@@ -30,10 +30,10 @@ var schema = {
         var communities = location_key == community_key ?
                 [location_key] :
                 [location_key, community_key],
-            roles = { "advisor" : {} };
+            roles = { "mentor" : {} };
 
-        roles.advisor[location_key] = [location_key];
-        roles.advisor[community_key] = [location_key];
+        roles.mentor[location_key] = [location_key];
+        roles.mentor[community_key] = [location_key];
 
         return {
             "type": "user",

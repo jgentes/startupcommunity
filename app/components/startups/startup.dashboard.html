@@ -47,10 +47,10 @@
                                     </li>
                                 </ul>
                             </div>
-                            <div ng-if="profile.user.roles.advisor">
+                            <div ng-if="profile.user.roles.mentor">
                                 <ul class="profile-ul">
-                                    <p style="font-size: 14px; padding: 2px 5px 0 20px; float: left;">Advisor:</p>
-                                    <li ng-repeat="(key, val) in profile.user.roles.advisor" class="profile-roles">
+                                    <p style="font-size: 14px; padding: 2px 5px 0 20px; float: left;">Mentor:</p>
+                                    <li ng-repeat="(key, val) in profile.user.roles.mentor" class="profile-roles">
                                         <a ui-sref="{{profile.communities[key].type + '.dashboard({location_path: key, community: profile.communities[key], query: &quot;&#42;&quot;})'}}" class="btn btn-xs btn-outline" ng-class="{'btn-danger' : profile.communities[key].type == 'startup', 'btn-info' : profile.communities[key].type == 'network', 'btn-primary' : profile.communities[key].type == 'industry', 'btn-success' : profile.communities[key].type == 'location'}"><i class="fa {{profile.communities[key].profile.icon}}"></i> {{profile.communities[key].profile.name}}</a>
                                     </li>
                                 </ul>

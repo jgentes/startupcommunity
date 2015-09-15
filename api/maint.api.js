@@ -13,14 +13,14 @@ var MaintApi = function() {
 
 
 function handleMaintenance(res) {
-    var enabled = false,
+    var enabled = true,
         startKey = 0,
         limit = 50,
         userlist = [];
 
     function getList(startKey, userlist, limit) {
         db.newSearchBuilder()
-            .collection(config.db.communities)
+            .collection('communities')
             .limit(limit)
             .offset(startKey)
             .query('*')
@@ -37,7 +37,7 @@ function handleMaintenance(res) {
                         },
                         "communities": {
                             "edco-stable-of-experts": {
-                                "advisor": ["bend-or"]
+                                "mentor": ["bend-or"]
                             }
                         }
                     };
@@ -52,13 +52,15 @@ function handleMaintenance(res) {
                      */
                     var newdata = data.body.results[item].value; // get current record
 
-                    if (newdata.roles && newdata.roles.advisor && newdata.roles.advisor["bend-or"] && newdata.roles.advisor["bend-or"].length < 1) {
+                    if (newdata.roles && newdata.roles.advisor) {
                         console.log('update!');
-                        newdata.roles.advisor["bend-or"] = ["bend-or"];
+                        newdata.roles["mentor"] = newdata.roles.advisor;
+                        delete newdata.roles.advisor;
+                        console.log(newdata.roles);
                     }
 
                     //newdata.communities = ["bend-or", "oregon", "us", "edco-stable-of-experts"];
-                    //newdata.roles = { "advisor" : { "edco-stable-of-experts": ["bend-or"], "bend-or": ["bend-or"]}};
+                    //newdata.roles = { "mentor" : { "edco-stable-of-experts": ["bend-or"], "bend-or": ["bend-or"]}};
                     //newdata.profile["home"] = "bend-or";
 
                     console.log('Updating record..');
@@ -67,7 +69,7 @@ function handleMaintenance(res) {
 
                     // IMPORTANT! TEST FIRST BY COMMENTING OUT BELOW..
                     // ALSO BE CAREFUL TO NOT PULL FROM -DEV AND PUT INTO PRODUCTION DB!!
-                    //db.put('communities', data.body.results[item].path.key, newdata);
+                    db.put('communities', data.body.results[item].path.key, newdata);
                 }
 
                 if (data.body.next) {
