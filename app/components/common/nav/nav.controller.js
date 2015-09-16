@@ -49,23 +49,25 @@ function NavigationController($auth, $state, $window, $location, $stateParams, $
     // PRIMARY LEFT-NAV ITEM LIST
 
     // sort communities for use in nav and child dashboard pages
-    for (item in communities.data) {
-        if (item !== this.community.key) {
-            switch (communities.data[item].type) {
-                case "location":
-                    if (!this.locations) this.locations = {};
-                    this.locations[item] = communities.data[item];
-                    break;
-                case "industry":
-                    if (!this.industries) this.industries = {};
-                    this.industries[item] = communities.data[item];
-                    break;
-                case "network":
-                    if (!this.networks) this.networks = {};
-                    this.networks[item] = communities.data[item];
-                    break;
-                default:
-                    break;
+    for (item in communities.data) { // no clue what item is here
+        if (item !== this.community.key) { // edco-stable-of-experts
+            if (communities.data[item]) {
+                switch (communities.data[item].type) {
+                    case "location":
+                        if (!this.locations) this.locations = {};
+                        this.locations[item] = communities.data[item];
+                        break;
+                    case "industry":
+                        if (!this.industries) this.industries = {};
+                        this.industries[item] = communities.data[item];
+                        break;
+                    case "network":
+                        if (!this.networks) this.networks = {};
+                        this.networks[item] = communities.data[item];
+                        break;
+                    default:
+                        break;
+                }
             }
         }
     }
