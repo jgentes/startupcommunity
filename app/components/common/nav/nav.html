@@ -70,7 +70,7 @@
 
         <ul side-navigation class="nav" id="side-menu" style="border-top: 1px solid #eee;">
 
-            <li class="active" ng-if="nav.location.type !== 'user' && nav.location.type !== 'startup'">
+            <li class="active">
                 <a style="cursor: default;"><span class="pe-7s-angle-down" style="padding-top: 4px;
     padding-right: 7px;"></span><span class="nav-label">
 
@@ -80,7 +80,7 @@
                     <div ng-if="nav.user.roles.leader[nav.community.key].indexOf(nav.location_path) > -1" class="fa fa-gear pull-right" ng-click="nav.communitySettings()" tooltip-placement="left" tooltip="Settings" style="opacity: .6; cursor: pointer; margin-top: 5px;"></div>
                     <!--<span class="fa fa-gear pull-right" ng-click="nav.changeLocation()" tooltip-placement="left" tooltip="Change Location" style="opacity: .6; margin-top: 4px; cursor: pointer;"></span>-->
                 </a>
-                <ul class="nav nav-second-level">
+                <ul class="nav nav-second-level" style="white-space: nowrap;">
                     <li>
                         <a ui-sref="{{nav.community.type + '.dashboard' + nav.nav_url}}" ng-class="{active: nav.path.includes('/' + nav.location.key)}">
                             <span ng-if="nav.community.community_profiles[nav.location_path]">
