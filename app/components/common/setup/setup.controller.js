@@ -5,7 +5,9 @@ angular
 function SetupController($auth, $mixpanel, community) {
     var self = this;
     this.community = community.profile.name.split(',')[0];
-    this.auth = false;
+    this.auth = true; //set to false
+    $state.go('invited.setup'); //remove
+    this.roles = {};
 
     this.authenticate = function(provider) {
         $auth.authenticate(provider)
@@ -13,6 +15,7 @@ function SetupController($auth, $mixpanel, community) {
                 response.data.user.value["key"] = response.data.user.path.key;
                 self.auth = true;
                 self.user = response.data.user.value;
+                console.log(response.data);
                 $state.go('invited.setup');
 
                 $mixpanel.identify(response.data.user.path.key);
@@ -25,5 +28,9 @@ function SetupController($auth, $mixpanel, community) {
                 } else self.alert = undefined;
             });
     };
+
+    this.selectRole = function(role) {
+
+    }
 
 }

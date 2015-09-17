@@ -1,30 +1,29 @@
 
 <div class="hpanel">
     <div class="panel-heading" style="text-align:center;">
-        Grouped Lists!
+        <h4 style="font-size: 25px; line-height: 1.25;">James{{setup.user.profile.linkedin.firstName}}, please identify your roles in the community:</h4>
     </div>
     <div class="panel-body no-padding">
         <div class="list-group ">
 
-            <a class="list-group-item active" href="">
+            <a class="list-group-item" ng-class="{'active' : setup.roles.founder}" ng-click="setup.roles.founder = !setup.roles.founder">
+                <div class="stats-icon pull-right" ng-show="setup.roles.founder"><i class="pe-7s-check fa-2x"></i></div>
                 <h5 class="list-group-item-heading">Founder</h5>
-
                 <p class="list-group-item-text">You have started or co-founded a business venture.</p>
             </a>
-            <a class="list-group-item" href="">
+            <a class="list-group-item" ng-class="{'active' : setup.roles.investor}" ng-click="setup.roles.investor = !setup.roles.investor">
+                <div class="stats-icon pull-right" ng-show="setup.roles.investor"><i class="pe-7s-check fa-2x"></i></div>
                 <h5 class="list-group-item-heading">Investor</h5>
-
                 <p class="list-group-item-text">You are an active investor in startup companies.</p>
             </a>
-            <a class="list-group-item" href="">
-                <div class="stats-icon pull-right"> <i class="pe-7s-science fa-4x"></i> </div>
+            <a class="list-group-item" ng-class="{'active' : setup.roles.mentor}" ng-click="setup.roles.mentor = !setup.roles.mentor">
+                <div class="stats-icon pull-right" ng-show="setup.roles.mentor"><i class="pe-7s-check fa-2x"></i></div>
                 <h5 class="list-group-item-heading">Mentor</h5>
-
                 <p class="list-group-item-text">You are willing to provide guidance to entrepreneurs without compensation - the 'give before you get' philosophy.</p>
             </a>
-            <a class="list-group-item" href="">
+            <a class="list-group-item" ng-class="{'active' : setup.roles.provider}" ng-click="setup.roles.provider = !setup.roles.provider">
+                <div class="stats-icon pull-right" ng-show="setup.roles.provider"><i class="pe-7s-check fa-2x"></i></div>
                 <h5 class="list-group-item-heading">Service Provider</h5>
-
                 <p class="list-group-item-text">You provide services to members of the community for a fee.</p>
             </a>
         </div>

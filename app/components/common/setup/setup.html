@@ -9,9 +9,11 @@
                 </div>
                 <div class="hpanel">
                     <div class="panel-body" style="padding: 20px; border-top: 1px solid #82bc4b;">
-                        <h4 class="text-center" style="margin-bottom: 20px; color: #5A5A5A; font-size: 25px; line-height: 1.25;">Welcome!<br><hr>You have been invited to join the {{setup.community}} Startup Community</h4>
                         <div ng-if="!setup.auth">
+                            <h4 class="text-center" style="margin-bottom: 20px; color: #5A5A5A; font-size: 25px; line-height: 1.25;">Welcome!<br><hr>
+                            You have been invited to join the {{setup.community}} Startup Community</h4>
                             <h4 class="text-center" style="margin-bottom: 13px;"><a class="btn btn-info" ng-click="setup.authenticate('linkedin')">Log in using Linkedin</a></h4>
+                            <hr>
                             <h5 style="text-align: center;" >Please log in to get started.</h5>
                             <br>
                             <div ng-show="setup.alert">
@@ -25,7 +27,8 @@
         </div>
         <div class="row">
             <div class="col-md-12 text-center">
-                &copy; 2015 StartupCommunity.org
+                &copy; 2015 StartupCommunity.org<br><br>
+                <a target="_blank" href="mailto:james@startupcommunity.org?subject=I'm having an issue with my invitation..">Having trouble?</a>
             </div>
         </div>
     </div>
