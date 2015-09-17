@@ -120,6 +120,20 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
 
         // ORDER MATTERS.. first matching url wins!
 
+        .state('invited', {
+            parent: "root",
+            url: "^/:location_path/invited",
+            views: {
+                "@": { // this forces override of root template
+                    templateUrl: "components/common/setup/setup.html",
+                    controller: "SetupController as setup"
+                }
+            }
+        })
+        .state('invited.setup', {
+            templateUrl: "components/common/setup/setup_invited.html"
+        })
+
         .state('search', {
             parent: 'root',
             abstract: true,

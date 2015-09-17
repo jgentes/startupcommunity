@@ -22,15 +22,15 @@ module.exports = function (grunt) {
         // The grunt server settings
         connect: {
             options: {
-                port: process.env.PORT,
-                hostname: '0.0.0.0',
+                port: process.env.PORT || 9000,
+                hostname: 'localhost',
                 livereload: 35729
             },
-            /*
             livereload: {
                 options: {
                     open: true,
                     middleware: function (connect) {
+                        console.log(appConfig.app);
                         return [
                             connect.static('.tmp'),
                             connect().use(
@@ -42,7 +42,6 @@ module.exports = function (grunt) {
                     }
                 }
             },
-            */
             test: {
                 options: {
                     base: '<%= startupcommunity.dist %>'

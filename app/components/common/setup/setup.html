@@ -1,0 +1,32 @@
+<div class="back-cover">
+    <div class="bright-line"></div>
+
+    <div class="login-container">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="text-center m-b-md">
+                    <a href="/"><img src="../images/sc_logo.png" alt="StartupCommunity.org Logo"/></a>
+                </div>
+                <div class="hpanel">
+                    <div class="panel-body" style="padding: 20px; border-top: 1px solid #82bc4b;">
+                        <h4 class="text-center" style="margin-bottom: 20px; color: #5A5A5A; font-size: 25px; line-height: 1.25;">Welcome!<br><hr>You have been invited to join the {{setup.community}} Startup Community</h4>
+                        <div ng-if="!setup.auth">
+                            <h4 class="text-center" style="margin-bottom: 13px;"><a class="btn btn-info" ng-click="setup.authenticate('linkedin')">Log in using Linkedin</a></h4>
+                            <h5 style="text-align: center;" >Please log in to get started.</h5>
+                            <br>
+                            <div ng-show="setup.alert">
+                                <alert type="{{setup.alert.type}}" style="margin: 2px; text-align: center;" ng-click="setup.alert = undefined"><span ng-bind-html="setup.alert.msg | safe_html"></span></alert>
+                            </div>
+                        </div>
+                        <div ng-if="setup.auth" ui-view></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12 text-center">
+                &copy; 2015 StartupCommunity.org
+            </div>
+        </div>
+    </div>
+</div>
