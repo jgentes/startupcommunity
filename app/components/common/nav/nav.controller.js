@@ -47,9 +47,9 @@ function NavigationController($auth, $state, $window, $location, $stateParams, $
     }
 
     // PRIMARY LEFT-NAV ITEM LIST
-
+    if (!this.community) this.community = communities.data[this.location_path];
     // sort communities for use in nav and child dashboard pages
-    for (item in communities.data) { // no clue what item is here
+    for (item in communities.data) { // no clue what item is here, esp if user or startup
         if (item !== this.community.key) { // edco-stable-of-experts
             if (communities.data[item]) {
                 switch (communities.data[item].type) {
