@@ -6,7 +6,7 @@ function LoginController($auth, $state, $mixpanel, $stateParams) {
 
     if (!jQuery.isEmptyObject($stateParams.alert)) this.alert = {type: 'danger', msg: $stateParams.alert};
     var self = this;
-
+    this.working = false;
     var postLogin = function(auth_response) { // from getprofile
         auth_response.data.user.value["key"] = auth_response.data.user.path.key;
         if (auth_response.config.data.state !== '/login') {
@@ -29,6 +29,7 @@ function LoginController($auth, $state, $mixpanel, $stateParams) {
             });
     };
     this.authenticate = function(provider) {
+        self.working = true;
         $auth.authenticate(provider)
             .then(function(response) {
                 postLogin(response);

@@ -12,7 +12,7 @@
                         <div ng-if="!welcome.auth">
                             <h4 class="text-center" style="margin-bottom: 20px; color: #5A5A5A; font-size: 25px; line-height: 1.25;">Welcome!<br><hr>
                             You have been invited to join the {{welcome.community}} Startup Community</h4>
-                            <h4 class="text-center" style="margin-bottom: 13px;"><a class="btn btn-info" ng-click="welcome.authenticate('linkedin')">Log in using Linkedin</a></h4>
+                            <h4 class="text-center" style="margin-bottom: 13px;"><button class="btn btn-info" ng-click="welcome.authenticate('linkedin')" ng-class="{'disabled' : welcome.working}">Log in using Linkedin</button></h4>
                             <hr>
                             <h5 style="text-align: center;" >Please log in to get started.</h5>
                             <br>

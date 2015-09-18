@@ -27,10 +27,10 @@
                             <span class="text-danger" ng-show="add.form.url.$error">&nbsp;&nbsp;<i class="fa fa-exclamation-triangle"></i> We can't import their profile without an AngelList URL..</span>
                         </div>
                     </div>
-                    <input type="submit" style="float:left" class="finish btn-success btn" ng-class="{'disabled' : disabled}" value="Add Startup" />
+                    <input type="submit" style="float:left" class="finish btn-success btn" ng-class="{'disabled' : disabled, 'disabled' : add.working}" value="Add Startup" />
                 </form>
             </div>
-    </div>
+        </div>
     <div class="panel-footer">
         To import a full spreadsheet, please <a href="mailto:james@startupcommunity.org">click here to let us know</a>.
     </div>

@@ -150,8 +150,8 @@ function handleAddStartup(req, res) {
 
     console.log('Inviting ' + addStartup.angellist_url + ' to ' + addStartup.location_key + ' / ' + addStartup.community_key);
 
-    // validate user has leader role within the location/community
-    if (req.user.value.roles.leader[addStartup.community_key] && req.user.value.roles.leader[addStartup.community_key].indexOf(addStartup.location_key) > -1) {
+    // validate user is a member in the location/community
+    if (req.user.value.communities[addStartup.community_key] && req.user.value.communities[addStartup.community_key].indexOf(addStartup.location_key) > -1) {
         // use the slug to get the startup id
         request.get({ url: 'https://api.angel.co/1/search/slugs?query=' + addStartup.angellist_url + '&access_token=' + config.angellist.clientToken },
             function(error, response, body) {
@@ -184,8 +184,8 @@ function handleAddStartup(req, res) {
             });
 
     } else {
-        console.warn("User is not a leader in community: " + addStartup.community_key + " for location: " + addStartup.location_key + "!");
-        res.status(202).send({ message: 'Sorry, you must be a Leader in this community to add people to it.' });
+        console.warn("User is not a member of community: " + addStartup.community_key + " and location: " + addStartup.location_key + "!");
+        res.status(202).send({ message: 'Sorry, you must be a member of this community to add a startup to it.' });
     }
 }
 

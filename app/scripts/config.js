@@ -123,7 +123,13 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
 
         .state('welcome', {
             parent: "root",
-            url: "^/:location_path/welcome",
+            url: "^/:location_path/:community_path/welcome",
+            params: {
+                community_path: {
+                    value: null,
+                    squash: true
+                }
+            },
             views: {
                 "@": { // this forces override of root template
                     templateUrl: "components/common/welcome/welcome.html",
@@ -132,10 +138,10 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
             }
         })
         .state('welcome.setup', {
-            templateUrl: "components/common/welcome/welcome_setup.html"
+            templateUrl: "components/common/welcome/welcome.setup.html"
         })
-        .state('welcome.skills', {
-            templateUrl: "components/common/welcome/welcome_setup.html"
+        .state('welcome.founder', {
+            templateUrl: "components/common/welcome/welcome.founder.html"
         })
 
         .state('search', {
