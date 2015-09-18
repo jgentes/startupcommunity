@@ -1,12 +1,12 @@
 angular
     .module('startupcommunity')
-    .controller('SetupController', SetupController);
+    .controller('WelcomeController', WelcomeController);
 
-function SetupController($auth, $mixpanel, community) {
+function WelcomeController($auth, $mixpanel, community) {
     var self = this;
     this.community = community.profile.name.split(',')[0];
     this.auth = true; //set to false
-    $state.go('invited.setup'); //remove
+    $state.go('welcome.setup'); //remove
     this.roles = {};
 
     this.authenticate = function(provider) {
@@ -16,7 +16,7 @@ function SetupController($auth, $mixpanel, community) {
                 self.auth = true;
                 self.user = response.data.user.value;
                 console.log(response.data);
-                $state.go('invited.setup');
+                $state.go('welcome.setup');
 
                 $mixpanel.identify(response.data.user.path.key);
                 $mixpanel.track('Accepted Invite');
@@ -29,8 +29,9 @@ function SetupController($auth, $mixpanel, community) {
             });
     };
 
-    this.selectRole = function(role) {
-
+    this.submitRoles = function() {
+        console.log(self.roles);
+        $state.go('welcome.skills');
     }
 
 }

@@ -99,9 +99,8 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                                     lastitem = url.pop(),
                                     root = url.pop();
 
-                                if (lastitem == "people" || lastitem == "startups" || lastitem == "search" || lastitem == "invite" || lastitem == "add") {
+                                if (lastitem == "people" || lastitem == "startups" || lastitem == "search" || lastitem == "invite" || lastitem == "add" || lastitem == "welcome") {
                                     if (lastitem == "invite" || lastitem == "add") {
-                                        //todo this is confusing because invite user and invite setup both use /invite and creates empty community
                                         return communities.data[url.pop()];
                                     } else return communities.data[root]; // return preceding url path as community, such as tech for 'bend-or/tech/people'
                                 } else if (communities.data[lastitem] && (communities.data[lastitem].type == "industry" || communities.data[lastitem].type == "network")) {
@@ -122,18 +121,21 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
 
         // ORDER MATTERS.. first matching url wins!
 
-        .state('invited', {
+        .state('welcome', {
             parent: "root",
-            url: "^/:location_path/invited",
+            url: "^/:location_path/welcome",
             views: {
                 "@": { // this forces override of root template
-                    templateUrl: "components/common/setup/setup.html",
-                    controller: "SetupController as setup"
+                    templateUrl: "components/common/welcome/welcome.html",
+                    controller: "WelcomeController as welcome"
                 }
             }
         })
-        .state('invited.setup', {
-            templateUrl: "components/common/setup/setup_invited.html"
+        .state('welcome.setup', {
+            templateUrl: "components/common/welcome/welcome_setup.html"
+        })
+        .state('welcome.skills', {
+            templateUrl: "components/common/welcome/welcome_setup.html"
         })
 
         .state('search', {
