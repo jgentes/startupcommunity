@@ -25,6 +25,21 @@ var AuthApi = function() {
  */
 
 var schema = {
+    invite: function(email, location_key, community_key) {
+
+        var communities = location_key == community_key ?
+                [location_key] :
+                [location_key, community_key];
+
+        return {
+            "type": "user",
+            "profile": {
+                "home": location_key,
+                "email": profile.emailAddress || email
+            },
+            "communities": communities
+        };
+    },
     linkedin: function(profile, email, location_key, community_key) {
 
         var communities = location_key == community_key ?
@@ -515,6 +530,7 @@ function handleInviteUser(req, res) {
     // validate user has leader role within the location/community
     if (req.user.value.roles.leader[inviteUser.community_key] && req.user.value.roles.leader[inviteUser.community_key].indexOf(inviteUser.location_key) > -1) {
 
+        /* Changed with new invite workflow
         // user must have valid Linkedin access token to pull other user's profile details
         if (req.user.value.profile.linkedin.access_token) {
             var access_token = req.user.value.profile.linkedin.access_token;
@@ -525,6 +541,36 @@ function handleInviteUser(req, res) {
             console.warn("User does not have Linkedin access_token!");
             res.status(202).send({ message: 'Sorry, you need to login to StartupCommunity.org with Linkedin first.' });
         }
+        */
+
+        // check to see if the email address already exists within the system
+        db.newSearchBuilder()
+            .collection(config.db.communities)
+            .limit(1)
+            .query('type: "user" AND (profile.linkedin.emailAddress: "' + inviteUser.email + '" OR profile.email: "' + inviteUser.email + '")')
+            .then(function (result) {
+                console.log('Result of db search: ' + result.body.total_count);
+                if (result.body.results.length > 0) {
+                    console.log("Existing user found!");
+                    res.status(202).send({message: 'Sorry, a user with that email address already exists in the system! View them here: <a target="_blank" href="https://startupcommunity.org/' + result.body.results[0].path.key + '">https://startupcommunity.org/' + result.body.results[0].path.key});
+                } else {
+                    // no existing user, so create user record with email address and community data
+                    var newUser = schema.invite(inviteUser.email, inviteUser.location_key, inviteUser.community_key);
+                    db.post(config.db.communities, newUser)
+                        .then(function (response) {
+                            console.log(response);
+
+                        });
+
+                }
+            });
+
+
+
+
+        // create welcome link for user to return with
+        // send email with knowtify with link
+
 
     } else {
         console.warn("User is not a leader in community: " + inviteUser.community_key + " for location: " + inviteUser.location_key + "!");
