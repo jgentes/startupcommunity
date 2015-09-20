@@ -83,10 +83,9 @@ app.post('/api/2.0/contact', userApis.contactUser);
 app.post('/api/2.1/startups/add', auth.ensureAuthenticated, startupApis.addStartup);
 
 // Auth
-app.get('/auth/unlink/:provider', auth.ensureAuthenticated, auth.unlink);
 app.post('/auth/linkedin', auth.linkedin);
-app.post('/auth/signup', auth.signup); //not currently used?
-app.post('/auth/login', auth.login); //not currently used?
+//app.post('/auth/signup', auth.signup); //not currently used?
+//app.post('/auth/login', auth.login); //not currently used?
 
 // Maintenance
 app.get('/api/maint', maint.maintenance);

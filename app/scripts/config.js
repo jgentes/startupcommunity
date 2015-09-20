@@ -123,7 +123,7 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
 
         .state('welcome', {
             parent: "root",
-            url: "^/:location_path/:community_path/welcome",
+            url: "^/:location_path/:community_path/welcome?invite_code",
             params: {
                 community_path: {
                     value: null,

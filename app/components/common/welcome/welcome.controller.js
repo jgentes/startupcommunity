@@ -5,23 +5,31 @@ angular
 function WelcomeController($auth, $mixpanel, $stateParams, community, startup_service) {
     var self = this;
     this.community = community.profile.name.split(',')[0];
-    this.auth = true; //set to false
-    $state.go('welcome.setup'); //remove
+    //this.auth = true; //set to false
+    //$state.go('welcome.setup'); //remove
     this.roles = {};
     this.working = false;
     var community_path = $stateParams.community_path ? $stateParams.community_path : $stateParams.location_path;
-    this.authenticate = function(provider) {
+    this.authenticate = function() {
         self.working = true;
-        $auth.authenticate(provider)
+        $auth.authenticate('linkedin', {invite_code: $stateParams.invite_code})
             .then(function(response) {
-                response.data.user.value["key"] = response.data.user.path.key;
-                self.auth = true;
-                self.user = response.data.user.value;
-                console.log(response.data);
-                $state.go('welcome.setup');
+                console.log(response); // this should be failing due to invalid code
+                if (response.status !== 200) {
+                    self.alert = { type: 'danger', message: 'There was a problem: ' + String(response.data.message) };
+                } else {
+                    response.data.user.value["key"] = response.data.user.path.key;
+                    self.auth = true;
+                    self.user = response.data.user.value;
+                    $state.go('welcome.setup');
+                    // need to update user record with linkedin data now
 
-                $mixpanel.identify(response.data.user.path.key);
-                $mixpanel.track('Accepted Invite');
+                    $mixpanel.identify(response.data.user.path.key);
+                    $mixpanel.track('Accepted Invite');
+
+                    self.alert = { type: 'success', message: 'Congrats, something has happened!' };
+                }
+
             })
             .catch(function(response) {
                 console.log(response);
