@@ -6,7 +6,7 @@ var bcrypt = require('bcryptjs'),
     db = require('orchestrate')(config.db.key),
     knowtify = require('knowtify-node');
 
-//require('request-debug')(request); // Very useful for debugging oauth and api req/res
+require('request-debug')(request); // Very useful for debugging oauth and api req/res
 
 var AuthApi = function() {
     this.ensureAuthenticated = handleEnsureAuthenticated;
@@ -536,37 +536,61 @@ function handleInviteUser(req, res) {
             .limit(1)
             .query('type: "user" AND (profile.linkedin.emailAddress: "' + inviteUser.email + '" OR profile.email: "' + inviteUser.email + '")')
             .then(function (result) {
-                console.log('Result of db search: ' + result.body.total_count);
                 if (result.body.results.length > 0) {
                     console.log("Existing user found!");
                     res.status(202).send({message: 'Sorry, a user with that email address already exists in the system! View them here: <a target="_blank" href="https://startupcommunity.org/' + result.body.results[0].path.key + '">https://startupcommunity.org/' + result.body.results[0].path.key});
                 } else {
-                    // no existing user, so create user record with email address and community data
-                    var newUser = schema.invite(inviteUser.email, inviteUser.location_key, inviteUser.community_key);
-                    console.log('creating user')
-                    db.post(config.db.communities, newUser)
-                        .then(function (response) {
-                            console.log('done')
-                            var userkey = response.headers.location.split('/')[3]; // hope their response format doesn't change :-/
+                    // no existing user, so search for existing invite
+                    db.newSearchBuilder()
+                        .collection(config.db.communities)
+                        .limit(1)
+                        .query('type: "invite" AND profile.email: "' + inviteUser.email + '"')
+                        .then(function (result) {
+                            if (result.body.results.length > 0) {
+                                console.log("Existing invite found!");
+                                res.status(202).send({message: 'An invitation has already been sent to ' + inviteUser.email + '. We will continue to send reminders for 1 week, then you will be notified if they still have not accepted. You may invite them again at that time.'});
+                            } else {
+                                // create user record with email address and community data
+                                var newUser = schema.invite(inviteUser.email, inviteUser.location_key, inviteUser.community_key);
+                                console.log('creating user')
+                                var community_url =
+                                    inviteUser.location_key == inviteUser.community_key ?
+                                    inviteUser.location_key :
+                                    inviteUser.location_key + '/' + inviteUser.community_key;
 
-                            // send email with knowtify with unique link
-                            var knowtifyClient = new knowtify.Knowtify(config.knowtify, false);
+                                db.post(config.db.communities, newUser)
+                                    .then(function (response) {
+                                        var userkey = response.headers.location.split('/')[3]; // hope their response format doesn't change :-/                     console.log(
 
-                            knowtifyClient.contacts.upsert({
-                                    "event" : "invitation",
-                                    "contacts": [{
-                                        "email": inviteUser.email,
-                                        "invite_community": //todo need formatted community name here
-                                        "invite_code": userkey,
-                                        "invitor_name": //todo need name here
-                                        "invitor_image": //todo need headshot url here
-                                    }]
-                            }),
-                                function(success) {
-                                    console.log('Invitation sent to ' + inviteUser.email);
-                                    res.status(200).end();
-                                };
-                        });
+                                        // send email with knowtify with unique link
+                                        var knowtifyClient = new knowtify.Knowtify(config.knowtify, false);
+
+                                        knowtifyClient.contacts.upsert({
+                                            "event": "invitation",
+                                            "contacts": [{
+                                                "email": inviteUser.email,
+                                                "data": {
+                                                    "invite_community": inviteUser.community_name.split(',')[0],
+                                                    "invite_url": community_url,
+                                                    "invite_code": userkey,
+                                                    "invitor_name": inviteUser.leader_profile.name,
+                                                    "invitor_email": inviteUser.leader_profile.email,
+                                                    "invitor_image": inviteUser.leader_profile.avatar
+                                                }
+                                            }]
+                                        },
+                                        function (success) {
+                                            console.log('Invitation sent to ' + inviteUser.email);
+                                            res.status(200).end();
+                                        },
+                                        function (error) {
+                                            console.log('WARNING:');
+                                            console.log(error);
+                                            res.status(500).end();
+                                        });
+                                    });
+                            }
+                        })
                 }
             });
     } else {

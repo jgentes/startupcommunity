@@ -421,20 +421,18 @@ function UserProfileController($scope, $stateParams, $location, $auth, $modal, $
 
 }
 
-function InviteUserController(user_service, community) {
+function InviteUserController(user_service, user, community, communities) {
     var self = this;
 
     this.inviteUser = function(location_key, community_key) {
-
         this.working = true;
 
         if (self.form.$valid) {
             var formdata = {
-                "email" : self.form.email_value,
-                "linkedin_url" : self.form.url_value
+                "email" : self.form.email_value
             };
-            //todo need to add leader *and community* data into the inviteUser call so it can be sent to the invite workflow
-            user_service.inviteUser(formdata.linkedin_url, formdata.email, location_key, community_key)
+
+            user_service.inviteUser(formdata.email, user.data.user.profile, communities.data[location_key].profile.name, location_key, community_key)
                 .then(function(response) {
                     self.working = false;
 
@@ -443,6 +441,8 @@ function InviteUserController(user_service, community) {
                     } else {
                         self.alert = { type: 'success', message: 'An invitation has been send to ' + formdata.email + ' to join the ' + community.profile.name + ' community.' };
                     }
+
+                    self.form.email_value = "";
                 });
 
         } else {

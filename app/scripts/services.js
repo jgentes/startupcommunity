@@ -44,11 +44,12 @@ angular
                       callback(response);
                   })
             },
-            inviteUser: function(linkedin_url, email, location_key, community_key) {
+            inviteUser: function(email, leader_profile, community_name, location_key, community_key) {
                 return $http.post('/api/2.0/invite', {
                     params: {
-                        linkedin_url: linkedin_url,
                         email: email,
+                        leader_profile: leader_profile,
+                        community_name: community_name,
                         location_key: location_key,
                         community_key: community_key
                     }

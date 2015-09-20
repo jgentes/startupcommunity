@@ -12,7 +12,7 @@
 
 <div class="hpanel hgreen">
     <div class="panel-heading hbuilt">
-        * This process currently <b>does not</b> notify the user (or invite them) in any way, it simply adds them to the community.
+        This process will send an email invitation the user to join the community.
     </div>
         <div class="panel-body">
             <div ng-show="invite.alert" class="alert" ng-class="{'alert-success' : invite.alert.type == 'success', 'alert-danger' : invite.alert.type == 'danger'}">
@@ -25,13 +25,6 @@
                         <input type="email" placeholder="new@mentor.com" class="form-control input-lg" required name="email" ng-model="invite.form.email_value">
                         <div class="m-t-xs" ng-show="invite.form.email.$invalid && invite.form.submitted">
                             <span class="text-danger" ng-show="invite.form.email.$error">&nbsp;&nbsp;<i class="fa fa-exclamation-triangle"></i> Please enter a valid email address..</span>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label>Linkedin URL:</label>
-                        <input type="text" placeholder="http://www.linkedin.com/in/bfeld" class="form-control input-lg" name="url" required ng-model="invite.form.url_value">
-                        <div class="m-t-xs" ng-show="invite.form.url.$invalid && invite.form.submitted">
-                            <span class="text-danger" ng-show="invite.form.url.$error">&nbsp;&nbsp;<i class="fa fa-exclamation-triangle"></i> We can't import their profile without a Linkedin URL..</span>
                         </div>
                     </div>
                     <input type="submit" style="float:left" class="finish btn-success btn" ng-class="{'disabled' : disabled}" value="Add User" />

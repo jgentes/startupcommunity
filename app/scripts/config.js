@@ -228,7 +228,7 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                     squash: true
                 },
                 pageTitle: 'Invite People',
-                pageDescription: 'Linkedin URL is required to pull the photo, headline, and summary for each person.',
+                pageDescription: 'New users will be asked to identify their roles and industry focus within the community.',
                 icon: 'pe-7s-id'
             },
             views: {
