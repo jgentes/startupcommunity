@@ -3,7 +3,8 @@ var bcrypt = require('bcryptjs'),
     request = require('request'),
     jwt = require('jwt-simple'),
     config = require('../config.json')[process.env.NODE_ENV || 'development'],
-    db = require('orchestrate')(config.db.key);
+    db = require('orchestrate')(config.db.key),
+    knowtify = require('knowtify-node');
 
 //require('request-debug')(request); // Very useful for debugging oauth and api req/res
 
@@ -32,10 +33,10 @@ var schema = {
                 [location_key, community_key];
 
         return {
-            "type": "user",
+            "type": "invite",
             "profile": {
                 "home": location_key,
-                "email": profile.emailAddress || email
+                "email": email
             },
             "communities": communities
         };
@@ -529,20 +530,6 @@ function handleInviteUser(req, res) {
 
     // validate user has leader role within the location/community
     if (req.user.value.roles.leader[inviteUser.community_key] && req.user.value.roles.leader[inviteUser.community_key].indexOf(inviteUser.location_key) > -1) {
-
-        /* Changed with new invite workflow
-        // user must have valid Linkedin access token to pull other user's profile details
-        if (req.user.value.profile.linkedin.access_token) {
-            var access_token = req.user.value.profile.linkedin.access_token;
-            getLinkedinProfile(inviteUser.linkedin_url, inviteUser.email, access_token, inviteUser.location_key, inviteUser.community_key, function(result) {
-                res.status(result.status).send(result.data);
-            });
-        } else {
-            console.warn("User does not have Linkedin access_token!");
-            res.status(202).send({ message: 'Sorry, you need to login to StartupCommunity.org with Linkedin first.' });
-        }
-        */
-
         // check to see if the email address already exists within the system
         db.newSearchBuilder()
             .collection(config.db.communities)
@@ -556,25 +543,35 @@ function handleInviteUser(req, res) {
                 } else {
                     // no existing user, so create user record with email address and community data
                     var newUser = schema.invite(inviteUser.email, inviteUser.location_key, inviteUser.community_key);
+                    console.log('creating user')
                     db.post(config.db.communities, newUser)
                         .then(function (response) {
-                            console.log(response);
+                            console.log('done')
+                            var userkey = response.headers.location.split('/')[3]; // hope their response format doesn't change :-/
 
+                            // send email with knowtify with unique link
+                            var knowtifyClient = new knowtify.Knowtify(config.knowtify, false);
+
+                            knowtifyClient.contacts.upsert({
+                                    "event" : "invitation",
+                                    "contacts": [{
+                                        "email": inviteUser.email,
+                                        "invite_community": //todo need formatted community name here
+                                        "invite_code": userkey,
+                                        "invitor_name": //todo need name here
+                                        "invitor_image": //todo need headshot url here
+                                    }]
+                            }),
+                                function(success) {
+                                    console.log('Invitation sent to ' + inviteUser.email);
+                                    res.status(200).end();
+                                };
                         });
-
                 }
             });
-
-
-
-
-        // create welcome link for user to return with
-        // send email with knowtify with link
-
-
     } else {
         console.warn("User is not a leader in community: " + inviteUser.community_key + " for location: " + inviteUser.location_key + "!");
-        res.status(202).send({ message: 'Sorry, you must be a Leader in this community to add people to it.' });
+        res.status(202).send({ message: 'Sorry, you must be a Leader in this community to invite people to it.' });
     }
 }
 

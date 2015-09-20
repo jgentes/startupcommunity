@@ -433,15 +433,15 @@ function InviteUserController(user_service, community) {
                 "email" : self.form.email_value,
                 "linkedin_url" : self.form.url_value
             };
-
+            //todo need to add leader *and community* data into the inviteUser call so it can be sent to the invite workflow
             user_service.inviteUser(formdata.linkedin_url, formdata.email, location_key, community_key)
                 .then(function(response) {
                     self.working = false;
 
                     if (response.status !== 200) {
-                        self.alert = { type: 'danger', message: 'There was a problem: ' + String(response.data.message) };
+                        self.alert = { type: 'danger', message: String(response.data.message) };
                     } else {
-                        self.alert = { type: 'success', message: 'Congrats, ' + response.data.profile.name + ' has been added to the ' + community.profile.name + ' community.' };
+                        self.alert = { type: 'success', message: 'An invitation has been send to ' + formdata.email + ' to join the ' + community.profile.name + ' community.' };
                     }
                 });
 

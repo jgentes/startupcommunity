@@ -16,7 +16,7 @@
     </div>
         <div class="panel-body">
             <div ng-show="invite.alert" class="alert" ng-class="{'alert-success' : invite.alert.type == 'success', 'alert-danger' : invite.alert.type == 'danger'}">
-                &nbsp;{{ invite.alert.message }}
+                <span ng-bind-html="invite.alert.message | safe_html"></span>
             </div>
             <div style="padding: 20px 20px 60px 20px;">
                 <form role="form" name="invite.form" novalidate ng-submit="invite.inviteUser(nav.location_path, nav.community.key)">
