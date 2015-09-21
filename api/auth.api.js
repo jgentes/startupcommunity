@@ -37,7 +37,7 @@ var schema = {
                 "home": location_key,
                 "email": email
             },
-            "communities": communities
+            "invite_communities": communities
         };
     },
     signupform: function(formdata) {
@@ -102,8 +102,8 @@ function handleEnsureAuthenticated(req, res, next) {
         next();
     }
     catch (e) {
-        console.log('EnsureAuth failure: ');
-        console.log(e);
+        console.warn('WARNING: EnsureAuth failure: ');
+        console.warn(e);
         return res.status(204).end();
     }
 }
@@ -204,7 +204,7 @@ function handleSignup(req, res) {
             }
         })
         .fail(function(err){
-            console.log("SEARCH FAIL:" + err);
+            console.warn("WARNING: SEARCH FAIL:" + err);
             res.status(202).send({ message: 'Something went wrong: ' + err});
         });
 }
@@ -237,7 +237,7 @@ function handleLogin(req, res) {
             }
         })
         .fail(function(err){
-            console.log("SEARCH FAIL:" + err);
+            console.warn("WARNING: SEARCH FAIL:" + err);
             res.status(202).send('Something went wrong: ' + err);
         });
 }
@@ -261,11 +261,22 @@ function handleLinkedin(req, res) {
         code: req.body.code,
         grant_type: 'authorization_code'
     };
+
+    var delete_invite = function () {
+        db.remove(config.db.communities, invite_code, true)
+            .then(function (result) {
+                console.log('Invitation applied and deleted: ' + invite_code);
+            })
+            .fail(function (err) {
+                console.warn('WARNING: Invitation was used but not deleted: ' + invite_code);
+            })
+    };
+
     // Exchange authorization code for access token.
-    request.post(accessTokenUrl, { form: params, json: true }, function(err, response, body) {
+    request.post(accessTokenUrl, {form: params, json: true}, function (err, response, body) {
 
         if (response.statusCode !== 200) {
-            return res.status(response.statusCode).send({ message: body.error_description });
+            return res.status(response.statusCode).send({message: body.error_description});
         }
 
         var params = {
@@ -274,12 +285,12 @@ function handleLinkedin(req, res) {
         };
 
         // Retrieve profile information about the current user.
-        request.get({ url: peopleApiUrl, qs: params, json: true }, function(err, response, profile) {
+        request.get({url: peopleApiUrl, qs: params, json: true}, function (err, response, profile) {
 
             if (err) {
-                console.log("Linkedin GET FAIL:");
-                console.log(err);
-                return res.status(401).send({ message: 'Something went wrong: ' + err});
+                console.warn("WARNING: Linkedin GET FAIL:");
+                console.warn(err);
+                return res.status(401).send({message: 'Something went wrong: ' + err});
             } else profile['access_token'] = params.oauth2_access_token;
 
             // if this is an invitation, pull that invite data first
@@ -288,114 +299,149 @@ function handleLinkedin(req, res) {
                     .collection(config.db.communities)
                     .limit(1)
                     .query('type: "invite" AND @path.key: ' + invite_code)
-                    .then(function (result){
+                    .then(function (result) {
                         if (result.body.results.length > 0) {
-                            var invite_profile = result;
+                            console.log('Verified invitation');
+                            userCheck(result.body.results[0].value);
                         } else {
                             console.log('WARNING: Invalid invite code: ' + invite_code);
-                            res.status(202).send({ message: 'Sorry, this invite code is not valid: ' + invite_code});
+                            return res.status(404).send({message: 'Sorry, this invite code is not valid: ' + invite_code});
                         }
                     })
-            }
+            } else userCheck();
 
-            // check to see if this linkedin account is already linked to an existing user
-            db.newSearchBuilder()
-                .collection(config.db.communities)
-                .limit(1)
-                .query('profile.linkedin.id: "' + profile.id + '"')
-                .then(function (result){
-                    if (result.body.results.length > 0){
-                        console.log("Found existing user: " + profile.firstName + ' ' + profile.lastName);
-                        result.body.results[0].value.profile["linkedin"] = profile;
-                        // get user account and update with latest linkedin data
-                        if (result.body.results[0].value.profile.avatar === "") {
-                            result.body.results[0].value.profile.avatar = profile.pictureUrl;
-                        }
-                        if (result.body.results[0].value.profile.name !== profile.firstName + ' ' + profile.lastName) {
-                            result.body.results[0].value.profile.name = profile.firstName + ' ' + profile.lastName;
-                        }
-                        if (result.body.results[0].value.profile.email !== profile.emailAddress) {
-                            result.body.results[0].value.profile.email = profile.emailAddress;
-                        }
+            function userCheck(invite_profile) {
+                // check to see if this linkedin account is already linked to an existing user
+                db.newSearchBuilder()
+                    .collection(config.db.communities)
+                    .limit(1)
+                    .query('type: "user" AND profile.linkedin.id: "' + profile.id + '"')
+                    .then(function (result) {
+                        if (result.body.results.length > 0) {
+                            console.log("Found existing user: " + profile.firstName + ' ' + profile.lastName);
+                            result.body.results[0].value.profile["linkedin"] = profile;
+                            // get user account and update with latest linkedin data
 
-                        db.put(config.db.communities, result.body.results[0].path.key, result.body.results[0].value)
-                            .then(function () {
-                                console.log("Profile updated: " + profile.emailAddress);
-                            })
-                            .fail(function (err) {
-                                console.error("Profile update failed:");
-                                console.error(err);
-                            });
+                            if (result.body.results[0].value.profile.avatar === "") {
+                                result.body.results[0].value.profile.avatar = profile.pictureUrl;
+                            }
+                            if (result.body.results[0].value.profile.name !== profile.firstName + ' ' + profile.lastName) {
+                                result.body.results[0].value.profile.name = profile.firstName + ' ' + profile.lastName;
+                            }
+                            if (result.body.results[0].value.profile.email !== profile.emailAddress) {
+                                result.body.results[0].value.profile.email = profile.emailAddress;
+                            }
+                            console.log(invite_profile);
+                            if (invite_profile && invite_profile.invite_communities) { // add invite data to existing user record and delete invite
+                                result.body.results[0].value["invite_communities"] = invite_profile.invite_communities;
+                            }
 
-                        res.send({ token: handleCreateToken(req, result.body.results[0]), user: result.body.results[0] });
-                    } else {
-                        // search by email
-                        db.newSearchBuilder()
-                            .collection(config.db.communities)
-                            .limit(1)
-                            .query('profile.email: "' + profile.emailAddress + '"')
-                            .then(function(result){
-                                if (result.body.results.length > 0) {
-                                    console.log("Found user: " + profile.firstName + ' ' + profile.lastName);
-                                    result.body.results[0].value.profile["linkedin"] = profile; // get user account and re-upload with linkedin data
-                                    db.put(config.db.communities, result.body.results[0].path.key, result.body.results[0].value)
-                                        .then(function () {
-                                            console.log("Profile updated: " + profile.emailAddress);
-                                        })
-                                        .fail(function (err) {
-                                            console.error("Profile update failed:");
-                                            console.error(err);
-                                        });
-                                    res.send({ token: handleCreateToken(req, result.body.results[0]), user: result.body.results[0] });
-
-                                } else {
-                                    console.log('No existing user found!');
-
+                            db.put(config.db.communities, result.body.results[0].path.key, result.body.results[0].value)
+                                .then(function () {
+                                    console.log("Profile updated: " + profile.emailAddress);
                                     if (invite_profile) {
-                                        // validate that email matches linkedin, otherwise fail? or just let them in, but this exposes the invite code to anyone who has it.
+                                        delete_invite();
+                                    }
+                                })
+                                .fail(function (err) {
+                                    console.error("Profile update failed:");
+                                    console.error(err);
+                                });
 
-                                        // update the invite record with user details
-                                        invite_profile.type = "user";
-                                        invite_profile.linkedin = profile;
-                                        invite_profile.profile.avatar = profile.pictureUrl;
-                                        invite_profile.profile.name = profile.firstName + ' ' + result.body.results[0].value.profile.linkedin.lastName;
-                                        invite_profile.profile.email = profile.emailAddress;
+                            res.send({
+                                token: handleCreateToken(req, result.body.results[0]),
+                                user: result.body.results[0]
+                            });
+                        } else {
+                            // search by email
+                            db.newSearchBuilder()
+                                .collection(config.db.communities)
+                                .limit(1)
+                                .query('type: "user" AND profile.email: "' + profile.emailAddress + '"')
+                                .then(function (result) {
+                                    if (result.body.results.length > 0) {
+                                        console.log("Found user: " + profile.firstName + ' ' + profile.lastName);
+                                        result.body.results[0].value.profile["linkedin"] = profile; // get user account and re-upload with linkedin data
 
-                                        // need to add path for res.send
-                                        var new_profile = {
-                                            path: {
-                                                key: invite_code
-                                            },
-                                            value: invite_profile
-                                        };
+                                        if (invite_profile && invite_profile.invite_communities) { // add invite data to existing user record and delete invite
+                                            result.body.results[0].value["invite_communities"] = invite_profile.invite_communities;
+                                        }
 
-                                        db.put(config.db.communities, invite_code, invite_profile)
+                                        db.put(config.db.communities, result.body.results[0].path.key, result.body.results[0].value)
                                             .then(function () {
-                                                console.log("Profile updated: " + JSON.stringify(invite_profile));
-                                                res.send({ token: handleCreateToken(req, invite_profile), user: new_profile });
+                                                console.log("Profile updated: " + profile.emailAddress);
+                                                if (invite_profile) {
+                                                    delete_invite();
+                                                }
                                             })
                                             .fail(function (err) {
-                                                console.error("POST fail:");
-                                                console.error(err.body);
+                                                console.warn("WARNING: Profile update failed:");
+                                                console.warn(err);
                                             });
+                                        res.send({
+                                            token: handleCreateToken(req, result.body.results[0]),
+                                            user: result.body.results[0]
+                                        });
 
                                     } else {
-                                        res.status(401).send({ profile: profile, message: "Sorry, we couldn't find " + profile.firstName + " " + profile.lastName + " with email address '" + profile.emailAddress + "' in our system. <br/><br/>Please <a href='/' target='_self'>click here to request an invitation</a>." });
-                                    }
+                                        console.log('No existing user found!');
 
-                                }
-                            })
-                            .fail(function(err){
-                                console.log("SEARCH FAIL:" + err);
-                                res.status(202).send({ message: 'Something went wrong: ' + err});
-                            });
-                    }
-                });
+                                        if (invite_profile) {
+                                            // note that we don't validate the invite email matches the linkedin email, so anyone can use the invite once.
+
+                                            // update the invite record with user details
+                                            invite_profile.type = "user";
+                                            invite_profile.profile.linkedin = profile;
+                                            invite_profile.profile.avatar = profile.pictureUrl;
+                                            invite_profile.profile.name = profile.firstName + ' ' + profile.lastName;
+                                            invite_profile.profile.email = profile.emailAddress;
+
+                                            // need to add path for res.send
+                                            var new_profile = {
+                                                path: {
+                                                    key: invite_code
+                                                },
+                                                value: invite_profile
+                                            };
+
+                                            db.put(config.db.communities, invite_code, invite_profile)
+                                                .then(function () {
+                                                    console.log("Profile created: " + JSON.stringify(new_profile));
+                                                    res.send({
+                                                        token: handleCreateToken(req, new_profile),
+                                                        user: new_profile
+                                                    });
+                                                })
+                                                .fail(function (err) {
+                                                    console.error("POST fail:");
+                                                    console.error(err.body);
+                                                });
+
+                                        } else {
+                                            res.status(401).send({
+                                                profile: profile,
+                                                message: "Sorry, we couldn't find " + profile.firstName + " " + profile.lastName + " with email address '" + profile.emailAddress + "' in our system. <br/><br/>Please <a href='/' target='_self'>click here to request an invitation</a>."
+                                            });
+                                        }
+
+                                    }
+                                })
+                                .fail(function (err) {
+                                    console.warn("WARNING: SEARCH FAIL:" + err);
+                                    res.status(202).send({message: 'Something went wrong: ' + err});
+                                });
+                        }
+                    })
+                    .fail(function (err) {
+                        console.warn("WARNING: There was a problem:");
+                        console.warn(err);
+                    });
+            };
 
         });
-
     });
 }
+
 
 /*
  |--------------------------------------------------------------------------
@@ -410,7 +456,7 @@ function handleInviteUser(req, res) {
     console.log('Inviting ' + inviteUser.email + ' to ' + inviteUser.location_key + ' / ' + inviteUser.community_key);
 
     // validate user has leader role within the location/community
-    if (req.user.value.roles.leader[inviteUser.community_key] && req.user.value.roles.leader[inviteUser.community_key].indexOf(inviteUser.location_key) > -1) {
+    if (req.user.value.roles && req.user.value.roles.leader[inviteUser.community_key] && req.user.value.roles.leader[inviteUser.community_key].indexOf(inviteUser.location_key) > -1) {
         // check to see if the email address already exists within the system
         db.newSearchBuilder()
             .collection(config.db.communities)
@@ -461,7 +507,7 @@ function handleInviteUser(req, res) {
                                             }]
                                         },
                                         function (success) {
-                                            console.log('Invitation sent to ' + inviteUser.email);
+                                            console.log('Invitation sent to ' + inviteUser.email + ' (' + userkey + ')');
                                             res.status(200).end();
                                         },
                                         function (error) {
