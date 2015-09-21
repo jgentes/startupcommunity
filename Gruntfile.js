@@ -235,7 +235,7 @@ module.exports = function (grunt) {
         'copy:dist',
         'cssmin',
         'uglify',
-        'filerev',
+        //'filerev',
         'usemin',
         'htmlmin'
     ]);
