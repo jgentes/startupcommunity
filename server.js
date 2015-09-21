@@ -18,6 +18,18 @@ var app = express();
 
 // Some things must come before Body Parser
 
+// change all www requests to non-www requests
+function wwwRedirect(req, res, next) {
+    if (req.headers.host.slice(0, 4) === 'www.') {
+        var newHost = req.headers.host.slice(4);
+        return res.redirect(301, req.protocol + '://' + newHost + req.originalUrl);
+    }
+    next();
+};
+
+app.set('trust proxy', true); // important for https
+app.use(wwwRedirect);
+
 // Proxy for Ghost, which runs on different port
 app.all("/blog*", function(req, res){
     blogProxy.web(req, res, { target: 'http://localhost:2368' });
