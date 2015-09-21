@@ -235,7 +235,7 @@ module.exports = function (grunt) {
         'copy:dist',
         'cssmin',
         'uglify',
-        //'filerev', // caused issues with cloudflare
+        //'filerev', caused issues with cloudflare
         'usemin',
         'htmlmin'
     ]);
