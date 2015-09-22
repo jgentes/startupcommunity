@@ -272,12 +272,13 @@ function handleLinkedin(req, res) {
             })
     };
 
-    var add_knowtify = function(email) {
+    var add_knowtify = function(id, email) {
         // send user info to Knowtify
         var knowtifyClient = new knowtify.Knowtify(config.knowtify, false);
 
         knowtifyClient.contacts.upsert({
             "contacts": [{
+                "id": id,
                 "email": email
             }]
         });
@@ -353,7 +354,7 @@ function handleLinkedin(req, res) {
                                     if (invite_profile) {
                                         delete_invite();
                                     }
-                                    add_knowtify(profile.emailAddress);
+                                    add_knowtify(result.body.results[0].path.key, profile.emailAddress);
                                 })
                                 .fail(function (err) {
                                     console.error("Profile update failed:");
@@ -385,7 +386,7 @@ function handleLinkedin(req, res) {
                                                 if (invite_profile) {
                                                     delete_invite();
                                                 }
-                                                add_knowtify(profile.emailAddress);
+                                                add_knowtify(result.body.results[0].path.key, profile.emailAddress);
                                             })
                                             .fail(function (err) {
                                                 console.warn("WARNING: Profile update failed:");
@@ -424,7 +425,7 @@ function handleLinkedin(req, res) {
                                                         token: handleCreateToken(req, new_profile),
                                                         user: new_profile
                                                     });
-                                                    add_knowtify(profile.emailAddress);
+                                                    add_knowtify(invite_code, profile.emailAddress);
                                                 })
                                                 .fail(function (err) {
                                                     console.error("POST fail:");
