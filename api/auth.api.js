@@ -262,7 +262,7 @@ function handleLinkedin(req, res) {
         grant_type: 'authorization_code'
     };
 
-    var delete_invite = function () {
+    var delete_invite = function() {
         db.remove(config.db.communities, invite_code, true)
             .then(function (result) {
                 console.log('Invitation applied and deleted: ' + invite_code);
@@ -270,6 +270,17 @@ function handleLinkedin(req, res) {
             .fail(function (err) {
                 console.warn('WARNING: Invitation was used but not deleted: ' + invite_code);
             })
+    };
+
+    var add_knowtify = function(email) {
+        // send user info to Knowtify
+        var knowtifyClient = new knowtify.Knowtify(config.knowtify, false);
+
+        knowtifyClient.contacts.upsert({
+            "contacts": [{
+                "email": email
+            }]
+        });
     };
 
     // Exchange authorization code for access token.
@@ -331,7 +342,7 @@ function handleLinkedin(req, res) {
                             if (result.body.results[0].value.profile.email !== profile.emailAddress) {
                                 result.body.results[0].value.profile.email = profile.emailAddress;
                             }
-                            console.log(invite_profile);
+
                             if (invite_profile && invite_profile.invite_communities) { // add invite data to existing user record and delete invite
                                 result.body.results[0].value["invite_communities"] = invite_profile.invite_communities;
                             }
@@ -342,6 +353,7 @@ function handleLinkedin(req, res) {
                                     if (invite_profile) {
                                         delete_invite();
                                     }
+                                    add_knowtify(profile.emailAddress);
                                 })
                                 .fail(function (err) {
                                     console.error("Profile update failed:");
@@ -373,6 +385,7 @@ function handleLinkedin(req, res) {
                                                 if (invite_profile) {
                                                     delete_invite();
                                                 }
+                                                add_knowtify(profile.emailAddress);
                                             })
                                             .fail(function (err) {
                                                 console.warn("WARNING: Profile update failed:");
@@ -411,6 +424,7 @@ function handleLinkedin(req, res) {
                                                         token: handleCreateToken(req, new_profile),
                                                         user: new_profile
                                                     });
+                                                    add_knowtify(profile.emailAddress);
                                                 })
                                                 .fail(function (err) {
                                                     console.error("POST fail:");
