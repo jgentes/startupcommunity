@@ -274,13 +274,17 @@ function handleLinkedin(req, res) {
 
     var add_knowtify = function(id, email) {
         // send user info to Knowtify
-        var knowtifyClient = new knowtify.Knowtify(config.knowtify, false);
+        var knowtifyClient = new knowtify.Knowtify(config.knowtify, true);
 
         knowtifyClient.contacts.upsert({
-            "contacts": [{
-                "id": id,
-                "email": email
-            }]
+            "contacts": [
+                {
+                    "email": email,
+                    "data": {
+                        "id": id
+                    }
+                }
+            ]
         });
     };
 

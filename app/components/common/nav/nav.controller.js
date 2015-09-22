@@ -42,7 +42,7 @@ function NavigationController($auth, $state, $window, $location, $stateParams, $
 
         this.user.profile["roles"] = rolelist;
 
-        knowtify.push(['load_inbox', 'knowtify', {email: this.user.profile.email}]);
+        knowtify.push(['load_inbox', 'knowtify', {id: this.user.key, email: this.user.profile.email}]);
 
     }
 

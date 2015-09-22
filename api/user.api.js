@@ -228,7 +228,7 @@ function handleContactUser(req, res) {
                 console.log("Found leader(s)");
                 var leaders = [];
                 for (item in result.body.results) {
-                    leaders.push(result.body.results[item].value);
+                    leaders.push(result.body.results[item]);
                 }
 
                 // now get user record for email address
@@ -240,8 +240,9 @@ function handleContactUser(req, res) {
 
                             for (leader in leaders) {
                                 contacts.push({
-                                    "name" : leaders[leader].profile.name,
-                                    "email" : leaders[leader].profile.email,
+                                    "id" : leaders[leader].path.key,
+                                    "name" : leaders[leader].value.profile.name,
+                                    "email" : leaders[leader].value.profile.email,
                                     "data" : {
                                         "source_name": formdata.name,
                                         "source_email" : formdata.email,
@@ -263,7 +264,7 @@ function handleContactUser(req, res) {
                                     console.log('Contact request sent to ' + leaders[leader].profile.name);
                                     res.status(200).end();
 
-                                    // send notification to requestor
+                                    // send notification to requestor, *i think* the rest api doesn't require an id for the user
                                     knowtifyClient.contacts.upsert({
                                             "event" : "contact_receipt",
                                             "contacts": [{
