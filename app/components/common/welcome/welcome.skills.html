@@ -3,7 +3,7 @@
         <h4 style="font-size: 25px; line-height: 1.25;">Thank you. Now select up to six skills that you specialize in.</h4>
     </div>
     <div class="panel-body no-padding" id="industry_select">
-            <ui-select multiple ng-model="welcome.skills.selected" ng-disabled="disabled" tagging="true" limit="6" alert_title="Sorry, only 6 skills here." alert_text="Focus on skills that you are truly badass with." alert_type="warning">
+            <ui-select multiple ng-model="welcome.skills.selected" ng-disabled="disabled" tagging="true" limit="6" alert_title="Sorry, only 6 skills here." alert_text="Focus on skills that you are truly badass with." alert_type="warning" style="border:none;">
                     <ui-select-match placeholder="Search by skill..">{{$item}}</ui-select-match>
                     <ui-select-choices repeat="skill in welcome.skills | filter:$select.search | limitTo: 25">
                             {{skill.replace('undefined','')}}
@@ -11,7 +11,7 @@
             </ui-select>
     </div>
     <br>
-        <p style="text-align: center;">Skills are your specific areas of expertise, such as crowdfunding, AngularJS, or .</p>
+        <p style="text-align: center;">Skills are your specific areas of expertise. You may add your own skills if they aren't in the list.</p>
     <div ng-show="welcome.alert" class="alert" ng-class="{'alert-success' : welcome.alert.type == 'success', 'alert-danger' : welcome.alert.type == 'danger'}">
             {{ welcome.alert.message }}
         <i class="pe-7s-close pull-right" ng-click="welcome.alert = undefined"></i>
