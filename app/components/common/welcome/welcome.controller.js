@@ -14,11 +14,10 @@ function WelcomeController($auth, $mixpanel, $stateParams, community, startup_se
         self.working = true;
         $auth.authenticate('linkedin', {invite_code: $stateParams.invite_code})
             .then(function(response) {
-                console.log(response);
+
                 if (response.status !== 200) {
                     self.alert = { type: 'danger', message: 'There was a problem: ' + String(response.data.message) };
                 } else {
-                    response.data.user.value["key"] = response.data.user.path.key; // why this?
                     self.auth = true;
                     self.user = response.data.user.value;
                     $state.go('welcome.setup');
@@ -27,7 +26,7 @@ function WelcomeController($auth, $mixpanel, $stateParams, community, startup_se
                     $mixpanel.identify(response.data.user.path.key);
                     $mixpanel.track('Accepted Invite');
 
-                    self.alert = { type: 'success', message: 'Congrats, something has happened!' };
+                    //self.alert = { type: 'success', message: 'Congrats, something has happened!' };
                 }
 
             })
@@ -65,7 +64,5 @@ function WelcomeController($auth, $mixpanel, $stateParams, community, startup_se
         }
 
     };
-
-    this.working = false;
 
 }

@@ -4,9 +4,6 @@
         We require an <a target="_blank" href="https://angel.co">AngelList</a> profile URL to add your startup to the community.</h4>
     </div>
     <div class="panel-body no-padding">
-        <div ng-show="welcome.alert" class="alert" ng-class="{'alert-success' : welcome.alert.type == 'success', 'alert-danger' : welcome.alert.type == 'danger'}">
-            &nbsp;{{ welcome.alert.message }}
-        </div>
         <div style="padding: 20px 20px 60px 20px;">
             <form role="form" name="welcome.founder.form" novalidate ng-submit="welcome.addStartup(nav.location_path, nav.community.key)">
                 <div class="form-group">
@@ -21,6 +18,10 @@
         </div>
     </div>
     <br>
+    <div ng-show="welcome.alert" class="alert" ng-class="{'alert-success' : welcome.alert.type == 'success', 'alert-danger' : welcome.alert.type == 'danger'}">
+            {{ welcome.alert.message }}
+        <i class="pe-7s-close pull-right" ng-click="welcome.alert = undefined"></i>
+    </div>
     <h4 style="margin-bottom: 13px;">
         <a class="btn btn-info pull-left" ui-sref="welcome.setup">Back</a>
         <a class="btn btn-info pull-right" ng-click="welcome.submitFounder()">Continue</a></h4>

@@ -274,7 +274,7 @@ function handleLinkedin(req, res) {
 
     var add_knowtify = function(id, email) {
         // send user info to Knowtify
-        var knowtifyClient = new knowtify.Knowtify(config.knowtify, true);
+        var knowtifyClient = new knowtify.Knowtify(config.knowtify, false);
 
         knowtifyClient.contacts.upsert({
             "contacts": [
