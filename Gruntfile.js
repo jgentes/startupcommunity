@@ -69,7 +69,7 @@ module.exports = function (grunt) {
         watch: {
             styles: {
                 files: ['app/less/**/*.less'],
-                tasks: ['less', 'copy:styles'],
+                tasks: ['less', 'copy:backstyles', 'copy:frontstyles'],
                 options: {
                     nospawn: true,
                     livereload: '<%= connect.options.livereload %>'
@@ -248,6 +248,19 @@ module.exports = function (grunt) {
     ]);
 
     grunt.registerTask('default', 'build');
+
+    grunt.registerTask('fast', [
+        //'clean:dist',
+        'less',
+        'useminPrepare',
+        'concat',
+        //'copy:dist',
+        'cssmin',
+        //'uglify',
+        //'filerev', caused issues with cloudflare
+        'usemin',
+        //'htmlmin'
+    ]);
 
     grunt.registerTask('heroku:development', 'build');
 

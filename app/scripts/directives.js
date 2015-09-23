@@ -25,9 +25,9 @@ function uiSelect(sweet){
             ctrl.select = function() {
                 if(ctrl.multiple && ctrl.limit !== undefined && ctrl.selected.length >= ctrl.limit) {
                     sweet.show({
-                        title: "Sorry, only 3 skills here.",
-                        text: "Use the Search field at the top of the page to use more.",
-                        type: "warning"
+                        title: $attributes.alertTitle,
+                        text: $attributes.alertText,
+                        type: $attributes.alertType
                     });
                 } else {
                     superSelect.apply(ctrl, arguments);
