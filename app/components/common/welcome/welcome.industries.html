@@ -2,7 +2,7 @@
     <div class="panel-heading" style="text-align:center;">
         <h4 style="font-size: 25px; line-height: 1.25;">Thank you. Now select up to three industries that you specialize in.</h4>
     </div>
-    <div class="panel-body no-padding" id="industry_select">
+    <div class="panel-body" id="industry_select" style="padding:5px;">
             <ui-select multiple ng-model="welcome.industries.selected" ng-disabled="disabled" limit="3" alert_title="Sorry, only 3 industries here." alert_text="Focus on industries that you are a real badass in." alert_type="warning" style="border:none;">
                     <ui-select-match placeholder="Search by industry..">{{$item}}</ui-select-match>
                     <ui-select-choices repeat="industry in welcome.industries | filter:$select.search | limitTo: 25">
@@ -11,7 +11,7 @@
             </ui-select>
     </div>
     <br>
-        <p style="text-align: center;">Industries are ecosystems of people and startups, such as Tech, Aviation, Healthcare, etc.</p>
+        <p style="text-align: center;">Industries are ecosystems of people and startups, such as Tech, Aviation, Healthcare, etc. You can add more later.</p>
     <div ng-show="welcome.alert" class="alert" ng-class="{'alert-success' : welcome.alert.type == 'success', 'alert-danger' : welcome.alert.type == 'danger'}">
             {{ welcome.alert.message }}
         <i class="pe-7s-close pull-right" ng-click="welcome.alert = undefined"></i>
