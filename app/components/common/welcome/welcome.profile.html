@@ -1,7 +1,14 @@
 <div class="hpanel">
     <div class="panel-heading" style="text-align:center;">
-        <h4 style="font-size: 25px; line-height: 1.25;">Ok {{welcome.user.profile.linkedin.firstName}}, here's what we've got:<br><br>
-        We require an <a target="_blank" href="https://angel.co">AngelList</a> profile URL to add your startup to the community.</h4>
+        <h4 style="font-size: 25px; line-height: 1.25;">{{welcome.user.profile.linkedin.firstName}}, here's what we've got for you:</h4><br/>
+        <img class="img-circle m-b" style="height:75px;" ng-src="{{welcome.user.profile.linkedin.pictureUrl || welcome.user.profile.avatar || 'images/blank_avatar.png'}}">
+        <br/>
+        <label id="uploader_text">
+                <input type="file" ng-file-select="welcome.onImageSelect(image)" ng-model="image" style="display:none;"/>
+                <img ng-show="welcome.dataUrls['image']" ng-src="{{welcome.dataUrls['image']}}">
+                <h6>Change picture..</h6>
+        </label>
+
     </div>
     <div class="panel-body no-padding">
         <div style="padding: 20px 20px 60px 20px;">
@@ -24,5 +31,5 @@
     </div>
     <h4 style="margin-bottom: 13px;">
         <a class="btn btn-info pull-left" ui-sref="welcome.setup">Back</a>
-        <a class="btn btn-info pull-right" ng-click="welcome.submitFounder()">Continue</a></h4>
+        <a class="btn btn-info pull-right" ng-click="welcome.submit()">Continue</a></h4>
 </div>

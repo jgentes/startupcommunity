@@ -12,6 +12,11 @@
       "clientID": "7d93aaf3f93e48b83e9cfa147004d6a4",
       "clientToken": "40a39cbffa91eecf57031c0ffcd0bc81"
     },
+    "aws": {
+      "aws_access_key_id": "AKIAJB7XMRYAWMFVOJFQ",
+      "aws_secret_access_key": "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",
+      "bucket": "startpucommunity-dev"
+    },
     "token_secret": "2l3knfgqlkn2fvkl23nvklgnvkg23bhva08",
     "API_token_secret": "2lknvqk32nvqknv3qlkvn3kvln234lknvqS",
     "mailchimp": "4cd1eb319ae631eb57ef642b9340af68-us9",
@@ -31,6 +36,11 @@
     "angellist": {
       "clientID": "7d93aaf3f93e48b83e9cfa147004d6a4",
       "clientToken": "40a39cbffa91eecf57031c0ffcd0bc81"
+    },
+    "aws": {
+      "aws_access_key_id": "AKIAJB7XMRYAWMFVOJFQ",
+      "aws_secret_access_key": "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",
+      "bucket": "startpucommunity-dev"
     },
     "token_secret": "2l3knfgqlkn2fvkl23nvklgnvkg23bhva08",
     "API_token_secret": "2lknvqk32nvqknv3qlkvn3kvln234lknvqS",
@@ -52,6 +62,11 @@
       "clientID": "7d93aaf3f93e48b83e9cfa147004d6a4",
       "clientToken": "40a39cbffa91eecf57031c0ffcd0bc81"
     },
+    "aws": {
+      "aws_access_key_id": "AKIAJB7XMRYAWMFVOJFQ",
+      "aws_secret_access_key": "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",
+      "bucket": "startpucommunity-dev"
+    },
     "token_secret": "2l3knfgqlkn2fvkl23nvklgnvkg23bhva08",
     "API_token_secret": "2lknvqk32nvqknv3qlkvn3kvln234lknvqS",
     "mailchimp": "4cd1eb319ae631eb57ef642b9340af68-us9",
@@ -72,6 +87,11 @@
        "clientID": "7d93aaf3f93e48b83e9cfa147004d6a4",
        "clientToken": "40a39cbffa91eecf57031c0ffcd0bc81"
      },
+     "aws": {
+       "aws_access_key_id": "AKIAJB7XMRYAWMFVOJFQ",
+       "aws_secret_access_key": "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",
+       "bucket": "startpucommunity"
+     },
      "token_secret": "2l3knfgqlkn2fvkl23nvklgnvkg23bhva08",
      "API_token_secret": "2lknvqk32nvqknv3qlkvn3kvln234lknvqS",
      "mailchimp": "4cd1eb319ae631eb57ef642b9340af68-us9",
@@ -91,6 +111,11 @@
     "angellist": {
       "clientID": "7d93aaf3f93e48b83e9cfa147004d6a4",
       "clientToken": "40a39cbffa91eecf57031c0ffcd0bc81"
+    },
+    "aws": {
+      "aws_access_key_id": "AKIAJB7XMRYAWMFVOJFQ",
+      "aws_secret_access_key": "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",
+      "bucket": "startpucommunity"
     },
     "token_secret": "2l3knfgqlkn2fvkl23nvklgnvkg23bhva08",
     "API_token_secret": "2lknvqk32nvqknv3qlkvn3kvln234lknvqS",

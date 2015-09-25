@@ -13,7 +13,8 @@
         'GoogleMapsNative',
         'angulartics',
         'angulartics.google.analytics',
-        'knowtify'
+        'knowtify',
+        'angularFileUpload'
     ]);
 })();
 

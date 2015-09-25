@@ -4,6 +4,7 @@
   "description": "StartupCommunity.org - Kickstart your city's entrepreneurial ecosystem",
   "private": true,
   "dependencies": {
+    "aws-sdk": "^2.2.4",
     "bcryptjs": "~0.7.12",
     "body-parser": "~1.6.5",
     "connect-wwwhisper": "0.1.11",
