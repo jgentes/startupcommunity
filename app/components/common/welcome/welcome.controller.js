@@ -5,8 +5,8 @@ angular
 function WelcomeController($auth, $mixpanel, $stateParams, community, startup_service) {
     var self = this;
     this.community = community.profile.name.split(',')[0];
-    this.auth = true; //set to false
-    $state.go('welcome.industries'); //remove
+    this.auth = false; //set to false
+    //$state.go('welcome.industries'); //remove
     this.roles = {};
     this.working = false;
 
@@ -21,6 +21,9 @@ function WelcomeController($auth, $mixpanel, $stateParams, community, startup_se
                 } else {
                     self.auth = true;
                     self.user = response.data.user.value;
+                    self.user.profile["headline"] = self.user.profile.linkedin.headline;
+                    self.user.profile["summary"] = self.user.profile.linkedin.summary;
+
                     $state.go('welcome.setup');
                     // need to update user record with linkedin data now
 
@@ -66,43 +69,20 @@ function WelcomeController($auth, $mixpanel, $stateParams, community, startup_se
 
     };
 
-    this.selectedFiles = [];
-    this.dataUrls = [];
-
-    this.onImageSelect = function(files) {
-        console.log('ping');
-
-        self.selectedFiles['image'] = $files[0];
-
-        var $file = $files[0];
-        if (window.FileReader && $file.type.indexOf('image') > -1) {
-            var fileReader = new FileReader();
-            fileReader.readAsDataURL($files[0]);
-
-            fileReader.onload = function(e) {
-                $timeout(function() {
-                    self.dataUrls['image'] = e.target.result;
-                });
-            }
+    this.profile = {
+        "options": {
+            limit: 1,
+            replace: true,
+            immediate: true,
+            extensions: ['png', 'gif', 'jpg'],
+            bucket: "startupcommunity-dev",
+            folder: "profiles",
+            filename: "avatar.png",
+            policy: '/api/2.1/profile/policy'
         }
-
     };
-
-    this.save_image =  function(){
-
-        $upload.upload({
-            data: self.model,
-            url: 'the/url',
-            file: self.selectedFiles['image']
-
-        }).then();
-
-
-    };
-
 
     this.submit = function() {
-        console.log(self.uploader.queue[0].file.name);
         //console.log(self.industries.selected);
         //console.log(self.skills.selected);
 

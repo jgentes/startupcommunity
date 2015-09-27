@@ -93,6 +93,7 @@ app.put('/api/2.0/settings', auth.ensureAuthenticated, communityApis.setCommunit
 app.post('/api/2.0/contact', userApis.contactUser);
 
 app.post('/api/2.1/startups/add', auth.ensureAuthenticated, startupApis.addStartup);
+app.get('/api/2.1/profile/policy', auth.ensureAuthenticated, auth.createPolicy);
 
 // Auth
 app.post('/auth/linkedin', auth.linkedin);

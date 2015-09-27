@@ -4,6 +4,7 @@
         'ui.bootstrap',
         'ui.highlight',
         'ui.select',
+        'xeditable',
         'ngSanitize',
         'hSweetAlert',
         'analytics.mixpanel',
@@ -14,7 +15,7 @@
         'angulartics',
         'angulartics.google.analytics',
         'knowtify',
-        'angularFileUpload'
+        'angular.aws.s3'
     ]);
 })();
 

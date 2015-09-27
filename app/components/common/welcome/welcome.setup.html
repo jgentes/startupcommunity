@@ -18,10 +18,10 @@
                 <h5 class="list-group-item-heading">Investor</h5>
                 <p class="list-group-item-text">You are an active investor in startup companies.</p>
             </a>
-            <a class="list-group-item" ng-class="{'active' : welcome.roles.employee}" ng-click="welcome.roles.employee = !welcome.roles.employee">
-                <div class="stats-icon pull-right" ng-show="welcome.roles.employee"><i class="pe-7s-check fa-2x"></i></div>
-                <h5 class="list-group-item-heading">Employee</h5>
-                <p class="list-group-item-text">You are a current team member of a local startup.</p>
+            <a class="list-group-item" ng-class="{'active' : welcome.roles.team}" ng-click="welcome.roles.team = !welcome.roles.team">
+                <div class="stats-icon pull-right" ng-show="welcome.roles.team"><i class="pe-7s-check fa-2x"></i></div>
+                <h5 class="list-group-item-heading">Team Member</h5>
+                <p class="list-group-item-text">You are a current employee or team member of a local startup.</p>
             </a>
             <a class="list-group-item" ng-class="{'active' : welcome.roles.mentor}" ng-click="welcome.roles.mentor = !welcome.roles.mentor">
                 <div class="stats-icon pull-right" ng-show="welcome.roles.mentor"><i class="pe-7s-check fa-2x"></i></div>
@@ -39,5 +39,5 @@
     <div ng-show="welcome.alert">
         <alert type="{{welcome.alert.type}}" style="margin: 2px; text-align: center;" ng-click="welcome.alert = undefined"><span ng-bind-html="welcome.alert.message | safe_html"></span></alert>
     </div>
-    <h4 style="margin-bottom: 13px;"><a class="btn btn-info pull-right" ui-sref="welcome.founder">Continue</a></h4>
+    <h4 style="margin-bottom: 13px;"><a class="btn btn-info pull-right" ui-sref="welcome.industries">Continue</a></h4>
 </div>
