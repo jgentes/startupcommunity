@@ -168,17 +168,19 @@ function handleCreateAPIToken(req, res) {
 function handleCreatePolicy(req, res) {
     var p = policy({
         secret: config.aws.aws_secret_access_key,
-        length: 5000000,
         bucket: config.aws.bucket,
-        key: config.aws.aws_access_key_id,
         expires: new Date(Date.now() + 60000),
-        acl: 'public-read'
+        acl: 'public-read',
+        conditions: [
+            ['starts-with', '$key', config.aws.aws_access_key_id],
+            ['starts-with', '$Content-Type', ''],
+            ['content-length-range', 1, 5000000]
+        ]
     });
 
     res.status(201).send({policy: p.policy, signature: p.signature, key: config.aws.aws_access_key_id});
 
-    console.log(p.policy);
-    console.log(p.signature);
+    console.log('Created AWS Policy');
 }
 
 /*

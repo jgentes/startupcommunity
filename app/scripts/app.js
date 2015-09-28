@@ -14,8 +14,7 @@
         'GoogleMapsNative',
         'angulartics',
         'angulartics.google.analytics',
-        'knowtify',
-        'angular.aws.s3'
+        'knowtify'
     ]);
 })();
 

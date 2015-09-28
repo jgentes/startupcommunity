@@ -13,8 +13,8 @@
       "clientToken": "40a39cbffa91eecf57031c0ffcd0bc81"
     },
     "aws": {
-      "aws_access_key_id": "AKIAJB7XMRYAWMFVOJFQ",
-      "aws_secret_access_key": "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",
+      "aws_access_key_id": "AKIAJIP3YQWFY73KUUGQ",
+      "aws_secret_access_key": "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",
       "bucket": "startpucommunity-dev"
     },
     "token_secret": "2l3knfgqlkn2fvkl23nvklgnvkg23bhva08",
@@ -38,8 +38,8 @@
       "clientToken": "40a39cbffa91eecf57031c0ffcd0bc81"
     },
     "aws": {
-      "aws_access_key_id": "AKIAJB7XMRYAWMFVOJFQ",
-      "aws_secret_access_key": "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",
+      "aws_access_key_id": "AKIAJIP3YQWFY73KUUGQ",
+      "aws_secret_access_key": "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",
       "bucket": "startpucommunity-dev"
     },
     "token_secret": "2l3knfgqlkn2fvkl23nvklgnvkg23bhva08",
@@ -63,8 +63,8 @@
       "clientToken": "40a39cbffa91eecf57031c0ffcd0bc81"
     },
     "aws": {
-      "aws_access_key_id": "AKIAJB7XMRYAWMFVOJFQ",
-      "aws_secret_access_key": "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",
+      "aws_access_key_id": "AKIAJIP3YQWFY73KUUGQ",
+      "aws_secret_access_key": "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",
       "bucket": "startpucommunity-dev"
     },
     "token_secret": "2l3knfgqlkn2fvkl23nvklgnvkg23bhva08",
@@ -88,8 +88,8 @@
        "clientToken": "40a39cbffa91eecf57031c0ffcd0bc81"
      },
      "aws": {
-       "aws_access_key_id": "AKIAJB7XMRYAWMFVOJFQ",
-       "aws_secret_access_key": "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",
+       "aws_access_key_id": "AKIAJIP3YQWFY73KUUGQ",
+       "aws_secret_access_key": "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",
        "bucket": "startpucommunity"
      },
      "token_secret": "2l3knfgqlkn2fvkl23nvklgnvkg23bhva08",
@@ -113,8 +113,8 @@
       "clientToken": "40a39cbffa91eecf57031c0ffcd0bc81"
     },
     "aws": {
-      "aws_access_key_id": "AKIAJB7XMRYAWMFVOJFQ",
-      "aws_secret_access_key": "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",
+      "aws_access_key_id": "AKIAJIP3YQWFY73KUUGQ",
+      "aws_secret_access_key": "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",
       "bucket": "startpucommunity"
     },
     "token_secret": "2l3knfgqlkn2fvkl23nvklgnvkg23bhva08",

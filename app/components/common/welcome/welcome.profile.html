@@ -7,10 +7,8 @@
         </div>
         <br/>
 
-        <button class="btn btn-default" s3 options="welcome.profile.options" ng-model="welcome.profile.image">
-            Select File
-        </button>
-
+        <button class="btn btn-default" s3-upload bucket="'startupcommunity-dev'" ng-model="welcome.profile.image"
+             s3-upload-options="{getOptionsUri: welcome.profile.options.policy, folder: 'profiles'}">
 
         <label id="uploader_text">
                 <input type="file" ng-file-select="welcome.onImageSelect(image)" ng-model="image" style="display:none;"/>
@@ -18,7 +16,7 @@
                 <h6>Change picture..</h6>
         </label>
 
-    </div>
+    </button>
     <h4 style="line-height:1.75;">
     Your name is <a style="color:#4ea5e0;" editable-text="welcome.user.profile.name">{{welcome.user.profile.name}}</a>, your email address is <a style="color:#4ea5e0;" editable-email="welcome.user.profile.email">{{welcome.user.profile.email}}</a> and your headline is <a style="color:#4ea5e0;" editable-text="welcome.user.profile.headline">{{welcome.user.profile.headline}}</a>.
         <br/><br/>
