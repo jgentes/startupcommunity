@@ -18,18 +18,21 @@
                     ng-attr-title="{{item.toUpperCase()[0] + item.slice(1);}}"
                     ng-class="{'text-primary fa fa-rocket' : item == 'founder', 'text-info fa fa-graduation-cap' : item == 'mentor', 'text-success fa fa-leaf' : item == 'investor', 'text-default fa fa-dribbble' : item == 'team', 'text-warning fa fa-briefcase' : item == 'provider'}"></i></span>
         </div>
-
-        <h4 style="line-height:1.75;">
-            Your name is <a style="color:#4ea5e0;" editable-text="welcome.user.profile.name">{{welcome.user.profile.name}}</a>,
-            your email address is <a style="color:#4ea5e0;" editable-email="welcome.user.profile.email">{{welcome.user.profile.email}}</a>
-            and your headline is <a style="color:#4ea5e0;" editable-text="welcome.user.profile.headline">{{welcome.user.profile.headline}}</a>.
-            <br/><br/>
-            Click to edit your summary if needed:<br/><br/>
+        <div>
+            <h4 style="line-height:1.75;">
+                Your name is <a style="color:#4ea5e0;" editable-text="welcome.user.profile.name">{{welcome.user.profile.name}}</a>,
+                your email address is <a style="color:#4ea5e0;" editable-email="welcome.user.profile.email">{{welcome.user.profile.email}}</a>
+                and your headline is <a style="color:#4ea5e0;" editable-text="welcome.user.profile.headline">{{welcome.user.profile.headline}}</a>.
+                <br/><br/>
+                Click to edit your summary if needed:
+            </h4>
+        </div>
+        <div id="summary_form">
             <a editable-textarea="welcome.user.profile.summary" e-rows="7" e-cols="40">
                 <pre style="background: none; font-family: inherit; font-size: 14px; text-align: left;">{{welcome.user.profile.summary}}</pre>
             </a>
-        </h4>
-        <br>
+        </div>
+
 
         <div alert-box this-alert="welcome.alert"></div>
         <h4 style="margin-bottom: 13px;">
