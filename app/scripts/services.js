@@ -36,7 +36,7 @@ angular
                 return $http.get(userid ? '/api/2.0/profile/' + userid : '/api/2.0/profile');
             },
             getProfileUrl: function(filename) {
-                return $http.get('/api/2.1/profile/url?' + filename);
+                return $http.get('/api/2.1/profile/url?filename=' + filename);
             },
             putProfile: function(profileData) { // addcallback!
                 return $http.put('/api/2.0/profile', profileData);

@@ -85,7 +85,6 @@ function WelcomeController($auth, $q, $mixpanel, $stateParams, community, user_s
 
                 xhr.onreadystatechange = function(e) {
                     if ( 4 == this.readyState ) {
-                        console.log('done uploading');
                         self.user.profile["avatar"] = fileUrl;
                         d_completed.resolve(true);
                     }

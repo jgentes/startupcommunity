@@ -385,7 +385,7 @@ function handleGetProfile(req, res) {
 function handleGetProfileUrl(req, res) {
     // req data is guaranteed by ensureauth
     var userid = req.param.userid || req.user.value.key || req.user.path.key,
-        filename = req.param.filename;
+        filename = req.query.filename;
 
     aws.config.update({
         accessKeyId: config.aws.aws_access_key_id,
@@ -397,7 +397,7 @@ function handleGetProfileUrl(req, res) {
     var s3 = new aws.S3();
     var s3_params = {
         Bucket: config.aws.bucket,
-        Key:  userid + '_' + filename,
+        Key:  'profiles/' + userid + '_' + filename,
         Expires: 60,
         ACL: 'public-read'
     };
