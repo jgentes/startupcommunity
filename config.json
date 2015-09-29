@@ -13,9 +13,9 @@
       "clientToken": "40a39cbffa91eecf57031c0ffcd0bc81"
     },
     "aws": {
-      "aws_access_key_id": "AKIAJIP3YQWFY73KUUGQ",
-      "aws_secret_access_key": "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",
-      "bucket": "startpucommunity-dev"
+      "aws_access_key_id": "AKIAIM4GWJMGU5JL6FKQ",
+      "aws_secret_access_key": "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",
+      "bucket": "startupcommunity-dev"
     },
     "token_secret": "2l3knfgqlkn2fvkl23nvklgnvkg23bhva08",
     "API_token_secret": "2lknvqk32nvqknv3qlkvn3kvln234lknvqS",
@@ -38,9 +38,9 @@
       "clientToken": "40a39cbffa91eecf57031c0ffcd0bc81"
     },
     "aws": {
-      "aws_access_key_id": "AKIAJIP3YQWFY73KUUGQ",
-      "aws_secret_access_key": "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",
-      "bucket": "startpucommunity-dev"
+      "aws_access_key_id": "AKIAIM4GWJMGU5JL6FKQ",
+      "aws_secret_access_key": "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",
+      "bucket": "startupcommunity-dev"
     },
     "token_secret": "2l3knfgqlkn2fvkl23nvklgnvkg23bhva08",
     "API_token_secret": "2lknvqk32nvqknv3qlkvn3kvln234lknvqS",
@@ -63,9 +63,9 @@
       "clientToken": "40a39cbffa91eecf57031c0ffcd0bc81"
     },
     "aws": {
-      "aws_access_key_id": "AKIAJIP3YQWFY73KUUGQ",
-      "aws_secret_access_key": "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",
-      "bucket": "startpucommunity-dev"
+      "aws_access_key_id": "AKIAIM4GWJMGU5JL6FKQ",
+      "aws_secret_access_key": "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",
+      "bucket": "startupcommunity-dev"
     },
     "token_secret": "2l3knfgqlkn2fvkl23nvklgnvkg23bhva08",
     "API_token_secret": "2lknvqk32nvqknv3qlkvn3kvln234lknvqS",
@@ -88,9 +88,9 @@
        "clientToken": "40a39cbffa91eecf57031c0ffcd0bc81"
      },
      "aws": {
-       "aws_access_key_id": "AKIAJIP3YQWFY73KUUGQ",
-       "aws_secret_access_key": "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",
-       "bucket": "startpucommunity"
+       "aws_access_key_id": "AKIAIM4GWJMGU5JL6FKQ",
+       "aws_secret_access_key": "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",
+       "bucket": "startupcommunity"
      },
      "token_secret": "2l3knfgqlkn2fvkl23nvklgnvkg23bhva08",
      "API_token_secret": "2lknvqk32nvqknv3qlkvn3kvln234lknvqS",
@@ -113,9 +113,9 @@
       "clientToken": "40a39cbffa91eecf57031c0ffcd0bc81"
     },
     "aws": {
-      "aws_access_key_id": "AKIAJIP3YQWFY73KUUGQ",
-      "aws_secret_access_key": "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",
-      "bucket": "startpucommunity"
+      "aws_access_key_id": "AKIAIM4GWJMGU5JL6FKQ",
+      "aws_secret_access_key": "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",
+      "bucket": "startupcommunity"
     },
     "token_secret": "2l3knfgqlkn2fvkl23nvklgnvkg23bhva08",
     "API_token_secret": "2lknvqk32nvqknv3qlkvn3kvln234lknvqS",

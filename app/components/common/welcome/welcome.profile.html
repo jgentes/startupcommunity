@@ -1,20 +1,18 @@
 <div class="hpanel">
     <div class="panel-heading" style="text-align:center;">
         <h4 style="font-size: 25px; line-height: 1.25;">{{welcome.user.profile.linkedin.firstName}}, please verify your profile:</h4><br/>
-        <img class="img-circle m-b" style="height:75px;" ng-src="{{welcome.user.profile.linkedin.pictureUrl || welcome.user.profile.avatar || 'images/blank_avatar.png'}}">
+
+        <img class="img-circle m-b" style="height:75px;" ngf-thumbnail="welcome.user.profile.avatar || file || 'images/blank_avatar.png'">
+        <br/>
+        <label id="uploader_text">
+            <input type="file" ng-model="file" name="file" ngf-pattern="'image/*'"
+                   accept="image/*" ngf-max-size="5MB" ngf-min-height="50"
+                   ngf-resize="{width: 75, height: 75}" ngf-select="welcome.upload($file)" style="display:none;"/>
+            <h6>Change picture..</h6>
+        </label>
         <div style="margin-left: -10px; padding-top: 1px;">
             <span ng-repeat="(item, val) in welcome.roles" class="user-role"><i ng-attr-title="{{item.toUpperCase()[0] + item.slice(1);}}" ng-class="{'text-primary fa fa-rocket' : item == 'founder', 'text-info fa fa-graduation-cap' : item == 'mentor', 'text-success fa fa-leaf' : item == 'investor', 'text-default fa fa-dribbble' : item == 'team', 'text-warning fa fa-briefcase' : item == 'provider'}"></i></span>
         </div>
-        <br/>
-
-        <button class="btn btn-default" s3-upload bucket="'startupcommunity-dev'" ng-model="welcome.profile.image"
-             s3-upload-options="{getOptionsUri: welcome.profile.options.policy, folder: 'profiles'}">
-
-        <label id="uploader_text">
-                <input type="file" ng-file-select="welcome.onImageSelect(image)" ng-model="image" style="display:none;"/>
-                <img ng-show="welcome.dataUrls['image']" ng-src="{{welcome.dataUrls['image']}}">
-                <h6>Change picture..</h6>
-        </label>
 
     </button>
     <h4 style="line-height:1.75;">

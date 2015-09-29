@@ -24,7 +24,6 @@
     "q": "~1.0.1",
     "request": "~2.40.0",
     "request-debug": "~0.1.1",
-    "s3-policy": "^0.2.0",
     "satellizer": "~0.12.4"
   },
   "devDependencies": {

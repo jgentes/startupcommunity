@@ -8,13 +8,15 @@ var Q = require('q'),
     aws = require('aws-sdk'),
     knowtify = require('knowtify-node');
 
-//require('request-debug')(request); // Very useful for debugging oauth and api req/res
+require('request-debug')(request); // Very useful for debugging oauth and api req/res
 
 var UserApi = function() {
     this.userSearch = handleUserSearch;
     this.directSearch = handleDirectSearch;
     this.contactUser = handleContactUser;
     this.getProfile = handleGetProfile;
+    this.getProfileUrl = handleGetProfileUrl;
+    this.postProfile = handlePostProfile;
     this.setRole = handleSetRole;
     this.removeProfile = handleRemoveProfile;
     this.feedback = handleFeedback;
@@ -380,11 +382,88 @@ function handleGetProfile(req, res) {
 
 }
 
+function handleGetProfileUrl(req, res) {
+    // req data is guaranteed by ensureauth
+    var userid = req.param.userid || req.user.value.key || req.user.path.key,
+        filename = req.param.filename;
+
+    aws.config.update({
+        accessKeyId: config.aws.aws_access_key_id,
+        secretAccessKey: config.aws.aws_secret_access_key,
+        signatureVersion: 'v4',
+        region: 'us-west-2'
+    });
+
+    var s3 = new aws.S3();
+    var s3_params = {
+        Bucket: config.aws.bucket,
+        Key:  userid + '_' + filename,
+        Expires: 60,
+        ACL: 'public-read'
+    };
+    s3.getSignedUrl('putObject', s3_params, function (err, signedUrl) {
+        var parsedUrl = url.parse(signedUrl);
+        parsedUrl.search = null;
+        var objectUrl = url.format(parsedUrl);
+
+        if (!err) {
+            res.send({ put: signedUrl, get: objectUrl });
+        } else res.status(204).send({ message: err });
+
+    });
+}
+
+function handlePostProfile(req, res) {
+    // req data is guaranteed by ensureauth
+    var userid = req.param.userid || req.user.value.key || req.user.path.key;
+    console.log('Updating user profile: ' + userid);
+    console.log(JSON.stringify(req.body));
+
+    var s3 = new aws.S3();
 /*
- |--------------------------------------------------------------------------
- | Put Profile
- |--------------------------------------------------------------------------
- */
+    s3.putObject({
+        Bucket: config.aws.bucket,
+        Key: config.aws.aws_access_key_id,
+        Body:
+    }, function(err, data) {
+
+        if (err)
+
+            console.log(err)
+
+        else       console.log("Successfully uploaded data to myBucket/myKey");
+
+    });
+
+    /*
+
+    db.put(config.db.communities, userid, profile)
+        .then(function(response){
+            if (response.body.code !== "items_not_found") {
+                response.body["key"] = userid;
+                var user = { "value" : response.body };
+                var payload = {
+                    iss: req.hostname,
+                    sub: user,
+                    iat: moment().valueOf(),
+                    exp: moment().add(14, 'days').valueOf()
+                };
+
+                res.status(200).send({ token: jwt.encode(payload, config.token_secret), user: user.value });
+
+            } else {
+                console.warn('WARNING:  User not found.');
+                res.status(200).send({ message: 'User not found.' });
+            }
+        })
+
+        .fail(function(err){
+            console.warn("WARNING: SEARCH FAIL:");
+            console.warn(err);
+            res.status(202).send({ message: 'Something went wrong: ' + err});
+        });
+    */
+}
 
 function handleSetRole(req, res) {
     var userkey = req.query.userkey,

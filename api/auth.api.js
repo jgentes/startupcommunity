@@ -4,8 +4,7 @@ var bcrypt = require('bcryptjs'),
     jwt = require('jwt-simple'),
     config = require('../config.json')[process.env.NODE_ENV || 'development'],
     db = require('orchestrate')(config.db.key),
-    knowtify = require('knowtify-node'),
-    policy = require('s3-policy');
+    knowtify = require('knowtify-node');
 
 //require('request-debug')(request); // Very useful for debugging oauth and api req/res
 
@@ -13,7 +12,6 @@ var AuthApi = function() {
     this.ensureAuthenticated = handleEnsureAuthenticated;
     this.createAPIToken = handleCreateAPIToken;
     this.createToken = handleCreateToken;
-    this.createPolicy = handleCreatePolicy;
     this.inviteUser = handleInviteUser;
     this.linkedin = handleLinkedin;
     this.signup = handleSignup;
@@ -158,29 +156,6 @@ function handleCreateAPIToken(req, res) {
             res.status(202).send({ message: 'Something went wrong: ' + err});
         });
 
-}
-
-/*
- |--------------------------------------------------------------------------
- | Generate S3 Policy Document
- |--------------------------------------------------------------------------
- */
-function handleCreatePolicy(req, res) {
-    var p = policy({
-        secret: config.aws.aws_secret_access_key,
-        bucket: config.aws.bucket,
-        expires: new Date(Date.now() + 60000),
-        acl: 'public-read',
-        conditions: [
-            ['starts-with', '$key', config.aws.aws_access_key_id],
-            ['starts-with', '$Content-Type', ''],
-            ['content-length-range', 1, 5000000]
-        ]
-    });
-
-    res.status(201).send({policy: p.policy, signature: p.signature, key: config.aws.aws_access_key_id});
-
-    console.log('Created AWS Policy');
 }
 
 /*

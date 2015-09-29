@@ -2,7 +2,7 @@ angular
     .module('startupcommunity')
     .controller('WelcomeController', WelcomeController);
 
-function WelcomeController($auth, $mixpanel, $stateParams, community, startup_service) {
+function WelcomeController($auth, $q, $mixpanel, $stateParams, community, user_service, startup_service) {
     var self = this;
     this.community = community.profile.name.split(',')[0];
     this.auth = false; //set to false
@@ -21,7 +21,9 @@ function WelcomeController($auth, $mixpanel, $stateParams, community, startup_se
                 } else {
                     self.auth = true;
                     self.user = response.data.user.value;
+                    self.user["key"] = response.data.user.path.key;
                     self.user.profile["headline"] = self.user.profile.linkedin.headline;
+                    self.user.profile["avatar"] = self.user.profile.linkedin.pictureUrl;
                     self.user.profile["summary"] = self.user.profile.linkedin.summary;
 
                     $state.go('welcome.setup');
@@ -69,17 +71,30 @@ function WelcomeController($auth, $mixpanel, $stateParams, community, startup_se
 
     };
 
-    this.profile = {
-        "options": {
-            limit: 1,
-            replace: true,
-            immediate: true,
-            extensions: ['png', 'gif', 'jpg'],
-            bucket: "startupcommunity-dev",
-            folder: "profiles",
-            filename: "avatar.png",
-            policy: '/api/2.1/profile/policy'
-        }
+    this.upload = function (file) {
+
+        // get the secure S3 url
+        user_service.getProfileUrl(file.name)
+            .then(function(response) {
+                var signedUrl = response.data.put,
+                    fileUrl = response.data.get;
+
+                var d_completed = $q.defer();
+                var xhr = new XMLHttpRequest();
+                xhr.file = file;
+
+                xhr.onreadystatechange = function(e) {
+                    if ( 4 == this.readyState ) {
+                        console.log('done uploading');
+                        self.user.profile["avatar"] = fileUrl;
+                        d_completed.resolve(true);
+                    }
+                };
+                xhr.open('PUT', signedUrl, true);
+                xhr.setRequestHeader("Content-Type","application/octet-stream");
+                xhr.send(file);
+            })
+
     };
 
     this.submit = function() {
