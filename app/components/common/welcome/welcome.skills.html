@@ -12,10 +12,7 @@
     </div>
     <br>
         <p style="text-align: center;">Skills are specialized abilities that you possess. You may add your own skills if they aren't in the list.</p>
-    <div ng-show="welcome.alert" class="alert" ng-class="{'alert-success' : welcome.alert.type == 'success', 'alert-danger' : welcome.alert.type == 'danger'}">
-            {{ welcome.alert.message }}
-        <i class="pe-7s-close pull-right" ng-click="welcome.alert = undefined"></i>
-    </div>
+    <div alert-box this-alert="welcome.alert"></div>
     <h4 style="margin-bottom: 13px;">
         <a class="btn btn-info pull-left" ui-sref="welcome.industries">Back</a>
         <a class="btn btn-info pull-right" ui-sref="welcome.profile">Continue</a></h4>

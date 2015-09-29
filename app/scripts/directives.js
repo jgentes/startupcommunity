@@ -20,9 +20,9 @@ angular
 function alertBox(){
     return {
         scope: {
-            scope: '=scope'
+            thisAlert: '&'
         },
-        template: '<div ng-show="' + scope + '.alert" class="alert alert-' + scope + '.type" style="text-align: center;"><a href="#" class="close" data-dismiss="alert" aria-label="close" title="close">x</a>        <span ng-bind-html="' + scope + '.message | safe_html"></span></div>'
+        template: '<div ng-show="thisAlert()" class="alert alert-{{thisAlert().type}}" style="text-align: center;"><a href="#" class="close" data-dismiss="alert" aria-label="close" title="close">x</a><span ng-bind-html="thisAlert().message | safe_html"></span></div>'
     }
 }
 

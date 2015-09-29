@@ -2,7 +2,7 @@ angular
     .module('startupcommunity')
     .controller('WelcomeController', WelcomeController);
 
-function WelcomeController($auth, $q, $mixpanel, $stateParams, community, user_service, startup_service, $scope) {
+function WelcomeController($auth, $q, $mixpanel, $stateParams, community, user_service, startup_service) {
     var self = this;
     this.community = community.profile.name.split(',')[0];
     this.auth = false; //set to false
@@ -70,8 +70,6 @@ function WelcomeController($auth, $q, $mixpanel, $stateParams, community, user_s
         }
 
     };
-
-    this.alert = {message: 'test!', type: 'danger'};
 
     this.upload = function (file) {
 
