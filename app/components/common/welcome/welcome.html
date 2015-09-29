@@ -20,9 +20,7 @@
                             <hr>
                             <h5 style="text-align: center;" >Please log in to get started.</h5>
                             <br>
-                            <div ng-show="welcome.alert">
-                                <alert type="{{welcome.alert.type}}" style="margin: 2px; text-align: center;" ng-click="welcome.alert = undefined"><span ng-bind-html="welcome.alert.message | safe_html"></span></alert>
-                            </div>
+                            <div alert-box scope="welcome"></div>
                         </div>
                         <div ng-if="welcome.auth" ui-view></div>
                     </div>

@@ -1,5 +1,6 @@
 angular
     .module('startupcommunity')
+    .directive('alertBox', alertBox)
     .directive('uiSelect', uiSelect)
     .directive('pageTitle', pageTitle)
     .directive('sideNavigation', sideNavigation)
@@ -13,6 +14,17 @@ angular
     .directive('backToTop', backToTop)
     .filter('safe_html', safeHTML)
     .filter('words', words);
+
+// custom
+
+function alertBox(){
+    return {
+        scope: {
+            scope: '=scope'
+        },
+        template: '<div ng-show="' + scope + '.alert" class="alert alert-' + scope + '.type" style="text-align: center;"><a href="#" class="close" data-dismiss="alert" aria-label="close" title="close">x</a>        <span ng-bind-html="' + scope + '.message | safe_html"></span></div>'
+    }
+}
 
 
 function uiSelect(sweet){
@@ -60,7 +72,7 @@ function pageTitle($rootScope, $timeout) {
 /**
  * sideNavigation - Directive for run metisMenu on sidebar navigation
  */
-function sideNavigation($timeout) {
+function sideNavigation() {
     return {
         restrict: 'EA',
         link: function(scope, element) {
