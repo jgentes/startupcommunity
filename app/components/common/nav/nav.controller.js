@@ -21,7 +21,7 @@ function NavigationController($auth, $state, $window, $location, $stateParams, $
 
     // ANONYMOUS ACCESS OR PROFILE DISPLAY
 
-    if ($auth.isAuthenticated()) {
+    if ($auth.isAuthenticated() && user.data.user) {
 
         this.user = user.data.user; // reference 'this' by using 'nav' from 'NavigationController as nav' - * nav is also usable in child views *
 
