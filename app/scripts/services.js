@@ -97,10 +97,10 @@ angular
               }
           };
       })
-    .factory('startup_service', function($http) {
+    .factory('company_service', function($http) {
         return {
             search: function(communities, query, stages, limit, alturl) { //alturl is for next/prev retrieval
-                var urlString = '/api/2.0/startups?' + jQuery.param({
+                var urlString = '/api/2.0/companies?' + jQuery.param({
                         communities: communities,
                         stages: stages,
                         limit: limit,
@@ -108,8 +108,8 @@ angular
                     });
                 return $http.get(alturl || urlString);
             },
-            addStartup: function(angellist_url, location_key, community_key) {
-                return $http.post('/api/2.1/startups/add', {
+            addCompany: function(angellist_url, location_key, community_key) {
+                return $http.post('/api/2.1/companies/add', {
                     params: {
                         angellist_url: angellist_url,
                         location_key: location_key,

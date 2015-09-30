@@ -21,26 +21,9 @@ function NavigationController($auth, $state, $window, $location, $stateParams, $
 
     // ANONYMOUS ACCESS OR PROFILE DISPLAY
 
-    if ($auth.isAuthenticated()) {
+    if ($auth.isAuthenticated() && user.data.user) {
 
         this.user = user.data.user; // reference 'this' by using 'nav' from 'NavigationController as nav' - * nav is also usable in child views *
-
-        // Role icons displayed in user profile
-        var rolelist = [],
-            j,
-            k,
-            role;
-
-        for (j in this.user.communities) {
-            for (k in this.user.communities[j]) {
-                role = k[0].toUpperCase() + k.slice(1);
-                if (rolelist.indexOf(role) < 0) {
-                    rolelist.push(role);
-                }
-            }
-        }
-
-        this.user.profile["roles"] = rolelist;
 
         knowtify.push(['load_inbox', 'knowtify', {id: this.user.key, email: this.user.profile.email}]);
 
@@ -49,7 +32,7 @@ function NavigationController($auth, $state, $window, $location, $stateParams, $
     // PRIMARY LEFT-NAV ITEM LIST
     if (!this.community) this.community = communities.data[this.location_path];
     // sort communities for use in nav and child dashboard pages
-    for (item in communities.data) { // no clue what item is here, esp if user or startup
+    for (item in communities.data) { // no clue what item is here, esp if user or company
         if (item !== this.community.key) { // edco-stable-of-experts
             if (communities.data[item]) {
                 switch (communities.data[item].type) {
@@ -72,13 +55,13 @@ function NavigationController($auth, $state, $window, $location, $stateParams, $
         }
     }
 
-    // to avoid duplicate location_path / community_path when navigating to people & startups
+    // to avoid duplicate location_path / community_path when navigating to people & companies
     this.nav_url = this.location_path == this.community.key ?
         "({location_path: nav.location_path, community: nav.community, query: '*'})" :
         "({location_path: nav.location_path, community_path: nav.community.key, community: nav.community, query: '*'})";
 
-    // to set correct root path when navigating from user or startup page
-    this.nav_jump = this.community.type == "user" || this.community.type == "startup" ?
+    // to set correct root path when navigating from user or company page
+    this.nav_jump = this.community.type == "user" || this.community.type == "company" ?
         "({location_path: nav.location.key, community_path: item.key, community: item, query: '*'})" :
         "({community_path: item.key, community: item, query: '*'})";
 
@@ -105,7 +88,7 @@ function NavigationController($auth, $state, $window, $location, $stateParams, $
             self.location_path == self.community.key ?
                 $state.go('search.dashboard', {location_path: self.location_path, community: self.community, query: query}) :
                 $state.go('search.dashboard', {location_path: self.location_path, community_path: self.community.key, community: self.community, query: query});
-        } else if (self.community.type == "user" || self.community.type == "startup") {
+        } else if (self.community.type == "user" || self.community.type == "company") {
             $state.go('search.dashboard', {location_path: self.community.profile.home, query: query});
         } else $state.go('search.dashboard', {query: query});
 

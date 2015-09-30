@@ -7,9 +7,9 @@ var Q = require('q'),
 
 //require('request-debug')(request); // Very useful for debugging oauth and api req/res
 
-var StartupApi = function() {
-        this.startupSearch = handleStartupSearch;
-        this.addStartup = handleAddStartup;
+var CompanyApi = function() {
+        this.companySearch = handleCompanySearch;
+        this.addCompany = handleAddCompany;
 };
 
 var schema = {
@@ -20,7 +20,7 @@ var schema = {
             [location_key, community_key];
 
         return {
-            "type": "startup",
+            "type": "company",
             "profile": {
                 "home": location_key,
                 "name": profile.name,
@@ -33,7 +33,7 @@ var schema = {
     }
 };
 
-function handleStartupSearch(req, res){
+function handleCompanySearch(req, res){
         var communities = req.query.communities,
             stages = req.query.stages,
             query = req.query.query,
@@ -83,21 +83,21 @@ var searchInCommunity = function(communities, stages, limit, offset, query, key)
         }
 
         // create searchstring
-        searchstring = 'communities:(';
+        searchstring = 'value.communities:(';
 
         for (c in communities) {
                 searchstring += '"' + communities[c] + '"';
                 if (c < (communities.length - 1)) { searchstring += ' AND '; }
         }
 
-        searchstring += ') AND type: "startup"';
+        searchstring += ') AND value.type: "company"';
 
         if (stages && stages.length > 0 && stages[0] !== '*') {
                 stages = stages.splice(',');
                 searchstring += ' AND (';
 
                 for (i in stages) {
-                        searchstring += 'profile.stage:"' + stages[i] + '"'; // scope to stage
+                        searchstring += 'value.profile.stage:"' + stages[i] + '"'; // scope to stage
                         if (i < (stages.length - 1)) { searchstring += ' OR '; }
                 }
                 searchstring += ')';
@@ -144,16 +144,16 @@ var searchInCommunity = function(communities, stages, limit, offset, query, key)
 
 };
 
-function handleAddStartup(req, res) {
+function handleAddCompany(req, res) {
     // always use ensureAuth before this (to acquire req.user)
-    var addStartup = req.body.params;
+    var addCompany = req.body.params;
 
-    console.log('Inviting ' + addStartup.angellist_url + ' to ' + addStartup.location_key + ' / ' + addStartup.community_key);
+    console.log('Inviting ' + addCompany.angellist_url + ' to ' + addCompany.location_key + ' / ' + addCompany.community_key);
 
     // validate user is a member in the location/community
-    if (req.user.value.communities[addStartup.community_key] && req.user.value.communities[addStartup.community_key].indexOf(addStartup.location_key) > -1) {
-        // use the slug to get the startup id
-        request.get({ url: 'https://api.angel.co/1/search/slugs?query=' + addStartup.angellist_url + '&access_token=' + config.angellist.clientToken },
+    if (req.user.value.communities[addCompany.community_key] && req.user.value.communities[addCompany.community_key].indexOf(addCompany.location_key) > -1) {
+        // use the slug to get the company id
+        request.get({ url: 'https://api.angel.co/1/search/slugs?query=' + addCompany.angellist_url + '&access_token=' + config.angellist.clientToken },
             function(error, response, body) {
 
                 if (!body.status || body.status === 200) {
@@ -162,10 +162,10 @@ function handleAddStartup(req, res) {
                     request.get({ url: 'https://api.angel.co/1/startups/' + JSON.parse(body).id + '?access_token=' + config.angellist.clientToken },
                         function(error, response, body) {
                             if (!body.status || body.status === 200) {
-                                var startup = schema.angellist(JSON.parse(body), addStartup.location_key, addStartup.community_key);
+                                var company = schema.angellist(JSON.parse(body), addCompany.location_key, addCompany.community_key);
                                 console.log('AngelList Startup:');
-                                console.log(startup);
-                                startupPull(startup, function(result) {
+                                console.log(company);
+                                companyPull(company, function(result) {
                                     res.status(result.status).send(result.data);
                                 });
                             } else {
@@ -184,34 +184,34 @@ function handleAddStartup(req, res) {
             });
 
     } else {
-        console.warn("User is not a member of community: " + addStartup.community_key + " and location: " + addStartup.location_key + "!");
-        res.status(202).send({ message: 'Sorry, you must be a member of this community to add a startup to it.' });
+        console.warn("User is not a member of community: " + addCompany.community_key + " and location: " + addCompany.location_key + "!");
+        res.status(202).send({ message: 'Sorry, you must be a member of this community to add a company to it.' });
     }
 }
 
-var startupPull = function (startup, callback) {
+var companyPull = function (company, callback) {
 
-    console.log('Looking for existing startup based on AngelList profile.');
+    console.log('Looking for existing company based on AngelList profile.');
 
-    db.search(config.db.communities, 'profile.angellist.id: ' + startup.profile.angellist.id) // no quotes due to number not string
+    db.search(config.db.communities, 'value.profile.angellist.id: ' + company.profile.angellist.id) // no quotes due to number not string
         .then(function (result){
             console.log('Result of db search: ' + result.body.total_count);
             if (result.body.results.length > 0){
-                if (result.body.results[0].value.profile.angellist.id == startup.profile.angellist.id){
-                    console.log("Matched AngelList startup to database startup: " + startup.profile.name);
-                    result.body.results[0].value["message"] = "It looks like " + startup.profile.name + " is already in the system.";
+                if (result.body.results[0].value.profile.angellist.id == company.profile.angellist.id){
+                    console.log("Matched AngelList startup to database company: " + company.profile.name);
+                    result.body.results[0].value["message"] = "It looks like " + company.profile.name + " is already in the system.";
                     callback({ "status": 202, "data": result.body.results[0].value });
-                } else {  // in this case we know a startup exists but for some reason the id doesn't match
+                } else {  // in this case we know a company exists but for some reason the id doesn't match
                     console.warn("WARNING: There's already an existing user with that public Linkedin profile.");
-                    result.body.results[0].value["message"] = "It looks like " + startup.profile.name + " is already in the system.";
+                    result.body.results[0].value["message"] = "It looks like " + company.profile.name + " is already in the system.";
                     callback({ "status": 200, "data": result.body.results[0].value });
                 }
             } else {
-                console.log('No existing startup found!');
-                db.post(config.db.communities, startup)
+                console.log('No existing company found!');
+                db.post(config.db.communities, company)
                     .then(function () {
-                        console.log("REGISTERED: " + startup.profile.name);
-                        callback({ "status": 200, "data": startup });
+                        console.log("REGISTERED: " + company.profile.name);
+                        callback({ "status": 200, "data": company });
                     })
                     .fail(function (err) {
                         console.error("POST FAIL:");
@@ -226,4 +226,4 @@ var startupPull = function (startup, callback) {
 
 };
 
-module.exports = StartupApi;
+module.exports = CompanyApi;

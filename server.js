@@ -65,8 +65,8 @@ var AuthApi = require('./api/auth.api.js'),
     auth = new AuthApi(),
     UserApi = require('./api/user.api.js'),
     userApis = new UserApi(),
-    StartupApi = require('./api/startup.api.js'),
-    startupApis = new StartupApi(),
+    CompanyApi = require('./api/company.api.js'),
+    companyApis = new CompanyApi(),
     CommunityApi = require('./api/community.api.js'),
     communityApis = new CommunityApi(),
     AngelListApi = require('./api/angellist.api.js'),
@@ -88,13 +88,14 @@ app.put('/api/2.0/profile/role', auth.ensureAuthenticated, userApis.setRole);
 app.post('/api/2.0/profile/remove/:userid', auth.ensureAuthenticated, userApis.removeProfile);
 app.post('/api/2.0/feedback', auth.ensureAuthenticated, userApis.feedback);
 // new for 2.0
-app.get('/api/2.0/startups', startupApis.startupSearch);
+app.get('/api/2.0/companies', companyApis.companySearch);
 app.put('/api/2.0/settings', auth.ensureAuthenticated, communityApis.setCommunity);
 app.post('/api/2.0/contact', userApis.contactUser);
 
-app.post('/api/2.1/startups/add', auth.ensureAuthenticated, startupApis.addStartup);
+app.post('/api/2.1/companies/add', auth.ensureAuthenticated, companyApis.addCompany);
 app.post('/api/2.1/profile', auth.ensureAuthenticated, userApis.postProfile);
 app.get('/api/2.1/profile/url', auth.ensureAuthenticated, userApis.getProfileUrl);
+app.get('/api/2.1/angel/startups/search', angellistApis.searchStartups);
 
 // Auth
 app.post('/auth/linkedin', auth.linkedin);

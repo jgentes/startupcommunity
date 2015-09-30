@@ -6,7 +6,7 @@ function NetworkController($scope) {
 
     $scope.charts = {
         people: {},
-        startups: {},
+        companies: {},
         jobs: {}
     };
 
@@ -15,10 +15,10 @@ function NetworkController($scope) {
     $scope.charts.people.data = [[157, 165, 172, 184]];
     $scope.charts.people.colors = ["#97BBCD"];
 
-    $scope.charts.startups.labels = ["", "", "", ""];
-    $scope.charts.startups.series = ['Monthly Growth'];
-    $scope.charts.startups.data = [[77, 78, 78, 79]];
-    $scope.charts.startups.colors = ["#A1BE85"];
+    $scope.charts.companies.labels = ["", "", "", ""];
+    $scope.charts.companies.series = ['Monthly Growth'];
+    $scope.charts.companies.data = [[77, 78, 78, 79]];
+    $scope.charts.companies.colors = ["#A1BE85"];
 
     $scope.charts.jobs.labels = ["", "", "", ""];
     $scope.charts.jobs.series = ['Monthly Growth'];

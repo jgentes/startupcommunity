@@ -90,17 +90,17 @@
                                 <i ng-if="nav.community.profile.icon" ng-class="'fa ' + nav.community.profile.icon"></i>
                                 <i ng-if="!nav.community.profile.icon" class="fa fa-globe"></i> {{nav.community.profile.name}}</span>
                         </a>
-                        <ul ng-if="nav.community.type !== 'user' && nav.community.type !== 'startup'" style="display: block;">
+                        <ul ng-if="nav.community.type !== 'user' && nav.community.type !== 'company'" style="display: block;">
                             <li ui-sref="{{'user.list' + nav.nav_url}}" ng-class="{ 'active' : nav.path.endsWith(nav.community.key + '/people') }">
                                 <a><i class="fa fa-caret-right"></i>People</a>
                                 <li ng-if="nav.user.roles.leader[nav.community.key].indexOf(nav.location_path) > -1" class="nav-third-level" ui-sref="{{'user.invite' + nav.nav_url}}">
                                     <a style="color: #aaa;">+&nbsp;&nbsp;Invite People</a>
                                 </li>
                             </li>
-                            <li ui-sref="{{'startup.list' + nav.nav_url}}" ng-class="{ 'active' : nav.path.endsWith(nav.community.key + '/startups') }">
-                                <a><i class="fa fa-caret-right"></i>Startups</a>
-                                <li ng-if="nav.user.roles.leader[nav.community.key].indexOf(nav.location_path) > -1" class="nav-third-level" ui-sref="{{'startup.add' + nav.nav_url}}">
-                                    <a style="color: #aaa;">+&nbsp;&nbsp;Add Startup</a>
+                            <li ui-sref="{{'company.list' + nav.nav_url}}" ng-class="{ 'active' : nav.path.endsWith(nav.community.key + '/companies') }">
+                                <a><i class="fa fa-caret-right"></i>Companies</a>
+                                <li ng-if="nav.user.roles.leader[nav.community.key].indexOf(nav.location_path) > -1" class="nav-third-level" ui-sref="{{'company.add' + nav.nav_url}}">
+                                    <a style="color: #aaa;">+&nbsp;&nbsp;Add Company</a>
                                 </li>
                             </li>
                         </ul>

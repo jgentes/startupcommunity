@@ -47,7 +47,7 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
             templateUrl: "components/common/nav/nav.html",
             controller: "NavigationController as nav",
             params: {
-                profile: {},  // must include params for *any* root-level object for inheritance, such as users, startups, networks, etc
+                profile: {},  // must include params for *any* root-level object for inheritance, such as users, companies, networks, etc
                 community: {},
                 location: {}
             },
@@ -86,7 +86,7 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
 
                             var pullCommunity = function () {
                                 if (communities.data[$stateParams.location_path]) { // if location_path has already been pulled, use that
-                                    return communities.data[$stateParams.location_path]; // this should also avoid re-pull for /people and /startups
+                                    return communities.data[$stateParams.location_path]; // this should also avoid re-pull for /people and /companies
                                 } else {
                                     var communityData = community_service.getCommunity($stateParams.location_path);
                                     return communityData.data;
@@ -99,7 +99,7 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                                     lastitem = url.pop(),
                                     root = url.pop();
 
-                                if (lastitem == "people" || lastitem == "startups" || lastitem == "search" || lastitem == "invite" || lastitem == "add" || lastitem == "welcome") {
+                                if (lastitem == "people" || lastitem == "companies" || lastitem == "search" || lastitem == "invite" || lastitem == "add" || lastitem == "welcome") {
                                     if (lastitem == "invite" || lastitem == "add") {
                                         return communities.data[url.pop()];
                                     } else return communities.data[root]; // return preceding url path as community, such as tech for 'bend-or/tech/people'
@@ -140,17 +140,14 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
         .state('welcome.setup', {
             templateUrl: "components/common/welcome/welcome.setup.html"
         })
-        .state('welcome.industries', {
-            templateUrl: "components/common/welcome/welcome.industries.html"
-        })
         .state('welcome.skills', {
             templateUrl: "components/common/welcome/welcome.skills.html"
         })
         .state('welcome.profile', {
             templateUrl: "components/common/welcome/welcome.profile.html"
         })
-        .state('welcome.founder', {
-            templateUrl: "components/common/welcome/welcome.founder.html"
+        .state('welcome.companies', {
+            templateUrl: "components/common/welcome/welcome.companies.html"
         })
 
         .state('search', {
@@ -180,9 +177,9 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                     templateUrl: 'components/users/user.list.html',
                     controller: "UserController as users"
                 },
-                'startups': {
-                    templateUrl: 'components/startups/startup.list.html',
-                    controller: "StartupController as startups"
+                'companies': {
+                    templateUrl: '../components/companies/company.list.html',
+                    controller: "CompanyController as companies"
                 }
             }
         })
@@ -251,56 +248,56 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
             }
         })
         
-        // Startup views
-        .state('startup', {
+        // Company views
+        .state('company', {
             parent: 'root',
             abstract: true
         })
-        .state('startup.dashboard', {
+        .state('company.dashboard', {
             params: {
                 profile: {},
                 location: {},
-                pageTitle: 'Startup Profile'
+                pageTitle: 'Company Profile'
             },
             views: {
                 'header': {
                     templateUrl: "components/common/header/header_small.html"
                 },
                 'content': {
-                    templateUrl: "components/startups/startup.dashboard.html",
-                    controller: 'StartupProfileController as profile'
+                    templateUrl: "../components/companies/company.dashboard.html",
+                    controller: 'CompanyProfileController as profile'
                 }
             }
         })
-        .state('startup.list', {
-            url: "^/:location_path/:community_path/startups",
+        .state('company.list', {
+            url: "^/:location_path/:community_path/companies",
             params: {
                 community_path: {
                     value: null,
                     squash: true
                 },
-                pageTitle: 'Startups'
+                pageTitle: 'Companies'
             },
             views: {
                 'header': {
                     templateUrl: "components/common/header/header_small.html"
                 },
                 'content': {
-                    templateUrl: 'components/startups/startup.list.html',
-                    controller: "StartupController as startups"
+                    templateUrl: '../components/companies/company.list.html',
+                    controller: "CompanyController as companies"
                 }
             }
         })
-        .state('startup.add', {
-            url: "/:community_path/startups/add",
+        .state('company.add', {
+            url: "/:community_path/companies/add",
             params: {
                 community: {},
                 community_path: {
                     value: null,
                     squash: true
                 },
-                pageTitle: 'Add Startup',
-                pageDescription: 'AngelList URL is required to pull the logo, headline, and summary for each startup.',
+                pageTitle: 'Add Company',
+                pageDescription: 'AngelList URL is required to pull the logo, headline, and summary for each company.',
                 icon: 'pe-7s-id'
             },
             views: {
@@ -308,8 +305,8 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                     templateUrl: "components/common/header/header_small.html"
                 },
                 'content': {
-                    templateUrl: 'components/startups/startup.add.html',
-                    controller: "AddStartupController as add"
+                    templateUrl: '../components/companies/company.add.html',
+                    controller: "AddCompanyController as add"
                 }
             }
 

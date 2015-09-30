@@ -9,7 +9,7 @@ function IndustryController($stateParams, leaders) {
 
     this.charts = {
         people: {},
-        startups: {},
+        companies: {},
         jobs: {}
     };
 
@@ -18,10 +18,10 @@ function IndustryController($stateParams, leaders) {
     this.charts.people.data = [[157, 165, 172, 184]];
     this.charts.people.colors = ["#97BBCD"];
 
-    this.charts.startups.labels = ["", "", "", ""];
-    this.charts.startups.series = ['Monthly Growth'];
-    this.charts.startups.data = [[77, 78, 78, 79]];
-    this.charts.startups.colors = ["#A1BE85"];
+    this.charts.companies.labels = ["", "", "", ""];
+    this.charts.companies.series = ['Monthly Growth'];
+    this.charts.companies.data = [[77, 78, 78, 79]];
+    this.charts.companies.colors = ["#A1BE85"];
 
     this.charts.jobs.labels = ["", "", "", ""];
     this.charts.jobs.series = ['Monthly Growth'];

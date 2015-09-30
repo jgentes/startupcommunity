@@ -8,7 +8,7 @@ var Q = require('q'),
     aws = require('aws-sdk'),
     knowtify = require('knowtify-node');
 
-require('request-debug')(request); // Very useful for debugging oauth and api req/res
+//require('request-debug')(request); // Very useful for debugging oauth and api req/res
 
 var UserApi = function() {
     this.userSearch = handleUserSearch;
@@ -80,21 +80,21 @@ var searchInCommunity = function(communities, roles, limit, offset, query, key) 
     }
 
     // create searchstring
-    searchstring = 'communities:(';
+    searchstring = 'value.communities:(';
 
     for (c in communities) {
         searchstring += '"' + communities[c] + '"';
         if (c < (communities.length - 1)) { searchstring += ' AND '; }
     }
 
-    searchstring += ') AND type: "user"';
+    searchstring += ') AND value.type: "user"';
 
     if (roles && roles.length > 0) {
         roles = roles.splice(',');
         searchstring += ' AND (';
 
         for (i in roles) {
-            searchstring += 'roles.' + roles[i] + '.*:*'; // scope to role
+            searchstring += 'value.roles.' + roles[i] + '.*:*'; // scope to role
             if (i < (roles.length - 1)) { searchstring += ' AND '; }
         }
         searchstring += ')';
@@ -220,7 +220,7 @@ function handleContactUser(req, res) {
     // search format is 'roles.leader[community]: location'
 
     // create searchstring to get leader of community
-    var searchstring = '(roles.leader.' + community_key + ': *) AND type: "user"';
+    var searchstring = '(value.roles.leader.' + community_key + ': *) AND value.type: "user"';
 
     db.newSearchBuilder()
         .collection(config.db.communities)
