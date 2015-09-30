@@ -148,7 +148,7 @@ function handleAddCompany(req, res) {
     // always use ensureAuth before this (to acquire req.user)
     var addCompany = req.body.params;
 
-    console.log('Inviting ' + addCompany.angellist_id + ' to ' + addCompany.location_key + ' / ' + addCompany.community_key);
+    console.log('Adding company w/ AngelList id:' + addCompany.angellist_id + ' to ' + addCompany.location_key + ' / ' + addCompany.community_key);
 
     // validate user is a member in the location/community
     if (((addCompany.location_key == addCompany.community_key) && req.user.value.communities.indexOf(addCompany.location_key) > -1) || (req.user.value.roles && req.user.value.roles.leader[addCompany.community_key] && req.user.value.roles.leader[addCompany.community_key].indexOf(addCompany.location_key) > -1)) {
