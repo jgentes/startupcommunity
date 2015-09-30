@@ -1,21 +1,16 @@
 <div class="hpanel">
     <div class="panel-heading" style="text-align:center;">
-        <h4 style="font-size: 25px; line-height: 1.25;">{{welcome.user.profile.linkedin.firstName}}, please add any companies located <b>in {{welcome.community}}</b> that you currently work with.</h4>
+        <h4 style="font-size: 25px; line-height: 1.25;">{{welcome.user.profile.linkedin.firstName}}, please add any companies <b>in {{welcome.community}}</b> that you currently work with:</h4>
     </div>
-    <div class="panel-body no-padding">
-        <div style="padding: 20px 20px 60px 20px;">
-            <form role="form" name="welcome.founder.form" novalidate ng-submit="welcome.addCompany(nav.location_path, nav.community.key)">
-                <div class="form-group">
-                    <label>Company name:</label>
-
-                    <input type="text" ng-model="welcome.company" placeholder="Search for an existing company.." typeahead="company.name for company in welcome.getCompanies($viewValue)" typeahead-editable="false" typeahead-loading="loadingCompanies" typeahead-on-select="welcome.selectedCompany = $item" class="form-control input-lg">
-                    <i ng-show="loadingCompanies" class="glyphicon glyphicon-refresh"></i>
-                </div>
-                <input type="submit" style="float:left" class="finish btn-success btn" ng-class="{'disabled' : disabled, 'disabled' : welcome.working}" value="Add {{ welcome.selectedCompany.name || 'Company' }}" />
-            </form>
-            <br/><br/>
-            We require an <a target="_blank" href="https://angel.co">AngelList</a> profile URL to add your company to the community.
-        </div>
+    <div style="padding: 20px;">
+        <form role="form" name="welcome.founder.form" novalidate ng-submit="welcome.addCompany(welcome.community, welcome.community)">
+            <div class="form-group">
+                <input type="text" ng-model="welcome.company" placeholder="Type a company name.." typeahead="company.name for company in welcome.getCompanies($viewValue)" typeahead-editable="false" typeahead-loading="loadingCompanies" typeahead-on-select="welcome.selectedCompany = $item" class="form-control input-lg">
+                <i ng-show="loadingCompanies" class="glyphicon glyphicon-refresh"></i>
+            </div>
+            <input type="submit" style="float:left" class="finish btn-success btn" ng-class="{'disabled' : disabled, 'disabled' : welcome.working}" value="Add {{ welcome.selectedCompany.name || 'Company' }}" />
+        </form>
+        <br/><br/>
     </div>
     <br>
     <div alert-box this-alert="welcome.alert"></div>

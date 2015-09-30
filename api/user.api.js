@@ -419,24 +419,6 @@ function handlePostProfile(req, res) {
     console.log('Updating user profile: ' + userid);
     console.log(JSON.stringify(req.body));
 
-    var s3 = new aws.S3();
-/*
-    s3.putObject({
-        Bucket: config.aws.bucket,
-        Key: config.aws.aws_access_key_id,
-        Body:
-    }, function(err, data) {
-
-        if (err)
-
-            console.log(err)
-
-        else       console.log("Successfully uploaded data to myBucket/myKey");
-
-    });
-
-    /*
-
     db.put(config.db.communities, userid, profile)
         .then(function(response){
             if (response.body.code !== "items_not_found") {
@@ -462,7 +444,7 @@ function handlePostProfile(req, res) {
             console.warn(err);
             res.status(202).send({ message: 'Something went wrong: ' + err});
         });
-    */
+
 }
 
 function handleSetRole(req, res) {

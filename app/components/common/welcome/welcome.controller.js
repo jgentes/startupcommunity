@@ -5,8 +5,8 @@ angular
 function WelcomeController($auth, $q, $http, $mixpanel, $stateParams, community, user_service, company_service) {
     var self = this;
     this.community = community.profile.name.split(',')[0];
-    this.auth = true; //set to false
-    $state.go('welcome.companies'); //remove
+    this.auth = false; //set to false
+    //$state.go('welcome.companies'); //remove
     this.roles = {};
     this.working = false;
 
@@ -32,7 +32,6 @@ function WelcomeController($auth, $q, $http, $mixpanel, $stateParams, community,
                     $mixpanel.identify(response.data.user.path.key);
                     $mixpanel.track('Accepted Invite');
 
-                    //self.alert = { type: 'success', message: 'Congrats, something has happened!' };
                 }
 
             })

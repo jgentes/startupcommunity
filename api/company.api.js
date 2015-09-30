@@ -148,44 +148,32 @@ function handleAddCompany(req, res) {
     // always use ensureAuth before this (to acquire req.user)
     var addCompany = req.body.params;
 
-    console.log('Inviting ' + addCompany.angellist_url + ' to ' + addCompany.location_key + ' / ' + addCompany.community_key);
+    console.log('Inviting ' + addCompany.angellist_id + ' to ' + addCompany.location_key + ' / ' + addCompany.community_key);
 
     // validate user is a member in the location/community
-    if (req.user.value.communities[addCompany.community_key] && req.user.value.communities[addCompany.community_key].indexOf(addCompany.location_key) > -1) {
-        // use the slug to get the company id
-        request.get({ url: 'https://api.angel.co/1/search/slugs?query=' + addCompany.angellist_url + '&access_token=' + config.angellist.clientToken },
+    if (((addCompany.location_key == addCompany.community_key) && req.user.value.communities.indexOf(addCompany.location_key) > -1) || (req.user.value.roles && req.user.value.roles.leader[addCompany.community_key] && req.user.value.roles.leader[addCompany.community_key].indexOf(addCompany.location_key) > -1)) {
+
+        // get the startup profile based on the id
+        request.get({ url: 'https://api.angel.co/1/startups/' + addCompany.angellist_id + '?access_token=' + config.angellist.clientToken },
             function(error, response, body) {
-
                 if (!body.status || body.status === 200) {
-
-                    // get the startp profile based on the id
-                    request.get({ url: 'https://api.angel.co/1/startups/' + JSON.parse(body).id + '?access_token=' + config.angellist.clientToken },
-                        function(error, response, body) {
-                            if (!body.status || body.status === 200) {
-                                var company = schema.angellist(JSON.parse(body), addCompany.location_key, addCompany.community_key);
-                                console.log('AngelList Startup:');
-                                console.log(company);
-                                companyPull(company, function(result) {
-                                    res.status(result.status).send(result.data);
-                                });
-                            } else {
-                                console.error('Error: ' + body.message);
-                                console.log(body);
-                                res.status(202).send({ message: 'Something went wrong: ' + err});
-                            }
-                        }
-                    );
-
+                    var company = schema.angellist(JSON.parse(body), addCompany.location_key, addCompany.community_key);
+                    console.log('AngelList Startup:');
+                    console.log(company);
+                    companyPull(company, function(result) {
+                        res.status(result.status).send(result.data);
+                    });
                 } else {
                     console.error('Error: ' + body.message);
                     console.log(body);
                     res.status(202).send({ message: 'Something went wrong: ' + err});
                 }
-            });
+            }
+        );
 
     } else {
         console.warn("User is not a member of community: " + addCompany.community_key + " and location: " + addCompany.location_key + "!");
-        res.status(202).send({ message: 'Sorry, you must be a member of this community to add a company to it.' });
+        res.status(202).send({ message: 'Sorry, you must be a member of this community and/or a leader of this network to add a company to it.' });
     }
 }
 

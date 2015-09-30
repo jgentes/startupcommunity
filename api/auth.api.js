@@ -326,6 +326,22 @@ function handleLinkedin(req, res) {
                     })
             } else userCheck();
 
+            function addCommunities(user_profile, invite_profile) {
+                // add invite data to existing user record and delete invite
+                if (invite_profile && invite_profile.invite_communities) {
+
+                    if (!user_profile.value.communities) user_profile.value["communities"] = [];
+
+                    for (i in invite_profile.invite_communities) {
+
+                        if (user_profile.value.communities && user_profile.value.communities.indexOf(invite_profile.invite_communities[i]) < 0) {
+                            user_profile.value.communities.push(invite_profile.invite_communities[i]);
+                        }
+                    }
+                }
+                return user_profile;
+            }
+
             function userCheck(invite_profile) {
                 // check to see if this linkedin account is already linked to an existing user
                 db.newSearchBuilder()
@@ -336,21 +352,21 @@ function handleLinkedin(req, res) {
                         if (result.body.results.length > 0) {
                             console.log("Found existing user: " + profile.firstName + ' ' + profile.lastName);
                             result.body.results[0].value.profile["linkedin"] = profile;
-                            // get user account and update with latest linkedin data
 
+                            // get user account and update with latest linkedin data
                             if (result.body.results[0].value.profile.avatar === "") {
                                 result.body.results[0].value.profile.avatar = profile.pictureUrl;
                             }
+
                             if (result.body.results[0].value.profile.name !== profile.firstName + ' ' + profile.lastName) {
                                 result.body.results[0].value.profile.name = profile.firstName + ' ' + profile.lastName;
                             }
+
                             if (result.body.results[0].value.profile.email !== profile.emailAddress) {
                                 result.body.results[0].value.profile.email = profile.emailAddress;
                             }
 
-                            if (invite_profile && invite_profile.invite_communities) { // add invite data to existing user record and delete invite
-                                result.body.results[0].value["invite_communities"] = invite_profile.invite_communities;
-                            }
+                            result.body.results[0] = addCommunities(result.body.results[0], invite_profile);
 
                             db.put(config.db.communities, result.body.results[0].path.key, result.body.results[0].value)
                                 .then(function () {
@@ -380,9 +396,7 @@ function handleLinkedin(req, res) {
                                         console.log("Found user: " + profile.firstName + ' ' + profile.lastName);
                                         result.body.results[0].value.profile["linkedin"] = profile; // get user account and re-upload with linkedin data
 
-                                        if (invite_profile && invite_profile.invite_communities) { // add invite data to existing user record and delete invite
-                                            result.body.results[0].value["invite_communities"] = invite_profile.invite_communities;
-                                        }
+                                        result.body.results[0] = addCommunities(result.body.results[0], invite_profile);
 
                                         db.put(config.db.communities, result.body.results[0].path.key, result.body.results[0].value)
                                             .then(function () {
@@ -413,6 +427,8 @@ function handleLinkedin(req, res) {
                                             invite_profile.profile.avatar = profile.pictureUrl;
                                             invite_profile.profile.name = profile.firstName + ' ' + profile.lastName;
                                             invite_profile.profile.email = profile.emailAddress;
+                                            invite_profile["communities"] = invite_profile.invite_communities;
+                                            delete invite_profile.invite_communities;
 
                                             // need to add path for res.send
                                             var new_profile = {
@@ -455,7 +471,7 @@ function handleLinkedin(req, res) {
                         console.warn("WARNING: There was a problem:");
                         console.warn(err);
                     });
-            };
+            }
 
         });
     });
@@ -474,8 +490,8 @@ function handleInviteUser(req, res) {
 
     console.log('Inviting ' + inviteUser.email + ' to ' + inviteUser.location_key + ' / ' + inviteUser.community_key);
 
-    // validate user has leader role within the location/community
-    if (req.user.value.roles && req.user.value.roles.leader[inviteUser.community_key] && req.user.value.roles.leader[inviteUser.community_key].indexOf(inviteUser.location_key) > -1) {
+    // validate user has leader role within the location/community, or let them through if they are a member of the location
+    if (((inviteUser.location_key == inviteUser.community_key) && req.user.value.communities.indexOf(inviteUser.location_key) > -1) || (req.user.value.roles && req.user.value.roles.leader[inviteUser.community_key] && req.user.value.roles.leader[inviteUser.community_key].indexOf(inviteUser.location_key) > -1)) {
         // check to see if the email address already exists within the system
         db.newSearchBuilder()
             .collection(config.db.communities)
@@ -541,7 +557,7 @@ function handleInviteUser(req, res) {
             });
     } else {
         console.warn("User is not a leader in community: " + inviteUser.community_key + " for location: " + inviteUser.location_key + "!");
-        res.status(202).send({ message: 'Sorry, you must be a Leader in this community to invite people to it.' });
+        res.status(202).send({ message: 'Sorry, you must be a member of this location and/or a leader of this network to invite someone.' });
     }
 }
 

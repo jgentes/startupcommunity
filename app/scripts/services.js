@@ -108,10 +108,10 @@ angular
                     });
                 return $http.get(alturl || urlString);
             },
-            addCompany: function(angellist_url, location_key, community_key) {
+            addCompany: function(angellist_id, location_key, community_key) {
                 return $http.post('/api/2.1/companies/add', {
                     params: {
-                        angellist_url: angellist_url,
+                        angellist_id: angellist_id,
                         location_key: location_key,
                         community_key: community_key
                     }
