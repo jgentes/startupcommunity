@@ -5,8 +5,8 @@ angular
 function WelcomeController($auth, $q, $http, $mixpanel, $stateParams, $scope, $filter, community, location, user_service, company_service) {
     var self = this;
     this.location = jQuery.isEmptyObject(location) ? community.profile.name : location.profile.name.split(',')[0];
-    this.auth = 1; //set to false
-    $state.go('welcome.companies'); //remove
+    this.auth = false; //set to false
+    //$state.go('welcome.companies'); //remove
     this.working = false;
 
     var community_path = $stateParams.community_path ? $stateParams.community_path : $stateParams.location_path;
@@ -27,7 +27,7 @@ function WelcomeController($auth, $q, $http, $mixpanel, $stateParams, $scope, $f
 
                     $state.go('welcome.roles');
                     // need to update user record with linkedin data now
-
+                    self.working = false;
                     $mixpanel.identify(response.data.user.path.key);
                     $mixpanel.track('Accepted Invite');
 
@@ -67,7 +67,6 @@ function WelcomeController($auth, $q, $http, $mixpanel, $stateParams, $scope, $f
             })
 
     };
-
     this.submit = function() {
         if (self.selectedCompany && !self.companyAdded) {
             self.alert = {type: "warning", message: "Warning: " + self.selectedCompany.name + " has been selected but hasn't been added yet."}
@@ -98,7 +97,7 @@ function WelcomeController($auth, $q, $http, $mixpanel, $stateParams, $scope, $f
                 })
             }
         }
-        self.selectedRole = self.selectRoles[0] || {text:'not involved'};
+        self.selectedRole = self.selectRoles[0].value || {text:'not involved'};
     });
 
     // used in add company view

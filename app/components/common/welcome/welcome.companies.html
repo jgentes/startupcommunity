@@ -9,10 +9,11 @@
             </div>
         </form>
         <div ng-show="welcome.selectedCompany">
-            <a href="{{welcome.selectedCompany.url}}" target="_blank" title="{{welcome.selectedCompany.name}}'s AngelList Profile"><i style="font-size: 18px; padding-top: 6px; padding-right: 2px;" class="fa fa-angellist pull-right"></i></a>
+
             <h4 style="line-height:1.75;">
-                Your primary role at {{welcome.selectedCompany.name}} is <a href="#" editable-select="welcome.selectedRole" e-ng-options="r.value as r.text for r in welcome.selectRoles">{{ welcome.showRole() }}</a>.
+                Your primary role at <a href="{{welcome.selectedCompany.url}}" target="_blank" title="{{welcome.selectedCompany.name}}'s AngelList Profile">{{welcome.selectedCompany.name}}</a> is <a href="#" editable-select="welcome.selectedRole" e-ng-options="r.value as r.text for r in welcome.selectRoles">{{ welcome.showRole() }}</a>.
             </h4>
+            {{welcome.selectedRoles}}
         </div>
         <input type="submit" style="float:left" class="finish btn-success btn" ng-class="{'disabled' : disabled, 'disabled' : welcome.working}" value="Add {{ welcome.selectedCompany.name || 'Company' }}" />
         <a ng-show="welcome.selectedCompany" ng-click="welcome.selectedCompany = undefined; welcome.company = undefined;" style="padding-left: 15px; line-height: 2.5;">cancel</a>
