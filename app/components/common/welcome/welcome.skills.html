@@ -2,7 +2,7 @@
     <div class="panel-heading" style="text-align:center;">
         <h4 style="font-size: 25px; line-height: 1.25;">Thank you. Now select up to six skills that you are considered an expert in.</h4>
     </div>
-    <div class="panel-body" id="industry_select" style="padding:5px;">
+    <div class="panel-body industry_select" style="padding:5px;">
             <ui-select multiple ng-model="welcome.skills.selected" ng-disabled="disabled" limit="6" alert_title="Sorry, only 6 skills here." alert_text="Focus on skills that you are truly badass with." alert_type="warning" style="border:none;">
                     <ui-select-match placeholder="Search by skill..">{{$item}}</ui-select-match>
                     <ui-select-choices repeat="skill in welcome.skills | filter:$select.search | limitTo: 25">

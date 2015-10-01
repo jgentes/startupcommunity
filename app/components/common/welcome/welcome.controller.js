@@ -6,7 +6,7 @@ function WelcomeController($auth, $q, $http, $mixpanel, $stateParams, $scope, $f
     var self = this;
     this.location = jQuery.isEmptyObject(location) ? community.profile.name : location.profile.name.split(',')[0];
     this.auth = 1; //set to false
-    $state.go('welcome.roles'); //remove
+    $state.go('welcome.companies'); //remove
     this.working = false;
 
     var community_path = $stateParams.community_path ? $stateParams.community_path : $stateParams.location_path;
