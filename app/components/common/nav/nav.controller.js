@@ -9,8 +9,12 @@ function NavigationController($auth, $state, $window, $location, $stateParams, $
     // SENSITIVE VARIABLES THAT AFFECT NAVIGATION AND ALL CHILD TEMPLATES
     // When used in ui-sref links: location_path affects the url, location affects header and content, community affects header and secondary url
     try { // catch any initial db connectivity problems
-        this.location = jQuery.isEmptyObject($stateParams.location) ? (jQuery.isEmptyObject(location) ? communities.data[$stateParams.location_path] : location) : $stateParams.location;
-        this.community = jQuery.isEmptyObject($stateParams.community) ? (community.key !== this.location.key ? community : this.location) : $stateParams.community;
+        this.location = location;
+        this.community = jQuery.isEmptyObject($stateParams.community) ?
+            (community.key !== this.location.key ?
+                community :
+                this.location) :
+            $stateParams.community;
         this.location_path = $stateParams.location_path || $stateParams.location.key || this.community.key;
     }
     catch(err) {

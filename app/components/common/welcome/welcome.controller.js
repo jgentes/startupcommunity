@@ -2,7 +2,9 @@ angular
     .module('startupcommunity')
     .controller('WelcomeController', WelcomeController);
 
-function WelcomeController($auth, $q, $http, $mixpanel, $stateParams, community, user_service, company_service) {
+function WelcomeController($auth, $q, $http, $mixpanel, $stateParams, community, location, user_service, company_service) {
+    console.log(community);
+    console.log(location);
     var self = this;
     this.community = community.profile.name.split(',')[0];
     this.auth = false; //set to false
