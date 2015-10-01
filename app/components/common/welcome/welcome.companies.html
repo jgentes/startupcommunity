@@ -9,16 +9,25 @@
             </div>
         </form>
         <div ng-show="welcome.selectedCompany">
+            <a ng-click="welcome.selectedCompany.angellist_url" target="_blank" title="{{welcome.selectedCompany.name}}'s AngelList Profile"><i style="font-size: 18px;" class="fa fa-angellist pull-right"></i></a>
             <h4 style="line-height:1.75;">
-                Your primary role at {{welcome.selectedCompany.name}} is <a href="#" editable-select="welcome.selectedRole" e-ng-options="r.value as r.text for r in welcome.selectRoles">{{ welcome.showRole() }}</a>
+                Your primary role at {{welcome.selectedCompany.name}} is <a href="#" editable-select="welcome.selectedRole" e-ng-options="r.value as r.text for r in welcome.selectRoles">{{ welcome.showRole() }}</a>.<br/>
+                You may add up to 6 industries this company targets here:
             </h4>
+            <ui-select multiple ng-model="welcome.companyIndustries" ng-disabled="disabled" limit="6" alert_title="Sorry, only 6 skills here." alert_text="Focus on general markets and industries." alert_type="warning" style="border:none;">
+                <ui-select-match placeholder="Search for industries..">{{$item}}</ui-select-match>
+                <ui-select-choices repeat="industry in welcome.skills | filter:$select.search | limitTo: 25">
+                    {{industry}}
+                </ui-select-choices>
+            </ui-select>
         </div>
         <input type="submit" style="float:left" class="finish btn-success btn" ng-class="{'disabled' : disabled, 'disabled' : welcome.working}" value="Add {{ welcome.selectedCompany.name || 'Company' }}" />
+        <a ng-show="welcome.selectedCompany" ng-click="welcome.selectedCompany = undefined; welcome.company = undefined;" style="padding-left: 15px; line-height: 2.5;">cancel</a>
         <br/><br/>
     </div>
     <br>
     <div alert-box this-alert="welcome.alert"></div>
     <h4 style="margin-bottom: 13px;">
-        <a class="btn btn-info pull-left" ui-sref="welcome.skills">Back</a>
+        <a class="btn btn-info pull-left" ui-sref="welcome.profile">Back</a>
         <a class="btn btn-info pull-right" ng-click="welcome.submit()">Continue</a></h4>
 </div>

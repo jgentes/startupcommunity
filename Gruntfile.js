@@ -76,7 +76,7 @@ module.exports = function (grunt) {
                 }
             },
             js: {
-                files: ['<%= startupcommunity.app %>/scripts/{,*/}*.js'],
+                files: ['<%= startupcommunity.app %>/scripts/{,*/}*.js', '<%= startupcommunity.app %>/components/{,*/}*.js'],
                 options: {
                     livereload: '<%= connect.options.livereload %>'
                 }

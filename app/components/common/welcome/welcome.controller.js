@@ -69,7 +69,9 @@ function WelcomeController($auth, $q, $http, $mixpanel, $stateParams, $scope, $f
     };
 
     this.submit = function() {
-
+        if (self.selectedCompany && !self.companyAdded) {
+            self.alert = {type: "warning", message: "Warning: " + self.selectedCompany.name + " has been selected but hasn't been added yet."}
+        }
         //console.log(self.industries.selected);
         //console.log(self.skills.selected);
 
@@ -85,17 +87,21 @@ function WelcomeController($auth, $q, $http, $mixpanel, $stateParams, $scope, $f
         });
     };
 
+    // present user with list of roles they selected previously when creating companies
     $scope.$watchCollection("welcome.roles", function(newVal, oldVal) {
         self.selectRoles = [];
         for (r in newVal) {
-            self.selectRoles.push({
-                value: r,
-                text: r[0].toUpperCase() + r.slice(1)
-            })
+            if (newVal[r]) { // only true items
+                self.selectRoles.push({
+                    value: r,
+                    text: r[0].toUpperCase() + r.slice(1)
+                })
+            }
         }
         self.selectedRole = self.selectRoles[0] || {text:'not involved'};
     });
 
+    // used in add company view
     this.showRole = function() {
         var selected = $filter('filter')(self.selectRoles, {value: self.selectedRole});
         return (selected.length) ? selected[0].text : self.selectedRole.text;
@@ -111,6 +117,7 @@ function WelcomeController($auth, $q, $http, $mixpanel, $stateParams, $scope, $f
                 if (response.status !== 200) {
                     self.alert = { type: 'danger', message: 'There was a problem: ' + String(response.data.message) };
                 } else {
+                    self.companyAdded = true;
                     self.alert = { type: 'success', message: 'Congrats, ' + response.data.profile.name + ' has been added to your profile.' };
                 }
             });
