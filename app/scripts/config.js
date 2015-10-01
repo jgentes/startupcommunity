@@ -113,7 +113,9 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                 location: ['$stateParams', 'community', 'communities',
                     function($stateParams, community, communities) {
                         if(jQuery.isEmptyObject($stateParams.location)) {
-                            return communities.data[$stateParams.location_path];
+                            if (communities.data[$stateParams.location_path].type == 'location') {
+                                return communities.data[$stateParams.location_path];
+                            } else return {};
                         } else return $stateParams.location;
                     }]
             }
