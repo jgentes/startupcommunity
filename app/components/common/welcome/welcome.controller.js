@@ -2,14 +2,11 @@ angular
     .module('startupcommunity')
     .controller('WelcomeController', WelcomeController);
 
-function WelcomeController($auth, $q, $http, $mixpanel, $stateParams, community, location, user_service, company_service) {
-    console.log(community);
-    console.log(location);
+function WelcomeController($auth, $q, $http, $mixpanel, $stateParams, $scope, $filter, community, location, user_service, company_service) {
     var self = this;
-    this.community = community.profile.name.split(',')[0];
-    this.auth = false; //set to false
-    //$state.go('welcome.companies'); //remove
-    this.roles = {};
+    this.location = jQuery.isEmptyObject(location) ? community.profile.name : location.profile.name.split(',')[0];
+    this.auth = 1; //set to false
+    $state.go('welcome.roles'); //remove
     this.working = false;
 
     var community_path = $stateParams.community_path ? $stateParams.community_path : $stateParams.location_path;
@@ -28,7 +25,7 @@ function WelcomeController($auth, $q, $http, $mixpanel, $stateParams, community,
                     self.user.profile["avatar"] = self.user.profile.linkedin.pictureUrl;
                     self.user.profile["summary"] = self.user.profile.linkedin.summary;
 
-                    $state.go('welcome.setup');
+                    $state.go('welcome.roles');
                     // need to update user record with linkedin data now
 
                     $mixpanel.identify(response.data.user.path.key);
@@ -88,10 +85,26 @@ function WelcomeController($auth, $q, $http, $mixpanel, $stateParams, community,
         });
     };
 
+    $scope.$watchCollection("welcome.roles", function(newVal, oldVal) {
+        self.selectRoles = [];
+        for (r in newVal) {
+            self.selectRoles.push({
+                value: r,
+                text: r[0].toUpperCase() + r.slice(1)
+            })
+        }
+        self.selectedRole = self.selectRoles[0] || {text:'not involved'};
+    });
+
+    this.showRole = function() {
+        var selected = $filter('filter')(self.selectRoles, {value: self.selectedRole});
+        return (selected.length) ? selected[0].text : self.selectedRole.text;
+    };
+
     this.addCompany = function() {
         this.working = true;
 
-        company_service.addCompany(self.selectedCompany.id, $stateParams.location_path, community_path)
+        company_service.addCompany(self.selectedCompany.id, location.key, community_path)
             .then(function(response) {
                 self.working = false;
 

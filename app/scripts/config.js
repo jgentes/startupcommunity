@@ -139,8 +139,8 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                 }
             }
         })
-        .state('welcome.setup', {
-            templateUrl: "components/common/welcome/welcome.setup.html"
+        .state('welcome.roles', {
+            templateUrl: "../components/common/welcome/welcome.roles.html"
         })
         .state('welcome.skills', {
             templateUrl: "components/common/welcome/welcome.skills.html"
@@ -429,7 +429,9 @@ angular
             }
         });
     })
-
+    .run(function(editableOptions) {
+        editableOptions.theme = 'bs3';
+    })
     .run(function($rootScope, $state) {
         $rootScope.$state = $state; // allows use if $state within views
         window.$state = $state; // allows use of $state within console

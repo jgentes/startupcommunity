@@ -1,20 +1,24 @@
 <div class="hpanel">
     <div class="panel-heading" style="text-align:center;">
-        <h4 style="font-size: 25px; line-height: 1.25;">{{welcome.user.profile.linkedin.firstName}}, please add any companies <b>in {{welcome.community}}</b> that you currently work with:</h4>
+        <h4 style="font-size: 25px; line-height: 1.25;">{{welcome.user.profile.linkedin.firstName}}, please add any companies <b>in {{welcome.location}}</b> that you currently work with:</h4>
     </div>
     <div style="padding: 20px;">
-        <form role="form" name="welcome.founder.form" novalidate ng-submit="welcome.addCompany(welcome.community, welcome.community)">
+        <form role="form" name="welcome.founder.form" novalidate ng-submit="welcome.addCompany()">
             <div class="form-group">
-                <input type="text" ng-model="welcome.company" placeholder="Type a company name.." typeahead="company.name for company in welcome.getCompanies($viewValue)" typeahead-editable="false" typeahead-loading="loadingCompanies" typeahead-on-select="welcome.selectedCompany = $item" class="form-control input-lg">
-                <i ng-show="loadingCompanies" class="glyphicon glyphicon-refresh"></i>
+                <input type="text" ng-model="welcome.company" placeholder="Type a company name.." typeahead="company.name for company in welcome.getCompanies($viewValue)" typeahead-editable="false" typeahead-on-select="welcome.selectedCompany = $item" class="form-control input-lg">
             </div>
-            <input type="submit" style="float:left" class="finish btn-success btn" ng-class="{'disabled' : disabled, 'disabled' : welcome.working}" value="Add {{ welcome.selectedCompany.name || 'Company' }}" />
         </form>
+        <div ng-show="welcome.selectedCompany">
+            <h4 style="line-height:1.75;">
+                Your primary role at {{welcome.selectedCompany.name}} is <a href="#" editable-select="welcome.selectedRole" e-ng-options="r.value as r.text for r in welcome.selectRoles">{{ welcome.showRole() }}</a>
+            </h4>
+        </div>
+        <input type="submit" style="float:left" class="finish btn-success btn" ng-class="{'disabled' : disabled, 'disabled' : welcome.working}" value="Add {{ welcome.selectedCompany.name || 'Company' }}" />
         <br/><br/>
     </div>
     <br>
     <div alert-box this-alert="welcome.alert"></div>
     <h4 style="margin-bottom: 13px;">
-        <a class="btn btn-info pull-left" ui-sref="welcome.setup">Back</a>
+        <a class="btn btn-info pull-left" ui-sref="welcome.skills">Back</a>
         <a class="btn btn-info pull-right" ng-click="welcome.submit()">Continue</a></h4>
 </div>
