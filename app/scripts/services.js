@@ -116,6 +116,9 @@ angular
                         community_key: community_key
                     }
                 });
+            },
+            getLogoUrl: function(filename, company_name) {
+                return $http.get('/api/2.1/profile/url?filename=' + filename + '&company_name=' + company_name);
             }
         };
     })

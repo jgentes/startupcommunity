@@ -43,7 +43,7 @@ function WelcomeController($auth, $q, $http, $mixpanel, $stateParams, $scope, $f
     };
 
     // for profile pic upload to S3
-    this.upload = function (file) {
+    this.uploadAvatar = function (file) {
 
         // get the secure S3 url
         user_service.getProfileUrl(file.name)
@@ -67,6 +67,33 @@ function WelcomeController($auth, $q, $http, $mixpanel, $stateParams, $scope, $f
             })
 
     };
+
+    // for startup logo upload to S3
+    this.uploadLogo = function (file) {
+
+        // get the secure S3 url
+        company_service.getLogoUrl(file.name, company_name)
+            .then(function(response) {
+                var signedUrl = response.data.put,
+                    fileUrl = response.data.get;
+
+                var d_completed = $q.defer();
+                var xhr = new XMLHttpRequest();
+                xhr.file = file;
+
+                xhr.onreadystatechange = function(e) {
+                    if ( 4 == this.readyState ) {
+                        self.selectedCompany.profile["logo"] = fileUrl;
+                        d_completed.resolve(true);
+                    }
+                };
+                xhr.open('PUT', signedUrl, true);
+                xhr.setRequestHeader("Content-Type","application/octet-stream");
+                xhr.send(file);
+            })
+
+    };
+
     this.submit = function() {
         if (self.selectedCompany && !self.companyAdded) {
             self.alert = {type: "warning", message: "Warning: " + self.selectedCompany.name + " has been selected but hasn't been added yet."}
@@ -80,14 +107,21 @@ function WelcomeController($auth, $q, $http, $mixpanel, $stateParams, $scope, $f
     this.getCompanies = function(val) {
         return $http.get('/api/2.1/angel/startups/search?val=' + val)
         .then(function(response){
-            return response.data.map(function(item){
-                return item;
-            });
+            if (!response.data.error) {
+                return response.data.map(function(item){
+                    return item;
+                });
+            } else {
+                self.alert = { type: 'danger', message: 'There was a problem: ' + String(response.data.error) };
+            }
+
+        }, function(error) {
+            self.alert = { type: 'danger', message: 'There was a problem: ' + String(error) };
         });
     };
 
     // present user with list of roles they selected previously when creating companies
-    $scope.$watchCollection("welcome.roles", function(newVal, oldVal) {
+    $scope.$watchCollection('welcome.roles', function(newVal, oldVal) {
         self.selectRoles = [];
         for (r in newVal) {
             if (newVal[r]) { // only true items
@@ -97,7 +131,27 @@ function WelcomeController($auth, $q, $http, $mixpanel, $stateParams, $scope, $f
                 })
             }
         }
-        self.selectedRole = self.selectRoles[0].value || {text:'not involved'};
+
+        if (self.selectRoles[0]) {
+            self.selectedRole = self.selectRoles[0].value || {text:'not involved'};
+        }
+
+    });
+
+    $scope.$watch('welcome.selectedCompany', function(newVal, oldVal) {
+        console.log(newVal);
+        if (newVal && newVal.id) {
+            $http.get('/api/2.0/angel/startup?id=' + newVal.id)
+                .then(function(response){
+                    if (response.status !== 200) {
+                        self.alert = { type: 'danger', message: 'There was a problem: ' + String(response.data.message) };
+                    } else {
+                        self.selectedCompany = response.data;
+                    }
+                }, function(error) {
+                    self.alert = { type: 'danger', message: 'There was a problem: ' + String(error) };
+                });
+        }
     });
 
     // used in add company view
@@ -117,7 +171,8 @@ function WelcomeController($auth, $q, $http, $mixpanel, $stateParams, $scope, $f
                     self.alert = { type: 'danger', message: 'There was a problem: ' + String(response.data.message) };
                 } else {
                     self.companyAdded = true;
-                    self.alert = { type: 'success', message: 'Congrats, ' + response.data.profile.name + ' has been added to your profile.' };
+                    self.selectedCompany = undefined;
+                    self.alert = { type: 'success', message: 'Thank you! ' + response.data.profile.name + ' has been added to the community.' };
                 }
             });
 

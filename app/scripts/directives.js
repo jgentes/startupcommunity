@@ -1,6 +1,7 @@
 angular
     .module('startupcommunity')
     .directive('alertBox', alertBox)
+    .directive('loadingBars', loadingBars)
     .directive('uiSelect', uiSelect)
     .directive('pageTitle', pageTitle)
     .directive('sideNavigation', sideNavigation)
@@ -23,6 +24,15 @@ function alertBox(){
             thisAlert: '&'
         },
         template: '<div ng-show="thisAlert()" class="alert alert-{{thisAlert().type}}" style="text-align: center;"><a href="#" class="close" data-dismiss="alert" aria-label="close" title="close">x</a><span ng-bind-html="thisAlert().message | safe_html"></span></div>'
+    }
+}
+
+function loadingBars() {
+    return {
+        scope: {
+            working: '&'
+        },
+        template: '<img ng-show="working()" src="images/loading-bars.svg" width="20" height="20" style="margin-right: -35px; margin-left: 10px;"/>'
     }
 }
 

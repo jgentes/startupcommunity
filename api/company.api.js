@@ -10,6 +10,7 @@ var Q = require('q'),
 var CompanyApi = function() {
         this.companySearch = handleCompanySearch;
         this.addCompany = handleAddCompany;
+        this.getLogoUrl = handleGetLogoUrl;
 };
 
 var schema = {
@@ -143,6 +144,37 @@ var searchInCommunity = function(communities, stages, limit, offset, query, key)
         return deferred.promise;
 
 };
+
+function handleGetLogoUrl(req, res) {
+    // req data is guaranteed by ensureauth
+    var company_name = req.query.company_name,
+        filename = req.query.filename;
+
+    aws.config.update({
+        accessKeyId: config.aws.aws_access_key_id,
+        secretAccessKey: config.aws.aws_secret_access_key,
+        signatureVersion: 'v4',
+        region: 'us-west-2'
+    });
+
+    var s3 = new aws.S3();
+    var s3_params = {
+        Bucket: config.aws.bucket,
+        Key:  'logos/' + company_name + '_' + filename,
+        Expires: 60,
+        ACL: 'public-read'
+    };
+    s3.getSignedUrl('putObject', s3_params, function (err, signedUrl) {
+        var parsedUrl = url.parse(signedUrl);
+        parsedUrl.search = null;
+        var objectUrl = url.format(parsedUrl);
+
+        if (!err) {
+            res.send({ put: signedUrl, get: objectUrl });
+        } else res.status(204).send({ message: err });
+
+    });
+}
 
 function handleAddCompany(req, res) {
     // always use ensureAuth before this (to acquire req.user)

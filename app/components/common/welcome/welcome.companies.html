@@ -2,24 +2,39 @@
     <div class="panel-heading" style="text-align:center;">
         <h4 style="font-size: 25px; line-height: 1.25;">{{welcome.user.profile.linkedin.firstName}}, please add any companies <b>in {{welcome.location}}</b> that you currently work with:</h4>
     </div>
+    <div ng-show="welcome.selectedCompany" style="text-align:center;">
+
+        <br/>
+        <label id="uploader_text">
+            <input type="file" ng-model="file" name="file" ngf-pattern="'image/*'"
+                   accept="image/*" ngf-max-size="2MB" ngf-min-height="50"
+                   ngf-resize="{width: 75, height: 75}" ngf-select="welcome.uploadLogo($file)" style="display:none;"/>
+            <h6>Change logo..</h6>
+        </label>
+    </div>
     <div style="padding: 20px;">
         <form role="form" name="welcome.founder.form" novalidate ng-submit="welcome.addCompany()">
             <div class="form-group">
                 <input type="text" ng-model="welcome.company" placeholder="Type a company name.." typeahead="company.name for company in welcome.getCompanies($viewValue)" typeahead-editable="false" typeahead-on-select="welcome.selectedCompany = $item;" class="form-control input-lg">
             </div>
+            <input type="submit" style="float:left" class="finish btn-success btn" ng-class="{'disabled' : disabled, 'disabled' : welcome.working}" value="Add {{ welcome.selectedCompany.name || 'Company' }}" />
+            <a ng-show="welcome.selectedCompany && !welcome.working" ng-click="welcome.selectedCompany = undefined; welcome.company = undefined;" style="padding-left: 15px; line-height: 2.5;">cancel</a>
+            <div loading-bars working="welcome.working"></div>
         </form>
         <div ng-show="welcome.selectedCompany">
-
             <h4 style="line-height:1.75;">
-                Your primary role at <a href="{{welcome.selectedCompany.url}}" target="_blank" title="{{welcome.selectedCompany.name}}'s AngelList Profile">{{welcome.selectedCompany.name}}</a> is <a href="#" editable-select="welcome.selectedRole" e-ng-options="r.value as r.text for r in welcome.selectRoles">{{ welcome.showRole() }}</a>.
+                Your primary role at <a href="{{welcome.selectedCompany.angellist_url}}" target="_blank" title="{{welcome.selectedCompany.name}}'s AngelList Profile">{{welcome.selectedCompany.name}}</a> is <a href="#" editable-select="welcome.selectedRole" e-ng-options="r.value as r.text for r in welcome.selectRoles">{{ welcome.showRole() }}</a>.<br/>
+                {{welcome.selectedCompany.name}}'s headline is <a style="color:#4ea5e0;" editable-text="welcome.selectedCompany.high_concept">{{welcome.selectedCompany.high_concept || 'empty'}}</a>.
+                <br/><br/>
+                Click below to edit {{welcome.selectedCompany.name}}'s summary:
             </h4>
-            {{welcome.selectedRoles}}
+            <div class="summary_form">
+                <a editable-textarea="welcome.selectedCompany.product_desc" e-rows="12" e-cols="60">
+                    <pre style="background: none; font-family: inherit; font-size: 14px; text-align: left;">{{welcome.selectedCompany.product_desc || 'Nothing here!'}}</pre>
+                </a>
+            </div>
         </div>
-        <input type="submit" style="float:left" class="finish btn-success btn" ng-class="{'disabled' : disabled, 'disabled' : welcome.working}" value="Add {{ welcome.selectedCompany.name || 'Company' }}" />
-        <a ng-show="welcome.selectedCompany" ng-click="welcome.selectedCompany = undefined; welcome.company = undefined;" style="padding-left: 15px; line-height: 2.5;">cancel</a>
-        <br/><br/>
     </div>
-    <br>
     <div alert-box this-alert="welcome.alert"></div>
     <h4 style="margin-bottom: 13px;">
         <a class="btn btn-info pull-left" ui-sref="welcome.profile">Back</a>
