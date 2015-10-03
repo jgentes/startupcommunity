@@ -108,17 +108,18 @@ angular
                     });
                 return $http.get(alturl || urlString);
             },
-            addCompany: function(angellist_id, location_key, community_key) {
+            addCompany: function(al_profile, role, location_key, community_key) {
                 return $http.post('/api/2.1/companies/add', {
                     params: {
-                        angellist_id: angellist_id,
+                        al_profile: al_profile,
+                        role: role,
                         location_key: location_key,
                         community_key: community_key
                     }
                 });
             },
             getLogoUrl: function(filename, company_name) {
-                return $http.get('/api/2.1/profile/url?filename=' + filename + '&company_name=' + company_name);
+                return $http.get('/api/2.1/companies/url?filename=' + filename + '&company_name=' + company_name);
             }
         };
     })

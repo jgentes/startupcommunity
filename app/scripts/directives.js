@@ -21,18 +21,15 @@ angular
 function alertBox(){
     return {
         scope: {
-            thisAlert: '&'
+            thisAlert: '='
         },
-        template: '<div ng-show="thisAlert()" class="alert alert-{{thisAlert().type}}" style="text-align: center;"><a href="#" class="close" data-dismiss="alert" aria-label="close" title="close">x</a><span ng-bind-html="thisAlert().message | safe_html"></span></div>'
+        template: '<div ng-show="thisAlert" class="alert alert-{{thisAlert.type}}" style="text-align: center;"><a href="#" class="close" ng-click="thisAlert = undefined" aria-label="close" title="close">x</a><span ng-bind-html="thisAlert.message | safe_html"></span></div>'
     }
 }
 
 function loadingBars() {
     return {
-        scope: {
-            working: '&'
-        },
-        template: '<img ng-show="working()" src="images/loading-bars.svg" width="20" height="20" style="margin-right: -35px; margin-left: 10px;"/>'
+        template: '<img src="images/loading-bars.svg" width="20" height="20" style="margin-right: -35px; margin-left: 10px;"/>'
     }
 }
 

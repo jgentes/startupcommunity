@@ -522,7 +522,7 @@ function handleInviteUser(req, res) {
 
                                 db.post(config.db.communities, newUser)
                                     .then(function (response) {
-                                        var userkey = response.headers.location.split('/')[3]; // hope their response format doesn't change :-/                     console.log(
+                                        var userkey = response.headers.location.split('/')[3]; // hope their response format doesn't change :-/
 
                                         // send email with knowtify with unique link
                                         var knowtifyClient = new knowtify.Knowtify(config.knowtify, false);

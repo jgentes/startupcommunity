@@ -3,6 +3,7 @@ var Q = require('q'),
     url = require('url'),
     jwt = require('jwt-simple'),
     config = require('../config.json')[process.env.NODE_ENV || 'development'],
+    aws = require('aws-sdk'),
     db = require('orchestrate')(config.db.key);
 
 //require('request-debug')(request); // Very useful for debugging oauth and api req/res
@@ -26,6 +27,8 @@ var schema = {
                 "home": location_key,
                 "name": profile.name,
                 "angellist": profile,
+                "headline": profile.high_concept,
+                "summary": profile.product_desc,
                 "avatar": profile.thumb_url || "",
                 "logo": profile.logo_url || ""
             },
@@ -85,11 +88,12 @@ var searchInCommunity = function(communities, stages, limit, offset, query, key)
 
         // create searchstring
         searchstring = 'value.communities:(';
-
-        for (c in communities) {
+        if (communities) {
+            for (c in communities) {
                 searchstring += '"' + communities[c] + '"';
                 if (c < (communities.length - 1)) { searchstring += ' AND '; }
-        }
+            }
+        } else searchstring += '*';
 
         searchstring += ') AND value.type: "company"';
 
@@ -171,7 +175,7 @@ function handleGetLogoUrl(req, res) {
 
         if (!err) {
             res.send({ put: signedUrl, get: objectUrl });
-        } else res.status(204).send({ message: err });
+        } else res.status(400).send({ message: err });
 
     });
 }
@@ -179,59 +183,114 @@ function handleGetLogoUrl(req, res) {
 function handleAddCompany(req, res) {
     // always use ensureAuth before this (to acquire req.user)
     var addCompany = req.body.params;
-
-    console.log('Adding company w/ AngelList id:' + addCompany.angellist_id + ' to ' + addCompany.location_key + ' / ' + addCompany.community_key);
-
-    // validate user is a member in the location/community
-    if (((addCompany.location_key == addCompany.community_key) && req.user.value.communities.indexOf(addCompany.location_key) > -1) || (req.user.value.roles && req.user.value.roles.leader[addCompany.community_key] && req.user.value.roles.leader[addCompany.community_key].indexOf(addCompany.location_key) > -1)) {
-
-        // get the startup profile based on the id
-        request.get({ url: 'https://api.angel.co/1/startups/' + addCompany.angellist_id + '?access_token=' + config.angellist.clientToken },
-            function(error, response, body) {
-                if (!body.status || body.status === 200) {
-                    var company = schema.angellist(JSON.parse(body), addCompany.location_key, addCompany.community_key);
-                    console.log('AngelList Startup:');
-                    console.log(company);
-                    companyPull(company, function(result) {
-                        res.status(result.status).send(result.data);
-                    });
-                } else {
-                    console.error('Error: ' + body.message);
-                    console.log(body);
-                    res.status(202).send({ message: 'Something went wrong: ' + err});
-                }
-            }
-        );
-
+    if (!addCompany.al_profile) {
+        console.warn("No company specified!");
+        res.status(400).send({ message: 'Please select a company first.' });
     } else {
-        console.warn("User is not a member of community: " + addCompany.community_key + " and location: " + addCompany.location_key + "!");
-        res.status(202).send({ message: 'Sorry, you must be a member of this community and/or a leader of this network to add a company to it.' });
+        console.log('Adding company ' + addCompany.al_profile.name + ' to ' + addCompany.location_key + ' / ' + addCompany.community_key);
+
+        // validate user is a member in the location/community
+        if (((addCompany.location_key == addCompany.community_key) && req.user.value.communities.indexOf(addCompany.location_key) > -1) || (req.user.value.roles && req.user.value.roles.leader[addCompany.community_key] && req.user.value.roles.leader[addCompany.community_key].indexOf(addCompany.location_key) > -1)) {
+
+            var company = schema.angellist(addCompany.al_profile, addCompany.location_key, addCompany.community_key);
+
+            //search for company and add if not there
+            companyPull(company, addCompany.role, addCompany.location_key, req.user.path.key, function(result) {
+                res.status(result.status).send(result.data);
+            });
+
+        } else {
+            console.warn("User is not a member of community: " + addCompany.community_key + " and location: " + addCompany.location_key + "!");
+            res.status(400).send({ message: 'Sorry, you must be a member of this community and/or a leader of this network to add a company to it.' });
+        }
     }
 }
 
-var companyPull = function (company, callback) {
+var addRole = function(company_key, role, location_key, user_key) {
+
+    db.get(config.db.communities, user_key)
+        .then(function(response){
+
+            if (response.body.code !== "items_not_found") {
+                // add role
+                if (!response.body.roles) {
+                    response.body["roles"] = {};
+                }
+
+                if (!response.body.roles[role]) {
+                    response.body.roles[role] = {};
+                    response.body.roles[role][company_key] = [location_key];
+                } else if (!response.body.roles[role][company_key]) {
+                    response.body.roles[role][company_key] = [location_key];
+                } else if (response.body.roles[role][company_key].indexOf(location_key) < 0) {
+                    response.body.roles[role][company_key].push(location_key);
+                } // else the damn thing is already there
+
+                // add community
+                if (!response.body.communities) {
+                    response.body["communities"] = {};
+                }
+
+                if (response.body.communities.indexOf(company_key) < 0) {
+                    response.body.communities.push(company_key);
+                }
+
+                db.put(config.db.communities, user_key, response.body)
+                    .then(function(result) {
+                        console.log('User ' + user_key + ' updated with company role.');
+                    })
+                    .fail(function(err){
+                        console.warn("WARNING: PUT FAIL:");
+                        console.warn(err);
+                    });
+
+            } else {
+                console.warn('WARNING:  User not found.');
+            }
+        })
+
+        .fail(function(err){
+            console.warn("WARNING: SEARCH FAIL:");
+            console.warn(err);
+        });
+};
+
+var companyPull = function (company, role, location_key, user, callback) {
 
     console.log('Looking for existing company based on AngelList profile.');
 
     db.search(config.db.communities, 'value.profile.angellist.id: ' + company.profile.angellist.id) // no quotes due to number not string
         .then(function (result){
+
             console.log('Result of db search: ' + result.body.total_count);
+
             if (result.body.results.length > 0){
-                if (result.body.results[0].value.profile.angellist.id == company.profile.angellist.id){
-                    console.log("Matched AngelList startup to database company: " + company.profile.name);
-                    result.body.results[0].value["message"] = "It looks like " + company.profile.name + " is already in the system.";
-                    callback({ "status": 202, "data": result.body.results[0].value });
-                } else {  // in this case we know a company exists but for some reason the id doesn't match
-                    console.warn("WARNING: There's already an existing user with that public Linkedin profile.");
-                    result.body.results[0].value["message"] = "It looks like " + company.profile.name + " is already in the system.";
-                    callback({ "status": 200, "data": result.body.results[0].value });
+
+                console.log("Matched AngelList startup to database company: " + company.profile.name);
+                result.body.results[0].value["message"] = "Well done! " + company.profile.name + " is already in the system, so your profile has been updated with your role at the company.";
+                if (role) {
+                    addRole(result.body.results[0].path.key, role, location_key, user);
                 }
+                callback({ "status": 200, "data": result.body.results[0].value });
+
             } else {
+
                 console.log('No existing company found!');
+
                 db.post(config.db.communities, company)
-                    .then(function () {
+                    .then(function (response) {
+
+                        var companykey = response.headers.location.split('/')[3];
                         console.log("REGISTERED: " + company.profile.name);
+
+                        if (role) {
+                            addRole(companykey, role, location_key, user);
+                        }
+
+                        company["message"] = "Well done! You've added " + company.profile.name + " to the community.";
+
                         callback({ "status": 200, "data": company });
+
                     })
                     .fail(function (err) {
                         console.error("POST FAIL:");
@@ -241,7 +300,7 @@ var companyPull = function (company, callback) {
         })
         .fail(function(err){
             console.log("SEARCH FAIL:" + err);
-            res.status(202).send({ message: 'Something went wrong: ' + err});
+            res.status(500).send({ message: 'Something went wrong: ' + err});
         });
 
 };
