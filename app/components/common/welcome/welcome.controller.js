@@ -2,7 +2,7 @@ angular
     .module('startupcommunity')
     .controller('WelcomeController', WelcomeController);
 
-function WelcomeController($auth, $q, $http, $mixpanel, $stateParams, $scope, $filter, community, location, user_service, company_service) {
+function WelcomeController($auth, $q, $http, $mixpanel, $stateParams, $scope, $filter, sweet, community, location, user_service, company_service) {
     var self = this;
     this.location = jQuery.isEmptyObject(location) ? community.profile.name : location.profile.name.split(',')[0];
     this.auth = false; //set to false
@@ -41,6 +41,14 @@ function WelcomeController($auth, $q, $http, $mixpanel, $stateParams, $scope, $f
                     self.alert = {type: 'danger', message: String(response.error || response.data.message)};
                 } else self.alert = undefined;
             });
+    };
+
+    this.not_listed = function() {
+        sweet.show({
+            title: "Can't find a company?",
+            text: "Please <a href='https://angel.co' target='_blank'>click here</a> to create a profile for the startup on AngelList.",
+            type: "warning"
+        });
     };
 
     // for profile pic upload to S3
