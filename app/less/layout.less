@@ -17,15 +17,25 @@ body {
 }
 
 .back-cover {
-  background: url('../images/office_table_wash.jpg') no-repeat center center fixed;
   margin-left: 0px !important;
-  height: 100%;
-  width: 100%;
-  position: absolute;
-  -webkit-background-size: cover;
-  -moz-background-size: cover;
-  -o-background-size: cover;
-  background-size: cover;
+  margin-bottom: 40px;
+  overflow: hidden; // added for pseudo-element
+  position: relative; // added for pseudo-element
+
+  // Fixed-position background image
+  &::before {
+    content: ' ';
+    position: fixed; // instead of background-attachment
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    background-color: white;
+    background: url('../images/office_table_wash.jpg') no-repeat center center;
+    background-size: cover;
+    will-change: transform; // creates a new paint layer
+    z-index: -1;
+  }
 }
 
 #header {
