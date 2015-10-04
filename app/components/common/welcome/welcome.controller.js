@@ -2,15 +2,41 @@ angular
     .module('startupcommunity')
     .controller('WelcomeController', WelcomeController);
 
-function WelcomeController($auth, $q, $http, $mixpanel, $stateParams, $scope, $filter, sweet, community, location, user_service, company_service) {
+function WelcomeController($auth, $q, $http, $mixpanel, $stateParams, $scope, $filter, sweet, community, communities, location, user_service, company_service) {
     var self = this;
     this.location = jQuery.isEmptyObject(location) ? community.profile.name : location.profile.name.split(',')[0];
     this.auth = false; //set to false
     //$state.go('welcome.companies'); //remove
     this.working = false; // used for waiting indicator
     self.updateRole = false; // used if company already exists
-
     var community_path = $stateParams.community_path ? $stateParams.community_path : $stateParams.location_path;
+
+    // create select list for clusters in this location
+    this.clusters = [{
+        key: 'none',
+        name: 'no'
+    }];
+    this.selectedCluster = 'none';
+    for (c in communities.data) {
+        if (communities.data[c].type == "industry") {
+            if (communities.data[c].community_profiles && communities.data[c].community_profiles[$stateParams.location_path]) {
+                this.clusters.push(
+                    {
+                        key: communities.data[c].key,
+                        name: communities.data[c].community_profiles[$stateParams.location_path].name
+                    }
+                )
+            } else {
+                this.clusters.push(
+                    {
+                        key: communities.data[c].key,
+                        name: communities.data[c].profile.name
+                    }
+                )
+            }
+        }
+    }
+
     this.authenticate = function() {
         self.working = true;
         $auth.authenticate('linkedin', {invite_code: $stateParams.invite_code})
@@ -133,7 +159,10 @@ function WelcomeController($auth, $q, $http, $mixpanel, $stateParams, $scope, $f
 
     // present user with list of roles they selected previously when creating companies
     $scope.$watchCollection('welcome.roles', function(newVal, oldVal) {
-        self.selectRoles = [];
+        self.selectRoles = [{
+            value: 'none',
+            text: 'not involved'
+        }];
         for (r in newVal) {
             if (newVal[r]) { // only true items
                 self.selectRoles.push({
@@ -143,9 +172,7 @@ function WelcomeController($auth, $q, $http, $mixpanel, $stateParams, $scope, $f
             }
         }
 
-        if (self.selectRoles[0]) {
-            self.selectedRole = self.selectRoles[0].value || {text:'not involved'};
-        }
+        self.selectedRole = 'none';
 
     });
 
@@ -175,8 +202,13 @@ function WelcomeController($auth, $q, $http, $mixpanel, $stateParams, $scope, $f
 
     // used in add company view
     this.showRole = function() {
-        var selected = $filter('filter')(self.selectRoles, {value: self.selectedRole});
-        return (selected.length) ? selected[0].text : self.selectedRole ? self.selectedRole.text : 'not involved';
+        var selected = $filter('filter')(self.selectRoles, {value: self.selectedRole}, true);
+        return selected[0].text;
+    };
+
+    this.showCluster = function() {
+        var selected = $filter('filter')(self.clusters, {key: self.selectedCluster}, true);
+        return selected[0].key == 'none' ? selected[0].name : 'the ' + selected[0].name;
     };
 
     this.addCompany = function() {
