@@ -142,8 +142,8 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
         .state('welcome.roles', {
             templateUrl: "../components/common/welcome/welcome.roles.html"
         })
-        .state('welcome.skills', {
-            templateUrl: "components/common/welcome/welcome.skills.html"
+        .state('welcome.industries', {
+            templateUrl: "../components/common/welcome/welcome.industries.html"
         })
         .state('welcome.profile', {
             templateUrl: "components/common/welcome/welcome.profile.html"

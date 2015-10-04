@@ -1,6 +1,6 @@
 <div class="hpanel">
     <div class="panel-heading" style="text-align:center;">
-        <h4 style="font-size: 25px; line-height: 1.25;">Now add any companies <b>in {{welcome.location}}</b> that you currently work with:</h4>
+        <h4 style="font-size: 25px; line-height: 1.25;">Now add any companies <b>in {{::welcome.location}}</b> that you currently work with:</h4>
     </div>
     <div ng-show="welcome.selectedCompany" style="text-align:center;">
         <a href="{{welcome.selectedCompany.angellist_url}}" target="_blank" title="{{welcome.selectedCompany.name}}'s AngelList Profile">
@@ -22,13 +22,13 @@
                 <a style="padding-top: 3px; color: #777;" class="pull-right" ng-click="welcome.notListed()">not listed?</a>
             </div>
             <input type="submit" style="float:left" class="finish btn-success btn" ng-class="{'disabled' : disabled || welcome.working || !welcome.selectedCompany}" value="{{ 'Add ' + (welcome.updateRole ? 'Your Role' : welcome.selectedCompany.name || 'Company') }}" />
-            <a ng-show="welcome.selectedCompany && !welcome.working" ng-click="welcome.selectedCompany = undefined; welcome.company = undefined; welcome.alert = undefined; welcome.updateRole = false;" style="padding-left: 15px; line-height: 2.5;">cancel</a>
+            <a ng-show="welcome.selectedCompany && !welcome.working" ng-click="welcome.selectedCompany = undefined; welcome.company = undefined; welcome.alert = undefined; welcome.updateRole = false; welcome.selectedRole = 'none'; welcome.selectedCluster = 'none';" style="padding-left: 15px; line-height: 2.5;">cancel</a>
             <div loading-bars ng-show="welcome.working" style="margin-top:20px;"></div>
         </form>
         <div ng-show="welcome.selectedCompany">
             <h4 style="line-height:1.75;">
                 Your primary role at <a href="{{welcome.selectedCompany.angellist_url}}" target="_blank" title="{{welcome.selectedCompany.name}}'s AngelList Profile">{{welcome.selectedCompany.name}}</a> is <a href="#" editable-select="welcome.selectedRole" e-ng-options="r.value as r.text for r in welcome.selectRoles">{{ welcome.showRole() }}</a>.<br/>
-                <span ng-show="welcome.clusters.length">{{welcome.selectedCompany.name}} is part of <a href="#" editable-select="welcome.selectedCluster" e-ng-options="c.key as c.name for c in welcome.clusters">{{  welcome.showCluster() }}</a> industry cluster.<br/></span>
+                <span ng-show="welcome.clusters.length">{{welcome.selectedCompany.name}} is part of <a href="#" editable-select="welcome.selectedCluster" e-ng-options="c.key as c.name for c in welcome.clusters">{{  welcome.showCluster() }}</a> industry cluster in {{::welcome.location}}.<br/></span>
                 {{welcome.selectedCompany.name}}'s headline is <a style="color:#4ea5e0;" editable-text="welcome.selectedCompany.high_concept">{{welcome.selectedCompany.high_concept || 'empty'}}</a>.
                 <br/><br/>
                 Click below to edit {{welcome.selectedCompany.name}}'s summary:

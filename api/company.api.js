@@ -15,11 +15,13 @@ var CompanyApi = function() {
 };
 
 var schema = {
-    angellist: function (profile, location_key, community_key) {
+    angellist: function (profile, cluster, location_key, community_key) {
 
         var communities = location_key == community_key ?
             [location_key] :
             [location_key, community_key];
+
+        if (cluster) communities.push(cluster);
 
         return {
             "type": "company",
@@ -187,12 +189,12 @@ function handleAddCompany(req, res) {
         console.warn("No company specified!");
         res.status(400).send({ message: 'Please select a company first.' });
     } else {
-        console.log('Adding company ' + addCompany.al_profile.name + ' to ' + addCompany.location_key + ' / ' + addCompany.community_key);
+        console.log('Adding company ' + addCompany.al_profile.name + ' to ' + addCompany.location_key + ' / ' + addCompany.community_key + ' and cluster: ' + addCompany.cluster);
 
         // validate user is a member in the location/community
         if (((addCompany.location_key == addCompany.community_key) && req.user.value.communities.indexOf(addCompany.location_key) > -1) || (req.user.value.roles && req.user.value.roles.leader[addCompany.community_key] && req.user.value.roles.leader[addCompany.community_key].indexOf(addCompany.location_key) > -1)) {
 
-            var company = schema.angellist(addCompany.al_profile, addCompany.location_key, addCompany.community_key);
+            var company = schema.angellist(addCompany.al_profile, addCompany.cluster, addCompany.location_key, addCompany.community_key);
 
             //search for company and add if not there
             companyPull(company, addCompany.role, addCompany.location_key, req.user.path.key, function(result) {
