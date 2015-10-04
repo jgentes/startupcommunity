@@ -19,7 +19,7 @@
         <form role="form" name="welcome.founder.form" novalidate ng-submit="welcome.addCompany()" style="padding-bottom: 30px;">
             <div class="form-group">
                 <input type="text" ng-model="welcome.company" placeholder="Type a company name.." typeahead="company.name for company in welcome.getCompanies($viewValue)" typeahead-editable="false" typeahead-on-select="welcome.selectedCompany = $item;" class="form-control input-lg">
-                <a class="pull-right" ng-click="welcome.not_listed()">not listed?</a>
+                <a style="padding-top: 3px; color: #777;" class="pull-right" ng-click="welcome.notListed()">not listed?</a>
             </div>
             <input type="submit" style="float:left" class="finish btn-success btn" ng-class="{'disabled' : disabled || welcome.working || !welcome.selectedCompany}" value="{{ 'Add ' + (welcome.updateRole ? 'Your Role' : welcome.selectedCompany.name || 'Company') }}" />
             <a ng-show="welcome.selectedCompany && !welcome.working" ng-click="welcome.selectedCompany = undefined; welcome.company = undefined; welcome.alert = undefined; welcome.updateRole = false;" style="padding-left: 15px; line-height: 2.5;">cancel</a>

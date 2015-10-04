@@ -43,11 +43,23 @@ function WelcomeController($auth, $q, $http, $mixpanel, $stateParams, $scope, $f
             });
     };
 
-    this.not_listed = function() {
+    this.notListed = function() {
         sweet.show({
             title: "Can't find a company?",
-            text: "Please <a href='https://angel.co' target='_blank'>click here</a> to create a profile for the startup on AngelList.",
-            type: "warning"
+            text: "Please <a href='https://angel.co/intro' target='_blank'>click here</a> to create a profile for the startup on AngelList.",
+            type: "warning",
+            html: true,
+            showCancelButton: true,
+            //confirmButtonColor: "#DD6B55",
+            confirmButtonText: "Take me to AngelList",
+            cancelButtonText: "Go back",
+            closeOnConfirm: true,
+            closeOnCancel: true
+        },
+        function (isConfirm) {
+            if (isConfirm) {
+                window.open("https://angel.co/intro");
+            }
         });
     };
 
