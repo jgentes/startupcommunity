@@ -250,8 +250,8 @@ function WelcomeController($auth, $q, $http, $mixpanel, $stateParams, $scope, $f
             //todo update user profile data now, then..
 
             sweet.show({
-                    title: "You're done!",
-                    text: "Welcome. Now let's check out your community.",
+                    title: "Welcome.",
+                    text: "Let's have a look at your community.",
                     type: "success",
                     showCancelButton: false,
                     confirmButtonText: "Let's go!",

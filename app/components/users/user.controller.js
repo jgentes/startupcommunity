@@ -272,18 +272,6 @@ function UserProfileController($scope, $stateParams, $location, $auth, $modal, $
         });
     };
 
-    this.putProfile = function(userid, profile) {
-        user_service.putProfile(userid, profile, function(response) {
-            if (response.status !== 200) {
-                this.alert = { type: 'danger', msg: 'There was a problem: ' + String(response.message) };
-                console.warn("WARNING: " +  response.message);
-            } else {
-                this.profile = response.data; // may need to tell angular to refresh view
-                this.alert = { type: 'success', msg: 'Person updated! ' + response.data.name + ' is good to go.' };
-            }
-        });
-    };
-
     this.removeProfile = function(userid, name) {
         notify("Are you sure you want to remove " + name + "?", function(result) { //todo fix notify maybe with sweetalert
             if (result) {

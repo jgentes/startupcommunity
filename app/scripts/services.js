@@ -38,9 +38,6 @@ angular
             getProfileUrl: function(filename) {
                 return $http.get('/api/2.1/profile/url?filename=' + filename);
             },
-            putProfile: function(profileData) { // addcallback!
-                return $http.put('/api/2.0/profile', profileData);
-            },
             removeProfile: function(userid, callback) {
                 $http.post('/api/2.0/profile/remove/' + userid)
                   .then( function(response) {
@@ -69,9 +66,6 @@ angular
             },
             feedback: function(data) {
                 $http.post('/api/2.0/feedback?data=' + encodeURIComponent(JSON.stringify(data)));
-            },
-            createTicket: function(email, subject, message) {
-                $http.post('');
             }
         };
     })

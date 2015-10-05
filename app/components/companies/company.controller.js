@@ -195,17 +195,6 @@ function CompanyProfileController($stateParams, $location, $mixpanel, user, comp
         }
     }
 */
-    this.putProfile = function(userid, profile) {
-        company_service.putProfile(userid, profile, function(response) {
-            if (response.status !== 200) {
-                this.alert = { type: 'danger', msg: 'There was a problem: ' + String(response.message) };
-                console.warn("WARNING: " +  response.message);
-            } else {
-                this.profile = response.data; // may need to tell angular to refresh view
-                this.alert = { type: 'success', msg: 'Person updated! ' + response.data.name + ' is good to go.' };
-            }
-        });
-    };
 
     this.removeProfile = function(userid, name) {
         notify("Are you sure you want to remove " + name + "?", function(result) { //todo fix notify maybe with sweetalert
