@@ -32,6 +32,17 @@ angular
                       callback(response);
                   })
             },
+            postProfile: function(email, leader_profile, community_name, location_key, community_key) {
+                return $http.post('/api/2.0/invite', {
+                    params: {
+                        email: email,
+                        leader_profile: leader_profile,
+                        community_name: community_name,
+                        location_key: location_key,
+                        community_key: community_key
+                    }
+                });
+            },
             getProfile: function(userid) {
                 return $http.get(userid ? '/api/2.0/profile/' + userid : '/api/2.0/profile');
             },

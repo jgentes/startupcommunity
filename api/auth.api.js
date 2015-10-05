@@ -354,15 +354,15 @@ function handleLinkedin(req, res) {
                             result.body.results[0].value.profile["linkedin"] = profile;
 
                             // get user account and update with latest linkedin data
-                            if (result.body.results[0].value.profile.avatar === "") {
+                            if (!result.body.results[0].value.profile.avatar) {
                                 result.body.results[0].value.profile.avatar = profile.pictureUrl;
                             }
 
-                            if (result.body.results[0].value.profile.name !== profile.firstName + ' ' + profile.lastName) {
+                            if (!result.body.results[0].value.profile.name) {
                                 result.body.results[0].value.profile.name = profile.firstName + ' ' + profile.lastName;
                             }
 
-                            if (result.body.results[0].value.profile.email !== profile.emailAddress) {
+                            if (!result.body.results[0].value.profile.email) {
                                 result.body.results[0].value.profile.email = profile.emailAddress;
                             }
 

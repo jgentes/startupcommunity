@@ -56,12 +56,11 @@ function WelcomeController($auth, $q, $http, $mixpanel, $stateParams, $scope, $f
                     self.user.profile["avatar"] = self.user.profile.linkedin.pictureUrl;
                     self.user.profile["summary"] = self.user.profile.linkedin.summary;
 
-                    $state.go('welcome.roles');
-                    // need to update user record with linkedin data now
                     self.working = false;
                     $mixpanel.identify(response.data.user.path.key);
                     $mixpanel.track('Accepted Invite');
 
+                    $state.go('welcome.roles');
                 }
 
             })
@@ -80,7 +79,6 @@ function WelcomeController($auth, $q, $http, $mixpanel, $stateParams, $scope, $f
             type: "warning",
             html: true,
             showCancelButton: true,
-            confirmButtonColor: "#A4C782",
             confirmButtonText: "Take me to AngelList",
             cancelButtonText: "Go back",
             closeOnConfirm: true,
@@ -91,6 +89,10 @@ function WelcomeController($auth, $q, $http, $mixpanel, $stateParams, $scope, $f
                 window.open("https://angel.co/intro");
             }
         });
+    };
+
+    this.noCluster = function() {
+        sweet.show("What's an industry cluster?", "A cluster is an organized ecosystem of people and companies who help startups grow. They generally include accelerator programs, entrepreneurial events, venture capital funds, and founders as leaders.\n\nIf your cluster doesn't exist, you will be able to add one and associate your company with it later.")
     };
 
     // for profile pic upload to S3
@@ -246,8 +248,29 @@ function WelcomeController($auth, $q, $http, $mixpanel, $stateParams, $scope, $f
             self.alert = {type: "warning", message: "Warning: " + self.selectedCompany.name + " has been selected but hasn't been added yet. Please add the company or cancel before continuing."};
             return;
         } else {
+            // add roles
+            if (!self.user.roles) {
+                self.user["roles"] = {};
+            }
 
-            //todo update user profile data now, then..
+            // i'm thinking this will only apply to non-founder, non-team, and non-investors. So providers and mentors.
+
+            for (role in self.roles) {
+                if (!self.user.roles[role]) {
+                    self.user.roles[role] = {};
+                    self.user.roles[role][company_key] = [location_key];
+                } else if (!self.user.roles[role][company_key]) {
+                    self.user.roles[role][company_key] = [location_key];
+                } else if (self.user.roles[role][company_key].indexOf(location_key) < 0) {
+                    self.user.roles[role][company_key].push(location_key);
+                } // else the damn thing is already there
+
+            }
+
+            console.log(self.roles);
+            console.log(self.industries.selected);
+            console.log(self.user);
+
 
             sweet.show({
                     title: "Welcome.",

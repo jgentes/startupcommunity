@@ -25,10 +25,15 @@
             <a ng-show="welcome.selectedCompany && !welcome.working" ng-click="welcome.selectedCompany = undefined; welcome.company = undefined; welcome.alert = undefined; welcome.updateRole = false; welcome.selectedRole = 'none'; welcome.selectedCluster = 'none';" style="padding-left: 15px; line-height: 2.5;">cancel</a>
             <div loading-bars ng-show="welcome.working" style="margin-top:20px;"></div>
         </form>
+        <div ng-show="!welcome.selectedCompany">
+            <h5 style="line-height:1.75;"><br>
+                Note: You must associate yourself with a company to receive the <i>Founder, Investor, or Team</i> badge.
+            </h5>
+        </div>
         <div ng-show="welcome.selectedCompany">
             <h4 style="line-height:1.75;">
                 Your primary role at <a href="{{welcome.selectedCompany.angellist_url}}" target="_blank" title="{{welcome.selectedCompany.name}}'s AngelList Profile">{{welcome.selectedCompany.name}}</a> is <a href="#" editable-select="welcome.selectedRole" e-ng-options="r.value as r.text for r in welcome.selectRoles">{{ welcome.showRole() }}</a>.<br/>
-                <span ng-show="welcome.clusters.length">{{welcome.selectedCompany.name}} is part of <a href="#" editable-select="welcome.selectedCluster" e-ng-options="c.key as c.name for c in welcome.clusters">{{  welcome.showCluster() }}</a> industry cluster in {{::welcome.location}}.<br/></span>
+                <span ng-show="welcome.clusters.length">{{welcome.selectedCompany.name}} is part of <a href="#" editable-select="welcome.selectedCluster" e-ng-options="c.key as c.name for c in welcome.clusters">{{  welcome.showCluster() }}</a> <a ng-click="welcome.noCluster()" title="What's a cluster?">industry cluster </a>in {{::welcome.location}}.<br/></span>
                 {{welcome.selectedCompany.name}}'s headline is <a style="color:#4ea5e0;" editable-text="welcome.selectedCompany.high_concept">{{welcome.selectedCompany.high_concept || 'empty'}}</a>.
                 <br/><br/>
                 Click below to edit {{welcome.selectedCompany.name}}'s summary:
