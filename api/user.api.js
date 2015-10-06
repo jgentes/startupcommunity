@@ -455,7 +455,7 @@ function handleSetRole(req, res) {
       status = (req.query.status == 'true'), // will convert string to bool
       allowed = false;
 
-    function checkperms(allowed, callback) {
+    var checkperms = function(allowed, callback) {
         if (!allowed) {
             db.get(config.db.communities, req.user.value.key || req.user.path.key)
               .then(function (response) {
@@ -468,7 +468,7 @@ function handleSetRole(req, res) {
                   res.status(202).send({ message: 'Something went wrong: ' + err});
               });
         } else callback(allowed);
-    }
+    };
 
     //check perms!
     if (userkey == req.user.value.key || userkey == req.user.path.key) { allowed = true; }

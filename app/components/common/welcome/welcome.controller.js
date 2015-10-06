@@ -248,30 +248,32 @@ function WelcomeController($auth, $q, $http, $mixpanel, $stateParams, $scope, $f
             self.alert = {type: "warning", message: "Warning: " + self.selectedCompany.name + " has been selected but hasn't been added yet. Please add the company or cancel before continuing."};
             return;
         } else {
+
             // add roles
             if (!self.user.roles) {
                 self.user["roles"] = {};
+            } else {
+                for (role in self.roles) {
+                    if (role == 'mentor' || role == 'provider') {
+                        if (!self.user.roles[role]) {
+                            self.user.roles[role] = {};
+                            self.user.roles[role][$stateParams.community_key] = [$stateParams.location_key];
+                            self.user.roles[role][$stateParams.location_key] = [$stateParams.location_key];
+                        } else if (!self.user.roles[role][$stateParams.commmunity_key]) {
+                            self.user.roles[role][$stateParams.community_key] = [$stateParams.location_key];
+                            self.user.roles[role][$stateParams.location_key] = [$stateParams.location_key];
+                        } else if (self.user.roles[role][$stateParams.community_key].indexOf($stateParams.location_key) < 0) {
+                            self.user.roles[role][$stateParams.community_key].push($stateParams.location_key);
+                            self.user.roles[role][$stateParams.location_key] = [$stateParams.location_key];
+                        } // else it's already there
+                    }
+                }
             }
 
-            // i'm thinking this will only apply to non-founder, non-team, and non-investors. So providers and mentors.
+            // add industries
+            self.user.profile["industries"] = self.industries.selected;
 
-            for (role in self.roles) {
-                if (!self.user.roles[role]) {
-                    self.user.roles[role] = {};
-                    self.user.roles[role][company_key] = [location_key];
-                } else if (!self.user.roles[role][company_key]) {
-                    self.user.roles[role][company_key] = [location_key];
-                } else if (self.user.roles[role][company_key].indexOf(location_key) < 0) {
-                    self.user.roles[role][company_key].push(location_key);
-                } // else the damn thing is already there
-
-            }
-
-            console.log(self.roles);
-            console.log(self.industries.selected);
-            console.log(self.user);
-
-
+            user_service.putUser()
             sweet.show({
                     title: "Welcome.",
                     text: "Let's have a look at your community.",

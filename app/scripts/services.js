@@ -26,12 +26,6 @@ angular
                     });
                 return $http.get(alturl || urlString);
             },
-            putUser: function(userid, profile, callback) {
-                $http.put('/api/2.0/user/' + userid + '?profile=' + profile)
-                  .then( function(response) {
-                      callback(response);
-                  })
-            },
             postProfile: function(email, leader_profile, community_name, location_key, community_key) {
                 return $http.post('/api/2.0/invite', {
                     params: {
