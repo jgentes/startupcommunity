@@ -93,7 +93,7 @@ app.put('/api/2.0/settings', auth.ensureAuthenticated, communityApis.setCommunit
 app.post('/api/2.0/contact', userApis.contactUser);
 
 app.post('/api/2.1/companies/add', auth.ensureAuthenticated, companyApis.addCompany);
-app.post('/api/2.1/profile', auth.ensureAuthenticated, userApis.postProfile);
+app.post('/api/2.1/profile', auth.ensureAuthenticated, userApis.updateProfile);
 app.put('/api/2.1/profile/role', auth.ensureAuthenticated, userApis.setRole);
 app.get('/api/2.1/profile/url', auth.ensureAuthenticated, userApis.getProfileUrl);
 app.get('/api/2.1/companies/url', auth.ensureAuthenticated, companyApis.getLogoUrl);

@@ -26,14 +26,10 @@ angular
                     });
                 return $http.get(alturl || urlString);
             },
-            postProfile: function(email, leader_profile, community_name, location_key, community_key) {
-                return $http.post('/api/2.0/invite', {
+            updateProfile: function(profile) {
+                return $http.post('/api/2.1/profile', {
                     params: {
-                        email: email,
-                        leader_profile: leader_profile,
-                        community_name: community_name,
-                        location_key: location_key,
-                        community_key: community_key
+                        profile: profile
                     }
                 });
             },

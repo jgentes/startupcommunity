@@ -16,7 +16,7 @@ var UserApi = function() {
     this.contactUser = handleContactUser;
     this.getProfile = handleGetProfile;
     this.getProfileUrl = handleGetProfileUrl;
-    this.postProfile = handlePostProfile;
+    this.updateProfile = handleUpdateProfile;
     this.setRole = handleSetRole;
     this.removeProfile = handleRemoveProfile;
     this.feedback = handleFeedback;
@@ -413,38 +413,43 @@ function handleGetProfileUrl(req, res) {
     });
 }
 
-function handlePostProfile(req, res) {
+function handleUpdateProfile(req, res) {
     // req data is guaranteed by ensureauth
-    var userid = req.param.userid || req.user.value.key || req.user.path.key;
+    var userid = req.user.value.key || req.user.path.key;
+    var profile = req.body.params.profile;
     console.log('Updating user profile: ' + userid);
-    console.log(JSON.stringify(req.body));
 
-    db.put(config.db.communities, userid, profile)
-        .then(function(response){
-            if (response.body.code !== "items_not_found") {
-                response.body["key"] = userid;
-                var user = { "value" : response.body };
-                var payload = {
-                    iss: req.hostname,
-                    sub: user,
-                    iat: moment().valueOf(),
-                    exp: moment().add(14, 'days').valueOf()
-                };
+    // validate user updates only their own record
+    if (userid == profile.key) {
+        delete profile.key;
+        db.put(config.db.communities, userid, profile)
+            .then(function(response){
+                if (response.body.code !== "items_not_found") {
+                    response.body["key"] = userid;
+                    var user = { "value" : response.body };
+                    var payload = {
+                        iss: req.hostname,
+                        sub: user,
+                        iat: moment().valueOf(),
+                        exp: moment().add(14, 'days').valueOf()
+                    };
 
-                res.status(200).send({ token: jwt.encode(payload, config.token_secret), user: user.value });
+                    res.status(200).send({ token: jwt.encode(payload, config.token_secret), user: user.value });
 
-            } else {
-                console.warn('WARNING:  User not found.');
-                res.status(200).send({ message: 'User not found.' });
-            }
-        })
+                } else {
+                    console.warn('WARNING:  User not found.');
+                    res.status(200).send({ message: 'User not found.' });
+                }
+            })
 
-        .fail(function(err){
-            console.warn("WARNING: SEARCH FAIL:");
-            console.warn(err);
-            res.status(202).send({ message: 'Something went wrong: ' + err});
-        });
-
+            .fail(function(err){
+                console.warn("WARNING: SEARCH FAIL:");
+                console.warn(err);
+                res.status(202).send({ message: 'Something went wrong: ' + err});
+            });
+    } else {
+        res.status(400).send({ message: 'You may only update your own user record.'})
+    }
 }
 
 function handleSetRole(req, res) {

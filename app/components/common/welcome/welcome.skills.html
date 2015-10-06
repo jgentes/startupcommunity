@@ -1,0 +1,19 @@
+<div class="hpanel">
+    <div class="panel-heading" style="text-align:center;">
+        <h4 style="font-size: 25px; line-height: 1.25;">Thank you. Now select up to ten industries or skills that you specialize in.</h4>
+    </div>
+    <div class="panel-body industry_select" style="padding:5px;">
+            <ui-select multiple ng-model="welcome.skills.selected" ng-disabled="disabled" limit="10" alert_title="Sorry, only 10 items here." alert_text="Focus on industries or skills that you are truly badass with." alert_type="warning" style="border:none;">
+                    <ui-select-match placeholder="Search by industry or skill..">{{$item}}</ui-select-match>
+                    <ui-select-choices repeat="skill in welcome.skills | filter:$select.search | limitTo: 25">
+                            {{skill}}
+                    </ui-select-choices>
+            </ui-select>
+    </div>
+    <br>
+        <p style="text-align: center;">Industries are markets that you are an expert in. Skills are specific abilities that you possess. They help people find you while searching for experts in the community.</p>
+    <div alert-box this-alert="welcome.alert"></div>
+    <h4 style="margin-bottom: 13px;">
+        <a class="btn btn-info pull-left" ui-sref="welcome.roles">Back</a>
+        <a class="btn btn-info pull-right" ui-sref="welcome.profile">Continue</a></h4>
+</div>
