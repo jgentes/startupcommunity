@@ -33,4 +33,6 @@ function IndustryController($stateParams, leaders) {
         animation: false,
         showScale: false
     };
+
+    $('.splash').css('display', 'none');
 }

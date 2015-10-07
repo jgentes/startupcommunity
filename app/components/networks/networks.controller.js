@@ -31,4 +31,6 @@ function NetworkController($scope) {
         showScale: false
     };
 
+    $('.splash').css('display', 'none');
+
 }

@@ -8,6 +8,7 @@ var CommunityApi = function () {
     this.getCommunity = handleGetCommunity;
     this.setCommunity = handleSetCommunity;
     this.getKey = handleGetKey;
+    this.getTop = handleGetTop;
 };
 
 var convert_state = function (name, to) {
@@ -155,6 +156,77 @@ function handleGetCommunity(req, res) {
     console.log('Pulling community: ' + community);
     pullCommunity();
 
+}
+
+function handleGetTop(req, res) {
+    var community = req.params.community,
+        location = req.params.location,
+        top_results = {
+            people: {},
+            companies: {},
+            skills: {}
+        };
+
+    console.log('Pulling Top Results: ' + location + ' / ' + community);
+
+    // get users and networks
+    db.newSearchBuilder()
+        .collection(config.db.communities)
+        .aggregate('top_values', 'value.communities', 50)
+        .query('value.communities:"' + location + '" AND value.communities:"' + community + '" AND value.type: "user"')
+        .then(function (result) {
+
+            top_results.people = {
+                total: result.body.total_count,
+                top: result.body.aggregates[0].entries,
+                results: result.body.results
+            };
+
+            db.newSearchBuilder()
+                .collection(config.db.communities)
+                .aggregate('top_values', 'value.communities', 50)
+                .query('value.communities:"' + location + '" AND value.communities:"' + community + '" AND value.type: "company"')
+                .then(function (result) {
+
+                    top_results.companies = {
+                        total: result.body.total_count,
+                        top: result.body.aggregates[0].entries,
+                        results: result.body.results
+                    };
+
+                    db.newSearchBuilder()
+                        .collection(config.db.communities)
+                        .aggregate('top_values', 'value.skills', 10)
+                        .query('value.communities:"' + location + '" AND value.communities:"' + community + '" AND value.type: "user"')
+                        .then(function (result) {
+
+                            top_results.skills = {
+                                total: result.body.total_count,
+                                top: result.body.aggregates[0].entries
+                            };
+
+                            res.status(200).send(top_results);
+
+                        })
+                        .fail(function (err) {
+                            console.log("SEARCH FAIL:");
+                            console.warn(err);
+                            res.status(202).send({message: 'Something went wrong: ' + err});
+                        });
+
+                })
+                .fail(function (err) {
+                    console.log("SEARCH FAIL:");
+                    console.warn(err);
+                    res.status(202).send({message: 'Something went wrong: ' + err});
+                });
+
+        })
+        .fail(function (err) {
+            console.log("SEARCH FAIL:");
+            console.warn(err);
+            res.status(202).send({message: 'Something went wrong: ' + err});
+        });
 }
 
 function handleSetCommunity(req, res) {

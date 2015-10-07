@@ -166,6 +166,7 @@
 <!-- Main Content -->
 <div ui-view>
     <div ng-style="{'background-color': nav.color}" ng-class="{'wrapper' : !nav.embedded}">
+        <div class="splash"><div class="splash-title"><a href="/"><img src="images/sc_logo.png" style="width: 75%;" alt="StartupCommunity.org Logo"/></a><img src="images/loading-bars.svg" width="64" height="64" /> </div> </div>
         <div ng-class="{'embed_header' : nav.embedded}" ui-view="header"></div>
         <div ng-class="{'content' : !nav.embedded}">
             <div ui-view="content"></div>

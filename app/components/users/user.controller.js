@@ -411,6 +411,7 @@ function UserProfileController($scope, $stateParams, $location, $auth, $modal, $
             });
     };
 
+    $('.splash').css('display', 'none');
 }
 
 function InviteUserController(user_service, user, community, communities) {

@@ -332,6 +332,24 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
             params: {
                 pageTitle: "Location"
             },
+            resolve: {
+                top: ['community_service', '$stateParams',
+                    function (community_service, $stateParams) {
+                        return community_service.getTop($stateParams.location_path, $stateParams.location_path);
+                    }]
+            },
+            views: {
+                'people': {
+                    templateUrl: 'components/locations/location.dashboard.html',
+                    controller: "LocationController as location"
+                }
+            }
+        })
+        /*
+        .state('location.dashboard', {
+            params: {
+                pageTitle: "Location"
+            },
             views: {
                 'people': {
                     templateUrl: 'components/users/user.list.html',
@@ -339,6 +357,7 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                 }
             }
         })
+        */
 
         // Network views
         .state('network', {

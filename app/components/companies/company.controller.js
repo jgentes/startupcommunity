@@ -166,6 +166,8 @@ function CompanyController($stateParams, company_service, result_service, $sce, 
             });
     };
 
+    $('.splash').css('display', 'none');
+
 }
 
 function CompanyProfileController($stateParams, $location, $mixpanel, user, company_service, community, communities) {

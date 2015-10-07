@@ -74,12 +74,13 @@ angular
       .factory('community_service', function($http) {
           return {
               getCommunity: function(community) {
-                  var urlString = '/api/2.0/community/' + community;
-                  return $http.get(urlString);
+                  return $http.get('/api/2.0/community/' + community);
               },
               getKey: function(key) {
-                  var urlString = '/api/2.0/key/' + key;
-                  return $http.get(urlString);
+                  return $http.get('/api/2.0/key/' + key);
+              },
+              getTop: function(location_key, community_key) {
+                  return $http.get('/api/2.1/community/' + location_key + '/' + community_key + '/top');
               },
               setSettings: function(embed, location_key, community_key) {
                   return $http.put('/api/2.0/settings', {

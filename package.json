@@ -20,7 +20,7 @@
     "moment": "~2.8.3",
     "morgan": "~1.2.3",
     "nodalytics": "^1.1.0",
-    "orchestrate": "~0.3.4",
+    "orchestrate": "~0.5.1",
     "q": "~1.0.1",
     "request": "~2.40.0",
     "request-debug": "~0.1.1",
