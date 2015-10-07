@@ -12,7 +12,7 @@
                         <h4 class="text-center" style="margin-bottom: 20px; color: #5A5A5A;">Kickstart your city's entrepreneurial ecosystem</h4>
                         <h4 class="text-center" style="margin-bottom: 13px;">
                             <button class="btn btn-info" ng-click="auth.authenticate('linkedin')" ng-class="{'disabled' : auth.working}">Log in using Linkedin</button>
-                            <div loading-bars working="auth.working"></div>
+                            <span loading-bars ng-show="auth.working"></span>
                         </h4>
 
                         <div ng-show="auth.alert">

@@ -14,7 +14,7 @@
                             You have been invited to join the {{welcome.location}} Startup Community</h4>
                             <h4 class="text-center" style="margin-bottom: 13px;">
                                 <button class="btn btn-info" ng-click="welcome.authenticate()" ng-class="{'disabled' : welcome.working}">Log in using Linkedin</button>
-                                <img ng-show="welcome.working" src="images/loading-bars.svg" width="20" height="20" style="margin-right: -35px; margin-left: 10px;"/>
+                                <span loading-bars ng-show="welcome.working"></span>
                             </h4>
 
                             <hr>

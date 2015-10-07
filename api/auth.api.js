@@ -25,7 +25,7 @@ var AuthApi = function() {
  */
 
 var schema = {
-    invite: function(email, location_key, community_key) {
+    invite: function(email, invitor_email, location_key, community_key) {
 
         var communities = location_key == community_key ?
                 [location_key] :
@@ -37,6 +37,7 @@ var schema = {
                 "home": location_key,
                 "email": email
             },
+            "invitor_email" : invitor_email,
             "invite_communities": communities
         };
     },
@@ -262,6 +263,23 @@ function handleLinkedin(req, res) {
         grant_type: 'authorization_code'
     };
 
+    var accept_invite = function(invitee_name, invitor_email) {
+        // update Knowtify with invitation accepted
+        var knowtifyClient = new knowtify.Knowtify(config.knowtify, false);
+
+        knowtifyClient.contacts.upsert({
+            "event": 'invite_accepted',
+            "contacts": [
+                {
+                    "email": invitor_email,
+                    "data": {
+                        "invitee_name": invitee_name
+                    }
+                }
+            ]
+        });
+    };
+
     var delete_invite = function() {
         db.remove(config.db.communities, invite_code, true)
             .then(function (result) {
@@ -272,16 +290,18 @@ function handleLinkedin(req, res) {
             })
     };
 
-    var add_knowtify = function(id, email) {
+    var add_knowtify = function(id, user) {
         // send user info to Knowtify
         var knowtifyClient = new knowtify.Knowtify(config.knowtify, false);
 
         knowtifyClient.contacts.upsert({
             "contacts": [
                 {
-                    "email": email,
+                    "email": user.profile.email,
                     "data": {
-                        "id": id
+                        "id": id,
+                        "name": user.profile.name,
+                        "email": user.profile.email
                     }
                 }
             ]
@@ -370,11 +390,12 @@ function handleLinkedin(req, res) {
 
                             db.put(config.db.communities, result.body.results[0].path.key, result.body.results[0].value)
                                 .then(function () {
-                                    console.log("Profile updated: " + profile.emailAddress);
+                                    console.log("Profile updated: " + result.body.results[0].value.profile.name);
                                     if (invite_profile) {
+                                        accept_invite(invite_profile.profile.name, invite_profile.invitor_email);
                                         delete_invite();
                                     }
-                                    add_knowtify(result.body.results[0].path.key, profile.emailAddress);
+                                    add_knowtify(result.body.results[0].path.key, result.body.results[0].value);
                                 })
                                 .fail(function (err) {
                                     console.error("Profile update failed:");
@@ -402,9 +423,10 @@ function handleLinkedin(req, res) {
                                             .then(function () {
                                                 console.log("Profile updated: " + profile.emailAddress);
                                                 if (invite_profile) {
+                                                    accept_invite(invite_profile.profile.name, invite_profile.invitor_email);
                                                     delete_invite();
                                                 }
-                                                add_knowtify(result.body.results[0].path.key, profile.emailAddress);
+                                                add_knowtify(result.body.results[0].path.key, result.body.results[0].value);
                                             })
                                             .fail(function (err) {
                                                 console.warn("WARNING: Profile update failed:");
@@ -429,6 +451,8 @@ function handleLinkedin(req, res) {
                                             invite_profile.profile.email = profile.emailAddress;
                                             invite_profile["communities"] = invite_profile.invite_communities;
                                             delete invite_profile.invite_communities;
+                                            var invitor_email = invite_profile.invitor_email;
+                                            delete invite_profile.invitor_email;
 
                                             // need to add path for res.send
                                             var new_profile = {
@@ -445,7 +469,8 @@ function handleLinkedin(req, res) {
                                                         token: handleCreateToken(req, new_profile),
                                                         user: new_profile
                                                     });
-                                                    add_knowtify(invite_code, profile.emailAddress);
+                                                    add_knowtify(invite_code, invite_profile);
+                                                    accept_invite(invite_profile.profile.name, invitor_email);
                                                 })
                                                 .fail(function (err) {
                                                     console.error("POST fail:");
@@ -513,7 +538,7 @@ function handleInviteUser(req, res) {
                                 res.status(202).send({message: 'An invitation has already been sent to ' + inviteUser.email + '. We will continue to send reminders for 1 week, then you will be notified if they still have not accepted. You may invite them again at that time.'});
                             } else {
                                 // create user record with email address and community data
-                                var newUser = schema.invite(inviteUser.email, inviteUser.location_key, inviteUser.community_key);
+                                var newUser = schema.invite(inviteUser.email, req.user.value.profile.email, inviteUser.location_key, inviteUser.community_key);
                                 console.log('creating user')
                                 var community_url =
                                     inviteUser.location_key == inviteUser.community_key ?
