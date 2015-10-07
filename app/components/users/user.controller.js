@@ -248,6 +248,7 @@ function UserProfileController($scope, $stateParams, $location, $auth, $modal, $
     var self = this;
     this.community = community;
     this.communities = communities.data;
+    this.location = communities.data[this.community.profile.home];
 
     $mixpanel.track('Viewed Profile');
 
@@ -263,10 +264,13 @@ function UserProfileController($scope, $stateParams, $location, $auth, $modal, $
                     return user;
                 },
                 community_key: function() {
-                    return self.community.key;
+                    if (self.community.type == "user") {
+                        return self.location.key;
+                    } else return self.community.key;
+
                 },
                 location_key: function() {
-                    return $stateParams.location_path;
+                    return self.location.key;
                 }
             }
         });

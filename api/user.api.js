@@ -264,7 +264,7 @@ function handleContactUser(req, res) {
                                     "contacts": contacts
                                 },
                                 function(success){
-                                    console.log('Contact request sent to ' + leaders[leader].profile.name);
+                                    console.log('Contact request sent!');
                                     res.status(200).end();
 
                                     // send notification to requestor, *i think* the rest api doesn't require an id for the user

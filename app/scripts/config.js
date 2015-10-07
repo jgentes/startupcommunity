@@ -361,11 +361,26 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
             },
             views: {
                 'people': {
+                    templateUrl: 'components/networks/network.dashboard.html',
+                    controller: "NetworkController as network"
+                }
+            }
+        })
+        /*
+        .state('network.dashboard', {
+            url: "/:community_path",
+            params: {
+                community: {}, // root url goes blank without this because it needs community passed in
+                pageTitle: "Network"
+            },
+            views: {
+                'people': {
                     templateUrl: 'components/users/user.list.html',
                     controller: "UserController as users"
                 }
             }
         })
+        */
 
         // Industry views
         .state('industry', {
