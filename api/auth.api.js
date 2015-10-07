@@ -263,7 +263,7 @@ function handleLinkedin(req, res) {
         grant_type: 'authorization_code'
     };
 
-    var accept_invite = function(invitee_name, invitor_email) {
+    var accept_invite = function(invitee, invitor_email) {
         // update Knowtify with invitation accepted
         var knowtifyClient = new knowtify.Knowtify(config.knowtify, false);
 
@@ -273,7 +273,18 @@ function handleLinkedin(req, res) {
                 {
                     "email": invitor_email,
                     "data": {
-                        "invitee_name": invitee_name
+                        "invitee_name": invitee.name
+                    }
+                }
+            ]
+        });
+
+        knowtifyClient.contacts.upsert({
+            "contacts": [
+                {
+                    "email": invitee.email,
+                    "data": {
+                        "invite_accepted": true
                     }
                 }
             ]
@@ -392,7 +403,7 @@ function handleLinkedin(req, res) {
                                 .then(function () {
                                     console.log("Profile updated: " + result.body.results[0].value.profile.name);
                                     if (invite_profile) {
-                                        accept_invite(invite_profile.profile.name, invite_profile.invitor_email);
+                                        accept_invite(invite_profile.profile, invite_profile.invitor_email);
                                         delete_invite();
                                     }
                                     add_knowtify(result.body.results[0].path.key, result.body.results[0].value);
@@ -423,7 +434,7 @@ function handleLinkedin(req, res) {
                                             .then(function () {
                                                 console.log("Profile updated: " + profile.emailAddress);
                                                 if (invite_profile) {
-                                                    accept_invite(invite_profile.profile.name, invite_profile.invitor_email);
+                                                    accept_invite(invite_profile.profile, invite_profile.invitor_email);
                                                     delete_invite();
                                                 }
                                                 add_knowtify(result.body.results[0].path.key, result.body.results[0].value);
@@ -470,7 +481,7 @@ function handleLinkedin(req, res) {
                                                         user: new_profile
                                                     });
                                                     add_knowtify(invite_code, invite_profile);
-                                                    accept_invite(invite_profile.profile.name, invitor_email);
+                                                    accept_invite(invite_profile.profile, invitor_email);
                                                 })
                                                 .fail(function (err) {
                                                     console.error("POST fail:");
@@ -562,7 +573,8 @@ function handleInviteUser(req, res) {
                                                     "invite_code": userkey,
                                                     "invitor_name": inviteUser.leader_profile.name,
                                                     "invitor_email": inviteUser.leader_profile.email,
-                                                    "invitor_image": inviteUser.leader_profile.avatar
+                                                    "invitor_image": inviteUser.leader_profile.avatar,
+                                                    "invite_accepted": false
                                                 }
                                             }]
                                         },
