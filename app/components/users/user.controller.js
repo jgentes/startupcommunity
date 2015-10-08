@@ -167,27 +167,6 @@ function UserController($stateParams, user_service, result_service, $sce, $modal
             });
     };
 
-    this.contact = function(user) {
-
-        var modalInstance = $modal.open({
-            templateUrl: 'components/users/user.contact.html',
-            controller: ContactUserController,
-            controllerAs: 'contact',
-            windowClass: "hmodal-warning",
-            resolve: {
-                user: function() {
-                    return user;
-                },
-                community_key: function() {
-                    return self.community.key;
-                },
-                location_key: function() {
-                    return $stateParams.location_path;
-                }
-            }
-        });
-    };
-
     $('.splash').css('display', 'none');
 }
 
@@ -206,10 +185,10 @@ function ContactUserController($modalInstance, notify_service, sweet, community_
                 "reason" : self.form.reason_value
             };
 
-            $modalInstance.close();
-
             notify_service.contact(user.key, formdata, community_key, location_key)
                 .then(function(response) {
+
+                    $modalInstance.close();
 
                     if (response.status !== 200) {
                         sweet.show({

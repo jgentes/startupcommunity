@@ -114,7 +114,7 @@ function handleGetCommunity(req, res) {
                     for (comm in result.body.results) {
                         if (result.body.results[comm].path.key == community) {
                             found = true;
-                            if (result.body.results[comm].value.type == "user" || result.body.results[comm].value.type == "startup" || result.body.results[comm].value.type == "network") { // user contains communities within record
+                            if (result.body.results[comm].value.type == "user" || result.body.results[comm].value.type == "company" || result.body.results[comm].value.type == "network") { // user contains communities within record
                                 console.log('Pulling community for ' + result.body.results[comm].value.profile.name);
                                 var comm_items = result.body.results[comm].value.communities;
                                 var search = community + " OR ";
@@ -159,22 +159,24 @@ function handleGetCommunity(req, res) {
 }
 
 function handleGetTop(req, res) {
-    var community = req.params.community,
-        location = req.params.location,
+    var community_key = req.params.community_key,
+        location_key = req.params.location_key,
         top_results = {
             people: {},
             companies: {},
             skills: {}
         };
 
-    console.log('Pulling Top Results: ' + location + ' / ' + community);
+    if (community_key == 'undefined') community_key = location_key;
+
+    console.log('Pulling Top Results: ' + location_key + ' / ' + community_key);
 
     // get users and networks
     db.newSearchBuilder()
         .collection(config.db.communities)
         .aggregate('top_values', 'value.communities', 50)
         .sort('path.reftime', 'desc')
-        .query('value.communities:"' + location + '" AND value.communities:"' + community + '" AND value.type: "user"')
+        .query('value.communities:"' + location_key + '" AND value.communities:"' + community_key + '" AND value.type: "user"')
         .then(function (result) {
 
             delete result.body.aggregates[0].entries.shift(); // the first item is always? the location
@@ -182,14 +184,14 @@ function handleGetTop(req, res) {
             top_results.people = {
                 total: result.body.total_count,
                 top: result.body.aggregates[0].entries,
-                results: result.body.results.slice(0,5)
+                results: result.body.results
             };
 
             db.newSearchBuilder()
                 .collection(config.db.communities)
                 .aggregate('top_values', 'value.communities', 50)
                 .sort('path.reftime', 'desc')
-                .query('value.communities:"' + location + '" AND value.communities:"' + community + '" AND value.type: "company"')
+                .query('value.communities:"' + location_key + '" AND value.communities:"' + community_key + '" AND value.type: "company"')
                 .then(function (result) {
 
                     delete result.body.aggregates[0].entries.shift(); // the first item is always? the location
@@ -197,17 +199,17 @@ function handleGetTop(req, res) {
                     top_results.companies = {
                         total: result.body.total_count,
                         top: result.body.aggregates[0].entries,
-                        results: result.body.results.slice(0,5)
+                        results: result.body.results
                     };
 
                     db.newSearchBuilder()
                         .collection(config.db.communities)
                         .aggregate('top_values', 'value.profile.skills', 10)
-                        .query('value.communities:"' + location + '" AND value.communities:"' + community + '" AND value.type: "user"')
+                        .query('value.communities:"' + location_key + '" AND value.communities:"' + community_key + '" AND value.type: "user"')
                         .then(function (result) {
 
                             top_results.skills = {
-                                total: result.body.total_count,
+                                total: result.body.aggregates[0].value_count,
                                 top: result.body.aggregates[0].entries
                             };
 

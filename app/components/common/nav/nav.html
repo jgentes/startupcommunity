@@ -15,8 +15,8 @@
                             <i class="pe-7s-search"></i>
                         </a>
                     </li>
-                    <form id="searchform" ng-submit="nav.search(search.query)" role="search" class="navbar-form-custom" method="post">
-                        <input ng-model="search.query" type="text" placeholder="Search {{nav.searchname}}.." class="form-control" name="search">
+                    <form id="searchform" ng-submit="nav.search(nav.search.query)" role="search" class="navbar-form-custom" method="post">
+                        <input ng-model="nav.search.query" type="text" placeholder="Search {{nav.searchname}}.." class="form-control" name="search">
                     </form>
                 </div>
             </div>

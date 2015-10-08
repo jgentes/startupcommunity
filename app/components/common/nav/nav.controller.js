@@ -77,6 +77,8 @@ function NavigationController($auth, $state, $window, $location, $stateParams, $
     }
 
     // SEARCH
+    console.log($stateParams);
+    if ($stateParams.query) this.search.query = $stateParams.query;
 
     if (this.community.type == "industry" || this.community.type == "network") {
         if (this.community.community_profiles && this.community.community_profiles[this.location_path]) {
@@ -96,6 +98,29 @@ function NavigationController($auth, $state, $window, $location, $stateParams, $
             $state.go('search.dashboard', {location_path: self.community.profile.home, query: query});
         } else $state.go('search.dashboard', {query: query});
 
+    };
+
+    // CONTACT USER
+
+    this.contact = function(user) {
+
+        var modalInstance = $modal.open({
+            templateUrl: 'components/users/user.contact.html',
+            controller: ContactUserController,
+            controllerAs: 'contact',
+            windowClass: "hmodal-warning",
+            resolve: {
+                user: function() {
+                    return user.path;
+                },
+                community_key: function() {
+                    return self.community.key;
+                },
+                location_key: function() {
+                    return $stateParams.location_path;;
+                }
+            }
+        });
     };
 
     // CHANGE LOCATION
@@ -189,6 +214,7 @@ function NavigationController($auth, $state, $window, $location, $stateParams, $
     }
 
     //this.embedded = true; // for testing
+    $('.splash').css('display', 'none');
 
 }
 

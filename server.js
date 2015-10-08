@@ -98,7 +98,7 @@ app.put('/api/2.1/profile/role', auth.ensureAuthenticated, userApis.setRole);
 app.get('/api/2.1/profile/url', auth.ensureAuthenticated, userApis.getProfileUrl);
 app.get('/api/2.1/companies/url', auth.ensureAuthenticated, companyApis.getLogoUrl);
 app.get('/api/2.1/angel/startups/search', angellistApis.searchStartups);
-app.get('/api/2.1/community/:location/:community/top', communityApis.getTop);
+app.get('/api/2.1/community/:location_key/:community_key/top', communityApis.getTop);
 
 // Auth
 app.post('/auth/linkedin', auth.linkedin);

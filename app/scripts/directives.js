@@ -32,7 +32,6 @@ function loadingBars() {
     }
 }
 
-
 function uiSelect(sweet){
     return {
         restrict: 'EA',

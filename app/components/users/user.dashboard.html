@@ -69,8 +69,9 @@
             <div ng-show="profile.user.profile.linkedin.summary" class="panel-footer">
                 <h3>Summary</h3>
                 <p style="white-space:pre-wrap;" ng-bind-html="::profile.user.profile.linkedin.summary | linky:'_blank'"></p>
-                <h3 ng-show="profile.user.skills">Skills</h3>
-                <li ng-repeat="skill in profile.user.skills" class="label btn-info" style="margin-right: 3px; margin-top: 3px; float:left; padding-bottom: 5px;">{{::skill.name}}</li>
+                <hr>
+                <h3 ng-show="profile.user.profile.skills">Skills & Industries</h3>
+                <li ng-repeat="skill in profile.user.profile.skills" class="label btn-default skills"><a href="#" ui-sref="search.dashboard({location_path: nav.location.key, community: nav.location, query: skill})">{{::skill}}</a></li>
             </div>
         </div>
     </div>

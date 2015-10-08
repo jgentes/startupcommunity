@@ -335,29 +335,16 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
             resolve: {
                 top: ['community_service', '$stateParams',
                     function (community_service, $stateParams) {
-                        return community_service.getTop($stateParams.location_path, $stateParams.location_path);
+                        return community_service.getTop($stateParams.location_path, $stateParams.community_path);
                     }]
             },
             views: {
                 'people': {
-                    templateUrl: 'components/locations/location.dashboard.html',
-                    controller: "LocationController as location"
+                    templateUrl: 'components/common/dashboard/dashboard.html',
+                    controller: "DashboardController as dashboard"
                 }
             }
         })
-        /*
-        .state('location.dashboard', {
-            params: {
-                pageTitle: "Location"
-            },
-            views: {
-                'people': {
-                    templateUrl: 'components/users/user.list.html',
-                    controller: "UserController as users"
-                }
-            }
-        })
-        */
 
         // Network views
         .state('network', {
@@ -378,28 +365,19 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                 community: {}, // root url goes blank without this because it needs community passed in
                 pageTitle: "Network"
             },
-            views: {
-                'people': {
-                    templateUrl: 'components/networks/network.dashboard.html',
-                    controller: "NetworkController as network"
-                }
-            }
-        })
-        /*
-        .state('network.dashboard', {
-            url: "/:community_path",
-            params: {
-                community: {}, // root url goes blank without this because it needs community passed in
-                pageTitle: "Network"
+            resolve: {
+                top: ['community_service', '$stateParams',
+                    function (community_service, $stateParams) {
+                        return community_service.getTop($stateParams.location_path, $stateParams.community_path);
+                    }]
             },
             views: {
                 'people': {
-                    templateUrl: 'components/users/user.list.html',
-                    controller: "UserController as users"
+                    templateUrl: 'components/common/dashboard/dashboard.html',
+                    controller: "DashboardController as dashboard"
                 }
             }
         })
-        */
 
         // Industry views
         .state('industry', {
@@ -420,10 +398,16 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                 community: {},
                 pageTitle: "Industry"
             },
+            resolve: {
+                top: ['community_service', '$stateParams',
+                    function (community_service, $stateParams) {
+                        return community_service.getTop($stateParams.location_path, $stateParams.community_path);
+                    }]
+            },
             views: {
                 'people': {
-                    templateUrl: 'components/users/user.list.html',
-                    controller: "UserController as users"
+                    templateUrl: 'components/common/dashboard/dashboard.html',
+                    controller: "DashboardController as dashboard"
                 }
             }
         })
