@@ -219,7 +219,7 @@ function CompanyProfileController($stateParams, $location, $mixpanel, user, comp
     };
 
 
-
+    $('.splash').css('display', 'none');
 
 }
 

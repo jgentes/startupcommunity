@@ -173,30 +173,36 @@ function handleGetTop(req, res) {
     db.newSearchBuilder()
         .collection(config.db.communities)
         .aggregate('top_values', 'value.communities', 50)
+        .sort('path.reftime', 'desc')
         .query('value.communities:"' + location + '" AND value.communities:"' + community + '" AND value.type: "user"')
         .then(function (result) {
+
+            delete result.body.aggregates[0].entries.shift(); // the first item is always? the location
 
             top_results.people = {
                 total: result.body.total_count,
                 top: result.body.aggregates[0].entries,
-                results: result.body.results
+                results: result.body.results.slice(0,5)
             };
 
             db.newSearchBuilder()
                 .collection(config.db.communities)
                 .aggregate('top_values', 'value.communities', 50)
+                .sort('path.reftime', 'desc')
                 .query('value.communities:"' + location + '" AND value.communities:"' + community + '" AND value.type: "company"')
                 .then(function (result) {
+
+                    delete result.body.aggregates[0].entries.shift(); // the first item is always? the location
 
                     top_results.companies = {
                         total: result.body.total_count,
                         top: result.body.aggregates[0].entries,
-                        results: result.body.results
+                        results: result.body.results.slice(0,5)
                     };
 
                     db.newSearchBuilder()
                         .collection(config.db.communities)
-                        .aggregate('top_values', 'value.skills', 10)
+                        .aggregate('top_values', 'value.profile.skills', 10)
                         .query('value.communities:"' + location + '" AND value.communities:"' + community + '" AND value.type: "user"')
                         .then(function (result) {
 

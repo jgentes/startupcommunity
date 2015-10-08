@@ -23,7 +23,7 @@
             </div>
             <input type="submit" style="float:left" class="finish btn-success btn" ng-class="{'disabled' : disabled || welcome.working || !welcome.selectedCompany}" value="{{ 'Add ' + (welcome.updateRole ? 'Your Role' : welcome.selectedCompany.name || 'Company') }}" />
             <a ng-show="welcome.selectedCompany && !welcome.working" ng-click="welcome.selectedCompany = undefined; welcome.company = undefined; welcome.alert = undefined; welcome.updateRole = false; welcome.selectedRole = 'none'; welcome.selectedCluster = 'none';" style="padding-left: 15px; line-height: 2.5;">cancel</a>
-            <span loading-bars ng-show="welcome.working" style="margin-top:20px;"></span>
+            <div loading-bars ng-show="welcome.working" style="padding-top: 5px;"></div>
         </form>
         <div ng-show="!welcome.selectedCompany">
             <h5 style="line-height:1.75;"><br>

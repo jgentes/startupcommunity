@@ -2,15 +2,15 @@ angular
     .module('startupcommunity')
     .controller('LocationController', LocationController);
 
-function LocationController(communities, top) {
+function LocationController($stateParams, communities, top) {
 
     this.top = top.data;
     this.communities = communities.data;
+    this.location_path = $stateParams.location_path;
 
+    console.log(top);
+    console.log(communities);
 
-
-    console.log(top.data);
-    console.log(communities.data);
 
 
 

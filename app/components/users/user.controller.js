@@ -187,6 +187,8 @@ function UserController($stateParams, user_service, result_service, $sce, $modal
             }
         });
     };
+
+    $('.splash').css('display', 'none');
 }
 
 function ContactUserController($modalInstance, notify_service, sweet, community_key, location_key, user){
@@ -412,6 +414,7 @@ function UserProfileController($scope, $stateParams, $location, $auth, $modal, $
     };
 
     $('.splash').css('display', 'none');
+
 }
 
 function InviteUserController(user_service, user, community, communities) {

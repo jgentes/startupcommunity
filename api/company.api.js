@@ -278,7 +278,7 @@ var companyPull = function (company, role, location_key, user, callback) {
             } else {
 
                 console.log('No existing company found!');
-
+                console.log(company);
                 db.post(config.db.communities, company)
                     .then(function (response) {
 
