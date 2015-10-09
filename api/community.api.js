@@ -190,7 +190,7 @@ function handleGetTop(req, res) {
 
             db.newSearchBuilder()
                 .collection(config.db.communities)
-                .aggregate('top_values', 'value.communities', 50)
+                .aggregate('top_values', 'value.profile.industries', 50)
                 .sort('path.reftime', 'desc')
                 .query('value.communities:"' + location_key + '" AND value.communities:"' + community_key + '" AND value.type: "company"')
                 .then(function (result) {
