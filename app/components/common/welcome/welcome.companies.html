@@ -33,7 +33,16 @@
         <div ng-show="welcome.selectedCompany">
             <h4 style="line-height:1.75;">
                 Your primary role at <a href="{{welcome.selectedCompany.angellist_url}}" target="_blank" title="{{welcome.selectedCompany.name}}'s AngelList Profile">{{welcome.selectedCompany.name}}</a> is <a href="#" editable-select="welcome.selectedRole" e-ng-options="r.value as r.text for r in welcome.selectRoles">{{ welcome.showRole() }}</a>.<br/>
-                <span ng-show="welcome.clusters.length">{{welcome.selectedCompany.name}} is part of <a href="#" editable-select="welcome.selectedCluster" e-ng-options="c.key as c.name for c in welcome.clusters">{{  welcome.showCluster() }}</a> <a ng-click="welcome.noCluster()" title="What's a cluster?">industry cluster </a>in {{::welcome.location}}.<br/></span>
+                <!--<span ng-show="welcome.clusters.length">{{welcome.selectedCompany.name}} is part of <a href="#" editable-select="welcome.selectedCluster" e-ng-options="c.key as c.name for c in welcome.clusters">{{  welcome.showCluster() }}</a> <a ng-click="welcome.noCluster()" title="What's a cluster?">industry cluster </a>in {{::welcome.location}}.<br/></span>-->
+                Add up to six industries <a href="{{welcome.selectedCompany.angellist_url}}" target="_blank" title="{{welcome.selectedCompany.name}}'s AngelList Profile">{{welcome.selectedCompany.name}}</a> is a part of:
+                <div class="panel-body industry_select" style="padding:1px; margin-top: 6px; margin-bottom: 6px;">
+                    <ui-select multiple ng-model="welcome.selectedCompany.industries" ng-disabled="disabled" limit="6" alert_title="Sorry, only 6 items here." alert_text="Focus on industries with a network in your community." alert_type="warning" style="border:none;">
+                        <ui-select-match placeholder="Search for industries..">{{$item}}</ui-select-match>
+                        <ui-select-choices repeat="industry in welcome.skills | filter:$select.search | limitTo: 25">
+                            {{industry}}
+                        </ui-select-choices>
+                    </ui-select>
+                </div>
                 {{welcome.selectedCompany.name}}'s headline is <a style="color:#4ea5e0;" editable-text="welcome.selectedCompany.high_concept">{{welcome.selectedCompany.high_concept || 'empty'}}</a>.
                 <br/><br/>
                 Click below to edit {{welcome.selectedCompany.name}}'s summary:
@@ -47,6 +56,6 @@
     </div>
     <div alert-box this-alert="welcome.alert"></div>
     <h4 style="margin-bottom: 13px;">
-        <a class="btn btn-info pull-left" ui-sref="welcome.profile">Back</a>
+        <a class="btn btn-info pull-left" ui-sref="welcome.skills">Back</a>
         <a class="btn btn-info pull-right" ng-click="welcome.submit()">Finish</a></h4>
 </div>

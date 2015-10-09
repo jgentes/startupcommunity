@@ -199,7 +199,7 @@ function WelcomeController($auth, $q, $http, $mixpanel, $stateParams, $scope, $f
                 .then(function(response) {
                     if (response.data.count > 0) {
                         self.updateRole = true;
-                        self.alert = { type: 'warning', message: self.selectedCompany.name + ' is already in the system, so you can only add your role at the company.'};
+                        self.alert = { type: 'warning', message: self.selectedCompany.name + ' is already in the system, so you may only add your role at the company.'};
                     }
                 })
         }
