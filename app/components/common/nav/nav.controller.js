@@ -77,7 +77,7 @@ function NavigationController($auth, $state, $window, $location, $stateParams, $
     }
 
     // SEARCH
-    console.log($stateParams);
+
     if ($stateParams.query) this.search.query = $stateParams.query;
 
     if (this.community.type == "industry" || this.community.type == "network") {

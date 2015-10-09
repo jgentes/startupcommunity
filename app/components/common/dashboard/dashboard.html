@@ -91,7 +91,7 @@
                 </div>
 
 
-                <div class="panel-body" ng-repeat="industry in dashboard.top.companies.top">
+                <div class="panel-body" ng-repeat="industry in dashboard.top.companies.top | limitTo: 5">
                     <div class="row" ng-if="dashboard.communities[industry.value]">
                         <div class="col-xs-10 forum-heading">
 
@@ -124,7 +124,7 @@
                     <h3>Top Networks</h3>
                 </div>
 
-                <div class="panel-body" ng-repeat="network in dashboard.top.people.top" ng-if="dashboard.communities[network.value]">
+                <div class="panel-body" ng-repeat="network in dashboard.top.people.top | limitTo: 5" ng-if="dashboard.communities[network.value]">
                     <div class="row">
                         <div class="col-xs-10 forum-heading">
 

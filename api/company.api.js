@@ -32,7 +32,8 @@ var schema = {
                 "headline": profile.high_concept,
                 "summary": profile.product_desc,
                 "avatar": profile.thumb_url || "",
-                "logo": profile.logo_url || ""
+                "logo": profile.logo_url || "",
+                "industries": profile.industries
             },
             "communities": communities
         };
@@ -269,16 +270,31 @@ var companyPull = function (company, role, location_key, user, callback) {
             if (result.body.results.length > 0){
 
                 console.log("Matched AngelList startup to database company: " + company.profile.name);
-                result.body.results[0].value["message"] = "Well done! " + company.profile.name + " is already in the system, so your profile has been updated with your role at the company.";
-                if (role) {
-                    addRole(result.body.results[0].path.key, role, location_key, user);
-                }
-                callback({ "status": 200, "data": result.body.results[0].value });
+
+                db.put(config.db.communities, result.body.results[0].path.key, company)
+                    .then(function (response) {
+
+                        var companykey = response.headers.location.split('/')[3];
+                        console.log("UPDATED: " + company.profile.name);
+
+                        if (role) {
+                            addRole(result.body.results[0].path.key, role, location_key, user);
+                        }
+
+                        result.body.results[0].value["message"] = "Well done! " + company.profile.name + " has been updated.";
+
+                        callback({ "status": 200, "data": result.body.results[0].value });
+
+                    })
+                    .fail(function (err) {
+                        console.error("PUT FAIL:");
+                        console.error(err);
+                    });
 
             } else {
 
                 console.log('No existing company found!');
-                console.log(company);
+
                 db.post(config.db.communities, company)
                     .then(function (response) {
 

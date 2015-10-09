@@ -2,12 +2,12 @@ angular
     .module('startupcommunity')
     .controller('WelcomeController', WelcomeController);
 
-function WelcomeController($auth, $q, $http, $mixpanel, $stateParams, $scope, $filter, sweet, community, communities, location, user_service, company_service) {
+function WelcomeController($auth, $q, $http, $mixpanel, $stateParams, $scope, $state, $filter, sweet, community, communities, location, user_service, company_service) {
     var self = this;
     this.location = jQuery.isEmptyObject(location) ? community.profile.name : location.profile.name.split(',')[0];
     this.auth = false;
     this.working = false; // used for waiting indicator
-    self.updateRole = false; // used if company already exists
+    this.updateCompany= false; // used if company already exists
     var community_path = $stateParams.community_path ? $stateParams.community_path : $stateParams.location_path;
 
     // create select list for clusters in this location
@@ -51,9 +51,25 @@ function WelcomeController($auth, $q, $http, $mixpanel, $stateParams, $scope, $f
                     self.auth = true;
                     self.user = response.data.user.value;
                     self.user["key"] = response.data.user.path.key;
-                    self.user.profile["headline"] = self.user.profile.linkedin.headline;
-                    self.user.profile["avatar"] = self.user.profile.linkedin.pictureUrl;
-                    self.user.profile["summary"] = self.user.profile.linkedin.summary;
+                    if (!self.user.profile["name"]) self.user.profile["name"] = self.user.profile.linkedin.firstName + ' ' + self.user.profile.linkedin.lastName;
+                    if (!self.user.profile["email"]) self.user.profile["email"] = self.user.profile.linkedin.emailAddress;
+                    if (!self.user.profile["headline"]) self.user.profile["headline"] = self.user.profile.linkedin.headline;
+                    if (!self.user.profile["avatar"]) self.user.profile["avatar"] = self.user.profile.linkedin.pictureUrl;
+                    if (!self.user.profile["summary"]) self.user.profile["summary"] = self.user.profile.linkedin.summary;
+
+                    if (self.user.roles) {
+                        if (!self.roles) self["roles"] = {};
+                        for (role in self.user.roles) {
+                            self.roles[role] = true;
+                        }
+                    }
+
+                    if (self.user.profile.skills) {
+                        if (!self.skills.selected) self.skills["selected"] =[];
+                        for (skill in self.user.profile.skills) {
+                            self.skills.selected.push(self.user.profile.skills[skill]);
+                        }
+                    }
 
                     self.working = false;
                     $mixpanel.identify(response.data.user.path.key);
@@ -88,10 +104,6 @@ function WelcomeController($auth, $q, $http, $mixpanel, $stateParams, $scope, $f
                 window.open("https://angel.co/intro");
             }
         });
-    };
-
-    this.noCluster = function() {
-        sweet.show("What's an industry cluster?", "A cluster is an organized ecosystem of people and companies who help startups grow. They generally include accelerator programs, entrepreneurial events, venture capital funds, and founders as leaders.\n\nIf your cluster doesn't exist, you will be able to add one and associate your company with it later.")
     };
 
     // for profile pic upload to S3
@@ -197,9 +209,11 @@ function WelcomeController($auth, $q, $http, $mixpanel, $stateParams, $scope, $f
 
             company_service.search(null, 'value.profile.angellist.id: ' + newVal, null, 1)
                 .then(function(response) {
+                    console.log(response.data);
                     if (response.data.count > 0) {
-                        self.updateRole = true;
-                        self.alert = { type: 'warning', message: self.selectedCompany.name + ' is already in the system, so you may only add your role at the company.'};
+                        self.updateCompany = true;
+                        if (response.data.results[0].value.profile.industries) self.selectedCompany.industries = response.data.results[0].value.profile.industries;
+                        self.alert = { type: 'warning', message: self.selectedCompany.name + ' is already in the system, but you may update the company record.'};
                     }
                 })
         }
@@ -230,7 +244,7 @@ function WelcomeController($auth, $q, $http, $mixpanel, $stateParams, $scope, $f
                 } else {
                     self.selectedCompany = undefined;
                     self.company = undefined;
-                    self.updateRole = false;
+                    self.updateCompany = false;
                     self.selectedRole = 'none';
                     self.selectedCluster = 'none';
                     self.alert = { type: 'success', message: String(response.data.message) };
@@ -253,24 +267,33 @@ function WelcomeController($auth, $q, $http, $mixpanel, $stateParams, $scope, $f
                 self.user["roles"] = {};
             } else {
                 for (role in self.roles) {
-                    if (role == 'mentor' || role == 'provider') {
-                        if (!self.user.roles[role]) {
-                            self.user.roles[role] = {};
-                            self.user.roles[role][$stateParams.community_key] = [$stateParams.location_key];
-                            self.user.roles[role][$stateParams.location_key] = [$stateParams.location_key];
-                        } else if (!self.user.roles[role][$stateParams.commmunity_key]) {
-                            self.user.roles[role][$stateParams.community_key] = [$stateParams.location_key];
-                            self.user.roles[role][$stateParams.location_key] = [$stateParams.location_key];
-                        } else if (self.user.roles[role][$stateParams.community_key].indexOf($stateParams.location_key) < 0) {
-                            self.user.roles[role][$stateParams.community_key].push($stateParams.location_key);
-                            self.user.roles[role][$stateParams.location_key] = [$stateParams.location_key];
-                        } // else it's already there
+                    if (!self.user.roles[role]) {
+                        self.user.roles[role] = {};
+                        self.user.roles[role][community_path] = [$stateParams.location_path];
+                        self.user.roles[role][$stateParams.location_path] = [$stateParams.location_path];
+                    } else if (!self.user.roles[role][community_path]) {
+                        self.user.roles[role][community_path] = [$stateParams.location_path];
+                        self.user.roles[role][$stateParams.location_path] = [$stateParams.location_path];
+                    } else if (self.user.roles[role][community_path].indexOf($stateParams.location_path) < 0) {
+                        self.user.roles[role][community_path].push($stateParams.location_path);
+                        self.user.roles[role][$stateParams.location_path] = [$stateParams.location_path];
+                    } // else it's already there
+
+                }
+                // allow user to remove roles
+                for (dRole in ['founder', 'investor', 'team', 'mentor', 'provider']) {
+                    if (self.roles[dRole] && self.roles[dRole] == false) {
+                        if (self.user.roles[dRole] && self.user.roles[dRole][community_path]) delete self.user.roles.mentor[community_path];
+                        if (self.user.roles[dRole] && self.user.roles[dRole][$stateParams.location_path]) delete self.user.roles.mentor[$stateParams.location_path];
                     }
                 }
+
             }
 
             // add skills
             self.user.profile["skills"] = self.skills.selected;
+
+            // update user profile
             user_service.updateProfile(self.user)
                 .then(function(response) {
                     if (response.status !== 200) {
@@ -286,7 +309,7 @@ function WelcomeController($auth, $q, $http, $mixpanel, $stateParams, $scope, $f
                             },
                             function (isConfirm) {
                                 if (isConfirm) {
-                                    //state.go to user, location, or community dashboard
+                                    $state.go('location.dashboard', {location_path: $stateParams.location_path, query: '*'})
                                 }
                             });
                     }

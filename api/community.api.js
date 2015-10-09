@@ -159,6 +159,7 @@ function handleGetCommunity(req, res) {
 }
 
 function handleGetTop(req, res) {
+    console.log(req.params);
     var community_key = req.params.community_key,
         location_key = req.params.location_key,
         top_results = {
