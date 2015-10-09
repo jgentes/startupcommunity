@@ -1,73 +1,4 @@
 <div>
-    <div class="row">
-        <div class="col-md-6">
-            <div class="hpanel forum-box">
-
-                <div class="panel-heading" style="border-bottom: 2px solid #34495E;">
-                    <h3>Top Industries</h3>
-                </div>
-
-
-                <div class="panel-body" ng-repeat="industry in dashboard.top.companies.top">
-                    <div class="row" ng-if="dashboard.communities[industry.value]">
-                        <div class="col-xs-10 forum-heading">
-
-                            <a ui-sref="industry.dashboard({community_path: dashboard.communities[industry.value].key, community: dashboard.communities[industry.value], query: '*'})">
-                            <span ng-if="dashboard.communities[industry.value].community_profiles[dashboard.location_path]">
-                                <h4><i ng-class="'fa ' + dashboard.communities[industry.value].community_profiles[dashboard.location_path].icon"></i> {{dashboard.communities[industry.value].community_profiles[dashboard.location_path].name}}</h4>
-                            <div class="desc" style="margin-bottom:5px;">{{dashboard.communities[industry.value].community_profiles[dashboard.location_path].headline}}</div>
-                            </span>
-                            <span ng-if="!dashboard.communities[industry.value].community_profiles[dashboard.location_path]">
-                                <h4><i ng-class="'fa ' + dashboard.communities[industry.value].profile.icon"></i> {{dashboard.communities[industry.value].profile.name}}</h4>
-                            <div class="desc" style="margin-top: 4px;">{{dashboard.communities[industry.value].profile.headline}}</div>
-                            </span>
-                            </a>
-                        </div>
-                        <div class="col-xs-2 forum-info">
-                            <a ui-sref="company.list({community_path: dashboard.communities[industry.value].key, community: dashboard.communities[industry.value]})">
-                                <span class="number">{{industry.count}}</span>
-                                <small>{{industry.count == 1 ? 'Company' : 'Companies'}}</small>
-                            </a>
-                        </div>
-                    </div>
-                </div>
-
-            </div>
-        </div>
-        <div class="col-md-6">
-            <div class="hpanel forum-box">
-
-                <div class="panel-heading" style="border-bottom: 2px solid #3498DB;">
-                    <h3>Top Networks</h3>
-                </div>
-
-                <div class="panel-body" ng-repeat="network in dashboard.top.people.top" ng-if="dashboard.communities[network.value]">
-                    <div class="row">
-                        <div class="col-xs-10 forum-heading">
-
-                            <a ui-sref="network.dashboard({community_path: dashboard.communities[network.value].key, community: dashboard.communities[network.value], query: '*'})">
-                            <span ng-if="dashboard.communities[network.value].community_profiles[dashboard.location_path]">
-                                <h4><i ng-class="'fa ' + dashboard.communities[network.value].community_profiles[dashboard.location_path].icon"></i> {{dashboard.communities[network.value].community_profiles[dashboard.location_path].name}}</h4>
-                            <div class="desc" style="margin-bottom:5px;">{{dashboard.communities[network.value].community_profiles[dashboard.location_path].headline}}</div>
-                            </span>
-                            <span ng-if="!dashboard.communities[network.value].community_profiles[dashboard.location_path]">
-                                <h4><i ng-class="'fa ' + dashboard.communities[network.value].profile.icon"></i> {{dashboard.communities[network.value].profile.name}}</h4>
-                            <div class="desc" style="margin-top: 4px;">{{dashboard.communities[network.value].profile.headline}}</div>
-                            </span>
-                            </a>
-                        </div>
-                        <div class="col-xs-2 forum-info">
-                            <a ui-sref="user.list({community_path: dashboard.communities[network.value].key, community: dashboard.communities[network.value]})">
-                                <span class="number">{{network.count}}</span>
-                                <small>{{network.count == 1 ? 'Person' : 'People'}}</small>
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-    </div>
 
     <div class="row">
         <div class="col-md-4">
@@ -150,4 +81,75 @@
             </div>
         </div>
     </div>
+
+    <div class="row">
+        <div class="col-md-6">
+            <div class="hpanel forum-box">
+
+                <div class="panel-heading" style="border-bottom: 2px solid #34495E;">
+                    <h3>Top Industries</h3>
+                </div>
+
+
+                <div class="panel-body" ng-repeat="industry in dashboard.top.companies.top">
+                    <div class="row" ng-if="dashboard.communities[industry.value]">
+                        <div class="col-xs-10 forum-heading">
+
+                            <a ui-sref="industry.dashboard({community_path: dashboard.communities[industry.value].key, community: dashboard.communities[industry.value], query: '*'})">
+                            <span ng-if="dashboard.communities[industry.value].community_profiles[dashboard.location_path]">
+                                <h4><i ng-class="'fa ' + dashboard.communities[industry.value].community_profiles[dashboard.location_path].icon"></i> {{dashboard.communities[industry.value].community_profiles[dashboard.location_path].name}}</h4>
+                            <div class="desc" style="margin-bottom:5px;">{{dashboard.communities[industry.value].community_profiles[dashboard.location_path].headline}}</div>
+                            </span>
+                            <span ng-if="!dashboard.communities[industry.value].community_profiles[dashboard.location_path]">
+                                <h4><i ng-class="'fa ' + dashboard.communities[industry.value].profile.icon"></i> {{dashboard.communities[industry.value].profile.name}}</h4>
+                            <div class="desc" style="margin-top: 4px;">{{dashboard.communities[industry.value].profile.headline}}</div>
+                            </span>
+                            </a>
+                        </div>
+                        <div class="col-xs-2 forum-info">
+                            <a ui-sref="company.list({community_path: dashboard.communities[industry.value].key, community: dashboard.communities[industry.value]})">
+                                <span class="number">{{industry.count}}</span>
+                                <small>{{industry.count == 1 ? 'Company' : 'Companies'}}</small>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="hpanel forum-box">
+
+                <div class="panel-heading" style="border-bottom: 2px solid #3498DB;">
+                    <h3>Top Networks</h3>
+                </div>
+
+                <div class="panel-body" ng-repeat="network in dashboard.top.people.top" ng-if="dashboard.communities[network.value]">
+                    <div class="row">
+                        <div class="col-xs-10 forum-heading">
+
+                            <a ui-sref="network.dashboard({community_path: dashboard.communities[network.value].key, community: dashboard.communities[network.value], query: '*'})">
+                            <span ng-if="dashboard.communities[network.value].community_profiles[dashboard.location_path]">
+                                <h4><i ng-class="'fa ' + dashboard.communities[network.value].community_profiles[dashboard.location_path].icon"></i> {{dashboard.communities[network.value].community_profiles[dashboard.location_path].name}}</h4>
+                            <div class="desc" style="margin-bottom:5px;">{{dashboard.communities[network.value].community_profiles[dashboard.location_path].headline}}</div>
+                            </span>
+                            <span ng-if="!dashboard.communities[network.value].community_profiles[dashboard.location_path]">
+                                <h4><i ng-class="'fa ' + dashboard.communities[network.value].profile.icon"></i> {{dashboard.communities[network.value].profile.name}}</h4>
+                            <div class="desc" style="margin-top: 4px;">{{dashboard.communities[network.value].profile.headline}}</div>
+                            </span>
+                            </a>
+                        </div>
+                        <div class="col-xs-2 forum-info">
+                            <a ui-sref="user.list({community_path: dashboard.communities[network.value].key, community: dashboard.communities[network.value]})">
+                                <span class="number">{{network.count}}</span>
+                                <small>{{network.count == 1 ? 'Person' : 'People'}}</small>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
 </div>
