@@ -8,6 +8,7 @@ function DashboardController($stateParams, communities, top) {
         networks = [];
 
     this.top = top.data;
+    console.log(top);
 
     for (c in this.top.companies.top) {
         if (communities.data[this.top.companies.top[c].value] && communities.data[this.top.companies.top[c].value].type == 'industry') {

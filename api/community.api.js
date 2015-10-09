@@ -214,8 +214,20 @@ function handleGetTop(req, res) {
                                 top: result.body.aggregates[0].entries
                             };
 
-                            res.status(200).send(top_results);
+                            db.newSearchBuilder()
+                                .collection(config.db.communities)
+                                .query('value.roles.leader.' + community_key + ':"' + location_key + '" AND value.type: "user"')
+                                .then(function (result) {
 
+                                    top_results.leaders = result.body.results;
+
+                                    res.status(200).send(top_results);
+                                })
+                                .fail(function (err) {
+                                    console.log("SEARCH FAIL:");
+                                    console.warn(err);
+                                    res.status(202).send({message: 'Something went wrong: ' + err});
+                                });
                         })
                         .fail(function (err) {
                             console.log("SEARCH FAIL:");

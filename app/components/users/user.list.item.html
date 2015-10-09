@@ -11,7 +11,7 @@
         <a ng-show="{{(item.value.profile.linkedin.summary).length > 0}}" title="Show Summary" ng-click="showSummary = !showSummary" class="user-summary">&nbsp;<i class="fa fa-chevron-down fa-fw"></i></a>
         <li ng-repeat="(item, val) in item.value.roles" class="user-role role-right"><i
                 ng-attr-title="{{item.toUpperCase()[0] + item.slice(1);}}"
-                ng-class="{'text-primary fa fa-rocket' : val && item == 'founder', 'text-info fa fa-graduation-cap' : val && item == 'mentor', 'text-success fa fa-leaf' : val && item == 'investor', 'text-default fa fa-dribbble' : val && item == 'team', 'text-warning fa fa-briefcase' : val && item == 'provider'}"></i></li>
+                ng-class="{'text-primary fa fa-rocket' : item == 'founder', 'text-danger fa fa-flag' : item == 'leader', 'text-info fa fa-graduation-cap' : item == 'mentor', 'text-success fa fa-leaf' : item == 'investor', 'text-default fa fa-dribbble' : item == 'team', 'text-warning fa fa-briefcase' : item == 'provider'}"></i></li>
 
         <br>
         <div class="dash-row">

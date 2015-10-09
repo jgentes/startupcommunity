@@ -339,6 +339,10 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                     }]
             },
             views: {
+                'header@root': {
+                    templateUrl: "components/common/header/header_dash.html",
+                    controller: "DashboardController as dashboard"
+                },
                 'people': {
                     templateUrl: 'components/common/dashboard/dashboard.html',
                     controller: "DashboardController as dashboard"
