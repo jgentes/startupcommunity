@@ -172,54 +172,55 @@ function handleGetTop(req, res) {
 
     console.log('Pulling Top Results: ' + location_key + ' / ' + community_key);
 
-    // get users and networks
+    // get users, networks, locations, and clusters
     db.newSearchBuilder()
         .collection(config.db.communities)
         .aggregate('top_values', 'value.communities', 50)
         .sort('path.reftime', 'desc')
         .query('value.communities:"' + location_key + '" AND value.communities:"' + community_key + '" AND value.type: "user"')
-        .then(function (result) {
+        .then(function (com_result) {
 
-            delete result.body.aggregates[0].entries.shift(); // the first item is always? the location
+            delete com_result.body.aggregates[0].entries.shift(); // the first item is always? the location
 
             top_results.people = {
-                total: result.body.total_count,
-                top: result.body.aggregates[0].entries,
-                results: result.body.results
+                total: com_result.body.total_count,
+                top: com_result.body.aggregates[0].entries,
+                results: com_result.body.results
             };
 
+            // get companies and industries
             db.newSearchBuilder()
                 .collection(config.db.communities)
-                .aggregate('top_values', 'value.profile.industries', 50)
+                .aggregate('top_values', 'value.profile.industries', 10)
                 .sort('path.reftime', 'desc')
                 .query('value.communities:"' + location_key + '" AND value.communities:"' + community_key + '" AND value.type: "company"')
-                .then(function (result) {
-
-                    delete result.body.aggregates[0].entries.shift(); // the first item is always? the location
+                .then(function (co_result) {
 
                     top_results.companies = {
-                        total: result.body.total_count,
-                        top: result.body.aggregates[0].entries,
-                        results: result.body.results
+                        total: co_result.body.total_count,
+                        top: co_result.body.aggregates[0].entries,
+                        results: co_result.body.results
                     };
 
+                    // get users and skills
                     db.newSearchBuilder()
                         .collection(config.db.communities)
                         .aggregate('top_values', 'value.profile.skills', 10)
                         .query('value.communities:"' + location_key + '" AND value.communities:"' + community_key + '" AND value.type: "user"')
-                        .then(function (result) {
+                        .then(function (sk_result) {
 
                             top_results.skills = {
-                                total: result.body.aggregates[0].value_count,
-                                top: result.body.aggregates[0].entries
+                                total: sk_result.body.aggregates[0].value_count,
+                                top: sk_result.body.aggregates[0].entries
                             };
 
+                            // get leaders
                             db.newSearchBuilder()
                                 .collection(config.db.communities)
                                 .query('value.roles.leader.' + community_key + ':"' + location_key + '" AND value.type: "user"')
-                                .then(function (result) {
+                                .then(function (lead_result) {
 
-                                    top_results.leaders = result.body.results;
+                                    top_results.leaders = lead_result.body.results;
 
                                     res.status(200).send(top_results);
                                 })

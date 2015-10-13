@@ -16,6 +16,10 @@
   height: 10px;
 }
 
+.progress-bar-default {
+  border-right: 4px solid darken(@color-navy-blue, 5%);
+}
+
 .progress-bar-success {
   border-right: 4px solid darken(@color-green, 5%);
 }
@@ -30,6 +34,11 @@
 
 .progress-bar-danger {
   border-right: 4px solid darken(@color-red, 5%);
+}
+
+.full .progress-bar-default {
+  background-color:  @color-navy-blue;
+  border-right: 4px solid darken(@color-navy-blue, 5%);
 }
 
 .full .progress-bar-success {

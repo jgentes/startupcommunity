@@ -4,18 +4,10 @@ angular
 
 function DashboardController($stateParams, communities, top) {
 
-    var industries = [],
-        networks = [];
+    var networks = [];
 
     this.top = top.data;
-    console.log(top);
-
-    for (c in this.top.companies.top) {
-        if (communities.data[this.top.companies.top[c].value] && communities.data[this.top.companies.top[c].value].type == 'industry') {
-            industries.push(this.top.companies.top[c]);
-            if (industries.length == 3) break;
-        }
-    }
+    console.log(this.top);
 
     for (n in this.top.people.top) {
         if (communities.data[this.top.people.top[n].value] && communities.data[this.top.people.top[n].value].type == 'network') {
@@ -24,7 +16,6 @@ function DashboardController($stateParams, communities, top) {
         }
     }
 
-    this.top.companies.top = industries;
     this.top.people.top = networks;
 
     this.communities = communities.data;

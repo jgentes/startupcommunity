@@ -90,42 +90,18 @@
                     <h3>Top Industries</h3>
                 </div>
 
-                <div class="row" ng-repeat="item in dashboard.top.companies.top | limitTo: 10">
-                    <div class="col-xs-10 forum-heading">
-                        <a ui-sref="search.dashboard({location_path: dashboard.location_path, query: item.value})"><h4 style="font-weight: 200;">{{item.value}}</h4></a>
-                        <progressbar ng-attr-value="item.count/dashboard.top.skills.total" type="success" class="progress-small full"></progressbar>
-                    </div>
-                    <div class="col-xs-2 forum-info">
-                            <span class="number">{{item.count}}</span>
-                            <small>{{item.count == 1 ? 'Company' : 'Companies'}}</small>
-                    </div>
-                </div>
-
-                <!--
-                <div class="panel-body" ng-repeat="industry in dashboard.top.companies.top | limitTo: 5">
-                    <div class="row" ng-if="dashboard.communities[industry.value]">
+                <div class="panel-body" ng-repeat="item in dashboard.top.companies.top | limitTo: 5">
+                    <div class="row">
                         <div class="col-xs-10 forum-heading">
-
-                            <a ui-sref="industry.dashboard({community_path: dashboard.communities[industry.value].key, community: dashboard.communities[industry.value], query: '*'})">
-                            <span ng-if="dashboard.communities[industry.value].community_profiles[dashboard.location_path]">
-                                <h4><i ng-class="'fa ' + dashboard.communities[industry.value].community_profiles[dashboard.location_path].icon"></i> {{dashboard.communities[industry.value].community_profiles[dashboard.location_path].name}}</h4>
-                            <div class="desc" style="margin-bottom:5px;">{{dashboard.communities[industry.value].community_profiles[dashboard.location_path].headline}}</div>
-                            </span>
-                            <span ng-if="!dashboard.communities[industry.value].community_profiles[dashboard.location_path]">
-                                <h4><i ng-class="'fa ' + dashboard.communities[industry.value].profile.icon"></i> {{dashboard.communities[industry.value].profile.name}}</h4>
-                            <div class="desc" style="margin-top: 4px;">{{dashboard.communities[industry.value].profile.headline}}</div>
-                            </span>
-                            </a>
+                            <a ui-sref="search.dashboard({location_path: dashboard.location_path, query: item.value})"><h4 style="font-weight: 200;">{{item.value}}</h4></a>
+                            <progressbar ng-attr-value="item.count/dashboard.top.companies.total" type="default" class="progress-small full" style="margin-top: 7px;"></progressbar>
                         </div>
                         <div class="col-xs-2 forum-info">
-                            <a ui-sref="company.list({community_path: dashboard.communities[industry.value].key, community: dashboard.communities[industry.value]})">
-                                <span class="number">{{industry.count}}</span>
-                                <small>{{industry.count == 1 ? 'Company' : 'Companies'}}</small>
-                            </a>
+                                <span class="number">{{item.count}}</span>
+                                <small>{{item.count == 1 ? 'Company' : 'Companies'}}</small>
                         </div>
                     </div>
                 </div>
-                -->
 
             </div>
         </div>
