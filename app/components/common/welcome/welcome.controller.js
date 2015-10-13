@@ -10,36 +10,6 @@ function WelcomeController($auth, $q, $http, $mixpanel, $stateParams, $scope, $s
     this.updateCompany= false; // used if company already exists
     var community_path = $stateParams.community_path ? $stateParams.community_path : $stateParams.location_path;
 
-    // create select list for clusters in this location
-    for (c in communities.data) {
-        if (communities.data[c].type == "industry") {
-            if (!this.clusters) {
-                this.clusters = [{
-                    key: 'none',
-                    name: 'no'
-                }];
-            }
-
-            if (communities.data[c].community_profiles && communities.data[c].community_profiles[$stateParams.location_path]) {
-                this.clusters.push(
-                    {
-                        key: communities.data[c].key,
-                        name: communities.data[c].community_profiles[$stateParams.location_path].name
-                    }
-                )
-            } else {
-                this.clusters.push(
-                    {
-                        key: communities.data[c].key,
-                        name: communities.data[c].profile.name
-                    }
-                )
-            }
-
-            if (!this.selectedCluster) this.selectedCluster = 'none';
-        }
-    }
-
     this.authenticate = function() {
         self.working = true;
         $auth.authenticate('linkedin', {invite_code: $stateParams.invite_code})
@@ -224,17 +194,11 @@ function WelcomeController($auth, $q, $http, $mixpanel, $stateParams, $scope, $s
         return selected[0].text;
     };
 
-    this.showCluster = function() {
-        var selected = $filter('filter')(self.clusters, {key: self.selectedCluster}, true);
-        return selected[0].key == 'none' ? selected[0].name : 'the ' + selected[0].name;
-    };
-
     this.addCompany = function() {
         this.working = true;
         var role = self.selectedRole == 'none' ? undefined : self.selectedRole;
-        var cluster = self.selectedCluster == 'none' ? undefined : self.selectedCluster;
 
-        company_service.addCompany(self.selectedCompany, role, cluster, location.key, community_path)
+        company_service.addCompany(self.selectedCompany, role, location.key, community_path)
             .then(function(response) {
 
                 self.working = false;
@@ -245,7 +209,6 @@ function WelcomeController($auth, $q, $http, $mixpanel, $stateParams, $scope, $s
                     self.company = undefined;
                     self.updateCompany = false;
                     self.selectedRole = 'none';
-                    self.selectedCluster = 'none';
                     self.alert = { type: 'success', message: String(response.data.message) };
                 }
             })

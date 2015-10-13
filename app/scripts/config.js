@@ -103,7 +103,7 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                                     if (lastitem == "invite" || lastitem == "add") {
                                         return communities.data[url.pop()];
                                     } else return communities.data[root]; // return preceding url path as community, such as tech for 'bend-or/tech/people'
-                                } else if (communities.data[lastitem] && (communities.data[lastitem].type == "industry" || communities.data[lastitem].type == "network")) {
+                                } else if (communities.data[lastitem] && (communities.data[lastitem].type == "cluster" || communities.data[lastitem].type == "network")) {
                                     return communities.data[lastitem]; // return tech in 'bend-or/tech'
                                 } else return pullCommunity();
                             } else return pullCommunity();
@@ -383,8 +383,8 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
             }
         })
 
-        // Industry views
-        .state('industry', {
+        // Cluster views
+        .state('cluster', {
             parent: "root",
             abstract: true,
             views: {
@@ -396,11 +396,11 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                 }
             }
         })
-        .state('industry.dashboard', {
+        .state('cluster.dashboard', {
             url: "/:community_path",
             params: {
                 community: {},
-                pageTitle: "Industry"
+                pageTitle: "Cluster"
             },
             resolve: {
                 top: ['community_service', '$stateParams',

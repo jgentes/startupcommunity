@@ -455,7 +455,7 @@ function handleUpdateProfile(req, res) {
 function handleSetRole(req, res) {
     var userkey = req.query.userkey,
       community = req.query.community,
-      industry = req.query.industry,
+      cluster = req.query.cluster,
       role = req.query.role,
       status = (req.query.status == 'true'), // will convert string to bool
       allowed = false;
@@ -484,11 +484,11 @@ function handleSetRole(req, res) {
                   if (response.body.cities[community].clusters === undefined) { //need to create clusters key
                       response.body.cities[community]['clusters'] = {};
                   }
-                  if (response.body.cities[community].clusters[industry] === undefined) { //need to create the industry in user profile
-                      console.log('Adding user to cluster: ' + industry);
-                      response.body.cities[community].clusters[industry] = { "roles": [] };
+                  if (response.body.cities[community].clusters[cluster] === undefined) { //need to create the cluster in user profile
+                      console.log('Adding user to cluster: ' + cluster);
+                      response.body.cities[community].clusters[cluster] = { "roles": [] };
                   }
-                  var thisindustry = response.body.cities[community].clusters[industry];
+                  var thisindustry = response.body.cities[community].clusters[cluster];
 
                   if (status === true) {
                       if (thisindustry.roles.indexOf(role) < 0) {
@@ -499,7 +499,7 @@ function handleSetRole(req, res) {
                           thisindustry.roles.splice(thisindustry.roles.indexOf(role), 1);
                       } // else they do not have the role, no action needed
                   }
-                  response.body.cities[community].clusters[industry] = thisindustry;
+                  response.body.cities[community].clusters[cluster] = thisindustry;
 
                   db.put(config.db.communities, userkey, response.body)
                     .then(function (finalres) {

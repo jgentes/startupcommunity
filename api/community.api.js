@@ -264,7 +264,7 @@ function handleSetCommunity(req, res) {
         // update the community
         db.get(config.db.communities, settings.community_key)
             .then(function (response) {
-                if (response.body.type == 'industry') { // use community_profiles
+                if (response.body.type == 'cluster') { // use community_profiles
                     if (response.body.community_profiles === undefined) { // create community_profiles
                         response.body['community_profiles'] = {};
                     }

@@ -44,9 +44,9 @@ function NavigationController($auth, $state, $window, $location, $stateParams, $
                         if (!this.locations) this.locations = {};
                         this.locations[item] = communities.data[item];
                         break;
-                    case "industry":
-                        if (!this.industries) this.industries = {};
-                        this.industries[item] = communities.data[item];
+                    case "cluster":
+                        if (!this.clusters) this.clusters = {};
+                        this.clusters[item] = communities.data[item];
                         break;
                     case "network":
                         if (!this.networks) this.networks = {};
@@ -80,7 +80,7 @@ function NavigationController($auth, $state, $window, $location, $stateParams, $
 
     if ($stateParams.query) this.search.query = $stateParams.query;
 
-    if (this.community.type == "industry" || this.community.type == "network") {
+    if (this.community.type == "cluster" || this.community.type == "network") {
         if (this.community.community_profiles && this.community.community_profiles[this.location_path]) {
             this.searchname = this.community.community_profiles[this.location_path].name;
         } else this.searchname = this.community.profile.name;
@@ -90,7 +90,7 @@ function NavigationController($auth, $state, $window, $location, $stateParams, $
 
         if (!query) query = "*";
 
-        if (self.community.type == "industry" || self.community.type == "network") {
+        if (self.community.type == "cluster" || self.community.type == "network") {
             self.location_path == self.community.key ?
                 $state.go('search.dashboard', {location_path: self.location_path, community: self.community, query: query}) :
                 $state.go('search.dashboard', {location_path: self.location_path, community_path: self.community.key, community: self.community, query: query});
@@ -192,7 +192,7 @@ function NavigationController($auth, $state, $window, $location, $stateParams, $
         if (!verified) {
 
 
-            if (this.community.type === 'industry' && this.community.community_profiles[this.location_path] && this.community.community_profiles[this.location_path].embed) {
+            if (this.community.type === 'cluster' && this.community.community_profiles[this.location_path] && this.community.community_profiles[this.location_path].embed) {
                 embed = this.community.community_profiles[this.location_path].embed;
             } else embed = this.community.profile.embed;
 
@@ -234,7 +234,7 @@ function CommunitySettingsController($modalInstance, $window, $state, sweet, com
     this.location_key = location_key;
     var self = this;
 
-    if (community.type == 'industry' && self.community.community_profiles[location_key] && self.community.community_profiles[location_key].embed) {
+    if (community.type == 'cluster' && self.community.community_profiles[location_key] && self.community.community_profiles[location_key].embed) {
         this.embed = self.community.community_profiles[location_key].embed;
     } else this.embed = this.community.profile.embed;
 

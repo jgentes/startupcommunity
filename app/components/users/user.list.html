@@ -38,19 +38,19 @@
                 </div>
             </div>
 
-            <div class="hpanel hnavyblue" ng-if="users.community.type !== 'industry'">
+            <div class="hpanel hnavyblue" ng-if="users.community.type !== 'cluster'">
                 <div class="panel-footer top" style="font-size: 17px;">
-                    <strong>Industry</strong> Filters
-                    <i ng-show="users.loadingIndustry" class="fa fa-refresh fa-spin pull-right" style="padding: 4px; color: #aaa;"></i>
+                    <strong>Cluster</strong> Filters
+                    <i ng-show="users.loadingCluster" class="fa fa-refresh fa-spin pull-right" style="padding: 4px; color: #aaa;"></i>
                 </div>
                 <div class="panel-body filternav">
                     <ul class="panel-list">
-                        <li ng-init="users.allIndustries=true" ng-class="{'active':users.allIndustries}" ng-click="users.loadingIndustry=true; users.allIndustries=true; users.filterIndustries();">
+                        <li ng-init="users.allClusters=true" ng-class="{'active':users.allClusters}" ng-click="users.loadingCluster=true; users.allClusters=true; users.filterClusters();">
                             <a><i class="fa fa-fw fa-globe themed-color-dark icon-push"></i> All</a>
                         </li>
                         <hr style="margin: 10px 0 10px 0;">
-                        <li ng-repeat="industry in nav.industries" ng-class="{'active':users.selectedIndustries.indexOf(industry.key) >= 0}" ng-click="users.loadingIndustry=true;  users.allIndustries=false; users.filterIndustries(industry.key);">
-                            <a><i class="fa {{industry.profile.icon}}"></i> {{industry.profile.name}}</a>
+                        <li ng-repeat="cluster in nav.clusters" ng-class="{'active':users.selectedClusters.indexOf(cluster.key) >= 0}" ng-click="users.loadingCluster=true;  users.allClusters=false; users.filterClusters(cluster.key);">
+                            <a><i class="fa {{cluster.profile.icon}}"></i> {{cluster.profile.name}}</a>
                         </li>
                     </ul>
                 </div>

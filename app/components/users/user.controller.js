@@ -9,7 +9,7 @@ function UserController($stateParams, user_service, result_service, $sce, $modal
 
     this.community = community;
     this.communities = communities.data;
-    this.selectedIndustries = [];
+    this.selectedClusters = [];
     this.selectedNetworks = [];
     this.selectedRole = ['*'];
 
@@ -54,7 +54,7 @@ function UserController($stateParams, user_service, result_service, $sce, $modal
     var setTitle = function(){
         var item;
         self.role = '';
-        self.industry = '';
+        self.cluster = '';
 
         if (self.selectedRole[0] == '*') {
             self.role = "People";
@@ -69,13 +69,13 @@ function UserController($stateParams, user_service, result_service, $sce, $modal
             }
         }
 
-        if (self.selectedIndustries.length == 0 && self.selectedNetworks.length == 0) {
+        if (self.selectedClusters.length == 0 && self.selectedNetworks.length == 0) {
             if (self.community.community_profiles && self.community.community_profiles[$stateParams.location_path]) {
                 self.selection = self.community.community_profiles[$stateParams.location_path].name;
             } else self.selection = self.community.profile.name;
         } else {
             self.selection = "";
-            var selectedCommunities = self.selectedIndustries.concat(self.selectedNetworks);
+            var selectedCommunities = self.selectedClusters.concat(self.selectedNetworks);
             for (item in selectedCommunities) {
                 self.selection += self.communities[selectedCommunities[item]].profile.name;
                 if (item < selectedCommunities.length - 1) {
@@ -129,19 +129,19 @@ function UserController($stateParams, user_service, result_service, $sce, $modal
             });
     };
 
-    this.filterIndustries = function(selection) {
+    this.filterClusters = function(selection) {
         if (selection == undefined) {
-            self.selectedIndustries = [];
+            self.selectedClusters = [];
         } else {
-            if (self.selectedIndustries.indexOf(selection) < 0) {
-                self.selectedIndustries.push(selection);
-            } else self.selectedIndustries.splice(self.selectedIndustries.indexOf(selection), 1);
-            if (self.selectedIndustries.length == 0) self.allIndustries = true;
+            if (self.selectedClusters.indexOf(selection) < 0) {
+                self.selectedClusters.push(selection);
+            } else self.selectedClusters.splice(self.selectedClusters.indexOf(selection), 1);
+            if (self.selectedClusters.length == 0) self.allClusters = true;
         }
 
-        user_service.search(communityFilter.concat(self.selectedIndustries), '*', self.selectedRole, 30, undefined)
+        user_service.search(communityFilter.concat(self.selectedClusters), '*', self.selectedRole, 30, undefined)
             .then(function(response) {
-                self.loadingIndustry = false;
+                self.loadingCluster = false;
                 self.loadingNetwork = false;
                 self.users = result_service.setPage(response.data);
                 setTitle();
@@ -160,7 +160,7 @@ function UserController($stateParams, user_service, result_service, $sce, $modal
 
         user_service.search(communityFilter.concat(self.selectedNetworks), '*', self.selectedRole, 20, undefined)
             .then(function(response) {
-                self.loadingIndustry = false;
+                self.loadingCluster = false;
                 self.loadingNetwork = false;
                 self.users = result_service.setPage(response.data);
                 setTitle();

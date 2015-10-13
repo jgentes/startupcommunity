@@ -24,7 +24,7 @@ function handleMaintenance(res) {
             .collection(collection)
             .limit(limit)
             .offset(startKey)
-            .query('*')
+            .query('value.type:"industry"')
             .then(function(data){
                 for (var item in data.body.results) {
                     /*
@@ -52,14 +52,15 @@ function handleMaintenance(res) {
 
                      */
                     var newdata = data.body.results[item].value; // get current record
-
+                    /*
                     if (newdata.roles && newdata.roles.advisor) {
                         console.log('update!');
                         newdata.roles["mentor"] = newdata.roles.advisor;
                         delete newdata.roles.advisor;
                         console.log(newdata.roles);
                     }
-
+                    */
+                    newdata.type = "cluster";
                     //newdata.communities = ["bend-or", "oregon", "us", "edco-stable-of-experts"];
                     //newdata.roles = { "mentor" : { "edco-stable-of-experts": ["bend-or"], "bend-or": ["bend-or"]}};
                     //newdata.profile["home"] = "bend-or";
@@ -70,7 +71,7 @@ function handleMaintenance(res) {
 
                     // IMPORTANT! TEST FIRST BY COMMENTING OUT BELOW..
                     // ALSO BE CAREFUL TO NOT PULL FROM -DEV AND PUT INTO PRODUCTION DB!!
-                    db.put(collection, data.body.results[item].path.key, newdata);
+                    //db.put(collection, data.body.results[item].path.key, newdata);
                 }
 
                 if (data.body.next) {

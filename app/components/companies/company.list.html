@@ -47,19 +47,19 @@
                 </div>
             </div>
 
-            <div class="hpanel hnavyblue" ng-if="companies.community.type !== 'industry'">
+            <div class="hpanel hnavyblue" ng-if="companies.community.type !== 'cluster'">
                 <div class="panel-footer top" style="font-size: 17px;">
-                    <strong>Industry</strong> Filters
-                    <i ng-show="companies.loadingIndustry" class="fa fa-refresh fa-spin pull-right" style="padding: 4px; color: #aaa;"></i>
+                    <strong>Cluster</strong> Filters
+                    <i ng-show="companies.loadingCluster" class="fa fa-refresh fa-spin pull-right" style="padding: 4px; color: #aaa;"></i>
                 </div>
                 <div class="panel-body filternav">
                     <ul class="panel-list">
-                        <li ng-init="companies.allIndustries=true" ng-class="{'active':companies.allIndustries}" ng-click="companies.loadingIndustry=true; companies.allIndustries=true; companies.filterIndustries();">
+                        <li ng-init="companies.allClusters=true" ng-class="{'active':companies.allClusters}" ng-click="companies.loadingCluster=true; companies.allClusters=true; companies.filterClusters();">
                             <a><i class="fa fa-fw fa-globe themed-color-dark icon-push"></i> All</a>
                         </li>
                         <hr style="margin: 10px 0 10px 0;">
-                        <li ng-repeat="industry in nav.industries" ng-class="{'active':companies.selectedIndustries.indexOf(industry.key) >= 0}" ng-click="companies.loadingIndustry=true;  companies.allIndustries=false; companies.filterIndustries(industry.key);">
-                            <a><i class="fa {{industry.profile.icon}}"></i> {{industry.profile.name}}</a>
+                        <li ng-repeat="cluster in nav.clusters" ng-class="{'active':companies.selectedClusters.indexOf(cluster.key) >= 0}" ng-click="companies.loadingCluster=true;  companies.allClusters=false; companies.filterClusters(cluster.key);">
+                            <a><i class="fa {{cluster.profile.icon}}"></i> {{cluster.profile.name}}</a>
                         </li>
                     </ul>
                 </div>
