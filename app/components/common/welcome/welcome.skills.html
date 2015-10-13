@@ -3,10 +3,10 @@
         <h4 style="font-size: 25px; line-height: 1.25;">Thank you. Now select up to ten industries or skills that you specialize in.</h4>
     </div>
     <div class="panel-body industry_select" style="padding:5px;">
-            <ui-select multiple ng-model="welcome.skills.selected" ng-disabled="disabled" limit="10" alert_title="Sorry, only 10 items here." alert_text="Focus on industries or skills that you are truly badass with." alert_type="warning" style="border:none;">
+            <ui-select multiple ng-model="welcome.skills.selected" ng-disabled="disabled" tagging="true" tagging-label="(new)" autofocus="true" limit="10" alert_title="Sorry, only 10 items here." alert_text="Focus on industries or skills that you are truly badass with." alert_type="warning" style="border:none;">
                     <ui-select-match placeholder="Search by industry or skill..">{{$item}}</ui-select-match>
                     <ui-select-choices repeat="skill in welcome.skills | filter:$select.search | limitTo: 25">
-                            {{skill}}
+                        {{skill.replace('undefined','')}}
                     </ui-select-choices>
             </ui-select>
     </div>

@@ -162,7 +162,7 @@ function WelcomeController($auth, $q, $http, $mixpanel, $stateParams, $scope, $s
         return $http.get('/api/2.1/angel/startups/search?val=' + val)
         .then(function(response){
             if (!response.data.error) {
-                return response.data.map(function(item){
+                return response.data.slice(0,6).map(function(item){
                     return item;
                 });
             } else {
@@ -209,7 +209,6 @@ function WelcomeController($auth, $q, $http, $mixpanel, $stateParams, $scope, $s
 
             company_service.search(null, 'value.profile.angellist.id: ' + newVal, null, 1)
                 .then(function(response) {
-                    console.log(response.data);
                     if (response.data.count > 0) {
                         self.updateCompany = true;
                         if (response.data.results[0].value.profile.industries) self.selectedCompany.industries = response.data.results[0].value.profile.industries;

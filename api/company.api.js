@@ -196,6 +196,7 @@ function handleAddCompany(req, res) {
         if (((addCompany.location_key == addCompany.community_key) && req.user.value.communities.indexOf(addCompany.location_key) > -1) || (req.user.value.roles && req.user.value.roles.leader[addCompany.community_key] && req.user.value.roles.leader[addCompany.community_key].indexOf(addCompany.location_key) > -1)) {
 
             var company = schema.angellist(addCompany.al_profile, addCompany.cluster, addCompany.location_key, addCompany.community_key);
+            if (company.profile.angellist.industries) delete company.profile.angellist.industries;
 
             //search for company and add if not there
             companyPull(company, addCompany.role, addCompany.location_key, req.user.path.key, function(result) {
