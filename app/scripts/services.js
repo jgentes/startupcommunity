@@ -79,12 +79,43 @@ angular
               getKey: function(key) {
                   return $http.get('/api/2.0/key/' + key);
               },
-              getTop: function(location_key, community_key, cluster) {
-                  return $http.get('/api/2.1/community/' + location_key + '/' + (community_key ? community_key + '/top' : 'top'), {
-                      params: {
-                          cluster: cluster
-                      }
-                  });
+              getTop: function(location_key, community_key, community) {
+                  // this service relies on cache first, then calls the api to update the db for next pull
+
+                  if (community && community.type == 'cluster') {
+                      if (community.community_profiles && community.community_profiles[location_key] && community.community_profiles[location_key].industries) {
+                          var industry_keys = community.community_profiles[location_key].industries;
+                      } else if (community.profile.industries) {
+                          industry_keys = community.profile.industries;
+                      } else industry_keys = ["none"];
+
+                      var cluster_key = community.key;
+                  }
+
+                  var top = function() {
+                      $http.get('/api/2.1/community/' + location_key + '/' + (community_key ? community_key + '/top' : 'top'), {
+                          params: {
+                              cluster_key: cluster_key,
+                              industry_keys: industry_keys
+                          }
+                      });
+                  };
+
+                  if (community.community_profiles && community.community_profiles[location_key] && community.community_profiles[location_key].top) {
+                      top();
+                      return { data: community.community_profiles[location_key].top };
+                  } else if (community.profile && community.profile.top) {
+                      top();
+                      return { data: community.profile.top };
+                  } else {
+                      return $http.get('/api/2.1/community/' + location_key + '/' + (community_key ? community_key + '/top' : 'top'), {
+                          params: {
+                              cluster_key: cluster_key,
+                              industry_keys: industry_keys
+                          }
+                      });
+                  }
+
               },
               setSettings: function(embed, location_key, community_key) {
                   return $http.put('/api/2.0/settings', {

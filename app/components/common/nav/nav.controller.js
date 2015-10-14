@@ -157,7 +157,16 @@ function NavigationController($auth, $state, $window, $location, $stateParams, $
 
     this.path = $location.path().replace(/\/$/, ""); //used for routing and used in view
     if (this.path.split('/').length < 3) {
-        $state.go(this.community.type + '.dashboard');
+        switch (this.community.type) {
+            case 'user':
+                $state.go('user.dashboard');
+                break;
+            case 'company':
+                $state.go('company.dashboard');
+                break;
+            default:
+                $state.go('community.dashboard');
+        }
     }
 
 

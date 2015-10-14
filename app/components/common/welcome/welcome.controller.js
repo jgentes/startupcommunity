@@ -271,7 +271,7 @@ function WelcomeController($auth, $q, $http, $mixpanel, $stateParams, $scope, $s
                             },
                             function (isConfirm) {
                                 if (isConfirm) {
-                                    $state.go('location.dashboard', {location_path: $stateParams.location_path, query: '*'})
+                                    $state.go('community.dashboard', {location_path: $stateParams.location_path, query: '*'})
                                 }
                             });
                     }

@@ -82,7 +82,7 @@
                 </a>
                 <ul class="nav nav-second-level" style="white-space: nowrap;">
                     <li>
-                        <a ui-sref="{{nav.community.type + '.dashboard' + nav.nav_url}}" ng-class="{active: nav.path.includes('/' + nav.location.key)}">
+                        <a ui-sref="{{'community.dashboard' + nav.nav_url}}" ng-class="{active: nav.path.includes('/' + nav.location.key)}">
                             <span ng-if="nav.community.community_profiles[nav.location_path]">
                                 <i ng-if="nav.community.community_profiles[nav.location_path].icon" ng-class="'fa ' + nav.community.community_profiles[nav.location_path].icon"></i>
                                 <i ng-if="!nav.community.community_profiles[nav.location_path].icon" class="fa fa-globe"></i> {{nav.community.community_profiles[nav.location_path].name}}</span>
@@ -117,7 +117,7 @@
                 </span></p>
                 <ul class="nav nav-second-level">
                     <li ng-repeat="item in nav.locations" ng-if="item.key !== nav.community.key">
-                        <a ui-sref="location.dashboard({location_path: item.key, community: item, location: item, query: '*'})" ng-class="{active: nav.path.includes('/' + item.key)}"><i class="fa fa-globe"></i> {{item.profile.name}}</a>
+                        <a ui-sref="community.dashboard({location_path: item.key, community: item, location: item, query: '*'})" ng-class="{active: nav.path.includes('/' + item.key)}"><i class="fa fa-globe"></i> {{item.profile.name}}</a>
                     </li>
                 </ul>
             </li>
@@ -131,7 +131,7 @@
                 </span></p>
                 <ul class="nav nav-second-level">
                     <li ng-repeat="item in nav.networks">
-                        <a ui-sref="{{'network.dashboard' + nav.nav_jump}}" ng-class="{active: nav.path.includes('/' + item.key)}"><i ng-class="'fa ' + item.profile.icon"></i> {{item.profile.name}}</a>
+                        <a ui-sref="{{'community.dashboard' + nav.nav_jump}}" ng-class="{active: nav.path.includes('/' + item.key)}"><i ng-class="'fa ' + item.profile.icon"></i> {{item.profile.name}}</a>
                     </li>
                 </ul>
             </li>
@@ -145,7 +145,7 @@
                 </span></p>
                 <ul class="nav nav-second-level">
                     <li ng-repeat="item in nav.clusters">
-                        <a ui-sref="{{'cluster.dashboard' + nav.nav_jump}}" ng-class="{active: nav.path.includes('/' + item.key)}">
+                        <a ui-sref="{{'community.dashboard' + nav.nav_jump}}" ng-class="{active: nav.path.includes('/' + item.key)}">
                             <span ng-if="item.community_profiles[nav.location_path]">
                                 <i ng-class="'fa ' + item.community_profiles[nav.location_path].icon"></i> {{item.community_profiles[nav.location_path].name}}</span>
                             <span ng-if="!item.community_profiles[nav.location_path]">

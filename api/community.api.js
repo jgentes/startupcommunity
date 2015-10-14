@@ -186,10 +186,13 @@ function handleGetCommunity(req, res) {
 }
 
 function handleGetTop(req, res) {
+    // GetTop updates a db record that is used as cache for subsequent reads by client.. 4 calls is too expensive to call directly from the client
     //console.log(util.inspect(req)); // used for logging circular request
     var community_key = req.params.community_key,
         location_key = req.params.location_key,
-        cluster = {},
+        cluster_key = req.query.cluster_key,
+        industry_keys = req.query.industry_keys,
+        has_location = true,
         top_results = {
             people: {},
             companies: {},
@@ -197,11 +200,10 @@ function handleGetTop(req, res) {
         },
         cluster_search = "";
 
-    if (req.query.cluster) {
+    if (cluster_key) {
 
-        cluster = JSON.parse(req.query.cluster);
-
-        if (location_key == cluster.key) {
+        if (location_key == cluster_key) {
+            has_location = false;
             search = '';
         }
 
@@ -209,92 +211,133 @@ function handleGetTop(req, res) {
             community_key = '*';
         }
 
-        if (cluster.community_profiles && cluster.community_profiles[location_key]) {
-            var cluster_keys = cluster.community_profiles[location_key].industries;
-        } else cluster_keys = cluster.profile.industries;
-
-        for (i in cluster_keys) {
+        for (i in industry_keys) {
             if (i > 0) {
                 cluster_search += ' OR ';
             }
-            cluster_search += '"' + cluster_keys[i] + '"';
+            cluster_search += '"' + industry_keys[i] + '"';
         }
     } else if (!community_key || community_key == 'undefined') community_key = location_key;
 
     var search = 'value.communities:' + location_key + ' AND value.communities:' + community_key + '';
 
-    console.log('Pulling Top Results: ' + location_key + ' / ' + community_key + ' Cluster keys: ', cluster_keys);
+    console.log('Pulling Top Results: ' + location_key + ' / ' + community_key + ' Industry keys: ', industry_keys);
 
-    // get users, networks, locations, and clusters
+    // get companies and industries
+
+    var industrysearch = cluster_search ? 'value.profile.industries:(' + cluster_search + ') AND ' + search : search;
+
+    function condense(results) {
+        var c = [],
+            count = 0;
+
+        for (item in results) {
+            results[item].value.type = "cache"; // because otherwise a search for value.type: "user" will pickup the cluster record due to recursive search match
+            c.push(results[item]);
+            count++;
+            if (count == 5) break;
+        }
+
+        return c;
+    }
+
+    // get companies & industries
+
     db.newSearchBuilder()
         .collection(config.db.communities)
-        .aggregate('top_values', 'value.communities', 50)
-        .sort('path.reftime', 'desc')
-        .query(search + ' AND value.type: "user"')
-        .then(function (com_result) {
+        .aggregate('top_values', 'value.profile.industries', 10)
+        .sort('@path.reftime', 'desc')
+        .query(industrysearch + ' AND value.type: "company"')
+        .then(function (result) {
 
-            top_results.people = {
-                total: com_result.body.total_count,
-                top: com_result.body.aggregates[0].entries,
-                results: com_result.body.results
+            top_results.industries = {
+                count: result.body.aggregates[0].value_count,
+                entries: result.body.aggregates[0].entries
             };
 
-            top_results.people.top.shift(); // the first item is always? the location
+            top_results.companies = {
+                count: result.body.total_count,
+                entries: condense(result.body.results)
+            };
 
-            // get companies and industries
+            // get people & skills
 
-            var industrysearch = cluster_search ? 'value.profile.industries:(' + cluster_search + ') AND ' + search : search;
+            var skillsearch = cluster_search ? 'value.profile.skills:(' + cluster_search + ') AND ' + search : search;
 
             db.newSearchBuilder()
                 .collection(config.db.communities)
-                .aggregate('top_values', 'value.profile.industries', 10)
-                .sort('path.reftime', 'desc')
-                .query(industrysearch + ' AND value.type: "company"')
-                .then(function (co_result) {
+                .aggregate('top_values', 'value.profile.skills', 10)
+                .sort('@path.reftime', 'desc')
+                .query(skillsearch + ' AND value.type: "user"')
+                .then(function (result) {
 
-                    top_results.companies = {
-                        total: co_result.body.total_count,
-                        top: co_result.body.aggregates[0].entries,
-                        results: co_result.body.results
+                    top_results.skills = {
+                        count: result.body.aggregates[0].value_count,
+                        entries: result.body.aggregates[0].entries
                     };
 
-                    // get skills
+                    top_results.people = {
+                        count: result.body.total_count,
+                        entries: condense(result.body.results)
+                    };
 
-                    var skillsearch = cluster_search ? 'value.profile.skills:(' + cluster_search + ') AND ' + search : search;
 
+                    // get leaders
                     db.newSearchBuilder()
                         .collection(config.db.communities)
-                        .aggregate('top_values', 'value.profile.skills', 10)
-                        .query(skillsearch + ' AND value.type: "user"')
-                        .then(function (sk_result) {
+                        .sort('@path.reftime', 'desc')
+                        .query('value.roles.leader.' + community_key + ':' + location_key + ' AND value.type: "user"')
+                        .then(function (result) {
 
-                            top_results.skills = {
-                                total: sk_result.body.aggregates[0].value_count,
-                                top: sk_result.body.aggregates[0].entries
-                            };
+                            top_results.leaders = condense(result.body.results);
 
-                            // get leaders
-                            db.newSearchBuilder()
-                                .collection(config.db.communities)
-                                .query('value.roles.leader.' + community_key + ':' + location_key + ' AND value.type: "user"')
-                                .then(function (lead_result) {
+                            var target = cluster_key ? cluster_key : community_key;
 
-                                    top_results.leaders = lead_result.body.results;
+                            console.log('Updating ' + target + ' with top results..');
 
-                                    res.status(200).send(top_results);
+                            //get current record
+                            db.get(config.db.communities, target)
+                                .then(function (response) {
+                                    if (response.body.type == 'cluster' || response.body.type == 'network') { // use community_profiles
+                                        if (response.body.community_profiles === undefined) { // create community_profiles
+                                            response.body['community_profiles'] = {};
+                                        }
+                                        if (response.body.community_profiles[location_key] === undefined) { // create this location
+                                            response.body.community_profiles[location_key] = {
+                                                "name": response.body.profile.name,
+                                                "icon": response.body.profile.icon,
+                                                "logo": response.body.profile.logo,
+                                                "embed": response.body.profile.embed,
+                                                "top": top_results
+                                            };
+                                        } else {
+                                            response.body.community_profiles[location_key]["top"] = top_results;
+                                        }
+                                    } else response.body.profile["top"] = top_results;
+
+                                    // update record with new data
+
+                                    db.put(config.db.communities, target, response.body)
+                                        .then(function (finalres) {
+                                            res.status(200).send(top_results);
+                                        })
+                                        .fail(function (err) {
+                                            console.warn('WARNING:  Problem with GetTop update: ' + err);
+                                            res.status(202).send({message: 'Something went wrong: ' + err});
+                                        });
+
                                 })
                                 .fail(function (err) {
-                                    console.log("WARNING: SEARCH FAIL:");
-                                    console.warn(err);
+                                    console.warn('WARNING:  Problem with get: ' + err);
                                     res.status(202).send({message: 'Something went wrong: ' + err});
                                 });
+
                         })
                         .fail(function (err) {
                             console.log("WARNING: SEARCH FAIL:");
                             console.warn(err);
                             res.status(202).send({message: 'Something went wrong: ' + err});
                         });
-
                 })
                 .fail(function (err) {
                     console.log("WARNING: SEARCH FAIL:");

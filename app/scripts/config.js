@@ -314,9 +314,8 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
 
         })
 
-
-        // Location views
-        .state('location', {
+        // Community views
+        .state('community', {
             parent: "root",
             abstract: true,
             views: {
@@ -328,79 +327,12 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                 }
             }
         })
-        .state('location.dashboard', {
-            resolve: {
-                top: ['community_service', '$stateParams', 'community',
-                    function (community_service, $stateParams, community) {
-                        var cluster;
-                        cluster = community.type == "cluster" ? community : null;
-                        return community_service.getTop($stateParams.location_path, $stateParams.community_path, cluster);
-                    }]
-            },
-            views: {
-                'header@root': {},
-                'people': {
-                    templateUrl: 'components/common/dashboard/dashboard.html',
-                    controller: "DashboardController as dashboard"
-                }
-            }
-        })
-
-        // Network views
-        .state('network', {
-            parent: "root",
-            abstract: true,
-            views: {
-                'header': {
-                    templateUrl: "components/common/header/header_big.html"
-                },
-                'content': {
-                    template: "<div ui-view='people'></div>"
-                }
-            }
-        })
-        .state('network.dashboard', {
+        .state('community.dashboard', {
             url: "/:community_path",
             resolve: {
                 top: ['community_service', '$stateParams', 'community',
                     function (community_service, $stateParams, community) {
-                        var cluster;
-                        cluster = community.type == "cluster" ? community : null;
-                        console.log(cluster);
-                        return community_service.getTop($stateParams.location_path, $stateParams.community_path, cluster);
-                    }]
-            },
-            views: {
-                'header@root': {},
-                'people': {
-                    templateUrl: 'components/common/dashboard/dashboard.html',
-                    controller: "DashboardController as dashboard"
-                }
-            }
-        })
-
-        // Cluster views
-        .state('cluster', {
-            parent: "root",
-            abstract: true,
-            views: {
-                'header': {
-                    templateUrl: "components/common/header/header_big.html"
-                },
-                'content': {
-                    template: "<div ui-view='people'></div>"
-                }
-            }
-        })
-        .state('cluster.dashboard', {
-            url: "/:community_path",
-            resolve: {
-                top: ['community_service', '$stateParams', 'community',
-                    function (community_service, $stateParams, community) {
-                        var cluster;
-                        cluster = community.type == "cluster" ? community : null;
-                        console.log(cluster);
-                        return community_service.getTop($stateParams.location_path, $stateParams.community_path, cluster);
+                        return community_service.getTop($stateParams.location_path, $stateParams.community_path, community);
                     }]
             },
             views: {

@@ -9,10 +9,10 @@
 
             <div id="hbreadcrumb" class="pull-right m-t-lg">
                 <ol class="hbreadcrumb">
-                    <li ng-if="nav.location_path && (nav.location.key !== nav.community.key)"><a ui-sref="{{nav.location.type + '.dashboard({community: nav.location})'}}">
+                    <li ng-if="nav.location_path && (nav.location.key !== nav.community.key)"><a ui-sref="community.dashboard({community: nav.location})">
                         <span ng-if="nav.location.profile.name">&nbsp;&nbsp;{{ nav.location.profile.name }}&nbsp;&nbsp;/</span></a>
                     </li>
-                    <li ui-sref="{{nav.community.type + '.dashboard({community_path: nav.community.key, community: nav.community})'}}"><span ng-if="nav.community.community_profiles[nav.location_path]">&nbsp;&nbsp;{{ nav.community.community_profiles[nav.location_path].name }}</span>
+                    <li ui-sref="community.dashboard({community_path: nav.community.key, community: nav.community})"><span ng-if="nav.community.community_profiles[nav.location_path]">&nbsp;&nbsp;{{ nav.community.community_profiles[nav.location_path].name }}</span>
                         <span ng-if="!nav.community.community_profiles[nav.location_path]">&nbsp;&nbsp;{{ nav.community.profile.name }}</span>
                         &nbsp;&nbsp;/
                     </li>
