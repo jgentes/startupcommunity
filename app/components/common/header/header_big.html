@@ -18,7 +18,7 @@
                     </li>
                     <li ng-repeat="state in $state.$current.path" ng-class="{active: $last}">
                         <a ng-if="state.params.pageTitle.config.value && !(!!state.abstract) && !$last" href="#{{state.url.format($stateParams)}}">&nbsp;&nbsp;{{state.params.pageTitle.config.value}}&nbsp;&nbsp;/</a>
-                        <span ng-if="$last">&nbsp;&nbsp;{{$state.params.pageTitle}}</span>
+                        <span ng-if="$last">&nbsp;&nbsp;{{$state.params.pageTitle || nav.community.type[0].toUpperCase() + nav.community.type.slice(1) }}</span>
                     </li>
                 </ol>
             </div>

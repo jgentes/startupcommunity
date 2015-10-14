@@ -153,7 +153,7 @@ function handleCreateAPIToken(req, res) {
             }
         })
         .fail(function(err){
-            console.log("SEARCH FAIL:" + err);
+            console.log("WARNING: SEARCH FAIL:" + err);
             res.status(202).send({ message: 'Something went wrong: ' + err});
         });
 
@@ -194,11 +194,11 @@ function handleSignup(req, res) {
                                 }
                             })
                             .fail(function(err){
-                                console.log("SEARCH FAIL:" + err);
+                                console.log("WARNING: SEARCH FAIL:" + err);
                                 res.status(202).send({ message: 'Something went wrong: ' + err});
                             })
                             .fail(function (err) {
-                                console.log("POST FAIL:" + err.body);
+                                console.log("WARNING: POST FAIL:" + err.body);
                                 res.status(202).send({ message: 'Something went wrong: ' + err});
                             });
                     });

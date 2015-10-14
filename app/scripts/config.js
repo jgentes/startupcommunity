@@ -314,7 +314,7 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
 
         })
 
-        
+
         // Location views
         .state('location', {
             parent: "root",
@@ -329,20 +329,16 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
             }
         })
         .state('location.dashboard', {
-            params: {
-                pageTitle: "Location"
-            },
             resolve: {
-                top: ['community_service', '$stateParams',
-                    function (community_service, $stateParams) {
-                        return community_service.getTop($stateParams.location_path, $stateParams.community_path);
+                top: ['community_service', '$stateParams', 'community',
+                    function (community_service, $stateParams, community) {
+                        var cluster;
+                        cluster = community.type == "cluster" ? community : null;
+                        return community_service.getTop($stateParams.location_path, $stateParams.community_path, cluster);
                     }]
             },
             views: {
-                'header@root': {
-                    templateUrl: "components/common/header/header_dash.html",
-                    controller: "DashboardController as dashboard"
-                },
+                'header@root': {},
                 'people': {
                     templateUrl: 'components/common/dashboard/dashboard.html',
                     controller: "DashboardController as dashboard"
@@ -365,17 +361,17 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
         })
         .state('network.dashboard', {
             url: "/:community_path",
-            params: {
-                community: {}, // root url goes blank without this because it needs community passed in
-                pageTitle: "Network"
-            },
             resolve: {
-                top: ['community_service', '$stateParams',
-                    function (community_service, $stateParams) {
-                        return community_service.getTop($stateParams.location_path, $stateParams.community_path);
+                top: ['community_service', '$stateParams', 'community',
+                    function (community_service, $stateParams, community) {
+                        var cluster;
+                        cluster = community.type == "cluster" ? community : null;
+                        console.log(cluster);
+                        return community_service.getTop($stateParams.location_path, $stateParams.community_path, cluster);
                     }]
             },
             views: {
+                'header@root': {},
                 'people': {
                     templateUrl: 'components/common/dashboard/dashboard.html',
                     controller: "DashboardController as dashboard"
@@ -398,17 +394,17 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
         })
         .state('cluster.dashboard', {
             url: "/:community_path",
-            params: {
-                community: {},
-                pageTitle: "Cluster"
-            },
             resolve: {
-                top: ['community_service', '$stateParams',
-                    function (community_service, $stateParams) {
-                        return community_service.getTop($stateParams.location_path, $stateParams.community_path);
+                top: ['community_service', '$stateParams', 'community',
+                    function (community_service, $stateParams, community) {
+                        var cluster;
+                        cluster = community.type == "cluster" ? community : null;
+                        console.log(cluster);
+                        return community_service.getTop($stateParams.location_path, $stateParams.community_path, cluster);
                     }]
             },
             views: {
+                'header@root': {},
                 'people': {
                     templateUrl: 'components/common/dashboard/dashboard.html',
                     controller: "DashboardController as dashboard"

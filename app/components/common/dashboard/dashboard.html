@@ -1,3 +1,54 @@
+<div small-header class="normalheader" ng-class="{'header-embedded' : nav.embedded}" style="padding: 25px 0;">
+    <div class="row">
+        <div class="col-md-6">
+            <div class="hpanel">
+                <div class="panel-body">
+                    <div id="hbreadcrumb" class="pull-right m-t-lg">
+                        <ol class="hbreadcrumb">
+                            <li ng-if="nav.location_path && (nav.location.key !== nav.community.key)"><a ui-sref="{{nav.location.type + '.dashboard({community: nav.location})'}}">
+                                <span ng-if="nav.location.profile.name">&nbsp;&nbsp;{{ nav.location.profile.name }}&nbsp;&nbsp;/</span></a>
+                            </li>
+                            <li ui-sref="{{nav.community.type + '.dashboard({community_path: nav.community.key, community: nav.community})'}}"><span ng-if="nav.community.community_profiles[nav.location_path]">&nbsp;&nbsp;{{ nav.community.community_profiles[nav.location_path].name }}</span>
+                                <span ng-if="!nav.community.community_profiles[nav.location_path]">&nbsp;&nbsp;{{ nav.community.profile.name }}</span>
+                                &nbsp;&nbsp;/
+                            </li>
+                            <li ng-repeat="state in $state.$current.path" ng-class="{active: $last}">
+                                <a ng-if="state.params.pageTitle.config.value && !(!!state.abstract) && !$last" href="#{{state.url.format($stateParams)}}">&nbsp;&nbsp;{{state.params.pageTitle.config.value}}&nbsp;&nbsp;/</a>
+                                <span ng-if="$last">&nbsp;&nbsp;{{ nav.community.type[0].toUpperCase() + nav.community.type.slice(1) }}</span>
+                            </li>
+                        </ol>
+                    </div>
+                    <h2 class="font-light m-b-xs">
+                        <span ng-if="nav.community.community_profiles[nav.location_path]">{{ nav.community.community_profiles[nav.location_path].name }}</span>
+                        <span ng-if="!nav.community.community_profiles[nav.location_path]">{{ nav.community.profile.name }}</span>
+                    </h2>
+                    <small>{{ nav.community.profile.description }}</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="hpanel">
+                <div class="panel-body" style="padding: 10px 5px;">
+                    <div class="col-xs-8">
+                        <div class="pull-left">
+                            <h2 class="font-light m-b-xs">Leaders</h2>
+                            <div ng-repeat="head in dashboard.top.leaders | limitTo: 5" style="float:left;">
+                                <a class="text-info" ui-sref="user.dashboard({profile: head.value, location_path: head.path.key, community: {}})"><small><span ng-if="$last && $index !== 0">&nbsp;and</span>&nbsp;{{head.value.profile.name}}<span ng-if="!$last">,</span></small></a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xs-4">
+                        <div class="stats-icon pull-right">
+                            <i class="pe-7s-flag fa-3x"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
 <div>
 
     <div class="row">

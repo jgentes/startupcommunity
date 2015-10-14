@@ -79,8 +79,12 @@ angular
               getKey: function(key) {
                   return $http.get('/api/2.0/key/' + key);
               },
-              getTop: function(location_key, community_key) {
-                  return $http.get('/api/2.1/community/' + location_key + '/' + community_key + '/top');
+              getTop: function(location_key, community_key, cluster) {
+                  return $http.get('/api/2.1/community/' + location_key + '/' + (community_key ? community_key + '/top' : 'top'), {
+                      params: {
+                          cluster: cluster
+                      }
+                  });
               },
               setSettings: function(embed, location_key, community_key) {
                   return $http.put('/api/2.0/settings', {

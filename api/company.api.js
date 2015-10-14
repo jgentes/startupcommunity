@@ -316,7 +316,7 @@ var companyPull = function (company, role, location_key, user, callback) {
             }
         })
         .fail(function(err){
-            console.log("SEARCH FAIL:" + err);
+            console.log("WARNING: SEARCH FAIL:" + err);
             res.status(500).send({ message: 'Something went wrong: ' + err});
         });
 

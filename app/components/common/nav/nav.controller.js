@@ -62,11 +62,11 @@ function NavigationController($auth, $state, $window, $location, $stateParams, $
     // to avoid duplicate location_path / community_path when navigating to people & companies
     this.nav_url = this.location_path == this.community.key ?
         "({location_path: nav.location_path, community: nav.community, query: '*'})" :
-        "({location_path: nav.location_path, community_path: nav.community.key, community: nav.community, query: '*'})";
+        "({location_path: nav.location_path, community: nav.community, query: '*', community_path: nav.community.key})";
 
     // to set correct root path when navigating from user or company page
     this.nav_jump = this.community.type == "user" || this.community.type == "company" ?
-        "({location_path: nav.location.key, community_path: item.key, community: item, query: '*'})" :
+        "({community_path: item.key, community: item, query: '*', location_path: nav.location.key})" :
         "({community_path: item.key, community: item, query: '*'})";
 
 
@@ -153,7 +153,7 @@ function NavigationController($auth, $state, $window, $location, $stateParams, $
         });
     };
 
-    // ROUTING OF ROOT PATHS
+    // *** ROUTING OF ROOT PATHS ***
 
     this.path = $location.path().replace(/\/$/, ""); //used for routing and used in view
     if (this.path.split('/').length < 3) {

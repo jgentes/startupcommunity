@@ -336,7 +336,7 @@ function handleContactUser(req, res) {
             }
         })
         .fail(function(err){
-            console.log("SEARCH FAIL:" + err);
+            console.log("WARNING: SEARCH FAIL:" + err);
             res.status(202).send({ message: 'Something went wrong: ' + err});
         });
 

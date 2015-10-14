@@ -1,5 +1,7 @@
 var config = require('../config.json')[process.env.NODE_ENV || 'development'],
     db = require('orchestrate')(config.db.key);
+
+//var util = require('util'); //for util.inspect on request
 //request = require('request');
 
 //require('request-debug')(request); // Very useful for debugging oauth and api req/res
@@ -114,8 +116,9 @@ function handleGetCommunity(req, res) {
                     for (comm in result.body.results) {
                         if (result.body.results[comm].path.key == community) {
                             found = true;
-                            if (result.body.results[comm].value.type == "user" || result.body.results[comm].value.type == "company" || result.body.results[comm].value.type == "network") { // user contains communities within record
-                                console.log('Pulling community for ' + result.body.results[comm].value.profile.name);
+                            console.log('Pulling community for ' + result.body.results[comm].value.profile.name);
+                            if (result.body.results[comm].value.type == "user" || result.body.results[comm].value.type == "company" || result.body.results[comm].value.type == "network") {
+                                // pull communities within record
                                 var comm_items = result.body.results[comm].value.communities;
                                 var search = community + " OR ";
                                 for (i in comm_items) {
@@ -134,6 +137,30 @@ function handleGetCommunity(req, res) {
                                         finalize(result.body.results);
                                     })
 
+                            } else if (result.body.results[comm].value.type == "cluster") {
+                                // pull industries within cluster
+                                var industry_items;
+                                if (result.body.results[comm].value.community_profiles[community]) {
+                                    industry_items = result.body.results[comm].value.community_profiles[community].industries;
+                                } else industry_items = result.body.results[comm].value.profile.industries;
+
+                                var search;
+                                for (i in industry_items) {
+                                    if (i > 0) {
+                                        search += ' OR ';
+                                    }
+                                    search += '"' + industry_items[i] + '"';
+                                }
+
+                                db.newSearchBuilder()
+                                    .collection(config.db.communities)
+                                    .limit(100)
+                                    .offset(0)
+                                    .query('value.profile.industries: (' + search + ')')
+                                    .then(function (result) {
+                                        finalize(result.body.results);
+                                    })
+
                             } else finalize(result.body.results);
                         }
                     }
@@ -147,7 +174,7 @@ function handleGetCommunity(req, res) {
                 }
             })
             .fail(function (err) {
-                console.log("SEARCH FAIL:");
+                console.log("WARNING: SEARCH FAIL:");
                 console.warn(err);
                 res.status(202).send({message: 'Something went wrong: ' + err});
             });
@@ -159,28 +186,52 @@ function handleGetCommunity(req, res) {
 }
 
 function handleGetTop(req, res) {
-    console.log(req.params);
+    //console.log(util.inspect(req)); // used for logging circular request
     var community_key = req.params.community_key,
         location_key = req.params.location_key,
+        cluster = {},
         top_results = {
             people: {},
             companies: {},
             skills: {}
-        };
+        },
+        cluster_search = "";
 
-    if (community_key == 'undefined') community_key = location_key;
+    if (req.query.cluster) {
 
-    console.log('Pulling Top Results: ' + location_key + ' / ' + community_key);
+        cluster = JSON.parse(req.query.cluster);
+
+        if (location_key == cluster.key) {
+            search = '';
+        }
+
+        if (location_key !== community_key) {
+            community_key = '*';
+        }
+
+        if (cluster.community_profiles && cluster.community_profiles[location_key]) {
+            var cluster_keys = cluster.community_profiles[location_key].industries;
+        } else cluster_keys = cluster.profile.industries;
+
+        for (i in cluster_keys) {
+            if (i > 0) {
+                cluster_search += ' OR ';
+            }
+            cluster_search += '"' + cluster_keys[i] + '"';
+        }
+    } else if (!community_key || community_key == 'undefined') community_key = location_key;
+
+    var search = 'value.communities:' + location_key + ' AND value.communities:' + community_key + '';
+
+    console.log('Pulling Top Results: ' + location_key + ' / ' + community_key + ' Cluster keys: ', cluster_keys);
 
     // get users, networks, locations, and clusters
     db.newSearchBuilder()
         .collection(config.db.communities)
         .aggregate('top_values', 'value.communities', 50)
         .sort('path.reftime', 'desc')
-        .query('value.communities:"' + location_key + '" AND value.communities:"' + community_key + '" AND value.type: "user"')
+        .query(search + ' AND value.type: "user"')
         .then(function (com_result) {
-
-            delete com_result.body.aggregates[0].entries.shift(); // the first item is always? the location
 
             top_results.people = {
                 total: com_result.body.total_count,
@@ -188,12 +239,17 @@ function handleGetTop(req, res) {
                 results: com_result.body.results
             };
 
+            top_results.people.top.shift(); // the first item is always? the location
+
             // get companies and industries
+
+            var industrysearch = cluster_search ? 'value.profile.industries:(' + cluster_search + ') AND ' + search : search;
+
             db.newSearchBuilder()
                 .collection(config.db.communities)
                 .aggregate('top_values', 'value.profile.industries', 10)
                 .sort('path.reftime', 'desc')
-                .query('value.communities:"' + location_key + '" AND value.communities:"' + community_key + '" AND value.type: "company"')
+                .query(industrysearch + ' AND value.type: "company"')
                 .then(function (co_result) {
 
                     top_results.companies = {
@@ -202,11 +258,14 @@ function handleGetTop(req, res) {
                         results: co_result.body.results
                     };
 
-                    // get users and skills
+                    // get skills
+
+                    var skillsearch = cluster_search ? 'value.profile.skills:(' + cluster_search + ') AND ' + search : search;
+
                     db.newSearchBuilder()
                         .collection(config.db.communities)
                         .aggregate('top_values', 'value.profile.skills', 10)
-                        .query('value.communities:"' + location_key + '" AND value.communities:"' + community_key + '" AND value.type: "user"')
+                        .query(skillsearch + ' AND value.type: "user"')
                         .then(function (sk_result) {
 
                             top_results.skills = {
@@ -217,7 +276,7 @@ function handleGetTop(req, res) {
                             // get leaders
                             db.newSearchBuilder()
                                 .collection(config.db.communities)
-                                .query('value.roles.leader.' + community_key + ':"' + location_key + '" AND value.type: "user"')
+                                .query('value.roles.leader.' + community_key + ':' + location_key + ' AND value.type: "user"')
                                 .then(function (lead_result) {
 
                                     top_results.leaders = lead_result.body.results;
@@ -225,27 +284,27 @@ function handleGetTop(req, res) {
                                     res.status(200).send(top_results);
                                 })
                                 .fail(function (err) {
-                                    console.log("SEARCH FAIL:");
+                                    console.log("WARNING: SEARCH FAIL:");
                                     console.warn(err);
                                     res.status(202).send({message: 'Something went wrong: ' + err});
                                 });
                         })
                         .fail(function (err) {
-                            console.log("SEARCH FAIL:");
+                            console.log("WARNING: SEARCH FAIL:");
                             console.warn(err);
                             res.status(202).send({message: 'Something went wrong: ' + err});
                         });
 
                 })
                 .fail(function (err) {
-                    console.log("SEARCH FAIL:");
+                    console.log("WARNING: SEARCH FAIL:");
                     console.warn(err);
                     res.status(202).send({message: 'Something went wrong: ' + err});
                 });
 
         })
         .fail(function (err) {
-            console.log("SEARCH FAIL:");
+            console.log("WARNING: SEARCH FAIL:");
             console.warn(err);
             res.status(202).send({message: 'Something went wrong: ' + err});
         });
@@ -319,7 +378,7 @@ function handleGetKey(req, res) {
                 if (err.statusCode == 404) {
                     res.status(404).end();
                 } else {
-                    console.log("SEARCH FAIL:");
+                    console.log("WARNING: SEARCH FAIL:");
                     console.warn(err);
                     res.status(202).send({message: 'Something went wrong: ' + err});
                 }
