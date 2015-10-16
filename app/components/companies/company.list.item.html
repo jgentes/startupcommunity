@@ -8,7 +8,7 @@
         <a ng-show="{{(item.value.profile.summary).length > 0}}" title="Show Summary" ng-click="showSummary = !showSummary" class="user-summary">&nbsp;&nbsp;<i class="fa fa-chevron-down fa-fw"></i>
         </a>
         <li ng-repeat="val in item.value.communities" class="role-right">
-            <a href="{{'/' + val}}" ng-class="{'btn-danger' : nav.communities[val].type == 'company', 'btn-info' : nav.communities[val].type == 'network', 'btn-primary' : nav.communities[val].type == 'cluster', 'btn-success' : nav.communities[val].type == 'location'}" class="btn btn-xs btn-outline hidden"><i class="fa {{nav.communities[val].profile.icon}}"></i> {{nav.communities[val].profile.name}}</a>
+            <a ng-if="nav.communities[val].type == 'network'" href="{{'/' + val}}" class="btn btn-xs btn-outline btn-success"><i class="fa {{nav.communities[val].profile.icon}}"></i> {{nav.communities[val].profile.name}}</a>
         </li>
         <br>
         <div class="dash-row">
