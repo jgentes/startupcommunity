@@ -10,7 +10,5 @@ function DashboardController($stateParams, top) {
     console.log(top);
 
     this.location_path = $stateParams.location_path;
-
-    $('.splash').css('display', 'none');
 }
 

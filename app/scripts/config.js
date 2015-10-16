@@ -9,17 +9,6 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
 
     $stateProvider
 
-        .state('invite', {
-            templateUrl: 'views/invite_user.html',
-            url: "/users/invite",
-            resolve: {
-                authenticated: ['$auth', function($auth) {
-                    if (!$auth.isAuthenticated()) {
-                        $state.go('login');
-                    }
-                }]
-            }
-        })
         .state('login', {
             url: "/login",
             controller: "LoginController as auth",
@@ -382,12 +371,18 @@ angular
     .run(function(editableOptions) {
         editableOptions.theme = 'bs3';
     })
-    .run(function($rootScope, $state) {
+    .run(function($rootScope, $state, $timeout) {
         $rootScope.$state = $state; // allows use if $state within views
         window.$state = $state; // allows use of $state within console
         $rootScope.$on("$stateChangeError", console.log.bind(console)); // for debugging of ui-router
         $rootScope.$on('$stateChangeSuccess',function(){
             $("html, body").animate({ scrollTop: 0 }, 200);
+        });
+        $rootScope.$on('$viewContentLoaded', function(){
+            // remove the splash screen
+            $timeout( function() {
+                $('.splash').css('display', 'none');
+            }, 500);
         });
 /*
         $rootScope.$on('$stateChangeStart',

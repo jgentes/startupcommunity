@@ -155,6 +155,26 @@ function NavigationController($auth, $state, $window, $location, $stateParams, $
         });
     };
 
+    // ADD CLUSTER
+
+    this.addCluster = function() {
+
+        var modalInstance = $modal.open({
+            templateUrl: 'components/common/nav/nav.community_settings.html',
+            controller: addClusterController,
+            controllerAs: 'settings',
+            windowClass: "hmodal-success",
+            resolve: {
+                community: function() {
+                    return self.community;
+                },
+                location_key: function() {
+                    return $stateParams.location_path;
+                }
+            }
+        });
+    };
+
     // *** ROUTING OF ROOT PATHS ***
 
     this.path = $location.path().replace(/\/$/, ""); //used for routing and used in view
@@ -225,7 +245,6 @@ function NavigationController($auth, $state, $window, $location, $stateParams, $
     }
 
     //this.embedded = true; // for testing
-    $('.splash').css('display', 'none');
 
 }
 

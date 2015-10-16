@@ -166,8 +166,6 @@ function CompanyController($stateParams, company_service, result_service, $sce, 
             });
     };
 
-    $('.splash').css('display', 'none');
-
 }
 
 function CompanyProfileController($stateParams, $location, $mixpanel, user, company_service, community, communities) {
@@ -217,9 +215,6 @@ function CompanyProfileController($stateParams, $location, $mixpanel, user, comp
             this.alert = { type: 'success', msg: "Great news. Your profile has been updated."};
         });
     };
-
-
-    $('.splash').css('display', 'none');
 
 }
 
