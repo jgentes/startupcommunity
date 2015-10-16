@@ -101,12 +101,25 @@ angular
                       });
                   };
 
+                  // change values back from 'cache'
+                  var clearCache = function(top_results) {
+                      for (u in top_results.people.entries) {
+                          top_results.people.entries[u].value.type = 'user';
+                      }
+
+                      for (u in top_results.companies.entries) {
+                          top_results.companies.entries[u].value.type = 'company';
+                      }
+
+                      return top_results;
+                  };
+
                   if (community.community_profiles && community.community_profiles[location_key] && community.community_profiles[location_key].top) {
                       top();
-                      return { data: community.community_profiles[location_key].top };
+                      return { data: clearCache(community.community_profiles[location_key].top) };
                   } else if (community.profile && community.profile.top) {
                       top();
-                      return { data: community.profile.top };
+                      return { data: clearCache(community.profile.top) };
                   } else {
                       return $http.get('/api/2.1/community/' + location_key + '/' + (community_key ? community_key + '/top' : 'top'), {
                           params: {

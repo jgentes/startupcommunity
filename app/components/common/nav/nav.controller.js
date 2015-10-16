@@ -59,6 +59,8 @@ function NavigationController($auth, $state, $window, $location, $stateParams, $
         }
     }
 
+    this.communities = communities.data; // used in company list views
+
     // to avoid duplicate location_path / community_path when navigating to people & companies
     this.nav_url = this.location_path == this.community.key ?
         "({location_path: nav.location_path, community: nav.community, query: '*'})" :

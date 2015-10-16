@@ -319,6 +319,16 @@ function handleGetTop(req, res) {
 
                                     db.put(config.db.communities, target, response.body)
                                         .then(function (finalres) {
+
+                                            // change values back from 'cache'
+                                            for (u in top_results.people.entries) {
+                                                top_results.people.entries[u].value.type = 'user';
+                                            }
+
+                                            for (u in top_results.companies.entries) {
+                                                top_results.companies.entries[u].value.type = 'company';
+                                            }
+
                                             res.status(200).send(top_results);
                                         })
                                         .fail(function (err) {
