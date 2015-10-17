@@ -160,9 +160,9 @@ function NavigationController($auth, $state, $window, $location, $stateParams, $
     this.addCluster = function() {
 
         var modalInstance = $modal.open({
-            templateUrl: 'components/common/nav/nav.community_settings.html',
+            templateUrl: 'components/common/nav/nav.add_cluster.html',
             controller: addClusterController,
-            controllerAs: 'settings',
+            controllerAs: 'add',
             windowClass: "hmodal-success",
             resolve: {
                 community: function() {
@@ -258,7 +258,7 @@ function ChangeLocationController($modalInstance){
     };
 }
 
-function CommunitySettingsController($modalInstance, $window, $state, sweet, community_service, community, location_key){
+function CommunitySettingsController($modalInstance, $state, sweet, community_service, community, location_key){
 
     this.community = community;
     this.location_key = location_key;
@@ -303,6 +303,90 @@ function CommunitySettingsController($modalInstance, $window, $state, sweet, com
                 } else {
                     sweet.show({
                         title: "Settings Saved!",
+                        type: "success"
+                    });
+
+                    $state.reload();
+                }
+            });
+    };
+
+    this.cancel = function () {
+        $modalInstance.dismiss('cancel');
+        $state.reload();
+    };
+}
+
+function addClusterController($modalInstance, $state, sweet, community_service, community, location_key){
+
+    this.community = community;
+    this.location_key = location_key;
+    var self = this;
+
+    this.parents = [ 'Agriculture', 'Art', 'Construction', 'Consumer Goods', 'Corporate', 'Education', 'Finance', 'Government', 'Healthcare', 'Legal', 'Manufacturing', 'Medical', 'Non-Profit', 'Recreation', 'Services', 'Tech', 'Transportation' ];
+
+    this.industryList = community_service.industries();
+
+    this.createCluster = function() {
+        if (self.form.$valid) {
+
+            var comms = self.location_key == self.community.key ? [self.location_key] : [self.location_key, self.community.key];
+
+            var cluster = {
+                type: "cluster",
+                parents: [self.parent],
+                profile: {
+                    name: self.name,
+                    industries: self.industries
+                },
+                path: self.url,
+                communities: comms
+            };
+
+            community_service.addCommunity(cluster, self.location_key, self.community.key)
+                .then(function(response) {
+
+                    if (response.status !== 201) {
+                        sweet.show({
+                            title: "Sorry, something went wrong.",
+                            text: "Here's what we know: " + response.data.message,
+                            type: "error"
+                        });
+
+                    } else {
+                        sweet.show({
+                            title: "Cluster created!",
+                            type: "success"
+                        });
+
+                        $state.reload();
+                    }
+                });
+
+            //
+
+        } else {
+            self.submitted = true;
+        }
+    };
+
+    this.save = function () {
+
+        $modalInstance.close();
+
+        community_service.setSettings(self.embed, self.location_key, self.community.key)
+            .then(function(response) {
+
+                if (response.status !== 201) {
+                    sweet.show({
+                        title: "Sorry, something went wrong.",
+                        text: "Here's what we know: " + response.data.message,
+                        type: "error"
+                    });
+
+                } else {
+                    sweet.show({
+                        title: "Cluster created!",
                         type: "success"
                     });
 

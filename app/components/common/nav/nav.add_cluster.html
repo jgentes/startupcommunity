@@ -1,0 +1,51 @@
+<div class="inmodal">
+    <div class="color-line"></div>
+    <div class="modal-header">
+        <h4 class="modal-title">Add a Cluster in {{add.community.profile.name}}</h4>
+        <p class="font-bold">A cluster is an entrepreneurial ecosystem in support of a specific industry. Clusters are made up of mentors, investors, companies, accelerators, coworking spaces, and events that connect people within the community and foster the creation of new business.</p>
+    </div>
+    <div class="modal-body">
+        <form name="add.form">
+            <div class="hpanel">
+                <div class="panel-heading" style="font-size: 20px;">1. Select a parent industry for this cluster</div>
+                <select class="form-control m-b" ng-model="add.parent" style="margin-bottom: 5px;" required>
+                    <option ng-repeat="parent in add.parents">{{ parent }}</option>
+                </select>
+                <em>The parent is used to aggregate data at the city and state level and isn't visible in the app.</em>
+                <div class="m-t-xs" ng-show="!add.parent && add.submitted">
+                    <span class="text-danger">&nbsp;&nbsp;<i class="fa fa-exclamation-triangle"></i> A parent is required.</span>
+                </div>
+                <br><br>
+                <div class="panel-heading" style="font-size: 20px;">2. Give the cluster a name</div>
+                <input type="text" class="form-control input-lg" placeholder="Tech, Bio-Science, Craft Brew, etc.." ng-model="add.name" required>
+                <div class="m-t-xs" ng-show="!add.name && add.submitted">
+                    <span class="text-danger">&nbsp;&nbsp;<i class="fa fa-exclamation-triangle"></i> A name is required.</span>
+                </div>
+                <br>
+                <div class="panel-heading" style="font-size: 20px;">3. Select the industries that make up this cluster</div>
+                <div class="panel-body industry_select" style="padding:5px; margin-bottom:5px;">
+                    <ui-select multiple ng-model="add.industries" style="border:none;" required>
+                        <ui-select-match placeholder="Search by industry..">{{$item}}</ui-select-match>
+                        <ui-select-choices repeat="industry in add.industryList | filter:$select.search | limitTo: 25">
+                            {{ industry }}
+                        </ui-select-choices>
+                    </ui-select>
+                </div>
+                <em>Your cluster will consist of companies that have associated themselves with these industries. You can add or remove industries later, so don't get too hung up here.</em>
+                <div class="m-t-xs" ng-show="!add.industries && add.submitted">
+                    <span class="text-danger">&nbsp;&nbsp;<i class="fa fa-exclamation-triangle"></i> At least one industry is required.</span>
+                </div>
+                <br><br>
+                <div class="panel-heading" style="font-size: 20px;">Choose a url path name (no spaces):</div>
+                <input type="text" class="form-control input-lg text-lowercase" placeholder="{{add.name}}" ng-model="add.url" pattern="^[a-zA-Z0-9]+$" style="margin-bottom: 5px;">
+                <em>Your url will be: https://startupcommunity.org/<strong><span class="text-lowercase">{{add.url || add.name}}</span></strong></em>
+                <br>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-default" ng-click="add.cancel()">Cancel</button>
+        <button type="button" class="btn btn-primary" ng-click="add.createCluster()">Create {{add.name}} Cluster</button>
+    </div>
+</div>
+

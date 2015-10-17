@@ -100,6 +100,7 @@ app.get('/api/2.1/companies/url', auth.ensureAuthenticated, companyApis.getLogoU
 app.get('/api/2.1/angel/startups/search', angellistApis.searchStartups);
 app.get('/api/2.1/community/:location_key/top', communityApis.getTop);
 app.get('/api/2.1/community/:location_key/:community_key/top', communityApis.getTop);
+app.post('/api/2.1/community/add', auth.ensureAuthenticated, communityApis.addCommunity);
 
 // Auth
 app.post('/auth/linkedin', auth.linkedin);

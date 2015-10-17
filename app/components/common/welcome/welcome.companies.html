@@ -32,7 +32,7 @@
                 <div class="panel-body industry_select" style="padding:1px; margin-top: 6px; margin-bottom: 6px;">
                     <ui-select multiple ng-model="welcome.selectedCompany.industries" tagging="true" tagging-label="(new)" ng-disabled="disabled" limit="6" alert_title="Sorry, only 6 items here." alert_text="Focus on industries with a network in your community." alert_type="warning" style="border:none;">
                         <ui-select-match placeholder="Search for industries..">{{$item}}</ui-select-match>
-                        <ui-select-choices repeat="industry in welcome.skills | filter:$select.search | limitTo: 25">
+                        <ui-select-choices repeat="industry in welcome.industries | filter:$select.search | limitTo: 25">
                             {{industry}}
                         </ui-select-choices>
                     </ui-select>

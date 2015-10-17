@@ -9,6 +9,7 @@ var config = require('../config.json')[process.env.NODE_ENV || 'development'],
 var CommunityApi = function () {
     this.getCommunity = handleGetCommunity;
     this.setCommunity = handleSetCommunity;
+    this.addCommunity = handleAddCommunity;
     this.getKey = handleGetKey;
     this.getTop = handleGetTop;
 };
@@ -371,6 +372,56 @@ function handleSetCommunity(req, res) {
     console.log('Updating settings for ' + settings.location_key + ' / ' + settings.community_key);
     console.log(req.user.value.roles.leader);
 
+    // validate user has leader role within the location/community
+    if (req.user.value.roles.leader[settings.community_key] && req.user.value.roles.leader[settings.community_key].indexOf(settings.location_key) > -1) {
+        // update the community
+        db.get(config.db.communities, settings.community_key)
+            .then(function (response) {
+                if (response.body.type == 'cluster') { // use community_profiles
+                    if (response.body.community_profiles === undefined) { // create community_profiles
+                        response.body['community_profiles'] = {};
+                    }
+                    if (response.body.community_profiles[settings.location_key] === undefined) { // create this location
+                        response.body.community_profiles[settings.location_key] = {
+                            "name": response.body.profile.name,
+                            "icon": response.body.profile.icon,
+                            "logo": response.body.profile.logo,
+                            "embed": settings.embed
+                        };
+                    } else {
+                        response.body.community_profiles[settings.location_key]["embed"] = settings.embed;
+                    }
+                } else response.body.profile["embed"] = settings.embed;
+
+                db.put(config.db.communities, settings.community_key, response.body)
+                    .then(function (finalres) {
+                        res.status(201).send({message: 'Community settings updated.'});
+                    })
+                    .fail(function (err) {
+                        console.warn('WARNING:  Problem with put: ' + err);
+                        res.status(202).send({message: 'Something went wrong: ' + err});
+                    });
+
+            })
+            .fail(function (err) {
+                console.warn('WARNING:  Problem with get: ' + err);
+                res.status(202).send({message: 'Something went wrong: ' + err});
+            });
+
+    } else {
+        console.warn("User is not a leader in location: " + settings.location_key + " and community: " + settings.community_key + "!");
+        res.status(202).send({message: 'Sorry, you must be a Leader in this community to change these settings.'});
+    }
+}
+
+function handleAddCommunity(req, res) {
+
+    // always use ensureAuth before this (to acquire req.user)
+    var settings = req.body.params;
+
+    console.log('Adding community: ' + settings.community.profile.name + ' in ' + settings.location_key + ' / ' + settings.community_key);
+    console.log(settings);
+//todo complete the rest
     // validate user has leader role within the location/community
     if (req.user.value.roles.leader[settings.community_key] && req.user.value.roles.leader[settings.community_key].indexOf(settings.location_key) > -1) {
         // update the community
