@@ -334,9 +334,9 @@ function addClusterController($modalInstance, $state, sweet, community_service, 
 
             var cluster = {
                 type: "cluster",
-                parents: [self.parent],
                 profile: {
                     name: self.name,
+                    parents: [self.parent],
                     industries: self.industries
                 },
                 path: self.url,

@@ -8,6 +8,7 @@ function WelcomeController($auth, $q, $http, $mixpanel, $stateParams, $scope, $s
     this.auth = false;
     this.working = false; // used for waiting indicator
     this.updateCompany= false; // used if company already exists
+    var community_path = $stateParams.community_path ? $stateParams.community_path : $stateParams.location_path;
     this.industries = community_service.industries();
 
     this.authenticate = function() {
@@ -198,7 +199,7 @@ function WelcomeController($auth, $q, $http, $mixpanel, $stateParams, $scope, $s
         this.working = true;
         var role = self.selectedRole == 'none' ? undefined : self.selectedRole;
 
-        company_service.addCompany(self.selectedCompany, role, location.key, community.key)
+        company_service.addCompany(self.selectedCompany, role, location.key, community_path)
             .then(function(response) {
 
                 self.working = false;
@@ -231,13 +232,13 @@ function WelcomeController($auth, $q, $http, $mixpanel, $stateParams, $scope, $s
                 for (role in self.roles) {
                     if (!self.user.roles[role]) {
                         self.user.roles[role] = {};
-                        self.user.roles[role][community.key] = [$stateParams.location_path];
+                        self.user.roles[role][community_path] = [$stateParams.location_path];
                         self.user.roles[role][$stateParams.location_path] = [$stateParams.location_path];
-                    } else if (!self.user.roles[role][community.key]) {
-                        self.user.roles[role][community.key] = [$stateParams.location_path];
+                    } else if (!self.user.roles[role][community_path]) {
+                        self.user.roles[role][community_path] = [$stateParams.location_path];
                         self.user.roles[role][$stateParams.location_path] = [$stateParams.location_path];
-                    } else if (self.user.roles[role][community.key].indexOf($stateParams.location_path) < 0) {
-                        self.user.roles[role][community.key].push($stateParams.location_path);
+                    } else if (self.user.roles[role][community_path].indexOf($stateParams.location_path) < 0) {
+                        self.user.roles[role][community_path].push($stateParams.location_path);
                         self.user.roles[role][$stateParams.location_path] = [$stateParams.location_path];
                     } // else it's already there
 
@@ -245,7 +246,7 @@ function WelcomeController($auth, $q, $http, $mixpanel, $stateParams, $scope, $s
                 // allow user to remove roles
                 for (dRole in ['founder', 'investor', 'team', 'mentor', 'provider']) {
                     if (self.roles[dRole] && self.roles[dRole] == false) {
-                        if (self.user.roles[dRole] && self.user.roles[dRole][community.key]) delete self.user.roles.mentor[community.key];
+                        if (self.user.roles[dRole] && self.user.roles[dRole][community_path]) delete self.user.roles.mentor[community_path];
                         if (self.user.roles[dRole] && self.user.roles[dRole][$stateParams.location_path]) delete self.user.roles.mentor[$stateParams.location_path];
                     }
                 }

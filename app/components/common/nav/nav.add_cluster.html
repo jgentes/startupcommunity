@@ -38,7 +38,7 @@
                 <br><br>
                 <div class="panel-heading" style="font-size: 20px;">Choose a url path name (no spaces):</div>
                 <input type="text" class="form-control input-lg text-lowercase" placeholder="{{add.name}}" ng-model="add.url" pattern="^[a-zA-Z0-9]+$" style="margin-bottom: 5px;">
-                <em>Your url will be: https://startupcommunity.org/<strong><span class="text-lowercase">{{add.url || add.name}}</span></strong></em>
+                <em>Your url will be: https://startupcommunity.org/{{add.location_key}}/<strong><span class="text-lowercase">{{add.url || add.name}}</span></strong></em>
                 <br>
             </div>
         </form>

@@ -420,48 +420,62 @@ function handleAddCommunity(req, res) {
     var settings = req.body.params;
 
     console.log('Adding community: ' + settings.community.profile.name + ' in ' + settings.location_key + ' / ' + settings.community_key);
-    console.log(settings);
-//todo complete the rest
-    // validate user has leader role within the location/community
-    if (req.user.value.roles.leader[settings.community_key] && req.user.value.roles.leader[settings.community_key].indexOf(settings.location_key) > -1) {
-        // update the community
-        db.get(config.db.communities, settings.community_key)
-            .then(function (response) {
-                if (response.body.type == 'cluster') { // use community_profiles
-                    if (response.body.community_profiles === undefined) { // create community_profiles
-                        response.body['community_profiles'] = {};
-                    }
-                    if (response.body.community_profiles[settings.location_key] === undefined) { // create this location
-                        response.body.community_profiles[settings.location_key] = {
-                            "name": response.body.profile.name,
-                            "icon": response.body.profile.icon,
-                            "logo": response.body.profile.logo,
-                            "embed": settings.embed
-                        };
-                    } else {
-                        response.body.community_profiles[settings.location_key]["embed"] = settings.embed;
-                    }
-                } else response.body.profile["embed"] = settings.embed;
+    console.log(settings.community);
 
-                db.put(config.db.communities, settings.community_key, response.body)
-                    .then(function (finalres) {
-                        res.status(201).send({message: 'Community settings updated.'});
-                    })
-                    .fail(function (err) {
-                        console.warn('WARNING:  Problem with put: ' + err);
-                        res.status(202).send({message: 'Something went wrong: ' + err});
-                    });
+    // check to see if the path exists
+    db.get(config.db.communities, settings.community.path)
+        .then(function (response) {
+            if (response.statusCode == 404) {
+                // no existing path, go ahead and create
+                //todo finish here
 
-            })
-            .fail(function (err) {
-                console.warn('WARNING:  Problem with get: ' + err);
-                res.status(202).send({message: 'Something went wrong: ' + err});
-            });
+            } else if (response.body.type && response.body.type == "cluster") {
+                    // we're good to add the community profile here
+                if (response.body.community_profiles === undefined) {
+                    // create community_profiles
+                    response.body['community_profiles'] = {};
+                }
+                if (response.body.community_profiles[settings.location_key] === undefined) {
+                    // create this location
+                    response.body.community_profiles[settings.location_key] = {
+                        "name": settings.community.profile.name,
+                        "parents": settings.community.parents,
+                        "icon": response.body.profile.icon,
+                        "logo": response.body.profile.logo,
+                        "industries": settings.community.profile.industries
+                    };
 
-    } else {
-        console.warn("User is not a leader in location: " + settings.location_key + " and community: " + settings.community_key + "!");
-        res.status(202).send({message: 'Sorry, you must be a Leader in this community to change these settings.'});
-    }
+                    db.put(config.db.communities, settings.community_key, response.body)
+                        .then(function (finalres) {
+
+                            // todo update user record to ensure ability to delete
+
+                            res.status(201).send({message: 'Cluster created!'});
+
+
+                        })
+                        .fail(function (err) {
+                            console.warn('WARNING:  Problem with put: ' + err);
+                            res.status(202).send({message: 'Something went wrong: ' + err});
+                        });
+
+
+                } else {
+                    res.status(202).send({message: 'Sorry, that cluster already exists in this community. Please change the url path name or delete the other cluster first.'});
+                }
+
+            } else {
+                res.status(202).send({message: 'Sorry, that path is taken. Try changing the url path name.'});
+            }
+
+
+
+        })
+        .fail(function (err) {
+            console.warn('WARNING:  Problem with get: ' + err);
+            res.status(202).send({message: 'Something went wrong: ' + err});
+        });
+
 }
 
 function handleGetKey(req, res) {
