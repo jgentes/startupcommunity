@@ -84,6 +84,34 @@ var convert_state = function (name, to) {
     return returnthis;
 };
 
+
+var schema = {
+    cluster: function (community, community_key, location_key) {
+
+        var comms = location_key == community_key ? [location_key] : [location_key, community_key];
+
+        var community_profiles = {};
+        community_profiles[location_key] = {
+            "parents": community.parents,
+            "profile": {
+                "name": community.profile.name,
+                "headline": community.profile.headline,
+                "industries": community.profile.industries
+            }
+        };
+
+        return {
+            "type": "cluster",
+            "profile": {
+                "name": community.profile.name,
+                "headline": community.profile.headline
+            },
+            "communities": comms,
+            "community_profiles": community_profiles
+        };
+    }
+};
+
 function handleGetCommunity(req, res) {
     var community = req.params.community;
 
@@ -422,61 +450,134 @@ function handleAddCommunity(req, res) {
     console.log('Adding community: ' + settings.community.profile.name + ' in ' + settings.location_key + ' / ' + settings.community_key);
     console.log(settings.community);
 
-    // check to see if the path exists
-    db.get(config.db.communities, settings.community.path)
-        .then(function (response) {
-            if (response.statusCode == 404) {
-                // no existing path, go ahead and create
-                //todo finish here
+    // validate user is a member in the location/community
+    if (req.user.value.communities.indexOf(settings.location_key) > -1 && req.user.value.communities.indexOf(settings.community_key) > -1) {
 
-            } else if (response.body.type && response.body.type == "cluster") {
-                    // we're good to add the community profile here
-                if (response.body.community_profiles === undefined) {
-                    // create community_profiles
-                    response.body['community_profiles'] = {};
-                }
-                if (response.body.community_profiles[settings.location_key] === undefined) {
-                    // create this location
-                    response.body.community_profiles[settings.location_key] = {
-                        "name": settings.community.profile.name,
-                        "parents": settings.community.parents,
-                        "icon": response.body.profile.icon,
-                        "logo": response.body.profile.logo,
-                        "industries": settings.community.profile.industries
-                    };
+        // check to see if the cluster exists
+        db.get(config.db.communities, settings.profile.name.toLowerCase())
+            .then(function (response) {
+                if (response.statusCode == 404) {
+                    // no existing path, go ahead and create
 
-                    db.put(config.db.communities, settings.community_key, response.body)
+                    var profile = schema.cluster(settings.community, settings.community_key, settings.location_key);
+
+                    db.put(config.db.communities, settings.profile.name.toLowerCase(), profile)
                         .then(function (finalres) {
 
-                            // todo update user record to ensure ability to delete
-
-                            res.status(201).send({message: 'Cluster created!'});
-
-
+                            update_user(req.user.path.key, 'leader', settings.profile.name.toLowerCase(), settings.location_key)
+                                .then(function(response) {
+                                    console.log(response);
+                                    res.status(201).send({message: 'Cluster created!'});
+                                })
                         })
                         .fail(function (err) {
                             console.warn('WARNING:  Problem with put: ' + err);
                             res.status(202).send({message: 'Something went wrong: ' + err});
                         });
 
+                } else if (response.body.type && response.body.type == "cluster") {
+                        // cluster already exists, we're good to add the community profile here
+                    if (response.body.community_profiles === undefined) {
+                        // create community_profiles
+                        response.body['community_profiles'] = {};
+                    }
+                    if (response.body.community_profiles[settings.location_key] === undefined) {
+                        // create this location
+                        response.body.community_profiles[settings.location_key] = {
+                            "name": settings.community.profile.name,
+                            "parents": settings.community.parents,
+                            "industries": settings.community.profile.industries
+                        };
+
+                        db.put(config.db.communities, settings.profile.name.toLowerCase(), response.body)
+                            .then(function (finalres) {
+
+                                update_user(req.user.path.key, 'leader', settings.profile.name.toLowerCase(), settings.location_key)
+                                    .then(function(response) {
+                                        console.log(response);
+                                        res.status(201).send({message: 'Cluster created!'});
+                                    })
+                            })
+                            .fail(function (err) {
+                                console.warn('WARNING:  Problem with put: ' + err);
+                                res.status(202).send({message: 'Something went wrong: ' + err});
+                            });
+
+
+                    } else {
+                        res.status(202).send({message: 'Sorry, that cluster already exists in this community. Please change the url path name or delete the other cluster first.'});
+                    }
 
                 } else {
-                    res.status(202).send({message: 'Sorry, that cluster already exists in this community. Please change the url path name or delete the other cluster first.'});
+                    res.status(202).send({message: 'Sorry, that path is taken. Try changing the url path name.'});
                 }
 
-            } else {
-                res.status(202).send({message: 'Sorry, that path is taken. Try changing the url path name.'});
-            }
 
 
+            })
+            .fail(function (err) {
+                console.warn('WARNING:  Problem with get: ' + err);
+                res.status(202).send({message: 'Something went wrong: ' + err});
+            });
 
-        })
-        .fail(function (err) {
-            console.warn('WARNING:  Problem with get: ' + err);
-            res.status(202).send({message: 'Something went wrong: ' + err});
-        });
+    } else {
+        console.warn("User is not a member of community: " + settings.community_key + " and location: " + settings.location_key + "!");
+        res.status(400).send({ message: 'Sorry, you must be a member of this community to add a cluster or network to it.' });
+    }
 
 }
+
+var update_user = function(user_key, role, cluster_key, location_key) {
+
+    db.get(config.db.communities, user_key)
+        .then(function(response){
+
+            if (response.body.code !== "items_not_found") {
+                // add role
+                if (!response.body.roles) {
+                    response.body["roles"] = {};
+                }
+
+                if (!response.body.roles[role]) {
+                    response.body.roles[role] = {};
+                    response.body.roles[role][cluster_key] = [location_key];
+                } else if (!response.body.roles[role][cluster_key]) {
+                    response.body.roles[role][cluster_key] = [location_key];
+                } else if (response.body.roles[role][cluster_key].indexOf(location_key) < 0) {
+                    response.body.roles[role][cluster_key].push(location_key);
+                } // else the damn thing is already there
+
+                // add community
+                if (!response.body.communities) {
+                    response.body["communities"] = {};
+                }
+
+                if (response.body.communities.indexOf(cluster_key) < 0) {
+                    response.body.communities.push(cluster_key);
+                }
+
+                db.put(config.db.communities, user_key, response.body)
+                    .then(function(result) {
+                        console.log('User ' + user_key + ' updated with community role.');
+                        return result;
+                    })
+                    .fail(function(err){
+                        console.warn("WARNING: PUT FAIL:");
+                        console.warn(err);
+                        return err;
+                    });
+
+            } else {
+                console.warn('WARNING:  User not found.');
+                return;
+            }
+        })
+
+        .fail(function(err){
+            console.warn("WARNING: SEARCH FAIL:");
+            console.warn(err);
+        });
+};
 
 function handleGetKey(req, res) {
     console.log('Pulling key: ' + req.params.key);

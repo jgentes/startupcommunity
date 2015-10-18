@@ -330,17 +330,14 @@ function addClusterController($modalInstance, $state, sweet, community_service, 
     this.createCluster = function() {
         if (self.form.$valid) {
 
-            var comms = self.location_key == self.community.key ? [self.location_key] : [self.location_key, self.community.key];
-
             var cluster = {
                 type: "cluster",
                 profile: {
                     name: self.name,
+                    headline: self.headline,
                     parents: [self.parent],
                     industries: self.industries
-                },
-                path: self.url,
-                communities: comms
+                }
             };
 
             community_service.addCommunity(cluster, self.location_key, self.community.key)

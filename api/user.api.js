@@ -267,7 +267,7 @@ function handleContactUser(req, res) {
                                     console.log('Contact request sent!');
                                     res.status(200).end();
 
-                                    // send notification to requestor, *i think* the rest api doesn't require an id for the user
+                                    // send notification to requestor.. a user id is only required if I create the record with an associated id
                                     knowtifyClient.contacts.upsert({
                                             "event" : "contact_receipt",
                                             "contacts": [{
