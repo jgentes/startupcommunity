@@ -93,17 +93,17 @@ var schema = {
         var community_profiles = {};
         community_profiles[location_key] = {
             "parents": community.parents,
-            "profile": {
-                "name": community.profile.name,
-                "headline": community.profile.headline,
-                "industries": community.profile.industries
-            }
+            "name": community.profile.name,
+            "icon": "fa-circle-o",
+            "headline": community.profile.headline,
+            "industries": community.profile.industries
         };
 
         return {
             "type": "cluster",
             "profile": {
                 "name": community.profile.name,
+                "icon": "fa-circle-o",
                 "headline": community.profile.headline
             },
             "communities": comms,
@@ -454,28 +454,10 @@ function handleAddCommunity(req, res) {
     if (req.user.value.communities.indexOf(settings.location_key) > -1 && req.user.value.communities.indexOf(settings.community_key) > -1) {
 
         // check to see if the cluster exists
-        db.get(config.db.communities, settings.profile.name.toLowerCase())
+        db.get(config.db.communities, settings.community.profile.name.toLowerCase())
             .then(function (response) {
-                if (response.statusCode == 404) {
-                    // no existing path, go ahead and create
 
-                    var profile = schema.cluster(settings.community, settings.community_key, settings.location_key);
-
-                    db.put(config.db.communities, settings.profile.name.toLowerCase(), profile)
-                        .then(function (finalres) {
-
-                            update_user(req.user.path.key, 'leader', settings.profile.name.toLowerCase(), settings.location_key)
-                                .then(function(response) {
-                                    console.log(response);
-                                    res.status(201).send({message: 'Cluster created!'});
-                                })
-                        })
-                        .fail(function (err) {
-                            console.warn('WARNING:  Problem with put: ' + err);
-                            res.status(202).send({message: 'Something went wrong: ' + err});
-                        });
-
-                } else if (response.body.type && response.body.type == "cluster") {
+                if (response.body.type && response.body.type == "cluster") {
                         // cluster already exists, we're good to add the community profile here
                     if (response.body.community_profiles === undefined) {
                         // create community_profiles
@@ -489,10 +471,10 @@ function handleAddCommunity(req, res) {
                             "industries": settings.community.profile.industries
                         };
 
-                        db.put(config.db.communities, settings.profile.name.toLowerCase(), response.body)
+                        db.put(config.db.communities, settings.community.profile.name.toLowerCase(), response.body)
                             .then(function (finalres) {
 
-                                update_user(req.user.path.key, 'leader', settings.profile.name.toLowerCase(), settings.location_key)
+                                update_user(req.user.value.key, 'leader', settings.community.profile.name.toLowerCase(), settings.location_key)
                                     .then(function(response) {
                                         console.log(response);
                                         res.status(201).send({message: 'Cluster created!'});
@@ -516,8 +498,30 @@ function handleAddCommunity(req, res) {
 
             })
             .fail(function (err) {
-                console.warn('WARNING:  Problem with get: ' + err);
-                res.status(202).send({message: 'Something went wrong: ' + err});
+
+                if (err.body.code == 'items_not_found') {
+                    // no existing path, go ahead and create
+
+                    var profile = schema.cluster(settings.community, settings.community_key, settings.location_key);
+
+                    db.put(config.db.communities, settings.community.profile.name.toLowerCase(), profile)
+                        .then(function (finalres) {
+
+                            update_user(req.user.value.key, 'leader', settings.community.profile.name.toLowerCase(), settings.location_key)
+                                .then(function() {
+                                    res.status(201).send({message: 'Cluster created!'});
+                                })
+                        })
+                        .fail(function (err) {
+                            console.warn('WARNING:  Problem with put: ' + err);
+                            res.status(202).send({message: 'Something went wrong: ' + err});
+                        });
+
+                } else {
+                    console.warn('WARNING:  Problem with get: ', err.body);
+                    res.status(202).send({message: 'Something went wrong: ' + err.body});
+                }
+
             });
 
     } else {
@@ -529,7 +533,7 @@ function handleAddCommunity(req, res) {
 
 var update_user = function(user_key, role, cluster_key, location_key) {
 
-    db.get(config.db.communities, user_key)
+    return db.get(config.db.communities, user_key)
         .then(function(response){
 
             if (response.body.code !== "items_not_found") {
@@ -559,17 +563,14 @@ var update_user = function(user_key, role, cluster_key, location_key) {
                 db.put(config.db.communities, user_key, response.body)
                     .then(function(result) {
                         console.log('User ' + user_key + ' updated with community role.');
-                        return result;
                     })
                     .fail(function(err){
                         console.warn("WARNING: PUT FAIL:");
                         console.warn(err);
-                        return err;
                     });
 
             } else {
                 console.warn('WARNING:  User not found.');
-                return;
             }
         })
 

@@ -288,8 +288,6 @@ function CommunitySettingsController($modalInstance, $state, sweet, community_se
 
     this.save = function () {
 
-        $modalInstance.close();
-
         community_service.setSettings(self.embed, self.location_key, self.community.key)
             .then(function(response) {
 
@@ -302,11 +300,12 @@ function CommunitySettingsController($modalInstance, $state, sweet, community_se
 
                 } else {
                     sweet.show({
-                        title: "Settings Saved!",
+                        title: "Settings saved!",
                         type: "success"
+                    }, function(){
+                        $modalInstance.close();
+                        $state.reload();
                     });
-
-                    $state.reload();
                 }
             });
     };
@@ -321,11 +320,16 @@ function addClusterController($modalInstance, $state, sweet, community_service, 
 
     this.community = community;
     this.location_key = location_key;
+    this.name = ""; // to avoid 'undefined' for initial url
     var self = this;
 
     this.parents = [ 'Agriculture', 'Art', 'Construction', 'Consumer Goods', 'Corporate', 'Education', 'Finance', 'Government', 'Healthcare', 'Legal', 'Manufacturing', 'Medical', 'Non-Profit', 'Recreation', 'Services', 'Tech', 'Transportation' ];
 
     this.industryList = community_service.industries();
+
+    this.encode = function(uri) {
+        return encodeURI(uri);
+    };
 
     this.createCluster = function() {
         if (self.form.$valid) {
@@ -346,7 +350,7 @@ function addClusterController($modalInstance, $state, sweet, community_service, 
                     if (response.status !== 201) {
                         sweet.show({
                             title: "Sorry, something went wrong.",
-                            text: "Here's what we know: " + response.data.message,
+                            text: response.data.message,
                             type: "error"
                         });
 
@@ -354,9 +358,10 @@ function addClusterController($modalInstance, $state, sweet, community_service, 
                         sweet.show({
                             title: "Cluster created!",
                             type: "success"
+                        }, function(){
+                            $modalInstance.close();
+                            $state.reload();
                         });
-
-                        $state.reload();
                     }
                 });
 
