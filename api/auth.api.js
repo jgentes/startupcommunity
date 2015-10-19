@@ -170,7 +170,7 @@ function handleSignup(req, res) {
     db.newSearchBuilder()
         .collection(config.db.communities)
         .limit(1)
-        .query('value.profile.email: "' + req.body.profile.email + '"')
+        .query('@value.profile.email: "' + req.body.profile.email + '"')
         .then(function(result){
             if (result.body.results.length > 0) {
                 console.log('User already exists');
@@ -182,7 +182,7 @@ function handleSignup(req, res) {
                         db.newSearchBuilder()
                             .collection(config.db.communities)
                             .limit(1)
-                            .query('value.profile.email: "' + req.body.profile.email + '"')
+                            .query('@value.profile.email: "' + req.body.profile.email + '"')
                             .then(function(result){
                                 if (result.body.results.length > 0) {
                                     console.log("USER:");
@@ -221,7 +221,7 @@ function handleLogin(req, res) {
     db.newSearchBuilder()
         .collection(config.db.communities)
         .limit(1)
-        .query('value.profile.email: "' + req.body.profile.email + '"')
+        .query('@value.profile.email: "' + req.body.profile.email + '"')
         .then(function(result){
             if (result.body.results.length > 0) {
                 console.log("FOUND USER");
@@ -345,7 +345,7 @@ function handleLinkedin(req, res) {
                 db.newSearchBuilder()
                     .collection(config.db.communities)
                     .limit(1)
-                    .query('value.type: "invite" AND @path.key: ' + invite_code)
+                    .query('@value.type: "invite" AND @path.key: ' + invite_code)
                     .then(function (result) {
                         if (result.body.results.length > 0) {
                             console.log('Verified invitation');
@@ -378,7 +378,7 @@ function handleLinkedin(req, res) {
                 db.newSearchBuilder()
                     .collection(config.db.communities)
                     .limit(1)
-                    .query('value.type: "user" AND value.profile.linkedin.id: "' + profile.id + '"')
+                    .query('@value.type: "user" AND @value.profile.linkedin.id: "' + profile.id + '"')
                     .then(function (result) {
                         if (result.body.results.length > 0) {
                             console.log("Found existing user: " + profile.firstName + ' ' + profile.lastName);
@@ -422,7 +422,7 @@ function handleLinkedin(req, res) {
                             db.newSearchBuilder()
                                 .collection(config.db.communities)
                                 .limit(1)
-                                .query('value.type: "user" AND value.profile.email: "' + profile.emailAddress + '"')
+                                .query('@value.type: "user" AND @value.profile.email: "' + profile.emailAddress + '"')
                                 .then(function (result) {
                                     if (result.body.results.length > 0) {
                                         console.log("Found user: " + profile.firstName + ' ' + profile.lastName);
@@ -532,7 +532,7 @@ function handleInviteUser(req, res) {
         db.newSearchBuilder()
             .collection(config.db.communities)
             .limit(1)
-            .query('value.type: "user" AND (value.profile.linkedin.emailAddress: "' + inviteUser.email + '" OR value.profile.email: "' + inviteUser.email + '")')
+            .query('@value.type: "user" AND (@value.profile.linkedin.emailAddress: "' + inviteUser.email + '" OR @value.profile.email: "' + inviteUser.email + '")')
             .then(function (result) {
                 if (result.body.results.length > 0) {
                     console.log("Existing user found!");
@@ -542,7 +542,7 @@ function handleInviteUser(req, res) {
                     db.newSearchBuilder()
                         .collection(config.db.communities)
                         .limit(1)
-                        .query('value.type: "invite" AND value.profile.email: "' + inviteUser.email + '"')
+                        .query('@value.type: "invite" AND @value.profile.email: "' + inviteUser.email + '"')
                         .then(function (result) {
                             if (result.body.results.length > 0) {
                                 console.log("Existing invite found!");

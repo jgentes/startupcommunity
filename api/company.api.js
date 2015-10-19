@@ -88,7 +88,7 @@ var searchInCommunity = function(communities, stages, limit, offset, query, key)
         }
 
         // create searchstring
-        searchstring = 'value.communities:(';
+        searchstring = '@value.communities:(';
         if (communities) {
             for (c in communities) {
                 searchstring += '"' + communities[c] + '"';
@@ -96,14 +96,14 @@ var searchInCommunity = function(communities, stages, limit, offset, query, key)
             }
         } else searchstring += '*';
 
-        searchstring += ') AND value.type: "company"';
+        searchstring += ') AND @value.type: "company"';
 
         if (stages && stages.length > 0 && stages[0] !== '*') {
                 stages = stages.splice(',');
                 searchstring += ' AND (';
 
                 for (i in stages) {
-                        searchstring += 'value.profile.stage:"' + stages[i] + '"'; // scope to stage
+                        searchstring += '@value.profile.stage:"' + stages[i] + '"'; // scope to stage
                         if (i < (stages.length - 1)) { searchstring += ' OR '; }
                 }
                 searchstring += ')';
@@ -261,7 +261,7 @@ var companyPull = function (company, role, location_key, user, callback) {
 
     console.log('Looking for existing company based on AngelList profile.');
 
-    db.search(config.db.communities, 'value.profile.angellist.id: ' + company.profile.angellist.id) // no quotes due to number not string
+    db.search(config.db.communities, '@value.profile.angellist.id: ' + company.profile.angellist.id) // no quotes due to number not string
         .then(function (result){
 
             console.log('Result of db search: ' + result.body.total_count);

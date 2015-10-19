@@ -116,11 +116,13 @@ function handleGetCommunity(req, res) {
     var community = req.params.community;
 
     var searchString = '@path.key: ' + community; // grab the primary community object, don't use parens here
-    searchString += ' OR ((value.communities: "' + community + '"'; // + grab anything associated with this community in this location
-    searchString += ' OR value.parents: "' + community + '")'; // + grab anything associated with this community as a parent
-    searchString += ' AND NOT value.type:("company" OR "user"))'; // exclude companies and users
+    searchString += ' OR ((@value.communities: "' + community + '"'; // + grab anything associated with this community in this location
+    searchString += ' OR @value.parents: "' + community + '")'; // + grab anything associated with this community as a parent
+    searchString += ' AND NOT @value.type:("company" OR "user"))'; // exclude companies and users
 
     function pullCommunity() {
+
+        // need to determine what 'this' community is, but to optimize the first query, grab all communities and then figure it out
 
         db.newSearchBuilder()
             .collection(config.db.communities)
@@ -143,6 +145,7 @@ function handleGetCommunity(req, res) {
                 if (result.body.results.length > 0) {
                     var found = false;
                     for (comm in result.body.results) {
+
                         if (result.body.results[comm].path.key == community) {
                             found = true;
                             console.log('Pulling community for ' + result.body.results[comm].value.profile.name);
@@ -156,36 +159,12 @@ function handleGetCommunity(req, res) {
                                     }
                                     search += comm_items[i];
                                 }
-
+                                //todo need to add skills here for users and industries for companies - yes, for user dash page or could top do that?
                                 db.newSearchBuilder()
                                     .collection(config.db.communities)
                                     .limit(100)
                                     .offset(0)
                                     .query("@path.key: (" + search + ")")
-                                    .then(function (result) {
-                                        finalize(result.body.results);
-                                    })
-
-                            } else if (result.body.results[comm].value.type == "cluster") {
-                                // pull industries within cluster
-                                var industry_items;
-                                if (result.body.results[comm].value.community_profiles[community]) {
-                                    industry_items = result.body.results[comm].value.community_profiles[community].industries;
-                                } else industry_items = result.body.results[comm].value.profile.industries;
-
-                                var search;
-                                for (i in industry_items) {
-                                    if (i > 0) {
-                                        search += ' OR ';
-                                    }
-                                    search += '"' + industry_items[i] + '"';
-                                }
-
-                                db.newSearchBuilder()
-                                    .collection(config.db.communities)
-                                    .limit(100)
-                                    .offset(0)
-                                    .query('value.profile.industries: (' + search + ')')
                                     .then(function (result) {
                                         finalize(result.body.results);
                                     })
@@ -248,13 +227,13 @@ function handleGetTop(req, res) {
         }
     } else if (!community_key || community_key == 'undefined') community_key = location_key;
 
-    var search = 'value.communities:' + location_key + ' AND value.communities:' + community_key + '';
+    var search = '@value.communities:' + location_key + ' AND @value.communities:' + community_key + '';
 
     console.log('Pulling Top Results: ' + location_key + ' / ' + community_key + ' Industry keys: ', industry_keys);
 
     // get companies and industries
 
-    var industrysearch = cluster_search ? 'value.profile.industries:(' + cluster_search + ') AND ' + search : search;
+    var industrysearch = cluster_search ? '@value.profile.industries:(' + cluster_search + ') AND ' + search : search;
 
     function condense(results) {
         var c = [],
@@ -274,9 +253,9 @@ function handleGetTop(req, res) {
 
     db.newSearchBuilder()
         .collection(config.db.communities)
-        .aggregate('top_values', 'value.profile.industries', 10)
+        .aggregate('top_values', '@value.profile.industries', 10)
         .sort('@path.reftime', 'desc')
-        .query(industrysearch + ' AND value.type: "company"')
+        .query(industrysearch + ' AND @value.type: "company"')
         .then(function (result) {
 
             top_results.industries = {
@@ -291,13 +270,13 @@ function handleGetTop(req, res) {
 
             // get people & skills
 
-            var skillsearch = cluster_search ? 'value.profile.skills:(' + cluster_search + ') AND ' + search : search;
+            var skillsearch = cluster_search ? '@value.profile.skills:(' + cluster_search + ') AND ' + search : search;
 
             db.newSearchBuilder()
                 .collection(config.db.communities)
-                .aggregate('top_values', 'value.profile.skills', 10)
+                .aggregate('top_values', '@value.profile.skills', 10)
                 .sort('@path.reftime', 'desc')
-                .query(skillsearch + ' AND value.type: "user"')
+                .query(skillsearch + ' AND @value.type: "user"')
                 .then(function (result) {
 
                     top_results.skills = {
@@ -315,7 +294,7 @@ function handleGetTop(req, res) {
                     db.newSearchBuilder()
                         .collection(config.db.communities)
                         .sort('@path.reftime', 'desc')
-                        .query('value.roles.leader.' + community_key + ':' + location_key + ' AND value.type: "user"')
+                        .query('@value.roles.leader.' + community_key + ':' + location_key + ' AND @value.type: "user"')
                         .then(function (result) {
 
                             top_results.leaders = condense(result.body.results);
@@ -467,9 +446,24 @@ function handleAddCommunity(req, res) {
                         // create this location
                         response.body.community_profiles[settings.location_key] = {
                             "name": settings.community.profile.name,
+                            "headline": settings.community.profile.headline,
+                            "icon": response.body.profile.icon,
                             "parents": settings.community.parents,
                             "industries": settings.community.profile.industries
                         };
+
+                        // add community
+                        if (!response.body.communities) {
+                            response.body["communities"] = {};
+                        }
+
+                        if (response.body.communities.indexOf(settings.location_key) < 0) {
+                            response.body.communities.push(settings.location_key);
+                        }
+
+                        if (response.body.communities.indexOf(settings.community_key) < 0) {
+                            response.body.communities.push(settings.community_key);
+                        }
 
                         db.put(config.db.communities, settings.community.profile.name.toLowerCase(), response.body)
                             .then(function (finalres) {

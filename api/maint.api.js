@@ -24,7 +24,7 @@ function handleMaintenance(res) {
             .collection(collection)
             .limit(limit)
             .offset(startKey)
-            .query('value.type:"industry"')
+            .query('@value.type:"industry"')
             .then(function(data){
                 for (var item in data.body.results) {
                     /*

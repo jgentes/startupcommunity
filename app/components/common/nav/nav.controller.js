@@ -310,6 +310,48 @@ function CommunitySettingsController($modalInstance, $state, sweet, community_se
             });
     };
 
+    this.delete = function () {
+
+        sweet.show({
+            title: "Are you sure?",
+            text: "You cannot recover this once it has been deleted!",
+            type: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#DD6B55",
+            confirmButtonText: "Yes, delete it!",
+            closeOnConfirm: false
+        }, function () {
+
+            community_service.deleteCommunity(self.location_key, self.community.key)
+                .then(function(response) {
+
+                    if (response.status !== 201) {
+
+
+                        sweet.show({
+                            title: "Sorry, something went wrong.",
+                            text: "Here's what we know: " + response.data.message,
+                            type: "error"
+                        });
+
+                    } else {
+                        sweet.show("Deleted!", "The " + self.community.profile.name + " community is gone.", "success");
+
+                        sweet.show({
+                            title: "Settings saved!",
+                            type: "success"
+                        }, function(){
+                            $modalInstance.close();
+                            $state.reload();
+                        });
+                    }
+                });
+
+        });
+
+
+    };
+
     this.cancel = function () {
         $modalInstance.dismiss('cancel');
         $state.reload();
