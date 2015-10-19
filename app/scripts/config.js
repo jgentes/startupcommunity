@@ -71,7 +71,7 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                     }],
                 community: ['$stateParams', '$location', 'communities', 'community_service',
                     function($stateParams, $location, communities, community_service) {
-                        console.log(communities);
+
                         if (jQuery.isEmptyObject($stateParams.community)) { // if community is passed in via ui-sref, just use that
 
                             var pullCommunity = function () {
@@ -102,7 +102,7 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                     }],
                 location: ['$stateParams', 'community', 'communities',
                     function($stateParams, community, communities) {
-                        console.log(community);
+
                         if(jQuery.isEmptyObject($stateParams.location)) {
                             if (communities.data[$stateParams.location_path].type == 'location') {
                                 return communities.data[$stateParams.location_path];

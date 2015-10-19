@@ -1,7 +1,6 @@
 angular
     .module('startupcommunity')
-    .controller('NavigationController', NavigationController)
-    .controller('ChangeLocationController', ChangeLocationController);
+    .controller('NavigationController', NavigationController);
 
 function NavigationController($auth, $state, $window, $location, $stateParams, $modal, user, location, community, communities, knowtify) {
     if (user.data && user.data.token) $auth.setToken(user.data.token); // update local storage with latest user profile
@@ -125,16 +124,6 @@ function NavigationController($auth, $state, $window, $location, $stateParams, $
         });
     };
 
-    // CHANGE LOCATION
-
-    this.changeLocation = function() {
-        var modalInstance = $modal.open({
-            templateUrl: 'components/common/nav/nav.change_location.html',
-            controller: ChangeLocationController,
-            windowClass: "hmodal-warning"
-        });
-    };
-
     // COMMUNITY SETTINGS
 
     this.communitySettings = function() {
@@ -150,6 +139,9 @@ function NavigationController($auth, $state, $window, $location, $stateParams, $
                 },
                 location_key: function() {
                     return $stateParams.location_path;
+                },
+                user: function() {
+                    return self.user;
                 }
             }
         });
@@ -165,11 +157,8 @@ function NavigationController($auth, $state, $window, $location, $stateParams, $
             controllerAs: 'add',
             windowClass: "hmodal-success",
             resolve: {
-                community: function() {
-                    return self.community;
-                },
-                location_key: function() {
-                    return $stateParams.location_path;
+                location: function() {
+                    return self.location;
                 }
             }
         });
@@ -248,18 +237,9 @@ function NavigationController($auth, $state, $window, $location, $stateParams, $
 
 }
 
-function ChangeLocationController($modalInstance){
-    this.ok = function () {
-        $modalInstance.close();
-    };
+function CommunitySettingsController($modalInstance, $state, sweet, user, community_service, community, location_key){
 
-    this.cancel = function () {
-        $modalInstance.dismiss('cancel');
-    };
-}
-
-function CommunitySettingsController($modalInstance, $state, sweet, community_service, community, location_key){
-
+    this.user = user;
     this.community = community;
     this.location_key = location_key;
     var self = this;
@@ -318,16 +298,14 @@ function CommunitySettingsController($modalInstance, $state, sweet, community_se
             type: "warning",
             showCancelButton: true,
             confirmButtonColor: "#DD6B55",
-            confirmButtonText: "Yes, delete it!",
+            confirmButtonText: "Yes, delete " + self.community.profile.name + "!",
             closeOnConfirm: false
         }, function () {
 
             community_service.deleteCommunity(self.location_key, self.community.key)
                 .then(function(response) {
 
-                    if (response.status !== 201) {
-
-
+                    if (response.status !== 204) {
                         sweet.show({
                             title: "Sorry, something went wrong.",
                             text: "Here's what we know: " + response.data.message,
@@ -358,10 +336,9 @@ function CommunitySettingsController($modalInstance, $state, sweet, community_se
     };
 }
 
-function addClusterController($modalInstance, $state, sweet, community_service, community, location_key){
-
-    this.community = community;
-    this.location_key = location_key;
+function addClusterController($modalInstance, $state, sweet, community_service, location){
+    console.log(location.key);
+    this.location = location;
     this.name = ""; // to avoid 'undefined' for initial url
     var self = this;
 
@@ -386,7 +363,7 @@ function addClusterController($modalInstance, $state, sweet, community_service, 
                 }
             };
 
-            community_service.addCommunity(cluster, self.location_key, self.community.key)
+            community_service.addCommunity(cluster, self.location.key)
                 .then(function(response) {
 
                     if (response.status !== 201) {
@@ -418,7 +395,7 @@ function addClusterController($modalInstance, $state, sweet, community_service, 
 
         $modalInstance.close();
 
-        community_service.setSettings(self.embed, self.location_key, self.community.key)
+        community_service.setSettings(self.embed, self.location.key)
             .then(function(response) {
 
                 if (response.status !== 201) {

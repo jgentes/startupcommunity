@@ -76,7 +76,7 @@
         </form>
     </div>
     <div class="modal-footer">
-        <button type="button" class="btn btn-danger" ng-click="settings.delete()">Delete {{settings.community.profile.name}}</button>
+        <button ng-if="settings.user.roles.leader[settings.community.key].indexOf(settings.location_key) > -1 && settings.community.type !== 'location'" type="button" class="btn btn-danger pull-left" ng-click="settings.delete()">Delete {{settings.community.profile.name}}</button>
         <button type="button" class="btn btn-default" ng-click="settings.cancel()">Cancel</button>
         <button type="button" class="btn btn-primary" ng-click="settings.save()">Save</button>
     </div>

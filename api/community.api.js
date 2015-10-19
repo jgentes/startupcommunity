@@ -10,6 +10,7 @@ var CommunityApi = function () {
     this.getCommunity = handleGetCommunity;
     this.setCommunity = handleSetCommunity;
     this.addCommunity = handleAddCommunity;
+    this.deleteCommunity = handleDeleteCommunity;
     this.getKey = handleGetKey;
     this.getTop = handleGetTop;
 };
@@ -86,9 +87,7 @@ var convert_state = function (name, to) {
 
 
 var schema = {
-    cluster: function (community, community_key, location_key) {
-
-        var comms = location_key == community_key ? [location_key] : [location_key, community_key];
+    community: function (community, location_key) {
 
         var community_profiles = {};
         community_profiles[location_key] = {
@@ -100,13 +99,13 @@ var schema = {
         };
 
         return {
-            "type": "cluster",
+            "type": community.type,
             "profile": {
                 "name": community.profile.name,
                 "icon": "fa-circle-o",
                 "headline": community.profile.headline
             },
-            "communities": comms,
+            "communities": [location_key],
             "community_profiles": community_profiles
         };
     }
@@ -235,20 +234,6 @@ function handleGetTop(req, res) {
 
     var industrysearch = cluster_search ? '@value.profile.industries:(' + cluster_search + ') AND ' + search : search;
 
-    function condense(results) {
-        var c = [],
-            count = 0;
-
-        for (item in results) {
-            results[item].value.type = "cache"; // because otherwise a search for value.type: "user" will pickup the cluster record due to recursive search match
-            c.push(results[item]);
-            count++;
-            if (count == 5) break;
-        }
-
-        return c;
-    }
-
     // get companies & industries
 
     db.newSearchBuilder()
@@ -265,7 +250,7 @@ function handleGetTop(req, res) {
 
             top_results.companies = {
                 count: result.body.total_count,
-                entries: condense(result.body.results)
+                entries: result.body.results.slice(0,5)
             };
 
             // get people & skills
@@ -286,7 +271,7 @@ function handleGetTop(req, res) {
 
                     top_results.people = {
                         count: result.body.total_count,
-                        entries: condense(result.body.results)
+                        entries: result.body.results.slice(0,5)
                     };
 
 
@@ -297,7 +282,7 @@ function handleGetTop(req, res) {
                         .query('@value.roles.leader.' + community_key + ':' + location_key + ' AND @value.type: "user"')
                         .then(function (result) {
 
-                            top_results.leaders = condense(result.body.results);
+                            top_results.leaders = result.body.results.slice(0,5);
 
                             var target = cluster_key ? cluster_key : community_key;
 
@@ -327,15 +312,6 @@ function handleGetTop(req, res) {
 
                                     db.put(config.db.communities, target, response.body)
                                         .then(function (finalres) {
-
-                                            // change values back from 'cache'
-                                            for (u in top_results.people.entries) {
-                                                top_results.people.entries[u].value.type = 'user';
-                                            }
-
-                                            for (u in top_results.companies.entries) {
-                                                top_results.companies.entries[u].value.type = 'company';
-                                            }
 
                                             res.status(200).send(top_results);
                                         })
@@ -426,18 +402,17 @@ function handleAddCommunity(req, res) {
     // always use ensureAuth before this (to acquire req.user)
     var settings = req.body.params;
 
-    console.log('Adding community: ' + settings.community.profile.name + ' in ' + settings.location_key + ' / ' + settings.community_key);
-    console.log(settings.community);
+    console.log('Adding community: ' + settings.community.profile.name + ' in ' + settings.location_key);
 
-    // validate user is a member in the location/community
-    if (req.user.value.communities.indexOf(settings.location_key) > -1 && req.user.value.communities.indexOf(settings.community_key) > -1) {
+    // validate user is a member in the location
+    if (req.user.value.communities.indexOf(settings.location_key) > -1) {
 
-        // check to see if the cluster exists
+        // check to see if the community exists
         db.get(config.db.communities, settings.community.profile.name.toLowerCase())
             .then(function (response) {
 
-                if (response.body.type && response.body.type == "cluster") {
-                        // cluster already exists, we're good to add the community profile here
+                if (response.body.type && (response.body.type == "cluster" || response.body.type == "network") && response.body.type == settings.community.type) {
+                        // community already exists, we're good to add the community profile here
                     if (response.body.community_profiles === undefined) {
                         // create community_profiles
                         response.body['community_profiles'] = {};
@@ -461,17 +436,13 @@ function handleAddCommunity(req, res) {
                             response.body.communities.push(settings.location_key);
                         }
 
-                        if (response.body.communities.indexOf(settings.community_key) < 0) {
-                            response.body.communities.push(settings.community_key);
-                        }
-
                         db.put(config.db.communities, settings.community.profile.name.toLowerCase(), response.body)
                             .then(function (finalres) {
 
                                 update_user(req.user.value.key, 'leader', settings.community.profile.name.toLowerCase(), settings.location_key)
                                     .then(function(response) {
                                         console.log(response);
-                                        res.status(201).send({message: 'Cluster created!'});
+                                        res.status(201).send({message: settings.community.type.toUpperCase() + settings.community.type.slice(1) + ' created!'});
                                     })
                             })
                             .fail(function (err) {
@@ -481,11 +452,11 @@ function handleAddCommunity(req, res) {
 
 
                     } else {
-                        res.status(202).send({message: 'Sorry, that cluster already exists in this community. Please change the url path name or delete the other cluster first.'});
+                        res.status(202).send({message: 'Sorry, ' + settings.community.profile.name + ' already exists in this location. Please change the name or delete the other one first.'});
                     }
 
                 } else {
-                    res.status(202).send({message: 'Sorry, that path is taken. Try changing the url path name.'});
+                    res.status(202).send({message: 'Sorry, that name is taken. Try changing the name.'});
                 }
 
 
@@ -496,14 +467,14 @@ function handleAddCommunity(req, res) {
                 if (err.body.code == 'items_not_found') {
                     // no existing path, go ahead and create
 
-                    var profile = schema.cluster(settings.community, settings.community_key, settings.location_key);
+                    var profile = schema.cluster(settings.community, settings.location_key);
 
                     db.put(config.db.communities, settings.community.profile.name.toLowerCase(), profile)
                         .then(function (finalres) {
 
                             update_user(req.user.value.key, 'leader', settings.community.profile.name.toLowerCase(), settings.location_key)
                                 .then(function() {
-                                    res.status(201).send({message: 'Cluster created!'});
+                                    res.status(201).send({message: settings.community.type.toUpperCase() + settings.community.type.slice(1) + ' created!'});
                                 })
                         })
                         .fail(function (err) {
@@ -520,7 +491,106 @@ function handleAddCommunity(req, res) {
 
     } else {
         console.warn("User is not a member of community: " + settings.community_key + " and location: " + settings.location_key + "!");
-        res.status(400).send({ message: 'Sorry, you must be a member of this community to add a cluster or network to it.' });
+        res.status(400).send({ message: 'Sorry, you must be a member of this community to add to it.' });
+    }
+
+}
+
+function handleDeleteCommunity(req, res) {
+
+    // always use ensureAuth before this (to acquire req.user)
+    var settings = req.body.params;
+
+    console.log('Deleting community: ' + settings.community.profile.name + ' in ' + settings.location_key);
+
+    // validate user is a member in the location
+    if (req.user.value.communities.indexOf(settings.location_key) > -1) {
+
+        // check to see if the community exists
+        db.get(config.db.communities, settings.community.profile.name.toLowerCase())
+            .then(function (response) {
+
+                if (response.body.type && (response.body.type == "cluster" || response.body.type == "network") && response.body.type == settings.community.type) {
+                    // community already exists, we're good to add the community profile here
+                    if (response.body.community_profiles === undefined) {
+                        // create community_profiles
+                        response.body['community_profiles'] = {};
+                    }
+                    if (response.body.community_profiles[settings.location_key] === undefined) {
+                        // create this location
+                        response.body.community_profiles[settings.location_key] = {
+                            "name": settings.community.profile.name,
+                            "headline": settings.community.profile.headline,
+                            "icon": response.body.profile.icon,
+                            "parents": settings.community.parents,
+                            "industries": settings.community.profile.industries
+                        };
+
+                        // add community
+                        if (!response.body.communities) {
+                            response.body["communities"] = {};
+                        }
+
+                        if (response.body.communities.indexOf(settings.location_key) < 0) {
+                            response.body.communities.push(settings.location_key);
+                        }
+
+                        db.put(config.db.communities, settings.community.profile.name.toLowerCase(), response.body)
+                            .then(function (finalres) {
+
+                                update_user(req.user.value.key, 'leader', settings.community.profile.name.toLowerCase(), settings.location_key)
+                                    .then(function(response) {
+                                        console.log(response);
+                                        res.status(201).send({message: settings.community.type.toUpperCase() + settings.community.type.slice(1) + ' created!'});
+                                    })
+                            })
+                            .fail(function (err) {
+                                console.warn('WARNING:  Problem with put: ' + err);
+                                res.status(202).send({message: 'Something went wrong: ' + err});
+                            });
+
+
+                    } else {
+                        res.status(202).send({message: 'Sorry, ' + settings.community.profile.name + ' already exists in this location. Please change the name or delete the other one first.'});
+                    }
+
+                } else {
+                    res.status(202).send({message: 'Sorry, that name is taken. Try changing the name.'});
+                }
+
+
+
+            })
+            .fail(function (err) {
+
+                if (err.body.code == 'items_not_found') {
+                    // no existing path, go ahead and create
+
+                    var profile = schema.cluster(settings.community, settings.location_key);
+
+                    db.put(config.db.communities, settings.community.profile.name.toLowerCase(), profile)
+                        .then(function (finalres) {
+
+                            update_user(req.user.value.key, 'leader', settings.community.profile.name.toLowerCase(), settings.location_key)
+                                .then(function() {
+                                    res.status(201).send({message: settings.community.type.toUpperCase() + settings.community.type.slice(1) + ' created!'});
+                                })
+                        })
+                        .fail(function (err) {
+                            console.warn('WARNING:  Problem with put: ' + err);
+                            res.status(202).send({message: 'Something went wrong: ' + err});
+                        });
+
+                } else {
+                    console.warn('WARNING:  Problem with get: ', err.body);
+                    res.status(202).send({message: 'Something went wrong: ' + err.body});
+                }
+
+            });
+
+    } else {
+        console.warn("User is not a member of community: " + settings.community_key + " and location: " + settings.location_key + "!");
+        res.status(400).send({ message: 'Sorry, you must be a member of this community to add to it.' });
     }
 
 }
