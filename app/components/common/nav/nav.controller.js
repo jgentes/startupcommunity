@@ -72,22 +72,23 @@ function NavigationController($auth, $state, $window, $location, $stateParams, $
         }
     }
 
-    // to avoid duplicate location_path / community_path when navigating to people & startups
-    this.nav_url = this.location_path == this.community.key ?
-        "({location_path: nav.location_path, community: nav.community, query: '*'})" :
-        "({location_path: nav.location_path, community_path: nav.community.key, community: nav.community, query: '*'})";
-
-    // to set correct root path when navigating from user or startup page
-    this.nav_jump = this.community.type == "user" || this.community.type == "startup" ?
-        "({location_path: nav.location.key, community_path: item.key, community: item, query: '*'})" :
-        "({community_path: item.key, community: item, query: '*'})";
-
-
     // BREADCRUMBS
 
     if (this.community.type == "user") {
+        // note this changes location for nav items below
         if (this.location.key == this.community.key) this.location = communities.data[this.community.profile.home];
     }
+
+    // to avoid duplicate location_path / community_path when navigating to people & companies
+    this.nav_url = this.location_path == this.community.key ?
+        "({location_path: nav.location_path, community: nav.community, query: '*'})" :
+        "({location_path: nav.location_path, community: nav.community, query: '*', community_path: nav.community.key})";
+
+    // to set correct root path when navigating from user or company page
+    this.nav_jump = (this.community.type == "user" || this.community.type == "company") &&
+    (this.location.type == 'location') ?
+        "({community_path: item.key, community: item, query: '*', location_path: nav.location.key})" :
+        "({community_path: item.key, community: item, query: '*', location_path: nav.location.profile.home})";
 
     // SEARCH
 

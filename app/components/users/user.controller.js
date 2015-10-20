@@ -251,7 +251,7 @@ function UserProfileController($scope, $stateParams, $location, $auth, $modal, $
 
     $mixpanel.track('Viewed Profile');
 
-    this.contact = function(user) {
+    this.contact = function(community_key) {
 
         var modalInstance = $modal.open({
             templateUrl: 'components/users/user.contact.html',
@@ -260,13 +260,13 @@ function UserProfileController($scope, $stateParams, $location, $auth, $modal, $
             windowClass: "hmodal-warning",
             resolve: {
                 user: function() {
-                    return user;
+                    return self.user;
                 },
                 community_key: function() {
-                    return self.community.key;
+                    return community_key;
                 },
                 location_key: function() {
-                    return $stateParams.location_path;
+                    return self.location.key;
                 }
             }
         });
