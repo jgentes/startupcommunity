@@ -415,6 +415,5 @@ function addClusterController($modalInstance, $state, sweet, community_service, 
 
     this.cancel = function () {
         $modalInstance.dismiss('cancel');
-        $state.reload();
     };
 }
