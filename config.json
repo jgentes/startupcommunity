@@ -52,7 +52,7 @@
   "development": {
     "db": {
       "key": "be406a43-5cc1-425f-9545-23bd75ec6cfc",
-      "communities": "communities-dev"
+      "communities": "communities-test"
     },
     "linkedin": {
       "clientID": "75bqixdv58z1az",
@@ -77,7 +77,7 @@
    "test": {
      "db": {
        "key": "be406a43-5cc1-425f-9545-23bd75ec6cfc",
-       "communities": "communities"
+       "communities": "communities-test"
      },
      "linkedin": {
        "clientID": "75bqixdv58z1az",

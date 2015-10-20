@@ -242,10 +242,11 @@ function handleGetTop(req, res) {
     };
 
     // get companies & industries
+    console.log(industrysearch);
 
     db.newSearchBuilder()
         .collection(config.db.communities)
-        .aggregate('top_values', '@value.profile.industries', 10)
+        .aggregate('top_values', 'value.profile.industries', 10)
         .sort('@path.reftime', 'desc')
         .query(industrysearch + ' AND @value.type: "company"')
         .then(function (result) {
@@ -266,7 +267,7 @@ function handleGetTop(req, res) {
 
             db.newSearchBuilder()
                 .collection(config.db.communities)
-                .aggregate('top_values', '@value.profile.skills', 10)
+                .aggregate('top_values', 'value.profile.skills', 10)
                 .sort('@path.reftime', 'desc')
                 .query(skillsearch + ' AND @value.type: "user"')
                 .then(function (result) {
