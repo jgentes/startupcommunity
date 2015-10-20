@@ -274,7 +274,7 @@ function CommunitySettingsController($modalInstance, $state, sweet, user, commun
                 if (response.status !== 201) {
                     sweet.show({
                         title: "Sorry, something went wrong.",
-                        text: "Here's what we know: " + response.data.message,
+                        text: response.data.message,
                         type: "error"
                     });
 
@@ -302,26 +302,19 @@ function CommunitySettingsController($modalInstance, $state, sweet, user, commun
             closeOnConfirm: false
         }, function () {
 
-            community_service.deleteCommunity(self.location_key, self.community.key)
+            community_service.deleteCommunity(self.community, self.location_key)
                 .then(function(response) {
 
                     if (response.status !== 204) {
                         sweet.show({
                             title: "Sorry, something went wrong.",
-                            text: "Here's what we know: " + response.data.message,
+                            text: response.data.message,
                             type: "error"
                         });
 
                     } else {
                         sweet.show("Deleted!", "The " + self.community.profile.name + " community is gone.", "success");
 
-                        sweet.show({
-                            title: "Settings saved!",
-                            type: "success"
-                        }, function(){
-                            $modalInstance.close();
-                            $state.reload();
-                        });
                     }
                 });
 
