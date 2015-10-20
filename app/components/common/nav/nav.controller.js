@@ -60,22 +60,24 @@ function NavigationController($auth, $state, $window, $location, $stateParams, $
 
     this.communities = communities.data; // used in company list views
 
+    // BREADCRUMBS
+
+    if (this.community.type == "user") {
+        // note this changes location for nav items below
+        if (this.location.key == this.community.key) this.location = communities.data[this.community.profile.home];
+    }
+
     // to avoid duplicate location_path / community_path when navigating to people & companies
     this.nav_url = this.location_path == this.community.key ?
         "({location_path: nav.location_path, community: nav.community, query: '*'})" :
         "({location_path: nav.location_path, community: nav.community, query: '*', community_path: nav.community.key})";
 
     // to set correct root path when navigating from user or company page
-    this.nav_jump = this.community.type == "user" || this.community.type == "company" ?
+    this.nav_jump = (this.community.type == "user" || this.community.type == "company") &&
+        (this.location.type == 'location') ?
         "({community_path: item.key, community: item, query: '*', location_path: nav.location.key})" :
-        "({community_path: item.key, community: item, query: '*'})";
+        "({community_path: item.key, community: item, query: '*', location_path: nav.location.profile.home})";
 
-
-    // BREADCRUMBS
-
-    if (this.community.type == "user") {
-        if (this.location.key == this.community.key) this.location = communities.data[this.community.profile.home];
-    }
 
     // SEARCH
 
@@ -112,7 +114,8 @@ function NavigationController($auth, $state, $window, $location, $stateParams, $
             windowClass: "hmodal-warning",
             resolve: {
                 user: function() {
-                    return user.path;
+                    user.value["key"] = user.path.key;
+                    return user.value;
                 },
                 community_key: function() {
                     return self.community.key;
@@ -314,7 +317,8 @@ function CommunitySettingsController($modalInstance, $state, sweet, user, commun
 
                     } else {
                         sweet.show("Deleted!", "The " + self.community.profile.name + " community is gone.", "success");
-
+                        $modalInstance.close();
+                        $state.reload();
                     }
                 });
 

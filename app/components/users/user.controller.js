@@ -5,7 +5,7 @@ angular
     .controller('InviteUserController', InviteUserController)
     .controller('ContactUserController', ContactUserController);
 
-function UserController($stateParams, user_service, result_service, $sce, $modal, community, communities) {
+function UserController($stateParams, user_service, result_service, $sce, community, communities) {
 
     this.community = community;
     this.communities = communities.data;
@@ -216,7 +216,7 @@ function ContactUserController($modalInstance, notify_service, sweet, community_
     };
 }
 
-function UserProfileController($scope, $stateParams, $location, $auth, $modal, $mixpanel, user, user_service, community, communities) {
+function UserProfileController($stateParams, $location, $modal, $mixpanel, user, user_service, community, communities) {
 
     if (!jQuery.isEmptyObject($stateParams.profile)) {
         this.user = $stateParams.profile;
@@ -231,7 +231,7 @@ function UserProfileController($scope, $stateParams, $location, $auth, $modal, $
 
     $mixpanel.track('Viewed Profile');
 
-    this.contact = function(user) {
+    this.contact = function(community_key) {
 
         var modalInstance = $modal.open({
             templateUrl: 'components/users/user.contact.html',
@@ -240,13 +240,10 @@ function UserProfileController($scope, $stateParams, $location, $auth, $modal, $
             windowClass: "hmodal-warning",
             resolve: {
                 user: function() {
-                    return user;
+                    return self.user;
                 },
                 community_key: function() {
-                    if (self.community.type == "user") {
-                        return self.location.key;
-                    } else return self.community.key;
-
+                    return community_key;
                 },
                 location_key: function() {
                     return self.location.key;
@@ -283,111 +280,6 @@ function UserProfileController($scope, $stateParams, $location, $auth, $modal, $
                     notify({title: "See our <a href='http://startupcommunity.readme.io?appkey=" + api_key + "' target='_blank'>API documentation</a> for help using your key:", message: "<pre>" + api_key + "</pre>"});
                 });
         } else notify({title: "See our <a href='http://startupcommunity.readme.io?appkey=" + api_key + "' target='_blank'>API documentation</a> for help using your key:", message: "<pre>" + api_key + "</pre>"});
-    };
-
-    $scope.isCityAdvisor = function(status) { //todo needs to be reworked
-        user_service.setCityAdvisor($state.params.user.key, self.user.context, 'cityAdvisor', status, function(response, rescode) {
-            var sameuser = false;
-            var cluster;
-            if (rescode == 201) {
-                if ($state.params.user.key == self.user.key) { sameuser = true; }
-                if ($state.params.user.cities[self.user.context].cityAdvisor === undefined) { //need to create key
-                    $state.params.user.cities[self.user.context]['cityAdvisor'] = false;
-                }
-
-                $state.params.user.cities[self.user.context].cityAdvisor = status;
-
-                for (cluster in self.community.location.clusters) {
-                    if (status === true) {
-                        if ($state.params.user.cities[self.user.context].clusters[cluster]) {
-                            $state.params.user.cities[self.user.context].clusters[cluster].advisorStatus = true;
-                        }
-                    } else {
-                        if (!$state.params.user.cities[self.user.context].clusters[cluster].roles || ($state.params.user.cities[self.user.context].clusters[cluster].roles.indexOf("Mentor") < 0)) {
-                            $state.params.user.cities[self.user.context].clusters[cluster].advisorStatus = false;
-                        } else {
-                            $state.params.user.cities[self.user.context].clusters[cluster].advisorStatus = true;
-                        }
-                    }
-                }
-
-                if (sameuser) {
-                    self.user.cities[self.user.context].cityAdvisor = status;
-                }
-            } else {
-                self.alert = { type: 'danger', msg: 'There was a problem: ' + String(response.message) };
-                console.warn("WARNING: " +  response.message);
-            }
-        });
-    };
-
-    $scope.setRole = function(cluster, role, status) { //todo needs to be reworked
-        user_service.setRole($state.params.user.key, self.user.context, cluster, role, status, function(response, rescode) {
-            var sameuser = false;
-            if (rescode == 201) {
-                if ($state.params.user.key == self.user.key) { sameuser = true; }
-                if ($state.params.user.cities[self.user.context].clusters === undefined) { //need to create clusters key
-                    $state.params.user.cities[self.user.context]['clusters'] = {};
-                }
-                if ($state.params.user.cities[self.user.context].clusters[cluster] === undefined) { //need to create the cluster in user profile
-                    $state.params.user.cities[self.user.context].clusters[cluster] = { "roles": [] };
-                }
-                if ($state.params.user.cities[self.user.context].clusters[cluster].roles === undefined) { //this can happen due to temp local scope variables
-                    $state.params.user.cities[self.user.context].clusters[cluster].roles = [];
-                }
-                var thiscluster = $state.params.user.cities[self.user.context].clusters[cluster];
-
-                if (status === true) {
-                    if (thiscluster.roles.indexOf(role) < 0) {
-                        thiscluster.roles.push(role);
-                    } // else they already have the role, no action needed
-                } else {
-                    if (thiscluster.roles.indexOf(role) >= 0) {
-                        thiscluster.roles.splice(thiscluster.roles.indexOf(role), 1);
-                    } // else they do not have the role, no action needed
-                }
-
-                $state.params.user.cities[self.user.context].clusters[cluster] = thiscluster;
-                if (sameuser) { self.user.cities[self.user.context].clusters[cluster] = thiscluster; }
-
-            } else {
-                self.alert = { type: 'danger', msg: 'There was a problem: ' + String(response.message) };
-                console.warn("WARNING: " +  response.message);
-
-            }
-        });
-    };
-
-    /**
-     * Link third-party provider.
-     */
-    $scope.link = function(provider) {
-        $auth.link(provider)
-            .then(function() {
-                self.alert ={ type: 'success', msg: 'Well done. You have successfully linked your ' + provider + ' account'};
-            })
-            .then(function() {
-                $scope.getProfile();
-            })
-            .catch(function(response) {
-                self.alert ={ type: 'danger', msg: 'Sorry, but we ran into this error: ' + response.data.message};
-            });
-    };
-
-    /**
-     * Unlink third-party provider.
-     */
-    $scope.unlink = function(provider) {
-        $auth.unlink(provider)
-            .then(function() {
-                self.alert = { type: 'success', msg: 'Bam. You have successfully unlinked your ' + provider + ' account'};
-            })
-            .then(function() {
-                $scope.getProfile();
-            })
-            .catch(function(response) {
-                self.alert = { type: 'danger', msg: 'Aww, shucks. We ran into this error while unlinking your ' + provider + ' account: ' + response.data.message};
-            });
     };
 
 }

@@ -373,10 +373,12 @@ angular
     .run(function(editableOptions) {
         editableOptions.theme = 'bs3';
     })
-    .run(function($rootScope, $state, $timeout) {
+    .run(function($rootScope, $state, $timeout, exceptionLoggingService) {
         $rootScope.$state = $state; // allows use if $state within views
         window.$state = $state; // allows use of $state within console
-        $rootScope.$on("$stateChangeError", console.log.bind(console)); // for debugging of ui-router
+        $rootScope.$on('$stateChangeError', function (evt, toState, toParams, fromState, fromParams, error) {
+            exceptionLoggingService(error);
+        });
         $rootScope.$on('$stateChangeSuccess',function(){
             $("html, body").animate({ scrollTop: 0 }, 200);
         });
@@ -428,7 +430,7 @@ angular
                     contentType: "application/json",
                     data: angular.toJson({
                         url: $window.location.href,
-                        message: errorMessage,
+                        message: 'WARNING: ' + errorMessage,
                         type: "exception",
                         stackTrace: stackTrace,
                         cause: ( cause || "")

@@ -234,6 +234,13 @@ function handleGetTop(req, res) {
 
     var industrysearch = cluster_search ? '@value.profile.industries:(' + cluster_search + ') AND ' + search : search;
 
+    var addkeys = function(data) {
+        for (i in data) {
+            data[i].value["key"] = data[i].path.key;
+        }
+        return data;
+    };
+
     // get companies & industries
 
     db.newSearchBuilder()
@@ -250,7 +257,7 @@ function handleGetTop(req, res) {
 
             top_results.companies = {
                 count: result.body.total_count,
-                entries: result.body.results.slice(0,5)
+                entries: addkeys(result.body.results).slice(0,5)
             };
 
             // get people & skills
@@ -271,7 +278,7 @@ function handleGetTop(req, res) {
 
                     top_results.people = {
                         count: result.body.total_count,
-                        entries: result.body.results.slice(0,5)
+                        entries: addkeys(result.body.results).slice(0,5)
                     };
 
 
@@ -282,7 +289,7 @@ function handleGetTop(req, res) {
                         .query('@value.roles.leader.' + community_key + ':' + location_key + ' AND @value.type: "user"')
                         .then(function (result) {
 
-                            top_results.leaders = result.body.results.slice(0,5);
+                            top_results.leaders = addkeys(result.body.results).slice(0,5);
 
                             var target = cluster_key ? cluster_key : community_key;
 
