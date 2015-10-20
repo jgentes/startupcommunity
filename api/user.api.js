@@ -214,6 +214,8 @@ function handleContactUser(req, res) {
         community_key = req.query.community_key,
         location_key = req.query.location_key;
 
+    if (user_key == community_key) community_key = location_key;
+
     // search format is 'roles.leader[community]: location'
 
     // create searchstring to get leader of community
