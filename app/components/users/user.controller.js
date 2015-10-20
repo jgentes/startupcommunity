@@ -248,6 +248,7 @@ function UserProfileController($scope, $stateParams, $location, $auth, $modal, $
     var self = this;
     this.community = community;
     this.communities = communities.data;
+    this.location = communities.data[this.community.profile.home];
 
     $mixpanel.track('Viewed Profile');
 
