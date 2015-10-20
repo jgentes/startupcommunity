@@ -52,14 +52,14 @@ function handleMaintenance(res) {
 
                      */
                     var newdata = data.body.results[item].value; // get current record
-
+                    /*
                     if (newdata.roles && newdata.roles.advisor) {
                         console.log('update!');
                         newdata.roles["mentor"] = newdata.roles.advisor;
                         delete newdata.roles.advisor;
                         console.log(newdata.roles);
                     }
-
+*/
                     //newdata.communities = ["bend-or", "oregon", "us", "edco-stable-of-experts"];
                     //newdata.roles = { "mentor" : { "edco-stable-of-experts": ["bend-or"], "bend-or": ["bend-or"]}};
                     //newdata.profile["home"] = "bend-or";
