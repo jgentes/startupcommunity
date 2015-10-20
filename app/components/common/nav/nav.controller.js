@@ -85,8 +85,8 @@ function NavigationController($auth, $state, $window, $location, $stateParams, $
         "({location_path: nav.location_path, community: nav.community, query: '*', community_path: nav.community.key})";
 
     // to set correct root path when navigating from user or company page
-    this.nav_jump = (this.community.type == "user" || this.community.type == "company") &&
-    (this.location.type == 'location') ?
+    this.nav_jump = this.location.type == 'location' || ((this.community.type == "user" || this.community.type == "company") &&
+    (this.location.type == 'location')) ?
         "({community_path: item.key, community: item, query: '*', location_path: nav.location.key})" :
         "({community_path: item.key, community: item, query: '*', location_path: nav.location.profile.home})";
 
