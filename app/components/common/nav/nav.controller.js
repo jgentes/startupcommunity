@@ -140,6 +140,9 @@ function NavigationController($auth, $state, $window, $location, $stateParams, $
                 community: function() {
                     return self.community;
                 },
+                location: function() {
+                    return self.location;
+                },
                 location_key: function() {
                     return $stateParams.location_path;
                 },
@@ -149,6 +152,24 @@ function NavigationController($auth, $state, $window, $location, $stateParams, $
             }
         });
     };
+
+    // ADD NETWORK
+
+    this.addNetwork = function() {
+
+        var modalInstance = $modal.open({
+            templateUrl: 'components/common/nav/nav.add_network.html',
+            controller: addNetworkController,
+            controllerAs: 'add',
+            windowClass: "hmodal-info",
+            resolve: {
+                location: function() {
+                    return self.location;
+                }
+            }
+        });
+    };
+
 
     // ADD CLUSTER
 
@@ -240,7 +261,7 @@ function NavigationController($auth, $state, $window, $location, $stateParams, $
 
 }
 
-function CommunitySettingsController($modalInstance, $state, sweet, user, community_service, community, location_key){
+function CommunitySettingsController($modalInstance, $state, sweet, user, community_service, community, location, location_key){
 
     this.user = user;
     this.community = community;
@@ -294,7 +315,7 @@ function CommunitySettingsController($modalInstance, $state, sweet, user, commun
     };
 
     this.delete = function () {
-
+        console.log(location);
         sweet.show({
             title: "Are you sure?",
             text: "You cannot recover this once it has been deleted!",
@@ -316,9 +337,14 @@ function CommunitySettingsController($modalInstance, $state, sweet, user, commun
                         });
 
                     } else {
-                        sweet.show("Deleted!", "The " + self.community.profile.name + " community is gone.", "success");
-                        $modalInstance.close();
-                        $state.reload();
+                        sweet.show({
+                            title: "Deleted!",
+                            text: "The " + self.community.profile.name + " community is gone.",
+                            type: "success"
+                        }, function() {
+                            $modalInstance.close();
+                            $state.go('community.dashboard', {location_path: self.location_key, community_path: null, community: location});
+                        })
                     }
                 });
 
@@ -334,7 +360,7 @@ function CommunitySettingsController($modalInstance, $state, sweet, user, commun
 }
 
 function addClusterController($modalInstance, $state, sweet, community_service, location){
-    console.log(location.key);
+
     this.location = location;
     this.name = ""; // to avoid 'undefined' for initial url
     var self = this;
@@ -350,6 +376,19 @@ function addClusterController($modalInstance, $state, sweet, community_service, 
     this.createCluster = function() {
         if (self.form.$valid) {
 
+            if (self.url) {
+                try {
+                    self.url = this.encode(self.url);
+                }
+                catch (e) {
+                    sweet.show({
+                        title: "Sorry, something is wrong with the url path.",
+                        type: "error"
+                    });
+                    self.submitted = true;
+                }
+            }
+
             var cluster = {
                 type: "cluster",
                 profile: {
@@ -357,7 +396,8 @@ function addClusterController($modalInstance, $state, sweet, community_service, 
                     headline: self.headline,
                     parents: [self.parent],
                     industries: self.industries
-                }
+                },
+                url: self.url
             };
 
             community_service.addCommunity(cluster, self.location.key)
@@ -388,29 +428,75 @@ function addClusterController($modalInstance, $state, sweet, community_service, 
         }
     };
 
-    this.save = function () {
+    this.cancel = function () {
+        $modalInstance.dismiss('cancel');
+    };
+}
 
-        $modalInstance.close();
+function addNetworkController($modalInstance, $state, sweet, community_service, location){
 
-        community_service.setSettings(self.embed, self.location.key)
-            .then(function(response) {
+    this.location = location;
+    this.name = ""; // to avoid 'undefined' for initial url
+    var self = this;
 
-                if (response.status !== 201) {
+    this.parents = [ 'Accelerator', 'College', 'Coworking Space', 'Incubator', 'Investment Fund', 'Mentor Group', 'VC Firm' ];
+
+    this.encode = function(uri) {
+        return encodeURI(uri);
+    };
+
+    this.createNetwork = function() {
+        if (self.form.$valid) {
+
+            if (self.url) {
+                try {
+                    self.url = this.encode(self.url);
+                }
+                catch (e) {
                     sweet.show({
-                        title: "Sorry, something went wrong.",
-                        text: "Here's what we know: " + response.data.message,
+                        title: "Sorry, something is wrong with the url path.",
                         type: "error"
                     });
-
-                } else {
-                    sweet.show({
-                        title: "Cluster created!",
-                        type: "success"
-                    });
-
-                    $state.reload();
+                    self.submitted = true;
                 }
-            });
+            }
+
+            var network = {
+                type: "network",
+                profile: {
+                    name: self.name,
+                    headline: self.headline,
+                    parents: [self.parent]
+                },
+                url: self.url
+            };
+
+            community_service.addCommunity(network, self.location.key)
+                .then(function(response) {
+
+                    if (response.status !== 201) {
+                        sweet.show({
+                            title: "Sorry, something went wrong.",
+                            text: response.data.message,
+                            type: "error"
+                        });
+
+                    } else {
+                        sweet.show({
+                            title: "Network created!",
+                            type: "success"
+                        }, function(){
+                            $modalInstance.close();
+                            $state.reload();
+                        });
+                    }
+                });
+
+            //
+
+        } else {
+            self.submitted = true;
+        }
     };
 
     this.cancel = function () {

@@ -78,7 +78,7 @@
                     Community
 
                 </span>
-                <div ng-if="nav.user.roles.leader[nav.community.key].indexOf(nav.location_path) > -1" class="fa fa-gear pull-right" ng-click="nav.communitySettings()" tooltip-placement="left" tooltip="Settings" style="opacity: .6; cursor: pointer; margin-top: 5px;"></div>
+                <div ng-if="nav.user.roles.leader[nav.community.key].indexOf(nav.location_path) > -1" class="fa fa-gear pull-right" ng-click="nav.communitySettings(); $event.stopPropagation();" tooltip-placement="left" tooltip="Settings" style="opacity: .6; cursor: pointer; margin-top: 5px;"></div>
                 </a>
                     <!--<span class="fa fa-gear pull-right" ng-click="nav.changeLocation()" tooltip-placement="left" tooltip="Change Location" style="opacity: .6; margin-top: 4px; cursor: pointer;"></span>-->
 
@@ -128,7 +128,7 @@
                 </a>
                 <ul class="nav nav-second-level">
                     <li ng-repeat="item in nav.locations" ng-if="item.key !== nav.community.key">
-                        <a ui-sref="community.dashboard({location_path: item.key, community: item, location: item, query: '*'})" ng-class="{active: nav.path.includes('/' + item.key)}" ng-click="l_working = true"><i class="fa fa-globe"></i> {{item.profile.name}}
+                        <a ui-sref="community.dashboard({location_path: item.key, community_path: '', community: item, location: item, query: '*'})" ng-class="{active: nav.path.includes('/' + item.key)}" ng-click="l_working = true"><i class="fa fa-globe"></i> {{item.profile.name}}
                         <span loading-bars ng-show="l_working"></span>
                         </a>
                     </li>
@@ -141,7 +141,9 @@
 
                     Networks
 
-                </span></a>
+                </span>
+                    <div ng-if="nav.user.communities.indexOf(nav.location_path) > -1 && nav.communities[nav.location_path].type == 'location'" class="pe-7s-close fa-rotate-45 pull-right" ng-click="nav.addNetwork(); $event.stopPropagation();" tooltip-placement="left" tooltip="Add Network" style="opacity: .6; cursor: pointer; margin-top: 4px; font-size: 15px;"></div>
+                </a>
                 <ul class="nav nav-second-level">
                     <li ng-repeat="item in nav.networks">
                         <a ui-sref="{{'community.dashboard' + nav.nav_jump}}" ng-class="{active: nav.path.includes('/' + item.key)}" ng-click="n_working = true">
@@ -159,7 +161,7 @@
                     Clusters
 
                 </span>
-                    <div ng-if="nav.user.communities.indexOf(nav.location_path) > -1 && nav.communities[nav.location_path].type == 'location'" class="pe-7s-close fa-rotate-45 pull-right" ng-click="nav.addCluster()" tooltip-placement="left" tooltip="Add Cluster" style="opacity: .6; cursor: pointer; margin-top: 5px;"></div>
+                    <div ng-if="nav.user.communities.indexOf(nav.location_path) > -1 && nav.communities[nav.location_path].type == 'location'" class="pe-7s-close fa-rotate-45 pull-right" ng-click="nav.addCluster(); $event.stopPropagation();" tooltip-placement="left" tooltip="Add Cluster" style="opacity: .6; cursor: pointer; margin-top: 4px; font-size: 15px;"></div>
                 </a>
                 <ul class="nav nav-second-level">
                     <li ng-repeat="item in nav.clusters">

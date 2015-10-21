@@ -320,6 +320,10 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
         })
         .state('community.dashboard', {
             url: "/:community_path",
+            params: {
+                location_path: null,
+                community_path: null
+            },
             resolve: {
                 top: ['community_service', '$stateParams', 'community',
                     function (community_service, $stateParams, community) {

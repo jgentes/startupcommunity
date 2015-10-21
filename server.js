@@ -27,6 +27,14 @@ function wwwRedirect(req, res, next) {
     next();
 };
 
+// remove trailing slash
+app.use(function(req, res, next) {
+    if(req.url.substr(-1) == '/' && req.url.length > 1)
+        res.redirect(301, req.url.slice(0, -1));
+    else
+        next();
+});
+
 app.set('trust proxy', true); // important for https
 app.use(wwwRedirect);
 

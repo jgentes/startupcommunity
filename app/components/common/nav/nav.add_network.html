@@ -1,0 +1,41 @@
+<div class="inmodal">
+    <div class="color-line"></div>
+    <div class="modal-header">
+        <h4 class="modal-title">Add a Network in {{add.location.profile.name}}</h4>
+        <p class="font-bold">A network is a private group of companies and people who are connected by virtue of being in the network. Examples of networks include startup accelerators, coworking spaces, mentorship groups, and investment funds.</p>
+    </div>
+    <div class="modal-body">
+        <form name="add.form">
+            <div class="hpanel">
+                <div class="panel-heading" style="font-size: 20px;">1. Select the type of network to create</div>
+                <select class="form-control m-b" ng-model="add.parent" style="margin-bottom: 5px;" required>
+                    <option ng-repeat="parent in add.parents">{{ parent }}</option>
+                </select>
+                <em><a href="mailto:james@startupcommunity.org?subject='I have a different type of network'" target="_blank">Type not listed?</a></em>
+                <div class="m-t-xs" ng-show="!add.parent && add.submitted">
+                    <span class="text-danger">&nbsp;&nbsp;<i class="fa fa-exclamation-triangle"></i> A type is required.</span>
+                </div>
+                <br><br>
+                <div class="panel-heading" style="font-size: 20px;">2. Give the network a name</div>
+                <input type="text" class="form-control input-lg" placeholder="Techstars" ng-model="add.name" style="margin-bottom: 5px;" required>
+                <div class="m-t-xs" ng-show="!add.name && add.submitted">
+                    <span class="text-danger">&nbsp;&nbsp;<i class="fa fa-exclamation-triangle"></i> A name is required.</span>
+                </div>
+                <br>
+                <div class="panel-heading" style="font-size: 20px;">3. Customize the url path</div>
+                <input type="text" class="form-control input-lg" placeholder="{{ add.encode(add.name) }}" ng-model="add.url" style="margin-bottom: 5px;">
+                <em>Your url will be: https://startupcommunity.org/<strong><span class="text-lowercase">{{ add.encode(add.url || add.name) }}</span></strong></em>
+                <br><br>
+                <div class="panel-heading" style="font-size: 20px;">4. And a short description</div>
+                <input type="text" class="form-control input-lg" placeholder="An accelerator for early stage SaaS startups.." ng-model="add.headline">
+                <br>
+                <br>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-default" ng-click="add.cancel()">Cancel</button>
+        <button type="button" class="btn btn-primary" ng-click="add.createNetwork()">Create {{add.name}} Network</button>
+    </div>
+</div>
+

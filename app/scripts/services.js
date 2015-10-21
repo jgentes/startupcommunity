@@ -82,12 +82,27 @@ angular
               getTop: function(location_key, community_key, community) {
                   // this service relies on cache first, then calls the api to update the db for next pull
 
+                  var industry_keys = [];
+
                   if (community && community.type == 'cluster') {
-                      if (community.community_profiles && community.community_profiles[location_key] && community.community_profiles[location_key].industries) {
-                          var industry_keys = community.community_profiles[location_key].industries;
-                      } else if (community.profile.industries) {
-                          industry_keys = community.profile.industries;
-                      } else industry_keys = ["none"];
+                      // check to see if this is a root cluster or within a location
+                      if (community_key) {
+                          if (community.community_profiles && community.community_profiles[location_key] && community.community_profiles[location_key].industries) {
+                              var industry_keys = community.community_profiles[location_key].industries;
+                          } else if (community.profile.industries) {
+                              industry_keys = community.profile.industries;
+                          }
+                      } else {
+                          for (i in community.community_profiles) {
+                              for (ii in community.community_profiles[i].industries) {
+                                  if (industry_keys.indexOf(community.community_profiles[i].industries[ii]) == -1) {
+                                      industry_keys.push(community.community_profiles[i].industries[ii]);
+                                  }
+                              }
+                          }
+
+                          location_key = '*'; // needed to avoid communities search for cluster (companies aren't tied to the cluster via community array)
+                      }
 
                       var cluster_key = community.key;
                   }

@@ -18,15 +18,18 @@
                 <br><br>
                 <div class="panel-heading" style="font-size: 20px;">2. Give the cluster a name</div>
                 <input type="text" class="form-control input-lg" placeholder="Tech, Bio-Science, Craft Brew, etc.." ng-model="add.name" style="margin-bottom: 5px;" required>
-                <em>Your url will be: https://startupcommunity.org/{{add.location_key}}/<strong><span class="text-lowercase">{{ add.encode(add.name) }}</span></strong></em>
                 <div class="m-t-xs" ng-show="!add.name && add.submitted">
                     <span class="text-danger">&nbsp;&nbsp;<i class="fa fa-exclamation-triangle"></i> A name is required.</span>
                 </div>
+                <br>
+                <div class="panel-heading" style="font-size: 20px;">3. Customize the url path</div>
+                <input type="text" class="form-control input-lg" placeholder="{{ add.encode(add.name) }}" ng-model="add.url" style="margin-bottom: 5px;">
+                <em>Your url will be: https://startupcommunity.org/{{add.location.key}}/<strong><span class="text-lowercase">{{ add.encode(add.url || add.name) }}</span></strong></em>
                 <br><br>
-                <div class="panel-heading" style="font-size: 20px;">3. And a short description</div>
+                <div class="panel-heading" style="font-size: 20px;">4. And a short description</div>
                 <input type="text" class="form-control input-lg" placeholder="Local hardware and software product companies" ng-model="add.headline">
                 <br>
-                <div class="panel-heading" style="font-size: 20px;">4. Select the industries that make up this cluster</div>
+                <div class="panel-heading" style="font-size: 20px;">5. Select the industries that make up this cluster</div>
                 <div class="panel-body industry_select" style="padding:5px; margin-bottom:5px;">
                     <ui-select multiple ng-model="add.industries" style="border:none;" required>
                         <ui-select-match placeholder="Search by industry..">{{$item}}</ui-select-match>
