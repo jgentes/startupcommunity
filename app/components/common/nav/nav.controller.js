@@ -211,6 +211,30 @@ function NavigationController($auth, $state, $window, $location, $stateParams, $
         });
     };
 
+    // ADD COMPANY
+
+    this.addCompany = function() {
+
+        var modalInstance = $modal.open({
+            templateUrl: 'components/companies/company.add.html',
+            controller: WelcomeController,
+            controllerAs: 'add',
+            windowClass: "hmodal-info",
+            resolve: {
+                community: function() {
+                    return self.community;
+                },
+                communities: function() {
+                    return self.communities;
+                },
+                location: function() {
+                    return self.location;
+                }
+            }
+        });
+    };
+
+
     // *** ROUTING OF ROOT PATHS ***
 
     this.path = $location.path().replace(/\/$/, ""); //used for routing and used in view

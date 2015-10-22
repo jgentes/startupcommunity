@@ -226,33 +226,32 @@ function CompanyProfileController($stateParams, $location, $mixpanel, user, comp
 function AddCompanyController(company_service, community) {
     var self = this;
 
-    this.addCompany = function(location_key, community_key) {
-
+    this.addCompany = function() {
         this.working = true;
+        var role = self.selectedRole == 'none' ? undefined : self.selectedRole;
 
-        if (self.form.$valid) {
-            var formdata = {
-                "angellist_url" : self.form.url_value.split('/').pop()
-            };
+        if (community.type == 'cluster') community_path = location.key; // do not allow companies to be added directly to clusters
 
-            company_service.addCompany(formdata.angellist_url, location_key, community_key)
-                .then(function(response) {
-                    self.working = false;
+        company_service.addCompany(self.selectedCompany, role, location.key, community_path)
+            .then(function(response) {
 
-                    if (response.status !== 200) {
-                        self.alert = { type: 'danger', message: 'There was a problem: ' + String(response.data.message) };
-                    } else {
-                        self.alert = { type: 'success', message: 'Congrats, ' + response.data.profile.name + ' has been added to the ' + community.profile.name + ' community.' };
-                    }
-                });
-
-        } else {
-            this.working = false;
-            self.form.submitted = true;
-        }
-
+                self.working = false;
+                if (response.status !== 200) {
+                    self.alert = { type: 'danger', message: String(response.data.message) };
+                } else {
+                    self.selectedCompany = undefined;
+                    self.company = undefined;
+                    self.updateCompany = false;
+                    self.selectedRole = 'none';
+                    self.alert = { type: 'success', message: String(response.data.message) };
+                }
+            })
+            .catch(function(error) {
+                self.working = false;
+                self.alert = { type: 'danger', message: String(error.data.message) };
+            })
     };
 
-    this.working = false;
+    self.working = false;
 
 }

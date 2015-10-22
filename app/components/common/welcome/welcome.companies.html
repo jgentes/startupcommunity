@@ -1,6 +1,6 @@
 <div class="hpanel">
     <div class="panel-heading" style="text-align:center;">
-        <h4 style="font-size: 25px; line-height: 1.25;">Now add any companies <b>in {{::welcome.location}}</b> that you currently work with:</h4>
+        <h4 style="font-size: 25px; line-height: 1.25;">Now add any companies <b>in {{::welcome.location}}</b> that you work with:</h4>
     </div>
     <div ng-show="welcome.selectedCompany" style="text-align:center;">
         <a href="{{welcome.selectedCompany.angellist_url}}" target="_blank" title="{{welcome.selectedCompany.name}}'s AngelList Profile">
@@ -28,6 +28,8 @@
         <div ng-show="welcome.selectedCompany">
             <h4 style="line-height:1.75;">
                 Your primary role at <a href="{{welcome.selectedCompany.angellist_url}}" target="_blank" title="{{welcome.selectedCompany.name}}'s AngelList Profile">{{welcome.selectedCompany.name}}</a> is <a href="#" editable-select="welcome.selectedRole" e-ng-options="r.value as r.text for r in welcome.selectRoles">{{ welcome.showRole() }}</a>.<br/>
+                <a href="{{welcome.selectedCompany.angellist_url}}" target="_blank" title="{{welcome.selectedCompany.name}}'s AngelList Profile">{{welcome.selectedCompany.name}}</a>'s headline is <a style="color:#4ea5e0;" editable-text="welcome.selectedCompany.high_concept">{{welcome.selectedCompany.high_concept || 'empty'}}</a>.
+                <br><br>
                 Select a parent industry for <a href="{{welcome.selectedCompany.angellist_url}}" target="_blank" title="{{welcome.selectedCompany.name}}'s AngelList Profile">{{welcome.selectedCompany.name}}</a>:
                 <select class="form-control m-b" ng-model="welcome.selectedCompany.parent" style="margin-bottom: 5px;" required>
                     <option ng-repeat="parent in welcome.parents">{{ parent }}</option>
@@ -36,7 +38,7 @@
                     <span class="text-danger">&nbsp;&nbsp;<i class="fa fa-exclamation-triangle"></i> A parent is required.</span>
                 </div>
                 <br>
-                Add up to six industries <a href="{{welcome.selectedCompany.angellist_url}}" target="_blank" title="{{welcome.selectedCompany.name}}'s AngelList Profile">{{welcome.selectedCompany.name}}</a> is a part of:
+                Add up to six specific industries <a href="{{welcome.selectedCompany.angellist_url}}" target="_blank" title="{{welcome.selectedCompany.name}}'s AngelList Profile">{{welcome.selectedCompany.name}}</a> is a part of:
                 <div class="panel-body industry_select" style="padding:1px; margin-top: 6px; margin-bottom: 6px;">
                     <ui-select multiple ng-model="welcome.selectedCompany.industries" tagging="true" tagging-label="(new)" ng-disabled="disabled" limit="6" alert_title="Sorry, only 6 items here." alert_text="Focus on industries with a network in your community." alert_type="warning" style="border:none;">
                         <ui-select-match placeholder="Search for industries..">{{$item}}</ui-select-match>
@@ -45,8 +47,7 @@
                         </ui-select-choices>
                     </ui-select>
                 </div>
-                <a href="{{welcome.selectedCompany.angellist_url}}" target="_blank" title="{{welcome.selectedCompany.name}}'s AngelList Profile">{{welcome.selectedCompany.name}}</a>'s headline is <a style="color:#4ea5e0;" editable-text="welcome.selectedCompany.high_concept">{{welcome.selectedCompany.high_concept || 'empty'}}</a>.
-                <br/><br/>
+                <br/>
                 Click below to edit <a href="{{welcome.selectedCompany.angellist_url}}" target="_blank" title="{{welcome.selectedCompany.name}}'s AngelList Profile">{{welcome.selectedCompany.name}}</a>'s summary:
             </h4>
             <div class="summary_form">
