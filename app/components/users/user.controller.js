@@ -284,7 +284,7 @@ function UserProfileController($stateParams, $location, $modal, $mixpanel, user,
 
 }
 
-function InviteUserController($modalInstance, user_service, community, communities, location) {
+function InviteUserController($modalInstance, $state, user_service, community, communities, location) {
     var self = this;
     this.community = community;
 
@@ -320,6 +320,7 @@ function InviteUserController($modalInstance, user_service, community, communiti
 
     this.cancel = function () {
         $modalInstance.dismiss('cancel');
+        $state.reload();
     };
 
     this.working = false;

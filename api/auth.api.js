@@ -552,7 +552,7 @@ function handleInviteUser(req, res) {
                     db.put(config.db.communities, result.body.results[0].path.key, existing)
                         .then(function (response) {
                             console.log("User updated!");
-                            res.status(200).send({message: '<a target="_blank" href="https://startupcommunity.org/' + result.body.results[0].path.key + '">' + result.body.results[0].value.profile.name + '</a> already exists in the system, so they were added to the community.'});
+                            res.status(200).send({message: 'Nice! <a target="_blank" href="https://startupcommunity.org/' + result.body.results[0].path.key + '">' + result.body.results[0].value.profile.name + '</a> is already a user. They were just added to your community.'});
                         })
                         .fail(function(err) {
                             console.log('WARNING:');
