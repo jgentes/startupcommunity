@@ -197,8 +197,8 @@ function handleAddCompany(req, res) {
             var company = schema.angellist(addCompany.al_profile, addCompany.location_key, addCompany.community_key);
             if (company.profile.angellist.industries) delete company.profile.angellist.industries;
 
-            //search for company and add if not there
-            companyPull(company, addCompany.role, addCompany.location_key, req.user.path.key, function(result) {
+            //search for company and add if not there.. not sure why req.user.path.key doesn't exist here sometimes
+            companyPull(company, addCompany.role, addCompany.location_key, req.user.value.key || req.user.path.key, function(result) {
                 res.status(result.status).send(result.data);
             });
 

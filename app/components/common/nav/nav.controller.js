@@ -218,7 +218,7 @@ function NavigationController($auth, $state, $window, $location, $stateParams, $
         var modalInstance = $modal.open({
             templateUrl: 'components/companies/company.add.html',
             controller: WelcomeController,
-            controllerAs: 'add',
+            controllerAs: 'welcome',
             windowClass: "hmodal-info",
             resolve: {
                 community: function() {

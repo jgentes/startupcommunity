@@ -2,7 +2,7 @@ angular
     .module('startupcommunity')
     .controller('WelcomeController', WelcomeController);
 
-function WelcomeController($auth, $q, $http, $mixpanel, $stateParams, $scope, $state, $filter, sweet, community, location, user_service, company_service, community_service) {
+function WelcomeController($auth, $q, $http, $mixpanel, $stateParams, $scope, $state, $filter, $modalInstance, sweet, community, location, user_service, company_service, community_service) {
     var self = this;
     this.location = jQuery.isEmptyObject(location) ? community.profile.name : location.profile.name.split(',')[0];
     this.auth = false;
@@ -292,6 +292,10 @@ function WelcomeController($auth, $q, $http, $mixpanel, $stateParams, $scope, $s
                     self.alert = { type: 'danger', message: String(error.data.message) };
                 });
         }
+    };
+
+    this.close = function () {
+        $modalInstance.dismiss('cancel');
     };
 
 }
