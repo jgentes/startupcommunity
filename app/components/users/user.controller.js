@@ -284,11 +284,12 @@ function UserProfileController($stateParams, $location, $modal, $mixpanel, user,
 
 }
 
-function InviteUserController($modalInstance, $state, user_service, community, communities, location) {
+function InviteUserController(user_service, community, location) {
     var self = this;
     this.community = community;
 
     this.inviteUser = function() {
+
         this.working = true;
 
         if (self.form.$valid) {
@@ -296,9 +297,9 @@ function InviteUserController($modalInstance, $state, user_service, community, c
                 "email" : self.form.email_value
             };
 
-            if (communities[community.key].type == 'cluster') community.key = location.key;
+            if (community.type == 'cluster') community.key = location.key;
 
-            user_service.inviteUser(formdata.email, communities[location.key].profile.name, location.key, community.key)
+            user_service.inviteUser(formdata.email, location.profile.name, location.key, community.key)
                 .then(function(response) {
                     self.working = false;
 
@@ -309,18 +310,17 @@ function InviteUserController($modalInstance, $state, user_service, community, c
                     }
 
                     self.form.email_value = "";
-                });
+                })
+                .catch(function(error) {
+                    self.working = false;
+                    self.alert = { type: 'danger', message: String(error.data.message) };
+                })
 
         } else {
             this.working = false;
             self.form.submitted = true;
         }
 
-    };
-
-    this.cancel = function () {
-        $modalInstance.dismiss('cancel');
-        $state.reload();
     };
 
     this.working = false;

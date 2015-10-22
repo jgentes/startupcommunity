@@ -2,7 +2,7 @@ angular
     .module('startupcommunity')
     .controller('WelcomeController', WelcomeController);
 
-function WelcomeController($auth, $q, $http, $mixpanel, $stateParams, $scope, $state, $filter, $modalInstance, sweet, community, location, user_service, company_service, community_service) {
+function WelcomeController($auth, $q, $http, $mixpanel, $stateParams, $scope, $state, $filter, sweet, community, location, user_service, company_service, community_service) {
     var self = this;
     this.location = jQuery.isEmptyObject(location) ? community.profile.name : location.profile.name.split(',')[0];
     this.auth = false;
@@ -56,7 +56,6 @@ function WelcomeController($auth, $q, $http, $mixpanel, $stateParams, $scope, $s
 
                 })
                 .catch(function(response) {
-                    console.log(response);
                     if (response.error || response.data) {
                         self.alert = {type: 'danger', message: String(response.error || response.data.message)};
                     } else self.alert = undefined;
@@ -230,72 +229,70 @@ function WelcomeController($auth, $q, $http, $mixpanel, $stateParams, $scope, $s
             })
     };
 
-    this.submit = function() {
+    this.next = function() {
         if (self.selectedCompany) {
             self.alert = {type: "warning", message: "Warning: " + self.selectedCompany.name + " has been selected but hasn't been added yet. Please add the company or cancel before continuing."};
-            return;
-        } else {
-
-            // add roles
-            if (!self.user.roles) {
-                self.user["roles"] = {};
-            }
-
-            for (role in self.roles) {
-                if (!self.user.roles[role]) {
-                    self.user.roles[role] = {};
-                    self.user.roles[role][community_path] = [$stateParams.location_path];
-                    self.user.roles[role][$stateParams.location_path] = [$stateParams.location_path];
-                } else if (!self.user.roles[role][community_path]) {
-                    self.user.roles[role][community_path] = [$stateParams.location_path];
-                    self.user.roles[role][$stateParams.location_path] = [$stateParams.location_path];
-                } else if (self.user.roles[role][community_path].indexOf($stateParams.location_path) < 0) {
-                    self.user.roles[role][community_path].push($stateParams.location_path);
-                    self.user.roles[role][$stateParams.location_path] = [$stateParams.location_path];
-                } // else it's already there
-
-            }
-            // allow user to remove roles
-            for (dRole in ['founder', 'investor', 'team', 'mentor', 'provider']) {
-                if (self.roles[dRole] && self.roles[dRole] == false) {
-                    if (self.user.roles[dRole] && self.user.roles[dRole][community_path]) delete self.user.roles.mentor[community_path];
-                    if (self.user.roles[dRole] && self.user.roles[dRole][$stateParams.location_path]) delete self.user.roles.mentor[$stateParams.location_path];
-                }
-            }
-
-            // add skills
-            self.user.profile["skills"] = self.skills;
-
-            // update user profile
-            user_service.updateProfile(self.user)
-                .then(function(response) {
-                    if (response.status !== 200) {
-                        self.alert = { type: 'danger', message: String(response.data.message) };
-                    } else {
-                        sweet.show({
-                                title: "Welcome.",
-                                text: "Let's have a look at your community.",
-                                type: "success",
-                                showCancelButton: false,
-                                confirmButtonText: "Let's go!",
-                                closeOnConfirm: true
-                            },
-                            function (isConfirm) {
-                                if (isConfirm) {
-                                    $state.go('community.dashboard', {profile: self.user, location_path: $stateParams.location_path, query: '*'})
-                                }
-                            });
-                    }
-                })
-                .catch(function(error) {
-                    self.working = false;
-                    self.alert = { type: 'danger', message: String(error.data.message) };
-                });
-        }
+        } else $state.go('welcome.invite');
     };
 
-    this.close = function () {
-        $modalInstance.dismiss('cancel');
+    this.submit = function() {
+
+        // add roles
+        if (!self.user.roles) {
+            self.user["roles"] = {};
+        }
+
+        for (role in self.roles) {
+            if (!self.user.roles[role]) {
+                self.user.roles[role] = {};
+                self.user.roles[role][community_path] = [$stateParams.location_path];
+                self.user.roles[role][$stateParams.location_path] = [$stateParams.location_path];
+            } else if (!self.user.roles[role][community_path]) {
+                self.user.roles[role][community_path] = [$stateParams.location_path];
+                self.user.roles[role][$stateParams.location_path] = [$stateParams.location_path];
+            } else if (self.user.roles[role][community_path].indexOf($stateParams.location_path) < 0) {
+                self.user.roles[role][community_path].push($stateParams.location_path);
+                self.user.roles[role][$stateParams.location_path] = [$stateParams.location_path];
+            } // else it's already there
+
+        }
+        // allow user to remove roles
+        for (dRole in ['founder', 'investor', 'team', 'mentor', 'provider']) {
+            if (self.roles[dRole] && self.roles[dRole] == false) {
+                if (self.user.roles[dRole] && self.user.roles[dRole][community_path]) delete self.user.roles.mentor[community_path];
+                if (self.user.roles[dRole] && self.user.roles[dRole][$stateParams.location_path]) delete self.user.roles.mentor[$stateParams.location_path];
+            }
+        }
+
+        // add skills
+        self.user.profile["skills"] = self.skills;
+
+        // update user profile
+        user_service.updateProfile(self.user)
+            .then(function(response) {
+                if (response.status !== 200) {
+                    self.alert = { type: 'danger', message: String(response.data.message) };
+                } else {
+                    sweet.show({
+                            title: "Welcome.",
+                            text: "Let's have a look at your community.",
+                            type: "success",
+                            showCancelButton: false,
+                            confirmButtonText: "Let's go!",
+                            closeOnConfirm: true
+                        },
+                        function (isConfirm) {
+                            if (isConfirm) {
+                                $state.go('community.dashboard', {profile: self.user, location_path: $stateParams.location_path, query: '*'})
+                            }
+                        });
+                }
+            })
+            .catch(function(error) {
+                self.working = false;
+                self.alert = { type: 'danger', message: String(error.data.message) };
+            });
+
     };
 
 }

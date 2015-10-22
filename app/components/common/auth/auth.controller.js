@@ -32,7 +32,6 @@ function LoginController($auth, $state, $mixpanel, $stateParams, sweet) {
         self.working = true;
         $auth.authenticate(provider)
             .then(function(response) {
-                console.log(response);
                 postLogin(response);
             })
             .catch(function(response) {

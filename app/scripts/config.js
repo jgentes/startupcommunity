@@ -142,6 +142,10 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
         .state('welcome.companies', {
             templateUrl: "components/common/welcome/welcome.companies.html"
         })
+        .state('welcome.invite', {
+            templateUrl: "components/common/welcome/welcome.invite.html",
+            controller: "InviteUserController as invite"
+        })
 
         .state('search', {
             parent: 'root',

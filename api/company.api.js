@@ -204,7 +204,7 @@ function handleAddCompany(req, res) {
 
         } else {
             console.warn("User is not a member of community: " + addCompany.community_key + " and location: " + addCompany.location_key + "!");
-            res.status(400).send({ message: 'Sorry, you must be a member of this community and/or a leader of this network to add a company to it.' });
+            res.status(400).send({ message: 'You must be a member of this community and/or a leader of this network to add a company to it.' });
         }
     }
 }

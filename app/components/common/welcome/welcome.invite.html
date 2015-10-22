@@ -1,10 +1,8 @@
-<div class="inmodal">
-    <div class="color-line"></div>
-    <div class="modal-header">
-        <h4 class="modal-title">Invite people to join {{invite.community.profile.name}}</h4>
-        <p class="font-bold">If you invite someone who is already in the system, they will be added to your {{invite.community.type}} immediately without being notified. Otherwise we will send them an invitation by email.</p>
+<div class="hpanel">
+    <div class="panel-heading" style="text-align:center;">
+        <h4 class="modal-title">Invite others to join this community.</h4>
     </div>
-    <div class="modal-body">
+    <div>
         <div class="hpanel">
             <div class="panel-heading" style="font-size: 20px;">Enter an email address:</div>
             <div style="padding-bottom: 30px;">
@@ -21,8 +19,8 @@
         </div>
         <div alert-box this-alert="invite.alert"></div>
     </div>
-    <div class="modal-footer">
-        <button type="button" class="btn btn-default" ng-click="$close();$state.reload();">Close</button>
-    </div>
+    <h4 style="margin-bottom: 13px;">
+        <a class="btn btn-info pull-left" ui-sref="welcome.companies">Back</a>
+        <a class="btn btn-info pull-right" ng-click="welcome.submit()">Finish</a></h4>
 </div>
 

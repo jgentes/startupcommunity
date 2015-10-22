@@ -301,7 +301,7 @@ function handleLinkedin(req, res) {
             })
     };
 
-    var add_knowtify = function(id, user) {
+    var add_knowtify = function(user) {
         // send user info to Knowtify
         var knowtifyClient = new knowtify.Knowtify(config.knowtify, false);
 
@@ -310,7 +310,6 @@ function handleLinkedin(req, res) {
                 {
                     "email": user.profile.email,
                     "data": {
-                        "id": id,
                         "name": user.profile.name,
                         "email": user.profile.email
                     }
@@ -406,7 +405,7 @@ function handleLinkedin(req, res) {
                                         accept_invite(result.body.results[0].value.profile, invite_profile.invitor_email);
                                         delete_invite();
                                     }
-                                    add_knowtify(result.body.results[0].path.key, result.body.results[0].value);
+                                    add_knowtify(result.body.results[0].value);
                                 })
                                 .fail(function (err) {
                                     console.error("Profile update failed:");
@@ -437,7 +436,7 @@ function handleLinkedin(req, res) {
                                                     accept_invite(invite_profile.profile, invite_profile.invitor_email);
                                                     delete_invite();
                                                 }
-                                                add_knowtify(result.body.results[0].path.key, result.body.results[0].value);
+                                                add_knowtify(result.body.results[0].value);
                                             })
                                             .fail(function (err) {
                                                 console.warn("WARNING: Profile update failed:");
@@ -480,7 +479,7 @@ function handleLinkedin(req, res) {
                                                         token: handleCreateToken(req, new_profile),
                                                         user: new_profile
                                                     });
-                                                    add_knowtify(invite_code, invite_profile);
+                                                    add_knowtify(invite_profile);
                                                     accept_invite(invite_profile.profile, invitor_email);
                                                 })
                                                 .fail(function (err) {
@@ -491,7 +490,7 @@ function handleLinkedin(req, res) {
                                         } else {
                                             res.status(401).send({
                                                 profile: profile,
-                                                message: "Sorry, we couldn't find " + profile.firstName + " " + profile.lastName + " with email address '" + profile.emailAddress + "' in our system. <br/><br/>Please <a href='/' target='_self'>click here to request an invitation</a>."
+                                                message: "We couldn't find " + profile.firstName + " " + profile.lastName + " with email address '" + profile.emailAddress + "' in our system. <br/><br/>Please <a href='/' target='_self'>click here to request an invitation</a>."
                                             });
                                         }
 
@@ -608,7 +607,7 @@ function handleInviteUser(req, res) {
                                         function (error) {
                                             console.log('WARNING:');
                                             console.log(error);
-                                            res.status(500).send({message: "Woah! Something went wrong: " + error});
+                                            res.status(202).send({message: "Woah! Something went wrong, but we've been notified and will take care of it."});
                                         });
                                     });
                             }

@@ -62,9 +62,9 @@
         </div>
     </div>
     <div class="modal-footer">
-        <input ng-click="welcome.addCompany()" type="submit" class="finish btn-success btn pull-left" ng-class="{'disabled' : disabled || welcome.working || !welcome.selectedCompany}" value="{{ (welcome.updateCompany ? 'Update ' : 'Add ') + (welcome.selectedCompany.name || 'Company') }}"/>
-        <button type="button" class="btn btn-default pull-left" ng-show="welcome.selectedCompany && !welcome.working" ng-click="welcome.selectedCompany = undefined; welcome.company = undefined; welcome.alert = undefined; welcome.updateRole = false; welcome.selectedRole = 'none'; welcome.updateCompany = false;">Cancel</button>
+        <input ng-click="welcome.addCompany()" type="submit" class="finish btn-success btn pull-right" ng-class="{'disabled' : disabled || welcome.working || !welcome.selectedCompany}" value="{{ (welcome.updateCompany ? 'Update ' : 'Add ') + (welcome.selectedCompany.name || 'Company') }}"/>
+        <button type="button" class="btn btn-default pull-right" ng-show="welcome.selectedCompany && !welcome.working" ng-click="welcome.selectedCompany = undefined; welcome.company = undefined; welcome.alert = undefined; welcome.updateRole = false; welcome.selectedRole = 'none'; welcome.updateCompany = false;">Clear</button>
         <div loading-bars ng-show="welcome.working" style="padding-top: 5px;"></div>
-        <button type="button" class="btn btn-default" ng-click="welcome.close()">Go Back</button>
+        <button type="button" class="btn btn-default pull-left" ng-click="$close();$state.reload();">Go Back</button>
     </div>
 </div>
