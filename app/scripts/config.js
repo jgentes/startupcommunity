@@ -218,28 +218,6 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                 }
             }
         })
-        .state('user.invite', {
-            url: "/:community_path/people/invite",
-            params: {
-                community: {},
-                community_path: {
-                    value: null,
-                    squash: true
-                },
-                pageTitle: 'Invite People',
-                pageDescription: 'New users will be asked to identify their roles and industry focus within the community.',
-                icon: 'pe-7s-id'
-            },
-            views: {
-                'header': {
-                    templateUrl: "components/common/header/header_small.html"
-                },
-                'content': {
-                    templateUrl: 'components/users/user.invite.html',
-                    controller: "InviteUserController as invite"
-                }
-            }
-        })
         
         // Company views
         .state('company', {

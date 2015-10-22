@@ -10,6 +10,7 @@ function WelcomeController($auth, $q, $http, $mixpanel, $stateParams, $scope, $s
     this.updateCompany= false; // used if company already exists
     var community_path = $stateParams.community_path ? $stateParams.community_path : $stateParams.location_path;
     this.industries = community_service.industries();
+    this.parents = [ 'Agriculture', 'Art', 'Construction', 'Consumer Goods', 'Corporate', 'Education', 'Finance', 'Government', 'Healthcare', 'Legal', 'Manufacturing', 'Medical', 'Non-Profit', 'Recreation', 'Services', 'Tech', 'Transportation' ];
 
     this.authenticate = function() {
         self.working = true;
@@ -189,6 +190,7 @@ function WelcomeController($auth, $q, $http, $mixpanel, $stateParams, $scope, $s
                     if (response.data.count > 0) {
                         self.updateCompany = true;
                         if (response.data.results[0].value.profile.industries) self.selectedCompany.industries = response.data.results[0].value.profile.industries;
+                        if (response.data.results[0].value.profile.parents) self.selectedCompany.parent = response.data.results[0].value.profile.parents[0];
                         self.alert = { type: 'warning', message: self.selectedCompany.name + ' is already in the system, but you may update the company record.'};
                     }
                 })
