@@ -188,6 +188,29 @@ function NavigationController($auth, $state, $window, $location, $stateParams, $
         });
     };
 
+    // INVITE PEOPLE
+
+    this.invitePeople = function() {
+
+        var modalInstance = $modal.open({
+            templateUrl: 'components/users/user.invite.html',
+            controller: InviteUserController,
+            controllerAs: 'invite',
+            windowClass: "hmodal-info",
+            resolve: {
+                community: function() {
+                    return self.community;
+                },
+                communities: function() {
+                    return self.communities;
+                },
+                location: function() {
+                    return self.location;
+                }
+            }
+        });
+    };
+
     // *** ROUTING OF ROOT PATHS ***
 
     this.path = $location.path().replace(/\/$/, ""); //used for routing and used in view

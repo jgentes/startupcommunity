@@ -13,49 +13,54 @@ function WelcomeController($auth, $q, $http, $mixpanel, $stateParams, $scope, $s
 
     this.authenticate = function() {
         self.working = true;
-        $auth.authenticate('linkedin', {invite_code: $stateParams.invite_code})
-            .then(function(response) {
+        if (!$stateParams.invite_code) {
+            this.alert = {type: 'danger', message: 'You must have an invitation to continue. Please check your email and click on the link provided there.'};
+            self.working = false;
+        } else {
+            $auth.authenticate('linkedin', {invite_code: $stateParams.invite_code})
+                .then(function(response) {
 
-                if (response.status !== 200) {
-                    self.alert = { type: 'danger', message: 'There was a problem: ' + String(response.data.message) };
-                } else {
-                    self.auth = true;
-                    self.user = response.data.user.value;
-                    self.user["key"] = response.data.user.path.key;
-                    if (!self.user.profile["name"]) self.user.profile["name"] = self.user.profile.linkedin.firstName + ' ' + self.user.profile.linkedin.lastName;
-                    if (!self.user.profile["email"]) self.user.profile["email"] = self.user.profile.linkedin.emailAddress;
-                    if (!self.user.profile["headline"]) self.user.profile["headline"] = self.user.profile.linkedin.headline;
-                    if (!self.user.profile["avatar"]) self.user.profile["avatar"] = self.user.profile.linkedin.pictureUrl;
-                    if (!self.user.profile["summary"]) self.user.profile["summary"] = self.user.profile.linkedin.summary;
+                    if (response.status !== 200) {
+                        self.alert = { type: 'danger', message: 'There was a problem: ' + String(response.data.message) };
+                    } else {
+                        self.auth = true;
+                        self.user = response.data.user.value;
+                        self.user["key"] = response.data.user.path.key;
+                        if (!self.user.profile["name"]) self.user.profile["name"] = self.user.profile.linkedin.firstName + ' ' + self.user.profile.linkedin.lastName;
+                        if (!self.user.profile["email"]) self.user.profile["email"] = self.user.profile.linkedin.emailAddress;
+                        if (!self.user.profile["headline"]) self.user.profile["headline"] = self.user.profile.linkedin.headline;
+                        if (!self.user.profile["avatar"]) self.user.profile["avatar"] = self.user.profile.linkedin.pictureUrl;
+                        if (!self.user.profile["summary"]) self.user.profile["summary"] = self.user.profile.linkedin.summary;
 
-                    if (self.user.roles) {
-                        if (!self.roles) self["roles"] = {};
-                        for (role in self.user.roles) {
-                            self.roles[role] = true;
+                        if (self.user.roles) {
+                            if (!self.roles) self["roles"] = {};
+                            for (role in self.user.roles) {
+                                self.roles[role] = true;
+                            }
                         }
+
+                        if (self.user.profile.skills) {
+                            if (!self.skills) self.skills =[];
+                            for (skill in self.user.profile.skills) {
+                                self.skills.push(self.user.profile.skills[skill]);
+                            }
+                        }
+
+                        self.working = false;
+                        $mixpanel.identify(response.data.user.path.key);
+                        $mixpanel.track('Accepted Invite');
+
+                        $state.go('welcome.roles');
                     }
 
-                    if (self.user.profile.skills) {
-                        if (!self.skills) self.skills =[];
-                        for (skill in self.user.profile.skills) {
-                            self.skills.push(self.user.profile.skills[skill]);
-                        }
-                    }
-
-                    self.working = false;
-                    $mixpanel.identify(response.data.user.path.key);
-                    $mixpanel.track('Accepted Invite');
-
-                    $state.go('welcome.roles');
-                }
-
-            })
-            .catch(function(response) {
-                console.log(response);
-                if (response.error || response.data) {
-                    self.alert = {type: 'danger', message: String(response.error || response.data.message)};
-                } else self.alert = undefined;
-            });
+                })
+                .catch(function(response) {
+                    console.log(response);
+                    if (response.error || response.data) {
+                        self.alert = {type: 'danger', message: String(response.error || response.data.message)};
+                    } else self.alert = undefined;
+                });
+        }
     };
 
     this.notListed = function() {
@@ -199,6 +204,8 @@ function WelcomeController($auth, $q, $http, $mixpanel, $stateParams, $scope, $s
         this.working = true;
         var role = self.selectedRole == 'none' ? undefined : self.selectedRole;
 
+        if (community.type == 'cluster') community_path = location.key; // do not allow companies to be added directly to clusters
+
         company_service.addCompany(self.selectedCompany, role, location.key, community_path)
             .then(function(response) {
 
@@ -272,6 +279,7 @@ function WelcomeController($auth, $q, $http, $mixpanel, $stateParams, $scope, $s
                             },
                             function (isConfirm) {
                                 if (isConfirm) {
+                                    $state.reload();
                                     $state.go('community.dashboard', {location_path: $stateParams.location_path, query: '*'})
                                 }
                             });

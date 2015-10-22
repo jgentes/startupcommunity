@@ -1,37 +1,28 @@
-<div ng-class="{'header-embedded' : nav.embedded}">
-    <div class="hpanel">
-        <div class="panel-body">
-            <h2 class="font-light m-b-xs">
-                <span>{{ $state.params.pageTitle }}</span>
-                <i class="pull-right" ng-class="{'fa fa-circle-o-notch fa-spin' : invite.working, 'pe-7s-id' : !invite.working}" style="font-size: 50px;"></i>
-            </h2>
-            <small>{{ $state.params.pageDescription }}</small>
-        </div>
+<div class="inmodal">
+    <div class="color-line"></div>
+    <div class="modal-header">
+        <h4 class="modal-title">Invite people to join {{invite.community.profile.name}}</h4>
+        <p class="font-bold">If you invite someone who is already in the system, they will be added to your {{invite.community.type}} immediately. Otherwise we will send them an invitation by email.</p>
     </div>
-</div>
-
-<div class="hpanel hgreen">
-    <div class="panel-heading hbuilt">
-        This process will send an email invitation the user to join the community.
-    </div>
-        <div class="panel-body">
-            <div ng-show="invite.alert" class="alert" ng-class="{'alert-success' : invite.alert.type == 'success', 'alert-danger' : invite.alert.type == 'danger'}">
-                <span ng-bind-html="invite.alert.message | safe_html"></span>
-            </div>
-            <div style="padding: 20px 20px 60px 20px;">
-                <form role="form" name="invite.form" novalidate ng-submit="invite.inviteUser(nav.location_path, nav.community.key)">
+    <div class="modal-body">
+        <div class="hpanel">
+            <div class="panel-heading" style="font-size: 20px;">Enter an email address:</div>
+            <div style="padding-bottom: 30px;">
+                <form role="form" name="invite.form" novalidate ng-submit="invite.inviteUser()">
                     <div class="form-group">
-                        <label>Email Address:</label>
                         <input type="email" placeholder="new@mentor.com" class="form-control input-lg" required name="email" ng-model="invite.form.email_value">
                         <div class="m-t-xs" ng-show="invite.form.email.$invalid && invite.form.submitted">
                             <span class="text-danger" ng-show="invite.form.email.$error">&nbsp;&nbsp;<i class="fa fa-exclamation-triangle"></i> Please enter a valid email address..</span>
                         </div>
                     </div>
-                    <input type="submit" style="float:left" class="finish btn-success btn" ng-class="{'disabled' : disabled}" value="Add User" />
+                    <input type="submit" style="float:left" class="finish btn-success btn" ng-class="{'disabled' : disabled}" value="Invite Person" /><div style="padding-top: 6px; margin-bottom: -24px;" ng-show="invite.working" loading-bars></div>
                 </form>
             </div>
+        </div>
+        <div alert-box this-alert="invite.alert"></div>
     </div>
-    <div class="panel-footer">
-        To import a full spreadsheet, please <a href="mailto:james@startupcommunity.org">click here to let us know</a>.
+    <div class="modal-footer">
+        <button type="button" class="btn btn-default" ng-click="invite.cancel()">Close</button>
     </div>
 </div>
+

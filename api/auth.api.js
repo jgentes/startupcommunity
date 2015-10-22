@@ -266,7 +266,7 @@ function handleLinkedin(req, res) {
     var accept_invite = function(invitee, invitor_email) {
         // update Knowtify with invitation accepted
         var knowtifyClient = new knowtify.Knowtify(config.knowtify, false);
-
+        console.log(invitee, invitor_email);
         knowtifyClient.contacts.upsert({
             "event": 'invite_accepted',
             "contacts": [
@@ -536,7 +536,30 @@ function handleInviteUser(req, res) {
             .then(function (result) {
                 if (result.body.results.length > 0) {
                     console.log("Existing user found!");
-                    res.status(202).send({message: 'Sorry, a user with that email address already exists in the system! View them here: <a target="_blank" href="https://startupcommunity.org/' + result.body.results[0].path.key + '">https://startupcommunity.org/' + result.body.results[0].path.key});
+
+                    var existing = result.body.results[0].value;
+
+                    if (!existing.communities) existing.communities = [];
+
+                    if (existing.communities.indexOf(inviteUser.community_key) > -1) {
+                        existing.communities.push(inviteUser.community_key);
+                    }
+
+                    if (existing.communities.indexOf(inviteUser.location_key) > -1) {
+                        existing.communities.push(inviteUser.location_key);
+                    }
+
+                    db.put(config.db.communities, result.body.results[0].path.key, existing)
+                        .then(function (response) {
+                            console.log("User updated!");
+                            res.status(200).send({message: '<a target="_blank" href="https://startupcommunity.org/' + result.body.results[0].path.key + '">' + result.body.results[0].value.profile.name + '</a> already exists in the system, so they were added to the community.'});
+                        })
+                        .fail(function(err) {
+                            console.log('WARNING:');
+                            console.log(err);
+                            res.status(202).send({message: err});
+                        })
+
                 } else {
                     // no existing user, so search for existing invite
                     db.newSearchBuilder()
@@ -546,7 +569,7 @@ function handleInviteUser(req, res) {
                         .then(function (result) {
                             if (result.body.results.length > 0) {
                                 console.log("Existing invite found!");
-                                res.status(202).send({message: 'An invitation has already been sent to ' + inviteUser.email + '. We will continue to send reminders for 1 week, then you will be notified if they still have not accepted. You may invite them again at that time.'});
+                                res.status(200).send({message: 'An invitation has already been sent to ' + inviteUser.email + '. We will continue to send reminders for 1 week, then you will be notified if they still have not accepted. You may invite them again at that time.'});
                             } else {
                                 // create user record with email address and community data
                                 var newUser = schema.invite(inviteUser.email, req.user.value.profile.email, inviteUser.location_key, inviteUser.community_key);
@@ -571,21 +594,21 @@ function handleInviteUser(req, res) {
                                                     "invite_community": inviteUser.community_name.split(',')[0],
                                                     "invite_url": community_url,
                                                     "invite_code": userkey,
-                                                    "invitor_name": inviteUser.leader_profile.name,
-                                                    "invitor_email": inviteUser.leader_profile.email,
-                                                    "invitor_image": inviteUser.leader_profile.avatar,
+                                                    "invitor_name": req.user.value.profile.name,
+                                                    "invitor_email": req.user.value.profile.email,
+                                                    "invitor_image": req.user.value.profile.avatar,
                                                     "invite_accepted": false
                                                 }
                                             }]
                                         },
                                         function (success) {
                                             console.log('Invitation sent to ' + inviteUser.email + ' (' + userkey + ')');
-                                            res.status(200).end();
+                                            res.status(200).send({message: "Done! We've sent an invitation to " + inviteUser.email});
                                         },
                                         function (error) {
                                             console.log('WARNING:');
                                             console.log(error);
-                                            res.status(500).end();
+                                            res.status(500).send({message: "Woah! Something went wrong: " + error});
                                         });
                                     });
                             }
@@ -594,7 +617,7 @@ function handleInviteUser(req, res) {
             });
     } else {
         console.warn("User is not a leader in community: " + inviteUser.community_key + " for location: " + inviteUser.location_key + "!");
-        res.status(202).send({ message: 'Sorry, you must be a member of this location and/or a leader of this network to invite someone.' });
+        res.status(202).send({ message: 'You must be a member of this location and/or a leader of this network to invite someone.' });
     }
 }
 

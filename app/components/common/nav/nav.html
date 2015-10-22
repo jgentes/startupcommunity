@@ -101,7 +101,7 @@
                                 <a><i class="fa fa-caret-right"></i>People
                                 <span loading-bars ng-show="p_working"></span>
                                 </a>
-                                <li ng-if="nav.user.roles.leader[nav.community.key].indexOf(nav.location_path) > -1" class="nav-third-level" ui-sref="{{'user.invite' + nav.nav_url}}">
+                                <li ng-if="nav.user.roles.leader[nav.community.key].indexOf(nav.location_path) > -1 && nav.community.type !== 'cluster'" class="nav-third-level" ng-click="nav.invitePeople();">
                                     <a style="color: #aaa;">+&nbsp;&nbsp;Invite People</a>
                                 </li>
                             </li>
@@ -109,7 +109,7 @@
                                 <a><i class="fa fa-caret-right"></i>Companies
                                 <span loading-bars ng-show="comp_working"></span>
                                 </a>
-                                <li ng-if="nav.user.roles.leader[nav.community.key].indexOf(nav.location_path) > -1" class="nav-third-level" ui-sref="{{'company.add' + nav.nav_url}}">
+                                <li ng-if="nav.user.roles.leader[nav.community.key].indexOf(nav.location_path) > -1 && nav.community.type !== 'cluster'" class="nav-third-level" ui-sref="{{'company.add' + nav.nav_url}}">
                                     <a style="color: #aaa;">+&nbsp;&nbsp;Add Company</a>
                                 </li>
                             </li>

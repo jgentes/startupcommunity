@@ -284,10 +284,11 @@ function UserProfileController($stateParams, $location, $modal, $mixpanel, user,
 
 }
 
-function InviteUserController(user_service, user, community, communities) {
+function InviteUserController($modalInstance, user_service, community, communities, location) {
     var self = this;
+    this.community = community;
 
-    this.inviteUser = function(location_key, community_key) {
+    this.inviteUser = function() {
         this.working = true;
 
         if (self.form.$valid) {
@@ -295,14 +296,16 @@ function InviteUserController(user_service, user, community, communities) {
                 "email" : self.form.email_value
             };
 
-            user_service.inviteUser(formdata.email, user.data.user.profile, communities.data[location_key].profile.name, location_key, community_key)
+            if (communities[community.key].type == 'cluster') community.key = location.key;
+
+            user_service.inviteUser(formdata.email, communities[location.key].profile.name, location.key, community.key)
                 .then(function(response) {
                     self.working = false;
-
+                    console.log(response);
                     if (response.status !== 200) {
                         self.alert = { type: 'danger', message: String(response.data.message) };
                     } else {
-                        self.alert = { type: 'success', message: 'An invitation has been send to ' + formdata.email + ' to join the ' + community.profile.name + ' community.' };
+                        self.alert = { type: 'success', message: response.data.message };
                     }
 
                     self.form.email_value = "";
@@ -315,8 +318,10 @@ function InviteUserController(user_service, user, community, communities) {
 
     };
 
+    this.cancel = function () {
+        $modalInstance.dismiss('cancel');
+    };
+
     this.working = false;
-
-
 
 }
