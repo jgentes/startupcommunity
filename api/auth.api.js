@@ -266,7 +266,7 @@ function handleLinkedin(req, res) {
     var accept_invite = function(invitee, invitor_email) {
         // update Knowtify with invitation accepted
         var knowtifyClient = new knowtify.Knowtify(config.knowtify, false);
-        console.log(invitee, invitor_email);
+
         knowtifyClient.contacts.upsert({
             "event": 'invite_accepted',
             "contacts": [
@@ -403,7 +403,7 @@ function handleLinkedin(req, res) {
                                 .then(function () {
                                     console.log("Profile updated: " + result.body.results[0].value.profile.name);
                                     if (invite_profile) {
-                                        accept_invite(invite_profile.profile, invite_profile.invitor_email);
+                                        accept_invite(result.body.results[0].value.profile, invite_profile.invitor_email);
                                         delete_invite();
                                     }
                                     add_knowtify(result.body.results[0].path.key, result.body.results[0].value);

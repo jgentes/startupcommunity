@@ -301,7 +301,7 @@ function InviteUserController($modalInstance, user_service, community, communiti
             user_service.inviteUser(formdata.email, communities[location.key].profile.name, location.key, community.key)
                 .then(function(response) {
                     self.working = false;
-                    console.log(response);
+
                     if (response.status !== 200) {
                         self.alert = { type: 'danger', message: String(response.data.message) };
                     } else {

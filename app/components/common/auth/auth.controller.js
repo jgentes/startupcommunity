@@ -2,7 +2,7 @@ angular
     .module('startupcommunity')
     .controller('LoginController', LoginController);
 
-function LoginController($auth, $state, $mixpanel, $stateParams) {
+function LoginController($auth, $state, $mixpanel, $stateParams, sweet) {
 
     if (!jQuery.isEmptyObject($stateParams.alert)) this.alert = {type: 'danger', msg: $stateParams.alert};
     var self = this;
@@ -32,10 +32,11 @@ function LoginController($auth, $state, $mixpanel, $stateParams) {
         self.working = true;
         $auth.authenticate(provider)
             .then(function(response) {
+                console.log(response);
                 postLogin(response);
             })
             .catch(function(response) {
-                if (response.data.profile) {
+                if (response.data && response.data.profile) {
                     $mixpanel.people.set({
                         "$name": response.data.profile.firstName + ' ' + response.data.profile.lastName,
                         "$email": response.data.profile.emailAddress
@@ -43,9 +44,17 @@ function LoginController($auth, $state, $mixpanel, $stateParams) {
                     $mixpanel.track('Attempted Login');
 
                 }
-                if (response.data.message && response.data.message !== 'undefined') {
+                if (response.data && response.data.message && response.data.message !== 'undefined') {
                     self.alert = {type: 'danger', msg: String(response.data.message)};
+                    sweet.show({
+                        title: "Woah!",
+                        text: String(response.data.message),
+                        type: "error",
+                        html: true
+                    });
                 } else self.alert = undefined;
+
+                self.working = false;
             });
     };
 }

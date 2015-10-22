@@ -46,7 +46,6 @@ function WelcomeController($auth, $q, $http, $mixpanel, $stateParams, $scope, $s
                             }
                         }
 
-                        self.working = false;
                         $mixpanel.identify(response.data.user.path.key);
                         $mixpanel.track('Accepted Invite');
 
@@ -60,6 +59,8 @@ function WelcomeController($auth, $q, $http, $mixpanel, $stateParams, $scope, $s
                         self.alert = {type: 'danger', message: String(response.error || response.data.message)};
                     } else self.alert = undefined;
                 });
+
+            self.working = false;
         }
     };
 
@@ -235,29 +236,28 @@ function WelcomeController($auth, $q, $http, $mixpanel, $stateParams, $scope, $s
             // add roles
             if (!self.user.roles) {
                 self.user["roles"] = {};
-            } else {
-                for (role in self.roles) {
-                    if (!self.user.roles[role]) {
-                        self.user.roles[role] = {};
-                        self.user.roles[role][community_path] = [$stateParams.location_path];
-                        self.user.roles[role][$stateParams.location_path] = [$stateParams.location_path];
-                    } else if (!self.user.roles[role][community_path]) {
-                        self.user.roles[role][community_path] = [$stateParams.location_path];
-                        self.user.roles[role][$stateParams.location_path] = [$stateParams.location_path];
-                    } else if (self.user.roles[role][community_path].indexOf($stateParams.location_path) < 0) {
-                        self.user.roles[role][community_path].push($stateParams.location_path);
-                        self.user.roles[role][$stateParams.location_path] = [$stateParams.location_path];
-                    } // else it's already there
+            }
 
-                }
-                // allow user to remove roles
-                for (dRole in ['founder', 'investor', 'team', 'mentor', 'provider']) {
-                    if (self.roles[dRole] && self.roles[dRole] == false) {
-                        if (self.user.roles[dRole] && self.user.roles[dRole][community_path]) delete self.user.roles.mentor[community_path];
-                        if (self.user.roles[dRole] && self.user.roles[dRole][$stateParams.location_path]) delete self.user.roles.mentor[$stateParams.location_path];
-                    }
-                }
+            for (role in self.roles) {
+                if (!self.user.roles[role]) {
+                    self.user.roles[role] = {};
+                    self.user.roles[role][community_path] = [$stateParams.location_path];
+                    self.user.roles[role][$stateParams.location_path] = [$stateParams.location_path];
+                } else if (!self.user.roles[role][community_path]) {
+                    self.user.roles[role][community_path] = [$stateParams.location_path];
+                    self.user.roles[role][$stateParams.location_path] = [$stateParams.location_path];
+                } else if (self.user.roles[role][community_path].indexOf($stateParams.location_path) < 0) {
+                    self.user.roles[role][community_path].push($stateParams.location_path);
+                    self.user.roles[role][$stateParams.location_path] = [$stateParams.location_path];
+                } // else it's already there
 
+            }
+            // allow user to remove roles
+            for (dRole in ['founder', 'investor', 'team', 'mentor', 'provider']) {
+                if (self.roles[dRole] && self.roles[dRole] == false) {
+                    if (self.user.roles[dRole] && self.user.roles[dRole][community_path]) delete self.user.roles.mentor[community_path];
+                    if (self.user.roles[dRole] && self.user.roles[dRole][$stateParams.location_path]) delete self.user.roles.mentor[$stateParams.location_path];
+                }
             }
 
             // add skills
@@ -279,8 +279,7 @@ function WelcomeController($auth, $q, $http, $mixpanel, $stateParams, $scope, $s
                             },
                             function (isConfirm) {
                                 if (isConfirm) {
-                                    $state.reload();
-                                    $state.go('community.dashboard', {location_path: $stateParams.location_path, query: '*'})
+                                    $state.go('community.dashboard', {profile: self.user, location_path: $stateParams.location_path, query: '*'})
                                 }
                             });
                     }
