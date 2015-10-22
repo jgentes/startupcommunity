@@ -541,11 +541,11 @@ function handleInviteUser(req, res) {
 
                     if (!existing.communities) existing.communities = [];
 
-                    if (existing.communities.indexOf(inviteUser.community_key) > -1) {
+                    if (existing.communities.indexOf(inviteUser.community_key) == -1) {
                         existing.communities.push(inviteUser.community_key);
                     }
 
-                    if (existing.communities.indexOf(inviteUser.location_key) > -1) {
+                    if (existing.communities.indexOf(inviteUser.location_key) == -1) {
                         existing.communities.push(inviteUser.location_key);
                     }
 
