@@ -107,6 +107,7 @@
   -moz-justify-content: center;
   -ms-justify-content: center;
   justify-content: center;
+  padding-bottom: 10px;
 }
 
 .content-tab-wrapper .nav-tabs > li > a {
@@ -147,13 +148,14 @@
   border: solid rgba(0, 0, 0, 0);
   content: '';
   pointer-events: none;
+  margin-top:10px;
 }
 
 .content-tab-wrapper .nav > li > a span[class^="pe-"] {
   display: block;
   margin-bottom: 10px;
   text-align: center;
-  font-size: 20px;
+  font-size: 30px;
 }
 
 .content-tab-wrapper .nav > li.active > a span[class^="pe-"] {
@@ -169,11 +171,12 @@
 .content-tab-wrapper .nav-tabs > li.active:after {
   margin-left: -10px;
   border-width: 10px;
-  border-top-color: #f7f8f9;
+  border-top-color: #fff;
 }
 
 .tab-content {
-  margin-top: 34px;
+  position: static !important;
+  padding: 30px !important;
 }
 
 // for alerts
