@@ -17,7 +17,6 @@
     "angular": "~1.3.5",
     "angular-bootstrap": "~0.12.0",
     "angular-chart.js": "~0.7.2",
-    "angular-google-maps-native": "~1.3.0",
     "angular-h-sweetalert": "~1.4.5",
     "angular-knowtify": "*",
     "angular-mixpanel": "~1.1.0",

@@ -1,26 +1,21 @@
-<header id="page-top">
-    <div class="hero">
+<div class="hpanel hgreen">
+    <div class="panel-body hero" style="padding: 10px 0;">
         <div class="container">
-            <div>
-                <header class="heading content" style="color:#fff">
-                    <img class="img-circle m-b" style="height:75px;" ng-src="{{profile.user.profile.linkedin.pictureUrl || profile.user.profile.avatar || 'images/blank_avatar.png'}}" alt="{{::profile.user.profile.name}}">
-                    <h1>
-                        {{::profile.user.profile.linkedin.headline}}
-                    </h1>
-                    <h3 style="padding-top: 5px;" style="line-height: 1.5;">
-                        My name is <span class="name">{{::profile.user.profile.name | words:0}} {{::profile.user.profile.name |
-                        words:1}} {{::profile.user.profile.name | words:2}}</span>, <span ng-bind-html="::profile.user.profile.linkedin.summary | sentence | linky:'_blank'"></span>
-                    </h3>
-                    <a href="#" class="btn btn-success btn-sm">Learn more</a>
-                </header>
-                <div class="heading-image" animate-panel child="img-animate" effect="fadeInRight">
-                    <p class="small">Lorem Ipsum is simply dummy text of the printing and typesetting industry.</p>
-                </div>
-            </div>
+            <header class="heading content" style="color:#fff">
+                <img class="img-circle m-b" style="height:100px;" ng-src="{{profile.user.profile.linkedin.pictureUrl || profile.user.profile.avatar || 'images/blank_avatar.png'}}" alt="{{::profile.user.profile.name}}">
+                <h1>
+                    {{::profile.user.profile.linkedin.headline}}
+                </h1>
+                <h3 style="padding-top: 5px;" style="line-height: 1.5;">
+                    My name is <span class="name">{{::profile.user.profile.name | words:0}} {{::profile.user.profile.name |
+                    words:1}} {{::profile.user.profile.name | words:2}}</span>, <span ng-bind-html="::profile.user.profile.linkedin.summary | sentence | linky:'_blank'"></span>
+                </h3>
+                <a href="#" class="btn btn-success btn-sm">Learn more</a>
+            </header>
         </div>
         <span><div id="cover-photo" class="active" style="background-image: url(https://s3-us-west-1.amazonaws.com/wiselike/uploads/background/cropped/upload_167c2ba1ec29e54c46b52b64ff0b16e1.jpg);"></div><span class="cover-overlay"></span></span>
     </div>
-</header>
+</div>
 
 
 <div class="content-tab-wrapper">
