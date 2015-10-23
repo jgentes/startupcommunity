@@ -60,7 +60,7 @@
                     <div class="col-xs-9" style="padding-top: 3px; white-space: nowrap;">
                         <a ui-sref="user.dashboard({profile: nav.user, location_path: nav.user.key, community: {}})">{{nav.user.profile.name}}</a>
                         <div style="margin-left: -10px; padding-top: 1px;">
-                            <span ng-repeat="(item, val) in nav.user.roles" class="user-role"><i ng-attr-title="{{item[0].toUpperCase() + item.slice(1);}}" ng-class="{'text-primary fa fa-rocket' : item == 'founder', 'text-danger fa fa-flag' : item == 'leader', 'text-info fa fa-graduation-cap' : item == 'mentor', 'text-success fa fa-leaf' : item == 'investor', 'text-default fa fa-dribbble' : item == 'team', 'text-warning fa fa-briefcase' : item == 'provider'}"></i></span>
+                            <span ng-repeat="(item, val) in nav.user.roles" class="user-role" ><i ng-attr-title="{{item[0].toUpperCase() + item.slice(1);}}" style="font-weight: bold;" ng-class="{'text-primary pe-7s-paper-plane' : item == 'founder', 'text-danger pe-7s-flag' : item == 'leader', 'text-info pe-7s-study' : item == 'mentor', 'text-success pe-7s-gleam' : item == 'investor', 'text-default pe-7s-ball' : item == 'team', 'text-warning pe-7s-portfolio' : item == 'provider'}"></i></span>
                         </div>
                     </div>
                 </div>

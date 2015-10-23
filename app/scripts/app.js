@@ -11,7 +11,6 @@
         'chart.js',
         'satellizer',
         'services',
-        'GoogleMapsNative',
         'angulartics',
         'angulartics.google.analytics',
         'knowtify',

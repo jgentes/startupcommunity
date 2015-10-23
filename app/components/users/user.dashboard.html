@@ -3,6 +3,9 @@
         <div class="container" style="padding: 20px 15px;">
             <header class="heading content" style="color:#fff">
                 <img class="img-circle m-b" style="height:100px;" ng-src="{{profile.user.profile.linkedin.pictureUrl || profile.user.profile.avatar || 'images/blank_avatar.png'}}" alt="{{::profile.user.profile.name}}">
+                <div style="margin-top: -12px;">
+                    <span ng-repeat="(item, val) in profile.user.roles" class="user-role" style="font-size: 24px;"><i ng-attr-title="{{item[0].toUpperCase() + item.slice(1);}}" ng-class="{'pe-7s-paper-plane' : item == 'founder', 'pe-7s-flag' : item == 'leader', 'pe-7s-study' : item == 'mentor', 'pe-7s-gleam' : item == 'investor', 'pe-7s-ball' : item == 'team', 'pe-7s-portfolio' : item == 'provider'}"></i></span>
+                </div>
                 <h1>
                     {{::profile.user.profile.linkedin.headline}}
                 </h1>
@@ -21,7 +24,7 @@
 
         <!-- BEGIN Nav tabs -->
         <ul class="nav nav-tabs" role="tablist">
-            <li class="active"><a href="#ask" aria-controls="ask" role="tab" data-toggle="tab" aria-expanded="false"><span class="pe-7s-micro"></span>Ask a Question</a></li>
+            <li class="active"><a href="#ask" aria-controls="ask" role="tab" data-toggle="tab" aria-expanded="true"><span class="pe-7s-micro"></span>Ask a Question</a></li>
             <li><a href="#profile" aria-controls="profile" role="tab" data-toggle="tab" aria-expanded="false"><span class="pe-7s-note2"></span>View Full Profile</a></li>
         </ul>
         <!--/ END Nav tabs -->
@@ -30,7 +33,7 @@
         <!-- BEGIN Tab panes -->
         <div class="tab-content">
 
-            <div role="tabpanel" class="tab-pane fade bg-light" id="first">
+            <div role="tabpanel" class="tab-pane" id="ask">
 
                     <div class="container">
                         <div class="row">
@@ -43,37 +46,74 @@
                     </div>
             </div> <!-- First Tab Pane -->
 
-            <div role="tabpanel" class="tab-pane fade" id="second">
-                <p>Vivamus sagittis lacus vel augue laoreet rutrum faucibus dolor auctor. Praesent commodo cursus magna, vel scelerisque nisl consectetur et.</p>
+            <div role="tabpanel" class="tab-pane" id="profile">
 
-                <p>Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus.</p>
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div style="padding-bottom: 20px;">
+                            <div style="margin-right: -15px;">
+                                <div class="btn-group pull-right">
+                                    <a ng-click="profile.contact(nav.location.key)" title="Contact {{item.value.profile.name}}" class="pull-left" style="padding-right: 8px;">
+                                        <i class="pe-7s-mail" style="font-size: 24px; opacity: .45;"></i></a>
+                                    <a href="{{::profile.user.profile.linkedin.publicProfileUrl}}" target="_blank"><i class="fa fa-linkedin btn btn-default btn-xs"></i>
+                                    </a>
+                                </div>
+                            </div>
+                            <h3 style="padding-left: 4px;">{{::profile.user.profile.name | words:0}} {{::profile.user.profile.name |
+                                words:1}} {{::profile.user.profile.name | words:2}}
+                            </h3>
+                            <h4>
+                                {{::profile.user.profile.linkedin.headline}}
+                            </h4>
+                        </div>
 
-                <a href="#0" class="more">Read More</a>
+                        <div class="row" style="float: left;">
+                            <div class="no-overflow profile-div" ng-if="profile.user.roles.leader">
+                                <ul class="profile-ul">
+                                    <p style="font-size: 14px; padding: 2px 5px 0 20px; float: left;">Leader:</p>
+                                    <li ng-repeat="(key, val) in profile.user.roles.leader" class="profile-roles">
+                                        <a ui-sref="community.dashboard({location_path: key, community: profile.communities[key], query: &quot;&#42;&quot;})" class="btn btn-xs btn-outline" ng-class="{'btn-danger' : profile.communities[key].type == 'company', 'btn-info' : profile.communities[key].type == 'network', 'btn-primary' : profile.communities[key].type == 'cluster', 'btn-success' : profile.communities[key].type == 'location'}"><i class="fa {{profile.communities[key].profile.icon}}"></i> {{profile.communities[key].profile.name}}</a>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="no-overflow profile-div" ng-if="profile.user.roles.founder">
+                                <ul class="profile-ul">
+                                    <p style="font-size: 14px; padding: 2px 5px 0 20px; float: left;">Founder:</p>
+                                    <li ng-repeat="(key, val) in profile.user.roles.founder" class="profile-roles">
+                                        <a ui-sref="community.dashboard({location_path: key, community: profile.communities[key], query: &quot;&#42;&quot;})" class="btn btn-xs btn-outline" ng-class="{'btn-danger' : profile.communities[key].type == 'company', 'btn-info' : profile.communities[key].type == 'network', 'btn-primary' : profile.communities[key].type == 'cluster', 'btn-success' : profile.communities[key].type == 'location'}"><i class="fa {{profile.communities[key].profile.icon}}"></i> {{profile.communities[key].profile.name}}</a>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="no-overflow profile-div" ng-if="profile.user.roles.investor">
+                                <ul class="profile-ul">
+                                    <p style="font-size: 14px; padding: 2px 5px 0 20px; float: left;">Investor:</p>
+                                    <li ng-repeat="(key, val) in profile.user.roles.investor" class="profile-roles">
+                                        <a ui-sref="community.dashboard({location_path: key, community: profile.communities[key], query: &quot;&#42;&quot;})" class="btn btn-xs btn-outline" ng-class="{'btn-danger' : profile.communities[key].type == 'company', 'btn-info' : profile.communities[key].type == 'network', 'btn-primary' : profile.communities[key].type == 'cluster', 'btn-success' : profile.communities[key].type == 'location'}"><i class="fa {{profile.communities[key].profile.icon}}"></i> {{profile.communities[key].profile.name}}</a>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div ng-if="profile.user.roles.mentor">
+                                <ul class="profile-ul">
+                                    <p style="font-size: 14px; padding: 2px 5px 0 20px; float: left;">Mentor:</p>
+                                    <li ng-repeat="(key, val) in profile.user.roles.mentor" class="profile-roles">
+                                        <a ui-sref="community.dashboard({location_path: key, community: profile.communities[key], query: &quot;&#42;&quot;})" class="btn btn-xs btn-outline" ng-class="{'btn-danger' : profile.communities[key].type == 'company', 'btn-info' : profile.communities[key].type == 'network', 'btn-primary' : profile.communities[key].type == 'cluster', 'btn-success' : profile.communities[key].type == 'location'}"><i class="fa {{profile.communities[key].profile.icon}}"></i> {{profile.communities[key].profile.name}}</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <div ng-show="profile.user.profile.linkedin.summary" class="panel-footer" style="margin-top:10px;">
+                    <h3>Summary</h3>
+                    <p style="white-space:pre-wrap;" ng-bind-html="::profile.user.profile.linkedin.summary | linky:'_blank'"></p>
+                    <hr>
+                    <h3 ng-show="profile.user.profile.skills">Skills & Industries</h3>
+                    <li ng-repeat="skill in profile.user.profile.skills" class="label btn-default skills"><a href="#" ui-sref="search.dashboard({location_path: nav.location.key, community: nav.location, query: skill})">{{::skill}}</a></li>
+                </div>
+
             </div> <!-- Second Tab Pane -->
-
-            <div role="tabpanel" class="tab-pane fade" id="third">
-                <p>Vivamus sagittis lacus vel augue laoreet rutrum faucibus dolor auctor. Praesent commodo cursus magna, vel scelerisque nisl consectetur et.</p>
-
-                <p>Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus.</p>
-
-                <a href="#0" class="more">Read More</a>
-            </div> <!-- Third Tab Pane -->
-
-            <div role="tabpanel" class="tab-pane fade" id="fourth">
-                <p>Vivamus sagittis lacus vel augue laoreet rutrum faucibus dolor auctor. Praesent commodo cursus magna, vel scelerisque nisl consectetur et.</p>
-
-                <p>Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus.</p>
-
-                <a href="#0" class="more">Read More</a>
-            </div> <!-- Fourth Tab Pane -->
-
-            <div role="tabpanel" class="tab-pane fade active in" id="fifth">
-                <p>Vivamus sagittis lacus vel augue laoreet rutrum faucibus dolor auctor. Praesent commodo cursus magna, vel scelerisque nisl consectetur et.</p>
-
-                <p>Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus.</p>
-
-                <a href="#0" class="more">Read More</a>
-            </div> <!-- Fifth Tab Pane -->
 
         </div>
         <!--/ END Tab panes -->

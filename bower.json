@@ -44,8 +44,7 @@
     "sweetalert": "https://github.com/t4t5/sweetalert.git#~1.0.1",
     "underscore": "~1.5.2",
     "ng-file-upload": "~8.0.1",
-    "ng-file-upload-shim": "~8.0.1",
-    "angular-google-maps-native": "~2.0.0"
+    "ng-file-upload-shim": "~8.0.1"
   },
   "resolutions": {
     "angular": "1.4.7",
