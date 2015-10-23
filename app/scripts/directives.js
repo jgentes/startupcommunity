@@ -13,7 +13,8 @@ angular
     .directive('randomQuote', randomQuote)
     .directive('backToTop', backToTop)
     .filter('safe_html', safeHTML)
-    .filter('words', words);
+    .filter('words', words)
+    .filter('sentence', sentence);
 
 // custom
 
@@ -371,6 +372,14 @@ function words() {
     return function(text, wordnum) {
         if (text) {
             return text.split(" ")[wordnum];
+        }
+    };
+}
+
+function sentence() {
+    return function(text) {
+        if (text) {
+            return text.split(".")[0] + '.';
         }
     };
 }
