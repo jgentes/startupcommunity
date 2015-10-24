@@ -11,7 +11,7 @@
                 </h1>
                 <h3 style="padding-top: 5px;" style="line-height: 1.5;">
                     My name is <span class="name">{{::profile.user.profile.name | words:0}} {{::profile.user.profile.name |
-                    words:1}} {{::profile.user.profile.name | words:2}}</span>, <span ng-bind-html="::profile.user.profile.linkedin.summary | sentence | linky:'_blank'"></span>
+                    words:1}}</span>, <span ng-bind-html="::profile.user.profile.linkedin.summary | sentence | linky:'_blank'"></span>
                 </h3>
                 <a href="#ask" class="btn btn-success btn-sm">Ask me a question</a>
             </header>
@@ -33,17 +33,71 @@
         <!-- BEGIN Tab panes -->
         <div class="tab-content">
 
-            <div role="tabpanel" class="tab-pane" id="ask">
+            <div role="tabpanel" class="tab-pane active" id="ask">
 
-                    <div class="container">
-                        <div class="row">
-                            <div class="col-lg-12">
-                                <h2><span class="text-success">UI components </span>for your app</h2>
-                                <p>Lorem Ipsum available, but the majority have suffered alteration euismod. </p>
+                <div class="input-group"><input type="text" class="form-control input-lg" placeholder="Write your question here.." ng-model="profile.question" style="margin-bottom: 5px;" required><span class="input-group-btn"> <button type="button" class="btn btn-success" style="height: 46px; margin-top: -5px;">Ask Question</button></span></div>
+                <div class="m-t-xs" ng-show="!profile.question && profile.submitted">
+                    <span class="text-danger">&nbsp;&nbsp;<i class="fa fa-exclamation-triangle"></i> A question is required.</span>
+                </div>
+                <br>
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="hpanel hnavyblue">
+                            <div class="panel-body">
+                                <div class="media social-profile clearfix">
+                                    <a class="pull-left">
+                                        <img ng-src="{{profile.user.profile.linkedin.pictureUrl || profile.user.profile.avatar || 'images/blank_avatar.png'}}" alt="profile-picture">
+                                    </a>
+                                    <div class="media-body">
+                                        <h5>Anna Smith</h5>
+                                        <small class="text-muted">21.03.2015</small>
+                                    </div>
+                                </div>
+
+                                <div class="social-content m-t-md">
+                                    There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form, by injected humour, or randomised words which don't look even slightly believable.
+                                </div>
+                            </div>
+                            <div class="panel-footer">
+                                <div class="social-talk">
+                                    <div class="media social-profile clearfix">
+                                        <a class="pull-left">
+                                            <img ng-src="{{profile.user.profile.linkedin.pictureUrl || profile.user.profile.avatar || 'images/blank_avatar.png'}}" alt="profile-picture">
+                                        </a>
+
+                                        <div class="media-body">
+                                            <span class="font-bold">John Novak</span>
+                                            <small class="text-muted">21.03.2015</small>
+
+                                            <div class="social-content">
+                                                Injected humour, or randomised words which don't look even slightly believable.
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="social-talk">
+                                    <div class="media social-profile clearfix">
+                                        <a class="pull-left">
+                                            <img ng-src="{{profile.user.profile.linkedin.pictureUrl || profile.user.profile.avatar || 'images/blank_avatar.png'}}" alt="profile-picture">
+                                        </a>
+
+                                        <div class="media-body">
+                                            <span class="font-bold">Mark Smith</span>
+                                            <small class="text-muted">14.04.2015</small>
+                                            <div class="social-content">
+                                                Many desktop publishing packages and web page editors.
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="social-form">
+                                    <input class="form-control" placeholder="Your comment">
+                                </div>
                             </div>
                         </div>
-
                     </div>
+                </div>
+
             </div> <!-- First Tab Pane -->
 
             <div role="tabpanel" class="tab-pane" id="profile">
@@ -51,12 +105,12 @@
                 <div class="row">
                     <div class="col-sm-12">
                         <div style="padding-bottom: 20px;">
-                            <div style="margin-right: -15px;">
+                            <div>
                                 <div class="btn-group pull-right">
-                                    <a ng-click="profile.contact(nav.location.key)" title="Contact {{item.value.profile.name}}" class="pull-left" style="padding-right: 8px;">
-                                        <i class="pe-7s-mail" style="font-size: 24px; opacity: .45;"></i></a>
                                     <a href="{{::profile.user.profile.linkedin.publicProfileUrl}}" target="_blank"><i class="fa fa-linkedin btn btn-default btn-xs"></i>
                                     </a>
+                                    <button ng-click="profile.contact(nav.location.key)" title="Contact {{item.value.profile.name}}" class="btn btn-xs btn-success pull-right" style="margin-left: 5px;">Contact me
+                                    </button>
                                 </div>
                             </div>
                             <h3 style="padding-left: 4px;">{{::profile.user.profile.name | words:0}} {{::profile.user.profile.name |
