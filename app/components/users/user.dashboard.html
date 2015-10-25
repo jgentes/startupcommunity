@@ -14,7 +14,7 @@
                     words:1}}</span>, <span ng-bind-html="::profile.user.profile.linkedin.summary | sentence | linky:'_blank'"></span>
                 </h3>
                 <a href="#ask" class="btn btn-success btn-sm">Ask me a question</a>
-                <div style="padding-top:10px; overflow: hidden; height: 50px;">
+                <div style="padding-top:10px; overflow: hidden; height: 50px; margin-bottom: -10px;">
                     <li ng-repeat="skill in profile.user.profile.skills" style="margin-right: 5px;" class="btn btn-outline btn-default btn-xs" ui-sref="search.dashboard({location_path: nav.location.key, community: nav.location, query: skill})">
                         {{::skill}}
                     </li>
