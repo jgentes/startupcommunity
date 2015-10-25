@@ -229,6 +229,8 @@ function UserProfileController($stateParams, $location, $modal, $mixpanel, user,
     this.communities = communities.data;
     this.location = communities.data[this.community.profile.home];
 
+    this.background_image = 'url(https://s3-us-west-2.amazonaws.com/startupcommunity/backgrounds/background' + Math.floor((Math.random() * 54) + 1) + '.jpg)';
+
     $mixpanel.track('Viewed Profile');
 
     this.contact = function(community_key) {

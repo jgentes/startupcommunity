@@ -16,7 +16,7 @@
                 <a href="#ask" class="btn btn-success btn-sm">Ask me a question</a>
             </header>
         </div>
-        <span><div id="cover-photo" class="active" style="background-image: url(https://s3-us-west-1.amazonaws.com/wiselike/uploads/background/cropped/upload_167c2ba1ec29e54c46b52b64ff0b16e1.jpg);"></div><span class="cover-overlay"></span></span>
+        <span><div id="cover-photo" class="active" ng-style="{'background-image':profile.background_image}"></div><span class="cover-overlay"></span></span>
     </div>
 </div>
 <div class="hpanel">
@@ -106,10 +106,10 @@
                     <div class="col-sm-12">
                         <div style="padding-bottom: 20px;">
                             <div>
-                                <div class="btn-group pull-right">
+                                <div class="pull-right">
                                     <a href="{{::profile.user.profile.linkedin.publicProfileUrl}}" target="_blank"><i class="fa fa-linkedin btn btn-default btn-xs"></i>
                                     </a>
-                                    <button ng-click="profile.contact(nav.location.key)" title="Contact {{item.value.profile.name}}" class="btn btn-xs btn-success pull-right" style="margin-left: 5px;">Contact me
+                                    <button ng-click="profile.contact(nav.location.key)" title="Contact {{item.value.profile.name}}" class="btn btn-xs btn-info pull-right" style="margin-left: 5px;">Contact me
                                     </button>
                                 </div>
                             </div>
