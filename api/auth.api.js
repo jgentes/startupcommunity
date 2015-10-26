@@ -612,6 +612,11 @@ function handleInviteUser(req, res) {
                                     });
                             }
                         })
+                        .fail(function(err) {
+                            console.log('WARNING:');
+                            console.log(err);
+                            res.status(202).send({message: "Woah! Something went wrong, but we've been notified and will take care of it."});
+                        })
                 }
             });
     } else {

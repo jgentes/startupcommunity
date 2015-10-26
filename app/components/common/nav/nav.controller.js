@@ -34,9 +34,10 @@ function NavigationController($auth, $state, $window, $location, $stateParams, $
 
     // PRIMARY LEFT-NAV ITEM LIST
     if (!this.community) this.community = communities.data[this.location_path];
+
     // sort communities for use in nav and child dashboard pages
     for (item in communities.data) { // no clue what item is here, esp if user or company
-        if (item !== this.community.key) { // edco-stable-of-experts
+        if (item !== this.community.key) { // ie. edco-stable-of-experts
             if (communities.data[item]) {
                 switch (communities.data[item].type) {
                     case "location":
@@ -73,8 +74,8 @@ function NavigationController($auth, $state, $window, $location, $stateParams, $
         "({location_path: nav.location_path, community: nav.community, query: '*', community_path: nav.community.key})";
 
     // to set correct root path when navigating from user or company page
-    this.nav_jump = this.location.type == 'location' || ((this.community.type == "user" || this.community.type == "company") &&
-        (this.location.type == 'location')) ?
+    this.nav_jump = (this.location && this.location.type == 'location') || ((this.community.type == "user" || this.community.type == "company") &&
+        (this.location && this.location.type == 'location')) ?
         "({community_path: item.key, community: item, query: '*', location_path: nav.location.key})" :
         "({community_path: item.key, community: item, query: '*', location_path: nav.location.profile.home})";
 
@@ -87,7 +88,7 @@ function NavigationController($auth, $state, $window, $location, $stateParams, $
         if (this.community.community_profiles && this.community.community_profiles[this.location_path]) {
             this.searchname = this.community.community_profiles[this.location_path].name;
         } else this.searchname = this.community.profile.name;
-    } else this.searchname = this.location.profile.name;
+    } else this.searchname = this.location ? this.location.profile.name : "";
 
     this.search = function(query) {
 

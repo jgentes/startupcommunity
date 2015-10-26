@@ -15,6 +15,28 @@ angular
         }
     })
 
+    .factory('message_service', function($http) {
+        return {
+            addMessage: function(type, from, to, content, parent) {
+                return $http.post('/api/2.1/messages/add', {
+                    params: {
+                        type: type,
+                        from: {
+                            key: from.key,
+                            profile: from.profile
+                        },
+                        to: {
+                            key: to.key,
+                            profile: to.profile
+                        },
+                        content: content,
+                        parent: parent
+                    }
+                })
+            }
+        }
+    })
+
     .factory('user_service', function($http) {
         return {
             search: function(communities, query, roles, limit, alturl) { //alturl is for next/prev retrieval

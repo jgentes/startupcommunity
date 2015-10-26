@@ -138,7 +138,26 @@ function handleGetCommunity(req, res) {
                         newresponse[results[item].path.key]["key"] = results[item].path.key;
                     }
                     newresponse["key"] = community;
-                    res.status(200).send(newresponse);
+
+                    // get messages for users
+                    if (newresponse.type == 'user') {
+                        db.newSearchBuilder()
+                            .collection(config.db.messages)
+                            .limit(100)
+                            .offset(0)
+                            .sort('@value.published', 'asc')
+                            .query('@value.to:' + newresponse.key)
+                            .then(function (messages) {
+                                newresponse["messages"] = messages.body.results;
+                                res.status(200).send(newresponse);
+                            })
+                            .fail(function (err) {
+                                console.log("WARNING: SEARCH FAIL:");
+                                console.warn(err);
+                                res.status(200).send(newresponse);
+                            });
+
+                    } else res.status(200).send(newresponse);
                 };
 
                 if (result.body.results.length > 0) {
@@ -147,19 +166,24 @@ function handleGetCommunity(req, res) {
 
                         if (result.body.results[comm].path.key == community) {
                             found = true;
+
                             console.log('Pulling community for ' + result.body.results[comm].value.profile.name);
+
                             if (result.body.results[comm].value.type == "user" ||
                                 result.body.results[comm].value.type == "company" ||
                                 result.body.results[comm].value.type == "network") {
 
                                 // pull communities within record
                                 var comm_items = result.body.results[comm].value.communities;
-                                var search = community + " OR ";
-                                for (i in comm_items) {
-                                    if (i > 0) {
-                                        search += ' OR ';
+                                var search = community;
+                                if (comm_items) {
+                                    search += " OR ";
+                                    for (i in comm_items) {
+                                        if (i > 0) {
+                                            search += ' OR ';
+                                        }
+                                        search += comm_items[i];
                                     }
-                                    search += comm_items[i];
                                 }
 
                                 db.newSearchBuilder()
@@ -167,9 +191,14 @@ function handleGetCommunity(req, res) {
                                     .limit(100)
                                     .offset(0)
                                     .query("@path.key: (" + search + ")")
-                                    .then(function (result) {
-                                        finalize(result.body.results);
+                                    .then(function (result2) {
+                                        finalize(result2.body.results);
                                     })
+                                    .fail(function (err) {
+                                        console.log("WARNING: SEARCH FAIL:");
+                                        console.warn(err);
+                                        finalize(result.body.results);
+                                    });
 
                             } else finalize(result.body.results);
                         }

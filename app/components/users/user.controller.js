@@ -216,13 +216,13 @@ function ContactUserController($modalInstance, notify_service, sweet, community_
     };
 }
 
-function UserProfileController($stateParams, $location, $modal, $mixpanel, user, user_service, community, communities) {
+function UserProfileController($stateParams, $location, $modal, $mixpanel, user, user_service, message_service, community, communities) {
 
     if (!jQuery.isEmptyObject($stateParams.profile)) {
         this.user = $stateParams.profile;
     } else if (community && community.type == "user") {
         this.user = community;
-    } else this.user = user.data.user.value;
+    } else this.user = user.data.user;
 
     var self = this;
     this.community = community;
@@ -284,7 +284,26 @@ function UserProfileController($stateParams, $location, $modal, $mixpanel, user,
         } else notify({title: "See our <a href='http://startupcommunity.readme.io?appkey=" + api_key + "' target='_blank'>API documentation</a> for help using your key:", message: "<pre>" + api_key + "</pre>"});
     };
 
-}
+    this.askQuestion = function() {
+        self.working = true;
+
+        if (self.question) {
+            // update user profile
+            message_service.addMessage('question', user.data.user, this.user, profile.question)
+                .then(function (response) {
+                    if (response.status !== 200) {
+                        self.alert = {type: 'danger', message: String(response.data.message)};
+                    } else {
+                        //todo present question on page
+                    }
+                })
+                .catch(function (error) {
+                    self.working = false;
+                    self.alert = {type: 'danger', message: String(error.data.message)};
+                });
+        }
+    }
+};
 
 function InviteUserController(user_service, community, location) {
     var self = this;

@@ -77,6 +77,8 @@ var AuthApi = require('./api/auth.api.js'),
     companyApis = new CompanyApi(),
     CommunityApi = require('./api/community.api.js'),
     communityApis = new CommunityApi(),
+    MessagesApi = require('./api/messages.api.js'),
+    messagesApis = new MessagesApi(),
     AngelListApi = require('./api/angellist.api.js'),
     angellistApis = new AngelListApi(),
     MaintApi = require('./api/maint.api.js'),
@@ -110,6 +112,7 @@ app.get('/api/2.1/community/:location_key/top', communityApis.getTop);
 app.get('/api/2.1/community/:location_key/:community_key/top', communityApis.getTop);
 app.post('/api/2.1/community/add', auth.ensureAuthenticated, communityApis.addCommunity);
 app.post('/api/2.1/community/delete', auth.ensureAuthenticated, communityApis.deleteCommunity);
+app.post('/api/2.1/messages/add', auth.ensureAuthenticated, messagesApis.addMessage);
 
 // Auth
 app.post('/auth/linkedin', auth.linkedin);
