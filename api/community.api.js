@@ -148,7 +148,10 @@ function handleGetCommunity(req, res) {
                         if (result.body.results[comm].path.key == community) {
                             found = true;
                             console.log('Pulling community for ' + result.body.results[comm].value.profile.name);
-                            if (result.body.results[comm].value.type == "user" || result.body.results[comm].value.type == "company" || result.body.results[comm].value.type == "network") {
+                            if (result.body.results[comm].value.type == "user" ||
+                                result.body.results[comm].value.type == "company" ||
+                                result.body.results[comm].value.type == "network") {
+
                                 // pull communities within record
                                 var comm_items = result.body.results[comm].value.communities;
                                 var search = community + " OR ";
@@ -158,7 +161,7 @@ function handleGetCommunity(req, res) {
                                     }
                                     search += comm_items[i];
                                 }
-                                //todo need to add skills here for users and industries for companies - yes, for user dash page or could top do that?
+
                                 db.newSearchBuilder()
                                     .collection(config.db.communities)
                                     .limit(100)
@@ -411,7 +414,7 @@ function handleAddCommunity(req, res) {
     // validate user is a member in the location
     if (req.user.value.communities.indexOf(settings.location_key) > -1) {
 
-        var pathname = settings.community.url || settings.community.profile.name.toLowerCase();
+        var pathname = settings.community.url || encodeURI(settings.community.profile.name.toLowerCase());
 
         // check to see if the community exists
         db.get(config.db.communities, pathname)
