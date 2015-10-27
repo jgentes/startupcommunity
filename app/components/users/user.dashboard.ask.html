@@ -1,0 +1,14 @@
+<form role="form" ng-submit="profile.askQuestion()">
+    <div class="input-group">
+        <input type="text" class="form-control input-lg" placeholder="Write your question here.." ng-model="profile.question" style="margin-bottom: 5px;" required>
+                        <span class="input-group-btn">
+                            <input type="submit" value="Ask a Question" class="btn btn-success" style="height: 46px; margin-top: -5px;"/>
+                        </span>
+    </div>
+</form>
+<br>
+<div loading-bars ng-show="profile.working" style="text-align:center; margin-left: -50px; margin-top: 10px;"></div>
+<div class="row" ng-repeat="question in profile.communities.messages">
+    <div class="col-lg-12" ng-include="'components/users/user.dashboard.questions.html'">
+    </div>
+</div>

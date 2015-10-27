@@ -1,17 +1,17 @@
 <div class="hpanel hgreen" style="margin-bottom: 10px;">
     <div class="panel-body hero" style="padding: 10px 0;">
-        <div class="container" style="padding: 20px 15px;">
+        <div style="padding: 20px 15px;">
             <header class="heading content" style="color:#fff">
-                <img class="img-circle m-b" style="height:100px;" ng-src="{{profile.user.profile.linkedin.pictureUrl || profile.user.profile.avatar || 'images/blank_avatar.png'}}" alt="{{::profile.user.profile.name}}">
+                <img class="img-circle m-b" style="height:100px;" ng-src="{{profile.user.profile.avatar || profile.user.profile.linkedin.pictureUrl || 'images/blank_avatar.png'}}" alt="{{::profile.user.profile.name}}">
                 <div style="margin-top: -12px;">
                     <span ng-repeat="(item, val) in profile.user.roles" class="user-role" style="font-size: 24px;"><i ng-attr-title="{{item[0].toUpperCase() + item.slice(1);}}" ng-class="{'pe-7s-paper-plane' : item == 'founder', 'pe-7s-flag' : item == 'leader', 'pe-7s-study' : item == 'mentor', 'pe-7s-gleam' : item == 'investor', 'pe-7s-ball' : item == 'team', 'pe-7s-portfolio' : item == 'provider'}"></i></span>
                 </div>
                 <h1>
-                    {{::profile.user.profile.linkedin.headline}}
+                    {{::profile.user.profile.headline}}
                 </h1>
                 <h3 style="padding-top: 5px;" style="line-height: 1.5;">
                     My name is <span class="name">{{::profile.user.profile.name | words:0}} {{::profile.user.profile.name |
-                    words:1}}</span>, <span ng-bind-html="::profile.user.profile.linkedin.summary | sentence | linky:'_blank'"></span>
+                    words:1}}</span>, <span ng-bind-html="::profile.user.profile.summary | sentence | linky:'_blank'"></span>
                 </h3>
                 <a href="#ask" class="btn btn-success btn-sm">Ask me a question</a>
                 <div style="padding-top:10px; overflow: hidden; height: 50px; margin-bottom: -10px;">
@@ -34,146 +34,20 @@
         </ul>
         <!--/ END Nav tabs -->
 
+        <div alert-box this-alert="profile.alert"></div>
 
         <!-- BEGIN Tab panes -->
         <div class="tab-content" style="position: static; padding: 30px;">
 
             <div role="tabpanel" class="tab-pane active" id="ask">
-                <form role="form" ng-submit="profile.askQuestion()">
-                    <div class="input-group">
-                        <input type="text" class="form-control input-lg" placeholder="Write your question here.." ng-model="profile.question" style="margin-bottom: 5px;" required>
-                        <span class="input-group-btn">
-                            <input type="submit" value="Ask a Question" class="btn btn-success" style="height: 46px; margin-top: -5px;"/>
-                        </span>
-                    </div>
-                </form>
-                <br>
-                <div class="row">
-                    <div class="col-lg-12">
-                        <div class="hpanel hblue">
-                            <div class="panel-heading hbuilt">
 
-                                <div class="media social-profile clearfix">
-                                    <a class="pull-left">
-                                        <img class="img-circle m-b" styel="height: 75px;" ng-src="{{profile.user.profile.linkedin.pictureUrl || profile.user.profile.avatar || 'images/blank_avatar.png'}}" alt="profile-picture">
-                                    </a>
-                                    <div class="media-body">
-                                        <p><span style="font-weight:bold;">Anna Smith</span>, CEO of HelpDesk asked:</p>
-                                        <div class="question-content">
-                                           What is your favorite color?
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="panel-body" style="padding:0 20px;"></div>
-                            <div class="panel-footer">
-                                <div class="social-talk">
-                                    <div class="media social-profile clearfix">
-                                        <a class="pull-left">
-                                            <img ng-src="{{profile.user.profile.linkedin.pictureUrl || profile.user.profile.avatar || 'images/blank_avatar.png'}}" alt="profile-picture">
-                                        </a>
-
-                                        <div class="media-body">
-                                            <span style="font-weight:bold;">John Novak</span>, CEO of Something Big
-                                            <small class="text-muted">- Oct 21</small>
-
-                                            <div class="social-content">
-                                                Injected humour, or randomised words which don't look even slightly believable.
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="social-talk">
-                                    <div class="media social-profile clearfix">
-                                        <a class="pull-left">
-                                            <img ng-src="{{profile.user.profile.linkedin.pictureUrl || profile.user.profile.avatar || 'images/blank_avatar.png'}}" alt="profile-picture">
-                                        </a>
-
-                                        <div class="media-body">
-                                            <span style="font-weight:bold;">Mark Smith</span>, Founder of Meyhem
-                                            <small class="text-muted">- Oct 22</small>
-                                            <div class="social-content">
-                                                Many desktop publishing packages and web page editors.
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="social-form">
-                                    <input class="form-control input-lg" placeholder="Write a reply..">
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                <div ng-include="'components/users/user.dashboard.ask.html'"></div>
 
             </div> <!-- First Tab Pane -->
 
             <div role="tabpanel" class="tab-pane" id="profile">
 
-                <div class="row">
-                    <div class="col-sm-12">
-                        <div style="padding-bottom: 20px;">
-                            <div>
-                                <div class="pull-right">
-                                    <a href="{{::profile.user.profile.linkedin.publicProfileUrl}}" target="_blank"><i class="fa fa-linkedin btn btn-default btn-xs"></i>
-                                    </a>
-                                    <button ng-click="profile.contact(nav.location.key)" title="Contact {{item.value.profile.name}}" class="btn btn-xs btn-info pull-right" style="margin-left: 5px;">Contact me
-                                    </button>
-                                </div>
-                            </div>
-                            <h3 style="padding-left: 4px;">{{::profile.user.profile.name | words:0}} {{::profile.user.profile.name |
-                                words:1}} {{::profile.user.profile.name | words:2}}
-                            </h3>
-                            <h4>
-                                {{::profile.user.profile.linkedin.headline}}
-                            </h4>
-                        </div>
-
-                        <div class="row" style="float: left;">
-                            <div class="no-overflow profile-div" ng-if="profile.user.roles.leader">
-                                <ul class="profile-ul">
-                                    <p style="font-size: 14px; padding: 2px 5px 0 20px; float: left;">Leader:</p>
-                                    <li ng-repeat="(key, val) in profile.user.roles.leader" class="profile-roles">
-                                        <a ui-sref="community.dashboard({location_path: key, community: profile.communities[key], query: &quot;&#42;&quot;})" class="btn btn-xs btn-outline" ng-class="{'btn-danger' : profile.communities[key].type == 'company', 'btn-info' : profile.communities[key].type == 'network', 'btn-primary' : profile.communities[key].type == 'cluster', 'btn-success' : profile.communities[key].type == 'location'}"><i class="fa {{profile.communities[key].profile.icon}}"></i> {{profile.communities[key].profile.name}}</a>
-                                    </li>
-                                </ul>
-                            </div>
-                            <div class="no-overflow profile-div" ng-if="profile.user.roles.founder">
-                                <ul class="profile-ul">
-                                    <p style="font-size: 14px; padding: 2px 5px 0 20px; float: left;">Founder:</p>
-                                    <li ng-repeat="(key, val) in profile.user.roles.founder" class="profile-roles">
-                                        <a ui-sref="community.dashboard({location_path: key, community: profile.communities[key], query: &quot;&#42;&quot;})" class="btn btn-xs btn-outline" ng-class="{'btn-danger' : profile.communities[key].type == 'company', 'btn-info' : profile.communities[key].type == 'network', 'btn-primary' : profile.communities[key].type == 'cluster', 'btn-success' : profile.communities[key].type == 'location'}"><i class="fa {{profile.communities[key].profile.icon}}"></i> {{profile.communities[key].profile.name}}</a>
-                                    </li>
-                                </ul>
-                            </div>
-                            <div class="no-overflow profile-div" ng-if="profile.user.roles.investor">
-                                <ul class="profile-ul">
-                                    <p style="font-size: 14px; padding: 2px 5px 0 20px; float: left;">Investor:</p>
-                                    <li ng-repeat="(key, val) in profile.user.roles.investor" class="profile-roles">
-                                        <a ui-sref="community.dashboard({location_path: key, community: profile.communities[key], query: &quot;&#42;&quot;})" class="btn btn-xs btn-outline" ng-class="{'btn-danger' : profile.communities[key].type == 'company', 'btn-info' : profile.communities[key].type == 'network', 'btn-primary' : profile.communities[key].type == 'cluster', 'btn-success' : profile.communities[key].type == 'location'}"><i class="fa {{profile.communities[key].profile.icon}}"></i> {{profile.communities[key].profile.name}}</a>
-                                    </li>
-                                </ul>
-                            </div>
-                            <div ng-if="profile.user.roles.mentor">
-                                <ul class="profile-ul">
-                                    <p style="font-size: 14px; padding: 2px 5px 0 20px; float: left;">Mentor:</p>
-                                    <li ng-repeat="(key, val) in profile.user.roles.mentor" class="profile-roles">
-                                        <a ui-sref="community.dashboard({location_path: key, community: profile.communities[key], query: &quot;&#42;&quot;})" class="btn btn-xs btn-outline" ng-class="{'btn-danger' : profile.communities[key].type == 'company', 'btn-info' : profile.communities[key].type == 'network', 'btn-primary' : profile.communities[key].type == 'cluster', 'btn-success' : profile.communities[key].type == 'location'}"><i class="fa {{profile.communities[key].profile.icon}}"></i> {{profile.communities[key].profile.name}}</a>
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
-
-                    </div>
-                </div>
-
-                <div ng-show="profile.user.profile.linkedin.summary" class="panel-footer" style="margin-top:10px;">
-                    <h3>Summary</h3>
-                    <p style="white-space:pre-wrap;" ng-bind-html="::profile.user.profile.linkedin.summary | linky:'_blank'"></p>
-                    <hr>
-                    <h3 ng-show="profile.user.profile.skills">Skills & Industries</h3>
-                    <li ng-repeat="skill in profile.user.profile.skills" class="label btn-default skills"><a href="#" ui-sref="search.dashboard({location_path: nav.location.key, community: nav.location, query: skill})">{{::skill}}</a></li>
-                </div>
+                <div ng-include="'components/users/user.dashboard.profile.html'"></div>
 
             </div> <!-- Second Tab Pane -->
 

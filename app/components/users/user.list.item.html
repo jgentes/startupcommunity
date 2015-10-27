@@ -9,10 +9,7 @@
         <a ng-click="nav.contact(item)" title="Contact {{item.value.profile.name}}" class="pull-left" style="margin-left: 6px; margin-top: 2px; padding: 0 8px 0 5px; line-height: 0;">
             <i class="pe-7s-mail" style="font-size: 20px; opacity: .45;"></i></a>
         <a ng-show="{{(item.value.profile.linkedin.summary).length > 0}}" title="Show Summary" ng-click="showSummary = !showSummary" class="user-summary">&nbsp;<i class="fa fa-chevron-down fa-fw"></i></a>
-        <li ng-repeat="(item, val) in item.value.roles" class="user-role role-right"><i
-                ng-attr-title="{{item.toUpperCase()[0] + item.slice(1);}}"
-                ng-class="{'text-primary fa fa-rocket' : item == 'founder', 'text-danger fa fa-flag' : item == 'leader', 'text-info fa fa-graduation-cap' : item == 'mentor', 'text-success fa fa-leaf' : item == 'investor', 'text-default fa fa-dribbble' : item == 'team', 'text-warning fa fa-briefcase' : item == 'provider'}"></i></li>
-
+        <li ng-repeat="(item, val) in item.value.roles" class="user-role role-right" ><i ng-attr-title="{{item[0].toUpperCase() + item.slice(1);}}" style="font-weight: bold;" ng-class="{'text-primary pe-7s-paper-plane' : item == 'founder', 'text-danger pe-7s-flag' : item == 'leader', 'text-info pe-7s-study' : item == 'mentor', 'text-success pe-7s-gleam' : item == 'investor', 'text-default pe-7s-ball' : item == 'team', 'text-warning pe-7s-portfolio' : item == 'provider'}"></i></li>
         <br>
         <div class="dash-row">
             <span class="text-muted" ng-bind-html="::item.value.profile.linkedin.headline | highlight:users.lastQuery"></span>

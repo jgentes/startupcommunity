@@ -140,7 +140,7 @@ function handleGetCommunity(req, res) {
                     newresponse["key"] = community;
 
                     // get messages for users
-                    if (newresponse.type == 'user') {
+                    if (newresponse[community].type == 'user') {
                         db.newSearchBuilder()
                             .collection(config.db.messages)
                             .limit(100)
@@ -148,7 +148,10 @@ function handleGetCommunity(req, res) {
                             .sort('@value.published', 'asc')
                             .query('@value.to:' + newresponse.key)
                             .then(function (messages) {
-                                newresponse["messages"] = messages.body.results;
+                                newresponse["messages"] = [];
+                                for (m in messages.body.results) {
+                                    newresponse.messages.push(messages.body.results[m].value);
+                                }
                                 res.status(200).send(newresponse);
                             })
                             .fail(function (err) {

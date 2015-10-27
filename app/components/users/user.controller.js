@@ -289,12 +289,16 @@ function UserProfileController($stateParams, $location, $modal, $mixpanel, user,
 
         if (self.question) {
             // update user profile
-            message_service.addMessage('question', user.data.user, this.user, profile.question)
+            message_service.addMessage('question', user.data.user, this.user, self.question)
                 .then(function (response) {
+                    self.question = undefined;
+
                     if (response.status !== 200) {
                         self.alert = {type: 'danger', message: String(response.data.message)};
                     } else {
-                        //todo present question on page
+                        self.working = false;
+                        if (!self.communities.messages) self.communities.messages = [];
+                        self.communities.messages.push(response.data);
                     }
                 })
                 .catch(function (error) {
@@ -302,8 +306,32 @@ function UserProfileController($stateParams, $location, $modal, $mixpanel, user,
                     self.alert = {type: 'danger', message: String(error.data.message)};
                 });
         }
+    };
+
+    this.postReply = function(parent) {
+        self.reply_working = true;
+
+        if (self.reply) {
+            // update user profile
+            console.log(parent);
+            message_service.addMessage('reply', user.data.user, this.user, self.reply, parent)
+                .then(function (response) {
+                    self.reply = undefined;
+
+                    if (response.status !== 200) {
+                        self.alert = {type: 'danger', message: String(response.data.message)};
+                    } else {
+                        self.reply_working = false;
+                        self.communities.messages.push(response.data);
+                    }
+                })
+                .catch(function (error) {
+                    self.reply_working = false;
+                    self.alert = {type: 'danger', message: String(error.data.message)};
+                });
+        }
     }
-};
+}
 
 function InviteUserController(user_service, community, location) {
     var self = this;
