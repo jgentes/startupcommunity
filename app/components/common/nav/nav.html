@@ -23,13 +23,13 @@
             <div ng-if="!nav.embedded" class="navbar-right">
                 <ul class="nav navbar-nav no-borders">
                     <li ng-if="!nav.user" class="dropdown">
-                        <div style="padding-top: 21px;" ng-controller="LoginController as login">
-                            <a tooltip-placement="left" tooltip="Login">
-                                <div ng-click="login.authenticate('linkedin')" style="font-size: 16px;">Log In&nbsp;</div>
+                        <div style="padding-top: 12px; margin-right: 8px;" ng-controller="LoginController as login">
+                            <a class="btn btn-success" tooltip-placement="left">
+                                <div ng-click="login.authenticate('linkedin')" style="font-size: 16px; color: #fff;">Log In&nbsp;</div>
                             </a>
                         </div>
                     </li>
-                    <li id="knowtify" class="dropdown">
+                    <li ng-if="nav.user" id="knowtify" class="dropdown">
                         <a>
                             <i class="pe-7s-bell"></i>
                         </a>
