@@ -21,7 +21,8 @@ var schema = {
             },
             "to": to_key,
             "published": datetime.getTime(),
-            "content": content
+            "content": content,
+            "replies": []
         };
     }
 };
@@ -44,12 +45,11 @@ function handleAddMessage(req, res) {
 
         message["link"] = 'https://startupcommunity.org/' +
             (message.type == 'question' ?
-                    message.to.key:
-                    message.parent.to.key
+                    message.to.key :
+                    message.parent.to
             ) + '#' + message.key;
 
-        if (!message.parent || jQuery.isEmptyObject(message.parent))
-            message.parent = { "content": "" };
+        if (!message.parent) message.parent = { content: "" };
 
         var go = function(notify) {
 

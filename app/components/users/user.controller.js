@@ -308,7 +308,10 @@ function UserProfileController($stateParams, $location, $modal, $mixpanel, user,
         }
     };
 
+    this.working = false;
+
     this.postReply = function(parent) {
+        console.log(parent);
         self.working[parent.key] = true;
 
         if (self.reply[parent.key]) {

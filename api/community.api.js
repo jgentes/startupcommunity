@@ -150,6 +150,7 @@ function handleGetCommunity(req, res) {
                             .then(function (messages) {
                                 newresponse["messages"] = [];
                                 for (m in messages.body.results) {
+                                    messages.body.results[m].value["key"] = messages.body.results[m].path.key;
                                     newresponse.messages.push(messages.body.results[m].value);
                                 }
                                 res.status(200).send(newresponse);
