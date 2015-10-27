@@ -35,6 +35,58 @@ function handleAddMessage(req, res) {
 
     var message = schema.message(addMessage.type, addMessage.from, addMessage.to.key, addMessage.content);
 
+    var putReply = function(addMessage, message, callback) {
+
+        db.newPatchBuilder(config.db.messages, addMessage.parent.key)
+            .add("replies", message)
+            .apply()
+            .then(function (result) {
+                callback(result);
+            })
+            .fail(function (err) {
+                console.error("POST FAIL:");
+                console.error(err);
+                res.status(202).send({message: "Woah! Something went wrong, but we've been notified and will take care of it."});
+            })
+    };
+
+    var postQuestion = function(addMessage, message, callback) {
+
+        db.post(config.db.messages, message)
+            .then(function (response) {
+                callback(response);
+            })
+            .fail(function (err) {
+                console.error("POST FAIL:");
+                console.error(err);
+                res.status(202).send({message: "Woah! Something went wrong, but we've been notified and will take care of it."});
+            });
+    };
+
+    var sendAlert = function(notify) {
+
+        knowtifyClient.contacts.upsert({
+                "event": notify.type,
+                "contacts": [{
+                    "email": notify.to.profile.email,
+                    "data": {
+                        "from_name": notify.from.profile.name,
+                        "from_image": notify.from.profile.avatar,
+                        "link": notify.link,
+                        "content": notify.content,
+                        "parent": notify.parent.content
+                    }
+                }]
+            },
+            function (success) {
+                console.log('Notification sent to ' + notify.to.profile.email);
+            },
+            function (error) {
+                console.log('WARNING:');
+                console.log(error);
+            });
+    };
+
     var to_notify = function(message) {
         console.log('sending notification');
 
@@ -51,31 +103,7 @@ function handleAddMessage(req, res) {
 
         if (!message.parent) message.parent = { content: "" };
 
-        var go = function(notify) {
-
-            knowtifyClient.contacts.upsert({
-                    "event": notify.type,
-                    "contacts": [{
-                        "email": notify.to.profile.email,
-                        "data": {
-                            "from_name": notify.from.profile.name,
-                            "from_image": notify.from.profile.avatar,
-                            "link": notify.link,
-                            "content": notify.content,
-                            "parent": notify.parent.content
-                        }
-                    }]
-                },
-                function (success) {
-                    console.log('Notification sent to ' + notify.to.profile.email);
-                },
-                function (error) {
-                    console.log('WARNING:');
-                    console.log(error);
-                });
-        };
-
-        go(message);
+        sendAlert(message);
 
         // send notifications to other people on the thread
 
@@ -91,7 +119,7 @@ function handleAddMessage(req, res) {
                     (message.to.profile.key || message.from.profile.key))) {
 
                     newMessage.to = message.parent.replies[reply].from;
-                    go(newMessage);
+                    sendAlert(newMessage);
                     nodups.push(message.parent.replies[reply].from.key);
                 }
             }
@@ -101,33 +129,19 @@ function handleAddMessage(req, res) {
     // check if this is a reply to existing thread
     if (addMessage.parent) {
 
-        db.newPatchBuilder(config.db.messages, addMessage.parent.key)
-            .add("replies", message)
-            .apply()
-            .then(function (result) {
-                addMessage["key"] = addMessage.parent.key;
-                to_notify(addMessage);
-                res.status(200).end(message);
-            })
-            .fail(function (err) {
-                console.error("POST FAIL:");
-                console.error(err);
-                res.status(202).send({message: "Woah! Something went wrong, but we've been notified and will take care of it."});
-            })
+        putReply(addMessage, message, function(response) {
+            addMessage["key"] = addMessage.parent.key;
+            to_notify(addMessage);
+            res.status(200).end(message);
+        })
 
     } else {
 
-        db.post(config.db.messages, message)
-            .then(function (response) {
-                addMessage["key"] = response.headers.location.split('/')[3];
-                to_notify(addMessage);
-                res.status(200).send(message);
-            })
-            .fail(function (err) {
-                console.error("POST FAIL:");
-                console.error(err);
-                res.status(202).send({message: "Woah! Something went wrong, but we've been notified and will take care of it."});
-            });
+        postQuestion(addMessage, message, function(response) {
+            addMessage["key"] = response.headers.location.split('/')[3];
+            to_notify(addMessage);
+            res.status(200).send(message);
+        })
     }
 
 }
