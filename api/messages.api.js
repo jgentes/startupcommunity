@@ -103,7 +103,10 @@ function handleAddMessage(req, res) {
         if (!message.parent || jQuery.isEmptyObject(message.parent))
             message.parent = { "content": "" };
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
+=======
+>>>>>>> parent of 02c1b80... basics working
 
         var go = function(notify) {
 
