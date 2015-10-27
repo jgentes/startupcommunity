@@ -104,7 +104,10 @@ function handleAddMessage(req, res) {
             message.parent = { "content": "" };
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
+=======
+>>>>>>> parent of 02c1b80... basics working
 =======
 >>>>>>> parent of 02c1b80... basics working
 
