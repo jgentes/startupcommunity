@@ -102,6 +102,33 @@ function handleAddMessage(req, res) {
 
         if (!message.parent || jQuery.isEmptyObject(message.parent))
             message.parent = { "content": "" };
+<<<<<<< HEAD
+=======
+
+        var go = function(notify) {
+
+            knowtifyClient.contacts.upsert({
+                    "event": notify.type,
+                    "contacts": [{
+                        "email": notify.to.profile.email,
+                        "data": {
+                            "from_name": notify.from.profile.name,
+                            "from_image": notify.from.profile.avatar,
+                            "link": notify.link,
+                            "content": notify.content,
+                            "parent": notify.parent.content
+                        }
+                    }]
+                },
+                function (success) {
+                    console.log('Notification sent to ' + notify.to.profile.email);
+                },
+                function (error) {
+                    console.log('WARNING:');
+                    console.log(error);
+                });
+        };
+>>>>>>> parent of 02c1b80... basics working
 
         sendAlert(message);
 
