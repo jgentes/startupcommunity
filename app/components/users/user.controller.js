@@ -310,6 +310,14 @@ function UserProfileController($stateParams, $location, $modal, $mixpanel, user,
 
     this.working = false;
 
+    this.ask = function() {
+        $('#ask').addClass('active');
+        $('#profile').removeClass('active');
+        $('#ask_li').addClass('active');
+        $('#profile_li').removeClass('active');
+        $('#questionbox').addClass('glowing-border');
+    };
+
     this.postReply = function(parent) {
         self.working[parent.key] = true;
 
@@ -324,7 +332,10 @@ function UserProfileController($stateParams, $location, $modal, $mixpanel, user,
                         self.alert = {type: 'danger', message: String(response.data.message)};
                     } else {
                         self.working[parent.key] = false;
-                        self.communities.messages[parent.key].replies.push(response.data);
+                        if (self.communities.messages[parent.key]) {
+                            self.communities.messages[parent.key].replies.push(response.data);
+                        } else self.communities.newmessages[parent.key].replies.push(response.data);
+
                     }
                 })
                 .catch(function (error) {

@@ -53,7 +53,7 @@ function handleAddMessage(req, res) {
 
         var go = function(notify) {
 
-            /*knowtifyClient.contacts.upsert({
+            knowtifyClient.contacts.upsert({
                     "event": notify.type,
                     "contacts": [{
                         "email": notify.to.profile.email,
@@ -72,7 +72,7 @@ function handleAddMessage(req, res) {
                 function (error) {
                     console.log('WARNING:');
                     console.log(error);
-                });*/
+                });
         };
 
         go(message);

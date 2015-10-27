@@ -13,7 +13,7 @@
                     My name is <span class="name">{{::profile.user.profile.name | words:0}} {{::profile.user.profile.name |
                     words:1}}</span>, <span ng-bind-html="::profile.user.profile.summary | sentence | linky:'_blank'"></span>
                 </h3>
-                <a href="#ask" class="btn btn-success btn-sm">Ask me a question</a>
+                <a ng-click="profile.ask()" class="btn btn-success btn-sm">Ask me a question</a>
                 <div style="padding-top:10px; overflow: hidden; height: 50px; margin-bottom: -10px;">
                     <li ng-repeat="skill in profile.user.profile.skills" style="margin-right: 5px;" class="btn btn-outline btn-default btn-xs" ui-sref="search.dashboard({location_path: nav.location.key, community: nav.location, query: skill})">
                         {{::skill}}
@@ -29,8 +29,8 @@
 
         <!-- BEGIN Nav tabs -->
         <ul class="nav nav-tabs" role="tablist">
-            <li class="active"><a href="#ask" aria-controls="ask" role="tab" data-toggle="tab" aria-expanded="true"><span class="pe-7s-micro"></span>Ask a Question</a></li>
-            <li><a href="#profile" aria-controls="profile" role="tab" data-toggle="tab" aria-expanded="false"><span class="pe-7s-note2"></span>View Full Profile</a></li>
+            <li id="ask_li" class="active"><a href="#ask" aria-controls="ask" role="tab" data-toggle="tab" aria-expanded="true"><span class="pe-7s-micro"></span>Ask a Question</a></li>
+            <li id="profile_li" ><a href="#profile" aria-controls="profile" role="tab" data-toggle="tab" aria-expanded="false"><span class="pe-7s-note2"></span>View Full Profile</a></li>
         </ul>
         <!--/ END Nav tabs -->
 
