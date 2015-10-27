@@ -1,11 +1,11 @@
 <div class="media social-profile clearfix">
     <a class="pull-left">
-        <img ng-src="{{reply.from.avatar || 'images/blank_avatar.png'}}" alt="{{reply.from.name}}" ui-sref="user.dashboard({location_path: question.from.key, community: {}})">
+        <img ng-src="{{reply.from.avatar || 'images/blank_avatar.png'}}" alt="{{reply.from.name}}" ui-sref="user.dashboard({location_path: question.from.key, community: {}, profile: {}})">
     </a>
 
     <div class="media-body">
-        <small><a class="pull-right" style="color: #999" ui-sref="user.dashboard({location_path: question.from.key, community: {}})">{{reply.from.headline}}</a></small>
-        <a style="font-weight:bold;" ui-sref="user.dashboard({location_path: reply.from.key, community: {}})">{{reply.from.name}}</a>
+        <small><a class="pull-right" style="color: #999" ui-sref="user.dashboard({location_path: question.from.key, community: {}, profile: {}})">{{reply.from.headline}}</a></small>
+        <a style="font-weight:bold;" ui-sref="user.dashboard({location_path: reply.from.key, community: {}, profile: {}})">{{reply.from.name}}</a>
         <small class="text-muted"> on {{ reply.published | date : 'MMM d' }}</small>
 
         <div class="social-content">
