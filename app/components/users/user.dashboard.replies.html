@@ -4,9 +4,9 @@
     </a>
 
     <div class="media-body">
-        <a class="pull-right" ui-sref="user.dashboard({location_path: question.from.key, community: {}})">{{reply.from.headline}}</a>
-        <a style="font-weight:bold;" ui-sref="user.dashboard({location_path: reply.from.key, community: {}})">{{reply.from.name}}</a> replied
-        <small class="text-muted">- {{reply.published}}</small>
+        <small><a class="pull-right" style="color: #999" ui-sref="user.dashboard({location_path: question.from.key, community: {}})">{{reply.from.headline}}</a></small>
+        <a style="font-weight:bold;" ui-sref="user.dashboard({location_path: reply.from.key, community: {}})">{{reply.from.name}}</a>
+        <small class="text-muted"> on {{ reply.published | date : 'MMM d' }}</small>
 
         <div class="social-content">
             {{reply.content}}

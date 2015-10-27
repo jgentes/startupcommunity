@@ -53,7 +53,7 @@ function handleAddMessage(req, res) {
 
         var go = function(notify) {
 
-            knowtifyClient.contacts.upsert({
+            /*knowtifyClient.contacts.upsert({
                     "event": notify.type,
                     "contacts": [{
                         "email": notify.to.profile.email,
@@ -72,7 +72,7 @@ function handleAddMessage(req, res) {
                 function (error) {
                     console.log('WARNING:');
                     console.log(error);
-                });
+                });*/
         };
 
         go(message);
@@ -102,12 +102,12 @@ function handleAddMessage(req, res) {
     if (addMessage.parent) {
 
         db.newPatchBuilder(config.db.messages, addMessage.parent.key)
-            .add("replies", message)
+            .append("replies", [message])
             .apply()
             .then(function (result) {
                 addMessage["key"] = addMessage.parent.key;
                 to_notify(addMessage);
-                res.status(200).end(message);
+                res.status(200).send(message);
             })
             .fail(function (err) {
                 console.error("POST FAIL:");
@@ -120,6 +120,7 @@ function handleAddMessage(req, res) {
         db.post(config.db.messages, message)
             .then(function (response) {
                 addMessage["key"] = response.headers.location.split('/')[3];
+                message.key = addMessage.key;
                 to_notify(addMessage);
                 res.status(200).send(message);
             })

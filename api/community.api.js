@@ -148,11 +148,17 @@ function handleGetCommunity(req, res) {
                             .sort('@value.published', 'asc')
                             .query('@value.to:' + newresponse.key)
                             .then(function (messages) {
-                                newresponse["messages"] = [];
+                                messages.body.results.sort(function(a, b){
+                                    return a.value.published < b.value.published;
+                                });
+
+                                newresponse.messages = {};
                                 for (m in messages.body.results) {
+
                                     messages.body.results[m].value["key"] = messages.body.results[m].path.key;
-                                    newresponse.messages.push(messages.body.results[m].value);
+                                    newresponse.messages[messages.body.results[m].path.key] = messages.body.results[m].value;
                                 }
+
                                 res.status(200).send(newresponse);
                             })
                             .fail(function (err) {
