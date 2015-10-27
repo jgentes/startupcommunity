@@ -228,7 +228,7 @@ function UserProfileController($stateParams, $location, $modal, $mixpanel, user,
     this.community = community;
     this.communities = communities.data;
     this.location = communities.data[this.community.profile.home];
-
+    this.reply = {};
     this.background_image = 'url(https://s3-us-west-2.amazonaws.com/startupcommunity/backgrounds/background' + Math.floor((Math.random() * 54) + 1) + '.jpg)';
 
     $mixpanel.track('Viewed Profile');
@@ -309,24 +309,24 @@ function UserProfileController($stateParams, $location, $modal, $mixpanel, user,
     };
 
     this.postReply = function(parent) {
-        self.reply_working = true;
+        self.working[parent.key] = true;
 
-        if (self.reply) {
+        if (self.reply[parent.key]) {
             // update user profile
             console.log(parent);
-            message_service.addMessage('reply', user.data.user, this.user, self.reply, parent)
+            message_service.addMessage('reply', user.data.user, this.user, self.reply[parent.key], parent)
                 .then(function (response) {
-                    self.reply = undefined;
+                    self.reply[parent.key] = undefined;
 
                     if (response.status !== 200) {
                         self.alert = {type: 'danger', message: String(response.data.message)};
                     } else {
-                        self.reply_working = false;
+                        self.working[parent.key] = false;
                         self.communities.messages.push(response.data);
                     }
                 })
                 .catch(function (error) {
-                    self.reply_working = false;
+                    self.working[parent.key] = false;
                     self.alert = {type: 'danger', message: String(error.data.message)};
                 });
         }
