@@ -67,13 +67,15 @@ function CompanyController($stateParams, company_service, result_service, $sce, 
             self.stage = "Companies";
         } else {
             for (item in self.selectedStage) {
-                self.stage += (self.selectedStage[item][0].toUpperCase() + self.selectedStage[item].slice(1) + 's');
+                self.stage += self.selectedStage[item];
                 if (item < self.selectedStage.length - 1) {
                     if (item < self.selectedStage.length - 2 ) {
                         self.stage += '</strong>,<strong> ';
                     } else self.stage += ' </strong>&<strong> ';
                 }
             }
+
+            self.stage += " Companies";
         }
 
         if (self.selectedClusters.length == 0 && self.selectedNetworks.length == 0) {

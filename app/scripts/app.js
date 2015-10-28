@@ -7,6 +7,7 @@
         'xeditable',
         'ngSanitize',
         'hSweetAlert',
+        'bm.bsTour',
         'analytics.mixpanel',
         'chart.js',
         'satellizer',
