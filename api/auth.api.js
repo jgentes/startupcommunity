@@ -350,8 +350,9 @@ function handleLinkedin(req, res) {
                             console.log('Verified invitation');
                             userCheck(result.body.results[0].value);
                         } else {
-                            console.log('WARNING: Invalid invite code: ' + invite_code);
-                            return res.status(404).send({message: 'Sorry, this invite code is not valid: ' + invite_code});
+                            userCheck();
+                            /*console.log('WARNING: Invalid invite code: ' + invite_code);
+                            return res.status(404).send({message: 'Sorry, this invite code is not valid: ' + invite_code});*/
                         }
                     })
             } else userCheck();
@@ -551,7 +552,7 @@ function handleInviteUser(req, res) {
                     db.put(config.db.communities, result.body.results[0].path.key, existing)
                         .then(function (response) {
                             console.log("User updated!");
-                            res.status(200).send({message: 'Nice! <a target="_blank" href="https://startupcommunity.org/' + result.body.results[0].path.key + '">' + result.body.results[0].value.profile.name + '</a> is already a user. They were just added to your community.'});
+                            res.status(200).send({message: 'Nice!  <a target="_blank" href="https://startupcommunity.org/' + result.body.results[0].path.key + '">' + result.body.results[0].value.profile.name + '</a> is a member of the community.'});
                         })
                         .fail(function(err) {
                             console.log('WARNING:');
@@ -568,7 +569,7 @@ function handleInviteUser(req, res) {
                         .then(function (result) {
                             if (result.body.results.length > 0) {
                                 console.log("Existing invite found!");
-                                res.status(200).send({message: 'An invitation has already been sent to ' + inviteUser.email + '. We will continue to send reminders for 1 week, then you will be notified if they still have not accepted. You may invite them again at that time.'});
+                                res.status(200).send({message: 'An invitation has already been sent to ' + inviteUser.email + '. We will send them a reminder.'});
                             } else {
                                 // create user record with email address and community data
                                 var newUser = schema.invite(inviteUser.email, req.user.value.profile.email, inviteUser.location_key, inviteUser.community_key);

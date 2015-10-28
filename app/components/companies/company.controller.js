@@ -15,7 +15,15 @@ function CompanyController($stateParams, company_service, result_service, $sce, 
     var self = this; // for accessing 'this' in child functions
     var query;
     var communityFilter = [$stateParams.location_path];
-    if ($stateParams.community_path) communityFilter.push($stateParams.community_path);
+
+    if (this.community.type == 'cluster') {
+        if (this.community.community_profiles[$stateParams.location_path]) {
+            var clusterFilter = this.community.community_profiles[$stateParams.location_path].industries;
+        } else clusterFilter = this.community.profile.industries;
+    } else {
+        clusterFilter = [];
+        communityFilter.push($stateParams.community_path);
+    }
 
     $stateParams.query ? query = $stateParams.query : query = '*';
 
@@ -38,7 +46,7 @@ function CompanyController($stateParams, company_service, result_service, $sce, 
             self.tag = query;
         } else self.tag = undefined;
 
-        company_service.search(communityFilter, query, undefined, self.usercount, alturl)
+        company_service.search(communityFilter, clusterFilter, query, undefined, self.usercount, alturl)
             .then(function (response) {
                 self.tag = undefined;
                 self.companies = result_service.setPage(response.data);
@@ -120,7 +128,7 @@ function CompanyController($stateParams, company_service, result_service, $sce, 
             }
         }
 
-        company_service.search(communityFilter, '*', self.selectedStage, 20, undefined)
+        company_service.search(communityFilter, clusterFilter, '*', self.selectedStage, 20, undefined)
             .then(function(response) {
                 self.loadingStage = false;
                 self.companies = result_service.setPage(response.data);
@@ -138,7 +146,7 @@ function CompanyController($stateParams, company_service, result_service, $sce, 
             if (self.selectedClusters.length == 0) self.allClusters = true;
         }
 
-        company_service.search(communityFilter.concat(self.selectedClusters), '*', self.selectedStage, 30, undefined)
+        company_service.search(communityFilter, clusterFilter, '*', self.selectedStage, 30, undefined)
             .then(function(response) {
                 self.loadingCluster = false;
                 self.loadingNetwork = false;
@@ -157,7 +165,9 @@ function CompanyController($stateParams, company_service, result_service, $sce, 
             if (self.selectedNetworks.length == 0) self.allNetworks = true;
         }
 
-        company_service.search(communityFilter.concat(self.selectedNetworks), '*', self.selectedStage, 20, undefined)
+        communityFilter = communityFilter.concat(self.selectedNetworks);
+
+        company_service.search(communityFilter, clusterFilter, '*', self.selectedStage, 20, undefined)
             .then(function(response) {
                 self.loadingCluster = false;
                 self.loadingNetwork = false;

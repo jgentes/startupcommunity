@@ -12,6 +12,15 @@ function WelcomeController($auth, $q, $http, $mixpanel, $stateParams, $scope, $s
     this.industries = community_service.industries();
     this.community = community; // used in add company (not welcome) modal
     this.parents = [ 'Agriculture', 'Art', 'Construction', 'Consumer Goods', 'Corporate', 'Education', 'Finance', 'Government', 'Healthcare', 'Legal', 'Manufacturing', 'Medical', 'Non-Profit', 'Recreation', 'Services', 'Tech', 'Transportation' ];
+    this.stages = [ '0 - 500k', '500k - 1M', '1M - 5M', '5M+'];
+
+    this.shouldIadd = function() {
+        self.alert = {type: "warning", message: "Startups find experts based on their work experience. If you work with the company while living in the community, you should add it."}
+    };
+
+    this.notListed = function() {
+        this.alert = {type: "warning", message: "Please <a href='https://angel.co/intro' target='_blank'>click here</a> to create a profile for the startup on AngelList."}
+    };
 
     this.authenticate = function() {
         self.working = true;
@@ -63,25 +72,6 @@ function WelcomeController($auth, $q, $http, $mixpanel, $stateParams, $scope, $s
 
             self.working = false;
         }
-    };
-
-    this.notListed = function() {
-        sweet.show({
-            title: "Can't find a company?",
-            text: "Please <a href='https://angel.co/intro' target='_blank'>click here</a> to create a profile for the startup on AngelList.",
-            type: "warning",
-            html: true,
-            showCancelButton: true,
-            confirmButtonText: "Take me to AngelList",
-            cancelButtonText: "Go back",
-            closeOnConfirm: true,
-            closeOnCancel: true
-        },
-        function (isConfirm) {
-            if (isConfirm) {
-                window.open("https://angel.co/intro");
-            }
-        });
     };
 
     // for profile pic upload to S3
@@ -185,12 +175,13 @@ function WelcomeController($auth, $q, $http, $mixpanel, $stateParams, $scope, $s
                     console.warn(error);
                 });
 
-            company_service.search(null, 'value.profile.angellist.id: ' + newVal, null, 1)
+            company_service.search(null, null, 'value.profile.angellist.id: ' + newVal, null, 1)
                 .then(function(response) {
                     if (response.data.count > 0) {
                         self.updateCompany = true;
                         if (response.data.results[0].value.profile.industries) self.selectedCompany.industries = response.data.results[0].value.profile.industries;
                         if (response.data.results[0].value.profile.parents) self.selectedCompany.parent = response.data.results[0].value.profile.parents[0];
+                        if (response.data.results[0].value.profile.stage) self.selectedCompany.stage = response.data.results[0].value.profile.stage;
                         self.alert = { type: 'warning', message: self.selectedCompany.name + ' is already in the system, but you may update the company record.'};
                     }
                 })

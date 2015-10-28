@@ -185,9 +185,10 @@ angular
       })
     .factory('company_service', function($http) {
         return {
-            search: function(communities, query, stages, limit, alturl) { //alturl is for next/prev retrieval
+            search: function(communities, clusters, query, stages, limit, alturl) { //alturl is for next/prev retrieval
                 var urlString = '/api/2.0/companies?' + jQuery.param({
                         communities: communities,
+                        clusters: clusters,
                         stages: stages,
                         limit: limit,
                         query: query

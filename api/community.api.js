@@ -255,13 +255,11 @@ function handleGetTop(req, res) {
 
     if (cluster_key) {
 
+        community_key = '*';
+
         if (location_key == cluster_key) {
             has_location = false;
             search = '';
-        }
-
-        if (location_key !== community_key) {
-            community_key = '*';
         }
 
         for (i in industry_keys) {
@@ -270,6 +268,7 @@ function handleGetTop(req, res) {
             }
             cluster_search += '"' + industry_keys[i] + '"';
         }
+
     } else if (!community_key || community_key == 'undefined') community_key = location_key;
 
     var search = '@value.communities:' + location_key + ' AND @value.communities:' + community_key + '';

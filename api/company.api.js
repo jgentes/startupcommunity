@@ -42,15 +42,16 @@ var schema = {
 
 function handleCompanySearch(req, res){
         var communities = req.query.communities,
+            clusters = req.query.clusters,
             stages = req.query.stages,
             query = req.query.query,
             limit = req.query.limit,
             offset = req.query.offset,
             key = req.query.api_key;
 
-        searchInCommunity(communities, stages, limit, offset, query, key)
-            .then(function(userlist){
-                    res.send(userlist);
+        searchInCommunity(communities, clusters, stages, limit, offset, query, key)
+            .then(function(companylist){
+                    res.send(companylist);
             })
             .fail(function(err){
                     console.warn(err);
@@ -58,7 +59,7 @@ function handleCompanySearch(req, res){
             });
 }
 
-var searchInCommunity = function(communities, stages, limit, offset, query, key) {
+var searchInCommunity = function(communities, clusters, stages, limit, offset, query, key) {
         var allowed = false;
         var userperms;
 
@@ -99,6 +100,17 @@ var searchInCommunity = function(communities, stages, limit, offset, query, key)
         } else searchstring += '*';
 
         searchstring += ') AND @value.type: "company"';
+
+        if (clusters && clusters.length > 0 && clusters[0] !== '*') {
+            clusters = clusters.splice(',');
+            searchstring += ' AND (';
+
+            for (i in clusters) {
+                searchstring += '@value.profile.industries:"' + clusters[i] + '"'; // scope to industries within the cluster
+                if (i < (clusters.length - 1)) { searchstring += ' OR '; }
+            }
+            searchstring += ')';
+        }
 
         if (stages && stages.length > 0 && stages[0] !== '*') {
                 stages = stages.splice(',');

@@ -39,7 +39,6 @@
                             <span class="text-danger">&nbsp;&nbsp;<i class="fa fa-exclamation-triangle"></i> A parent is required.</span>
                         </div>
                         <br>
-                        <br>
                         And a revenue stage:
                         <select class="form-control m-b" ng-model="welcome.selectedCompany.stage" style="margin-bottom: 5px;" required>
                             <option ng-repeat="stage in welcome.stages">{{ stage }}</option>
@@ -72,7 +71,7 @@
     </div>
     <div class="modal-footer">
         <input ng-click="welcome.addCompany()" type="submit" class="finish btn-success btn pull-right" ng-class="{'disabled' : disabled || welcome.working || !welcome.selectedCompany}" value="{{ (welcome.updateCompany ? 'Update ' : 'Add ') + (welcome.selectedCompany.name || 'Company') }}"/>
-        <button type="button" class="btn btn-default pull-right" ng-show="welcome.selectedCompany && !welcome.working" ng-click="welcome.selectedCompany = undefined; welcome.company = undefined; welcome.alert = undefined; welcome.updateRole = false; welcome.selectedRole = 'none'; welcome.updateCompany = false;">Clear</button>
+        <button type="button" class="btn btn-default pull-right" style="margin-right: 15px;" ng-show="welcome.selectedCompany && !welcome.working" ng-click="welcome.selectedCompany = undefined; welcome.company = undefined; welcome.alert = undefined; welcome.updateRole = false; welcome.selectedRole = 'none'; welcome.updateCompany = false;">Clear Form</button>
         <div loading-bars ng-show="welcome.working" style="padding-top: 5px;"></div>
         <button type="button" class="btn btn-default pull-left" ng-click="$close();$state.reload();">Go Back</button>
     </div>
