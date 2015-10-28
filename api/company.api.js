@@ -32,6 +32,7 @@ var schema = {
                 "summary": profile.product_desc,
                 "avatar": profile.thumb_url || "",
                 "logo": profile.logo_url || "",
+                "stage": profile.stage,
                 "industries": profile.industries
             },
             "communities": communities

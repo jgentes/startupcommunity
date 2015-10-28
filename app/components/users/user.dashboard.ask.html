@@ -8,7 +8,7 @@
 </form>
 <span style="text-align: center;" ng-if="!nav.user">
     <h1>Join the startup community in {{ (nav.location.profile.name | words : 0).slice(0,-1) }} to ask questions.</h1><br>
-    <h2><a href="mailto:james@startupcommunity.org?subject=I'd like an invitation to the {{nav.location.profile.name}} startup community, pronto." target="_blank">Click here to request an invitation.</a></h2>
+    <h2><a class="btn btn-lg btn-info" href="mailto:james@startupcommunity.org?subject=I'd like an invitation to the {{nav.location.profile.name}} startup community, pronto!" target="_blank">Click here to request an invitation.</a></h2>
 </span>
 <br>
 <div loading-bars ng-show="profile.working" style="text-align:center; margin-left: -50px; margin-bottom: 15px;"></div>

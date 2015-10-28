@@ -104,7 +104,6 @@ function UserController($stateParams, user_service, result_service, $sce, commun
 
     setTitle();
 
-
     this.filterRole = function(role) {
         self.loadingRole = true;
         if (role == '*') {
@@ -217,7 +216,7 @@ function ContactUserController($modalInstance, notify_service, sweet, community_
 }
 
 function UserProfileController($stateParams, $location, $modal, $mixpanel, user, user_service, message_service, community, communities) {
-    console.log($stateParams);
+
     if (!jQuery.isEmptyObject($stateParams.profile)) {
         this.user = $stateParams.profile;
     } else if (community && community.type == "user") {
