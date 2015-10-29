@@ -32,13 +32,14 @@ var UserApi = function() {
 
 function handleUserSearch(req, res){
     var communities = req.query.communities,
+        clusters = req.query.clusters,
         roles = req.query.roles,
         query = req.query.query,
         limit = req.query.limit,
         offset = req.query.offset,
         key = req.query.api_key;
 
-    searchInCommunity(communities, roles, limit, offset, query, key)
+    searchInCommunity(communities, clusters, roles, limit, offset, query, key)
         .then(function(userlist){
             res.send(userlist);
         })
@@ -48,7 +49,7 @@ function handleUserSearch(req, res){
         });
 }
 
-var searchInCommunity = function(communities, roles, limit, offset, query, key) {
+var searchInCommunity = function(communities, clusters, roles, limit, offset, query, key) {
     var allowed = false;
     var userperms;
 
@@ -89,6 +90,17 @@ var searchInCommunity = function(communities, roles, limit, offset, query, key) 
 
     searchstring += ') AND @value.type: "user"';
 
+    if (clusters && clusters.length > 0 && clusters[0] !== '*') {
+        clusters = clusters.splice(',');
+        searchstring += ' AND (';
+
+        for (i in clusters) {
+            searchstring += '@value.profile.skills:"' + clusters[i] + '"'; // scope to industries within the cluster
+            if (i < (clusters.length - 1)) { searchstring += ' OR '; }
+        }
+        searchstring += ')';
+    }
+
     if (roles && roles.length > 0) {
         roles = roles.splice(',');
         searchstring += ' AND (';
@@ -101,7 +113,7 @@ var searchInCommunity = function(communities, roles, limit, offset, query, key) 
     }
 
     if (query) { searchstring += ' AND ' + '(' + query + ')'; }
-
+    console.log(searchstring);
     var deferred = Q.defer();
     db.newSearchBuilder()
       .collection(config.db.communities)

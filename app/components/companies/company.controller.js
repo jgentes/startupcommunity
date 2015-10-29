@@ -22,7 +22,7 @@ function CompanyController($stateParams, company_service, result_service, $sce, 
         } else clusterFilter = this.community.profile.industries;
     } else {
         clusterFilter = [];
-        communityFilter.push($stateParams.community_path);
+        if ($stateParams.community_path && $stateParams.community_path !== $stateParams.location_path) communityFilter.push($stateParams.community_path);
     }
 
     $stateParams.query ? query = $stateParams.query : query = '*';
@@ -148,7 +148,7 @@ function CompanyController($stateParams, company_service, result_service, $sce, 
             if (self.selectedClusters.length == 0) self.allClusters = true;
         }
 
-        company_service.search(communityFilter, clusterFilter, '*', self.selectedStage, 30, undefined)
+        company_service.search(communityFilter, self.selectedClusters, '*', self.selectedStage, 30, undefined)
             .then(function(response) {
                 self.loadingCluster = false;
                 self.loadingNetwork = false;

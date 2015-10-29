@@ -6,7 +6,7 @@ angular
     .controller('ContactUserController', ContactUserController);
 
 function UserController($stateParams, user_service, result_service, $sce, community, communities) {
-
+    //todo usercontroller and company controller are dups, need to be consolidated
     this.community = community;
     this.communities = communities.data;
     this.selectedClusters = [];
@@ -16,7 +16,15 @@ function UserController($stateParams, user_service, result_service, $sce, commun
     var self = this; // for accessing 'this' in child functions
     var query;
     var communityFilter = [$stateParams.location_path];
-    if ($stateParams.community_path) communityFilter.push($stateParams.community_path);
+
+    if (this.community.type == 'cluster') {
+        if (this.community.community_profiles[$stateParams.location_path]) {
+            var clusterFilter = this.community.community_profiles[$stateParams.location_path].industries;
+        } else clusterFilter = this.community.profile.industries;
+    } else {
+        clusterFilter = [];
+        if ($stateParams.community_path && $stateParams.community_path !== $stateParams.location_path) communityFilter.push($stateParams.community_path);
+    }
 
     $stateParams.query ? query = $stateParams.query : query = '*';
 
@@ -39,7 +47,7 @@ function UserController($stateParams, user_service, result_service, $sce, commun
             self.tag = query;
         } else self.tag = undefined;
 
-        user_service.search(communityFilter, query, undefined, self.usercount, alturl)
+        user_service.search(communityFilter, clusterFilter, query, undefined, self.usercount, alturl)
             .then(function (response) {
                 self.tag = undefined;
                 self.users = result_service.setPage(response.data);
@@ -120,7 +128,7 @@ function UserController($stateParams, user_service, result_service, $sce, commun
             }
         }
 
-        user_service.search(communityFilter, '*', self.selectedRole, 20, undefined)
+        user_service.search(communityFilter, clusterFilter, '*', self.selectedRole, 20, undefined)
             .then(function(response) {
                 self.loadingRole = false;
                 self.users = result_service.setPage(response.data);
@@ -138,7 +146,7 @@ function UserController($stateParams, user_service, result_service, $sce, commun
             if (self.selectedClusters.length == 0) self.allClusters = true;
         }
 
-        user_service.search(communityFilter.concat(self.selectedClusters), '*', self.selectedRole, 30, undefined)
+        user_service.search(communityFilter, self.selectedClusters, '*', self.selectedRole, 30, undefined)
             .then(function(response) {
                 self.loadingCluster = false;
                 self.loadingNetwork = false;
@@ -157,7 +165,9 @@ function UserController($stateParams, user_service, result_service, $sce, commun
             if (self.selectedNetworks.length == 0) self.allNetworks = true;
         }
 
-        user_service.search(communityFilter.concat(self.selectedNetworks), '*', self.selectedRole, 20, undefined)
+        communityFilter = communityFilter.concat(self.selectedNetworks);
+
+        user_service.search(communityFilter, clusterFilter, '*', self.selectedRole, 20, undefined)
             .then(function(response) {
                 self.loadingCluster = false;
                 self.loadingNetwork = false;

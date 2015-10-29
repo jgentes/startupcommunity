@@ -39,9 +39,10 @@ angular
 
     .factory('user_service', function($http) {
         return {
-            search: function(communities, query, roles, limit, alturl) { //alturl is for next/prev retrieval
+            search: function(communities, clusters, query, roles, limit, alturl) { //alturl is for next/prev retrieval
                 var urlString = '/api/2.0/users?' + jQuery.param({
                         communities: communities,
+                        clusters: clusters,
                         roles: roles,
                         limit: limit,
                         query: query
