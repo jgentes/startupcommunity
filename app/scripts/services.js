@@ -137,20 +137,22 @@ angular
                       });
                   };
 
-                  if (community.community_profiles && community.community_profiles[location_key] && community.community_profiles[location_key].top) {
+                  /*if (community.community_profiles && community.community_profiles[location_key] && community.community_profiles[location_key].top) {
                       top();
                       return { data: community.community_profiles[location_key].top };
                   } else if (community.profile && community.profile.top) {
                       top();
                       return { data: community.profile.top };
                   } else {
-                      return $http.get('/api/2.1/community/' + location_key + '/' + (community_key ? community_key + '/top' : 'top'), {
-                          params: {
-                              cluster_key: cluster_key,
-                              industry_keys: industry_keys
-                          }
-                      });
-                  }
+
+                  }*/
+
+                  return $http.get('/api/2.1/community/' + location_key + '/' + (community_key ? community_key + '/top' : 'top'), {
+                      params: {
+                          cluster_key: cluster_key,
+                          industry_keys: industry_keys
+                      }
+                  });
 
               },
               setSettings: function(embed, location_key, community_key) {

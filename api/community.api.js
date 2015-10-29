@@ -1,4 +1,6 @@
 var config = require('../config.json')[process.env.NODE_ENV || 'development'],
+    memjs = require('memjs'),
+    mc = memjs.Client.create(),
     db = require('orchestrate')(config.db.key);
 
 //var util = require('util'); //for util.inspect on request
@@ -119,7 +121,7 @@ function handleGetCommunity(req, res) {
     searchString += ' OR @value.parents: "' + community + '")'; // + grab anything associated with this community as a parent
     searchString += ' AND NOT @value.type:("company" OR "user"))'; // exclude companies and users
 
-    function pullCommunity() {
+    var pullCommunity = function() {
 
         // need to determine what 'this' community is, but to optimize the first query, grab all communities and then figure it out
 
@@ -148,7 +150,7 @@ function handleGetCommunity(req, res) {
                             .sort('@value.published', 'asc')
                             .query('@value.to:' + newresponse.key)
                             .then(function (messages) {
-                                messages.body.results.sort(function(a, b){
+                                messages.body.results.sort(function (a, b) {
                                     return a.value.published < b.value.published;
                                 });
 
@@ -160,6 +162,9 @@ function handleGetCommunity(req, res) {
                                 }
 
                                 res.status(200).send(newresponse);
+                                mc.set(community, JSON.stringify(newresponse), function(err, val) {
+                                    if (err) console.warn('WARNING: Memcache error: ', err)
+                                });
                             })
                             .fail(function (err) {
                                 console.log("WARNING: SEARCH FAIL:");
@@ -167,7 +172,12 @@ function handleGetCommunity(req, res) {
                                 res.status(200).send(newresponse);
                             });
 
-                    } else res.status(200).send(newresponse);
+                    } else {
+                        res.status(200).send(newresponse);
+                        mc.set(community, JSON.stringify(newresponse), function(err, val) {
+                            if (err) console.warn('WARNING: Memcache error: ', err)
+                        });
+                    }
                 };
 
                 if (result.body.results.length > 0) {
@@ -227,13 +237,21 @@ function handleGetCommunity(req, res) {
                 console.warn(err);
                 res.status(202).send({message: 'Something went wrong: ' + err});
             });
-    }
+    };
 
     if (community) {
-        console.log('Pulling community: ' + community);
-        pullCommunity();
-    } else res.status(404).send({message: 'Please specify a community!'});
 
+        mc.get(community, function(err, value) {
+            if (value) {
+                res.status(200).send(value);
+                pullCommunity();
+            } else {
+                console.log('Pulling community: ' + community);
+                pullCommunity();
+            }
+        })
+
+    } else res.status(404).send({message: 'Please specify a community!'});
 }
 
 function handleGetTop(req, res) {
@@ -289,109 +307,129 @@ function handleGetTop(req, res) {
     };
 
     // get companies & industries
-    console.log(industrysearch);
 
-    db.newSearchBuilder()
-        .collection(config.db.communities)
-        .aggregate('top_values', 'value.profile.industries', 10)
-        .sort('@path.reftime', 'desc')
-        .query(industrysearch + ' AND @value.type: "company"')
-        .then(function (result) {
+    var pullTop = function() {
 
-            top_results.industries = {
-                count: result.body.aggregates[0].value_count,
-                entries: result.body.aggregates[0].entries
-            };
+        db.newSearchBuilder()
+            .collection(config.db.communities)
+            .aggregate('top_values', 'value.profile.industries', 10)
+            .sort('@path.reftime', 'desc')
+            .query(industrysearch + ' AND @value.type: "company"')
+            .then(function (result) {
 
-            top_results.companies = {
-                count: result.body.total_count,
-                entries: addkeys(result.body.results).slice(0,5)
-            };
+                top_results.industries = {
+                    count: result.body.aggregates[0].value_count,
+                    entries: result.body.aggregates[0].entries
+                };
 
-            // get people & skills
+                top_results.companies = {
+                    count: result.body.total_count,
+                    entries: addkeys(result.body.results).slice(0,5)
+                };
 
-            var skillsearch = cluster_search ? '@value.profile.skills:(' + cluster_search + ') AND ' + search : search;
+                // get people & skills
 
-            db.newSearchBuilder()
-                .collection(config.db.communities)
-                .aggregate('top_values', 'value.profile.skills', 10)
-                .sort('@path.reftime', 'desc')
-                .query(skillsearch + ' AND @value.type: "user"')
-                .then(function (result) {
+                var skillsearch = cluster_search ? '@value.profile.skills:(' + cluster_search + ') AND ' + search : search;
 
-                    top_results.skills = {
-                        count: result.body.aggregates[0].value_count,
-                        entries: result.body.aggregates[0].entries
-                    };
+                db.newSearchBuilder()
+                    .collection(config.db.communities)
+                    .aggregate('top_values', 'value.profile.skills', 10)
+                    .sort('@path.reftime', 'desc')
+                    .query(skillsearch + ' AND @value.type: "user"')
+                    .then(function (result) {
 
-                    top_results.people = {
-                        count: result.body.total_count,
-                        entries: addkeys(result.body.results).slice(0,5)
-                    };
+                        top_results.skills = {
+                            count: result.body.aggregates[0].value_count,
+                            entries: result.body.aggregates[0].entries
+                        };
+
+                        top_results.people = {
+                            count: result.body.total_count,
+                            entries: addkeys(result.body.results).slice(0,5)
+                        };
 
 
-                    // get leaders
-                    db.newSearchBuilder()
-                        .collection(config.db.communities)
-                        .sort('@path.reftime', 'desc')
-                        .query('@value.roles.leader.' + community_key + ':' + location_key + ' AND @value.type: "user"')
-                        .then(function (result) {
+                        // get leaders
+                        db.newSearchBuilder()
+                            .collection(config.db.communities)
+                            .sort('@path.reftime', 'desc')
+                            .query('@value.roles.leader.' + community_key + ':' + location_key + ' AND @value.type: "user"')
+                            .then(function (result) {
 
-                            top_results.leaders = addkeys(result.body.results).slice(0,5);
+                                top_results.leaders = addkeys(result.body.results).slice(0,5);
 
-                            var target = cluster_key ? cluster_key : community_key;
+                                var target = cluster_key ? cluster_key : community_key;
 
-                            console.log('Updating ' + target + ' with top results..');
+                                console.log('Updating ' + target + ' with top results..');
 
-                            //get current record
-                            db.get(config.db.communities, target)
-                                .then(function (response) {
-                                    if (response.body.type == 'cluster' || response.body.type == 'network') { // use community_profiles
-                                        if (response.body.community_profiles === undefined) { // create community_profiles
-                                            response.body['community_profiles'] = {};
-                                        }
-                                        if (response.body.community_profiles[location_key]) { // don't create the location if it doesn't exist
-                                            response.body.community_profiles[location_key]["top"] = top_results;
-                                        }
-                                    } else response.body.profile["top"] = top_results;
+                                //get current record
+                                db.get(config.db.communities, target)
+                                    .then(function (response) {
+                                        if (response.body.type == 'cluster' || response.body.type == 'network') { // use community_profiles
+                                            if (response.body.community_profiles === undefined) { // create community_profiles
+                                                response.body['community_profiles'] = {};
+                                            }
+                                            if (response.body.community_profiles[location_key]) { // don't create the location if it doesn't exist
+                                                response.body.community_profiles[location_key]["top"] = top_results;
+                                            }
+                                        } else response.body.profile["top"] = top_results;
 
-                                    // update record with new data
-
-                                    db.put(config.db.communities, target, response.body)
-                                        .then(function (finalres) {
-
-                                            res.status(200).send(top_results);
-                                        })
-                                        .fail(function (err) {
-                                            console.warn('WARNING:  Problem with GetTop update: ' + err);
-                                            res.status(202).send({message: 'Something went wrong: ' + err});
+                                        res.status(200).send(top_results);
+                                        mc.set(industrysearch, JSON.stringify(top_results), function(err, val) {
+                                            if (err) console.warn('WARNING: Memcache error: ', err)
                                         });
 
-                                })
-                                .fail(function (err) {
-                                    console.warn('WARNING:  Problem with get: ' + err);
-                                    res.status(202).send({message: 'Something went wrong: ' + err});
-                                });
+                                        /*
+                                        // update record with new data
+                                        db.put(config.db.communities, target, response.body)
+                                            .then(function (finalres) {
+                                            // removed due to move to memcache
+                                            })
+                                            .fail(function (err) {
+                                                console.warn('WARNING:  Problem with GetTop update: ' + err);
+                                                res.status(202).send({message: 'Something went wrong: ' + err});
+                                            });*/
 
-                        })
-                        .fail(function (err) {
-                            console.log("WARNING: SEARCH FAIL:");
-                            console.warn(err);
-                            res.status(202).send({message: 'Something went wrong: ' + err});
-                        });
-                })
-                .fail(function (err) {
-                    console.log("WARNING: SEARCH FAIL:");
-                    console.warn(err);
-                    res.status(202).send({message: 'Something went wrong: ' + err});
-                });
+                                    })
+                                    .fail(function (err) {
+                                        console.warn('WARNING:  Problem with get: ' + err);
+                                        res.status(202).send({message: 'Something went wrong: ' + err});
+                                    });
 
+                            })
+                            .fail(function (err) {
+                                console.log("WARNING: SEARCH FAIL:");
+                                console.warn(err);
+                                res.status(202).send({message: 'Something went wrong: ' + err});
+                            });
+                    })
+                    .fail(function (err) {
+                        console.log("WARNING: SEARCH FAIL:");
+                        console.warn(err);
+                        res.status(202).send({message: 'Something went wrong: ' + err});
+                    });
+
+            })
+            .fail(function (err) {
+                console.log("WARNING: SEARCH FAIL:");
+                console.warn(err);
+                res.status(202).send({message: 'Something went wrong: ' + err});
+            });
+    };
+
+    if (industrysearch) {
+
+        mc.get(industrysearch, function(err, value) {
+            if (value) {
+                res.status(200).send(value);
+                pullTop();
+            } else {
+                console.log('Pulling top: ' + industrysearch);
+                pullTop();
+            }
         })
-        .fail(function (err) {
-            console.log("WARNING: SEARCH FAIL:");
-            console.warn(err);
-            res.status(202).send({message: 'Something went wrong: ' + err});
-        });
+
+    } else res.status(404).send({message: 'Please specify a community!'});
 }
 
 function handleSetCommunity(req, res) {
