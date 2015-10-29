@@ -60,7 +60,7 @@ function NavigationController($auth, $state, $window, $location, $stateParams, $
     }
 
     this.communities = communities.data; // used in company list views
-    console.log($stateParams);
+
     // For tour
     if ($stateParams.tour) {
         angular.element(document).ready(function () {

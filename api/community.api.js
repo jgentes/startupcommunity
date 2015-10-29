@@ -121,7 +121,7 @@ function handleGetCommunity(req, res) {
     searchString += ' OR @value.parents: "' + community + '")'; // + grab anything associated with this community as a parent
     searchString += ' AND NOT @value.type:("company" OR "user"))'; // exclude companies and users
 
-    var pullCommunity = function() {
+    var pullCommunity = function(cache) {
 
         // need to determine what 'this' community is, but to optimize the first query, grab all communities and then figure it out
 
@@ -161,7 +161,8 @@ function handleGetCommunity(req, res) {
                                     newresponse.messages[messages.body.results[m].path.key] = messages.body.results[m].value;
                                 }
 
-                                res.status(200).send(newresponse);
+                                if (!cache) res.status(200).send(newresponse);
+
                                 mc.set(community, JSON.stringify(newresponse), function(err, val) {
                                     if (err) console.warn('WARNING: Memcache error: ', err)
                                 });
@@ -173,7 +174,8 @@ function handleGetCommunity(req, res) {
                             });
 
                     } else {
-                        res.status(200).send(newresponse);
+                        if (!cache) res.status(200).send(newresponse);
+
                         mc.set(community, JSON.stringify(newresponse), function(err, val) {
                             if (err) console.warn('WARNING: Memcache error: ', err)
                         });
@@ -244,10 +246,10 @@ function handleGetCommunity(req, res) {
         mc.get(community, function(err, value) {
             if (value) {
                 res.status(200).send(value);
-                pullCommunity();
+                pullCommunity(true);
             } else {
                 console.log('Pulling community: ' + community);
-                pullCommunity();
+                pullCommunity(false);
             }
         })
 
@@ -308,7 +310,7 @@ function handleGetTop(req, res) {
 
     // get companies & industries
 
-    var pullTop = function() {
+    var pullTop = function(cache) {
 
         db.newSearchBuilder()
             .collection(config.db.communities)
@@ -358,7 +360,14 @@ function handleGetTop(req, res) {
 
                                 top_results.leaders = addkeys(result.body.results).slice(0,5);
 
-                                var target = cluster_key ? cluster_key : community_key;
+                                if (!cache) res.status(200).send(top_results);
+
+                                mc.set(industrysearch, JSON.stringify(top_results), function(err, val) {
+                                    if (err) console.warn('WARNING: Memcache error: ', err)
+                                });
+
+                                // removed due to move to memcache
+                                /*var target = cluster_key ? cluster_key : community_key;
 
                                 console.log('Updating ' + target + ' with top results..');
 
@@ -374,27 +383,21 @@ function handleGetTop(req, res) {
                                             }
                                         } else response.body.profile["top"] = top_results;
 
-                                        res.status(200).send(top_results);
-                                        mc.set(industrysearch, JSON.stringify(top_results), function(err, val) {
-                                            if (err) console.warn('WARNING: Memcache error: ', err)
-                                        });
-
-                                        /*
                                         // update record with new data
                                         db.put(config.db.communities, target, response.body)
                                             .then(function (finalres) {
-                                            // removed due to move to memcache
+
                                             })
                                             .fail(function (err) {
                                                 console.warn('WARNING:  Problem with GetTop update: ' + err);
                                                 res.status(202).send({message: 'Something went wrong: ' + err});
-                                            });*/
+                                            });
 
                                     })
                                     .fail(function (err) {
                                         console.warn('WARNING:  Problem with get: ' + err);
                                         res.status(202).send({message: 'Something went wrong: ' + err});
-                                    });
+                                    });*/
 
                             })
                             .fail(function (err) {
@@ -422,10 +425,10 @@ function handleGetTop(req, res) {
         mc.get(industrysearch, function(err, value) {
             if (value) {
                 res.status(200).send(value);
-                pullTop();
+                pullTop(true);
             } else {
                 console.log('Pulling top: ' + industrysearch);
-                pullTop();
+                pullTop(false);
             }
         })
 
