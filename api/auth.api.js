@@ -289,6 +289,34 @@ function handleLinkedin(req, res) {
                 }
             ]
         });
+
+        // add a question for their profile
+
+        var datetime = new Date(); // added as milliseconds since epoch
+
+        var question = {
+            "type": 'question',
+            "from": {
+                "key": 'james',
+                "name": 'James Gentes',
+                "avatar": 'https://startupcommunity-dev.s3-us-west-2.amazonaws.com/profiles/james_me_wkids_square.png',
+                "headline": 'Founder of StartupCommunity.org'
+            },
+            "to": invite_code,
+            "published": datetime.getTime(),
+            "content": 'What are you currently working on? How can the community help?',
+            "replies": []
+        };
+
+        db.post(config.db.messages, question)
+            .then(function () {
+                console.log('Question posted to new user account')
+            })
+            .fail(function (err) {
+                console.error("POST FAIL:");
+                console.error(err);
+            });
+
     };
 
     var delete_invite = function() {

@@ -46,108 +46,109 @@
 
 
 <div>
-
-    <div class="row">
-        <div class="col-xs-12 col-sm-6">
-            <div class="hpanel" style="border-top: 2px solid #34495E;">
-                <div class="panel-body" style="padding: 10px 5px;">
-                    <div class="col-xs-8">
-                        <div class="stats-title">
-                            <a ui-sref="{{'company.list' + nav.nav_url}}">
-                                <h3>Companies</h3>
-                                <h1 style="color:#34495E;">{{dashboard.top.companies.count}}</h1>
-                            </a>
+    <div tour-step order="0" title="The {{nav.community.profile.name.split(',')[0] }} Startup Community" content="Your community includes people and companies, organized by industry and skillset." placement="top">
+        <div class="row">
+            <div class="col-xs-12 col-sm-6">
+                <div class="hpanel" style="border-top: 2px solid #34495E;">
+                    <div class="panel-body" style="padding: 10px 5px;">
+                        <div class="col-xs-8">
+                            <div class="stats-title">
+                                <a ui-sref="{{'company.list' + nav.nav_url}}">
+                                    <h3>Companies</h3>
+                                    <h1 style="color:#34495E;">{{dashboard.top.companies.count}}</h1>
+                                </a>
+                            </div>
+                        </div>
+                        <div class="col-xs-4">
+                            <div class="stats-icon pull-right">
+                                <i class="pe-7s-power fa-4x"></i>
+                            </div>
                         </div>
                     </div>
-                    <div class="col-xs-4">
-                        <div class="stats-icon pull-right">
-                            <i class="pe-7s-power fa-4x"></i>
+                    <div class="panel-footer" style="background: #fff;">
+                        <div ng-repeat="item in dashboard.top.companies.entries | limitTo: 5">
+                            <div style="margin-right: -2px; margin-bottom:-5px;">
+                                <div ng-if="$first" style="padding-top:5px;"></div>
+                                <div class="row" ng-include="'components/companies/company.list.item.html'"></div>
+                                <div ng-if="$last" style="margin-bottom:-32px;"></div>
+                            </div>
                         </div>
                     </div>
                 </div>
-                <div class="panel-footer" style="background: #fff;">
-                    <div ng-repeat="item in dashboard.top.companies.entries | limitTo: 5">
-                        <div style="margin-right: -2px; margin-bottom:-5px;">
-                            <div ng-if="$first" style="padding-top:5px;"></div>
-                            <div class="row" ng-include="'components/companies/company.list.item.html'"></div>
-                            <div ng-if="$last" style="margin-bottom:-32px;"></div>
+            </div>
+            <div class="col-xs-12 col-sm-6">
+                <div class="hpanel hblue" >
+                    <div class="panel-body" style="padding: 10px 5px;">
+                        <div class="col-xs-8">
+                            <div class="stats-title pull-left">
+                                <a ui-sref="{{'user.list' + nav.nav_url}}">
+                                    <h3>People</h3>
+                                    <h1 class="text-info">{{dashboard.top.people.count}}</h1>
+                                </a>
+                            </div>
+                        </div>
+                        <div class="col-xs-4">
+                            <div class="stats-icon pull-right">
+                                <i class="pe-7s-id fa-4x"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel-footer" style="background: #fff;">
+                        <div ng-repeat="item in dashboard.top.people.entries | limitTo: 5">
+                            <div style="margin-right: -2px; margin-bottom:-5px;">
+                                <div ng-if="$first" style="padding-top:5px;"></div>
+                                <div class="row" ng-include="'components/users/user.list.item.html'"></div>
+                                <div ng-if="$last" style="margin-bottom:-32px;"></div>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="col-xs-12 col-sm-6">
-            <div class="hpanel hblue" >
-                <div class="panel-body" style="padding: 10px 5px;">
-                    <div class="col-xs-8">
-                        <div class="stats-title pull-left">
-                            <a ui-sref="{{'user.list' + nav.nav_url}}">
-                                <h3>People</h3>
-                                <h1 class="text-info">{{dashboard.top.people.count}}</h1>
-                            </a>
+        <div class="row">
+            <div class="col-xs-12 col-sm-6">
+                <div class="hpanel forum-box">
+
+                    <div class="panel-heading" style="border-bottom: 2px solid #34495E;">
+                        <h3>Top Industries</h3>
+                    </div>
+
+                    <div class="panel-body" ng-repeat="item in dashboard.top.industries.entries | limitTo: 5">
+                        <div class="row">
+                            <div class="col-xs-10 forum-heading">
+                                <a ui-sref="search.dashboard({location_path: dashboard.location_path, query: item.value})"><h4 style="font-weight: 200;">{{item.value}}</h4></a>
+                                <progressbar ng-attr-value="item.count/dashboard.top.industries.count" type="default" class="progress-small full" style="margin-top: 7px;"></progressbar>
+                            </div>
+                            <div class="col-xs-2 forum-info">
+                                <span class="number">{{item.count}}</span>
+                                <small>{{item.count == 1 ? 'Company' : 'Companies'}}</small>
+                            </div>
                         </div>
                     </div>
-                    <div class="col-xs-4">
-                        <div class="stats-icon pull-right">
-                            <i class="pe-7s-id fa-4x"></i>
-                        </div>
-                    </div>
-                </div>
-                <div class="panel-footer" style="background: #fff;">
-                    <div ng-repeat="item in dashboard.top.people.entries | limitTo: 5">
-                        <div style="margin-right: -2px; margin-bottom:-5px;">
-                            <div ng-if="$first" style="padding-top:5px;"></div>
-                            <div class="row" ng-include="'components/users/user.list.item.html'"></div>
-                            <div ng-if="$last" style="margin-bottom:-32px;"></div>
-                        </div>
-                    </div>
+
                 </div>
             </div>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-xs-12 col-sm-6">
-            <div class="hpanel forum-box">
+            <div class="col-xs-12 col-sm-6">
+                <div class="hpanel forum-box">
 
-                <div class="panel-heading" style="border-bottom: 2px solid #34495E;">
-                    <h3>Top Industries</h3>
-                </div>
+                    <div class="panel-heading" style="border-bottom: 2px solid #3498db">
+                        <h3>Top Skills</h3>
+                    </div>
 
-                <div class="panel-body" ng-repeat="item in dashboard.top.industries.entries | limitTo: 5">
-                    <div class="row">
-                        <div class="col-xs-10 forum-heading">
-                            <a ui-sref="search.dashboard({location_path: dashboard.location_path, query: item.value})"><h4 style="font-weight: 200;">{{item.value}}</h4></a>
-                            <progressbar ng-attr-value="item.count/dashboard.top.industries.count" type="default" class="progress-small full" style="margin-top: 7px;"></progressbar>
-                        </div>
-                        <div class="col-xs-2 forum-info">
-                            <span class="number">{{item.count}}</span>
-                            <small>{{item.count == 1 ? 'Company' : 'Companies'}}</small>
+                    <div class="panel-body" ng-repeat="item in dashboard.top.skills.entries | limitTo: 5">
+                        <div class="row">
+                            <div class="col-xs-10 forum-heading">
+                                <a ui-sref="search.dashboard({location_path: dashboard.location_path, query: item.value})"><h4 style="font-weight: 200;">{{item.value}}</h4></a>
+                                <progressbar ng-attr-value="item.count/dashboard.top.skills.count" type="info" class="progress-small full" style="margin-top: 7px;"></progressbar>
+                            </div>
+                            <div class="col-xs-2 forum-info">
+                                <span class="number">{{item.count}}</span>
+                                <small>{{item.count == 1 ? 'Person' : 'People'}}</small>
+                            </div>
                         </div>
                     </div>
+
                 </div>
-
-            </div>
-        </div>
-        <div class="col-xs-12 col-sm-6">
-            <div class="hpanel forum-box">
-
-                <div class="panel-heading" style="border-bottom: 2px solid #3498db">
-                    <h3>Top Skills</h3>
-                </div>
-
-                <div class="panel-body" ng-repeat="item in dashboard.top.skills.entries | limitTo: 5">
-                    <div class="row">
-                        <div class="col-xs-10 forum-heading">
-                            <a ui-sref="search.dashboard({location_path: dashboard.location_path, query: item.value})"><h4 style="font-weight: 200;">{{item.value}}</h4></a>
-                            <progressbar ng-attr-value="item.count/dashboard.top.skills.count" type="info" class="progress-small full" style="margin-top: 7px;"></progressbar>
-                        </div>
-                        <div class="col-xs-2 forum-info">
-                            <span class="number">{{item.count}}</span>
-                            <small>{{item.count == 1 ? 'Person' : 'People'}}</small>
-                        </div>
-                    </div>
-                </div>
-
             </div>
         </div>
     </div>

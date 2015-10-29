@@ -44,11 +44,16 @@
     "sweetalert": "https://github.com/t4t5/sweetalert.git#~1.0.1",
     "underscore": "~1.5.2",
     "ng-file-upload": "~8.0.1",
-    "ng-file-upload-shim": "~8.0.1"
+    "ng-file-upload-shim": "~8.0.1",
+    "bootstrap-tour": "~0.10.2",
+    "angular-bootstrap-tour": "~0.3.3"
   },
   "resolutions": {
-    "angular": "1.4.7",
+    "angular": ">= 1.0.8",
     "angulartics": "~0.19.0",
-    "sweetalert": ">=1.1.0"
+    "sweetalert": ">=1.1.0",
+    "bootstrap": ">=2.3.2",
+    "jquery": ">= 1.9.0",
+    "bootstrap-tour": "~0.10.2"
   }
 }

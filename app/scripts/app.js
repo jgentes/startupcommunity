@@ -7,7 +7,6 @@
         'xeditable',
         'ngSanitize',
         'hSweetAlert',
-        'bm.bsTour',
         'analytics.mixpanel',
         'chart.js',
         'satellizer',
@@ -15,7 +14,8 @@
         'angulartics',
         'angulartics.google.analytics',
         'knowtify',
-        'ngFileUpload'
+        'ngFileUpload',
+        'bm.bsTour'
     ]);
 })();
 

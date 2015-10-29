@@ -79,7 +79,6 @@ function NavigationController($auth, $state, $window, $location, $stateParams, $
         "({community_path: item.key, community: item, query: '*', location_path: nav.location.key})" :
         "({community_path: item.key, community: item, query: '*', location_path: nav.location.profile.home})";
 
-
     // SEARCH
 
     if ($stateParams.query) this.search.query = $stateParams.query;
