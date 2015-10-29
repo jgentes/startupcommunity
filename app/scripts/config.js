@@ -1,8 +1,8 @@
 function configState($stateProvider, $urlRouterProvider, $compileProvider, $locationProvider) {
 
     // Optimize load start
-    $compileProvider
-     .debugInfoEnabled(false); // set to false for production
+    /*$compileProvider
+     .debugInfoEnabled(true); // set to false for production*/
 
     $locationProvider
         .html5Mode(true);
@@ -19,14 +19,8 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
         })
         .state('logout', {
             url: "/logout",
-            params: {
-                alert: {}
-            },
-            onEnter: function($auth, $state, $stateParams) {
-                $auth.logout()
-                    .then(function() {
-                        $state.go('login', { alert: $stateParams.message });
-                    })
+            onEnter: function($auth) {
+                $auth.logout('/login');
             }
         })
 
@@ -36,9 +30,10 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
             templateUrl: "components/common/nav/nav.html",
             controller: "NavigationController as nav",
             params: {
-                profile: {},  // must include params for *any* root-level object for inheritance, such as users, companies, networks, etc
+                profile: {},  // must include params here for inheritance
                 community: {},
-                location: {}
+                location: {},
+                tour: false
             },
             resolve: {
                 user: ['user_service', '$state', '$mixpanel',
@@ -66,6 +61,7 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                     function($stateParams, community_service) {
                         return community_service.getCommunity($stateParams.location_path)
                             .error(function(response) {
+                                console.log(response);
                                 $state.go('404', { message: String(response.message) });
                             });
                     }],
@@ -304,7 +300,8 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
             url: "/:community_path",
             params: {
                 location_path: null,
-                community_path: null
+                community_path: null,
+                tour: false
             },
             resolve: {
                 top: ['community_service', '$stateParams', 'community',

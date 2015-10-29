@@ -229,8 +229,10 @@ function handleGetCommunity(req, res) {
             });
     }
 
-    console.log('Pulling community: ' + community);
-    pullCommunity();
+    if (community) {
+        console.log('Pulling community: ' + community);
+        pullCommunity();
+    } else res.status(404).send({message: 'Please specify a community!'});
 
 }
 

@@ -25,7 +25,7 @@ function wwwRedirect(req, res, next) {
         return res.redirect(301, req.protocol + '://' + newHost + req.originalUrl);
     }
     next();
-};
+}
 
 // remove trailing slash
 app.use(function(req, res, next) {
@@ -88,6 +88,7 @@ var AuthApi = require('./api/auth.api.js'),
 app.get('/api/2.0/key/:key', communityApis.getKey);
 app.get('/api/2.0/users', userApis.userSearch);
 app.get('/api/2.0/search', userApis.directSearch);
+app.get('/api/2.0/community', communityApis.getCommunity);
 app.get('/api/2.0/community/:community', communityApis.getCommunity);
 app.get('/api/2.0/angel/startups', angellistApis.getStartups);
 app.get('/api/2.0/angel/startup', angellistApis.getStartup);

@@ -2,7 +2,7 @@ angular
     .module('startupcommunity')
     .controller('NavigationController', NavigationController);
 
-function NavigationController($auth, $state, $scope, $window, $location, $stateParams, $modal, user, location, community, communities, knowtify) {
+function NavigationController($auth, $state, $window, $location, $stateParams, $modal, user, location, community, communities, knowtify) {
     if (user.data && user.data.token) $auth.setToken(user.data.token); // update local storage with latest user profile
 
     // SENSITIVE VARIABLES THAT AFFECT NAVIGATION AND ALL CHILD TEMPLATES
@@ -34,7 +34,8 @@ function NavigationController($auth, $state, $scope, $window, $location, $stateP
 
     // PRIMARY LEFT-NAV ITEM LIST
     if (!this.community) this.community = communities.data[this.location_path];
-
+    console.log(communities.data);
+    console.log(this.community);
     // sort communities for use in nav and child dashboard pages
     for (item in communities.data) { // no clue what item is here, esp if user or company
         if (item !== this.community.key) { // ie. edco-stable-of-experts
@@ -60,15 +61,18 @@ function NavigationController($auth, $state, $scope, $window, $location, $stateP
     }
 
     this.communities = communities.data; // used in company list views
-
+    console.log($stateParams);
     // For tour
-
-    $scope.$on('$viewContentLoaded', function() {
-        $scope.tour.start(true);
-    });
+    if ($stateParams.tour) {
+        angular.element(document).ready(function () {
+            setTimeout(function() {
+                jQuery('#tourstart').trigger('click');
+            }, 3000);
+        });
+    }
 
     this.end = function() {
-        $state.go('user.dashboard', {profile: self.user, location_path: self.user.key, community: self.user});
+        $state.go('user.dashboard', {profile: self.user, location_path: self.user.key, community: self.user, tour: false});
     };
 
     // BREADCRUMBS
