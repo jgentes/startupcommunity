@@ -8,7 +8,7 @@
         <a ng-show="{{(item.value.profile.summary).length > 0}}" title="Show Summary" ng-click="showSummary = !showSummary" class="user-summary">&nbsp;&nbsp;<i class="fa fa-chevron-down fa-fw"></i>
         </a>
         <li ng-repeat="val in item.value.profile.parents" class="role-right">
-            <a ui-sref="search.dashboard({location_path: nav.location.key, community: nav.location, query: val})" class="btn btn-xs btn-outline btn-defai;t">{{val}}</a>
+            <a ui-sref="search.dashboard({location_path: nav.location.key, community: nav.location, query: val})" class="btn btn-xs btn-outline btn-default">{{val}}</a>
         </li>
         <br>
         <div class="dash-row">

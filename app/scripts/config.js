@@ -2,7 +2,7 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
 
     // Optimize load start
     $compileProvider
-        .debugInfoEnabled(true); // set to false for production
+     .debugInfoEnabled(false); // set to false for production
 
     $locationProvider
         .html5Mode(true);

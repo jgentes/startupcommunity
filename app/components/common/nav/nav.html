@@ -1,5 +1,4 @@
-<div tour backdrop="true">
-    <a ng-click="tour.init(); tour.start(true);">x</a>
+<div tour backdrop="true" on-end="nav.end()">
     <!-- Header -->
     <div id="header" ng-class="{'no-sides' : !nav.embedded}">
         <div ng-class="{'bright-line' : !nav.embedded, 'grey-line' : nav.embedded}">
@@ -21,6 +20,7 @@
                     </form>
                 </div>
             </div>
+
             <div ng-if="!nav.embedded" class="navbar-right">
                 <ul class="nav navbar-nav no-borders">
                     <li ng-if="!nav.user" class="dropdown">
@@ -52,8 +52,8 @@
 
     <!-- Navigation -->
     <aside id="menu" ng-if="!nav.embedded">
-        <div class="profile-picture" tour-step order="4" title="Your Profile" content="People can ask you questions on your profile page. Click your name or picture to take a look." placement="right">
-            <div ng-if="nav.user" class="container side-menu" style="padding-top: 10px; margin-left: -20px; border-bottom: 1px solid #eee;    margin-bottom: -9px;" >
+        <div class="profile-picture">
+            <div ng-if="nav.user" class="container side-menu" style="padding-top: 10px; margin-left: -20px; border-bottom: 1px solid #eee;    margin-bottom: -9px;" tour-step order="4" title="Your Profile" content="People can ask you questions on your profile page. Click 'End Tour' to take a look." placement="right">
                 <div class="row side-menu">
                     <div class="col-xs-3">
                         <a ui-sref="user.dashboard({profile: nav.user, location_path: nav.user.key, community: {}})"><img class="img-circle m-b" ng-src="{{nav.user.profile.avatar || nav.user.profile.linkedin.pictureUrl || 'images/blank_avatar.png'}}" alt="{{nav.user.profile.name}}" style="height: 40px; width: 40px; "/></a>
@@ -71,7 +71,7 @@
 
         <ul side-navigation class="nav" id="side-menu" style="border-top: 1px solid #eee;">
 
-            <li class="active" tour-step order="1" title="The {{nav.community.profile.name.split(',')[0] }} Startup Community" content="To view people by role, or sort companies by revenue, visit the People and Company pages." placement="right">
+            <li class="active" tour-step order="1" title="People and Companies" content="To view people by role, or sort companies by revenue, visit the People and Company pages." placement="right">
 
                 <a style="cursor: default;"><span class="pe-7s-angle-down" style="padding-top: 4px;
     padding-right: 7px;"></span><span class="nav-label">
@@ -134,7 +134,7 @@
                 </ul>
             </li>
 
-            <li class="active" ng-show="nav.networks" tour-step order="2" title="Private Networks" content="Networks are groups of companies and people who are connected through a private, invitation-only community.\n\nExamples of networks include startup accelerators, coworking spaces, mentorship groups, and investment funds." placement="right">
+            <li class="active" ng-show="nav.networks" tour-step order="2" title="Private Networks" content="Networks are groups of companies and people who are connected through a private, invitation-only community.<br><br>Examples of networks include startup accelerators, coworking spaces, mentorship groups, and investment funds." placement="right">
                 <a style="cursor: default;"><span class="pe-7s-angle-down" style="padding-top: 4px;
     padding-right: 7px;"></span><span class="nav-label">
 
@@ -153,7 +153,7 @@
                 </ul>
             </li>
 
-            <li class="active" ng-show="nav.clusters" tour-step order="3" title="Industry Clusters" content="A cluster is an entrepreneurial ecosystem in support of a specific industry. Clusters are made up of mentors, investors, companies, accelerators, coworking spaces, and events that connect people within the community and foster the creation of new business." placement="right">
+            <li class="active" ng-show="nav.clusters" tour-step order="3" title="Industry Clusters" content="A cluster is an entrepreneurial ecosystem in support of a specific industry.<br><br>Clusters are made up of mentors, investors, companies, accelerators, coworking spaces, and events that connect people within the community and foster the creation of new business." placement="right">
                 <a style="cursor: default;"><span class="pe-7s-angle-down" style="padding-top: 4px;
     padding-right: 7px;"></span><span class="nav-label">
 
