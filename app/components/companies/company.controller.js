@@ -256,6 +256,7 @@ function AddCompanyController($mixpanel, $http, company_service, community) {
                     self.updateCompany = false;
                     self.selectedRole = 'none';
                     self.alert = { type: 'success', message: String(response.data.message) };
+
                 }
                 $mixpanel.track('Added Company');
             })
