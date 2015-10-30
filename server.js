@@ -87,24 +87,26 @@ var AuthApi = require('./api/auth.api.js'),
     maint = new MaintApi();
 
 // API
-app.get('/api/2.0/key/:key', communityApis.getKey);
-app.get('/api/2.0/users', userApis.userSearch);
-app.get('/api/2.0/search', userApis.directSearch);
-app.get('/api/2.0/community', communityApis.getCommunity);
-app.get('/api/2.0/community/:community', communityApis.getCommunity);
-app.get('/api/2.0/angel/startups', angellistApis.getStartups);
-app.get('/api/2.0/angel/startup', angellistApis.getStartup);
-app.get('/api/2.0/profile', auth.ensureAuthenticated, userApis.getProfile); // must ensureAuth to send userid to getProfile
-app.get('/api/2.0/profile/getkey', auth.ensureAuthenticated, auth.createAPIToken);
-app.post('/api/2.0/invite', auth.ensureAuthenticated, auth.inviteUser);
-app.put('/api/2.0/profile/role', auth.ensureAuthenticated, userApis.setRole);
-app.post('/api/2.0/profile/remove/:userid', auth.ensureAuthenticated, userApis.removeProfile);
-app.post('/api/2.0/feedback', auth.ensureAuthenticated, userApis.feedback);
-// new for 2.0
-app.get('/api/2.0/companies', companyApis.companySearch);
-app.put('/api/2.0/settings', auth.ensureAuthenticated, communityApis.setCommunity);
-app.post('/api/2.0/contact', userApis.contactUser);
+app.get('/api/2.1/key/:key', communityApis.getKey);
+app.get('/api/2.1/users', userApis.userSearch);
+app.get('/api/2.1/search', userApis.directSearch);
+app.get('/api/2.1/community', communityApis.getCommunity);
+app.get('/api/2.1/community/:community', communityApis.getCommunity);
+app.get('/api/2.1/angel/startups', angellistApis.getStartups);
+app.get('/api/2.1/angel/startup', angellistApis.getStartup);
+app.get('/api/2.1/profile', auth.ensureAuthenticated, userApis.getProfile); // must ensureAuth to send userid to getProfile
+app.get('/api/2.1/profile/getkey', auth.ensureAuthenticated, auth.createAPIToken);
+app.post('/api/2.1/invite', auth.ensureAuthenticated, auth.inviteUser);
+app.put('/api/2.1/profile/role', auth.ensureAuthenticated, userApis.setRole);
+app.post('/api/2.1/profile/remove/:userid', auth.ensureAuthenticated, userApis.removeProfile);
+app.post('/api/2.1/feedback', auth.ensureAuthenticated, userApis.feedback);
 
+// new for 2.0
+app.get('/api/2.1/companies', companyApis.companySearch);
+app.put('/api/2.1/settings', auth.ensureAuthenticated, communityApis.setCommunity);
+app.post('/api/2.1/contact', userApis.contactUser);
+
+// new for 2.1
 app.post('/api/2.1/companies/add', auth.ensureAuthenticated, companyApis.addCompany);
 app.post('/api/2.1/profile', auth.ensureAuthenticated, userApis.updateProfile);
 app.put('/api/2.1/profile/role', auth.ensureAuthenticated, userApis.setRole);

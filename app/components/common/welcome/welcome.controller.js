@@ -163,7 +163,7 @@ function WelcomeController($auth, $q, $http, $mixpanel, $stateParams, $scope, $s
 
     $scope.$watch('welcome.selectedCompany.id', function(newVal, oldVal) {
         if (newVal) {
-            $http.get('/api/2.0/angel/startup?id=' + newVal)
+            $http.get('/api/2.1/angel/startup?id=' + newVal)
                 .then(function(response){
                     if (response.status !== 200) {
                         self.alert = { type: 'danger', message: String(response.data.message) };

@@ -147,11 +147,11 @@ var searchInCommunity = function(communities, clusters, stages, limit, offset, q
 
                     if (result.body.next) {
                             var getnext = url.parse(result.body.next, true);
-                            result.body.next = '/api/2.0/search' + getnext.search;
+                            result.body.next = '/api/2.1/search' + getnext.search;
                     }
                     if (result.body.prev) {
                             var getprev = url.parse(result.body.prev, true);
-                            result.body.prev = '/api/2.0/search' + getprev.search;
+                            result.body.prev = '/api/2.1/search' + getprev.search;
                     }
                     deferred.resolve(result.body);
             })

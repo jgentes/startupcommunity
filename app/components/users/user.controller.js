@@ -225,7 +225,7 @@ function ContactUserController($modalInstance, notify_service, sweet, community_
     };
 }
 
-function UserProfileController($stateParams, $location, $modal, $mixpanel, user, user_service, message_service, community, communities) {
+function UserProfileController($stateParams, $http, $location, $modal, $mixpanel, user, user_service, message_service, community, communities) {
 
     if (!jQuery.isEmptyObject($stateParams.profile)) {
         this.user = $stateParams.profile;
@@ -298,6 +298,7 @@ function UserProfileController($stateParams, $location, $modal, $mixpanel, user,
 
         if (self.question) {
             // update user profile
+
             message_service.addMessage('question', user.data.user, this.user, self.question)
                 .then(function (response) {
                     self.question = undefined;
@@ -308,6 +309,7 @@ function UserProfileController($stateParams, $location, $modal, $mixpanel, user,
                         self.working = false;
                         if (!self.communities.newmessages) self.communities.newmessages = {};
                         self.communities.newmessages[response.data.key] = response.data;
+                        $http.get('/api/2.1/community/' + self.user.key); // refresh outdated cache
                     }
 
                     $mixpanel.track('Asked Question');
@@ -346,6 +348,7 @@ function UserProfileController($stateParams, $location, $modal, $mixpanel, user,
                         if (self.communities.messages[parent.key]) {
                             self.communities.messages[parent.key].replies.push(response.data);
                         } else self.communities.newmessages[parent.key].replies.push(response.data);
+                        $http.get('/api/2.1/community/' + self.user.key); // refresh outdated cache
                     }
 
                     $mixpanel.track('Replied to Question');

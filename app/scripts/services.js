@@ -4,7 +4,7 @@ angular
     .factory('notify_service', function($http) {
         return {
             contact: function(user_key, formdata, community_key, location_key) {
-                return $http.post('/api/2.0/contact?' + jQuery.param({
+                return $http.post('/api/2.1/contact?' + jQuery.param({
                         user_key: user_key,
                         formdata: formdata,
                         community_key: community_key,
@@ -40,7 +40,7 @@ angular
     .factory('user_service', function($http) {
         return {
             search: function(communities, clusters, query, roles, limit, alturl) { //alturl is for next/prev retrieval
-                var urlString = '/api/2.0/users?' + jQuery.param({
+                var urlString = '/api/2.1/users?' + jQuery.param({
                         communities: communities,
                         clusters: clusters,
                         roles: roles,
@@ -57,19 +57,19 @@ angular
                 });
             },
             getProfile: function(userid) {
-                return $http.get(userid ? '/api/2.0/profile/' + userid : '/api/2.0/profile');
+                return $http.get(userid ? '/api/2.1/profile/' + userid : '/api/2.1/profile');
             },
             getProfileUrl: function(filename) {
                 return $http.get('/api/2.1/profile/url?filename=' + filename);
             },
             removeProfile: function(userid, callback) {
-                $http.post('/api/2.0/profile/remove/' + userid)
+                $http.post('/api/2.1/profile/remove/' + userid)
                   .then( function(response) {
                       callback(response);
                   })
             },
             inviteUser: function(email, community_name, location_key, community_key) {
-                return $http.post('/api/2.0/invite', {
+                return $http.post('/api/2.1/invite', {
                     params: {
                         email: email,
                         community_name: community_name,
@@ -79,16 +79,16 @@ angular
                 });
             },
             getKey: function() {
-                return $http.get('/api/2.0/profile/getkey');
+                return $http.get('/api/2.1/profile/getkey');
             },
             setRole: function(userkey, communitykey, cluster, role, status, callback) {
-                $http.put('/api/2.0/profile/role?userkey=' + userkey + '&communitykey=' + communitykey + '&cluster=' + cluster + '&role=' + role + '&status=' + status)
+                $http.put('/api/2.1/profile/role?userkey=' + userkey + '&communitykey=' + communitykey + '&cluster=' + cluster + '&role=' + role + '&status=' + status)
                   .then( function(data, status) {
                       callback(data, status);
                   })
             },
             feedback: function(data) {
-                $http.post('/api/2.0/feedback?data=' + encodeURIComponent(JSON.stringify(data)));
+                $http.post('/api/2.1/feedback?data=' + encodeURIComponent(JSON.stringify(data)));
             }
         };
     })
@@ -96,10 +96,10 @@ angular
       .factory('community_service', function($http) {
           return {
               getCommunity: function(community) {
-                  return $http.get('/api/2.0/community/' + community);
+                  return $http.get('/api/2.1/community/' + community);
               },
               getKey: function(key) {
-                  return $http.get('/api/2.0/key/' + key);
+                  return $http.get('/api/2.1/key/' + key);
               },
               getTop: function(location_key, community_key, community) {
                   // this service relies on cache first, then calls the api to update the db for next pull
@@ -157,7 +157,7 @@ angular
 
               },
               setSettings: function(embed, location_key, community_key) {
-                  return $http.put('/api/2.0/settings', {
+                  return $http.put('/api/2.1/settings', {
                       params: {
                           embed: embed,
                           location_key: location_key,
@@ -189,7 +189,7 @@ angular
     .factory('company_service', function($http) {
         return {
             search: function(communities, clusters, query, stages, limit, alturl) { //alturl is for next/prev retrieval
-                var urlString = '/api/2.0/companies?' + jQuery.param({
+                var urlString = '/api/2.1/companies?' + jQuery.param({
                         communities: communities,
                         clusters: clusters,
                         stages: stages,
@@ -216,10 +216,10 @@ angular
     .factory('angellist_service', function($http) {
         return {
             getStartups: function(id) {
-                return $http.get('/api/2.0/angel/startups?id=' + id);
+                return $http.get('/api/2.1/angel/startups?id=' + id);
             },
             getStartup: function(id) {
-                return $http.get('/api/2.0/angel/startup?id=' + id);
+                return $http.get('/api/2.1/angel/startup?id=' + id);
             }
         };
     })
