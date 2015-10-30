@@ -23,7 +23,7 @@ function LoginController($auth, $state, $mixpanel, $stateParams, sweet) {
                 postLogin(response.data.user);
             })
             .catch(function(response) {
-                if (response.data.message && response.data.message !== 'undefined') {
+                if (response.data && response.data.message && response.data.message !== 'undefined') {
                     self.alert = {type: 'danger', msg: String(response.data.message)};
                 } else self.alert = undefined;
             });
