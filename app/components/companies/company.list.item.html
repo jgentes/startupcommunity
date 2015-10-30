@@ -1,0 +1,25 @@
+<div class="col-md-12 dash-table">
+    <div>
+        <a ui-sref="company.dashboard({profile: item.value, location_path: item.path.key, location: nav.community })" title="View {{::item.value.profile.name | words:0}}'s Profile"><img
+                ng-src="{{item.value.profile.avatar || 'images/blank_startup.jpg'}}" alt="{{::item.value.profile.name}}" class="user-img widget-image pull-left" onerror="this.src='images/blank_startup.png'"/></a>
+    </div>
+    <div class="user-row" ng-class="{'user-row-border': $index % 2 == 0}">
+        <a ui-sref="company.dashboard({profile: item.value, location_path: item.path.key, location: nav.community })" title="View {{::item.value.profile.name | words:0}}'s Profile" style="float: left; "><strong>{{::item.value.profile.name}} </strong></a>
+        <a ng-show="{{(item.value.profile.summary).length > 0}}" title="Show Summary" ng-click="showSummary = !showSummary" class="user-summary">&nbsp;&nbsp;<i class="fa fa-chevron-down fa-fw"></i>
+        </a>
+        <li ng-repeat="val in item.value.profile.parents" class="role-right">
+            <a ui-sref="search.dashboard({location_path: nav.location.key, community: nav.location, query: val})" class="btn btn-xs btn-outline btn-default">{{val}}</a>
+        </li>
+        <br>
+        <div class="dash-row">
+            <span class="text-muted" ng-bind-html="::item.value.profile.headline | highlight:companies.lastQuery"></span>
+        </div>
+        <div ng-show="(showSummary || $state.includes('search.*')) && item.value.profile.summary">
+            <div style="padding-bottom: 10px;">
+                <hr>
+                <span class="text-muted" style="white-space:pre-wrap;" ng-bind-html="::item.value.profile.summary | linky:'_blank' | highlight:companies.lastQuery | safe_html"></span>
+            </div>
+        </div>
+    </div>
+    <hr>
+</div>

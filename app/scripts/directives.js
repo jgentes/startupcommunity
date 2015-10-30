@@ -1,19 +1,37 @@
 angular
     .module('startupcommunity')
+    .directive('alertBox', alertBox)
+    .directive('loadingBars', loadingBars)
     .directive('uiSelect', uiSelect)
     .directive('pageTitle', pageTitle)
     .directive('sideNavigation', sideNavigation)
     .directive('minimalizaMenu', minimalizaMenu)
     .directive('sparkline', sparkline)
     .directive('icheck', icheck)
-    .directive('panelTools', panelTools)
     .directive('smallHeader', smallHeader)
     .directive('animatePanel', animatePanel)
     .directive('randomQuote', randomQuote)
     .directive('backToTop', backToTop)
     .filter('safe_html', safeHTML)
-    .filter('words', words);
+    .filter('words', words)
+    .filter('sentence', sentence);
 
+// custom
+
+function alertBox(){
+    return {
+        scope: {
+            thisAlert: '='
+        },
+        template: '<div ng-show="thisAlert" class="alert alert-{{thisAlert.type}}" style="text-align: center;"><a href="#" class="close" ng-click="thisAlert = undefined" aria-label="close" title="close">x</a><span ng-bind-html="thisAlert.message | safe_html"></span></div>'
+    }
+}
+
+function loadingBars() {
+    return {
+        template: '<img src="images/loading-bars.svg" width="15" height="15" style="margin-right: -35px; margin-left: 10px;margin-top: -3px;"/>'
+    }
+}
 
 function uiSelect(sweet){
     return {
@@ -25,9 +43,9 @@ function uiSelect(sweet){
             ctrl.select = function() {
                 if(ctrl.multiple && ctrl.limit !== undefined && ctrl.selected.length >= ctrl.limit) {
                     sweet.show({
-                        title: "Sorry, only 3 skills here.",
-                        text: "Use the Search field at the top of the page to use more.",
-                        type: "warning"
+                        title: $attributes.alertTitle,
+                        text: $attributes.alertText,
+                        type: $attributes.alertType
                     });
                 } else {
                     superSelect.apply(ctrl, arguments);
@@ -60,7 +78,7 @@ function pageTitle($rootScope, $timeout) {
 /**
  * sideNavigation - Directive for run metisMenu on sidebar navigation
  */
-function sideNavigation($timeout) {
+function sideNavigation() {
     return {
         restrict: 'EA',
         link: function(scope, element) {
@@ -150,43 +168,6 @@ function icheck($timeout) {
                         }
                     });
             });
-        }
-    };
-}
-
-
-/**
- * panelTools - Directive for panel tools elements in right corner of panel
- */
-function panelTools($timeout) {
-    return {
-        restrict: 'A',
-        scope: true,
-        templateUrl: '../components/common/header/panel_tools.html',
-        controller: function ($scope, $element) {
-            // Function for collapse ibox
-            $scope.showhide = function () {
-                var hpanel = $element.closest('div.hpanel');
-                var icon = $element.find('i:first');
-                var body = hpanel.find('div.panel-body');
-                var footer = hpanel.find('div.panel-footer');
-                body.slideToggle(300);
-                footer.slideToggle(200);
-                // Toggle icon from up to down
-                icon.toggleClass('fa-chevron-up').toggleClass('fa-chevron-down');
-                hpanel.toggleClass('').toggleClass('panel-collapse');
-                $timeout(function () {
-                    hpanel.resize();
-                    hpanel.find('[id^=map-]').resize();
-                }, 50);
-            },
-
-            // Function for close ibox
-            $scope.closebox = function () {
-                var hpanel = $element.closest('div.hpanel');
-                hpanel.remove();
-            }
-
         }
     };
 }
@@ -391,6 +372,14 @@ function words() {
     return function(text, wordnum) {
         if (text) {
             return text.split(" ")[wordnum];
+        }
+    };
+}
+
+function sentence() {
+    return function(text) {
+        if (text) {
+            return text.split(".")[0] + '.';
         }
     };
 }

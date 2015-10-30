@@ -5,18 +5,26 @@ angular
     .controller('InviteUserController', InviteUserController)
     .controller('ContactUserController', ContactUserController);
 
-function UserController($stateParams, user_service, result_service, $sce, $modal, community, communities) {
-
+function UserController($stateParams, user_service, result_service, $sce, community, communities) {
+    //todo usercontroller and company controller are dups, need to be consolidated
     this.community = community;
     this.communities = communities.data;
-    this.selectedIndustries = [];
+    this.selectedClusters = [];
     this.selectedNetworks = [];
     this.selectedRole = ['*'];
 
     var self = this; // for accessing 'this' in child functions
     var query;
     var communityFilter = [$stateParams.location_path];
-    if ($stateParams.community_path) communityFilter.push($stateParams.community_path);
+
+    if (this.community.type == 'cluster') {
+        if (this.community.community_profiles[$stateParams.location_path]) {
+            var clusterFilter = this.community.community_profiles[$stateParams.location_path].industries;
+        } else clusterFilter = this.community.profile.industries;
+    } else {
+        clusterFilter = [];
+        if ($stateParams.community_path && $stateParams.community_path !== $stateParams.location_path) communityFilter.push($stateParams.community_path);
+    }
 
     $stateParams.query ? query = $stateParams.query : query = '*';
 
@@ -39,7 +47,7 @@ function UserController($stateParams, user_service, result_service, $sce, $modal
             self.tag = query;
         } else self.tag = undefined;
 
-        user_service.search(communityFilter, query, undefined, self.usercount, alturl)
+        user_service.search(communityFilter, clusterFilter, query, undefined, self.usercount, alturl)
             .then(function (response) {
                 self.tag = undefined;
                 self.users = result_service.setPage(response.data);
@@ -54,7 +62,7 @@ function UserController($stateParams, user_service, result_service, $sce, $modal
     var setTitle = function(){
         var item;
         self.role = '';
-        self.industry = '';
+        self.cluster = '';
 
         if (self.selectedRole[0] == '*') {
             self.role = "People";
@@ -69,13 +77,13 @@ function UserController($stateParams, user_service, result_service, $sce, $modal
             }
         }
 
-        if (self.selectedIndustries.length == 0 && self.selectedNetworks.length == 0) {
+        if (self.selectedClusters.length == 0 && self.selectedNetworks.length == 0) {
             if (self.community.community_profiles && self.community.community_profiles[$stateParams.location_path]) {
                 self.selection = self.community.community_profiles[$stateParams.location_path].name;
             } else self.selection = self.community.profile.name;
         } else {
             self.selection = "";
-            var selectedCommunities = self.selectedIndustries.concat(self.selectedNetworks);
+            var selectedCommunities = self.selectedClusters.concat(self.selectedNetworks);
             for (item in selectedCommunities) {
                 self.selection += self.communities[selectedCommunities[item]].profile.name;
                 if (item < selectedCommunities.length - 1) {
@@ -104,7 +112,6 @@ function UserController($stateParams, user_service, result_service, $sce, $modal
 
     setTitle();
 
-
     this.filterRole = function(role) {
         self.loadingRole = true;
         if (role == '*') {
@@ -121,7 +128,7 @@ function UserController($stateParams, user_service, result_service, $sce, $modal
             }
         }
 
-        user_service.search(communityFilter, '*', self.selectedRole, 20, undefined)
+        user_service.search(communityFilter, clusterFilter, '*', self.selectedRole, 20, undefined)
             .then(function(response) {
                 self.loadingRole = false;
                 self.users = result_service.setPage(response.data);
@@ -129,19 +136,19 @@ function UserController($stateParams, user_service, result_service, $sce, $modal
             });
     };
 
-    this.filterIndustries = function(selection) {
+    this.filterClusters = function(selection) {
         if (selection == undefined) {
-            self.selectedIndustries = [];
+            self.selectedClusters = [];
         } else {
-            if (self.selectedIndustries.indexOf(selection) < 0) {
-                self.selectedIndustries.push(selection);
-            } else self.selectedIndustries.splice(self.selectedIndustries.indexOf(selection), 1);
-            if (self.selectedIndustries.length == 0) self.allIndustries = true;
+            if (self.selectedClusters.indexOf(selection) < 0) {
+                self.selectedClusters.push(selection);
+            } else self.selectedClusters.splice(self.selectedClusters.indexOf(selection), 1);
+            if (self.selectedClusters.length == 0) self.allClusters = true;
         }
 
-        user_service.search(communityFilter.concat(self.selectedIndustries), '*', self.selectedRole, 30, undefined)
+        user_service.search(communityFilter, self.selectedClusters, '*', self.selectedRole, 30, undefined)
             .then(function(response) {
-                self.loadingIndustry = false;
+                self.loadingCluster = false;
                 self.loadingNetwork = false;
                 self.users = result_service.setPage(response.data);
                 setTitle();
@@ -158,34 +165,15 @@ function UserController($stateParams, user_service, result_service, $sce, $modal
             if (self.selectedNetworks.length == 0) self.allNetworks = true;
         }
 
-        user_service.search(communityFilter.concat(self.selectedNetworks), '*', self.selectedRole, 20, undefined)
+        communityFilter = communityFilter.concat(self.selectedNetworks);
+
+        user_service.search(communityFilter, clusterFilter, '*', self.selectedRole, 20, undefined)
             .then(function(response) {
-                self.loadingIndustry = false;
+                self.loadingCluster = false;
                 self.loadingNetwork = false;
                 self.users = result_service.setPage(response.data);
                 setTitle();
             });
-    };
-
-    this.contact = function(user) {
-
-        var modalInstance = $modal.open({
-            templateUrl: 'components/users/user.contact.html',
-            controller: ContactUserController,
-            controllerAs: 'contact',
-            windowClass: "hmodal-warning",
-            resolve: {
-                user: function() {
-                    return user;
-                },
-                community_key: function() {
-                    return self.community.key;
-                },
-                location_key: function() {
-                    return $stateParams.location_path;
-                }
-            }
-        });
     };
 }
 
@@ -204,10 +192,10 @@ function ContactUserController($modalInstance, notify_service, sweet, community_
                 "reason" : self.form.reason_value
             };
 
-            $modalInstance.close();
-
             notify_service.contact(user.key, formdata, community_key, location_key)
                 .then(function(response) {
+
+                    $modalInstance.close();
 
                     if (response.status !== 200) {
                         sweet.show({
@@ -237,18 +225,20 @@ function ContactUserController($modalInstance, notify_service, sweet, community_
     };
 }
 
-function UserProfileController($scope, $stateParams, $location, $auth, $modal, $mixpanel, user, user_service, community, communities) {
+function UserProfileController($stateParams, $location, $modal, $mixpanel, user, user_service, message_service, community, communities) {
 
     if (!jQuery.isEmptyObject($stateParams.profile)) {
         this.user = $stateParams.profile;
     } else if (community && community.type == "user") {
         this.user = community;
-    } else this.user = user.data.user.value;
+    } else this.user = user.data.user;
 
     var self = this;
     this.community = community;
     this.communities = communities.data;
     this.location = communities.data[this.community.profile.home];
+    this.reply = {};
+    this.background_image = 'url(https://s3-us-west-2.amazonaws.com/startupcommunity/backgrounds/background' + Math.floor((Math.random() * 54) + 1) + '.jpg)';
 
     $mixpanel.track('Viewed Profile');
 
@@ -269,18 +259,6 @@ function UserProfileController($scope, $stateParams, $location, $auth, $modal, $
                 location_key: function() {
                     return self.location.key;
                 }
-            }
-        });
-    };
-
-    this.putProfile = function(userid, profile) {
-        user_service.putProfile(userid, profile, function(response) {
-            if (response.status !== 200) {
-                this.alert = { type: 'danger', msg: 'There was a problem: ' + String(response.message) };
-                console.warn("WARNING: " +  response.message);
-            } else {
-                this.profile = response.data; // may need to tell angular to refresh view
-                this.alert = { type: 'success', msg: 'Person updated! ' + response.data.name + ' is good to go.' };
             }
         });
     };
@@ -315,136 +293,103 @@ function UserProfileController($scope, $stateParams, $location, $auth, $modal, $
         } else notify({title: "See our <a href='http://startupcommunity.readme.io?appkey=" + api_key + "' target='_blank'>API documentation</a> for help using your key:", message: "<pre>" + api_key + "</pre>"});
     };
 
-    $scope.isCityAdvisor = function(status) { //todo needs to be reworked
-        user_service.setCityAdvisor($state.params.user.key, self.user.context, 'cityAdvisor', status, function(response, rescode) {
-            var sameuser = false;
-            var cluster;
-            if (rescode == 201) {
-                if ($state.params.user.key == self.user.key) { sameuser = true; }
-                if ($state.params.user.cities[self.user.context].cityAdvisor === undefined) { //need to create key
-                    $state.params.user.cities[self.user.context]['cityAdvisor'] = false;
-                }
+    this.askQuestion = function() {
+        self.working = true;
 
-                $state.params.user.cities[self.user.context].cityAdvisor = status;
+        if (self.question) {
+            // update user profile
+            message_service.addMessage('question', user.data.user, this.user, self.question)
+                .then(function (response) {
+                    self.question = undefined;
 
-                for (cluster in self.community.location.clusters) {
-                    if (status === true) {
-                        if ($state.params.user.cities[self.user.context].clusters[cluster]) {
-                            $state.params.user.cities[self.user.context].clusters[cluster].advisorStatus = true;
-                        }
+                    if (response.status !== 200) {
+                        self.alert = {type: 'danger', message: String(response.data.message)};
                     } else {
-                        if (!$state.params.user.cities[self.user.context].clusters[cluster].roles || ($state.params.user.cities[self.user.context].clusters[cluster].roles.indexOf("Mentor") < 0)) {
-                            $state.params.user.cities[self.user.context].clusters[cluster].advisorStatus = false;
-                        } else {
-                            $state.params.user.cities[self.user.context].clusters[cluster].advisorStatus = true;
-                        }
+                        self.working = false;
+                        if (!self.communities.newmessages) self.communities.newmessages = {};
+                        self.communities.newmessages[response.data.key] = response.data;
                     }
-                }
 
-                if (sameuser) {
-                    self.user.cities[self.user.context].cityAdvisor = status;
-                }
-            } else {
-                self.alert = { type: 'danger', msg: 'There was a problem: ' + String(response.message) };
-                console.warn("WARNING: " +  response.message);
-            }
-        });
+                    $mixpanel.track('Asked Question');
+                })
+                .catch(function (error) {
+                    self.working = false;
+                    self.alert = {type: 'danger', message: String(error.data.message)};
+                });
+        }
     };
 
-    $scope.setRole = function(cluster, role, status) { //todo needs to be reworked
-        user_service.setRole($state.params.user.key, self.user.context, cluster, role, status, function(response, rescode) {
-            var sameuser = false;
-            if (rescode == 201) {
-                if ($state.params.user.key == self.user.key) { sameuser = true; }
-                if ($state.params.user.cities[self.user.context].clusters === undefined) { //need to create clusters key
-                    $state.params.user.cities[self.user.context]['clusters'] = {};
-                }
-                if ($state.params.user.cities[self.user.context].clusters[cluster] === undefined) { //need to create the cluster in user profile
-                    $state.params.user.cities[self.user.context].clusters[cluster] = { "roles": [] };
-                }
-                if ($state.params.user.cities[self.user.context].clusters[cluster].roles === undefined) { //this can happen due to temp local scope variables
-                    $state.params.user.cities[self.user.context].clusters[cluster].roles = [];
-                }
-                var thiscluster = $state.params.user.cities[self.user.context].clusters[cluster];
+    this.working = false;
 
-                if (status === true) {
-                    if (thiscluster.roles.indexOf(role) < 0) {
-                        thiscluster.roles.push(role);
-                    } // else they already have the role, no action needed
-                } else {
-                    if (thiscluster.roles.indexOf(role) >= 0) {
-                        thiscluster.roles.splice(thiscluster.roles.indexOf(role), 1);
-                    } // else they do not have the role, no action needed
-                }
-
-                $state.params.user.cities[self.user.context].clusters[cluster] = thiscluster;
-                if (sameuser) { self.user.cities[self.user.context].clusters[cluster] = thiscluster; }
-
-            } else {
-                self.alert = { type: 'danger', msg: 'There was a problem: ' + String(response.message) };
-                console.warn("WARNING: " +  response.message);
-
-            }
-        });
+    this.ask = function() {
+        $('#ask').addClass('active');
+        $('#profile').removeClass('active');
+        $('#ask_li').addClass('active');
+        $('#profile_li').removeClass('active');
+        $('#questionbox').addClass('glowing-border');
     };
 
-    /**
-     * Link third-party provider.
-     */
-    $scope.link = function(provider) {
-        $auth.link(provider)
-            .then(function() {
-                self.alert ={ type: 'success', msg: 'Well done. You have successfully linked your ' + provider + ' account'};
-            })
-            .then(function() {
-                $scope.getProfile();
-            })
-            .catch(function(response) {
-                self.alert ={ type: 'danger', msg: 'Sorry, but we ran into this error: ' + response.data.message};
-            });
-    };
+    this.postReply = function(parent) {
+        self.working[parent.key] = true;
 
-    /**
-     * Unlink third-party provider.
-     */
-    $scope.unlink = function(provider) {
-        $auth.unlink(provider)
-            .then(function() {
-                self.alert = { type: 'success', msg: 'Bam. You have successfully unlinked your ' + provider + ' account'};
-            })
-            .then(function() {
-                $scope.getProfile();
-            })
-            .catch(function(response) {
-                self.alert = { type: 'danger', msg: 'Aww, shucks. We ran into this error while unlinking your ' + provider + ' account: ' + response.data.message};
-            });
-    };
+        if (self.reply[parent.key]) {
+            // update user profile
 
+            message_service.addMessage('reply', user.data.user, this.user, self.reply[parent.key], parent)
+                .then(function (response) {
+                    self.reply[parent.key] = undefined;
+
+                    if (response.status !== 200) {
+                        self.alert = {type: 'danger', message: String(response.data.message)};
+                    } else {
+                        self.working[parent.key] = false;
+                        if (self.communities.messages[parent.key]) {
+                            self.communities.messages[parent.key].replies.push(response.data);
+                        } else self.communities.newmessages[parent.key].replies.push(response.data);
+                    }
+
+                    $mixpanel.track('Replied to Question');
+                })
+                .catch(function (error) {
+                    self.working[parent.key] = false;
+                    self.alert = {type: 'danger', message: String(error.data.message)};
+                });
+        }
+    }
 }
 
-function InviteUserController(user_service, community) {
+function InviteUserController($mixpanel, user_service, community, location) {
     var self = this;
+    this.community = community;
 
-    this.inviteUser = function(location_key, community_key) {
+    this.inviteUser = function() {
 
         this.working = true;
 
         if (self.form.$valid) {
             var formdata = {
-                "email" : self.form.email_value,
-                "linkedin_url" : self.form.url_value
+                "email" : self.form.email_value
             };
 
-            user_service.inviteUser(formdata.linkedin_url, formdata.email, location_key, community_key)
+            if (community.type == 'cluster') community.key = location.key;
+
+            user_service.inviteUser(formdata.email, location.profile.name, location.key, community.key)
                 .then(function(response) {
                     self.working = false;
 
                     if (response.status !== 200) {
-                        self.alert = { type: 'danger', message: 'There was a problem: ' + String(response.data.message) };
+                        self.alert = { type: 'danger', message: String(response.data.message) };
                     } else {
-                        self.alert = { type: 'success', message: 'Congrats, ' + response.data.profile.name + ' has been added to the ' + community.profile.name + ' community.' };
+                        self.alert = { type: 'success', message: response.data.message };
                     }
-                });
+
+                    self.form.email_value = "";
+                    $mixpanel.track('Sent Invite');
+                })
+                .catch(function(error) {
+                    self.working = false;
+                    self.alert = { type: 'danger', message: String(error.data.message) };
+                })
 
         } else {
             this.working = false;

@@ -25,7 +25,15 @@ function wwwRedirect(req, res, next) {
         return res.redirect(301, req.protocol + '://' + newHost + req.originalUrl);
     }
     next();
-};
+}
+
+// remove trailing slash
+app.use(function(req, res, next) {
+    if(req.url.substr(-1) == '/' && req.url.length > 1)
+        res.redirect(301, req.url.slice(0, -1));
+    else
+        next();
+});
 
 app.set('trust proxy', true); // important for https
 app.use(wwwRedirect);
@@ -65,10 +73,12 @@ var AuthApi = require('./api/auth.api.js'),
     auth = new AuthApi(),
     UserApi = require('./api/user.api.js'),
     userApis = new UserApi(),
-    StartupApi = require('./api/startup.api.js'),
-    startupApis = new StartupApi(),
+    CompanyApi = require('./api/company.api.js'),
+    companyApis = new CompanyApi(),
     CommunityApi = require('./api/community.api.js'),
     communityApis = new CommunityApi(),
+    MessagesApi = require('./api/messages.api.js'),
+    messagesApis = new MessagesApi(),
     AngelListApi = require('./api/angellist.api.js'),
     angellistApis = new AngelListApi(),
     MaintApi = require('./api/maint.api.js'),
@@ -78,6 +88,7 @@ var AuthApi = require('./api/auth.api.js'),
 app.get('/api/2.0/key/:key', communityApis.getKey);
 app.get('/api/2.0/users', userApis.userSearch);
 app.get('/api/2.0/search', userApis.directSearch);
+app.get('/api/2.0/community', communityApis.getCommunity);
 app.get('/api/2.0/community/:community', communityApis.getCommunity);
 app.get('/api/2.0/angel/startups', angellistApis.getStartups);
 app.get('/api/2.0/angel/startup', angellistApis.getStartup);
@@ -88,17 +99,26 @@ app.put('/api/2.0/profile/role', auth.ensureAuthenticated, userApis.setRole);
 app.post('/api/2.0/profile/remove/:userid', auth.ensureAuthenticated, userApis.removeProfile);
 app.post('/api/2.0/feedback', auth.ensureAuthenticated, userApis.feedback);
 // new for 2.0
-app.get('/api/2.0/startups', startupApis.startupSearch);
+app.get('/api/2.0/companies', companyApis.companySearch);
 app.put('/api/2.0/settings', auth.ensureAuthenticated, communityApis.setCommunity);
 app.post('/api/2.0/contact', userApis.contactUser);
 
-app.post('/api/2.1/startups/add', auth.ensureAuthenticated, startupApis.addStartup);
+app.post('/api/2.1/companies/add', auth.ensureAuthenticated, companyApis.addCompany);
+app.post('/api/2.1/profile', auth.ensureAuthenticated, userApis.updateProfile);
+app.put('/api/2.1/profile/role', auth.ensureAuthenticated, userApis.setRole);
+app.get('/api/2.1/profile/url', auth.ensureAuthenticated, userApis.getProfileUrl);
+app.get('/api/2.1/companies/url', auth.ensureAuthenticated, companyApis.getLogoUrl);
+app.get('/api/2.1/angel/startups/search', angellistApis.searchStartups);
+app.get('/api/2.1/community/:location_key/top', communityApis.getTop);
+app.get('/api/2.1/community/:location_key/:community_key/top', communityApis.getTop);
+app.post('/api/2.1/community/add', auth.ensureAuthenticated, communityApis.addCommunity);
+app.post('/api/2.1/community/delete', auth.ensureAuthenticated, communityApis.deleteCommunity);
+app.post('/api/2.1/messages/add', auth.ensureAuthenticated, messagesApis.addMessage);
 
 // Auth
-app.get('/auth/unlink/:provider', auth.ensureAuthenticated, auth.unlink);
 app.post('/auth/linkedin', auth.linkedin);
-app.post('/auth/signup', auth.signup); //not currently used?
-app.post('/auth/login', auth.login); //not currently used?
+//app.post('/auth/signup', auth.signup); //not currently used?
+//app.post('/auth/login', auth.login); //not currently used?
 
 // Maintenance
 app.get('/api/maint', maint.maintenance);

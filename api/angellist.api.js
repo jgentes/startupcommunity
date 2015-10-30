@@ -7,7 +7,22 @@ var config = require('../config.json')[process.env.NODE_ENV || 'development'],
 var AngelListApi = function() {
     this.getStartups = handleGetStartups;
     this.getStartup = handleGetStartup;
+    this.searchStartups = handleSearchStartups;
 };
+
+function handleSearchStartups(req, res) {
+
+    request.get({ url: 'https://api.angel.co/1/search?query=' + req.query.val + '&type=Startup&access_token=' + config.angellist.clientToken },
+        function(error, response, body) {
+            if (error || body.error) {
+                console.warn('WARNING: AngelList API ERROR');
+                console.log(error);
+                res.status(202).send({ message: 'Something went wrong: ' + error || body.error});
+            } else if (!body.status || body.status === 200) {
+                res.status(200).send(body);
+            }
+        });
+}
 
 function handleGetStartups(req, res) {
 

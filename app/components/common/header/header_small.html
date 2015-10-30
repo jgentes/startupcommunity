@@ -3,21 +3,24 @@
         <div class="panel-body" ng-class="{'header-embedded' : nav.embedded, 'no-sides' : !nav.embedded}">
             <div id="hbreadcrumb" class="pull-left">
                 <ol class="hbreadcrumb">
-                    <li ng-if="nav.location_path && (nav.location.key !== nav.community.key)"><a ui-sref="{{nav.location.type + '.dashboard({location_path: nav.location.key, community: nav.location})'}}">
+                    <li ng-if="nav.location_path && (nav.location.key !== nav.community.key)"><a ui-sref="community.dashboard({location_path: nav.location.key, community: nav.location})">
                         <span ng-if="nav.location.profile.name">&nbsp;&nbsp;{{ nav.location.profile.name }}&nbsp;&nbsp;/</span></a>
                     </li>
-                    <li><a ui-sref="{{nav.community.type + '.dashboard({community_path: nav.community.key, community: nav.community})'}}"><span ng-if="nav.community.community_profiles[nav.location_path]">&nbsp;&nbsp;{{ nav.community.community_profiles[nav.location_path].name }}</span>
+                    <li ng-if="nav.community.type == 'user' || nav.community.type == 'company'">
+                        &nbsp;&nbsp;{{ nav.community.profile.name }}&nbsp;&nbsp;/
+                    </li>
+                    <li ng-if="nav.community.type !== 'user' && nav.community.type !== 'company'"><a ui-sref="community.dashboard({community_path: nav.community.key, community: nav.community})"><span ng-if="nav.community.community_profiles[nav.location_path]">&nbsp;&nbsp;{{ nav.community.community_profiles[nav.location_path].name }}</span>
                         <span ng-if="!nav.community.community_profiles[nav.location_path]">&nbsp;&nbsp;{{ nav.community.profile.name }}</span>
                         &nbsp;&nbsp;/</a>
                     </li>
                     <li ng-repeat="state in $state.$current.path" ng-class="{active: $last}">
                         <a ng-if="state.params.pageTitle.config.value && !(!!state.abstract) && !$last" href="#{{state.url.format($stateParams)}}">&nbsp;&nbsp;{{state.params.pageTitle.config.value}}&nbsp;&nbsp;/</a>
-                        <span ng-if="$last">&nbsp;&nbsp;{{$state.params.pageTitle}}</span>
+                        <span ng-if="$last">&nbsp;&nbsp;{{ $state.params.pageTitle || nav.community.type[0].toUpperCase() + nav.community.type.slice(1) }}</span>
                     </li>
                 </ol>
             </div>
             <h2 class="font-light pull-right m-b-xs">
-                <span style="text-transform: none;">{{ $state.params.pageTitle }}&nbsp;<span ng-if="nav.community.type !== 'user' && nav.community.type !== 'startup'">in {{ nav.community.community_profiles[nav.location_path].name || nav.community.profile.name }}</span>
+                <span style="text-transform: none;">{{ $state.params.pageTitle }}&nbsp;<span ng-if="nav.community.type !== 'user' && nav.community.type !== 'company'">in {{ nav.community.community_profiles[nav.location_path].name || nav.community.profile.name }}</span>
                 </span>
             </h2>
         </div>

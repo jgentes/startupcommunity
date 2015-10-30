@@ -1,77 +1,59 @@
-<div class="row">
-    <div class="col-lg-12">
-        <div class="hpanel hgreen">
-            <div class="panel-body">
-                <div class="row">
-                    <div class="col-sm-9">
-                        <div style="padding-bottom: 20px;">
-                            <div style="float: left; padding-right:20px;">
-                                <img class="img-circle m-b" style="height:75px;" ng-src="{{profile.user.profile.linkedin.pictureUrl || profile.user.profile.avatar || 'images/blank_avatar.png'}}" alt="{{::profile.user.profile.name}}">
-                            </div>
-                            <div style="margin-right: -15px;">
-                                <div class="btn-group pull-right">
-                                    <a ng-click="profile.contact(nav.location.key)" title="Contact {{item.value.profile.name}}" class="pull-left" style="padding-right: 8px;">
-                                        <i class="pe-7s-mail" style="font-size: 24px; opacity: .45;"></i></a>
-                                    <a href="{{::profile.user.profile.linkedin.publicProfileUrl}}" target="_blank"><i class="fa fa-linkedin btn btn-default btn-xs"></i>
-                                    </a>
-                                </div>
-                            </div>
-                            <h3 style="padding-top: 5px;">{{::profile.user.profile.name | words:0}} {{::profile.user.profile.name |
-                                words:1}} {{::profile.user.profile.name | words:2}}
-                            </h3>
-                            <h4>
-                                {{::profile.user.profile.linkedin.headline}}
-                            </h4>
-                        </div>
-
-                        <div class="row" style="float: left;">
-                            <div class="no-overflow profile-div" ng-if="profile.user.roles.leader">
-                                <ul class="profile-ul">
-                                    <p style="font-size: 14px; padding: 2px 5px 0 20px; float: left;">Leader:</p>
-                                    <li ng-repeat="(key, val) in profile.user.roles.leader" class="profile-roles">
-                                        <a ui-sref="{{profile.communities[key].type + '.dashboard({location_path: key, community: profile.communities[key], query: &quot;&#42;&quot;})'}}" class="btn btn-xs btn-outline" ng-class="{'btn-danger' : profile.communities[key].type == 'startup', 'btn-info' : profile.communities[key].type == 'network', 'btn-primary' : profile.communities[key].type == 'industry', 'btn-success' : profile.communities[key].type == 'location'}"><i class="fa {{profile.communities[key].profile.icon}}"></i> {{profile.communities[key].profile.name}}</a>
-                                    </li>
-                                </ul>
-                            </div>
-                            <div class="no-overflow profile-div" ng-if="profile.user.roles.founder">
-                                <ul class="profile-ul">
-                                    <p style="font-size: 14px; padding: 2px 5px 0 20px; float: left;">Founder:</p>
-                                    <li ng-repeat="(key, val) in profile.user.roles.founder" class="profile-roles">
-                                        <a ui-sref="{{profile.communities[key].type + '.dashboard({location_path: key, community: profile.communities[key], query: &quot;&#42;&quot;})'}}" class="btn btn-xs btn-outline" ng-class="{'btn-danger' : profile.communities[key].type == 'startup', 'btn-info' : profile.communities[key].type == 'network', 'btn-primary' : profile.communities[key].type == 'industry', 'btn-success' : profile.communities[key].type == 'location'}"><i class="fa {{profile.communities[key].profile.icon}}"></i> {{profile.communities[key].profile.name}}</a>
-                                    </li>
-                                </ul>
-                            </div>
-                            <div class="no-overflow profile-div" ng-if="profile.user.roles.investor">
-                                <ul class="profile-ul">
-                                    <p style="font-size: 14px; padding: 2px 5px 0 20px; float: left;">Investor:</p>
-                                    <li ng-repeat="(key, val) in profile.user.roles.investor" class="profile-roles">
-                                        <a ui-sref="{{profile.communities[key].type + '.dashboard({location_path: key, community: profile.communities[key], query: &quot;&#42;&quot;})'}}" class="btn btn-xs btn-outline" ng-class="{'btn-danger' : profile.communities[key].type == 'startup', 'btn-info' : profile.communities[key].type == 'network', 'btn-primary' : profile.communities[key].type == 'industry', 'btn-success' : profile.communities[key].type == 'location'}"><i class="fa {{profile.communities[key].profile.icon}}"></i> {{profile.communities[key].profile.name}}</a>
-                                    </li>
-                                </ul>
-                            </div>
-                            <div ng-if="profile.user.roles.mentor">
-                                <ul class="profile-ul">
-                                    <p style="font-size: 14px; padding: 2px 5px 0 20px; float: left;">Mentor:</p>
-                                    <li ng-repeat="(key, val) in profile.user.roles.mentor" class="profile-roles">
-                                        <a ui-sref="{{profile.communities[key].type + '.dashboard({location_path: key, community: profile.communities[key], query: &quot;&#42;&quot;})'}}" class="btn btn-xs btn-outline" ng-class="{'btn-danger' : profile.communities[key].type == 'startup', 'btn-info' : profile.communities[key].type == 'network', 'btn-primary' : profile.communities[key].type == 'industry', 'btn-success' : profile.communities[key].type == 'location'}"><i class="fa {{profile.communities[key].profile.icon}}"></i> {{profile.communities[key].profile.name}}</a>
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
-
-                    </div>
-                    <div class="col-xs-12 col-sm-3 project-info">
-                        <gm-map id="profile-map" gm-address="{address:profile.user.profile.home}" options="{zoom: 11, disableDefaultUI: true}">
-                        </gm-map>
-                    </div>
+<div class="hpanel hgreen" style="margin-bottom: 10px;">
+    <div class="panel-body hero" style="padding: 10px 0;">
+        <div style="padding: 20px 15px;">
+            <header class="heading content" style="color:#fff">
+                <img class="img-circle m-b" style="height:100px;" ng-src="{{profile.user.profile.avatar || profile.user.profile.linkedin.pictureUrl || 'images/blank_avatar.png'}}" alt="{{::profile.user.profile.name}}">
+                <div style="margin-top: -12px;">
+                    <span ng-repeat="(item, val) in profile.user.roles" class="user-role" style="font-size: 24px;"><i ng-attr-title="{{item[0].toUpperCase() + item.slice(1);}}" ng-class="{'pe-7s-paper-plane' : item == 'founder', 'pe-7s-flag' : item == 'leader', 'pe-7s-study' : item == 'mentor', 'pe-7s-gleam' : item == 'investor', 'pe-7s-ball' : item == 'team', 'pe-7s-portfolio' : item == 'provider'}"></i></span>
                 </div>
-            </div>
-            <div ng-show="profile.user.profile.linkedin.summary" class="panel-footer">
-                <h3>Summary</h3>
-                <p style="white-space:pre-wrap;" ng-bind-html="::profile.user.profile.linkedin.summary | linky:'_blank'"></p>
-                <h3 ng-show="profile.user.skills">Skills</h3>
-                <li ng-repeat="skill in profile.user.skills" class="label btn-info" style="margin-right: 3px; margin-top: 3px; float:left; padding-bottom: 5px;">{{::skill.name}}</li>
-            </div>
+                <h1>
+                    {{::profile.user.profile.headline}}
+                </h1>
+                <h3 style="padding-top: 5px;" style="line-height: 1.5;">
+                    My name is <span class="name">{{::profile.user.profile.name | words:0}} {{::profile.user.profile.name |
+                    words:1}}</span>, <span ng-bind-html="::profile.user.profile.summary | sentence | linky:'_blank'"></span>
+                </h3>
+                <a ng-click="profile.ask()" class="btn btn-success btn-sm">Ask me a question</a>
+                <div style="padding-top:10px; overflow: hidden; height: 50px; margin-bottom: -10px;">
+                    <li ng-repeat="skill in profile.user.profile.skills" style="margin-right: 5px;" class="btn btn-outline btn-default btn-xs" ui-sref="search.dashboard({location_path: nav.location.key, community: nav.location, query: skill})">
+                        {{::skill}}
+                    </li>
+                </div>
+            </header>
         </div>
+        <span><div id="cover-photo" class="active" ng-style="{'background-image':profile.background_image}"></div><span class="cover-overlay"></span></span>
     </div>
+</div>
+<div class="hpanel">
+    <div class="panel-body content-tab-wrapper">
+
+        <!-- BEGIN Nav tabs -->
+        <ul class="nav nav-tabs" role="tablist">
+            <li id="ask_li" class="active"><a href="#ask" aria-controls="ask" role="tab" data-toggle="tab" aria-expanded="true"><span class="pe-7s-micro"></span>Ask a Question</a></li>
+            <li id="profile_li" ><a href="#profile" aria-controls="profile" role="tab" data-toggle="tab" aria-expanded="false"><span class="pe-7s-note2"></span>View Full Profile</a></li>
+        </ul>
+        <!--/ END Nav tabs -->
+
+        <div alert-box this-alert="profile.alert"></div>
+
+        <!-- BEGIN Tab panes -->
+        <div class="tab-content" style="position: static; padding: 30px;">
+
+            <div role="tabpanel" class="tab-pane active" id="ask">
+
+                <div ng-include="'components/users/user.dashboard.ask.html'"></div>
+
+            </div> <!-- First Tab Pane -->
+
+            <div role="tabpanel" class="tab-pane" id="profile">
+
+                <div ng-include="'components/users/user.dashboard.profile.html'"></div>
+
+            </div> <!-- Second Tab Pane -->
+
+        </div>
+        <!--/ END Tab panes -->
+
+    </div>
+>>>>>>> invite
 </div>

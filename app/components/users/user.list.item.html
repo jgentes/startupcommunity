@@ -1,28 +1,26 @@
 <div class="col-md-12 dash-table">
     <div>
-        <a ui-sref="user.dashboard({profile: item.value, location_path: item.value.key, location: item.value, community: users.community })" title="View {{::item.value.profile.name | words:0}}'s Profile">
-            <img ng-src="{{item.value.profile.linkedin.pictureUrl || item.value.profile.avatar || 'images/blank_avatar.png'}}" alt="{{::item.value.profile.name}}" class="user-img widget-image img-circle pull-left" onerror="this.src='images/blank_avatar.png'"/>
+        <a ui-sref="user.dashboard({profile: item.value, location_path: item.path.key, location: nav.community, community: item.value })" title="View {{::item.value.profile.name | words:0}}'s Profile">
+            <img ng-src="{{item.value.profile.avatar || item.value.profile.linkedin.pictureUrl || 'images/blank_avatar.png'}}" alt="{{::item.value.profile.name}}" class="user-img widget-image img-circle pull-left" onerror="this.src='images/blank_avatar.png'"/>
         </a>
     </div>
     <div class="user-row" ng-class="{'user-row-border': $index % 2 == 0}">
-        <a ui-sref="user.dashboard({profile: item.value, location_path: item.value.key, community: item.value, location: nav.location })" title="View {{::item.value.profile.name | words:0}}'s Profile" style="float: left; "><strong>{{::item.value.profile.name}} </strong></a>
-        <a ng-click="users.contact(nav.location.key)" title="Contact {{item.value.profile.name}}" class="pull-left" style="margin-left: 6px; margin-top: 2px; padding: 0 8px 0 5px; line-height: 0;">
+        <a ui-sref="user.dashboard({profile: item.value, location_path: item.path.key, location: nav.community, community: item.value })" title="View {{::item.value.profile.name | words:0}}'s Profile" style="float: left; "><strong>{{::item.value.profile.name}} </strong></a>
+        <a ng-if="nav.community.type == 'network' || nav.location.type == 'network'" ng-click="nav.contact(item)" title="Contact {{item.value.profile.name}}" class="pull-left" style="margin-left: 6px; margin-top: 2px; padding: 0 8px 0 5px; line-height: 0;">
             <i class="pe-7s-mail" style="font-size: 20px; opacity: .45;"></i></a>
-        <a ng-show="{{(item.value.profile.linkedin.summary).length > 0}}" title="Show Summary" ng-click="showSummary = !showSummary" class="user-summary">&nbsp;<i class="fa fa-chevron-down fa-fw"></i></a>
-        <li ng-repeat="val in item.value.communities" class="role-right">
-            <a ui-sref="{{users.communities[val].type + '.dashboard' + users.url}}" ng-class="{'btn-danger' : users.communities[val].type == 'startup', 'btn-info' : users.communities[val].type == 'network', 'btn-primary' : users.communities[val].type == 'industry', 'btn-success' : users.communities[val].type == 'location'}" class="btn btn-xs btn-outline hidden"><i class="fa {{users.communities[val].profile.icon}}"></i> {{users.communities[val].profile.name}}</a>
-        </li>
+        <a ng-show="{{(item.value.profile.summary).length > 0}}" title="Show Summary" ng-click="showSummary = !showSummary" class="user-summary">&nbsp;<i class="fa fa-chevron-down fa-fw"></i></a>
+        <li ng-repeat="(item, val) in item.value.roles" class="user-role role-right" ><i ng-attr-title="{{item[0].toUpperCase() + item.slice(1);}}" style="font-weight: bold;" ng-class="{'text-primary pe-7s-paper-plane' : item == 'founder', 'text-danger pe-7s-flag' : item == 'leader', 'text-info pe-7s-study' : item == 'mentor', 'text-success pe-7s-gleam' : item == 'investor', 'text-default pe-7s-ball' : item == 'team', 'text-warning pe-7s-portfolio' : item == 'provider'}"></i></li>
         <br>
         <div class="dash-row">
-            <span class="text-muted" ng-bind-html="::item.value.profile.linkedin.headline | highlight:users.lastQuery"></span>
+            <span class="text-muted" ng-bind-html="::item.value.profile.headline | highlight:users.lastQuery"></span>
         </div>
-        <div ng-show="(showSummary || $state.includes('search.*')) && item.value.profile.linkedin.summary">
+        <div ng-show="(showSummary || $state.includes('search.*')) && item.value.profile.summary">
             <div style="padding-bottom: 10px;">
                 <hr>
-                <span class="text-muted" style="white-space:pre-wrap;" ng-bind-html="::item.value.profile.linkedin.summary | linky:'_blank' | highlight:users.lastQuery | safe_html"></span>
-                <div id="skills" ng-show="(showSummary || users.lastQuery) && item.value.profile.linkedin.summary" class="skills-top">
-                    <li ng-repeat="skill in item.value.profile.linkedin.skills.values" class="label btn-default skills">
-                        <a><span ui-sref="search({query: (skill.skill.name)})" ng-bind-html="::skill.skill.name | highlight:users.lastQuery"></span></a>
+                <span class="text-muted" style="white-space:pre-wrap;" ng-bind-html="::item.value.profile.summary | linky:'_blank' | highlight:users.lastQuery | safe_html"></span>
+                <div id="skills" ng-show="(showSummary || users.lastQuery) && item.value.profile.summary" class="skills-top">
+                    <li ng-repeat="skill in item.value.profile.skills" class="label btn-default skills">
+                        <a><span ui-sref="search.dashboard({location_path: nav.location.key, community: nav.location, query: skill})" ng-bind-html="::skill | highlight:users.lastQuery"></span></a>
                     </li>
                 </div>
             </div>

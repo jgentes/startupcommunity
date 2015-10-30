@@ -1,0 +1,44 @@
+<div class="hpanel">
+    <div class="panel-heading" style="text-align:center;">
+        <h4 style="font-size: 25px; line-height: 1.25;">{{welcome.user.profile.linkedin.firstName}}, please verify your
+            profile:</h4><br/>
+
+        <img class="img-circle m-b" style="height:75px;"
+             ngf-thumbnail="welcome.user.profile.avatar || file || 'images/blank_avatar.png'">
+        <br/>
+        <label id="uploader_text">
+            <input type="file" ng-model="file" name="file" ngf-pattern="'image/*'"
+                   accept="image/*" ngf-max-size="2MB" ngf-min-height="50"
+                   ngf-resize="{width: 100, height: 100}" ngf-select="welcome.uploadAvatar($file)" style="display:none;"/>
+            <h6>Change picture..</h6>
+        </label>
+
+        <div style="margin-left: -10px; padding-top: 1px;">
+            <span ng-repeat="(item, val) in welcome.roles" class="user-role"><i
+                    ng-attr-title="{{item.toUpperCase()[0] + item.slice(1);}}"
+                    ng-class="{'text-primary fa fa-rocket' : val && item == 'founder', 'text-info fa fa-graduation-cap' : val && item == 'mentor', 'text-success fa fa-leaf' : val && item == 'investor', 'text-default fa fa-dribbble' : val && item == 'team', 'text-warning fa fa-briefcase' : val && item == 'provider'}"></i></span>
+        </div>
+        <div>
+            <h4 style="line-height:1.75;">
+                Your name is <a style="color:#4ea5e0;" editable-text="welcome.user.profile.name">{{welcome.user.profile.name}}</a>,<br/>
+                your email address is <a style="color:#4ea5e0;" editable-email="welcome.user.profile.email">{{welcome.user.profile.email}}</a><br/>
+                and your headline is <a style="color:#4ea5e0;" editable-text="welcome.user.profile.headline">{{welcome.user.profile.headline || 'empty'}}</a>.
+                <br/><br/>
+                Click below to edit your summary.
+                <br>
+                <span style="font-size: 13px;">Focus on the first sentence. It will be used on your profile page.</span>
+            </h4>
+        </div>
+        <div class="summary_form">
+            <a editable-textarea="welcome.user.profile.summary" e-rows="12" e-cols="60">
+                <pre style="background: none; font-family: 'Open Sans','Helvetica Neue',Helvetica,Arial,sans-serif; font-size: 14px; text-align: left;">{{welcome.user.profile.summary || 'Nothing here!'}}</pre>
+            </a>
+        </div>
+
+
+        <div alert-box this-alert="welcome.alert"></div>
+        <h4 style="margin-bottom: 13px;">
+            <a class="btn btn-info pull-left" ui-sref="welcome.roles">Back</a>
+            <a class="btn btn-info pull-right" ui-sref="welcome.skills">Continue</a></h4>
+    </div>
+</div>

@@ -1,25 +1,14 @@
 function configState($stateProvider, $urlRouterProvider, $compileProvider, $locationProvider) {
 
     // Optimize load start
-    $compileProvider
-        .debugInfoEnabled(true); // set to false for production
+    /*$compileProvider
+     .debugInfoEnabled(true); // set to false for production*/
 
     $locationProvider
         .html5Mode(true);
 
     $stateProvider
 
-        .state('invite', {
-            templateUrl: 'views/invite_user.html',
-            url: "/users/invite",
-            resolve: {
-                authenticated: ['$auth', function($auth) {
-                    if (!$auth.isAuthenticated()) {
-                        $state.go('login');
-                    }
-                }]
-            }
-        })
         .state('login', {
             url: "/login",
             controller: "LoginController as auth",
@@ -30,14 +19,8 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
         })
         .state('logout', {
             url: "/logout",
-            params: {
-                alert: {}
-            },
-            onEnter: function($auth, $state, $stateParams) {
-                $auth.logout()
-                    .then(function() {
-                        $state.go('login', { alert: $stateParams.message });
-                    })
+            onEnter: function($auth) {
+                $auth.logout('/login');
             }
         })
 
@@ -47,9 +30,10 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
             templateUrl: "components/common/nav/nav.html",
             controller: "NavigationController as nav",
             params: {
-                profile: {},  // must include params for *any* root-level object for inheritance, such as users, startups, networks, etc
+                profile: {},  // must include params here for inheritance
                 community: {},
-                location: {}
+                location: {},
+                tour: false
             },
             resolve: {
                 user: ['user_service', '$state', '$mixpanel',
@@ -77,16 +61,18 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                     function($stateParams, community_service) {
                         return community_service.getCommunity($stateParams.location_path)
                             .error(function(response) {
+                                console.log(response);
                                 $state.go('404', { message: String(response.message) });
                             });
                     }],
                 community: ['$stateParams', '$location', 'communities', 'community_service',
                     function($stateParams, $location, communities, community_service) {
+
                         if (jQuery.isEmptyObject($stateParams.community)) { // if community is passed in via ui-sref, just use that
 
                             var pullCommunity = function () {
                                 if (communities.data[$stateParams.location_path]) { // if location_path has already been pulled, use that
-                                    return communities.data[$stateParams.location_path]; // this should also avoid re-pull for /people and /startups
+                                    return communities.data[$stateParams.location_path]; // this should also avoid re-pull for /people and /companies
                                 } else {
                                     var communityData = community_service.getCommunity($stateParams.location_path);
                                     return communityData.data;
@@ -98,27 +84,64 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                                 var url = $location.path().replace(/\/$/, "").split('/'),
                                     lastitem = url.pop(),
                                     root = url.pop();
-                                if (lastitem == "people" || lastitem == "startups" || lastitem == "search" || lastitem == "invite" || lastitem == "add") {
+
+                                if (lastitem == "people" || lastitem == "companies" || lastitem == "search" || lastitem == "invite" || lastitem == "add" || lastitem == "welcome") {
                                     if (lastitem == "invite" || lastitem == "add") {
                                         return communities.data[url.pop()];
                                     } else return communities.data[root]; // return preceding url path as community, such as tech for 'bend-or/tech/people'
-                                } else if (communities.data[lastitem] && (communities.data[lastitem].type == "industry" || communities.data[lastitem].type == "network")) {
+                                } else if (communities.data[lastitem] && (communities.data[lastitem].type == "cluster" || communities.data[lastitem].type == "network")) {
                                     return communities.data[lastitem]; // return tech in 'bend-or/tech'
                                 } else return pullCommunity();
                             } else return pullCommunity();
 
                         } else return $stateParams.community;
                     }],
-                location: ['$stateParams', 'community',
-                    function($stateParams, community) {
-                        if (community && (community.type == "location" || community.type == "network")) {
-                            return community;
+                location: ['$stateParams', 'community', 'communities',
+                    function($stateParams, community, communities) {
+
+                        if(jQuery.isEmptyObject($stateParams.location)) {
+                            if (communities.data[$stateParams.location_path] && communities.data[$stateParams.location_path].type == 'location') {
+                                return communities.data[$stateParams.location_path];
+                            } else return {};
                         } else return $stateParams.location;
                     }]
             }
         })
 
         // ORDER MATTERS.. first matching url wins!
+
+        .state('welcome', {
+            parent: "root",
+            url: "^/:location_path/:community_path/welcome?invite_code",
+            params: {
+                community_path: {
+                    value: null,
+                    squash: true
+                }
+            },
+            views: {
+                "@": { // this forces override of root template
+                    templateUrl: "components/common/welcome/welcome.html",
+                    controller: "WelcomeController as welcome"
+                }
+            }
+        })
+        .state('welcome.roles', {
+            templateUrl: "../components/common/welcome/welcome.roles.html"
+        })
+        .state('welcome.skills', {
+            templateUrl: "../components/common/welcome/welcome.skills.html"
+        })
+        .state('welcome.profile', {
+            templateUrl: "components/common/welcome/welcome.profile.html"
+        })
+        .state('welcome.companies', {
+            templateUrl: "components/common/welcome/welcome.companies.html"
+        })
+        .state('welcome.invite', {
+            templateUrl: "components/common/welcome/welcome.invite.html",
+            controller: "InviteUserController as invite"
+        })
 
         .state('search', {
             parent: 'root',
@@ -147,9 +170,9 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                     templateUrl: 'components/users/user.list.html',
                     controller: "UserController as users"
                 },
-                'startups': {
-                    templateUrl: 'components/startups/startup.list.html',
-                    controller: "StartupController as startups"
+                'companies': {
+                    templateUrl: '../components/companies/company.list.html',
+                    controller: "CompanyController as companies"
                 }
             }
         })
@@ -195,79 +218,57 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                 }
             }
         })
-        .state('user.invite', {
-            url: "/:community_path/people/invite",
-            params: {
-                community: {},
-                community_path: {
-                    value: null,
-                    squash: true
-                },
-                pageTitle: 'Invite People',
-                pageDescription: 'Linkedin URL is required to pull the photo, headline, and summary for each person.',
-                icon: 'pe-7s-id'
-            },
-            views: {
-                'header': {
-                    templateUrl: "components/common/header/header_small.html"
-                },
-                'content': {
-                    templateUrl: 'components/users/user.invite.html',
-                    controller: "InviteUserController as invite"
-                }
-            }
-        })
         
-        // Startup views
-        .state('startup', {
+        // Company views
+        .state('company', {
             parent: 'root',
             abstract: true
         })
-        .state('startup.dashboard', {
+        .state('company.dashboard', {
             params: {
                 profile: {},
                 location: {},
-                pageTitle: 'Startup Profile'
+                pageTitle: 'Company Profile'
             },
             views: {
                 'header': {
                     templateUrl: "components/common/header/header_small.html"
                 },
                 'content': {
-                    templateUrl: "components/startups/startup.dashboard.html",
-                    controller: 'StartupProfileController as profile'
+                    templateUrl: "../components/companies/company.dashboard.html",
+                    controller: 'CompanyProfileController as profile'
                 }
             }
         })
-        .state('startup.list', {
-            url: "^/:location_path/:community_path/startups",
+        .state('company.list', {
+            url: "^/:location_path/:community_path/companies",
             params: {
                 community_path: {
                     value: null,
                     squash: true
                 },
-                pageTitle: 'Startups'
+                pageTitle: 'Companies'
             },
             views: {
                 'header': {
                     templateUrl: "components/common/header/header_small.html"
                 },
                 'content': {
-                    templateUrl: 'components/startups/startup.list.html',
-                    controller: "StartupController as startups"
+                    templateUrl: '../components/companies/company.list.html',
+                    controller: "CompanyController as companies"
                 }
             }
         })
-        .state('startup.add', {
-            url: "/:community_path/startups/add",
+        .state('company.add', {
+            url: "/:community_path/companies/add",
             params: {
                 community: {},
                 community_path: {
                     value: null,
                     squash: true
                 },
-                pageTitle: 'Add Startup',
-                pageDescription: 'AngelList URL is required to pull the logo, headline, and summary for each startup.',
+                pageTitle: 'Add Company',
+                pageDescription: 'AngelList URL is required to pull the logo, headline, and summary for each company.',
                 icon: 'pe-7s-id'
             },
             views: {
@@ -275,16 +276,15 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                     templateUrl: "components/common/header/header_small.html"
                 },
                 'content': {
-                    templateUrl: 'components/startups/startup.add.html',
-                    controller: "AddStartupController as add"
+                    templateUrl: '../components/companies/company.add.html',
+                    controller: "AddCompanyController as add"
                 }
             }
 
         })
 
-        
-        // Location views
-        .state('location', {
+        // Community views
+        .state('community', {
             parent: "root",
             abstract: true,
             views: {
@@ -296,68 +296,24 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                 }
             }
         })
-        .state('location.dashboard', {
-            params: {
-                pageTitle: "Location"
-            },
-            views: {
-                'people': {
-                    templateUrl: 'components/users/user.list.html',
-                    controller: "UserController as users"
-                }
-            }
-        })
-
-        // Network views
-        .state('network', {
-            parent: "root",
-            abstract: true,
-            views: {
-                'header': {
-                    templateUrl: "components/common/header/header_big.html"
-                },
-                'content': {
-                    template: "<div ui-view='people'></div>"
-                }
-            }
-        })
-        .state('network.dashboard', {
+        .state('community.dashboard', {
             url: "/:community_path",
             params: {
-                community: {}, // root url goes blank without this because it needs community passed in
-                pageTitle: "Network"
+                location_path: null,
+                community_path: null,
+                tour: false
+            },
+            resolve: {
+                top: ['community_service', '$stateParams', 'community',
+                    function (community_service, $stateParams, community) {
+                        return community_service.getTop($stateParams.location_path, $stateParams.community_path, community);
+                    }]
             },
             views: {
+                'header@root': {},
                 'people': {
-                    templateUrl: 'components/users/user.list.html',
-                    controller: "UserController as users"
-                }
-            }
-        })
-
-        // Industry views
-        .state('industry', {
-            parent: "root",
-            abstract: true,
-            views: {
-                'header': {
-                    templateUrl: "components/common/header/header_big.html"
-                },
-                'content': {
-                    template: "<div ui-view='people'></div>"
-                }
-            }
-        })
-        .state('industry.dashboard', {
-            url: "/:community_path",
-            params: {
-                community: {},
-                pageTitle: "Industry"
-            },
-            views: {
-                'people': {
-                    templateUrl: 'components/users/user.list.html',
-                    controller: "UserController as users"
+                    templateUrl: 'components/common/dashboard/dashboard.html',
+                    controller: "DashboardController as dashboard"
                 }
             }
         })
@@ -397,13 +353,23 @@ angular
             }
         });
     })
-
-    .run(function($rootScope, $state) {
+    .run(function(editableOptions) {
+        editableOptions.theme = 'bs3';
+    })
+    .run(function($rootScope, $state, $timeout, exceptionLoggingService) {
         $rootScope.$state = $state; // allows use if $state within views
         window.$state = $state; // allows use of $state within console
-        $rootScope.$on("$stateChangeError", console.log.bind(console)); // for debugging of ui-router
+        $rootScope.$on('$stateChangeError', function (evt, toState, toParams, fromState, fromParams, error) {
+            exceptionLoggingService(error);
+        });
         $rootScope.$on('$stateChangeSuccess',function(){
             $("html, body").animate({ scrollTop: 0 }, 200);
+        });
+        $rootScope.$on('$viewContentLoaded', function(){
+            // remove the splash screen
+            $timeout( function() {
+                $('.splash').css('display', 'none');
+            }, 500);
         });
 /*
         $rootScope.$on('$stateChangeStart',
@@ -447,7 +413,7 @@ angular
                     contentType: "application/json",
                     data: angular.toJson({
                         url: $window.location.href,
-                        message: errorMessage,
+                        message: 'WARNING: ' + errorMessage,
                         type: "exception",
                         stackTrace: stackTrace,
                         cause: ( cause || "")

@@ -5,12 +5,16 @@
         <div class="row">
             <div class="col-md-12">
                 <div class="text-center m-b-md">
-                    <a href="/"><img src="../images/sc_logo.png" alt="StartupCommunity.org Logo"/></a>
+                    <a href="/"><img style="width:75%" src="../images/sc_logo.png" alt="StartupCommunity.org Logo"/></a>
                 </div>
                 <div class="hpanel">
                     <div class="panel-body" style="padding: 15px; border-top: 1px solid #82bc4b;">
                         <h4 class="text-center" style="margin-bottom: 20px; color: #5A5A5A;">Kickstart your city's entrepreneurial ecosystem</h4>
-                        <h4 class="text-center" style="margin-bottom: 13px;"><a class="btn btn-info" ng-click="auth.authenticate('linkedin')">Log in using Linkedin</a></h4>
+                        <h4 class="text-center" style="margin-bottom: 13px;">
+                            <button class="btn btn-info" ng-click="auth.authenticate('linkedin')" ng-class="{'disabled' : auth.working}">Log in using Linkedin</button>
+                            <span loading-bars ng-show="auth.working"></span>
+                        </h4>
+
                         <div ng-show="auth.alert">
                             <alert type="{{auth.alert.type}}" style="margin: 2px;" ng-click="auth.alert = undefined"><span ng-bind-html="auth.alert.msg | safe_html"></span></alert>
                         </div>

@@ -1,4 +1,4 @@
-<div>
+<div tour backdrop="true" on-end="nav.end()">
     <!-- Header -->
     <div id="header" ng-class="{'no-sides' : !nav.embedded}">
         <div ng-class="{'bright-line' : !nav.embedded, 'grey-line' : nav.embedded}">
@@ -15,21 +15,24 @@
                             <i class="pe-7s-search"></i>
                         </a>
                     </li>
-                    <form id="searchform" ng-submit="nav.search(search.query)" role="search" class="navbar-form-custom" method="post">
-                        <input ng-model="search.query" type="text" placeholder="Search {{nav.searchname}}.." class="form-control" name="search">
+                    <form id="searchform" ng-submit="nav.search(nav.search.query)" role="search" class="navbar-form-custom" method="post">
+                        <input ng-model="nav.search.query" type="text" placeholder="Search {{nav.searchname}}.." class="form-control" name="search">
                     </form>
                 </div>
             </div>
+
+            <a id="tourstart" style="display: none;" ng-click="tour.restart(true)"></a>
+
             <div ng-if="!nav.embedded" class="navbar-right">
                 <ul class="nav navbar-nav no-borders">
                     <li ng-if="!nav.user" class="dropdown">
-                        <div style="padding-top: 21px;" ng-controller="LoginController as login">
-                            <a tooltip-placement="left" tooltip="Login">
-                                <div ng-click="login.authenticate('linkedin')" style="font-size: 16px;">Log In&nbsp;</div>
+                        <div style="padding-top: 12px; margin-right: 8px;" ng-controller="LoginController as login">
+                            <a class="btn btn-success" tooltip-placement="left" tooltip="Login">
+                                <div ng-click="login.authenticate('linkedin')" style="font-size: 16px; color: #fff;">Log In&nbsp;</div>
                             </a>
                         </div>
                     </li>
-                    <li id="knowtify" class="dropdown">
+                    <li ng-if="nav.user" id="knowtify" class="dropdown">
                         <a>
                             <i class="pe-7s-bell"></i>
                         </a>
@@ -40,7 +43,7 @@
                         </a>
                     </li>
                     <li ng-if="nav.user" class="dropdown">
-                        <a tooltip-placement="left" tooltip="Logout" ui-sref="logout" style="padding-right: 30px;">
+                        <a tooltip-placement="left" tooltip="Logout" href="/logout" style="padding-right: 30px;">
                             <i class="pe-7s-upload pe-rotate-90"></i>
                         </a>
                     </li>
@@ -52,7 +55,7 @@
     <!-- Navigation -->
     <aside id="menu" ng-if="!nav.embedded">
         <div class="profile-picture">
-            <div ng-if="nav.user" class="container side-menu" style="padding-top: 10px; margin-left: -20px; border-bottom: 1px solid #eee;    margin-bottom: -9px;">
+            <div ng-if="nav.user" class="container side-menu" style="padding-top: 10px; margin-left: -20px; border-bottom: 1px solid #eee;    margin-bottom: -9px;" tour-step order="4" title="Your Profile" content="People can ask you questions on your profile page. Click 'End Tour' to take a look." placement="right">
                 <div class="row side-menu">
                     <div class="col-xs-3">
                         <a ui-sref="user.dashboard({profile: nav.user, location_path: nav.user.key, community: {}})"><img class="img-circle m-b" ng-src="{{nav.user.profile.avatar || nav.user.profile.linkedin.pictureUrl || 'images/blank_avatar.png'}}" alt="{{nav.user.profile.name}}" style="height: 40px; width: 40px; "/></a>
@@ -60,47 +63,55 @@
                     <div class="col-xs-9" style="padding-top: 3px; white-space: nowrap;">
                         <a ui-sref="user.dashboard({profile: nav.user, location_path: nav.user.key, community: {}})">{{nav.user.profile.name}}</a>
                         <div style="margin-left: -10px; padding-top: 1px;">
-                            <span ng-repeat="(item, val) in nav.user.roles" class="user-role"><i ng-attr-title="{{item[0].toUpperCase() + item.slice(1);}}" ng-class="{'text-primary fa fa-rocket' : item == 'founder', 'text-info fa fa-graduation-cap' : item == 'mentor', 'text-success fa fa-leaf' : item == 'investor', 'text-danger fa fa-flag' : item == 'leader'}"></i></span>
+                            <span ng-repeat="(item, val) in nav.user.roles" class="user-role" ><i ng-attr-title="{{item[0].toUpperCase() + item.slice(1);}}" style="font-weight: bold;" ng-class="{'text-primary pe-7s-paper-plane' : item == 'founder', 'text-danger pe-7s-flag' : item == 'leader', 'text-info pe-7s-study' : item == 'mentor', 'text-success pe-7s-gleam' : item == 'investor', 'text-default pe-7s-ball' : item == 'team', 'text-warning pe-7s-portfolio' : item == 'provider'}"></i></span>
                         </div>
                     </div>
                 </div>
             </div>
-            <div ng-if="nav.location.profile.sc_logo" style="margin-left: -21px;"><img style="width:182px; border: 1px solid #ddd;" ng-src="{{nav.location.profile.sc_logo}}"/></div>
+            <div ng-if="nav.location.profile.sc_logo"  data-intro="Project title" data-position="right" style="margin-left: -21px;"><img style="width:182px; border: 1px solid #ddd;" ng-src="{{nav.location.profile.sc_logo}}"/></div>
         </div>
 
         <ul side-navigation class="nav" id="side-menu" style="border-top: 1px solid #eee;">
 
-            <li class="active">
+            <li ng-show="nav.community.type !== 'user' && nav.community.type !== 'company'" class="active" tour-step order="1" title="People and Companies" content="To view people by role, or sort companies by revenue, visit the People and Company pages." placement="right">
+
                 <a style="cursor: default;"><span class="pe-7s-angle-down" style="padding-top: 4px;
     padding-right: 7px;"></span><span class="nav-label">
 
                     Community
 
                 </span>
-                    <div ng-if="nav.user.roles.leader[nav.community.key].indexOf(nav.location_path) > -1" class="fa fa-gear pull-right" ng-click="nav.communitySettings()" tooltip-placement="left" tooltip="Settings" style="opacity: .6; cursor: pointer; margin-top: 5px;"></div>
-                    <!--<span class="fa fa-gear pull-right" ng-click="nav.changeLocation()" tooltip-placement="left" tooltip="Change Location" style="opacity: .6; margin-top: 4px; cursor: pointer;"></span>-->
+                <div ng-if="nav.user.roles.leader[nav.community.key].indexOf(nav.location_path) > -1" class="fa fa-gear pull-right" ng-click="nav.communitySettings(); $event.stopPropagation();" tooltip-placement="left" tooltip="Settings" style="opacity: .6; cursor: pointer; margin-top: 5px;"></div>
                 </a>
+                    <!--<span class="fa fa-gear pull-right" ng-click="nav.changeLocation()" tooltip-placement="left" tooltip="Change Location" style="opacity: .6; margin-top: 4px; cursor: pointer;"></span>-->
+
                 <ul class="nav nav-second-level" style="white-space: nowrap;">
                     <li>
-                        <a ui-sref="{{nav.community.type + '.dashboard' + nav.nav_url}}" ng-class="{active: nav.path.includes('/' + nav.location.key)}">
-                            <span ng-if="nav.community.community_profiles[nav.location_path]">
+                        <a ui-sref="{{'community.dashboard' + nav.nav_url}}" ng-class="{active: nav.path.includes('/' + nav.location.key)}">
+                            <span ng-if="nav.community.community_profiles[nav.location_path]" ng-click="c_working = true">
                                 <i ng-if="nav.community.community_profiles[nav.location_path].icon" ng-class="'fa ' + nav.community.community_profiles[nav.location_path].icon"></i>
-                                <i ng-if="!nav.community.community_profiles[nav.location_path].icon" class="fa fa-globe"></i> {{nav.community.community_profiles[nav.location_path].name}}</span>
+                                <i ng-if="!nav.community.community_profiles[nav.location_path].icon" class="fa fa-globe"></i> {{nav.community.community_profiles[nav.location_path].name}}
+                                <span loading-bars ng-show="c_working"></span>
+                            </span>
                             <span ng-if="!nav.community.community_profiles[nav.location_path]">
                                 <i ng-if="nav.community.profile.icon" ng-class="'fa ' + nav.community.profile.icon"></i>
-                                <i ng-if="!nav.community.profile.icon" class="fa fa-globe"></i> {{nav.community.profile.name}}</span>
+                                <i ng-if="!nav.community.profile.icon" class="fa fa-globe"></i> {{nav.community.profile.name}}
+                                <span loading-bars ng-show="c_working"></span>
+                            </span>
                         </a>
-                        <ul ng-if="nav.community.type !== 'user' && nav.community.type !== 'startup'" style="display: block;">
+                        <ul ng-if="nav.community.type !== 'user' && nav.community.type !== 'company'" style="display: block;">
                             <li ui-sref="{{'user.list' + nav.nav_url}}" ng-class="{ 'active' : nav.path.endsWith(nav.community.key + '/people') }">
-                                <a><i class="fa fa-caret-right"></i>People</a>
-                                <li ng-if="nav.user.roles.leader[nav.community.key].indexOf(nav.location_path) > -1" class="nav-third-level" ui-sref="{{'user.invite' + nav.nav_url}}">
+                                <a><i class="fa fa-caret-right"></i>People
+                                </a>
+                                <li ng-if="nav.user && (nav.community.type == 'cluster' || (nav.community.type == 'network' && nav.user.roles.leader[nav.community.key].indexOf(nav.location_path) > -1) || (nav.community.type == 'location' && nav.user.communities.indexOf(nav.location_path) > -1))" class="nav-third-level" ng-click="nav.invitePeople();">
                                     <a style="color: #aaa;">+&nbsp;&nbsp;Invite People</a>
                                 </li>
                             </li>
-                            <li ui-sref="{{'startup.list' + nav.nav_url}}" ng-class="{ 'active' : nav.path.endsWith(nav.community.key + '/startups') }">
-                                <a><i class="fa fa-caret-right"></i>Startups</a>
-                                <li ng-if="nav.user.roles.leader[nav.community.key].indexOf(nav.location_path) > -1" class="nav-third-level" ui-sref="{{'startup.add' + nav.nav_url}}">
-                                    <a style="color: #aaa;">+&nbsp;&nbsp;Add Startup</a>
+                            <li ui-sref="{{'company.list' + nav.nav_url}}" ng-class="{ 'active' : nav.path.endsWith(nav.community.key + '/companies') }">
+                                <a><i class="fa fa-caret-right"></i>Companies
+                                </a>
+                                <li ng-if="nav.user && (nav.community.type == 'cluster' || (nav.community.type == 'network' && nav.user.roles.leader[nav.community.key].indexOf(nav.location_path) > -1) || (nav.community.type == 'location' && nav.user.communities.indexOf(nav.location_path) > -1))" class="nav-third-level" ng-click="nav.addCompany();">
+                                    <a style="color: #aaa;">+&nbsp;&nbsp;Add Company</a>
                                 </li>
                             </li>
                         </ul>
@@ -108,48 +119,63 @@
                 </ul>
             </li>
 
-            <li class="active" ng-if="nav.locations">
-                <p style="cursor: default;"><span class="pe-7s-angle-down" style="padding-top: 4px;
+            <li class="active" ng-show="nav.locations">
+                <a style="cursor: default;"><span class="pe-7s-angle-down" style="padding-top: 4px;
     padding-right: 7px;"></span><span class="nav-label">
 
                     Locations
 
-                </span></p>
+                </span>
+                </a>
                 <ul class="nav nav-second-level">
                     <li ng-repeat="item in nav.locations" ng-if="item.key !== nav.community.key">
-                        <a ui-sref="location.dashboard({location_path: item.key, community: item, location: item, query: '*'})" ng-class="{active: nav.path.includes('/' + item.key)}"><i class="fa fa-globe"></i> {{item.profile.name}}</a>
+                        <a ui-sref="community.dashboard({location_path: item.key, community_path: '', community: item, location: item, query: '*'})" ng-class="{active: nav.path.includes('/' + item.key)}" ng-click="l_working = true"><i class="fa fa-globe"></i> {{item.profile.name}}
+                        <span loading-bars ng-show="l_working"></span>
+                        </a>
                     </li>
                 </ul>
             </li>
 
-            <li class="active" ng-if="nav.networks">
-                <p style="cursor: default;"><span class="pe-7s-angle-down" style="padding-top: 4px;
+            <li class="active" ng-show="nav.networks" tour-step order="2" title="Private Networks" content="Networks are groups of companies and people who are connected through a private, invitation-only community.<br><br>Examples of networks include startup accelerators, coworking spaces, mentorship groups, and investment funds." placement="right">
+                <a style="cursor: default;"><span class="pe-7s-angle-down" style="padding-top: 4px;
     padding-right: 7px;"></span><span class="nav-label">
 
                     Networks
 
-                </span></p>
+                </span>
+                    <div ng-if="nav.user.communities.indexOf(nav.location_path) > -1 && nav.communities[nav.location_path].type == 'location'" class="pe-7s-close fa-rotate-45 pull-right" ng-click="nav.addNetwork(); $event.stopPropagation();" tooltip-placement="left" tooltip="Add Network" style="opacity: .6; cursor: pointer; margin-top: 4px; font-size: 15px;"></div>
+                </a>
                 <ul class="nav nav-second-level">
                     <li ng-repeat="item in nav.networks">
-                        <a ui-sref="{{'network.dashboard' + nav.nav_jump}}" ng-class="{active: nav.path.includes('/' + item.key)}"><i ng-class="'fa ' + item.profile.icon"></i> {{item.profile.name}}</a>
+                        <a ui-sref="{{'community.dashboard' + nav.nav_jump}}" ng-class="{active: nav.path.includes('/' + item.key)}" ng-click="n_working = true">
+                                <i ng-class="'fa ' + item.profile.icon"></i> {{item.profile.name}}
+                                <span loading-bars ng-show="n_working"></span>
+                        </a>
                     </li>
                 </ul>
             </li>
 
-            <li class="active" ng-if="nav.industries">
-                <p style="cursor: default;"><span class="pe-7s-angle-down" style="padding-top: 4px;
+            <li class="active" ng-show="nav.clusters" tour-step order="3" title="Industry Clusters" content="A cluster is an entrepreneurial ecosystem in support of a specific industry.<br><br>Clusters are made up of mentors, investors, companies, accelerators, coworking spaces, and events that connect people within the community and foster the creation of new business." placement="right">
+                <a style="cursor: default;"><span class="pe-7s-angle-down" style="padding-top: 4px;
     padding-right: 7px;"></span><span class="nav-label">
 
-                    Industries
+                    Clusters
 
-                </span></p>
+                </span>
+                    <div ng-if="nav.user.communities.indexOf(nav.location_path) > -1 && nav.communities[nav.location_path].type == 'location'" class="pe-7s-close fa-rotate-45 pull-right" ng-click="nav.addCluster(); $event.stopPropagation();" tooltip-placement="left" tooltip="Add Cluster" style="opacity: .6; cursor: pointer; margin-top: 4px; font-size: 15px;"></div>
+                </a>
                 <ul class="nav nav-second-level">
-                    <li ng-repeat="item in nav.industries">
-                        <a ui-sref="{{'industry.dashboard' + nav.nav_jump}}" ng-class="{active: nav.path.includes('/' + item.key)}">
+                    <li ng-repeat="item in nav.clusters">
+                        <a ui-sref="{{'community.dashboard' + nav.nav_jump}}" ng-class="{active: nav.path.includes('/' + item.key)}" ng-click="cl_working = true">
                             <span ng-if="item.community_profiles[nav.location_path]">
-                                <i ng-class="'fa ' + item.community_profiles[nav.location_path].icon"></i> {{item.community_profiles[nav.location_path].name}}</span>
+                                <i ng-class="'fa ' + item.community_profiles[nav.location_path].icon"></i> {{item.community_profiles[nav.location_path].name}}
+                                <span loading-bars ng-show="cl_working"></span>
+                            </span>
                             <span ng-if="!item.community_profiles[nav.location_path]">
-                                <i ng-class="'fa ' + item.profile.icon"></i> {{item.profile.name}}</span>
+                                <i ng-class="'fa ' + item.profile.icon"></i> {{item.profile.name}}
+                                <span loading-bars ng-show="cl_working"></span>
+                            </span>
+
                         </a>
                     </li>
                 </ul>
@@ -161,14 +187,17 @@
             </ul>
         </div>
     </aside>
-</div>
 
-<!-- Main Content -->
-<div ui-view>
-    <div ng-style="{'background-color': nav.color}" ng-class="{'wrapper' : !nav.embedded}">
-        <div ng-class="{'embed_header' : nav.embedded}" ui-view="header"></div>
-        <div ng-class="{'content' : !nav.embedded}">
-            <div ui-view="content"></div>
+
+    <!-- Main Content -->
+    <div ui-view >
+        <div ng-style="{'background-color': nav.color}" ng-class="{'wrapper' : !nav.embedded}">
+            <div class="splash"><div class="splash-title"><a href="/"><img src="images/sc_logo.png" style="width: 75%;" alt="StartupCommunity.org Logo"/></a><img src="images/loading-bars.svg" width="64" height="64" /> </div></div>
+            <div ng-class="{'embed_header' : nav.embedded}" ui-view="header"></div>
+            <div ng-class="{'content' : !nav.embedded}">
+                <div ui-view="content"></div>
+            </div>
         </div>
     </div>
+
 </div>

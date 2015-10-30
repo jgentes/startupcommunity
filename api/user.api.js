@@ -5,6 +5,7 @@ var Q = require('q'),
     jwt = require('jwt-simple'),
     config = require('../config.json')[process.env.NODE_ENV || 'development'],
     db = require('orchestrate')(config.db.key),
+    aws = require('aws-sdk'),
     knowtify = require('knowtify-node');
 
 //require('request-debug')(request); // Very useful for debugging oauth and api req/res
@@ -14,6 +15,8 @@ var UserApi = function() {
     this.directSearch = handleDirectSearch;
     this.contactUser = handleContactUser;
     this.getProfile = handleGetProfile;
+    this.getProfileUrl = handleGetProfileUrl;
+    this.updateProfile = handleUpdateProfile;
     this.setRole = handleSetRole;
     this.removeProfile = handleRemoveProfile;
     this.feedback = handleFeedback;
@@ -29,13 +32,14 @@ var UserApi = function() {
 
 function handleUserSearch(req, res){
     var communities = req.query.communities,
+        clusters = req.query.clusters,
         roles = req.query.roles,
         query = req.query.query,
         limit = req.query.limit,
         offset = req.query.offset,
         key = req.query.api_key;
 
-    searchInCommunity(communities, roles, limit, offset, query, key)
+    searchInCommunity(communities, clusters, roles, limit, offset, query, key)
         .then(function(userlist){
             res.send(userlist);
         })
@@ -45,7 +49,7 @@ function handleUserSearch(req, res){
         });
 }
 
-var searchInCommunity = function(communities, roles, limit, offset, query, key) {
+var searchInCommunity = function(communities, clusters, roles, limit, offset, query, key) {
     var allowed = false;
     var userperms;
 
@@ -77,28 +81,39 @@ var searchInCommunity = function(communities, roles, limit, offset, query, key) 
     }
 
     // create searchstring
-    searchstring = 'communities:(';
+    searchstring = '@value.communities:(';
 
     for (c in communities) {
         searchstring += '"' + communities[c] + '"';
         if (c < (communities.length - 1)) { searchstring += ' AND '; }
     }
 
-    searchstring += ') AND type: "user"';
+    searchstring += ') AND @value.type: "user"';
+
+    if (clusters && clusters.length > 0 && clusters[0] !== '*') {
+        clusters = clusters.splice(',');
+        searchstring += ' AND (';
+
+        for (i in clusters) {
+            searchstring += '@value.profile.skills:"' + clusters[i] + '"'; // scope to industries within the cluster
+            if (i < (clusters.length - 1)) { searchstring += ' OR '; }
+        }
+        searchstring += ')';
+    }
 
     if (roles && roles.length > 0) {
         roles = roles.splice(',');
         searchstring += ' AND (';
 
         for (i in roles) {
-            searchstring += 'roles.' + roles[i] + '.*:*'; // scope to role
+            searchstring += '@value.roles.' + roles[i] + '.*:*'; // scope to role
             if (i < (roles.length - 1)) { searchstring += ' AND '; }
         }
         searchstring += ')';
     }
 
     if (query) { searchstring += ' AND ' + '(' + query + ')'; }
-
+    console.log(searchstring);
     var deferred = Q.defer();
     db.newSearchBuilder()
       .collection(config.db.communities)
@@ -219,7 +234,7 @@ function handleContactUser(req, res) {
     // search format is 'roles.leader[community]: location'
 
     // create searchstring to get leader of community
-    var searchstring = '(roles.leader.' + community_key + ': *) AND type: "user"';
+    var searchstring = '(@value.roles.leader.' + community_key + ': *) AND @value.type: "user"';
 
     db.newSearchBuilder()
         .collection(config.db.communities)
@@ -230,7 +245,7 @@ function handleContactUser(req, res) {
                 console.log("Found leader(s)");
                 var leaders = [];
                 for (item in result.body.results) {
-                    leaders.push(result.body.results[item].value);
+                    leaders.push(result.body.results[item]);
                 }
 
                 // now get user record for email address
@@ -242,8 +257,9 @@ function handleContactUser(req, res) {
 
                             for (leader in leaders) {
                                 contacts.push({
-                                    "name" : leaders[leader].profile.name,
-                                    "email" : leaders[leader].profile.email,
+                                    "id" : leaders[leader].path.key,
+                                    "name" : leaders[leader].value.profile.name,
+                                    "email" : leaders[leader].value.profile.email,
                                     "data" : {
                                         "source_name": formdata.name,
                                         "source_email" : formdata.email,
@@ -262,10 +278,10 @@ function handleContactUser(req, res) {
                                     "contacts": contacts
                                 },
                                 function(success){
-                                    console.log('Contact request sent to ' + leaders[leader].profile.name);
+                                    console.log('Contact request sent!');
                                     res.status(200).end();
 
-                                    // send notification to requestor
+                                    // send notification to requestor.. a user id is only required if I create the record with an associated id
                                     knowtifyClient.contacts.upsert({
                                             "event" : "contact_receipt",
                                             "contacts": [{
@@ -334,7 +350,7 @@ function handleContactUser(req, res) {
             }
         })
         .fail(function(err){
-            console.log("SEARCH FAIL:" + err);
+            console.log("WARNING: SEARCH FAIL:" + err);
             res.status(202).send({ message: 'Something went wrong: ' + err});
         });
 
@@ -380,21 +396,85 @@ function handleGetProfile(req, res) {
 
 }
 
-/*
- |--------------------------------------------------------------------------
- | Put Profile
- |--------------------------------------------------------------------------
- */
+function handleGetProfileUrl(req, res) {
+    // req data is guaranteed by ensureauth
+    var userid = req.param.userid || req.user.value.key || req.user.path.key,
+        filename = req.query.filename;
+
+    aws.config.update({
+        accessKeyId: config.aws.aws_access_key_id,
+        secretAccessKey: config.aws.aws_secret_access_key,
+        signatureVersion: 'v4',
+        region: 'us-west-2'
+    });
+
+    var s3 = new aws.S3();
+    var s3_params = {
+        Bucket: config.aws.bucket,
+        Key:  'profiles/' + userid + '_' + filename,
+        Expires: 60,
+        ACL: 'public-read'
+    };
+    s3.getSignedUrl('putObject', s3_params, function (err, signedUrl) {
+        var parsedUrl = url.parse(signedUrl);
+        parsedUrl.search = null;
+        var objectUrl = url.format(parsedUrl);
+
+        if (!err) {
+            res.send({ put: signedUrl, get: objectUrl });
+        } else res.status(204).send({ message: err });
+
+    });
+}
+
+function handleUpdateProfile(req, res) {
+    // req data is guaranteed by ensureauth
+    var userid = req.user.value.key || req.user.path.key;
+    var profile = req.body.params.profile;
+    console.log('Updating user profile: ' + userid);
+
+    // validate user updates only their own record
+    if (userid == profile.key) {
+        delete profile.key;
+        db.put(config.db.communities, userid, profile)
+            .then(function(response){
+                if (response.body.code !== "items_not_found") {
+                    response.body["key"] = userid;
+                    var user = { "value" : response.body };
+                    var payload = {
+                        iss: req.hostname,
+                        sub: user,
+                        iat: moment().valueOf(),
+                        exp: moment().add(14, 'days').valueOf()
+                    };
+
+                    res.status(200).send({ token: jwt.encode(payload, config.token_secret), user: user.value });
+
+                } else {
+                    console.warn('WARNING:  User not found.');
+                    res.status(200).send({ message: 'User not found.' });
+                }
+            })
+
+            .fail(function(err){
+                console.warn("WARNING: SEARCH FAIL:");
+                console.warn(err);
+                res.status(202).send({ message: 'Something went wrong: ' + err});
+            });
+    } else {
+        res.status(400).send({ message: 'You may only update your own user record.'})
+    }
+}
 
 function handleSetRole(req, res) {
     var userkey = req.query.userkey,
       community = req.query.community,
-      industry = req.query.industry,
+      cluster = req.query.cluster,
       role = req.query.role,
       status = (req.query.status == 'true'), // will convert string to bool
       allowed = false;
 
-    function checkperms(allowed, callback) {
+    var checkperms = function(allowed, callback) {
         if (!allowed) {
             db.get(config.db.communities, req.user.value.key || req.user.path.key)
               .then(function (response) {
@@ -407,7 +487,7 @@ function handleSetRole(req, res) {
                   res.status(202).send({ message: 'Something went wrong: ' + err});
               });
         } else callback(allowed);
-    }
+    };
 
     //check perms!
     if (userkey == req.user.value.key || userkey == req.user.path.key) { allowed = true; }
@@ -418,11 +498,11 @@ function handleSetRole(req, res) {
                   if (response.body.cities[community].clusters === undefined) { //need to create clusters key
                       response.body.cities[community]['clusters'] = {};
                   }
-                  if (response.body.cities[community].clusters[industry] === undefined) { //need to create the industry in user profile
-                      console.log('Adding user to cluster: ' + industry);
-                      response.body.cities[community].clusters[industry] = { "roles": [] };
+                  if (response.body.cities[community].clusters[cluster] === undefined) { //need to create the cluster in user profile
+                      console.log('Adding user to cluster: ' + cluster);
+                      response.body.cities[community].clusters[cluster] = { "roles": [] };
                   }
-                  var thisindustry = response.body.cities[community].clusters[industry];
+                  var thisindustry = response.body.cities[community].clusters[cluster];
 
                   if (status === true) {
                       if (thisindustry.roles.indexOf(role) < 0) {
@@ -433,7 +513,7 @@ function handleSetRole(req, res) {
                           thisindustry.roles.splice(thisindustry.roles.indexOf(role), 1);
                       } // else they do not have the role, no action needed
                   }
-                  response.body.cities[community].clusters[industry] = thisindustry;
+                  response.body.cities[community].clusters[cluster] = thisindustry;
 
                   db.put(config.db.communities, userkey, response.body)
                     .then(function (finalres) {

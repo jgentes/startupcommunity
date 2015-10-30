@@ -1,0 +1,26 @@
+<div class="hpanel">
+    <div class="panel-heading" style="text-align:center;">
+        <h4 class="modal-title">Invite others to join this community.</h4>
+    </div>
+    <div>
+        <div class="hpanel">
+            <div class="panel-heading" style="font-size: 20px;">Enter an email address:</div>
+            <div style="padding-bottom: 30px;">
+                <form role="form" name="invite.form" novalidate ng-submit="invite.inviteUser()">
+                    <div class="form-group">
+                        <input type="email" placeholder="new@mentor.com" class="form-control input-lg" required name="email" ng-model="invite.form.email_value">
+                        <div class="m-t-xs" ng-show="invite.form.email.$invalid && invite.form.submitted">
+                            <span class="text-danger" ng-show="invite.form.email.$error">&nbsp;&nbsp;<i class="fa fa-exclamation-triangle"></i> Please enter a valid email address..</span>
+                        </div>
+                    </div>
+                    <input type="submit" style="float:left" class="finish btn-success btn" ng-class="{'disabled' : disabled}" value="Invite Person" /><div style="padding-top: 6px; margin-bottom: -24px;" ng-show="invite.working" loading-bars></div>
+                </form>
+            </div>
+        </div>
+        <div alert-box this-alert="invite.alert"></div>
+    </div>
+    <h4 style="margin-bottom: 13px;">
+        <a class="btn btn-info pull-left" ui-sref="welcome.companies">Back</a>
+        <a class="btn btn-info pull-right" ng-click="welcome.submit()">Finish</a></h4>
+</div>
+

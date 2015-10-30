@@ -1,27 +1,35 @@
 angular
     .module('startupcommunity')
-    .controller('StartupController', StartupController)
-    .controller('StartupProfileController', StartupProfileController)
-    .controller('AddStartupController', AddStartupController);
+    .controller('CompanyController', CompanyController)
+    .controller('CompanyProfileController', CompanyProfileController)
+    .controller('AddCompanyController', AddCompanyController);
 
-function StartupController($stateParams, startup_service, result_service, $sce, community, communities) {
+function CompanyController($stateParams, company_service, result_service, $sce, community, communities) {
 
     this.community = community;
     this.communities = communities.data;
-    this.selectedIndustries = [];
+    this.selectedClusters = [];
     this.selectedNetworks = [];
     this.selectedStage = ['*'];
 
     var self = this; // for accessing 'this' in child functions
     var query;
     var communityFilter = [$stateParams.location_path];
-    if ($stateParams.community_path) communityFilter.push($stateParams.community_path);
+
+    if (this.community.type == 'cluster') {
+        if (this.community.community_profiles[$stateParams.location_path]) {
+            var clusterFilter = this.community.community_profiles[$stateParams.location_path].industries;
+        } else clusterFilter = this.community.profile.industries;
+    } else {
+        clusterFilter = [];
+        if ($stateParams.community_path && $stateParams.community_path !== $stateParams.location_path) communityFilter.push($stateParams.community_path);
+    }
 
     $stateParams.query ? query = $stateParams.query : query = '*';
 
     this.url = $stateParams.community_path && $stateParams.location_path ?
-        "({community_path: val, community: startups.communities[val], query: '*'})" :
-        "({location_path: val, community: startups.communities[val], query: '*'})";
+        "({community_path: val, community: companies.communities[val], query: '*'})" :
+        "({location_path: val, community: companies.communities[val], query: '*'})";
 
     // THIS IS A DUPLICATE OF NAV.EMBEDDED, SHOULD MOVE TO A SERVICE AND INJECT IN NAV AND USER CONTROLLERS
     try {
@@ -31,50 +39,52 @@ function StartupController($stateParams, startup_service, result_service, $sce, 
     }
     this.usercount = this.embedded ? 8 : 16;
 
-    this.searchStartups = function(alturl) {
+    this.searchCompanies = function(alturl) {
         self.loadingUser = true;
 
         if (query !== '*') {
             self.tag = query;
         } else self.tag = undefined;
 
-        startup_service.search(communityFilter, query, undefined, self.usercount, alturl)
+        company_service.search(communityFilter, clusterFilter, query, undefined, self.usercount, alturl)
             .then(function (response) {
                 self.tag = undefined;
-                self.startups = result_service.setPage(response.data);
+                self.companies = result_service.setPage(response.data);
                 self.loadingUser = false;
                 self.lastQuery = query;
             });
     };
 
-    this.searchStartups();
+    this.searchCompanies();
 
     // Title of list box changes based on context
     var setTitle = function(){
         var item;
         self.stage = '';
-        self.industry = '';
+        self.cluster = '';
 
         if (self.selectedStage[0] == '*') {
-            self.stage = "Startups";
+            self.stage = "Companies";
         } else {
             for (item in self.selectedStage) {
-                self.stage += (self.selectedStage[item][0].toUpperCase() + self.selectedStage[item].slice(1) + 's');
+                self.stage += self.selectedStage[item];
                 if (item < self.selectedStage.length - 1) {
                     if (item < self.selectedStage.length - 2 ) {
                         self.stage += '</strong>,<strong> ';
                     } else self.stage += ' </strong>&<strong> ';
                 }
             }
+
+            self.stage += " Companies";
         }
 
-        if (self.selectedIndustries.length == 0 && self.selectedNetworks.length == 0) {
+        if (self.selectedClusters.length == 0 && self.selectedNetworks.length == 0) {
             if (self.community.community_profiles && self.community.community_profiles[$stateParams.location_path]) {
                 self.selection = self.community.community_profiles[$stateParams.location_path].name;
             } else self.selection = self.community.profile.name;
         } else {
             self.selection = "";
-            var selectedCommunities = self.selectedIndustries.concat(self.selectedNetworks);
+            var selectedCommunities = self.selectedClusters.concat(self.selectedNetworks);
             for (item in selectedCommunities) {
                 self.selection += self.communities[selectedCommunities[item]].profile.name;
                 if (item < selectedCommunities.length - 1) {
@@ -88,7 +98,7 @@ function StartupController($stateParams, startup_service, result_service, $sce, 
         if (query == "*") {
             self.title = '<strong>' + self.stage + '</strong> in ' + self.selection;
         } else {
-            self.title = 'Startups matching <strong>"' + query + '"</strong> ';
+            self.title = 'Companies matching <strong>"' + query + '"</strong> ';
             self.title += 'in <strong>';
             if ($stateParams.community_path && $stateParams.location_path) {
                 if (self.community.community_profiles && self.community.community_profiles[$stateParams.location_path]) {
@@ -120,29 +130,29 @@ function StartupController($stateParams, startup_service, result_service, $sce, 
             }
         }
 
-        startup_service.search(communityFilter, '*', self.selectedStage, 20, undefined)
+        company_service.search(communityFilter, clusterFilter, '*', self.selectedStage, 20, undefined)
             .then(function(response) {
                 self.loadingStage = false;
-                self.startups = result_service.setPage(response.data);
+                self.companies = result_service.setPage(response.data);
                 setTitle();
             });
     };
 
-    this.filterIndustries = function(selection) {
+    this.filterClusters = function(selection) {
         if (selection == undefined) {
-            self.selectedIndustries = [];
+            self.selectedClusters = [];
         } else {
-            if (self.selectedIndustries.indexOf(selection) < 0) {
-                self.selectedIndustries.push(selection);
-            } else self.selectedIndustries.splice(self.selectedIndustries.indexOf(selection), 1);
-            if (self.selectedIndustries.length == 0) self.allIndustries = true;
+            if (self.selectedClusters.indexOf(selection) < 0) {
+                self.selectedClusters.push(selection);
+            } else self.selectedClusters.splice(self.selectedClusters.indexOf(selection), 1);
+            if (self.selectedClusters.length == 0) self.allClusters = true;
         }
 
-        startup_service.search(communityFilter.concat(self.selectedIndustries), '*', self.selectedStage, 30, undefined)
+        company_service.search(communityFilter, self.selectedClusters, '*', self.selectedStage, 30, undefined)
             .then(function(response) {
-                self.loadingIndustry = false;
+                self.loadingCluster = false;
                 self.loadingNetwork = false;
-                self.startups = result_service.setPage(response.data);
+                self.companies = result_service.setPage(response.data);
                 setTitle();
             });
     };
@@ -157,25 +167,29 @@ function StartupController($stateParams, startup_service, result_service, $sce, 
             if (self.selectedNetworks.length == 0) self.allNetworks = true;
         }
 
-        startup_service.search(communityFilter.concat(self.selectedNetworks), '*', self.selectedStage, 20, undefined)
+        communityFilter = communityFilter.concat(self.selectedNetworks);
+
+        company_service.search(communityFilter, clusterFilter, '*', self.selectedStage, 20, undefined)
             .then(function(response) {
-                self.loadingIndustry = false;
+                self.loadingCluster = false;
                 self.loadingNetwork = false;
-                self.startups = result_service.setPage(response.data);
+                self.companies = result_service.setPage(response.data);
                 setTitle();
             });
     };
 
+    $('.splash').css('display', 'none');
+
 }
 
-function StartupProfileController($stateParams, $location, $mixpanel, user, startup_service, community, communities) {
-    console.log('ping')
-    $mixpanel.track('Viewed Startup');
+function CompanyProfileController($stateParams, $location, $mixpanel, user, company_service, community, communities) {
+
+    $mixpanel.track('Viewed Company');
 
     if (!jQuery.isEmptyObject($stateParams.profile)) {
-        this.startup = $stateParams.profile;
-    } else if (community && community.type == "startup") {
-        this.startup = community;
+        this.company = $stateParams.profile;
+    } else if (community && community.type == "company") {
+        this.company = community;
     }
 
     var self = this;
@@ -187,7 +201,7 @@ function StartupProfileController($stateParams, $location, $mixpanel, user, star
     for (member in team.data.results) {
         for (role in team.data.results[member].value.roles) {
             for (item in team.data.results[member].value.roles[role]) {
-                if (item == this.startup.key) {
+                if (item == this.company.key) {
                     if (!this.team[role]) this.team[role] = {};
                     this.team[role][team.data.results[member].value.key] = team.data.results[member].value;
                 }
@@ -195,22 +209,11 @@ function StartupProfileController($stateParams, $location, $mixpanel, user, star
         }
     }
 */
-    this.putProfile = function(userid, profile) {
-        startup_service.putProfile(userid, profile, function(response) {
-            if (response.status !== 200) {
-                this.alert = { type: 'danger', msg: 'There was a problem: ' + String(response.message) };
-                console.warn("WARNING: " +  response.message);
-            } else {
-                this.profile = response.data; // may need to tell angular to refresh view
-                this.alert = { type: 'success', msg: 'Person updated! ' + response.data.name + ' is good to go.' };
-            }
-        });
-    };
 
     this.removeProfile = function(userid, name) {
         notify("Are you sure you want to remove " + name + "?", function(result) { //todo fix notify maybe with sweetalert
             if (result) {
-                startup_service.removeProfile(userid, function(response) {
+                company_service.removeProfile(userid, function(response) {
                     $location.path('/people');
                     this.alert = { type: 'success', msg: "Person removed. Hopefully they'll return some day." };
                 });
@@ -219,7 +222,7 @@ function StartupProfileController($stateParams, $location, $mixpanel, user, star
     };
 
     this.updateProfile = function() {
-        startup_service.updateProfile({
+        company_service.updateProfile({
             displayName: user.data.user.value.profile.name,
             email: user.data.user.value.profile.email
         }).then(function() {
@@ -228,40 +231,40 @@ function StartupProfileController($stateParams, $location, $mixpanel, user, star
     };
 
 
-
+    $('.splash').css('display', 'none');
 
 }
 
-function AddStartupController(startup_service, community) {
+function AddCompanyController($mixpanel, company_service, community) {
     var self = this;
 
-    this.addStartup = function(location_key, community_key) {
-
+    this.addCompany = function() {
         this.working = true;
+        var role = self.selectedRole == 'none' ? undefined : self.selectedRole;
 
-        if (self.form.$valid) {
-            var formdata = {
-                "angellist_url" : self.form.url_value.split('/').pop()
-            };
+        if (community.type == 'cluster') community_path = location.key; // do not allow companies to be added directly to clusters
 
-            startup_service.addStartup(formdata.angellist_url, location_key, community_key)
-                .then(function(response) {
-                    self.working = false;
+        company_service.addCompany(self.selectedCompany, role, location.key, community_path)
+            .then(function(response) {
 
-                    if (response.status !== 200) {
-                        self.alert = { type: 'danger', message: 'There was a problem: ' + String(response.data.message) };
-                    } else {
-                        self.alert = { type: 'success', message: 'Congrats, ' + response.data.profile.name + ' has been added to the ' + community.profile.name + ' community.' };
-                    }
-                });
-
-        } else {
-            this.working = false;
-            self.form.submitted = true;
-        }
-
+                self.working = false;
+                if (response.status !== 200) {
+                    self.alert = { type: 'danger', message: String(response.data.message) };
+                } else {
+                    self.selectedCompany = undefined;
+                    self.company = undefined;
+                    self.updateCompany = false;
+                    self.selectedRole = 'none';
+                    self.alert = { type: 'success', message: String(response.data.message) };
+                }
+                $mixpanel.track('Added Company');
+            })
+            .catch(function(error) {
+                self.working = false;
+                self.alert = { type: 'danger', message: String(error.data.message) };
+            })
     };
 
-    this.working = false;
+    self.working = false;
 
 }

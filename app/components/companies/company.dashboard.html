@@ -3,22 +3,22 @@
         <div class="hpanel hgreen">
             <div class="panel-body">
                 <div class="row">
-                    <div class="col-sm-9">
+                    <div class="col-sm-12">
                         <div class="col-sm-2 col-lg-1">
-                            <img style="height:75px;" ng-src="{{profile.startup.logo || profile.startup.profile.avatar || profile.startup.profile.angellist.thumb_url || 'images/blank_startup.jpg'}}" alt="{{::profile.startup.profile.name}}">
+                            <img style="height:75px;" ng-src="{{profile.company.logo || profile.company.profile.avatar || profile.company.profile.angellist.thumb_url || 'images/blank_startup.jpg'}}" alt="{{::profile.company.profile.name}}">
                         </div>
                         <div class="col-sm-10 col-lg-11" style="padding-bottom: 15px;">
                             <div class="project-action" style="margin-right: -15px;">
                                 <div class="btn-group pull-right">
                                     <a href="#"><i class="fa fa-angellist btn btn-default btn-xs"></i></a>
-                                    <a href="{{profile.startup.profile.angellist.angellist_url}}" target="_blank"><i class="fa fa-linkedin btn btn-default btn-xs"></i>
+                                    <a href="{{profile.company.profile.angellist.angellist_url}}" target="_blank"><i class="fa fa-linkedin btn btn-default btn-xs"></i>
                                     </a>
                                 </div>
                             </div>
-                            <h3>{{::profile.startup.profile.name}}
+                            <h3>{{::profile.company.profile.name}}
                             </h3>
                             <h4>
-                                {{::profile.startup.profile.angellist.high_concept}}
+                                {{::profile.company.profile.angellist.high_concept}}
                             </h4>
                         </div>
 
@@ -27,7 +27,7 @@
                                 <ul class="profile-ul">
                                     <p style="font-size: 14px; padding: 2px 5px 0 20px; float: left;">Leader:</p>
                                     <li ng-repeat="(key, val) in profile.user.roles.leader" class="profile-roles">
-                                        <a ui-sref="{{profile.communities[key].type + '.dashboard({location_path: key, community: profile.communities[key], query: &quot;&#42;&quot;})'}}" class="btn btn-xs btn-outline" ng-class="{'btn-danger' : profile.communities[key].type == 'startup', 'btn-info' : profile.communities[key].type == 'network', 'btn-primary' : profile.communities[key].type == 'industry', 'btn-success' : profile.communities[key].type == 'location'}"><i class="fa {{profile.communities[key].profile.icon}}"></i> {{profile.communities[key].profile.name}}</a>
+                                        <a ui-sref="community.dashboard({location_path: key, community: profile.communities[key], query: &quot;&#42;&quot;})" class="btn btn-xs btn-outline" ng-class="{'btn-danger' : profile.communities[key].type == 'company', 'btn-info' : profile.communities[key].type == 'network', 'btn-primary' : profile.communities[key].type == 'cluster', 'btn-success' : profile.communities[key].type == 'location'}"><i class="fa {{profile.communities[key].profile.icon}}"></i> {{profile.communities[key].profile.name}}</a>
                                     </li>
                                 </ul>
                             </div>
@@ -35,7 +35,7 @@
                                 <ul class="profile-ul">
                                     <p style="font-size: 14px; padding: 2px 5px 0 20px; float: left;">Founder:</p>
                                     <li ng-repeat="(key, val) in profile.user.roles.founder" class="profile-roles">
-                                        <a ui-sref="{{profile.communities[key].type + '.dashboard({location_path: key, community: profile.communities[key], query: &quot;&#42;&quot;})'}}" class="btn btn-xs btn-outline" ng-class="{'btn-danger' : profile.communities[key].type == 'startup', 'btn-info' : profile.communities[key].type == 'network', 'btn-primary' : profile.communities[key].type == 'industry', 'btn-success' : profile.communities[key].type == 'location'}"><i class="fa {{profile.communities[key].profile.icon}}"></i> {{profile.communities[key].profile.name}}</a>
+                                        <a ui-sref="community.dashboard({location_path: key, community: profile.communities[key], query: &quot;&#42;&quot;})" class="btn btn-xs btn-outline" ng-class="{'btn-danger' : profile.communities[key].type == 'company', 'btn-info' : profile.communities[key].type == 'network', 'btn-primary' : profile.communities[key].type == 'cluster', 'btn-success' : profile.communities[key].type == 'location'}"><i class="fa {{profile.communities[key].profile.icon}}"></i> {{profile.communities[key].profile.name}}</a>
                                     </li>
                                 </ul>
                             </div>
@@ -43,7 +43,7 @@
                                 <ul class="profile-ul">
                                     <p style="font-size: 14px; padding: 2px 5px 0 20px; float: left;">Investor:</p>
                                     <li ng-repeat="(key, val) in profile.user.roles.investor" class="profile-roles">
-                                        <a ui-sref="{{profile.communities[key].type + '.dashboard({location_path: key, community: profile.communities[key], query: &quot;&#42;&quot;})'}}" class="btn btn-xs btn-outline" ng-class="{'btn-danger' : profile.communities[key].type == 'startup', 'btn-info' : profile.communities[key].type == 'network', 'btn-primary' : profile.communities[key].type == 'industry', 'btn-success' : profile.communities[key].type == 'location'}"><i class="fa {{profile.communities[key].profile.icon}}"></i> {{profile.communities[key].profile.name}}</a>
+                                        <a ui-sref="community.dashboard({location_path: key, community: profile.communities[key], query: &quot;&#42;&quot;})" class="btn btn-xs btn-outline" ng-class="{'btn-danger' : profile.communities[key].type == 'company', 'btn-info' : profile.communities[key].type == 'network', 'btn-primary' : profile.communities[key].type == 'cluster', 'btn-success' : profile.communities[key].type == 'location'}"><i class="fa {{profile.communities[key].profile.icon}}"></i> {{profile.communities[key].profile.name}}</a>
                                     </li>
                                 </ul>
                             </div>
@@ -51,22 +51,24 @@
                                 <ul class="profile-ul">
                                     <p style="font-size: 14px; padding: 2px 5px 0 20px; float: left;">Mentor:</p>
                                     <li ng-repeat="(key, val) in profile.user.roles.mentor" class="profile-roles">
-                                        <a ui-sref="{{profile.communities[key].type + '.dashboard({location_path: key, community: profile.communities[key], query: &quot;&#42;&quot;})'}}" class="btn btn-xs btn-outline" ng-class="{'btn-danger' : profile.communities[key].type == 'startup', 'btn-info' : profile.communities[key].type == 'network', 'btn-primary' : profile.communities[key].type == 'industry', 'btn-success' : profile.communities[key].type == 'location'}"><i class="fa {{profile.communities[key].profile.icon}}"></i> {{profile.communities[key].profile.name}}</a>
+                                        <a ui-sref="community.dashboard({location_path: key, community: profile.communities[key], query: &quot;&#42;&quot;})" class="btn btn-xs btn-outline" ng-class="{'btn-danger' : profile.communities[key].type == 'company', 'btn-info' : profile.communities[key].type == 'network', 'btn-primary' : profile.communities[key].type == 'cluster', 'btn-success' : profile.communities[key].type == 'location'}"><i class="fa {{profile.communities[key].profile.icon}}"></i> {{profile.communities[key].profile.name}}</a>
                                     </li>
                                 </ul>
                             </div>
                         </div>
 
                     </div>
+                    <!--
                     <div class="col-sm-3 project-info">
-                        <gm-map id="profile-map" gm-address="{address:profile.startup.profile.home}" options="{zoom: 11, disableDefaultUI: true}">
+                        <gm-map id="profile-map" gm-address="{address:profile.company.profile.home}" options="{zoom: 11, disableDefaultUI: true}">
                         </gm-map>
                     </div>
+                    -->
                 </div>
             </div>
             <div class="panel-footer">
                 <h3>Summary</h3>
-                <p style="white-space:pre-wrap;" ng-bind-html="::profile.startup.profile.angellist.product_desc | linky:'_blank'"></p>
+                <p style="white-space:pre-wrap;" ng-bind-html="::profile.company.profile.angellist.product_desc | linky:'_blank'"></p>
             </div>
         </div>
     </div>

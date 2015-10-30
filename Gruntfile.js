@@ -22,15 +22,15 @@ module.exports = function (grunt) {
         // The grunt server settings
         connect: {
             options: {
-                port: process.env.PORT,
-                hostname: '0.0.0.0',
+                port: process.env.PORT || 9000,
+                hostname: 'localhost',
                 livereload: 35729
             },
-            /*
             livereload: {
                 options: {
                     open: true,
                     middleware: function (connect) {
+                        console.log(appConfig.app);
                         return [
                             connect.static('.tmp'),
                             connect().use(
@@ -42,7 +42,6 @@ module.exports = function (grunt) {
                     }
                 }
             },
-            */
             test: {
                 options: {
                     base: '<%= startupcommunity.dist %>'
@@ -70,14 +69,14 @@ module.exports = function (grunt) {
         watch: {
             styles: {
                 files: ['app/less/**/*.less'],
-                tasks: ['less', 'copy:styles'],
+                tasks: ['less', 'copy:backstyles', 'copy:frontstyles'],
                 options: {
                     nospawn: true,
                     livereload: '<%= connect.options.livereload %>'
                 }
             },
             js: {
-                files: ['<%= startupcommunity.app %>/scripts/{,*/}*.js'],
+                files: ['<%= startupcommunity.app %>/scripts/{,*/}*.js', '<%= startupcommunity.app %>/components/{,*/}*.js'],
                 options: {
                     livereload: '<%= connect.options.livereload %>'
                 }
@@ -244,11 +243,24 @@ module.exports = function (grunt) {
         'clean:server',
         'copy:backstyles',
         'copy:frontstyles',
-        'connect'
+        'connect:test'
         //'protractor:run'
     ]);
 
     grunt.registerTask('default', 'build');
+
+    grunt.registerTask('fast', [
+        //'clean:dist',
+        'less',
+        'useminPrepare',
+        'concat',
+        //'copy:dist',
+        'cssmin',
+        //'uglify',
+        //'filerev', caused issues with cloudflare
+        'usemin',
+        //'htmlmin'
+    ]);
 
     grunt.registerTask('heroku:development', 'build');
 

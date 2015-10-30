@@ -1,7 +1,6 @@
 angular
     .module('startupcommunity')
-    .controller('NavigationController', NavigationController)
-    .controller('ChangeLocationController', ChangeLocationController);
+    .controller('NavigationController', NavigationController);
 
 function NavigationController($auth, $state, $window, $location, $stateParams, $modal, user, location, community, communities, knowtify) {
     if (user.data && user.data.token) $auth.setToken(user.data.token); // update local storage with latest user profile
@@ -9,8 +8,12 @@ function NavigationController($auth, $state, $window, $location, $stateParams, $
     // SENSITIVE VARIABLES THAT AFFECT NAVIGATION AND ALL CHILD TEMPLATES
     // When used in ui-sref links: location_path affects the url, location affects header and content, community affects header and secondary url
     try { // catch any initial db connectivity problems
-        this.location = jQuery.isEmptyObject($stateParams.location) ? (jQuery.isEmptyObject(location) ? communities.data[$stateParams.location_path] : location) : $stateParams.location;
-        this.community = jQuery.isEmptyObject($stateParams.community) ? (community.key !== this.location.key ? community : this.location) : $stateParams.community;
+        this.location = jQuery.isEmptyObject(location) ? community : location;
+        this.community = jQuery.isEmptyObject($stateParams.community) ?
+            (community.key !== this.location.key ?
+                community :
+                this.location) :
+            $stateParams.community;
         this.location_path = $stateParams.location_path || $stateParams.location.key || this.community.key;
     }
     catch(err) {
@@ -25,41 +28,25 @@ function NavigationController($auth, $state, $window, $location, $stateParams, $
 
         this.user = user.data.user; // reference 'this' by using 'nav' from 'NavigationController as nav' - * nav is also usable in child views *
 
-        // Role icons displayed in user profile
-        var rolelist = [],
-            j,
-            k,
-            role;
-
-        for (j in this.user.communities) {
-            for (k in this.user.communities[j]) {
-                role = k[0].toUpperCase() + k.slice(1);
-                if (rolelist.indexOf(role) < 0) {
-                    rolelist.push(role);
-                }
-            }
-        }
-
-        this.user.profile["roles"] = rolelist;
-
-        knowtify.push(['load_inbox', 'knowtify', {email: this.user.profile.email, id: this.user.profile.linkedin.id }]);
+        knowtify.push(['load_inbox', 'knowtify', {email: this.user.profile.email}]);
 
     }
 
     // PRIMARY LEFT-NAV ITEM LIST
+    if (!this.community) this.community = communities.data[this.location_path];
 
     // sort communities for use in nav and child dashboard pages
-    for (item in communities.data) { // no clue what item is here
-        if (item !== this.community.key) { // edco-stable-of-experts
+    for (item in communities.data) { // no clue what item is here, esp if user or company
+        if (item !== this.community.key) { // ie. edco-stable-of-experts
             if (communities.data[item]) {
                 switch (communities.data[item].type) {
                     case "location":
                         if (!this.locations) this.locations = {};
                         this.locations[item] = communities.data[item];
                         break;
-                    case "industry":
-                        if (!this.industries) this.industries = {};
-                        this.industries[item] = communities.data[item];
+                    case "cluster":
+                        if (!this.clusters) this.clusters = {};
+                        this.clusters[item] = communities.data[item];
                         break;
                     case "network":
                         if (!this.networks) this.networks = {};
@@ -72,6 +59,24 @@ function NavigationController($auth, $state, $window, $location, $stateParams, $
         }
     }
 
+<<<<<<< HEAD
+=======
+    this.communities = communities.data; // used in company list views
+
+    // For tour
+    if ($stateParams.tour) {
+        angular.element(document).ready(function () {
+            setTimeout(function() {
+                jQuery('#tourstart').trigger('click');
+            }, 3000);
+        });
+    }
+
+    this.end = function() {
+        $state.go('user.dashboard', {profile: self.user, location_path: self.user.key, community: self.user, tour: false});
+    };
+
+>>>>>>> invite
     // BREADCRUMBS
 
     if (this.community.type == "user") {
@@ -85,40 +90,61 @@ function NavigationController($auth, $state, $window, $location, $stateParams, $
         "({location_path: nav.location_path, community: nav.community, query: '*', community_path: nav.community.key})";
 
     // to set correct root path when navigating from user or company page
+<<<<<<< HEAD
     this.nav_jump = this.location.type == 'location' || ((this.community.type == "user" || this.community.type == "company") &&
     (this.location.type == 'location')) ?
+=======
+    this.nav_jump = (this.location && this.location.type == 'location') || ((this.community.type == "user" || this.community.type == "company") &&
+        (this.location && this.location.type == 'location')) ?
+>>>>>>> invite
         "({community_path: item.key, community: item, query: '*', location_path: nav.location.key})" :
         "({community_path: item.key, community: item, query: '*', location_path: nav.location.profile.home})";
 
     // SEARCH
 
-    if (this.community.type == "industry" || this.community.type == "network") {
+    if ($stateParams.query) this.search.query = $stateParams.query;
+
+    if (this.community.type == "cluster" || this.community.type == "network") {
         if (this.community.community_profiles && this.community.community_profiles[this.location_path]) {
             this.searchname = this.community.community_profiles[this.location_path].name;
         } else this.searchname = this.community.profile.name;
-    } else this.searchname = this.location.profile.name;
+    } else this.searchname = this.location ? this.location.profile.name : "";
 
     this.search = function(query) {
 
         if (!query) query = "*";
 
-        if (self.community.type == "industry" || self.community.type == "network") {
+        if (self.community.type == "cluster" || self.community.type == "network") {
             self.location_path == self.community.key ?
                 $state.go('search.dashboard', {location_path: self.location_path, community: self.community, query: query}) :
                 $state.go('search.dashboard', {location_path: self.location_path, community_path: self.community.key, community: self.community, query: query});
-        } else if (self.community.type == "user" || self.community.type == "startup") {
+        } else if (self.community.type == "user" || self.community.type == "company") {
             $state.go('search.dashboard', {location_path: self.community.profile.home, query: query});
         } else $state.go('search.dashboard', {query: query});
 
     };
 
-    // CHANGE LOCATION
+    // CONTACT USER
 
-    this.changeLocation = function() {
+    this.contact = function(user) {
+
         var modalInstance = $modal.open({
-            templateUrl: 'components/common/nav/nav.change_location.html',
-            controller: ChangeLocationController,
-            windowClass: "hmodal-warning"
+            templateUrl: 'components/users/user.contact.html',
+            controller: ContactUserController,
+            controllerAs: 'contact',
+            windowClass: "hmodal-warning",
+            resolve: {
+                user: function() {
+                    user.value["key"] = user.path.key;
+                    return user.value;
+                },
+                community_key: function() {
+                    return self.community.key;
+                },
+                location_key: function() {
+                    return $stateParams.location_path;;
+                }
+            }
         });
     };
 
@@ -135,18 +161,115 @@ function NavigationController($auth, $state, $window, $location, $stateParams, $
                 community: function() {
                     return self.community;
                 },
+                location: function() {
+                    return self.location;
+                },
                 location_key: function() {
                     return $stateParams.location_path;
+                },
+                user: function() {
+                    return self.user;
                 }
             }
         });
     };
 
-    // ROUTING OF ROOT PATHS
+    // ADD NETWORK
+
+    this.addNetwork = function() {
+
+        var modalInstance = $modal.open({
+            templateUrl: 'components/common/nav/nav.add_network.html',
+            controller: addNetworkController,
+            controllerAs: 'add',
+            windowClass: "hmodal-info",
+            resolve: {
+                location: function() {
+                    return self.location;
+                }
+            }
+        });
+    };
+
+
+    // ADD CLUSTER
+
+    this.addCluster = function() {
+
+        var modalInstance = $modal.open({
+            templateUrl: 'components/common/nav/nav.add_cluster.html',
+            controller: addClusterController,
+            controllerAs: 'add',
+            windowClass: "hmodal-success",
+            resolve: {
+                location: function() {
+                    return self.location;
+                }
+            }
+        });
+    };
+
+    // INVITE PEOPLE
+
+    this.invitePeople = function() {
+
+        var modalInstance = $modal.open({
+            templateUrl: 'components/users/user.invite.html',
+            controller: InviteUserController,
+            controllerAs: 'invite',
+            windowClass: "hmodal-info",
+            resolve: {
+                community: function() {
+                    return self.community;
+                },
+                communities: function() {
+                    return self.communities;
+                },
+                location: function() {
+                    return self.location;
+                }
+            }
+        });
+    };
+
+    // ADD COMPANY
+
+    this.addCompany = function() {
+
+        var modalInstance = $modal.open({
+            templateUrl: 'components/companies/company.add.html',
+            controller: WelcomeController,
+            controllerAs: 'welcome',
+            windowClass: "hmodal-info",
+            resolve: {
+                community: function() {
+                    return self.community;
+                },
+                communities: function() {
+                    return self.communities;
+                },
+                location: function() {
+                    return self.location;
+                }
+            }
+        });
+    };
+
+
+    // *** ROUTING OF ROOT PATHS ***
 
     this.path = $location.path().replace(/\/$/, ""); //used for routing and used in view
     if (this.path.split('/').length < 3) {
-        $state.go(this.community.type + '.dashboard');
+        switch (this.community.type) {
+            case 'user':
+                $state.go('user.dashboard');
+                break;
+            case 'company':
+                $state.go('company.dashboard');
+                break;
+            default:
+                $state.go('community.dashboard');
+        }
     }
 
 
@@ -181,7 +304,7 @@ function NavigationController($auth, $state, $window, $location, $stateParams, $
         if (!verified) {
 
 
-            if (this.community.type === 'industry' && this.community.community_profiles[this.location_path] && this.community.community_profiles[this.location_path].embed) {
+            if (this.community.type === 'cluster' && this.community.community_profiles[this.location_path] && this.community.community_profiles[this.location_path].embed) {
                 embed = this.community.community_profiles[this.location_path].embed;
             } else embed = this.community.profile.embed;
 
@@ -206,23 +329,14 @@ function NavigationController($auth, $state, $window, $location, $stateParams, $
 
 }
 
-function ChangeLocationController($modalInstance){
-    this.ok = function () {
-        $modalInstance.close();
-    };
+function CommunitySettingsController($modalInstance, $state, sweet, user, community_service, community, location, location_key){
 
-    this.cancel = function () {
-        $modalInstance.dismiss('cancel');
-    };
-}
-
-function CommunitySettingsController($modalInstance, $window, $state, sweet, community_service, community, location_key){
-
+    this.user = user;
     this.community = community;
     this.location_key = location_key;
     var self = this;
 
-    if (community.type == 'industry' && self.community.community_profiles[location_key] && self.community.community_profiles[location_key].embed) {
+    if (community.type == 'cluster' && self.community.community_profiles[location_key] && self.community.community_profiles[location_key].embed) {
         this.embed = self.community.community_profiles[location_key].embed;
     } else this.embed = this.community.profile.embed;
 
@@ -246,31 +360,216 @@ function CommunitySettingsController($modalInstance, $window, $state, sweet, com
 
     this.save = function () {
 
-        $modalInstance.close();
-
         community_service.setSettings(self.embed, self.location_key, self.community.key)
             .then(function(response) {
 
                 if (response.status !== 201) {
                     sweet.show({
                         title: "Sorry, something went wrong.",
-                        text: "Here's what we know: " + response.data.message,
+                        text: response.data.message,
                         type: "error"
                     });
 
                 } else {
                     sweet.show({
-                        title: "Settings Saved!",
+                        title: "Settings saved!",
                         type: "success"
+                    }, function(){
+                        $modalInstance.close();
+                        $state.reload();
                     });
-
-                    $state.reload();
                 }
             });
+    };
+
+    this.delete = function () {
+        console.log(location);
+        sweet.show({
+            title: "Are you sure?",
+            text: "You cannot recover this once it has been deleted!",
+            type: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#DD6B55",
+            confirmButtonText: "Yes, delete " + self.community.profile.name + "!",
+            closeOnConfirm: false
+        }, function () {
+
+            community_service.deleteCommunity(self.community, self.location_key)
+                .then(function(response) {
+
+                    if (response.status !== 204) {
+                        sweet.show({
+                            title: "Sorry, something went wrong.",
+                            text: response.data.message,
+                            type: "error"
+                        });
+
+                    } else {
+                        sweet.show({
+                            title: "Deleted!",
+                            text: "The " + self.community.profile.name + " community is gone.",
+                            type: "success"
+                        }, function() {
+                            $modalInstance.close();
+                            $state.go('community.dashboard', {location_path: self.location_key, community_path: null, community: location});
+                        })
+                    }
+                });
+
+        });
+
+
     };
 
     this.cancel = function () {
         $modalInstance.dismiss('cancel');
         $state.reload();
+    };
+}
+
+function addClusterController($modalInstance, $mixpanel, $state, sweet, community_service, location){
+
+    this.location = location;
+    this.name = ""; // to avoid 'undefined' for initial url
+    var self = this;
+
+    this.parents = [ 'Agriculture', 'Art', 'Construction', 'Consumer Goods', 'Corporate', 'Education', 'Finance', 'Government', 'Healthcare', 'Legal', 'Manufacturing', 'Medical', 'Non-Profit', 'Recreation', 'Services', 'Tech', 'Transportation' ];
+
+    this.industryList = community_service.industries();
+
+    this.encode = function(uri) {
+        return encodeURI(uri);
+    };
+
+    this.createCluster = function() {
+        if (self.form.$valid) {
+
+            if (self.url) {
+                try {
+                    self.url = this.encode(self.url);
+                }
+                catch (e) {
+                    sweet.show({
+                        title: "Sorry, something is wrong with the url path.",
+                        type: "error"
+                    });
+                    self.submitted = true;
+                }
+            }
+
+            var cluster = {
+                type: "cluster",
+                profile: {
+                    name: self.name,
+                    headline: self.headline,
+                    parents: [self.parent],
+                    industries: self.industries
+                },
+                url: self.url
+            };
+
+            community_service.addCommunity(cluster, self.location.key)
+                .then(function(response) {
+
+                    if (response.status !== 201) {
+                        sweet.show({
+                            title: "Sorry, something went wrong.",
+                            text: response.data.message,
+                            type: "error"
+                        });
+
+                    } else {
+                        sweet.show({
+                            title: "Cluster created!",
+                            type: "success"
+                        }, function(){
+                            $modalInstance.close();
+                            $state.reload();
+                        });
+                    }
+                    $mixpanel.track('Added Cluster');
+                });
+
+            //
+
+        } else {
+            self.submitted = true;
+        }
+    };
+
+    this.cancel = function () {
+        $modalInstance.dismiss('cancel');
+    };
+}
+
+function addNetworkController($modalInstance, $mixpanel, $state, sweet, community_service, location){
+
+    this.location = location;
+    this.name = ""; // to avoid 'undefined' for initial url
+    var self = this;
+
+    this.parents = [ 'Accelerator', 'College', 'Coworking Space', 'Incubator', 'Investment Fund', 'Mentor Group', 'VC Firm' ];
+
+    this.encode = function(uri) {
+        return encodeURI(uri);
+    };
+
+    this.createNetwork = function() {
+        if (self.form.$valid) {
+
+            if (self.url) {
+                try {
+                    self.url = this.encode(self.url);
+                }
+                catch (e) {
+                    sweet.show({
+                        title: "Sorry, something is wrong with the url path.",
+                        type: "error"
+                    });
+                    self.submitted = true;
+                }
+            }
+
+            var network = {
+                type: "network",
+                profile: {
+                    name: self.name,
+                    headline: self.headline,
+                    parents: [self.parent]
+                },
+                url: self.url
+            };
+
+            community_service.addCommunity(network, self.location.key)
+                .then(function(response) {
+
+                    if (response.status !== 201) {
+                        sweet.show({
+                            title: "Sorry, something went wrong.",
+                            text: response.data.message,
+                            type: "error"
+                        });
+
+                    } else {
+                        sweet.show({
+                            title: "Network created!",
+                            type: "success"
+                        }, function(){
+                            $modalInstance.close();
+                            $state.reload();
+                        });
+                    }
+                    $mixpanel.track('Added Network');
+                });
+
+            //
+
+        } else {
+            self.submitted = true;
+        }
+    };
+
+    this.cancel = function () {
+        $modalInstance.dismiss('cancel');
     };
 }

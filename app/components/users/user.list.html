@@ -5,61 +5,71 @@
             <div class="hpanel hgreen">
                 <div class="panel-footer top" style="font-size: 17px;">
                     <strong>Role</strong> Filters
-                    <i ng-show="users.loadingRole" class="fa fa-refresh fa-spin pull-right" style="padding: 4px; color: #aaa;"></i>
+                    <div loading-bars ng-show="users.loadingRole" style="display: inline;"></div>
                 </div>
                 <div class="panel-body filternav">
 
-                    <ul class="panel-list">
+                    <ul class="panel-list" style="white-space: nowrap; overflow: hidden;">
                         <li ng-class="{'active':users.selectedRole.indexOf('*') >= 0}" ng-click="users.filterRole('*')">
                             <a><i class="fa fa-fw fa-globe themed-color-dark"></i> All</a>
                         </li>
                         <hr style="margin: 10px 0 10px 0;">
                         <li ng-class="{'active':users.selectedRole.indexOf('founder') >= 0}" ng-click="users.filterRole('founder')">
                             <a>
-                                <i class="fa fa-rocket text-navyblue"></i> Founders
+                                <i class="pe-7s-paper-plane text-primary"></i> Founders
                             </a>
                         </li>
                         <li ng-class="{'active':users.selectedRole.indexOf('leader') >= 0}" ng-click="users.filterRole('leader')">
                             <a>
-                                <i class="fa fa-flag text-danger"></i> Leaders
+                                <i class="text-danger pe-7s-flag"></i> Leaders
                             </a>
                         </li>
                         <li ng-class="{'active':users.selectedRole.indexOf('mentor') >= 0}" ng-click="users.filterRole('mentor')">
                             <a>
-                                <i class="fa fa-graduation-cap text-info"></i> Mentors
+                                <i class="text-info pe-7s-study"></i> Mentors
                             </a>
                         </li>
                         <li ng-class="{'active':users.selectedRole.indexOf('investor') >= 0}" ng-click="users.filterRole('investor')">
                             <a>
-                                <i class="fa fa-leaf text-success"></i> Investors
+                                <i class="text-success pe-7s-gleam"></i> Investors
+                            </a>
+                        </li>
+                        <li ng-class="{'active':users.selectedRole.indexOf('team') >= 0}" ng-click="users.filterRole('team')">
+                            <a>
+                                <i class="text-default pe-7s-ball"></i> Teams
+                            </a>
+                        </li>
+                        <li ng-class="{'active':users.selectedRole.indexOf('provider') >= 0}" ng-click="users.filterRole('provider')">
+                            <a>
+                                <i class="text-warning pe-7s-portfolio"></i> Providers
                             </a>
                         </li>
                     </ul>
                 </div>
             </div>
-
-            <div class="hpanel hnavyblue" ng-if="users.community.type !== 'industry'">
+            <!--
+            <div class="hpanel hnavyblue" ng-if="users.community.type !== 'cluster'">
                 <div class="panel-footer top" style="font-size: 17px;">
-                    <strong>Industry</strong> Filters
-                    <i ng-show="users.loadingIndustry" class="fa fa-refresh fa-spin pull-right" style="padding: 4px; color: #aaa;"></i>
+                    <strong>Cluster</strong> Filters
+                    <div loading-bars ng-show="users.loadingCluster" style="display: inline;"></div>
                 </div>
                 <div class="panel-body filternav">
                     <ul class="panel-list">
-                        <li ng-init="users.allIndustries=true" ng-class="{'active':users.allIndustries}" ng-click="users.loadingIndustry=true; users.allIndustries=true; users.filterIndustries();">
+                        <li ng-init="users.allClusters=true" ng-class="{'active':users.allClusters}" ng-click="users.loadingCluster=true; users.allClusters=true; users.filterClusters();">
                             <a><i class="fa fa-fw fa-globe themed-color-dark icon-push"></i> All</a>
                         </li>
                         <hr style="margin: 10px 0 10px 0;">
-                        <li ng-repeat="industry in nav.industries" ng-class="{'active':users.selectedIndustries.indexOf(industry.key) >= 0}" ng-click="users.loadingIndustry=true;  users.allIndustries=false; users.filterIndustries(industry.key);">
-                            <a><i class="fa {{industry.profile.icon}}"></i> {{industry.profile.name}}</a>
+                        <li ng-repeat="cluster in nav.clusters" ng-class="{'active':users.selectedClusters.indexOf(cluster.key) >= 0}" ng-click="users.loadingCluster=true;  users.allClusters=false; users.filterClusters(cluster.key);">
+                            <a><i class="fa {{cluster.profile.icon}}"></i> {{cluster.profile.name}}</a>
                         </li>
                     </ul>
                 </div>
             </div>
-
+            -->
             <div class="hpanel hblue">
                 <div class="panel-footer top" style="font-size: 17px;">
                     <strong>Network</strong> Filters
-                    <i ng-show="users.loadingNetwork" class="fa fa-refresh fa-spin pull-right" style="padding: 4px; color: #aaa;"></i>
+                    <div loading-bars ng-show="users.loadingNetwork" style="display: inline;"></div>
                 </div>
                 <div class="panel-body filternav">
                     <ul class="panel-list">

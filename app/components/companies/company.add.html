@@ -1,0 +1,78 @@
+<div class="inmodal">
+    <div class="color-line"></div>
+    <div class="modal-header">
+        <h4 class="modal-title">Add a company to {{::welcome.community.profile.name}}</h4>
+        <p class="font-bold">Only add companies that are part of your local startup community.</p>
+    </div>
+    <div class="modal-body">
+        <div class="hpanel">
+            <div ng-show="welcome.selectedCompany" style="text-align:center;">
+                <a href="{{welcome.selectedCompany.angellist_url}}" target="_blank" title="{{welcome.selectedCompany.name}}'s AngelList Profile">
+                    <img style="height:75px;"
+                         ngf-thumbnail="welcome.selectedCompany.thumb_url || file || 'images/blank_startup.png'">
+                </a>
+                <br/>
+                <label id="uploader_text">
+                    <input type="file" ng-model="logo_thumbnail" name="file" ngf-pattern="'image/*'"
+                           accept="image/*" ngf-max-size="2MB" ngf-min-height="50"
+                           ngf-resize="{width: 75, height: 75}" ngf-select="welcome.uploadLogo($file)" style="display:none;"/>
+                    <h6>Change thumbnail..</h6>
+                </label>
+            </div>
+            <div style="padding: 20px;">
+
+                <div class="form-group">
+                    <input type="text" ng-model="welcome.company" placeholder="Search by company name.." autofocus="true" typeahead="company.name for company in welcome.getCompanies($viewValue)" typeahead-editable="false" typeahead-on-select="welcome.selectedCompany = $item;" class="form-control input-lg">
+                    <a style="padding-top: 3px; color: #777;" class="pull-right" ng-click="welcome.notListed()">not listed?</a>
+                </div>
+
+                <div ng-show="welcome.selectedCompany" style="padding-top: 10px;">
+                    <h4 style="line-height:1.75;">
+                        Your primary role at <a href="{{welcome.selectedCompany.angellist_url}}" target="_blank" title="{{welcome.selectedCompany.name}}'s AngelList Profile">{{welcome.selectedCompany.name}}</a> is <a href="#" editable-select="welcome.selectedRole" e-ng-options="r.value as r.text for r in welcome.selectRoles">{{ welcome.showRole() }}</a>.<br/>
+                        <a href="{{welcome.selectedCompany.angellist_url}}" target="_blank" title="{{welcome.selectedCompany.name}}'s AngelList Profile">{{welcome.selectedCompany.name}}</a>'s headline is <a style="color:#4ea5e0;" editable-text="welcome.selectedCompany.high_concept">{{welcome.selectedCompany.high_concept || 'empty'}}</a>.
+                        <br><br>
+                        Select a parent industry for <a href="{{welcome.selectedCompany.angellist_url}}" target="_blank" title="{{welcome.selectedCompany.name}}'s AngelList Profile">{{welcome.selectedCompany.name}}</a>:
+                        <select class="form-control m-b" ng-model="welcome.selectedCompany.parent" style="margin-bottom: 5px;" required>
+                            <option ng-repeat="parent in welcome.parents">{{ parent }}</option>
+                        </select>
+                        <div class="m-t-xs" ng-show="!welcome.selectedCompany.parent && welcome.submitted">
+                            <span class="text-danger">&nbsp;&nbsp;<i class="fa fa-exclamation-triangle"></i> A parent is required.</span>
+                        </div>
+                        <br>
+                        And a revenue stage:
+                        <select class="form-control m-b" ng-model="welcome.selectedCompany.stage" style="margin-bottom: 5px;" required>
+                            <option ng-repeat="stage in welcome.stages">{{ stage }}</option>
+                        </select>
+                        <div class="m-t-xs" ng-show="!welcome.selectedCompany.stage && welcome.submitted">
+                            <span class="text-danger">&nbsp;&nbsp;<i class="fa fa-exclamation-triangle"></i> A stage is required.</span>
+                        </div>
+                        <br>
+                        Add up to six specific industries <a href="{{welcome.selectedCompany.angellist_url}}" target="_blank" title="{{welcome.selectedCompany.name}}'s AngelList Profile">{{welcome.selectedCompany.name}}</a> is a part of:
+                        <div class="panel-body industry_select" style="padding:1px; margin-top: 6px; margin-bottom: 6px;">
+                            <ui-select multiple ng-model="welcome.selectedCompany.industries" tagging="true" tagging-label="(new)" ng-disabled="disabled" limit="6" alert_title="Sorry, only 6 items here." alert_text="Focus on industries with a network in your community." alert_type="warning" style="border:none;">
+                                <ui-select-match placeholder="Search for industries..">{{$item}}</ui-select-match>
+                                <ui-select-choices repeat="industry in welcome.industries | filter:$select.search | limitTo: 25">
+                                    {{industry}}
+                                </ui-select-choices>
+                            </ui-select>
+                        </div>
+                        <br/>
+                        Click below to edit <a href="{{welcome.selectedCompany.angellist_url}}" target="_blank" title="{{welcome.selectedCompany.name}}'s AngelList Profile">{{welcome.selectedCompany.name}}</a>'s summary:
+                    </h4>
+                    <div class="summary_form">
+                        <a editable-textarea="welcome.selectedCompany.product_desc" e-rows="12" e-cols="60">
+                            <pre style="background: none; font-family: inherit; font-size: 14px; text-align: left;">{{welcome.selectedCompany.product_desc || 'Nothing here!'}}</pre>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div alert-box this-alert="welcome.alert"></div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <input ng-click="welcome.addCompany()" type="submit" class="finish btn-success btn pull-right" ng-class="{'disabled' : disabled || welcome.working || !welcome.selectedCompany}" value="{{ (welcome.updateCompany ? 'Update ' : 'Add ') + (welcome.selectedCompany.name || 'Company') }}"/>
+        <button type="button" class="btn btn-default pull-right" style="margin-right: 15px;" ng-show="welcome.selectedCompany && !welcome.working" ng-click="welcome.selectedCompany = undefined; welcome.company = undefined; welcome.alert = undefined; welcome.updateRole = false; welcome.selectedRole = 'none'; welcome.updateCompany = false;">Clear Form</button>
+        <div loading-bars ng-show="welcome.working" style="padding-top: 5px;"></div>
+        <button type="button" class="btn btn-default pull-left" ng-click="$close();$state.reload();">Go Back</button>
+    </div>
+</div>
