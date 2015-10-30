@@ -18,7 +18,7 @@
             <div style="padding-bottom: 10px;">
                 <hr>
                 <span class="text-muted" style="white-space:pre-wrap;" ng-bind-html="(item.value.profile.summary || item.value.profile.linkedin.summary) | linky:'_blank' | highlight:users.lastQuery | safe_html"></span>
-                <div id="skills" ng-show="(showSummary || users.lastQuery) && item.value.profile.summary" class="skills-top">
+                <div id="skills" ng-show="(showSummary || users.lastQuery) && (item.value.profile.summary || item.value.profile.linkedin.summary)" class="skills-top">
                     <li ng-repeat="skill in item.value.profile.skills" class="label btn-default skills">
                         <a><span ui-sref="search.dashboard({location_path: nav.location.key, community: nav.location, query: skill})" ng-bind-html="::skill | highlight:users.lastQuery"></span></a>
                     </li>
