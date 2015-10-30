@@ -1,6 +1,6 @@
 {
   "name": "StartupCommunity.org",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "description": "StartupCommunity.org - Kickstart your city's entrepreneurial ecosystem",
   "private": true,
   "dependencies": {

@@ -17,7 +17,7 @@ function handleMaintenance(res) {
         startKey = 0,
         limit = 50,
         userlist = [],
-        collection = 'communities-dev';
+        collection = 'communities-staging';
 
     function getList(startKey, userlist, limit) {
         db.newSearchBuilder()
@@ -51,16 +51,19 @@ function handleMaintenance(res) {
                     if (data.body.results[item].value.linkedin) delete data.body.results[item].value.linkedin;
 
                      */
+
+                    // 1 Migration for production v2.1
                     var newdata = data.body.results[item].value; // get current record
-                    /*
-                    if (newdata.roles && newdata.roles.advisor) {
+                    newdata.type = "cluster";
+
+                    /*if (newdata.roles && newdata.roles.advisor) {
                         console.log('update!');
                         newdata.roles["mentor"] = newdata.roles.advisor;
                         delete newdata.roles.advisor;
                         console.log(newdata.roles);
-                    }
+                    }*/
 
-                    newdata.type = "cluster";
+
 
                     //newdata.communities = ["bend-or", "oregon", "us", "edco-stable-of-experts"];
                     //newdata.roles = { "mentor" : { "edco-stable-of-experts": ["bend-or"], "bend-or": ["bend-or"]}};
