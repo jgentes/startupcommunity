@@ -12,12 +12,12 @@
         <li ng-repeat="(item, val) in item.value.roles" class="user-role role-right" ><i ng-attr-title="{{item[0].toUpperCase() + item.slice(1);}}" style="font-weight: bold;" ng-class="{'text-primary pe-7s-paper-plane' : item == 'founder', 'text-danger pe-7s-flag' : item == 'leader', 'text-info pe-7s-study' : item == 'mentor', 'text-success pe-7s-gleam' : item == 'investor', 'text-default pe-7s-ball' : item == 'team', 'text-warning pe-7s-portfolio' : item == 'provider'}"></i></li>
         <br>
         <div class="dash-row">
-            <span class="text-muted" ng-bind-html="::item.value.profile.headline | highlight:users.lastQuery"></span>
+            <span class="text-muted" ng-bind-html="(item.value.profile.headline || item.value.profile.linkedin.headline) | highlight:users.lastQuery"></span>
         </div>
-        <div ng-show="(showSummary || $state.includes('search.*')) && item.value.profile.summary">
+        <div ng-show="(showSummary || $state.includes('search.*')) && (item.value.profile.summary || item.value.profile.linkedin.summary)">
             <div style="padding-bottom: 10px;">
                 <hr>
-                <span class="text-muted" style="white-space:pre-wrap;" ng-bind-html="::item.value.profile.summary | linky:'_blank' | highlight:users.lastQuery | safe_html"></span>
+                <span class="text-muted" style="white-space:pre-wrap;" ng-bind-html="(item.value.profile.summary || item.value.profile.linkedin.summary) | linky:'_blank' | highlight:users.lastQuery | safe_html"></span>
                 <div id="skills" ng-show="(showSummary || users.lastQuery) && item.value.profile.summary" class="skills-top">
                     <li ng-repeat="skill in item.value.profile.skills" class="label btn-default skills">
                         <a><span ui-sref="search.dashboard({location_path: nav.location.key, community: nav.location, query: skill})" ng-bind-html="::skill | highlight:users.lastQuery"></span></a>
