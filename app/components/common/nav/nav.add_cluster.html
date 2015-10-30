@@ -24,7 +24,7 @@
                 <br>
                 <div class="panel-heading" style="font-size: 20px;">3. Customize the url path</div>
                 <input type="text" class="form-control input-lg" placeholder="{{ add.encode(add.name) }}" ng-model="add.url" style="margin-bottom: 5px;">
-                <em>Your url will be: https://startupcommunity.org/{{add.location.key}}/<strong><span class="text-lowercase">{{ add.encode(add.url || add.name) }}</span></strong></em>
+                <em>Your url will be: https://startupcommunity.org/{{add.location.key}}/<strong><span style="text-transform: lowercase;">{{ add.encode(add.url || add.name) }}</span></strong></em>
                 <br><br>
                 <div class="panel-heading" style="font-size: 20px;">4. And a short description</div>
                 <input type="text" class="form-control input-lg" placeholder="Local hardware and software product companies" ng-model="add.headline">
