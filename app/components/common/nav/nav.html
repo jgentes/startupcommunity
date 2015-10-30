@@ -73,7 +73,7 @@
 
         <ul side-navigation class="nav" id="side-menu" style="border-top: 1px solid #eee;">
 
-            <li class="active" tour-step order="1" title="People and Companies" content="To view people by role, or sort companies by revenue, visit the People and Company pages." placement="right">
+            <li ng-show="nav.community.type !== 'user' && nav.community.type !== 'company'" class="active" tour-step order="1" title="People and Companies" content="To view people by role, or sort companies by revenue, visit the People and Company pages." placement="right">
 
                 <a style="cursor: default;"><span class="pe-7s-angle-down" style="padding-top: 4px;
     padding-right: 7px;"></span><span class="nav-label">

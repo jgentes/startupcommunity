@@ -3,7 +3,7 @@
         <div class="hpanel hgreen">
             <div class="panel-body">
                 <div class="row">
-                    <div class="col-sm-9">
+                    <div class="col-sm-12">
                         <div class="col-sm-2 col-lg-1">
                             <img style="height:75px;" ng-src="{{profile.company.logo || profile.company.profile.avatar || profile.company.profile.angellist.thumb_url || 'images/blank_startup.jpg'}}" alt="{{::profile.company.profile.name}}">
                         </div>
@@ -58,10 +58,12 @@
                         </div>
 
                     </div>
+                    <!--
                     <div class="col-sm-3 project-info">
                         <gm-map id="profile-map" gm-address="{address:profile.company.profile.home}" options="{zoom: 11, disableDefaultUI: true}">
                         </gm-map>
                     </div>
+                    -->
                 </div>
             </div>
             <div class="panel-footer">

@@ -247,9 +247,10 @@ function WelcomeController($auth, $q, $http, $mixpanel, $stateParams, $scope, $s
             } // else it's already there
 
         }
+
         // allow user to remove roles
         for (dRole in ['founder', 'investor', 'team', 'mentor', 'provider']) {
-            if (self.roles[dRole] && self.roles[dRole] == false) {
+            if (self.roles.length && self.roles[dRole] && self.roles[dRole] == false) {
                 if (self.user.roles[dRole] && self.user.roles[dRole][community_path]) delete self.user.roles.mentor[community_path];
                 if (self.user.roles[dRole] && self.user.roles[dRole][$stateParams.location_path]) delete self.user.roles.mentor[$stateParams.location_path];
             }

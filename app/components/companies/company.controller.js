@@ -235,7 +235,7 @@ function CompanyProfileController($stateParams, $location, $mixpanel, user, comp
 
 }
 
-function AddCompanyController(company_service, community) {
+function AddCompanyController($mixpanel, company_service, community) {
     var self = this;
 
     this.addCompany = function() {
@@ -257,6 +257,7 @@ function AddCompanyController(company_service, community) {
                     self.selectedRole = 'none';
                     self.alert = { type: 'success', message: String(response.data.message) };
                 }
+                $mixpanel.track('Added Company');
             })
             .catch(function(error) {
                 self.working = false;

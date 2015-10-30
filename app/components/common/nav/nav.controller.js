@@ -28,7 +28,7 @@ function NavigationController($auth, $state, $window, $location, $stateParams, $
 
         this.user = user.data.user; // reference 'this' by using 'nav' from 'NavigationController as nav' - * nav is also usable in child views *
 
-        knowtify.push(['load_inbox', 'knowtify', {id: this.user.key, email: this.user.profile.email}]);
+        knowtify.push(['load_inbox', 'knowtify', {email: this.user.profile.email}]);
 
     }
 
@@ -419,7 +419,7 @@ function CommunitySettingsController($modalInstance, $state, sweet, user, commun
     };
 }
 
-function addClusterController($modalInstance, $state, sweet, community_service, location){
+function addClusterController($modalInstance, $mixpanel, $state, sweet, community_service, location){
 
     this.location = location;
     this.name = ""; // to avoid 'undefined' for initial url
@@ -479,6 +479,7 @@ function addClusterController($modalInstance, $state, sweet, community_service, 
                             $state.reload();
                         });
                     }
+                    $mixpanel.track('Added Cluster');
                 });
 
             //
@@ -493,7 +494,7 @@ function addClusterController($modalInstance, $state, sweet, community_service, 
     };
 }
 
-function addNetworkController($modalInstance, $state, sweet, community_service, location){
+function addNetworkController($modalInstance, $mixpanel, $state, sweet, community_service, location){
 
     this.location = location;
     this.name = ""; // to avoid 'undefined' for initial url
@@ -550,6 +551,7 @@ function addNetworkController($modalInstance, $state, sweet, community_service, 
                             $state.reload();
                         });
                     }
+                    $mixpanel.track('Added Network');
                 });
 
             //

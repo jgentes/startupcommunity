@@ -309,6 +309,8 @@ function UserProfileController($stateParams, $location, $modal, $mixpanel, user,
                         if (!self.communities.newmessages) self.communities.newmessages = {};
                         self.communities.newmessages[response.data.key] = response.data;
                     }
+
+                    $mixpanel.track('Asked Question');
                 })
                 .catch(function (error) {
                     self.working = false;
@@ -344,8 +346,9 @@ function UserProfileController($stateParams, $location, $modal, $mixpanel, user,
                         if (self.communities.messages[parent.key]) {
                             self.communities.messages[parent.key].replies.push(response.data);
                         } else self.communities.newmessages[parent.key].replies.push(response.data);
-
                     }
+
+                    $mixpanel.track('Replied to Question');
                 })
                 .catch(function (error) {
                     self.working[parent.key] = false;
@@ -355,7 +358,7 @@ function UserProfileController($stateParams, $location, $modal, $mixpanel, user,
     }
 }
 
-function InviteUserController(user_service, community, location) {
+function InviteUserController($mixpanel, user_service, community, location) {
     var self = this;
     this.community = community;
 
@@ -381,6 +384,7 @@ function InviteUserController(user_service, community, location) {
                     }
 
                     self.form.email_value = "";
+                    $mixpanel.track('Sent Invite');
                 })
                 .catch(function(error) {
                     self.working = false;

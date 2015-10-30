@@ -54,8 +54,8 @@
   "development": {
     "db": {
       "key": "be406a43-5cc1-425f-9545-23bd75ec6cfc",
-      "communities": "communities-test",
-      "messages": "messages-test"
+      "communities": "communities-dev",
+      "messages": "messages-dev"
     },
     "linkedin": {
       "clientID": "75bqixdv58z1az",
@@ -77,11 +77,11 @@
     "path": "/dist",
     "api_base_url": "https://dev.startupcommunity.org"
   },
-   "test": {
+   "staging": {
      "db": {
        "key": "be406a43-5cc1-425f-9545-23bd75ec6cfc",
-       "communities": "communities-test",
-       "messages": "messages-test"
+       "communities": "communities-staging",
+       "messages": "messages-staging"
      },
      "linkedin": {
        "clientID": "75bqixdv58z1az",
