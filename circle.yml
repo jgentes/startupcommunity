@@ -16,6 +16,10 @@ deployment:
     branch: dev
     heroku:
       appname: startupcommunity-dev
+  staging:
+      branch: staging
+      heroku:
+        appname: startupcommunity-staging
   production:
     branch: master
     heroku:

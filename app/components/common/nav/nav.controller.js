@@ -59,8 +59,6 @@ function NavigationController($auth, $state, $window, $location, $stateParams, $
         }
     }
 
-<<<<<<< HEAD
-=======
     this.communities = communities.data; // used in company list views
 
     // For tour
@@ -76,7 +74,6 @@ function NavigationController($auth, $state, $window, $location, $stateParams, $
         $state.go('user.dashboard', {profile: self.user, location_path: self.user.key, community: self.user, tour: false});
     };
 
->>>>>>> invite
     // BREADCRUMBS
 
     if (this.community.type == "user") {
@@ -90,13 +87,10 @@ function NavigationController($auth, $state, $window, $location, $stateParams, $
         "({location_path: nav.location_path, community: nav.community, query: '*', community_path: nav.community.key})";
 
     // to set correct root path when navigating from user or company page
-<<<<<<< HEAD
-    this.nav_jump = this.location.type == 'location' || ((this.community.type == "user" || this.community.type == "company") &&
-    (this.location.type == 'location')) ?
-=======
+
     this.nav_jump = (this.location && this.location.type == 'location') || ((this.community.type == "user" || this.community.type == "company") &&
         (this.location && this.location.type == 'location')) ?
->>>>>>> invite
+
         "({community_path: item.key, community: item, query: '*', location_path: nav.location.key})" :
         "({community_path: item.key, community: item, query: '*', location_path: nav.location.profile.home})";
 
