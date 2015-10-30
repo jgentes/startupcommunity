@@ -136,7 +136,7 @@
                 </ul>
             </li>
 
-            <li class="active" ng-show="nav.networks" tour-step order="2" title="Private Networks" content="Networks are groups of companies and people who are connected through a private, invitation-only community.<br><br>Examples of networks include startup accelerators, coworking spaces, mentorship groups, and investment funds." placement="right">
+            <li class="active" tour-step order="2" title="Private Networks" content="Networks are groups of companies and people who are connected through a private, invitation-only community.<br><br>Examples of networks include startup accelerators, coworking spaces, mentorship groups, and investment funds." placement="right">
                 <a style="cursor: default;"><span class="pe-7s-angle-down" style="padding-top: 4px;
     padding-right: 7px;"></span><span class="nav-label">
 
@@ -145,7 +145,7 @@
                 </span>
                     <div ng-if="nav.user.communities.indexOf(nav.location_path) > -1 && nav.communities[nav.location_path].type == 'location'" class="pe-7s-close fa-rotate-45 pull-right" ng-click="nav.addNetwork(); $event.stopPropagation();" tooltip-placement="left" tooltip="Add Network" style="opacity: .6; cursor: pointer; margin-top: 4px; font-size: 15px;"></div>
                 </a>
-                <ul class="nav nav-second-level">
+                <ul ng-show="nav.networks" class="nav nav-second-level">
                     <li ng-repeat="item in nav.networks">
                         <a ui-sref="{{'community.dashboard' + nav.nav_jump}}" ng-class="{active: nav.path.includes('/' + item.key)}" ng-click="n_working = true">
                                 <i ng-class="'fa ' + item.profile.icon"></i> {{item.profile.name}}
@@ -155,7 +155,7 @@
                 </ul>
             </li>
 
-            <li class="active" ng-show="nav.clusters" tour-step order="3" title="Industry Clusters" content="A cluster is an entrepreneurial ecosystem in support of a specific industry.<br><br>Clusters are made up of mentors, investors, companies, accelerators, coworking spaces, and events that connect people within the community and foster the creation of new business." placement="right">
+            <li class="active" tour-step order="3" title="Industry Clusters" content="A cluster is an entrepreneurial ecosystem in support of a specific industry.<br><br>Clusters are made up of mentors, investors, companies, accelerators, coworking spaces, and events that connect people within the community and foster the creation of new business." placement="right">
                 <a style="cursor: default;"><span class="pe-7s-angle-down" style="padding-top: 4px;
     padding-right: 7px;"></span><span class="nav-label">
 
@@ -164,7 +164,7 @@
                 </span>
                     <div ng-if="nav.user.communities.indexOf(nav.location_path) > -1 && nav.communities[nav.location_path].type == 'location'" class="pe-7s-close fa-rotate-45 pull-right" ng-click="nav.addCluster(); $event.stopPropagation();" tooltip-placement="left" tooltip="Add Cluster" style="opacity: .6; cursor: pointer; margin-top: 4px; font-size: 15px;"></div>
                 </a>
-                <ul class="nav nav-second-level">
+                <ul ng-show="nav.clusters" class="nav nav-second-level">
                     <li ng-repeat="item in nav.clusters">
                         <a ui-sref="{{'community.dashboard' + nav.nav_jump}}" ng-class="{active: nav.path.includes('/' + item.key)}" ng-click="cl_working = true">
                             <span ng-if="item.community_profiles[nav.location_path]">
