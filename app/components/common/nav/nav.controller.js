@@ -213,6 +213,9 @@ function NavigationController($auth, $state, $window, $location, $stateParams, $
             controllerAs: 'invite',
             windowClass: "hmodal-info",
             resolve: {
+                user: function() {
+                    return self.user;
+                },
                 community: function() {
                     return self.community;
                 },
@@ -236,6 +239,9 @@ function NavigationController($auth, $state, $window, $location, $stateParams, $
             controllerAs: 'welcome',
             windowClass: "hmodal-info",
             resolve: {
+                user: function() {
+                    return self.user;
+                },
                 community: function() {
                     return self.community;
                 },

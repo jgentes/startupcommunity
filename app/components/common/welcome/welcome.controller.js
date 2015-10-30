@@ -2,7 +2,7 @@ angular
     .module('startupcommunity')
     .controller('WelcomeController', WelcomeController);
 
-function WelcomeController($auth, $q, $http, $mixpanel, $stateParams, $scope, $state, $filter, sweet, community, location, user_service, company_service, community_service) {
+function WelcomeController($auth, $q, $http, $mixpanel, $stateParams, $scope, $state, $filter, sweet, community, location, user_service, company_service, community_service, user) {
     var self = this;
     this.location = jQuery.isEmptyObject(location) ? community.profile.name : location.profile.name.split(',')[0];
     this.auth = false;
@@ -13,6 +13,7 @@ function WelcomeController($auth, $q, $http, $mixpanel, $stateParams, $scope, $s
     this.community = community; // used in add company (not welcome) modal
     this.parents = [ 'Agriculture', 'Art', 'Construction', 'Consumer Goods', 'Corporate', 'Education', 'Finance', 'Government', 'Healthcare', 'Legal', 'Manufacturing', 'Medical', 'Non-Profit', 'Recreation', 'Services', 'Tech', 'Transportation' ];
     this.stages = [ '0 - 500k', '500k - 1M', '1M - 5M', '5M+'];
+    this.user = user;
 
     this.shouldIadd = function() {
         self.alert = {type: "warning", message: "Startups find experts based on their work experience. If you work with the company while living in the community, you should add it."}
@@ -199,6 +200,7 @@ function WelcomeController($auth, $q, $http, $mixpanel, $stateParams, $scope, $s
         var role = self.selectedRole == 'none' ? undefined : self.selectedRole;
 
         if (community.type == 'cluster') community_path = location.key; // do not allow companies to be added directly to clusters
+        if (community.type == 'network' && !(self.user.roles && self.user.roles.leader && self.user.roles.leader[community.key] && self.user.roles.leader[community.key].indexOf(location.key) < 0)) community_path = location.key;
 
         company_service.addCompany(self.selectedCompany, role, location.key, community_path)
             .then(function(response) {

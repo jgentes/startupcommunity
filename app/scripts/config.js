@@ -36,13 +36,13 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                 tour: false
             },
             resolve: {
-                user: ['user_service', '$state', '$mixpanel',
-                    function(user_service, $state, $mixpanel) {
+                user: ['user_service', '$mixpanel', '$location',
+                    function(user_service, $mixpanel, $location) {
                         return user_service.getProfile()
                             .success(function(response) {
 
                                 if (response.message) {
-                                    $state.go('logout', { message: String(response.message) });
+                                    $location.url('/logout');
                                 }
 
                                 if (response.key) {
@@ -54,7 +54,7 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                                 }
                             })
                             .error(function(response) {
-                                $state.go('logout', { message: String(response.message) });
+                                $location.url('/logout');
                             });
                     }],
                 communities: ['$stateParams', 'community_service',

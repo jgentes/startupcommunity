@@ -55,7 +55,7 @@
     <!-- Navigation -->
     <aside id="menu" ng-if="!nav.embedded">
         <div class="profile-picture">
-            <div ng-if="nav.user" class="container side-menu" style="padding-top: 10px; margin-left: -20px; border-bottom: 1px solid #eee;    margin-bottom: -9px;" tour-step order="4" title="Your Profile" content="People can ask you questions on your profile page. Click 'End Tour' to take a look." placement="right">
+            <div ng-if="nav.user" class="container side-menu" style="padding-top: 10px; margin-left: -20px; border-bottom: 1px solid #eee;    margin-bottom: -9px;" tour-step order="4" title="Your Profile" content="People can ask you questions on your profile page. Click 'End tour' to take a look." placement="right">
                 <div class="row side-menu">
                     <div class="col-xs-3">
                         <a ui-sref="user.dashboard({profile: nav.user, location_path: nav.user.key, community: {}})"><img class="img-circle m-b" ng-src="{{nav.user.profile.avatar || nav.user.profile.linkedin.pictureUrl || 'images/blank_avatar.png'}}" alt="{{nav.user.profile.name}}" style="height: 40px; width: 40px; "/></a>
