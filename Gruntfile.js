@@ -140,8 +140,8 @@ module.exports = function (grunt) {
                     {
                         expand: true,
                         dot: true,
-                        cwd: 'bower_components/bootstrap',
-                        src: ['dist/fonts/*.*'],
+                        cwd: 'bower_components/bootstrap/dist',
+                        src: ['fonts/*.*'],
                         dest: '<%= startupcommunity.dist %>'
                     },
                     {
