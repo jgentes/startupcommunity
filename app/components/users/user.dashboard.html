@@ -7,11 +7,11 @@
                     <span ng-repeat="(item, val) in profile.user.roles" class="user-role" style="font-size: 24px;"><i ng-attr-title="{{item[0].toUpperCase() + item.slice(1);}}" ng-class="{'pe-7s-paper-plane' : item == 'founder', 'pe-7s-flag' : item == 'leader', 'pe-7s-study' : item == 'mentor', 'pe-7s-gleam' : item == 'investor', 'pe-7s-ball' : item == 'team', 'pe-7s-portfolio' : item == 'provider'}"></i></span>
                 </div>
                 <h1>
-                    {{::profile.user.profile.headline}}
+                    {{profile.user.profile.headline || profile.user.profile.linkedin.headline}}
                 </h1>
                 <h3 style="padding-top: 5px;" style="line-height: 1.5;">
                     My name is <span class="name">{{::profile.user.profile.name | words:0}} {{::profile.user.profile.name |
-                    words:1}}</span>, <span ng-bind-html="::profile.user.profile.summary | sentence | linky:'_blank'"></span>
+                    words:1}}</span>, <span ng-bind-html="(profile.user.profile.summary || profile.user.profile.linkedin.headline) | sentence | linky:'_blank'"></span>
                 </h3>
                 <a ng-click="profile.ask()" class="btn btn-success btn-sm">Ask me a question</a>
                 <div style="padding-top:10px; overflow: hidden; height: 50px; margin-bottom: -10px;">
