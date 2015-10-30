@@ -42,12 +42,14 @@ app.use(wwwRedirect);
 app.all("/blog*", function(req, res){
     blogProxy.web(req, res, { target: 'http://localhost:2368' });
 });
+/*
 
 // Restrict access to dev.startupcommunity.org
 if (process.env.NODE_ENV === "development") {
   var wwwhisper = require('connect-wwwhisper');
   app.use(wwwhisper());
 }
+*/
 
 // Order really matters here..!
 app.disable('x-powered-by');
