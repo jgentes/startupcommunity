@@ -141,7 +141,7 @@ module.exports = function (grunt) {
                         expand: true,
                         dot: true,
                         cwd: 'bower_components/bootstrap',
-                        src: ['fonts/*.*'],
+                        src: ['dist/fonts/*.*'],
                         dest: '<%= startupcommunity.dist %>'
                     },
                     {
@@ -247,8 +247,6 @@ module.exports = function (grunt) {
         //'protractor:run'
     ]);
 
-    grunt.registerTask('default', 'build');
-
     grunt.registerTask('fast', [
         //'clean:dist',
         'less',
@@ -258,9 +256,11 @@ module.exports = function (grunt) {
         'cssmin',
         //'uglify',
         //'filerev', caused issues with cloudflare
-        'usemin',
+        'usemin'
         //'htmlmin'
     ]);
+
+    grunt.registerTask('default', 'fast');
 
     grunt.registerTask('heroku:development', 'build');
 
