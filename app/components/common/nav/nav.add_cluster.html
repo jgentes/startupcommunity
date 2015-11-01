@@ -11,7 +11,7 @@
                 <select class="form-control m-b" ng-model="add.parent" style="margin-bottom: 5px;" required>
                     <option ng-repeat="parent in add.parents">{{ parent }}</option>
                 </select>
-                <em>The parent is used to aggregate data at the city and state level and isn't visible in the app.</em>
+                <br>
                 <div class="m-t-xs" ng-show="!add.parent && add.submitted">
                     <span class="text-danger">&nbsp;&nbsp;<i class="fa fa-exclamation-triangle"></i> A parent is required.</span>
                 </div>
@@ -29,7 +29,7 @@
                 <div class="panel-heading" style="font-size: 20px;">4. And a short description</div>
                 <input type="text" class="form-control input-lg" placeholder="Local hardware and software product companies" ng-model="add.headline">
                 <br>
-                <div class="panel-heading" style="font-size: 20px;">5. Select the industries that make up this cluster</div>
+                <div class="panel-heading" style="font-size: 20px;">5. Select the sub-industries that make up this cluster</div>
                 <div class="panel-body industry_select" style="padding:5px; margin-bottom:5px;">
                     <ui-select multiple ng-model="add.industries" style="border:none;" required>
                         <ui-select-match placeholder="Search by industry..">{{$item}}</ui-select-match>
@@ -38,7 +38,7 @@
                         </ui-select-choices>
                     </ui-select>
                 </div>
-                <em>Your cluster will consist of companies that have associated themselves with these industries. You can add or remove industries later, so don't get too hung up here.</em>
+                <em>Your cluster will consist of companies that have associated themselves with these industries.</em>
                 <div class="m-t-xs" ng-show="!add.industries && add.submitted">
                     <span class="text-danger">&nbsp;&nbsp;<i class="fa fa-exclamation-triangle"></i> At least one industry is required.</span>
                 </div>
@@ -48,7 +48,7 @@
         </form>
     </div>
     <div class="modal-footer">
-        <button type="button" class="btn btn-default" ng-click="add.cancel()">Cancel</button>
+        <button type="button" class="btn btn-default pull-left" ng-click="add.cancel()">Cancel</button>
         <button type="button" class="btn btn-primary" ng-click="add.createCluster()">Create {{add.name}} Cluster</button>
     </div>
 </div>

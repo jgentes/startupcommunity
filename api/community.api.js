@@ -300,7 +300,7 @@ function handleGetTop(req, res) {
 
     // get companies and industries
 
-    var industrysearch = cluster_search ? '@value.profile.industries:(' + cluster_search + ') AND ' + search : search;
+    var industrysearch = cluster_search ? '(@value.profile.parents:(' + cluster_search + ') OR @value.profile.industries:(' + cluster_search + ')) AND ' + search : search;
 
     var addkeys = function(data) {
         for (i in data) {
