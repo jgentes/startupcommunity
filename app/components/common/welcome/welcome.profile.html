@@ -25,10 +25,10 @@
                 and your headline is <a style="color:#4ea5e0;" editable-text="welcome.user.profile.headline">{{welcome.user.profile.headline || 'empty'}}</a>.
                 <br/><br/>
                 Select the industry you most closely associate with:
-                <select class="form-control m-b" ng-model="welcome.user.profile.parent" style="margin-bottom: 5px;" required>
+                <select class="form-control m-b" ng-model="welcome.selectedParent" style="margin-bottom: 5px;" required>
                     <option ng-repeat="parent in welcome.parents">{{ parent }}</option>
                 </select>
-                <div class="m-t-xs" ng-show="!welcome.user.profile.parent && welcome.submitted">
+                <div class="m-t-xs" ng-show="!welcome.selectedParent && welcome.submitted">
                     <span class="text-danger">&nbsp;&nbsp;<i class="fa fa-exclamation-triangle"></i> A parent is required.</span>
                 </div>
                 <br/>

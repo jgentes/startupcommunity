@@ -43,6 +43,8 @@ function WelcomeController($auth, $q, $http, $mixpanel, $stateParams, $scope, $s
                 self.skills.push(self.user.profile.skills[skill]);
             }
         }
+
+        if (self.user.profile.parents) self.selectedParent = self.user.profile.parents[0];
     };
 
     this.authenticate = function() {
