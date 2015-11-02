@@ -16,6 +16,7 @@ var AuthApi = function() {
     this.linkedin = handleLinkedin;
     this.signup = handleSignup;
     this.login = handleLogin;
+    this.ideas = handleIdeas;
 };
 
 /*
@@ -122,6 +123,18 @@ function handleCreateToken(req, user) {
         exp: moment().add(14, 'days').valueOf()
     };
     return jwt.encode(payload, config.token_secret);
+}
+
+function handleIdeas(req, res) {
+    var response = {
+        iat: moment().valueOf(),
+        jti: iat.toString() + '/' + Math.random().toString(),
+        first_name: req.user.value.profile.name.split(' ')[0],
+        last_name: req.user.value.profile.name.split(' ')[1],
+        email: req.user.value.profile.email
+    };
+
+    res.redirect('https://startupcommunity.ideas.aha.io/auth/jwt/callback?return_to=/ideas').send(jwt.encode(response, '9040706aa8e51dc1e3fc8885816f281136c38abe6201609baa0b8adbb035de104a0a77d6'))
 }
 
 function handleCreateAPIToken(req, res) {

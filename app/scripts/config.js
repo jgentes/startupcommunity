@@ -110,6 +110,19 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
 
         // ORDER MATTERS.. first matching url wins!
 
+        .state('feedback', {
+            parent: "root",
+            url: "/feedback",
+            views: {
+                'header': {
+                    templateUrl: "components/common/header/header_small.html"
+                },
+                'content': {
+                    templateUrl: 'components/common/feedback.html'
+                }
+            }
+        })
+
         .state('welcome', {
             parent: "root",
             url: "^/:location_path/:community_path/welcome?invite_code",
@@ -127,10 +140,10 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
             }
         })
         .state('welcome.roles', {
-            templateUrl: "../components/common/welcome/welcome.roles.html"
+            templateUrl: "components/common/welcome/welcome.roles.html"
         })
         .state('welcome.skills', {
-            templateUrl: "../components/common/welcome/welcome.skills.html"
+            templateUrl: "components/common/welcome/welcome.skills.html"
         })
         .state('welcome.profile', {
             templateUrl: "components/common/welcome/welcome.profile.html"

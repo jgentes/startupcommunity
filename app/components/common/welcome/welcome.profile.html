@@ -24,6 +24,14 @@
                 your email address is <a style="color:#4ea5e0;" editable-email="welcome.user.profile.email">{{welcome.user.profile.email}}</a><br/>
                 and your headline is <a style="color:#4ea5e0;" editable-text="welcome.user.profile.headline">{{welcome.user.profile.headline || 'empty'}}</a>.
                 <br/><br/>
+                Select the industry you most closely associate with:
+                <select class="form-control m-b" ng-model="welcome.user.profile.parent" style="margin-bottom: 5px;" required>
+                    <option ng-repeat="parent in welcome.parents">{{ parent }}</option>
+                </select>
+                <div class="m-t-xs" ng-show="!welcome.user.profile.parent && welcome.submitted">
+                    <span class="text-danger">&nbsp;&nbsp;<i class="fa fa-exclamation-triangle"></i> A parent is required.</span>
+                </div>
+                <br/>
                 Click below to edit your summary.
                 <br>
                 <span style="font-size: 13px;">Focus on the first sentence. It will be used on your profile page.</span>
@@ -39,6 +47,6 @@
         <div alert-box this-alert="welcome.alert"></div>
         <h4 style="margin-bottom: 13px;">
             <a class="btn btn-info pull-left" ui-sref="welcome.roles">Back</a>
-            <a class="btn btn-info pull-right" ui-sref="welcome.skills">Continue</a></h4>
+            <a class="btn btn-info pull-right" ng-click="welcome.submitProfile()">Continue</a></h4>
     </div>
 </div>
