@@ -126,6 +126,15 @@ function WelcomeController($auth, $q, $http, $mixpanel, $stateParams, $scope, $s
 
     };
 
+    this.submitProfile = function() {
+
+        if (self.form.$valid) {
+            $state.go('welcome.skills');
+            self.submitted = false;
+        } else self.submitted = true;
+
+    };
+
     // for typeahead on company search field
     this.getCompanies = function(val) {
         return $http.get('/api/2.1/angel/startups/search?val=' + val)
@@ -196,30 +205,37 @@ function WelcomeController($auth, $q, $http, $mixpanel, $stateParams, $scope, $s
     };
 
     this.addCompany = function() {
-        this.working = true;
-        var role = self.selectedRole == 'none' ? undefined : self.selectedRole;
 
-        if (community.type == 'cluster') community_path = location.key; // do not allow companies to be added directly to clusters
-        if (community.type == 'network' && !(self.user.roles && self.user.roles.leader && self.user.roles.leader[community.key] && self.user.roles.leader[community.key].indexOf(location.key) < 0)) community_path = location.key;
+        if (selectedCompany.parent && selectedCompany.stage) {
 
-        company_service.addCompany(self.selectedCompany, role, location.key, community_path)
-            .then(function(response) {
+            self.working = true;
+            var role = self.selectedRole == 'none' ? undefined : self.selectedRole;
 
-                self.working = false;
-                if (response.status !== 200) {
-                    self.alert = { type: 'danger', message: String(response.data.message) };
-                } else {
-                    self.selectedCompany = undefined;
-                    self.company = undefined;
-                    self.updateCompany = false;
-                    self.selectedRole = 'none';
-                    self.alert = { type: 'success', message: String(response.data.message) };
-                }
-            })
-            .catch(function(error) {
-                self.working = false;
-                self.alert = { type: 'danger', message: String(error.data.message) };
-            })
+            if (community.type == 'cluster') community_path = location.key; // do not allow companies to be added directly to clusters
+            if (community.type == 'network' && !(self.user.roles && self.user.roles.leader && self.user.roles.leader[community.key] && self.user.roles.leader[community.key].indexOf(location.key) < 0)) community_path = location.key;
+
+            company_service.addCompany(self.selectedCompany, role, location.key, community_path)
+                .then(function(response) {
+
+                    self.working = false;
+                    if (response.status !== 200) {
+                        self.alert = { type: 'danger', message: String(response.data.message) };
+                    } else {
+                        self.selectedCompany = undefined;
+                        self.company = undefined;
+                        self.updateCompany = false;
+                        self.selectedRole = 'none';
+                        self.submitted = false;
+                        self.alert = { type: 'success', message: String(response.data.message) };
+                    }
+                })
+                .catch(function(error) {
+                    self.working = false;
+                    self.alert = { type: 'danger', message: String(error.data.message) };
+                })
+
+        } else self.submitted = true;
+
     };
 
     this.next = function() {
