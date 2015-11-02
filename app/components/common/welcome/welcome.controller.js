@@ -261,6 +261,9 @@ function WelcomeController($auth, $q, $http, $mixpanel, $stateParams, $scope, $s
         // add skills
         self.user.profile["skills"] = self.skills;
 
+        // add parent industry
+        self.user.profile["parents"] = [self.selectedParent];
+
         // update user profile
         user_service.updateProfile(self.user)
             .then(function(response) {
