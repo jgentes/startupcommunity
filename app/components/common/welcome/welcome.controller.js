@@ -12,8 +12,8 @@ function WelcomeController($auth, $q, $http, $mixpanel, $stateParams, $scope, $s
     this.industries = community_service.industries();
     this.community = community; // used in add company (not welcome) modal
     this.parents = [ 'Agriculture', 'Art', 'Construction', 'Consumer Goods', 'Corporate', 'Education', 'Finance', 'Government', 'Healthcare', 'Legal', 'Manufacturing', 'Medical', 'Non-Profit', 'Recreation', 'Services', 'Tech', 'Transportation' ];
-    this.stages = [ '0 - 500k', '500k - 1M', '1M - 5M', '5M+'];
-    this.user = user;
+    this.stages = [ 'Bootstrap', 'Seed', 'Series A', 'Series B', 'Later'];
+    this.user = user.data.user ? user.data.user : user;
 
     this.shouldIadd = function() {
         self.alert = {type: "warning", message: "Startups find experts based on their work experience. If you work with the company while living in the community, you should add it."}
@@ -23,7 +23,30 @@ function WelcomeController($auth, $q, $http, $mixpanel, $stateParams, $scope, $s
         this.alert = {type: "warning", message: "Please <a href='https://angel.co/intro' target='_blank'>click here</a> to create a profile for the startup on AngelList."}
     };
 
+    var checkProfile = function() {
+        if (!self.user.profile["name"]) self.user.profile["name"] = self.user.profile.linkedin.firstName + ' ' + self.user.profile.linkedin.lastName;
+        if (!self.user.profile["email"]) self.user.profile["email"] = self.user.profile.linkedin.emailAddress;
+        if (!self.user.profile["headline"]) self.user.profile["headline"] = self.user.profile.linkedin.headline;
+        if (!self.user.profile["avatar"]) self.user.profile["avatar"] = self.user.profile.linkedin.pictureUrl;
+        if (!self.user.profile["summary"]) self.user.profile["summary"] = self.user.profile.linkedin.summary;
+
+        if (self.user.roles) {
+            if (!self.roles) self["roles"] = {};
+            for (role in self.user.roles) {
+                self.roles[role] = true;
+            }
+        }
+
+        if (self.user.profile.skills) {
+            if (!self.skills) self.skills =[];
+            for (skill in self.user.profile.skills) {
+                self.skills.push(self.user.profile.skills[skill]);
+            }
+        }
+    };
+
     this.authenticate = function() {
+
         self.working = true;
         if (!$stateParams.invite_code) {
             this.alert = {type: 'danger', message: 'You must have an invitation to continue. Please check your email and click on the link provided there.'};
@@ -38,25 +61,8 @@ function WelcomeController($auth, $q, $http, $mixpanel, $stateParams, $scope, $s
                         self.auth = true;
                         self.user = response.data.user.value;
                         self.user["key"] = response.data.user.path.key;
-                        if (!self.user.profile["name"]) self.user.profile["name"] = self.user.profile.linkedin.firstName + ' ' + self.user.profile.linkedin.lastName;
-                        if (!self.user.profile["email"]) self.user.profile["email"] = self.user.profile.linkedin.emailAddress;
-                        if (!self.user.profile["headline"]) self.user.profile["headline"] = self.user.profile.linkedin.headline;
-                        if (!self.user.profile["avatar"]) self.user.profile["avatar"] = self.user.profile.linkedin.pictureUrl;
-                        if (!self.user.profile["summary"]) self.user.profile["summary"] = self.user.profile.linkedin.summary;
 
-                        if (self.user.roles) {
-                            if (!self.roles) self["roles"] = {};
-                            for (role in self.user.roles) {
-                                self.roles[role] = true;
-                            }
-                        }
-
-                        if (self.user.profile.skills) {
-                            if (!self.skills) self.skills =[];
-                            for (skill in self.user.profile.skills) {
-                                self.skills.push(self.user.profile.skills[skill]);
-                            }
-                        }
+                        checkProfile();
 
                         $mixpanel.identify(response.data.user.path.key);
                         $mixpanel.track('Accepted Invite');
@@ -73,6 +79,13 @@ function WelcomeController($auth, $q, $http, $mixpanel, $stateParams, $scope, $s
 
             self.working = false;
         }
+    };
+
+    // if already authenticated, just move straight to roles
+    if (self.user) {
+        checkProfile();
+        self.auth = true;
+        $state.go('welcome.roles');
     };
 
     // for profile pic upload to S3
@@ -128,7 +141,7 @@ function WelcomeController($auth, $q, $http, $mixpanel, $stateParams, $scope, $s
 
     this.submitProfile = function() {
 
-        if (self.form.$valid) {
+        if (self.user.profile.parent) {
             $state.go('welcome.skills');
             self.submitted = false;
         } else self.submitted = true;
@@ -206,7 +219,7 @@ function WelcomeController($auth, $q, $http, $mixpanel, $stateParams, $scope, $s
 
     this.addCompany = function() {
 
-        if (selectedCompany.parent) {
+        if (self.selectedCompany.parent) {
 
             self.working = true;
             var role = self.selectedRole == 'none' ? undefined : self.selectedRole;

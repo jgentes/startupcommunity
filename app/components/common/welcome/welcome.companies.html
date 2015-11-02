@@ -19,7 +19,7 @@
         <form role="form" name="welcome.founder.form" novalidate ng-submit="welcome.addCompany()" style="padding-bottom: 30px;">
             <div class="form-group">
                 <input type="text" ng-model="welcome.company" placeholder="Search by company name.." autofocus="true" typeahead="company.name for company in welcome.getCompanies($viewValue)" typeahead-editable="false" typeahead-on-select="welcome.selectedCompany = $item;" class="form-control input-lg">
-                <a style="font-size: 12px; padding-top: 3px; color: #777;" class="pull-right" ng-click="welcome.shouldIadd()">should I add my company?</a>
+                <a style="font-size: 12px; padding-top: 3px; color: #777;" class="pull-right" ng-click="welcome.shouldIadd()">should I add a company?</a>
 
             </div>
             <input type="submit" style="float:left" class="finish btn-success btn" ng-class="{'disabled' : disabled || welcome.working || !welcome.selectedCompany}" value="{{ (welcome.updateCompany ? 'Update ' : 'Add ') + (welcome.selectedCompany.name || 'Company') }}" />
@@ -39,7 +39,7 @@
                 <div class="m-t-xs" ng-show="!welcome.selectedCompany.parent && welcome.submitted">
                     <span class="text-danger">&nbsp;&nbsp;<i class="fa fa-exclamation-triangle"></i> A parent is required.</span>
                 </div>
-                And annual revenue (optional):
+                And investment stage (optional):
                 <select class="form-control m-b" ng-model="welcome.selectedCompany.stage" style="margin-bottom: 5px;">
                     <option ng-repeat="stage in welcome.stages">{{ stage }}</option>
                 </select>

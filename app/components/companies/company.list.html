@@ -6,7 +6,7 @@
                 <div class="panel-footer top" style="font-size: 17px;">
                     <strong>Stage</strong> Filters
                     <div loading-bars ng-show="users.loadingStage" style="display: inline;"></div>
-                    <small class="pull-right text-muted" style="padding:7px 2px 0 0; font-size: 12px;">(Revenue)</small>
+                    <small class="pull-right text-muted" style="padding:7px 2px 0 0; font-size: 12px;">(Investment)</small>
                 </div>
                 <div class="panel-body filternav">
 
@@ -19,28 +19,29 @@
                         <li>
                             <hr style="margin: 10px 0 10px 0;">
                         </li>
-                        <li ng-class="{'active':companies.selectedStage.indexOf('0 - 500k') >= 0}" ng-click="companies.filterStage('0 - 500k')">
+                        <li ng-class="{'active':companies.selectedStage.indexOf('Bootstrap') >= 0}" ng-click="companies.filterStage('Bootstrap')">
                             <a>
                                 Bootstrap
-                                <span class="pull-right">0 - 500k</span>
                             </a>
                         </li>
-                        <li ng-class="{'active':companies.selectedStage.indexOf('500k - 1M') >= 0}" ng-click="companies.filterStage('500k - 1M')">
+                        <li ng-class="{'active':companies.selectedStage.indexOf('Seed') >= 0}" ng-click="companies.filterStage('Seed')">
                             <a>
-                                Validation
-                                <span class="pull-right">500k - 1M</span>
+                                Seed / Angel
                             </a>
                         </li>
-                        <li ng-class="{'active':companies.selectedStage.indexOf('1M - 5M') >= 0}" ng-click="companies.filterStage('1M - 5M')">
+                        <li ng-class="{'active':companies.selectedStage.indexOf('Series A') >= 0}" ng-click="companies.filterStage('Series A')">
                             <a>
-                                Growth
-                                <span class="pull-right">1M - 5M</span>
+                                Series A
                             </a>
                         </li>
-                        <li ng-class="{'active':companies.selectedStage.indexOf('5M+') >= 0}" ng-click="companies.filterStage('5M+')">
+                        <li ng-class="{'active':companies.selectedStage.indexOf('Series B') >= 0}" ng-click="companies.filterStage('Series B')">
                             <a>
-                                Scale
-                                <span class="pull-right">5M+</span>
+                                Series B
+                            </a>
+                        </li>
+                        <li ng-class="{'active':companies.selectedStage.indexOf('Later') >= 0}" ng-click="companies.filterStage('Later')">
+                            <a>
+                                Later Stage
                             </a>
                         </li>
                     </ul>
