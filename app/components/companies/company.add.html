@@ -31,7 +31,7 @@
                         Your primary role at <a href="{{welcome.selectedCompany.angellist_url}}" target="_blank" title="{{welcome.selectedCompany.name}}'s AngelList Profile">{{welcome.selectedCompany.name}}</a> is <a href="#" editable-select="welcome.selectedRole" e-ng-options="r.value as r.text for r in welcome.selectRoles">{{ welcome.showRole() }}</a>.<br/>
                         <a href="{{welcome.selectedCompany.angellist_url}}" target="_blank" title="{{welcome.selectedCompany.name}}'s AngelList Profile">{{welcome.selectedCompany.name}}</a>'s headline is <a style="color:#4ea5e0;" editable-text="welcome.selectedCompany.high_concept">{{welcome.selectedCompany.high_concept || 'empty'}}</a>.
                         <br><br>
-                        Select a parent industry for <a href="{{welcome.selectedCompany.angellist_url}}" target="_blank" title="{{welcome.selectedCompany.name}}'s AngelList Profile">{{welcome.selectedCompany.name}}</a>:
+                        Select a primary industry for <a href="{{welcome.selectedCompany.angellist_url}}" target="_blank" title="{{welcome.selectedCompany.name}}'s AngelList Profile">{{welcome.selectedCompany.name}}</a>:
                         <select class="form-control m-b" ng-model="welcome.selectedCompany.parent" style="margin-bottom: 5px;" required>
                             <option ng-repeat="parent in welcome.parents">{{ parent }}</option>
                         </select>
@@ -39,13 +39,10 @@
                             <span class="text-danger">&nbsp;&nbsp;<i class="fa fa-exclamation-triangle"></i> A parent is required.</span>
                         </div>
                         <br>
-                        And a revenue stage:
-                        <select class="form-control m-b" ng-model="welcome.selectedCompany.stage" style="margin-bottom: 5px;" required>
+                        And a revenue stage (optional):
+                        <select class="form-control m-b" ng-model="welcome.selectedCompany.stage" style="margin-bottom: 5px;">
                             <option ng-repeat="stage in welcome.stages">{{ stage }}</option>
                         </select>
-                        <div class="m-t-xs" ng-show="!welcome.selectedCompany.stage && welcome.submitted">
-                            <span class="text-danger">&nbsp;&nbsp;<i class="fa fa-exclamation-triangle"></i> A stage is required.</span>
-                        </div>
                         <br>
                         Add up to six specific industries <a href="{{welcome.selectedCompany.angellist_url}}" target="_blank" title="{{welcome.selectedCompany.name}}'s AngelList Profile">{{welcome.selectedCompany.name}}</a> is a part of:
                         <div class="panel-body industry_select" style="padding:1px; margin-top: 6px; margin-bottom: 6px;">

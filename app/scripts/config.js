@@ -110,6 +110,19 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
 
         // ORDER MATTERS.. first matching url wins!
 
+        .state('feedback', {
+            parent: "root",
+            url: "/feedback",
+            views: {
+                'header': {
+                    templateUrl: "components/common/header/header_small.html"
+                },
+                'content': {
+                    templateUrl: 'components/common/feedback.html'
+                }
+            }
+        })
+
         .state('welcome', {
             parent: "root",
             url: "^/:location_path/:community_path/welcome?invite_code",

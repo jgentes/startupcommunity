@@ -206,7 +206,7 @@ function WelcomeController($auth, $q, $http, $mixpanel, $stateParams, $scope, $s
 
     this.addCompany = function() {
 
-        if (selectedCompany.parent && selectedCompany.stage) {
+        if (selectedCompany.parent) {
 
             self.working = true;
             var role = self.selectedRole == 'none' ? undefined : self.selectedRole;

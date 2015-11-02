@@ -226,11 +226,11 @@ function handleGetCommunity(req, res) {
                         }
                     }
                     if (!found) {
-                        console.warn('WARNING: Community not found!');
+                        console.log('INFO: Community not found!');
                         res.status(404).send({message: 'Community not found.'});
                     }
                 } else {
-                    console.warn('WARNING: Community not found!');
+                    console.log('INFO: Community not found!');
                     res.status(404).send({message: 'Community not found.'});
                 }
             })
