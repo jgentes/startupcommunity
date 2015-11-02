@@ -62,7 +62,7 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                         return community_service.getCommunity($stateParams.location_path)
                             .error(function(response) {
                                 console.log(response);
-                                $state.go('404', { message: String(response.message) });
+                                $state.go('404', { message: String(response) });
                             });
                     }],
                 community: ['$stateParams', '$location', 'communities', 'community_service',
