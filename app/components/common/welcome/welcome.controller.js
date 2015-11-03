@@ -44,7 +44,18 @@ function WelcomeController($auth, $q, $http, $mixpanel, $stateParams, $scope, $s
             }
         }
 
-        if (self.user.profile.parents) self.selectedParent = self.user.profile.parents[0];
+        if (self.user.profile.parents) {
+            switch(self.user.profile.parents[0]) {
+                case 'consumer-goods':
+                    self.selectedParent = 'Consumer Goods';
+                    break;
+                case 'non-profit':
+                    self.selectedParent = 'Non-Profit';
+                    break;
+                default:
+                    self.selectedParent = self.user.profile.parents[0][0].toUpperCase() + self.user.profile.parents[0].slice(1);
+            }
+        }
     };
 
     this.authenticate = function() {
@@ -295,7 +306,13 @@ function WelcomeController($auth, $q, $http, $mixpanel, $stateParams, $scope, $s
         self.user.profile["skills"] = self.skills;
 
         // add parent industry
-        self.user.profile["parents"] = [self.selectedParent];
+        switch(self.selectedParent) {
+            case 'Consumer Goods':
+                self.user.profile["parents"] = ['consumer-goods'];
+                break;
+            default:
+                self.user.profile["parents"] = [self.selectedParent.toLowerCase()];
+        }
 
         // update user profile
         user_service.updateProfile(self.user)
@@ -303,19 +320,35 @@ function WelcomeController($auth, $q, $http, $mixpanel, $stateParams, $scope, $s
                 if (response.status !== 200) {
                     self.alert = { type: 'danger', message: String(response.data.message) };
                 } else {
-                    sweet.show({
-                            title: "Welcome.",
-                            text: "Let's have a look at your community.",
-                            type: "success",
-                            showCancelButton: false,
-                            confirmButtonText: "Let's go!",
-                            closeOnConfirm: true
-                        },
-                        function (isConfirm) {
-                            if (isConfirm) {
-                                $state.go('community.dashboard', {profile: self.user, location_path: $stateParams.location_path, query: '*', tour: true});
-                            }
+                    $http.get('/api/2.1/community/' + self.user.key); // refresh outdated cache
+
+                    if ($stateParams.go) {
+                        $state.go('user.dashboard', {
+                            profile: self.user,
+                            location_path: self.user.key,
+                            query: '*',
+                            tour: false
                         });
+                    } else {
+                        sweet.show({
+                                title: "Welcome.",
+                                text: "Let's have a look at your community.",
+                                type: "success",
+                                showCancelButton: false,
+                                confirmButtonText: "Let's go!",
+                                closeOnConfirm: true
+                            },
+                            function (isConfirm) {
+                                if (isConfirm) {
+                                    $state.go('community.dashboard', {
+                                        profile: self.user,
+                                        location_path: $stateParams.location_path,
+                                        query: '*',
+                                        tour: true
+                                    });
+                                }
+                            });
+                    }
                 }
             })
             .catch(function(error) {
