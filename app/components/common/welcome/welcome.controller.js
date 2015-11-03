@@ -143,7 +143,7 @@ function WelcomeController($auth, $q, $http, $mixpanel, $stateParams, $scope, $s
 
     this.submitProfile = function() {
 
-        if (self.user.profile.parent) {
+        if (self.selectedParent) {
             $state.go('welcome.skills');
             self.submitted = false;
         } else self.submitted = true;
