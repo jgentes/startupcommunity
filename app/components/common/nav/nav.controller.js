@@ -2,7 +2,7 @@ angular
     .module('startupcommunity')
     .controller('NavigationController', NavigationController);
 
-function NavigationController($auth, $state, $window, $location, $stateParams, $modal, user, location, community, communities, knowtify) {
+function NavigationController($auth, $state, $window, $location, $stateParams, $modal, user_service, user, location, community, communities, knowtify) {
     if (user.data && user.data.token) $auth.setToken(user.data.token); // update local storage with latest user profile
 
     // SENSITIVE VARIABLES THAT AFFECT NAVIGATION AND ALL CHILD TEMPLATES
@@ -30,7 +30,26 @@ function NavigationController($auth, $state, $window, $location, $stateParams, $
 
         knowtify.push(['load_inbox', 'knowtify', {email: this.user.profile.email}]);
 
+        $window.HelpCrunch('onReady', function() {
+            //$window.HelpCrunch('showChatWidget', { position: 'right' });
+            $('.helpcrunch-chat-header>span').replaceWith('<span>StartupCommunity.org Live Chat</span>');
+            $('.helpcrunch-logo').replaceWith('<img class="helpcrunch-logo" src="/images/plant_only.jpg" style="height:32px;">');
+            user_service.getHelpToken()
+                .then(function(response) {
+                    $window.HelpCrunch('updateUser', {
+                        name: self.user.profile.name,
+                        email: self.user.profile.email,
+                        user_id: self.user.key,
+                        signature: response.data
+                    });
+                });
+        });
+
     }
+
+    this.openChat = function() {
+        $window.HelpCrunch('openChat');
+    };
 
     // PRIMARY LEFT-NAV ITEM LIST
     if (!this.community) this.community = communities.data[this.location_path];

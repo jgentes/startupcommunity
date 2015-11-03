@@ -2,6 +2,7 @@ var bcrypt = require('bcryptjs'),
     moment = require('moment'),
     request = require('request'),
     jwt = require('jwt-simple'),
+    crypto = require('crypto'),
     config = require('../config.json')[process.env.NODE_ENV || 'development'],
     db = require('orchestrate')(config.db.key),
     knowtify = require('knowtify-node');
@@ -16,7 +17,7 @@ var AuthApi = function() {
     this.linkedin = handleLinkedin;
     this.signup = handleSignup;
     this.login = handleLogin;
-    this.ideas = handleIdeas;
+    this.helpToken = handleHelpToken;
 };
 
 /*
@@ -125,20 +126,16 @@ function handleCreateToken(req, user) {
     return jwt.encode(payload, config.token_secret);
 }
 
-function handleIdeas(req, res) {
+function handleHelpToken(req, res) {
+    // this is for HelpCrunch live chat support to send over user data
 
-    var iat = moment().valueOf();
-    console.log(req.user);
+    var hmac = crypto.createHmac('sha256', 'yCVzaQb6BMR7oHxYXpI373lTIg13+CVBtpvyd/dt3Rs=');
+    hmac.setEncoding('hex');
+    hmac.write(req.user.value.key);
+    hmac.end();
+    response = hmac.read();
 
-    var response = {
-        iat: iat,
-        jti: iat.toString() + '/' + Math.random().toString(),
-        first_name: req.user.value.profile.name.split(' ')[0],
-        last_name: req.user.value.profile.name.split(' ')[1],
-        email: req.user.value.profile.email
-    };
-
-    res.redirect('https://startupcommunity.ideas.aha.io/auth/jwt/callback?return_to=/ideas').send(jwt.encode(response, '9040706aa8e51dc1e3fc8885816f281136c38abe6201609baa0b8adbb035de104a0a77d6'))
+    res.status(201).send(response);
 }
 
 function handleCreateAPIToken(req, res) {

@@ -81,6 +81,9 @@ angular
             getKey: function() {
                 return $http.get('/api/2.1/profile/getkey');
             },
+            getHelpToken: function() {
+                return $http.get('/auth/helpToken');
+            },
             setRole: function(userkey, communitykey, cluster, role, status, callback) {
                 $http.put('/api/2.1/profile/role?userkey=' + userkey + '&communitykey=' + communitykey + '&cluster=' + cluster + '&role=' + role + '&status=' + status)
                   .then( function(data, status) {
