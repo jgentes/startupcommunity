@@ -128,6 +128,7 @@ function handleCreateToken(req, user) {
 function handleIdeas(req, res) {
 
     var iat = moment().valueOf();
+    console.log(req.user);
 
     var response = {
         iat: iat,

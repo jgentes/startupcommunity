@@ -142,7 +142,7 @@ app.post('/api/2.1/messages/add', auth.ensureAuthenticated, messagesApis.addMess
 
 // Auth
 app.post('/auth/linkedin', auth.linkedin);
-app.get('/auth/ideas', auth.ideas);
+app.get('/auth/ideas', auth.ensureAuthenticated, auth.ideas);
 //app.post('/auth/signup', auth.signup); //not currently used?
 //app.post('/auth/login', auth.login); //not currently used?
 
