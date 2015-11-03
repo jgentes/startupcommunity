@@ -126,8 +126,11 @@ function handleCreateToken(req, user) {
 }
 
 function handleIdeas(req, res) {
+
+    var iat = moment().valueOf();
+
     var response = {
-        iat: moment().valueOf(),
+        iat: iat,
         jti: iat.toString() + '/' + Math.random().toString(),
         first_name: req.user.value.profile.name.split(' ')[0],
         last_name: req.user.value.profile.name.split(' ')[1],
