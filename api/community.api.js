@@ -295,11 +295,11 @@ function handleGetTop(req, res) {
 
     var search = '@value.communities:' + location_key + ' AND @value.communities:' + community_key + '';
 
-    console.log('Pulling Top Results: ' + location_key + ' / ' + community_key + ' Industry keys: ', industry_keys);
-
     // get companies and industries
 
     var industrysearch = cluster_search ? '(@value.profile.parents:(' + cluster_search + ') OR @value.profile.industries:(' + cluster_search + ')) AND ' + search : search;
+
+    console.log('Pulling Top Results: ', industrysearch);
 
     var addkeys = function(data) {
         for (i in data) {
@@ -331,7 +331,7 @@ function handleGetTop(req, res) {
 
                 // get people & skills
 
-                var skillsearch = cluster_search ? '@value.profile.skills:(' + cluster_search + ') AND ' + search : search;
+                var skillsearch = cluster_search ? '(@value.profile.parents:(' + cluster_search + ') OR @value.profile.skills:(' + cluster_search + ')) AND ' + search : search;
 
                 db.newSearchBuilder()
                     .collection(config.db.communities)
