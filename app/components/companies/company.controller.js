@@ -235,7 +235,7 @@ function CompanyProfileController($stateParams, $location, $mixpanel, user, comp
 
 }
 
-function AddCompanyController($mixpanel, $http, company_service, community) {
+function AddCompanyController($mixpanel, company_service, community) {
     var self = this;
 
     this.addCompany = function() {

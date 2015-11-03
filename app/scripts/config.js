@@ -130,7 +130,8 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                 community_path: {
                     value: null,
                     squash: true
-                }
+                },
+                go: null
             },
             views: {
                 "@": { // this forces override of root template

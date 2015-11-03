@@ -87,7 +87,7 @@ function WelcomeController($auth, $q, $http, $mixpanel, $stateParams, $scope, $s
     if (this.user.profile) {
         checkProfile();
         this.auth = true;
-        $state.go('welcome.roles');
+        if ($stateParams.go) $state.go($stateParams.go);
     };
 
     // for profile pic upload to S3
