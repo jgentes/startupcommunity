@@ -86,8 +86,10 @@ function WelcomeController($auth, $q, $http, $mixpanel, $stateParams, $scope, $s
     // if already authenticated, just move straight to roles
     if (this.user.profile) {
         checkProfile();
-        this.auth = true;
-        if ($stateParams.go) $state.go($stateParams.go);
+        if ($stateParams.go) {
+            this.auth = true;
+            $state.go($stateParams.go);
+        }
     };
 
     // for profile pic upload to S3
