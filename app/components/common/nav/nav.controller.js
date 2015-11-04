@@ -30,24 +30,20 @@ function NavigationController($auth, $state, $window, $location, $stateParams, $
 
         knowtify.push(['load_inbox', 'knowtify', {email: this.user.profile.email}]);
 
-        $window.HelpCrunch('onReady', function() {
-            //$window.HelpCrunch('showChatWidget', { position: 'right' });
-            $('.helpcrunch-chat-header>span').replaceWith('<span>StartupCommunity.org Live Chat</span>');
-            $('.helpcrunch-logo').replaceWith('<img class="helpcrunch-logo" src="/images/plant_only.jpg" style="height:32px;">');
-            user_service.getHelpToken()
-                .then(function(response) {
-                    $window.HelpCrunch('updateUser', {
-                        name: self.user.profile.name,
-                        email: self.user.profile.email,
-                        user_id: self.user.key,
-                        signature: response.data
-                    });
-                });
-        });
-
     }
 
     this.openChat = function() {
+        user_service.getHelpToken()
+            .then(function(response) {
+                $('.helpcrunch-chat-header>span').replaceWith('<span>StartupCommunity.org Live Chat</span>');
+                $('.helpcrunch-logo').replaceWith('<img class="helpcrunch-logo" src="/images/plant_only.jpg" style="height:32px;">');
+                $window.HelpCrunch('updateUser', {
+                    name: self.user.profile.name,
+                    email: self.user.profile.email,
+                    user_id: self.user.key,
+                    signature: response.data
+                });
+            });
         $window.HelpCrunch('openChat');
     };
 
