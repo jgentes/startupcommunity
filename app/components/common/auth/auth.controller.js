@@ -8,6 +8,7 @@ function LoginController($auth, $state, $mixpanel, $stateParams, sweet) {
     var self = this;
     this.working = false;
     var postLogin = function(auth_response) { // from getprofile
+        console.log(auth_response);
         auth_response.data.user.value["key"] = auth_response.data.user.path.key;
         if (auth_response.config.data.state !== '/login') {
             $state.reload();
