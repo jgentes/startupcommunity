@@ -417,7 +417,6 @@ angular
         function error(exception, cause) { // preserve the default behaviour which will log the error to the console, and allow the application to continue running.
             $log.error.apply($log, arguments); // now try to log the error to the server side.
             try{
-                var errorMessage = exception.toString();
                 // use our traceService to generate a stack trace
                 var stackTrace = traceService.print({e: exception});
 
@@ -427,8 +426,8 @@ angular
                     contentType: "application/json",
                     data: angular.toJson({
                         url: $window.location.href,
-                        message: 'WARNING: ' + errorMessage,
-                        type: "exception",
+                        message: exception,
+                        type: "WARNING",
                         stackTrace: stackTrace,
                         cause: ( cause || "")
                     })

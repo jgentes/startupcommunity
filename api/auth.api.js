@@ -105,8 +105,7 @@ function handleEnsureAuthenticated(req, res, next) {
         next();
     }
     catch (e) {
-        console.warn('WARNING: EnsureAuth failure: ');
-        console.warn(e);
+        console.warn('WARNING: EnsureAuth failure: ', e);
         return res.status(204).end();
     }
 }
@@ -167,7 +166,7 @@ function handleCreateAPIToken(req, res) {
             }
         })
         .fail(function(err){
-            console.log("WARNING: SEARCH FAIL:" + err);
+            console.log("WARNING: auth170", err);
             res.status(202).send({ message: 'Something went wrong: ' + err});
         });
 
@@ -208,19 +207,19 @@ function handleSignup(req, res) {
                                 }
                             })
                             .fail(function(err){
-                                console.log("WARNING: SEARCH FAIL:" + err);
-                                res.status(202).send({ message: 'Something went wrong: ' + err});
+                                console.log("WARNING: auth211", err);
+                                res.status(202).send({ message: err});
                             })
                             .fail(function (err) {
-                                console.log("WARNING: POST FAIL:" + err.body);
-                                res.status(202).send({ message: 'Something went wrong: ' + err});
+                                console.log("WARNING: auth215:", err);
+                                res.status(202).send({ message: err});
                             });
                     });
             }
         })
         .fail(function(err){
-            console.warn("WARNING: SEARCH FAIL:" + err);
-            res.status(202).send({ message: 'Something went wrong: ' + err});
+            console.warn("WARNING: auth222", err);
+            res.status(202).send({ message: err});
         });
 }
 
@@ -252,7 +251,7 @@ function handleLogin(req, res) {
             }
         })
         .fail(function(err){
-            console.warn("WARNING: SEARCH FAIL:" + err);
+            console.warn("WARNING: auth255" + err);
             res.status(202).send('Something went wrong: ' + err);
         });
 }
@@ -345,6 +344,7 @@ function handleLinkedin(req, res) {
 
     var add_knowtify = function(user) {
         // send user info to Knowtify
+        console.log('updating Knowtify')
         var knowtifyClient = new knowtify.Knowtify(config.knowtify, false);
 
         knowtifyClient.contacts.upsert({
@@ -376,7 +376,7 @@ function handleLinkedin(req, res) {
         request.get({url: peopleApiUrl, qs: params, json: true}, function (err, response, profile) {
 
             if (err) {
-                console.warn("WARNING: Linkedin GET FAIL:");
+                console.warn("WARNING: auth380");
                 console.warn(err);
                 return res.status(401).send({message: 'Something went wrong: ' + err});
             } else profile['access_token'] = params.oauth2_access_token;
@@ -481,7 +481,7 @@ function handleLinkedin(req, res) {
                                                 add_knowtify(result.body.results[0].value);
                                             })
                                             .fail(function (err) {
-                                                console.warn("WARNING: Profile update failed:");
+                                                console.warn("WARNING: auth485");
                                                 console.warn(err);
                                             });
                                         res.send({
@@ -525,8 +525,7 @@ function handleLinkedin(req, res) {
                                                     accept_invite(invite_profile.profile, invitor_email);
                                                 })
                                                 .fail(function (err) {
-                                                    console.error("POST fail:");
-                                                    console.error(err.body);
+                                                    console.warn("WARNING: auth529", err);
                                                 });
 
                                         } else {
@@ -539,14 +538,13 @@ function handleLinkedin(req, res) {
                                     }
                                 })
                                 .fail(function (err) {
-                                    console.warn("WARNING: SEARCH FAIL:" + err);
-                                    res.status(202).send({message: 'Something went wrong: ' + err});
+                                    console.warn("WARNING: auth543", err);
+                                    res.status(202).send({message: err});
                                 });
                         }
                     })
                     .fail(function (err) {
-                        console.warn("WARNING: There was a problem:");
-                        console.warn(err);
+                        console.warn("WARNING: auth549", err);
                     });
             }
 
@@ -596,7 +594,7 @@ function handleInviteUser(req, res) {
                             res.status(200).send({message: 'Nice!  <a target="_blank" href="https://startupcommunity.org/' + result.body.results[0].path.key + '">' + result.body.results[0].value.profile.name + '</a> is a member of the community.'});
                         })
                         .fail(function(err) {
-                            console.log('WARNING:');
+                            console.log('WARNING: auth600');
                             console.log(err);
                             res.status(202).send({message: err});
                         })
@@ -647,7 +645,7 @@ function handleInviteUser(req, res) {
                                             res.status(200).send({message: "Done! We've sent an invitation to " + inviteUser.email});
                                         },
                                         function (error) {
-                                            console.log('WARNING:');
+                                            console.log('WARNING: auth651');
                                             console.log(error);
                                             res.status(202).send({message: "Woah! Something went wrong, but we've been notified and will take care of it."});
                                         });
@@ -655,7 +653,7 @@ function handleInviteUser(req, res) {
                             }
                         })
                         .fail(function(err) {
-                            console.log('WARNING:');
+                            console.log('WARNING: auth659');
                             console.log(err);
                             res.status(202).send({message: "Woah! Something went wrong, but we've been notified and will take care of it."});
                         })

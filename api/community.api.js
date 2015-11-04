@@ -168,8 +168,7 @@ function handleGetCommunity(req, res) {
                                 });
                             })
                             .fail(function (err) {
-                                console.log("WARNING: SEARCH FAIL:");
-                                console.warn(err);
+                                console.log("WARNING: community171", err);
                                 res.status(200).send(newresponse);
                             });
 
@@ -217,8 +216,7 @@ function handleGetCommunity(req, res) {
                                         finalize(result2.body.results);
                                     })
                                     .fail(function (err) {
-                                        console.log("WARNING: SEARCH FAIL:");
-                                        console.warn(err);
+                                        console.log("WARNING: community219", err);
                                         finalize(result.body.results);
                                     });
 
@@ -235,8 +233,7 @@ function handleGetCommunity(req, res) {
                 }
             })
             .fail(function (err) {
-                console.log("WARNING: SEARCH FAIL:");
-                console.warn(err);
+                console.log("WARNING: community236", err);
                 res.status(202).send({message: 'Something went wrong: ' + err});
             });
     };
@@ -401,21 +398,18 @@ function handleGetTop(req, res) {
 
                             })
                             .fail(function (err) {
-                                console.log("WARNING: SEARCH FAIL:");
-                                console.warn(err);
+                                console.log("WARNING: community401", err);
                                 res.status(202).send({message: 'Something went wrong: ' + err});
                             });
                     })
                     .fail(function (err) {
-                        console.log("WARNING: SEARCH FAIL:");
-                        console.warn(err);
+                        console.log("WARNING: community406", err);
                         res.status(202).send({message: 'Something went wrong: ' + err});
                     });
 
             })
             .fail(function (err) {
-                console.log("WARNING: SEARCH FAIL:");
-                console.warn(err);
+                console.log("WARNING: community412", err);
                 res.status(202).send({message: 'Something went wrong: ' + err});
             });
     };
@@ -469,14 +463,14 @@ function handleSetCommunity(req, res) {
                         res.status(201).send({message: 'Community settings updated.'});
                     })
                     .fail(function (err) {
-                        console.warn('WARNING:  Problem with put: ' + err);
-                        res.status(202).send({message: 'Something went wrong: ' + err});
+                        console.warn('WARNING: community466 ', err);
+                        res.status(202).send({message: err});
                     });
 
             })
             .fail(function (err) {
-                console.warn('WARNING:  Problem with get: ' + err);
-                res.status(202).send({message: 'Something went wrong: ' + err});
+                console.warn('WARNING: community472 ', err);
+                res.status(202).send({message: err});
             });
 
     } else {
@@ -536,8 +530,8 @@ function handleAddCommunity(req, res) {
                                     })
                             })
                             .fail(function (err) {
-                                console.warn('WARNING:  Problem with put: ' + err);
-                                res.status(202).send({message: 'Something went wrong: ' + err});
+                                console.warn('WARNING: community533 ', err);
+                                res.status(202).send({message: err});
                             });
 
 
@@ -568,13 +562,13 @@ function handleAddCommunity(req, res) {
                                 })
                         })
                         .fail(function (err) {
-                            console.warn('WARNING:  Problem with put: ' + err);
-                            res.status(202).send({message: 'Something went wrong: ' + err});
+                            console.warn('WARNING: community565 ', err);
+                            res.status(202).send({message: err});
                         });
 
                 } else {
-                    console.warn('WARNING:  Problem with get: ', err.body);
-                    res.status(202).send({message: 'Something went wrong: ' + err.body});
+                    console.warn('WARNING: community570', err);
+                    res.status(202).send({message: err});
                 }
 
             });
@@ -623,8 +617,8 @@ function handleDeleteCommunity(req, res) {
                                 res.status(204).send({message: settings.community.type[0].toUpperCase() + settings.community.type.slice(1) + ' deleted!'});
                             })
                             .fail(function (err) {
-                                console.warn('WARNING:  Problem with put: ' + err);
-                                res.status(202).send({message: 'Something went wrong: ' + err});
+                                console.warn('WARNING: community620', err);
+                                res.status(202).send({message: err});
                             });
                     } else {
                         db.put(config.db.communities, settings.community.key, response.body)
@@ -632,8 +626,8 @@ function handleDeleteCommunity(req, res) {
                                 res.status(204).send({message: settings.community.type[0].toUpperCase() + settings.community.type.slice(1) + ' deleted!'});
                             })
                             .fail(function (err) {
-                                console.warn('WARNING:  Problem with put: ' + err);
-                                res.status(202).send({message: 'Something went wrong: ' + err});
+                                console.warn('WARNING: community629 ', err);
+                                res.status(202).send({message: err});
                             });
                     }
 
@@ -647,8 +641,8 @@ function handleDeleteCommunity(req, res) {
             })
             .fail(function (err) {
 
-                console.warn('WARNING:  Problem with get: ', err.body);
-                res.status(202).send({message: 'Something went wrong: ' + err.body});
+                console.warn('WARNING: community644', err);
+                res.status(202).send({message: err});
 
             });
 
@@ -709,8 +703,7 @@ var update_user = function(user_key, role, cluster_key, location_key) {
                         console.log('User ' + user_key + ' updated with community role.');
                     })
                     .fail(function(err){
-                        console.warn("WARNING: PUT FAIL:");
-                        console.warn(err);
+                        console.warn("WARNING: community706", err);
                     });
 
             } else {
@@ -719,8 +712,7 @@ var update_user = function(user_key, role, cluster_key, location_key) {
         })
 
         .fail(function(err){
-            console.warn("WARNING: SEARCH FAIL:");
-            console.warn(err);
+            console.warn("WARNING: community715", err);
         });
 };
 
@@ -742,9 +734,8 @@ function handleGetKey(req, res) {
                 if (err.statusCode == 404) {
                     res.status(404).end();
                 } else {
-                    console.log("WARNING: SEARCH FAIL:");
-                    console.warn(err);
-                    res.status(202).send({message: 'Something went wrong: ' + err});
+                    console.log("WARNING: community737:", err);
+                    res.status(202).send({message: err});
                 }
             });
     }

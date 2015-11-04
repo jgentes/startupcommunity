@@ -70,8 +70,7 @@ function handleAddMessage(req, res) {
                     console.log('Notification sent to ' + notify.to.profile.email);
                 },
                 function (error) {
-                    console.log('WARNING:');
-                    console.log(error);
+                    console.log('WARNING: messages73', error);
                 });
         };
 

@@ -82,7 +82,7 @@ var searchInCommunity = function(communities, clusters, stages, limit, offset, q
                                      */
                             })
                             .fail(function(err){
-                                    console.warn("WARNING: SEARCH FAIL:" + err);
+                                    console.warn("WARNING: company85", err);
                                     return deferred.reject(new Error(err));
                             });
                 } catch (err) {
@@ -141,7 +141,7 @@ var searchInCommunity = function(communities, clusters, stages, limit, offset, q
                                 result.body.results[i].value["key"] = result.body.results[i].path.key;
                             }
                     } catch (error) {
-                            console.warn('WARNING:  Possible database entry corrupted: ');
+                            console.warn('WARNING: company144 ', error);
                             console.log(result.body.results);
                     }
 
@@ -256,8 +256,7 @@ var addRole = function(company_key, role, location_key, user_key) {
                         console.log('User ' + user_key + ' updated with company role.');
                     })
                     .fail(function(err){
-                        console.warn("WARNING: PUT FAIL:");
-                        console.warn(err);
+                        console.warn("WARNING: company259", err);
                     });
 
             } else {
@@ -266,8 +265,7 @@ var addRole = function(company_key, role, location_key, user_key) {
         })
 
         .fail(function(err){
-            console.warn("WARNING: SEARCH FAIL:");
-            console.warn(err);
+            console.warn("WARNING: company268", err);
         });
 };
 
@@ -330,8 +328,8 @@ var companyPull = function (company, role, location_key, user, callback) {
             }
         })
         .fail(function(err){
-            console.log("WARNING: SEARCH FAIL:" + err);
-            res.status(500).send({ message: 'Something went wrong: ' + err});
+            console.log("WARNING: company331", err);
+            res.status(500).send({ message: err});
         });
 
 };
