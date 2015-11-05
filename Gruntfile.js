@@ -88,7 +88,7 @@ module.exports = function (grunt) {
                 files: [
                     '<%= startupcommunity.app %>/**/*.html',
                     '/public/styles/{,*/}*.css',
-                    '<%= startupcommunity.app %>/images/{,*/}*.{png,jpg,jpeg,gif,webp,svg}'
+                    'public/images/{,*/}*.{png,jpg,jpeg,gif,webp,svg}'
                 ]
             }
         },
@@ -126,7 +126,7 @@ module.exports = function (grunt) {
                             '*.html',
                             'components/**',
                             'public/styles/img/*.*',
-                            'images/{,*/}*.*',
+                            'public/images/{,*/}*.*',
                             'frontend/**'
                         ]
                     },

@@ -2,7 +2,7 @@ angular
     .module('startupcommunity')
     .controller('LoginController', LoginController);
 
-function LoginController($auth, $state, $mixpanel, $stateParams, sweet, applicationLoggingService) {
+function LoginController($auth, $state, $mixpanel, $stateParams, sweet) {
 
     if (!jQuery.isEmptyObject($stateParams.alert)) this.alert = {type: 'danger', msg: $stateParams.alert};
     var self = this;
@@ -36,7 +36,6 @@ function LoginController($auth, $state, $mixpanel, $stateParams, sweet, applicat
                 postLogin(response);
             })
             .catch(function(response) {
-                applicationLoggingService.error(response);
                 if (response.data && response.data.profile) {
                     $mixpanel.people.set({
                         "$name": response.data.profile.firstName + ' ' + response.data.profile.lastName,

@@ -36,7 +36,7 @@ function NavigationController($auth, $state, $window, $location, $stateParams, $
         user_service.getHelpToken()
             .then(function(response) {
                 $('.helpcrunch-chat-header>span').replaceWith('<span>StartupCommunity.org Live Chat</span>');
-                $('.helpcrunch-logo').replaceWith('<img class="helpcrunch-logo" src="/images/plant_only.jpg" style="height:32px;">');
+                $('.helpcrunch-logo').replaceWith('<img class="helpcrunch-logo" src="/public/images/plant_only.jpg" style="height:32px;">');
                 $window.HelpCrunch('updateUser', {
                     name: self.user.profile.name,
                     email: self.user.profile.email,

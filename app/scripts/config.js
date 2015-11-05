@@ -36,8 +36,8 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                 tour: false
             },
             resolve: {
-                user: ['user_service', '$mixpanel', '$location',
-                    function(user_service, $mixpanel, $location) {
+                user: ['user_service', '$mixpanel', '$location', 'applicationLoggingService',
+                    function(user_service, $mixpanel, $location, applicationLoggingService) {
                         return user_service.getProfile()
                             .success(function(response) {
 
@@ -54,6 +54,7 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                                 }
                             })
                             .error(function(response) {
+                                applicationLoggingService.error(response);
                                 $location.url('/logout');
                             });
                     }],
