@@ -66,7 +66,11 @@ if (process.env.NODE_ENV === "production") {
   app.use(nodalytics('UA-58555092-2'));
 
 } else {
-  app.use("/bower_components", express.static(__dirname + "/bower_components"));
+    app.use(function(err, req, res, next) {
+        if (err) console.log(err);
+        if (req) console.log(req);
+    });
+    app.use("/bower_components", express.static(__dirname + "/bower_components"));
 }
 
 // API ROUTE METHODS
@@ -172,7 +176,6 @@ ghost({
 // Backend App
 
 app.get('/*', function (req, res, next) {
-    console.log(req);
   res.sendFile("app.html", {root: __dirname + config.path});
 });
 
