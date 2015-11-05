@@ -41,6 +41,9 @@
                         <a ng-click="nav.openChat()" tooltip-placement="left" tooltip="Help">
                             <i class="pe-7s-help1"></i>
                         </a>
+                        <span ng-show="nav.chatMessageCount">
+                            <span id="helpcrunch_message_count" ng-bind="nav.chatMessageCount"></span>
+                        </span>
                     </li>
                     <li ng-if="nav.user" class="dropdown">
                         <a tooltip-placement="left" tooltip="Logout" href="/logout" style="padding-right: 30px;">

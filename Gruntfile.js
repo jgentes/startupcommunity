@@ -33,10 +33,7 @@ module.exports = function (grunt) {
                         console.log(appConfig.app);
                         return [
                             connect.static('.tmp'),
-                            connect().use(
-                                '/bower_components',
-                                connect.static('../bower_components')
-                            ),
+                            connect.static('bower_components'),
                             connect.static(appConfig.app)
                         ];
                     }
@@ -61,7 +58,7 @@ module.exports = function (grunt) {
                     optimization: 2
                 },
                 files: {
-                    ".tmp/styles/style.css": "<%= startupcommunity.app %>/less/style.less"
+                    "build/styles/style.css": "<%= startupcommunity.app %>/less/style.less"
                 }
             }
         },
@@ -87,7 +84,7 @@ module.exports = function (grunt) {
                 },
                 files: [
                     '<%= startupcommunity.app %>/**/*.html',
-                    '/public/styles/{,*/}*.css',
+                    'build/styles/{,*/}*.css',
                     'public/images/{,*/}*.{png,jpg,jpeg,gif,webp,svg}'
                 ]
             }
@@ -125,43 +122,48 @@ module.exports = function (grunt) {
                             '.htaccess',
                             '*.html',
                             'components/**',
-                            'public/styles/img/*.*',
-                            'public/images/{,*/}*.*',
                             'frontend/**'
                         ]
                     },
                     {
                         expand: true,
                         dot: true,
-                        cwd: '../bower_components/fontawesome',
-                        src: ['/public/fonts/*.*'],
+                        cwd: 'build',
+                        src: ['styles/*.*'],
                         dest: '<%= startupcommunity.dist %>'
                     },
                     {
                         expand: true,
                         dot: true,
-                        cwd: '../bower_components/bootstrap/dist',
-                        src: ['/public/fonts/*.*'],
+                        cwd: 'build/fonts/pe-icon-7-stroke',
+                        src: ['fonts/*.*'],
                         dest: '<%= startupcommunity.dist %>'
                     },
                     {
                         expand: true,
                         dot: true,
-                        cwd: '/fonts/pe-icon-7-stroke/',
-                        src: ['/public/fonts/*.*'],
+                        cwd: 'bower_components/fontawesome',
+                        src: ['fonts/*.*'],
+                        dest: '<%= startupcommunity.dist %>'
+                    },
+                    {
+                        expand: true,
+                        dot: true,
+                        cwd: 'bower_components/bootstrap/dist',
+                        src: ['fonts/*.*'],
                         dest: '<%= startupcommunity.dist %>'
                     }
                 ]
             },
             backstyles: {
                 expand: true,
-                cwd: '/public/styles',
+                cwd: 'build/styles',
                 dest: '.tmp/styles/',
                 src: '{,*/}*.css'
             },
             frontstyles: {
                 expand: true,
-                cwd: '<%= startupcommunity.app %>/frontend/css',
+                cwd: 'frontend/css',
                 dest: '.tmp/frontend/css',
                 src: '{,*/}*.css'
             }
@@ -207,7 +209,7 @@ module.exports = function (grunt) {
         protractor: {
             options: {
                 keepAlive: true,
-                configFile: "../test/protractor.conf.js"
+                configFile: "test/protractor.conf.js"
             },
             run: {}
         }

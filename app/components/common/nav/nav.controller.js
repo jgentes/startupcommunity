@@ -2,7 +2,7 @@ angular
     .module('startupcommunity')
     .controller('NavigationController', NavigationController);
 
-function NavigationController($auth, $state, $window, $location, $stateParams, $modal, user_service, user, location, community, communities, knowtify) {
+function NavigationController($auth, $state, $window, $location, $scope, $stateParams, $modal, user_service, user, location, community, communities, knowtify) {
     if (user.data && user.data.token) $auth.setToken(user.data.token); // update local storage with latest user profile
 
     // SENSITIVE VARIABLES THAT AFFECT NAVIGATION AND ALL CHILD TEMPLATES
@@ -29,6 +29,11 @@ function NavigationController($auth, $state, $window, $location, $stateParams, $
         this.user = user.data.user; // reference 'this' by using 'nav' from 'NavigationController as nav' - * nav is also usable in child views *
 
         knowtify.push(['load_inbox', 'knowtify', {email: this.user.profile.email}]);
+
+        $window.HelpCrunch('onNewUnreadMessages', function(event) {
+            self.chatMessageCount = event.unreadMessages;
+            $scope.$apply();
+        });
 
     }
 

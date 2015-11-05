@@ -67,6 +67,7 @@ if (process.env.NODE_ENV === "production") {
 
 } else {
     app.use("/bower_components", express.static("bower_components"));
+    app.use("/build", express.static("build"));
 }
 
 // API ROUTE METHODS
