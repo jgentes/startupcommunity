@@ -35,7 +35,7 @@ module.exports = function (grunt) {
                             connect.static('.tmp'),
                             connect().use(
                                 '/bower_components',
-                                connect.static('./bower_components')
+                                connect.static('../bower_components')
                             ),
                             connect.static(appConfig.app)
                         ];
@@ -61,14 +61,14 @@ module.exports = function (grunt) {
                     optimization: 2
                 },
                 files: {
-                    "app/styles/style.css": "app/less/style.less"
+                    ".tmp/styles/style.css": "<%= startupcommunity.app %>/less/style.less"
                 }
             }
         },
         // Watch for changes in live edit
         watch: {
             styles: {
-                files: ['app/less/**/*.less'],
+                files: ['<%= startupcommunity.app %>/less/**/*.less'],
                 tasks: ['less', 'copy:backstyles', 'copy:frontstyles'],
                 options: {
                     nospawn: true,
@@ -87,7 +87,7 @@ module.exports = function (grunt) {
                 },
                 files: [
                     '<%= startupcommunity.app %>/**/*.html',
-                    '.tmp/styles/{,*/}*.css',
+                    '/public/styles/{,*/}*.css',
                     '<%= startupcommunity.app %>/images/{,*/}*.{png,jpg,jpeg,gif,webp,svg}'
                 ]
             }
@@ -125,7 +125,7 @@ module.exports = function (grunt) {
                             '.htaccess',
                             '*.html',
                             'components/**',
-                            'styles/img/*.*',
+                            'public/styles/img/*.*',
                             'images/{,*/}*.*',
                             'frontend/**'
                         ]
@@ -133,29 +133,29 @@ module.exports = function (grunt) {
                     {
                         expand: true,
                         dot: true,
-                        cwd: 'bower_components/fontawesome',
-                        src: ['fonts/*.*'],
+                        cwd: '../bower_components/fontawesome',
+                        src: ['/public/fonts/*.*'],
                         dest: '<%= startupcommunity.dist %>'
                     },
                     {
                         expand: true,
                         dot: true,
-                        cwd: 'bower_components/bootstrap/dist',
-                        src: ['fonts/*.*'],
+                        cwd: '../bower_components/bootstrap/dist',
+                        src: ['/public/fonts/*.*'],
                         dest: '<%= startupcommunity.dist %>'
                     },
                     {
                         expand: true,
                         dot: true,
-                        cwd: 'app/fonts/pe-icon-7-stroke/',
-                        src: ['fonts/*.*'],
+                        cwd: '/fonts/pe-icon-7-stroke/',
+                        src: ['/public/fonts/*.*'],
                         dest: '<%= startupcommunity.dist %>'
                     }
                 ]
             },
             backstyles: {
                 expand: true,
-                cwd: '<%= startupcommunity.app %>/styles',
+                cwd: '/public/styles',
                 dest: '.tmp/styles/',
                 src: '{,*/}*.css'
             },
@@ -196,18 +196,18 @@ module.exports = function (grunt) {
             }
         },
         useminPrepare: {
-            html: ['app/app.html', 'app/frontend.html'],
+            html: ['<%= startupcommunity.app %>/app.html', '<%= startupcommunity.app %>/frontend.html'],
             options: {
-                dest: 'dist'
+                dest: '<%= startupcommunity.dist %>'
             }
         },
         usemin: {
-            html: ['dist/app.html', 'dist/frontend.html']
+            html: ['<%= startupcommunity.dist %>/app.html', '<%= startupcommunity.dist %>/frontend.html']
         },
         protractor: {
             options: {
                 keepAlive: true,
-                configFile: "test/protractor.conf.js"
+                configFile: "../test/protractor.conf.js"
             },
             run: {}
         }

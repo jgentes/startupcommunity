@@ -58,7 +58,7 @@ app.use(methodOverride());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use("/", express.static(__dirname + config.path));
-app.use("/public", express.static(__dirname + '/public'));
+app.use("/public", express.static('public'));
 
 if (process.env.NODE_ENV === "production") {
     // production-only things go here
@@ -66,24 +66,24 @@ if (process.env.NODE_ENV === "production") {
     app.use(nodalytics('UA-58555092-2'));
 
 } else {
-    app.use("/bower_components", express.static(__dirname + "/bower_components"));
+    app.use("/bower_components", express.static("bower_components"));
 }
 
 // API ROUTE METHODS
 
-var AuthApi = require('./api/auth.api.js'),
+var AuthApi = require(__dirname + '/api/auth.api.js'),
     auth = new AuthApi(),
-    UserApi = require('./api/user.api.js'),
+    UserApi = require(__dirname + '/api/user.api.js'),
     userApis = new UserApi(),
-    CompanyApi = require('./api/company.api.js'),
+    CompanyApi = require(__dirname + '/api/company.api.js'),
     companyApis = new CompanyApi(),
-    CommunityApi = require('./api/community.api.js'),
+    CommunityApi = require(__dirname + '/api/community.api.js'),
     communityApis = new CommunityApi(),
-    MessagesApi = require('./api/messages.api.js'),
+    MessagesApi = require(__dirname + '/api/messages.api.js'),
     messagesApis = new MessagesApi(),
-    AngelListApi = require('./api/angellist.api.js'),
+    AngelListApi = require(__dirname + '/api/angellist.api.js'),
     angellistApis = new AngelListApi(),
-    MaintApi = require('./api/maint.api.js'),
+    MaintApi = require(__dirname + '/api/maint.api.js'),
     maint = new MaintApi();
 
 // API
@@ -162,7 +162,7 @@ app.get('/', function (req, res, next) {
 });
 
 ghost({
-  config: __dirname + '/app/frontend/ghost/config.js'
+  config: __dirname + '/frontend/ghost/config.js'
 }).then(function (ghostServer) {
   parentApp.use('/blog', ghostServer.rootApp);
 
