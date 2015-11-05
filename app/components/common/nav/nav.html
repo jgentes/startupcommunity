@@ -4,7 +4,7 @@
         <div ng-class="{'bright-line' : !nav.embedded, 'grey-line' : nav.embedded}">
         </div>
         <div id="logo" class="light-version">
-            <a href="https://startupcommunity.org" target="_blank"><img src="images/sc_logo.png"/></a>
+            <a href="https://startupcommunity.org" target="_blank"><img src="/public/images/sc_logo.png"/></a>
         </div>
         <nav role="navigation">
             <minimaliza-menu ng-if="!nav.embedded"></minimaliza-menu>
@@ -58,7 +58,7 @@
             <div ng-if="nav.user" class="container side-menu" style="padding-top: 10px; margin-left: -20px; border-bottom: 1px solid #eee;    margin-bottom: -9px;" tour-step order="4" title="Your Profile" content="People can ask you questions on your profile page. Click 'End tour' to take a look." placement="right">
                 <div class="row side-menu">
                     <div class="col-xs-3">
-                        <a ui-sref="user.dashboard({profile: nav.user, location_path: nav.user.key, community: {}})"><img class="img-circle m-b" ng-src="{{nav.user.profile.avatar || nav.user.profile.linkedin.pictureUrl || 'images/blank_avatar.png'}}" alt="{{nav.user.profile.name}}" style="height: 40px; width: 40px; "/></a>
+                        <a ui-sref="user.dashboard({profile: nav.user, location_path: nav.user.key, community: {}})"><img class="img-circle m-b" ng-src="{{nav.user.profile.avatar || nav.user.profile.linkedin.pictureUrl || '/public/images/blank_avatar.png'}}" alt="{{nav.user.profile.name}}" style="height: 40px; width: 40px; "/></a>
                     </div>
                     <div class="col-xs-9" style="padding-top: 3px; white-space: nowrap;">
                         <a ui-sref="user.dashboard({profile: nav.user, location_path: nav.user.key, community: {}})">{{nav.user.profile.name}}</a>
@@ -192,7 +192,7 @@
     <!-- Main Content -->
     <div ui-view >
         <div ng-style="{'background-color': nav.color}" ng-class="{'wrapper' : !nav.embedded}">
-            <div class="splash"><div class="splash-title"><a href="/"><img src="images/sc_logo.png" style="width: 75%;" alt="StartupCommunity.org Logo"/></a><img src="images/loading-bars.svg" width="64" height="64" /> </div></div>
+            <div class="splash"><div class="splash-title"><a href="/"><img src="/public/images/sc_logo.png" style="width: 75%;" alt="StartupCommunity.org Logo"/></a><img src="/public/images/loading-bars.svg" width="64" height="64" /> </div></div>
             <div ng-class="{'embed_header' : nav.embedded}" ui-view="header"></div>
             <div ng-class="{'content' : !nav.embedded}">
                 <div ui-view="content"></div>

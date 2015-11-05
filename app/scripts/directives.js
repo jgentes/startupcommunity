@@ -28,7 +28,7 @@ function alertBox(){
 
 function loadingBars() {
     return {
-        template: '<img src="images/loading-bars.svg" width="15" height="15" style="margin-right: -35px; margin-left: 10px;margin-top: -3px;"/>'
+        template: '<img src="/public/images/loading-bars.svg" width="15" height="15" style="margin-right: -35px; margin-left: 10px;margin-top: -3px;"/>'
     }
 }
 
