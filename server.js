@@ -27,7 +27,7 @@ function wwwRedirect(req, res, next) {
     next();
 }
 
-//app.set('trust proxy', true); // important for https
+app.set('trust proxy', true); // important for https
 app.use(wwwRedirect);
 
 // Proxy for Ghost, which runs on different port
@@ -172,6 +172,7 @@ ghost({
 // Backend App
 
 app.get('/*', function (req, res, next) {
+    console.log(req);
   res.sendFile("app.html", {root: __dirname + config.path});
 });
 
