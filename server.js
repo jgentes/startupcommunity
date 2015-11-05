@@ -12,6 +12,7 @@ var express = require('express'),
     logger = require('morgan'),
     nodalytics = require('nodalytics'),
     ghost = require('ghost'),
+    util = require('util'),
     parentApp = express();
 
 var app = express();
@@ -61,14 +62,14 @@ app.use("/", express.static(__dirname + config.path));
 app.use("/public", express.static(__dirname + '/public'));
 
 if (process.env.NODE_ENV === "production") {
-  // production-only things go here
-  app.use(enforce.HTTPS(true));
-  app.use(nodalytics('UA-58555092-2'));
+    // production-only things go here
+    app.use(enforce.HTTPS(true));
+    app.use(nodalytics('UA-58555092-2'));
 
 } else {
-    app.use(function(err, req, res, next) {
-        if (err) console.log(err);
-        if (req) console.log(req);
+    app.use(function(req, res, next) {
+        if (req) console.log(util.inspect(req.headers));
+        next();
     });
     app.use("/bower_components", express.static(__dirname + "/bower_components"));
 }
