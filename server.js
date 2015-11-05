@@ -12,7 +12,6 @@ var express = require('express'),
     logger = require('morgan'),
     nodalytics = require('nodalytics'),
     ghost = require('ghost'),
-    util = require('util'),
     parentApp = express();
 
 var app = express();
@@ -67,10 +66,6 @@ if (process.env.NODE_ENV === "production") {
     app.use(nodalytics('UA-58555092-2'));
 
 } else {
-    app.use(function(req, res, next) {
-        if (req) console.log(util.inspect(req.headers));
-        next();
-    });
     app.use("/bower_components", express.static(__dirname + "/bower_components"));
 }
 
