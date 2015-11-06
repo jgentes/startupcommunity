@@ -55,15 +55,14 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                             })
                             .error(function(response) {
                                 applicationLoggingService.error('user resolve fail: ', response);
-                                $state.go('logout');
                                 $location.url('/logout');
                             });
                     }],
-                communities: ['$stateParams', 'community_service',
-                    function($stateParams, community_service) {
+                communities: ['$stateParams', 'community_service', 'user',
+                    function($stateParams, community_service, user) {
+                        // user is injected to prevent communities from loading until user is valid
                         return community_service.getCommunity($stateParams.location_path)
                             .error(function(response) {
-                                console.log(response);
                                 $state.go('404', { message: String(response) });
                             });
                     }],
