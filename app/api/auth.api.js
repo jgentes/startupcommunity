@@ -116,6 +116,8 @@ function handleEnsureAuthenticated(req, res, next) {
  |--------------------------------------------------------------------------
  */
 function handleCreateToken(req, user) {
+    console.log(req.hostname);
+    console.log(user);
     var payload = {
         iss: req.hostname,
         sub: user,
@@ -453,6 +455,7 @@ function handleLinkedin(req, res) {
                                     console.error("Profile update failed:");
                                     console.error(err);
                                 });
+
 
                             res.send({
                                 token: handleCreateToken(req, result.body.results[0]),
