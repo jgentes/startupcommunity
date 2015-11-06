@@ -116,8 +116,6 @@ function handleEnsureAuthenticated(req, res, next) {
  |--------------------------------------------------------------------------
  */
 function handleCreateToken(req, user) {
-    console.log(req.hostname);
-    console.log(user);
     var payload = {
         iss: req.hostname,
         sub: user,
