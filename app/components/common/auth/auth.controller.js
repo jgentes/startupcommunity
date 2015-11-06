@@ -9,9 +9,10 @@ function LoginController($auth, $state, $mixpanel, $stateParams, sweet) {
     var self = this;
     this.working = false;
     var postLogin = function(auth_response) { // from getprofile
-
+        console.log('postlogin');
         auth_response.data.user.value["key"] = auth_response.data.user.path.key;
         if (auth_response.config.data.state !== '/login') {
+            console.log('state reload');
             $state.reload();
         } else $state.go('user.dashboard', {profile: auth_response.data.user.value, location_path: auth_response.data.user.value.key, community: {}});
 
@@ -35,7 +36,7 @@ function LoginController($auth, $state, $mixpanel, $stateParams, sweet) {
         self.working = true;
         $auth.authenticate(provider)
             .then(function(response) {
-                console.log('response');
+                console.log(response);
                 postLogin(response);
             })
             .catch(function(response) {
