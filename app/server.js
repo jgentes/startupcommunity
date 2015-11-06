@@ -59,6 +59,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use("/", express.static(__dirname + config.path));
 app.use("/public", express.static('public'));
+console.log(__dirname);
 
 if (process.env.NODE_ENV === "production") {
     // production-only things go here
