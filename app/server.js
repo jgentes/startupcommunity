@@ -50,7 +50,7 @@ if (process.env.NODE_ENV === "development") {
   app.use(wwwhisper());
 }
 */
-console.log(__dirname);
+
 // Order really matters here..!
 app.disable('x-powered-by');
 app.use(logger('dev'));
@@ -163,7 +163,7 @@ app.get('/', function (req, res, next) {
 });
 
 ghost({
-  config: './frontend/ghost/config.js'
+  config: __dirname + '/frontend/ghost/config.js'
 }).then(function (ghostServer) {
   parentApp.use('/blog', ghostServer.rootApp);
 
