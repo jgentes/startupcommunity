@@ -377,7 +377,7 @@ angular
         window.$state = $state; // allows use of $state within console
         $rootScope.$on('$stateChangeError', function (evt, toState, toParams, fromState, fromParams, error) {
             exceptionLoggingService('state change error: ', fromState, toState, error);
-            $state.go($state.current, {}, {reload: true});
+            $state.go($state.current, {alert: error.statusText + ': Perhaps try <a href="/logout">logging out?</a>'}, {reload: true});
         });
         $rootScope.$on('$stateChangeSuccess',function(){
             $("html, body").animate({ scrollTop: 0 }, 200);
