@@ -40,6 +40,7 @@ function LoginController($auth, $state, $mixpanel, $stateParams, sweet) {
                 postLogin(response);
             })
             .catch(function(response) {
+                console.log('catch');
                 console.log(response);
                 if (response.data && response.data.profile) {
                     $mixpanel.people.set({
