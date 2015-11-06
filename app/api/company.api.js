@@ -190,7 +190,7 @@ function handleGetLogoUrl(req, res) {
 
         if (!err) {
             res.send({ put: signedUrl, get: objectUrl });
-        } else res.status(400).send({ message: err });
+        } else res.status(400).send({ message: "Something went wrong." });
 
     });
 }
@@ -329,7 +329,7 @@ var companyPull = function (company, role, location_key, user, callback) {
         })
         .fail(function(err){
             console.log("WARNING: company331", err);
-            res.status(500).send({ message: err});
+            res.status(500).send({ message: "Something went wrong."});
         });
 
 };

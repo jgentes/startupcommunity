@@ -208,18 +208,18 @@ function handleSignup(req, res) {
                             })
                             .fail(function(err){
                                 console.log("WARNING: auth211", err);
-                                res.status(202).send({ message: err});
+                                res.status(202).send({ message: "Something went wrong."});
                             })
                             .fail(function (err) {
                                 console.log("WARNING: auth215:", err);
-                                res.status(202).send({ message: err});
+                                res.status(202).send({ message: "Something went wrong."});
                             });
                     });
             }
         })
         .fail(function(err){
             console.warn("WARNING: auth222", err);
-            res.status(202).send({ message: err});
+            res.status(202).send({ message: "Something went wrong."});
         });
 }
 
@@ -539,12 +539,12 @@ function handleLinkedin(req, res) {
                                 })
                                 .fail(function (err) {
                                     console.warn("WARNING: auth543", err);
-                                    res.status(202).send({message: err});
+                                    res.status(202).send({message: "Something went wrong."});
                                 });
                         }
                     })
                     .fail(function (err) {
-                        console.warn("WARNING: auth549", err);
+                        console.warn("WARNING: auth549", "Something went wrong.");
                     });
             }
 
@@ -596,7 +596,7 @@ function handleInviteUser(req, res) {
                         .fail(function(err) {
                             console.log('WARNING: auth600');
                             console.log(err);
-                            res.status(202).send({message: err});
+                            res.status(202).send({message: "Something went wrong."});
                         })
 
                 } else {

@@ -464,13 +464,13 @@ function handleSetCommunity(req, res) {
                     })
                     .fail(function (err) {
                         console.warn('WARNING: community466 ', err);
-                        res.status(202).send({message: err});
+                        res.status(202).send({message: "Something went wrong."});
                     });
 
             })
             .fail(function (err) {
                 console.warn('WARNING: community472 ', err);
-                res.status(202).send({message: err});
+                res.status(202).send({message: "Something went wrong."});
             });
 
     } else {
@@ -531,7 +531,7 @@ function handleAddCommunity(req, res) {
                             })
                             .fail(function (err) {
                                 console.warn('WARNING: community533 ', err);
-                                res.status(202).send({message: err});
+                                res.status(202).send({message: "Something went wrong."});
                             });
 
 
@@ -563,12 +563,12 @@ function handleAddCommunity(req, res) {
                         })
                         .fail(function (err) {
                             console.warn('WARNING: community565 ', err);
-                            res.status(202).send({message: err});
+                            res.status(202).send({message: "Something went wrong."});
                         });
 
                 } else {
                     console.warn('WARNING: community570', err);
-                    res.status(202).send({message: err});
+                    res.status(202).send({message: "Something went wrong."});
                 }
 
             });
@@ -618,7 +618,7 @@ function handleDeleteCommunity(req, res) {
                             })
                             .fail(function (err) {
                                 console.warn('WARNING: community620', err);
-                                res.status(202).send({message: err});
+                                res.status(202).send({message: "Something went wrong."});
                             });
                     } else {
                         db.put(config.db.communities, settings.community.key, response.body)
@@ -627,7 +627,7 @@ function handleDeleteCommunity(req, res) {
                             })
                             .fail(function (err) {
                                 console.warn('WARNING: community629 ', err);
-                                res.status(202).send({message: err});
+                                res.status(202).send({message: "Something went wrong."});
                             });
                     }
 
@@ -642,7 +642,7 @@ function handleDeleteCommunity(req, res) {
             .fail(function (err) {
 
                 console.warn('WARNING: community644', err);
-                res.status(202).send({message: err});
+                res.status(202).send({message: "Something went wrong."});
 
             });
 
@@ -735,7 +735,7 @@ function handleGetKey(req, res) {
                     res.status(404).end();
                 } else {
                     console.log("WARNING: community737:", err);
-                    res.status(202).send({message: err});
+                    res.status(202).send({message: "Something went wrong."});
                 }
             });
     }

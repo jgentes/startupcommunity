@@ -210,7 +210,7 @@ function handleDirectSearch(req, res) {
         })
         .fail(function(err){
             console.log(err.body.message);
-            res.status(202).send({ message: err});
+            res.status(202).send({ message: "Something went wrong."});
         });
 }
 
@@ -324,7 +324,7 @@ function handleContactUser(req, res) {
                                 function(err){
                                     console.warn('WARNING');
                                     console.log(err);
-                                    res.status(202).send({ message: err });
+                                    res.status(202).send({ message: "Something went wrong." });
                                 }
                             );
 
@@ -336,7 +336,7 @@ function handleContactUser(req, res) {
 
                     .fail(function(err){
                         console.warn("WARNING: user338", err);
-                        res.status(202).send({ message: err});
+                        res.status(202).send({ message: "Something went wrong."});
                     });
 
 
@@ -349,7 +349,7 @@ function handleContactUser(req, res) {
         })
         .fail(function(err){
             console.log("WARNING: user351", err);
-            res.status(202).send({ message: err});
+            res.status(202).send({ message: "Something went wrong."});
         });
 
 
@@ -388,7 +388,7 @@ function handleGetProfile(req, res) {
 
         .fail(function(err){
             console.warn("WARNING: user390", err);
-            res.status(202).send({ message: err});
+            res.status(statusCode).send({ message: "Something went wrong."});
         });
 
 }
@@ -419,7 +419,7 @@ function handleGetProfileUrl(req, res) {
 
         if (!err) {
             res.send({ put: signedUrl, get: objectUrl });
-        } else res.status(204).send({ message: err });
+        } else res.status(204).send({ message: "Something went wrong." });
 
     });
 }
@@ -455,7 +455,7 @@ function handleUpdateProfile(req, res) {
 
             .fail(function(err){
                 console.warn("WARNING: user457", err);
-                res.status(202).send({ message: err});
+                res.status(202).send({ message: "Something went wrong."});
             });
     } else {
         res.status(400).send({ message: 'You may only update your own user record.'})
@@ -480,7 +480,7 @@ function handleSetRole(req, res) {
               })
               .fail(function(err){
                   console.warn("WARNING: user482", err);
-                  res.status(202).send({ message: err});
+                  res.status(202).send({ message: "Something went wrong."});
               });
         } else callback(allowed);
     };
@@ -517,13 +517,13 @@ function handleSetRole(req, res) {
                     })
                     .fail(function (err) {
                         console.warn('WARNING: user519 ', err);
-                        res.status(202).send({ message: err});
+                        res.status(202).send({ message: "Something went wrong."});
                     });
 
               })
               .fail(function (err) {
                   console.warn('WARNING: user525 ', err);
-                  res.status(202).send({ message: err});
+                  res.status(202).send({ message: "Something went wrong."});
               });
         } else {
             res.status(401).send({ message: 'You do not have permission to change this role.'});
@@ -545,7 +545,7 @@ function handleFeedback(req, res) {
             })
             .fail(function (err) {
                 console.warn('WARNING: user547', err);
-                res.status(202).send({ message: err});
+                res.status(202).send({ message: "Something went wrong."});
             });
 
       })
