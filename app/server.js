@@ -18,15 +18,6 @@ var app = express();
 
 // Some things must come before Body Parser
 
-app.use(handle400);
-
-function handle400(err, req, res, next) {
-    if (err) console.log(err);
-    if (err.status !== 400) return next();
-    res.send('400 error!');
-}
-
-
 // change all www requests to non-www requests
 function wwwRedirect(req, res, next) {
     if (req.headers.host.slice(0, 4) === 'www.') {
