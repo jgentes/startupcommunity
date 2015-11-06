@@ -58,7 +58,10 @@ function LoginController($auth, $state, $mixpanel, $stateParams, sweet) {
                         type: "error",
                         html: true
                     });
-                } else self.alert = undefined;
+                } else if (response.statusText) {
+                    self.alert = response.statusText + ': We just cleared your browser token, please try again.';
+                    $auth.removeToken();
+                }
 
                 self.working = false;
             });
