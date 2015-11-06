@@ -387,7 +387,7 @@ function handleGetProfile(req, res) {
         })
 
         .fail(function(err){
-            console.warn("WARNING: user390", err);
+            console.warn("WARNING: user390", err.body);
             res.status(statusCode).send({ message: "Something went wrong."});
         });
 
