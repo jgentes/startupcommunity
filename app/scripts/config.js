@@ -55,8 +55,8 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                             })
                             .error(function(response) {
                                 applicationLoggingService.error('user resolve fail: ', response);
-                                $location.url('/logout');
                                 $state.go('logout');
+                                $location.url('/logout');
                             });
                     }],
                 communities: ['$stateParams', 'community_service',
