@@ -376,7 +376,8 @@ angular
         $rootScope.$state = $state; // allows use if $state within views
         window.$state = $state; // allows use of $state within console
         $rootScope.$on('$stateChangeError', function (evt, toState, toParams, fromState, fromParams, error) {
-            exceptionLoggingService(error);
+            exceptionLoggingService.error('state change error: ', fromState, toState, error);
+            $state.reload();
         });
         $rootScope.$on('$stateChangeSuccess',function(){
             $("html, body").animate({ scrollTop: 0 }, 200);
