@@ -2,7 +2,7 @@ angular
     .module('startupcommunity')
     .controller('NavigationController', NavigationController);
 
-function NavigationController($auth, $state, $window, $location, $scope, $stateParams, $modal, user_service, user, location, community, communities, knowtify) {
+function NavigationController($auth, $state, $window, $timeout, $location, $scope, $stateParams, $modal, user_service, user, location, community, communities, knowtify) {
     if (user.data && user.data.token) $auth.setToken(user.data.token); // update local storage with latest user profile
 
     // SENSITIVE VARIABLES THAT AFFECT NAVIGATION AND ALL CHILD TEMPLATES
@@ -32,9 +32,10 @@ function NavigationController($auth, $state, $window, $location, $scope, $stateP
 
         $window.HelpCrunch('onNewUnreadMessages', function(event) {
             self.chatMessageCount = event.unreadMessages;
-            $scope.$apply();
+            $timeout(function() {
+                $scope.$apply();
+            });
         });
-
     }
 
     this.openChat = function() {

@@ -18,6 +18,14 @@ var app = express();
 
 // Some things must come before Body Parser
 
+
+function handle400(err, req, res, next) {
+    if (err.status !== 400) return next();
+    res.send('400 error!');
+}
+
+app.use(handle400);
+
 // change all www requests to non-www requests
 function wwwRedirect(req, res, next) {
     if (req.headers.host.slice(0, 4) === 'www.') {
@@ -51,7 +59,7 @@ if (process.env.NODE_ENV === "development") {
 }
 */
 
-var root = __dirname.substring(0, __dirname.lastIndexOf('/')); // returns /app for heroku
+var root = __dirname.substring(0, __dirname.lastIndexOf('/')) || __dirname.substring(0, __dirname.lastIndexOf('\\')); // returns /app for heroku [should replace with path.join(__dirname, '../../dir')]
 
 // Order really matters here..!
 app.disable('x-powered-by');
