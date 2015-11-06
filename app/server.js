@@ -18,12 +18,11 @@ var app = express();
 
 // Some things must come before Body Parser
 
-app.set('trust proxy', true); // important for https
+//app.set('trust proxy', true); // important for https
 
 // change all www requests to non-www requests
 app.use(function(req, res, next) {
     if (req.headers.host.slice(0, 4) === 'www.') {
-        console.log('www redirect');
         var newHost = req.headers.host.slice(4);
         return res.redirect(301, req.protocol + '://' + newHost + req.originalUrl);
     }
@@ -38,7 +37,6 @@ app.all("/blog*", function(req, res){
 // remove trailing slash
 app.use(function(req, res, next) {
     if(req.url.substr(-1) == '/' && req.url.length > 1) {
-        console.log('trailing slash redirect');
         res.redirect(301, req.url.slice(0, -1));
     } else next();
 });
