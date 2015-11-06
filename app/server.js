@@ -27,7 +27,7 @@ function wwwRedirect(req, res, next) {
     next();
 }
 
-//app.set('trust proxy', true); // important for https
+app.set('trust proxy', true); // important for https
 app.use(wwwRedirect);
 
 // Proxy for Ghost, which runs on different port
@@ -50,14 +50,14 @@ if (process.env.NODE_ENV === "development") {
   app.use(wwwhisper());
 }
 */
-
+console.log(__dirname);
 // Order really matters here..!
 app.disable('x-powered-by');
 app.use(logger('dev'));
 app.use(methodOverride());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use("/", express.static('../' + config.path));
+app.use("/", express.static(__dirname + config.path));
 app.use("/public", express.static('../public'));
 
 if (process.env.NODE_ENV === "production") {
@@ -159,11 +159,11 @@ app.post('/api/logger', function (req, res) {
 
 // Frontend Homepage & Blog
 app.get('/', function (req, res, next) {
-  res.sendFile("frontend.html", {root: '../' + config.path});
+  res.sendFile("frontend.html", {root: __dirname + config.path});
 });
 
 ghost({
-  config: 'frontend/ghost/config.js'
+  config: './frontend/ghost/config.js'
 }).then(function (ghostServer) {
   parentApp.use('/blog', ghostServer.rootApp);
 
@@ -173,7 +173,7 @@ ghost({
 // Backend App
 
 app.get('/*', function (req, res, next) {
-  res.sendFile("app.html", {root: '../' + config.path});
+  res.sendFile("app.html", {root: __dirname + config.path});
 });
 
 var port = process.env.PORT || 5000;
