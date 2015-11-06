@@ -1,5 +1,5 @@
 # Apache Configuration File
-
+deny from all
 # (!) Using `.htaccess` files slows down Apache, therefore, if you have access
 # to the main server config file (usually called `httpd.conf`), you should add
 # this logic there: http://httpd.apache.org/docs/current/howto/htaccess.html.
@@ -214,7 +214,6 @@ AddDefaultCharset utf-8
     Options +FollowSymlinks
   # Options +SymLinksIfOwnerMatch
     RewriteEngine On
-    2klh3hq2a3bblk qa3wlbhkv32wh4bhl3bw2 3lhwb43h bwh3w3l hbwlh3wb
   # RewriteBase /
 </IfModule>
 
