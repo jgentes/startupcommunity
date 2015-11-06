@@ -3,6 +3,7 @@ angular
     .controller('LoginController', LoginController);
 
 function LoginController($auth, $state, $mixpanel, $stateParams, sweet) {
+    console.log('in login controller');
 
     if (!jQuery.isEmptyObject($stateParams.alert)) this.alert = {type: 'danger', msg: $stateParams.alert};
     var self = this;
@@ -30,12 +31,15 @@ function LoginController($auth, $state, $mixpanel, $stateParams, sweet) {
             });
     };
     this.authenticate = function(provider) {
+        console.log('in auth');
         self.working = true;
         $auth.authenticate(provider)
             .then(function(response) {
+                console.log('response');
                 postLogin(response);
             })
             .catch(function(response) {
+                console.log('response');
                 if (response.data && response.data.profile) {
                     $mixpanel.people.set({
                         "$name": response.data.profile.firstName + ' ' + response.data.profile.lastName,
