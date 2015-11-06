@@ -51,14 +51,16 @@ if (process.env.NODE_ENV === "development") {
 }
 */
 
+var root = __dirname.substring(0, __dirname.lastIndexOf('/')); // returns /app for heroku
+
 // Order really matters here..!
 app.disable('x-powered-by');
 app.use(logger('dev'));
 app.use(methodOverride());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use("/", express.static(config.path));
-app.use("/public", express.static('../public'));
+app.use("/", express.static(root + config.path));
+app.use("/public", express.static(root + '/public'));
 
 if (process.env.NODE_ENV === "production") {
     // production-only things go here
@@ -66,8 +68,8 @@ if (process.env.NODE_ENV === "production") {
     app.use(nodalytics('UA-58555092-2'));
 
 } else {
-    app.use("/bower_components", express.static("../bower_components"));
-    app.use("/build", express.static("../build"));
+    app.use("/bower_components", express.static(root + "/bower_components"));
+    app.use("/build", express.static(root + "/build"));
 }
 
 // API ROUTE METHODS
@@ -159,7 +161,7 @@ app.post('/api/logger', function (req, res) {
 
 // Frontend Homepage & Blog
 app.get('/', function (req, res, next) {
-  res.sendFile("frontend.html", {root: config.path});
+  res.sendFile("frontend.html", {root: root + config.path});
 });
 
 ghost({
@@ -173,7 +175,7 @@ ghost({
 // Backend App
 
 app.get('/*', function (req, res, next) {
-  res.sendFile("app.html", {root: config.path});
+  res.sendFile("app.html", {root: root + config.path});
 });
 
 var port = process.env.PORT || 5000;
