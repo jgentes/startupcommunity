@@ -6,7 +6,7 @@ var express = require('express'),
     enforce = require('express-sslify'),
     httpProxy = require('http-proxy'),
     blogProxy = httpProxy.createProxyServer(),
-    config = require('app/config.json')[process.env.NODE_ENV || 'local'],
+    config = require('config.json')[process.env.NODE_ENV || 'local'],
     bodyParser = require('body-parser'),
     methodOverride = require('method-override'),
     logger = require('morgan'),
@@ -57,8 +57,8 @@ app.use(logger('dev'));
 app.use(methodOverride());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use("/", express.static(__dirname + config.path));
-app.use("/public", express.static('public'));
+app.use("/", express.static('../' + config.path));
+app.use("/public", express.static('../public'));
 
 if (process.env.NODE_ENV === "production") {
     // production-only things go here
@@ -66,8 +66,8 @@ if (process.env.NODE_ENV === "production") {
     app.use(nodalytics('UA-58555092-2'));
 
 } else {
-    app.use("/bower_components", express.static("bower_components"));
-    app.use("/build", express.static("build"));
+    app.use("/bower_components", express.static("../bower_components"));
+    app.use("/build", express.static("../build"));
 }
 
 // API ROUTE METHODS
@@ -159,11 +159,11 @@ app.post('/api/logger', function (req, res) {
 
 // Frontend Homepage & Blog
 app.get('/', function (req, res, next) {
-  res.sendFile("frontend.html", {root: __dirname + config.path});
+  res.sendFile("frontend.html", {root: '../' + config.path});
 });
 
 ghost({
-  config: __dirname + '/frontend/ghost/config.js'
+  config: 'frontend/ghost/config.js'
 }).then(function (ghostServer) {
   parentApp.use('/blog', ghostServer.rootApp);
 
@@ -173,7 +173,7 @@ ghost({
 // Backend App
 
 app.get('/*', function (req, res, next) {
-  res.sendFile("app.html", {root: __dirname + config.path});
+  res.sendFile("app.html", {root: '../' + config.path});
 });
 
 var port = process.env.PORT || 5000;

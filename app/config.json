@@ -22,7 +22,7 @@
     "API_token_secret": "2lknvqk32nvqknv3qlkvn3kvln234lknvqS",
     "mailchimp": "4cd1eb319ae631eb57ef642b9340af68-us9",
     "knowtify": "e8644357ff8f2da492532e7617a88114",
-    "path": "/app",
+    "path": "app",
     "api_base_url": "http://localhost:5000"
   },
   "theme": {
@@ -48,7 +48,7 @@
     "API_token_secret": "2lknvqk32nvqknv3qlkvn3kvln234lknvqS",
     "mailchimp": "4cd1eb319ae631eb57ef642b9340af68-us9",
     "knowtify": "e8644357ff8f2da492532e7617a88114",
-    "path": "/theme",
+    "path": "theme",
     "api_base_url": "http://localhost:5000"
   },
   "development": {
@@ -74,7 +74,7 @@
     "API_token_secret": "2lknvqk32nvqknv3qlkvn3kvln234lknvqS",
     "mailchimp": "4cd1eb319ae631eb57ef642b9340af68-us9",
     "knowtify": "e8644357ff8f2da492532e7617a88114",
-    "path": "/dist",
+    "path": "dist",
     "api_base_url": "https://dev.startupcommunity.org"
   },
    "staging": {
@@ -100,7 +100,7 @@
      "API_token_secret": "2lknvqk32nvqknv3qlkvn3kvln234lknvqS",
      "mailchimp": "4cd1eb319ae631eb57ef642b9340af68-us9",
      "knowtify": "e8644357ff8f2da492532e7617a88114",
-     "path": "/dist",
+     "path": "dist",
      "api_base_url": "http://localhost:5000"
    },
   "production": {
@@ -126,7 +126,7 @@
     "API_token_secret": "2lknvqk32nvqknv3qlkvn3kvln234lknvqS",
     "mailchimp": "4cd1eb319ae631eb57ef642b9340af68-us9",
     "knowtify": "e8644357ff8f2da492532e7617a88114",
-    "path": "/dist",
+    "path": "dist",
     "api_base_url": "https://startupcommunity.org"
   }
 }
