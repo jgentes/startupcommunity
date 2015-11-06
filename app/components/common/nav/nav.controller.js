@@ -30,10 +30,12 @@ function NavigationController($auth, $state, $window, $timeout, $location, $scop
 
         knowtify.push(['load_inbox', 'knowtify', {email: this.user.profile.email}]);
 
-        $window.HelpCrunch('onNewUnreadMessages', function(event) {
-            self.chatMessageCount = event.unreadMessages;
-            $timeout(function() {
-                $scope.$apply();
+        $window.HelpCrunch('onReady', function() {
+            $window.HelpCrunch('onNewUnreadMessages', function(event) {
+                self.chatMessageCount = event.unreadMessages;
+                $timeout(function() {
+                    $scope.$apply();
+                });
             });
         });
     }
