@@ -18,7 +18,7 @@ var app = express();
 
 // Some things must come before Body Parser
 
-//app.set('trust proxy', true); // important for https
+app.set('trust proxy', true); // important for https
 
 // change all www requests to non-www requests
 app.use(function(req, res, next) {
