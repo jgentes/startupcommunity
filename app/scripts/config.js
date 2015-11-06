@@ -372,12 +372,13 @@ angular
     .run(function(editableOptions) {
         editableOptions.theme = 'bs3';
     })
-    .run(function($rootScope, $state, $timeout, exceptionLoggingService) {
+    .run(function($rootScope, $state, $timeout, exceptionLoggingService, $auth) {
         $rootScope.$state = $state; // allows use if $state within views
         window.$state = $state; // allows use of $state within console
         $rootScope.$on('$stateChangeError', function (evt, toState, toParams, fromState, fromParams, error) {
             exceptionLoggingService('state change error: ', fromState, toState, error);
-            $state.go($state.current, {alert: error.statusText + ': Perhaps try <a href="/logout">logging out?</a>'}, {reload: true});
+            $auth.removeToken();
+            $state.go('login', {alert: error.statusText + ': Sorry, please login again.'}, {reload: true});
         });
         $rootScope.$on('$stateChangeSuccess',function(){
             $("html, body").animate({ scrollTop: 0 }, 200);
