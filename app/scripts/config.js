@@ -19,7 +19,7 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
         })
         .state('logout', {
             url: "/logout",
-            onEnter: function($auth) {
+            onEnter: function($auth, $location) {
                 $auth.logout()
                     .then(function() {
                         $location.path('/login');
