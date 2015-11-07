@@ -361,7 +361,7 @@ angular
     .module('startupcommunity')
     .config(configState)
     .config(function($authProvider) {
-        $authProvider.authHeader = 'x-access-token'; // to fix 400 Bad Request issue
+        //$authProvider.authHeader = 'x-access-token'; // to fix 400 Bad Request issue
         $authProvider.loginRedirect = false; //otherwise will go home
         $authProvider.linkedin({
             clientId: "75bqixdv58z1az",

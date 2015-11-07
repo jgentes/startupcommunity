@@ -81,13 +81,13 @@ var schema = {
  */
 function handleEnsureAuthenticated(req, res, next) {
 
-    if (!req.headers['x-access-token']) {
+    if (!req.headers.authorization) {
         console.log('Session is anonymous.');
         return res.status(204).end();
     }
     try {
 
-        var token = req.headers['x-access-token'].split(' ')[1];
+        var token = req.headers.authorization.split(' ')[1];
         var payload = jwt.decode(token, config.token_secret);
 
         if (payload.exp <= Date.now()) {
