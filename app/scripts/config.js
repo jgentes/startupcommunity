@@ -20,7 +20,14 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
         .state('logout', {
             url: "/logout",
             onEnter: function($auth) {
-                $auth.logout('/login');
+                $auth.logout()
+                    .then(function() {
+                        $location.path('/login');
+                    })
+                    .catch(function(err) {
+                        console.warn('WARNING: Logout error', err);
+                        $location.path('/login');
+                    });
             }
         })
 
