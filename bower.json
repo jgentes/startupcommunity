@@ -37,7 +37,7 @@
     "metisMenu": "~1.1.2",
     "mixpanel": "~2.5.1",
     "moment": "~2.8.3",
-    "satellizer": "~0.11.3",
+    "satellizer": "~0.13.0",
     "sparkline": "http://omnipotent.net/jquery.sparkline/2.1.2/jquery.sparkline.js",
     "stacktrace-js": "~0.6.4",
     "sweetalert": "https://github.com/t4t5/sweetalert.git#~1.0.1",
