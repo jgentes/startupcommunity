@@ -10,8 +10,8 @@ function WelcomeController($auth, $q, $http, $mixpanel, $stateParams, $scope, $s
     this.updateCompany= false; // used if company already exists
     var community_path = $stateParams.community_path ? $stateParams.community_path : $stateParams.location_path;
     this.industries = community_service.industries();
+    this.parents = community_service.parents();
     this.community = community; // used in add company (not welcome) modal
-    this.parents = [ 'Agriculture', 'Art', 'Construction', 'Consumer Goods', 'Corporate', 'Education', 'Finance', 'Government', 'Healthcare', 'Legal', 'Manufacturing', 'Medical', 'Non-Profit', 'Recreation', 'Services', 'Tech', 'Transportation' ];
     this.stages = [ 'Bootstrap', 'Seed', 'Series A', 'Series B', 'Later'];
     this.user = user.data && user.data.user ? user.data.user : user;
 

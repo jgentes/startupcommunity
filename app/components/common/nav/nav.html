@@ -184,6 +184,31 @@
                 </ul>
             </li>
 
+            <li class="active" title="Primary Industries">
+                <a style="cursor: default;"><span class="pe-7s-angle-down" style="padding-top: 4px;
+    padding-right: 7px;"></span><span class="nav-label">
+
+                    Industries
+
+                </span>
+                </a>
+                <ul ng-show="nav.parents" class="nav nav-second-level">
+                    <li ng-repeat="item in nav.parents">
+                        <a ui-sref="{{'community.dashboard' + nav.nav_jump}}" ng-class="{active: nav.path.includes('/' + item.key)}" ng-click="cl_working = true">
+                            <span ng-if="item.community_profiles[nav.location_path]">
+                                <i ng-class="'fa ' + item.community_profiles[nav.location_path].icon"></i> {{item.community_profiles[nav.location_path].name}}
+                                <span loading-bars ng-show="cl_working"></span>
+                            </span>
+                            <span ng-if="!item.community_profiles[nav.location_path]">
+                                <i ng-class="'fa ' + item.profile.icon"></i> {{item.profile.name}}
+                                <span loading-bars ng-show="cl_working"></span>
+                            </span>
+
+                        </a>
+                    </li>
+                </ul>
+            </li>
+
         </ul>
         <div>
             <ul id="sidebar" sticky-scroll="40">

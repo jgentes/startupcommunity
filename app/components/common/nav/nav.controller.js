@@ -2,7 +2,7 @@ angular
     .module('startupcommunity')
     .controller('NavigationController', NavigationController);
 
-function NavigationController($auth, $state, $window, $timeout, $location, $scope, $stateParams, $modal, user_service, user, location, community, communities, knowtify) {
+function NavigationController($auth, $state, $window, $timeout, $location, $scope, $stateParams, $modal, user_service, community_service, user, location, community, communities, knowtify) {
     if (user.data && user.data.token) $auth.setToken(user.data.token); // update local storage with latest user profile
 
     // SENSITIVE VARIABLES THAT AFFECT NAVIGATION AND ALL CHILD TEMPLATES
@@ -58,6 +58,10 @@ function NavigationController($auth, $state, $window, $timeout, $location, $scop
     // PRIMARY LEFT-NAV ITEM LIST
     if (!this.community) this.community = communities.data[this.location_path];
 
+    var parents = community_service.parents();
+    parents[parents.indexOf("Consumer Goods")] = "consumer-goods";
+    parents = parents.join('|').toLowerCase().split('|'); // change all to lowercase
+
     // sort communities for use in nav and child dashboard pages
     for (item in communities.data) { // no clue what item is here, esp if user or company
         if (item !== this.community.key) { // ie. edco-stable-of-experts
@@ -69,7 +73,10 @@ function NavigationController($auth, $state, $window, $timeout, $location, $scop
                         break;
                     case "cluster":
                         if (!this.clusters) this.clusters = {};
-                        this.clusters[item] = communities.data[item];
+                        if (parents.indexOf(item) > -1) {
+                            if (!this.parents) this.parents = {};
+                            this.parents[item] = communities.data[item];
+                        } else this.clusters[item] = communities.data[item];
                         break;
                     case "network":
                         if (!this.networks) this.networks = {};
