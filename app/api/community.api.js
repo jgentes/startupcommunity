@@ -118,12 +118,12 @@ function handleGetCommunity(req, res) {
 
     var searchString = '@path.key: ' + community; // grab the primary community object, don't use parens here
     searchString += ' OR ((@value.communities: "' + community + '"'; // + grab anything associated with this community in this location
-    searchString += ' OR @value.parents: "' + community + '")'; // + grab anything associated with this community as a parent
+    searchString += ' OR @value.parents: "' + community + '")'; // + grab anything that has this community as a parent
     searchString += ' AND NOT @value.type:("company" OR "user"))'; // exclude companies and users
 
     var pullCommunity = function(cache) {
 
-        // need to determine what 'this' community is, but to optimize the first query, grab all communities and then figure it out
+        // need to determine what 'this' community is, but to optimize the first query, grab all communities and then figure it out (rather than a 'get' for the first community, then another call for the rest)
 
         db.newSearchBuilder()
             .collection(config.db.communities)
@@ -207,11 +207,17 @@ function handleGetCommunity(req, res) {
                                     }
                                 }
 
+                                // also grab clusters
+
+                                if (!result.body.results[comm].value.parents) result.body.results[comm].value.parents = [];
+                                if (!result.body.results[comm].value.industries) result.body.results[comm].value.industries = [];
+                                if (!result.body.results[comm].value.skills) result.body.results[comm].value.skills = [];
+
                                 db.newSearchBuilder()
                                     .collection(config.db.communities)
                                     .limit(100)
                                     .offset(0)
-                                    .query("@path.key: (" + search + ")")
+                                    .query("@path.key: (" + search + ") OR " + clusters)
                                     .then(function (result2) {
                                         finalize(result2.body.results);
                                     })
@@ -221,6 +227,8 @@ function handleGetCommunity(req, res) {
                                     });
 
                             } else finalize(result.body.results);
+
+                            break;
                         }
                     }
                     if (!found) {
