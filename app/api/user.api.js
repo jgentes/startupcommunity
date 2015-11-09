@@ -2,7 +2,7 @@ var Q = require('q'),
     request = require('request'),
     moment = require('moment'),
     url = require('url'),
-    jwt = require('jwt-simple'),
+    jwt = require('jsonwebtoken'),
     config = require('../config.json')[process.env.NODE_ENV || 'development'],
     db = require('orchestrate')(config.db.key),
     aws = require('aws-sdk'),
@@ -55,7 +55,7 @@ var searchInCommunity = function(communities, clusters, roles, limit, offset, qu
 
     if (key) { //check api key to determine if restricted profile data is included with results
         try {
-            var payload = jwt.decode(key, config.API_token_secret);
+            //var payload = jwt.decode(key, config.API_token_secret);
             // Assuming key never expires
             //check perms!
             console.log('test then remove me')
@@ -363,23 +363,14 @@ function handleContactUser(req, res) {
 
 function handleGetProfile(req, res) {
     // req data is guaranteed by ensureauth
-    var userid = req.param.userid || req.user.value.key || req.user.path.key;
+    var userid = req.param.userid || req.user;
     console.log('Pulling user profile: ' + userid);
 
     db.get(config.db.communities, userid)
         .then(function(response){
             if (response.body.code !== "items_not_found") {
                 response.body["key"] = userid;
-                var user = { "value" : response.body };
-                var payload = {
-                    iss: req.hostname,
-                    sub: user,
-                    iat: moment().valueOf(),
-                    exp: moment().add(14, 'days').valueOf()
-                };
-
-                res.status(200).send({ token: jwt.encode(payload, config.token_secret), user: user.value });
-
+                res.status(200).send({ token: jwt.sign(userid, config.token_secret, { expiresIn: "5h" }), user: response.body });
             } else {
                 console.warn('WARNING:  User not found.');
                 res.status(200).send({ message: 'User not found.' });
@@ -395,7 +386,7 @@ function handleGetProfile(req, res) {
 
 function handleGetProfileUrl(req, res) {
     // req data is guaranteed by ensureauth
-    var userid = req.param.userid || req.user.value.key || req.user.path.key,
+    var userid = req.param.userid || req.user,
         filename = req.query.filename;
 
     aws.config.update({
@@ -426,7 +417,7 @@ function handleGetProfileUrl(req, res) {
 
 function handleUpdateProfile(req, res) {
     // req data is guaranteed by ensureauth
-    var userid = req.user.value.key || req.user.path.key;
+    var userid = req.user;
     var profile = req.body.params.profile;
     console.log('Updating user profile: ' + userid);
 
@@ -437,15 +428,7 @@ function handleUpdateProfile(req, res) {
             .then(function(response){
                 if (response.body.code !== "items_not_found") {
                     response.body["key"] = userid;
-                    var user = { "value" : response.body };
-                    var payload = {
-                        iss: req.hostname,
-                        sub: user,
-                        iat: moment().valueOf(),
-                        exp: moment().add(14, 'days').valueOf()
-                    };
-
-                    res.status(200).send({ token: jwt.encode(payload, config.token_secret), user: user.value });
+                    res.status(200).send({ token: jwt.sign(userid, config.token_secret, { expiresIn: "5h" }), user: response.body });
 
                 } else {
                     console.warn('WARNING:  User not found.');
@@ -472,7 +455,7 @@ function handleSetRole(req, res) {
 
     var checkperms = function(allowed, callback) {
         if (!allowed) {
-            db.get(config.db.communities, req.user.value.key || req.user.path.key)
+            db.get(config.db.communities, req.user)
               .then(function (response) {
                   userperms = findKey(response.body.communities, community, []); //todo this would mean an admin of anything would work, need to validate location + community
                   if (userperms[0].roles.indexOf("admin") > -1) { allowed=true; }
@@ -486,7 +469,7 @@ function handleSetRole(req, res) {
     };
 
     //check perms!
-    if (userkey == req.user.value.key || userkey == req.user.path.key) { allowed = true; }
+    if (userkey == req.user) { allowed = true; }
     checkperms(allowed, function (allowed) {
         if (allowed) {
             db.get(config.db.communities, userkey)
@@ -532,7 +515,7 @@ function handleSetRole(req, res) {
 }
 
 function handleFeedback(req, res) {
-    var userkey = req.user.value.key || req.user.path.key,
+    var userkey = req.user,
       data = JSON.parse(decodeURIComponent(req.query.data));
 
     db.get(config.db.communities, userkey)

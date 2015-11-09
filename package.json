@@ -14,7 +14,7 @@
     "ghost": "^0.7.0",
     "grunt": "^0.4.5",
     "http-proxy": "^1.9.0",
-    "jwt-simple": "~0.3.1",
+    "jsonwebtoken": "^5.4.1",
     "knowtify-node": "^0.1.0",
     "memjs": "^0.8.7",
     "method-override": "~2.1.3",

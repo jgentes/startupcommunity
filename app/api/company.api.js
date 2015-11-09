@@ -1,7 +1,6 @@
 var Q = require('q'),
     request = require('request'),
     url = require('url'),
-    jwt = require('jwt-simple'),
     config = require('../config.json')[process.env.NODE_ENV || 'development'],
     aws = require('aws-sdk'),
     db = require('orchestrate')(config.db.key);
@@ -65,7 +64,7 @@ var searchInCommunity = function(communities, clusters, stages, limit, offset, q
 
         if (key) { //check api key to determine if restricted profile data is included with results
                 try {
-                        var payload = jwt.decode(key, config.API_token_secret);
+                        //var payload = jwt.decode(key, config.API_token_secret);
                         // Assuming key never expires
                         //check perms!
                         console.log('test then remove me')
@@ -205,20 +204,33 @@ function handleAddCompany(req, res) {
         console.log('Adding company ' + addCompany.al_profile.name + ' to ' + addCompany.location_key + ' / ' + addCompany.community_key);
 
         // validate user is a member in the location/community
-        if (((addCompany.location_key == addCompany.community_key) && req.user.value.communities.indexOf(addCompany.location_key) > -1) || (req.user.value.roles && req.user.value.roles.leader[addCompany.community_key] && req.user.value.roles.leader[addCompany.community_key].indexOf(addCompany.location_key) > -1)) {
+        db.get(config.db.communities, req.user)
+            .then(function(response){
 
-            var company = schema.angellist(addCompany.al_profile, addCompany.location_key, addCompany.community_key);
-            if (company.profile.angellist.industries) delete company.profile.angellist.industries;
+                if (response.body.code !== "items_not_found") {
+                    var user = response.body;
+                    if (((addCompany.location_key == addCompany.community_key) && user.communities.indexOf(addCompany.location_key) > -1) || (user.roles && user.roles.leader[addCompany.community_key] && user.roles.leader[addCompany.community_key].indexOf(addCompany.location_key) > -1)) {
 
-            //search for company and add if not there.. not sure why req.user.path.key doesn't exist here sometimes
-            companyPull(company, addCompany.role, addCompany.location_key, req.user.value.key || req.user.path.key, function(result) {
-                res.status(result.status).send(result.data);
+                        var company = schema.angellist(addCompany.al_profile, addCompany.location_key, addCompany.community_key);
+                        if (company.profile.angellist.industries) delete company.profile.angellist.industries;
+
+                        //search for company and add if not there..
+                        companyPull(company, addCompany.role, addCompany.location_key, req.user, function(result) {
+                            res.status(result.status).send(result.data);
+                        });
+
+                    } else {
+                        console.warn("User is not a member of community: " + addCompany.community_key + " and location: " + addCompany.location_key + "!");
+                        res.status(400).send({ message: 'You must be a member of this community and/or a leader of this network to add a company to it.' });
+                    }
+                } else {
+                    console.warn('WARNING:  User not found.');
+                }
+            })
+
+            .fail(function(err){
+                console.warn("WARNING: company231", err);
             });
-
-        } else {
-            console.warn("User is not a member of community: " + addCompany.community_key + " and location: " + addCompany.location_key + "!");
-            res.status(400).send({ message: 'You must be a member of this community and/or a leader of this network to add a company to it.' });
-        }
     }
 }
 

@@ -1,7 +1,7 @@
 var bcrypt = require('bcryptjs'),
     moment = require('moment'),
     request = require('request'),
-    jwt = require('jwt-simple'),
+    jwt = require('jsonwebtoken'),
     crypto = require('crypto'),
     config = require('../config.json')[process.env.NODE_ENV || 'development'],
     db = require('orchestrate')(config.db.key),
@@ -87,21 +87,24 @@ function handleEnsureAuthenticated(req, res, next) {
     }
     try {
 
-        var token = req.headers.authorization.split(' ')[1];
-        var payload = jwt.decode(token, config.token_secret);
+        if (req.headers.authorization && req.headers.authorization.split(' ')[0] === 'Bearer') {
+            req.user = jwt.verify(req.headers.authorization.split(' ')[1], config.token_secret);
+        }
 
-        if (payload.exp <= Date.now()) {
+        //var token = req.headers.authorization.split(' ')[1];
+        //var payload = jwt.decode(token, config.token_secret);
+
+       /* if (payload.exp <= Date.now()) {
             console.log('Token has expired');
             return res.status(204).end();
-        }
+        }*/
 
-        if (req.user === undefined) {
+        if (!req.user || req.user === undefined) {
             req.user = {}; //required step to pursue auth through refresh
         } else {
-            console.log('Existing user in request:');
+            console.log('Existing user in request');
         }
 
-        req.user = payload.sub;
         next();
     }
     catch (e) {
@@ -116,13 +119,7 @@ function handleEnsureAuthenticated(req, res, next) {
  |--------------------------------------------------------------------------
  */
 function handleCreateToken(req, user) {
-    var payload = {
-        iss: req.hostname,
-        sub: user,
-        iat: moment().valueOf(),
-        exp: moment().add(14, 'days').valueOf()
-    };
-    return jwt.encode(payload, config.token_secret);
+    return jwt.sign(user.path.key, config.token_secret, { expiresIn: "5h" });
 }
 
 function handleHelpToken(req, res) {
@@ -130,7 +127,7 @@ function handleHelpToken(req, res) {
 
     var hmac = crypto.createHmac('sha256', 'yCVzaQb6BMR7oHxYXpI373lTIg13+CVBtpvyd/dt3Rs=');
     hmac.setEncoding('hex');
-    hmac.write(req.user.value.key);
+    hmac.write(req.user);
     hmac.end();
     response = hmac.read();
 
@@ -138,21 +135,23 @@ function handleHelpToken(req, res) {
 }
 
 function handleCreateAPIToken(req, res) {
-    var payload = {
+    // todo needs to be redone if jwt-simple is no longer used
+    /*var payload = {
         iss: req.hostname,
         sub: req.user,
         iat: moment().valueOf(),
         exp: moment().add(90, 'days').valueOf()
     };
-    res.status(201).send(jwt.encode(payload, config.API_token_secret));
+    res.status(201).send(jwt.encode(payload, config.API_token_secret));*/
 
-    db.get(config.db.communities, req.user.value.key || req.user.path.key)
+    db.get(config.db.communities, req.user)
         .then(function(response){
             if (response.body.code !== "items_not_found") {
                 console.log('Matching user found.');
                 if (response.body.profile.api_key === undefined) {
-                    response.body.profile["api_key"] = jwt.encode(payload, config.API_token_secret); // get user account and re-upload with api_key
-                    db.put(config.db.communities, req.user.value.key || req.user.path.key, response.body)
+                    // todo update next line
+                    //response.body.profile["api_key"] = jwt.encode(payload, config.API_token_secret); // get user account and re-upload with api_key
+                    db.put(config.db.communities, req.user, response.body)
                         .then(function () {
                             console.log("Profile updated.");
                         })
@@ -567,103 +566,120 @@ function handleInviteUser(req, res) {
     console.log('Inviting ' + inviteUser.email + ' to ' + inviteUser.location_key + ' / ' + inviteUser.community_key);
 
     // validate user has leader role within the location/community, or let them through if they are a member of the location
-    if (((inviteUser.location_key == inviteUser.community_key) && req.user.value.communities.indexOf(inviteUser.location_key) > -1) || (req.user.value.roles && req.user.value.roles.leader[inviteUser.community_key] && req.user.value.roles.leader[inviteUser.community_key].indexOf(inviteUser.location_key) > -1)) {
-        // check to see if the email address already exists within the system
-        db.newSearchBuilder()
-            .collection(config.db.communities)
-            .limit(1)
-            .query('@value.type: "user" AND (@value.profile.linkedin.emailAddress: "' + inviteUser.email + '" OR @value.profile.email: "' + inviteUser.email + '")')
-            .then(function (result) {
-                if (result.body.results.length > 0 && req.user.value.key !== 'james') {
-                    console.log("Existing user found!");
 
-                    var existing = result.body.results[0].value;
+    db.get(config.db.communities, req.user)
+        .then(function(response){
 
-                    if (!existing.communities) existing.communities = [];
+            if (response.body.code !== "items_not_found") {
+                var user = response.body;
 
-                    if (existing.communities.indexOf(inviteUser.community_key) == -1) {
-                        existing.communities.push(inviteUser.community_key);
-                    }
-
-                    if (existing.communities.indexOf(inviteUser.location_key) == -1) {
-                        existing.communities.push(inviteUser.location_key);
-                    }
-
-                    db.put(config.db.communities, result.body.results[0].path.key, existing)
-                        .then(function (response) {
-                            console.log("User updated!");
-                            res.status(200).send({message: 'Nice!  <a target="_blank" href="https://startupcommunity.org/' + result.body.results[0].path.key + '">' + result.body.results[0].value.profile.name + '</a> is a member of the community.'});
-                        })
-                        .fail(function(err) {
-                            console.log('WARNING: auth600');
-                            console.log(err);
-                            res.status(202).send({message: "Something went wrong."});
-                        })
-
-                } else {
-                    // no existing user, so search for existing invite
+                if (((inviteUser.location_key == inviteUser.community_key) && user.communities.indexOf(inviteUser.location_key) > -1) || (user.roles && user.roles.leader[inviteUser.community_key] && user.roles.leader[inviteUser.community_key].indexOf(inviteUser.location_key) > -1)) {
+                    // check to see if the email address already exists within the system
                     db.newSearchBuilder()
                         .collection(config.db.communities)
                         .limit(1)
-                        .query('@value.type: "invite" AND @value.profile.email: "' + inviteUser.email + '"')
+                        .query('@value.type: "user" AND (@value.profile.linkedin.emailAddress: "' + inviteUser.email + '" OR @value.profile.email: "' + inviteUser.email + '")')
                         .then(function (result) {
-                            if (result.body.results.length > 0) {
-                                console.log("Existing invite found!");
-                                res.status(200).send({message: 'An invitation has already been sent to ' + inviteUser.email + '. We will send them a reminder.'});
-                            } else {
-                                // create user record with email address and community data
-                                var newUser = schema.invite(inviteUser.email, req.user.value.profile.email, inviteUser.location_key, inviteUser.community_key);
-                                console.log('creating user')
-                                var community_url =
-                                    inviteUser.location_key == inviteUser.community_key ?
-                                    inviteUser.location_key :
-                                    inviteUser.location_key + '/' + inviteUser.community_key;
+                            if (result.body.results.length > 0 && req.user !== 'james') {
+                                console.log("Existing user found!");
 
-                                db.post(config.db.communities, newUser)
+                                var existing = result.body.results[0].value;
+
+                                if (!existing.communities) existing.communities = [];
+
+                                if (existing.communities.indexOf(inviteUser.community_key) == -1) {
+                                    existing.communities.push(inviteUser.community_key);
+                                }
+
+                                if (existing.communities.indexOf(inviteUser.location_key) == -1) {
+                                    existing.communities.push(inviteUser.location_key);
+                                }
+
+                                db.put(config.db.communities, result.body.results[0].path.key, existing)
                                     .then(function (response) {
-                                        var userkey = response.headers.location.split('/')[3]; // hope their response format doesn't change :-/
+                                        console.log("User updated!");
+                                        res.status(200).send({message: 'Nice!  <a target="_blank" href="https://startupcommunity.org/' + result.body.results[0].path.key + '">' + result.body.results[0].value.profile.name + '</a> is a member of the community.'});
+                                    })
+                                    .fail(function(err) {
+                                        console.log('WARNING: auth600');
+                                        console.log(err);
+                                        res.status(202).send({message: "Something went wrong."});
+                                    })
 
-                                        // send email with knowtify with unique link
-                                        var knowtifyClient = new knowtify.Knowtify(config.knowtify, false);
+                            } else {
+                                // no existing user, so search for existing invite
+                                db.newSearchBuilder()
+                                    .collection(config.db.communities)
+                                    .limit(1)
+                                    .query('@value.type: "invite" AND @value.profile.email: "' + inviteUser.email + '"')
+                                    .then(function (result) {
+                                        if (result.body.results.length > 0) {
+                                            console.log("Existing invite found!");
+                                            res.status(200).send({message: 'An invitation has already been sent to ' + inviteUser.email + '. We will send them a reminder.'});
+                                        } else {
+                                            // create user record with email address and community data
+                                            var newUser = schema.invite(inviteUser.email, user.profile.email, inviteUser.location_key, inviteUser.community_key);
+                                            console.log('creating user');
+                                            var community_url =
+                                                inviteUser.location_key == inviteUser.community_key ?
+                                                    inviteUser.location_key :
+                                                inviteUser.location_key + '/' + inviteUser.community_key;
 
-                                        knowtifyClient.contacts.upsert({
-                                            "event": "invitation",
-                                            "contacts": [{
-                                                "email": inviteUser.email,
-                                                "data": {
-                                                    "invite_community": inviteUser.community_name.split(',')[0],
-                                                    "invite_url": community_url,
-                                                    "invite_code": userkey,
-                                                    "invitor_name": req.user.value.profile.name,
-                                                    "invitor_email": req.user.value.profile.email,
-                                                    "invitor_image": req.user.value.profile.avatar,
-                                                    "invite_accepted": false
-                                                }
-                                            }]
-                                        },
-                                        function (success) {
-                                            console.log('Invitation sent to ' + inviteUser.email + ' (' + userkey + ')');
-                                            res.status(200).send({message: "Done! We've sent an invitation to " + inviteUser.email});
-                                        },
-                                        function (error) {
-                                            console.log('WARNING: auth651');
-                                            console.log(error);
-                                            res.status(202).send({message: "Woah! Something went wrong, but we've been notified and will take care of it."});
-                                        });
-                                    });
+                                            db.post(config.db.communities, newUser)
+                                                .then(function (response) {
+                                                    var userkey = response.headers.location.split('/')[3]; // hope their response format doesn't change :-/
+
+                                                    // send email with knowtify with unique link
+                                                    var knowtifyClient = new knowtify.Knowtify(config.knowtify, false);
+
+                                                    knowtifyClient.contacts.upsert({
+                                                            "event": "invitation",
+                                                            "contacts": [{
+                                                                "email": inviteUser.email,
+                                                                "data": {
+                                                                    "invite_community": inviteUser.community_name.split(',')[0],
+                                                                    "invite_url": community_url,
+                                                                    "invite_code": userkey,
+                                                                    "invitor_name": user.profile.name,
+                                                                    "invitor_email": user.profile.email,
+                                                                    "invitor_image": user.profile.avatar,
+                                                                    "invite_accepted": false
+                                                                }
+                                                            }]
+                                                        },
+                                                        function (success) {
+                                                            console.log('Invitation sent to ' + inviteUser.email + ' (' + userkey + ')');
+                                                            res.status(200).send({message: "Done! We've sent an invitation to " + inviteUser.email});
+                                                        },
+                                                        function (error) {
+                                                            console.log('WARNING: auth651');
+                                                            console.log(error);
+                                                            res.status(202).send({message: "Woah! Something went wrong, but we've been notified and will take care of it."});
+                                                        });
+                                                });
+                                        }
+                                    })
+                                    .fail(function(err) {
+                                        console.log('WARNING: auth659');
+                                        console.log(err);
+                                        res.status(202).send({message: "Woah! Something went wrong, but we've been notified and will take care of it."});
+                                    })
                             }
-                        })
-                        .fail(function(err) {
-                            console.log('WARNING: auth659');
-                            console.log(err);
-                            res.status(202).send({message: "Woah! Something went wrong, but we've been notified and will take care of it."});
-                        })
+                        });
+                } else {
+                    console.warn("User is not a leader in community: " + inviteUser.community_key + " for location: " + inviteUser.location_key + "!");
+                    res.status(202).send({ message: 'You must be a member of this location and/or a leader of this network to invite someone.' });
                 }
-            });
-    } else {
-        console.warn("User is not a leader in community: " + inviteUser.community_key + " for location: " + inviteUser.location_key + "!");
-        res.status(202).send({ message: 'You must be a member of this location and/or a leader of this network to invite someone.' });
-    }
+
+            } else {
+                console.warn('WARNING:  User not found.');
+            }
+        })
+
+        .fail(function(err){
+            console.warn("WARNING: auth688", err);
+        });
+
 }
 
 module.exports = AuthApi;

@@ -435,48 +435,66 @@ function handleSetCommunity(req, res) {
     var settings = req.body.params;
 
     console.log('Updating settings for ' + settings.location_key + ' / ' + settings.community_key);
-    console.log(req.user.value.roles.leader);
 
-    // validate user has leader role within the location/community
-    if (req.user.value.roles.leader[settings.community_key] && req.user.value.roles.leader[settings.community_key].indexOf(settings.location_key) > -1) {
-        // update the community
-        db.get(config.db.communities, settings.community_key)
-            .then(function (response) {
-                if (response.body.type == 'cluster') { // use community_profiles
-                    if (response.body.community_profiles === undefined) { // create community_profiles
-                        response.body['community_profiles'] = {};
-                    }
-                    if (response.body.community_profiles[settings.location_key] === undefined) { // create this location
-                        response.body.community_profiles[settings.location_key] = {
-                            "name": response.body.profile.name,
-                            "icon": response.body.profile.icon,
-                            "logo": response.body.profile.logo,
-                            "embed": settings.embed
-                        };
-                    } else {
-                        response.body.community_profiles[settings.location_key]["embed"] = settings.embed;
-                    }
-                } else response.body.profile["embed"] = settings.embed;
 
-                db.put(config.db.communities, settings.community_key, response.body)
-                    .then(function (finalres) {
-                        res.status(201).send({message: 'Community settings updated.'});
-                    })
-                    .fail(function (err) {
-                        console.warn('WARNING: community466 ', err);
-                        res.status(202).send({message: "Something went wrong."});
-                    });
+    db.get(config.db.communities, req.user)
+        .then(function (response) {
 
-            })
-            .fail(function (err) {
-                console.warn('WARNING: community472 ', err);
-                res.status(202).send({message: "Something went wrong."});
-            });
+            if (response.body.code !== "items_not_found") {
+                var user = response.body;
+                console.log(user.roles.leader);
 
-    } else {
-        console.warn("User is not a leader in location: " + settings.location_key + " and community: " + settings.community_key + "!");
-        res.status(202).send({message: 'Sorry, you must be a Leader in this community to change these settings.'});
-    }
+                // validate user has leader role within the location/community
+                if (user.roles.leader[settings.community_key] && user.roles.leader[settings.community_key].indexOf(settings.location_key) > -1) {
+                    // update the community
+                    db.get(config.db.communities, settings.community_key)
+                        .then(function (response) {
+                            if (response.body.type == 'cluster') { // use community_profiles
+                                if (response.body.community_profiles === undefined) { // create community_profiles
+                                    response.body['community_profiles'] = {};
+                                }
+                                if (response.body.community_profiles[settings.location_key] === undefined) { // create this location
+                                    response.body.community_profiles[settings.location_key] = {
+                                        "name": response.body.profile.name,
+                                        "icon": response.body.profile.icon,
+                                        "logo": response.body.profile.logo,
+                                        "embed": settings.embed
+                                    };
+                                } else {
+                                    response.body.community_profiles[settings.location_key]["embed"] = settings.embed;
+                                }
+                            } else response.body.profile["embed"] = settings.embed;
+
+                            db.put(config.db.communities, settings.community_key, response.body)
+                                .then(function (finalres) {
+                                    res.status(201).send({message: 'Community settings updated.'});
+                                })
+                                .fail(function (err) {
+                                    console.warn('WARNING: community466 ', err);
+                                    res.status(202).send({message: "Something went wrong."});
+                                });
+
+                        })
+                        .fail(function (err) {
+                            console.warn('WARNING: community472 ', err);
+                            res.status(202).send({message: "Something went wrong."});
+                        });
+
+                } else {
+                    console.warn("User is not a leader in location: " + settings.location_key + " and community: " + settings.community_key + "!");
+                    res.status(202).send({message: 'Sorry, you must be a Leader in this community to change these settings.'});
+                }
+
+            } else {
+                console.warn('WARNING:  User not found.');
+            }
+        })
+
+        .fail(function (err) {
+            console.warn("WARNING: community493", err);
+        });
+
+
 }
 
 function handleAddCommunity(req, res) {
@@ -486,97 +504,112 @@ function handleAddCommunity(req, res) {
 
     console.log('Adding community: ' + settings.community.profile.name + ' in ' + settings.location_key);
 
-    // validate user is a member in the location
-    if (req.user.value.communities.indexOf(settings.location_key) > -1) {
+    db.get(config.db.communities, req.user)
+        .then(function (response) {
 
-        var pathname = settings.community.url || encodeURI(settings.community.profile.name.toLowerCase());
+            if (response.body.code !== "items_not_found") {
+                var user = response.body;
 
-        // check to see if the community exists
-        db.get(config.db.communities, pathname)
-            .then(function (response) {
+                // validate user is a member in the location
+                if (user.communities.indexOf(settings.location_key) > -1) {
 
-                if (response.body.type && (response.body.type == "cluster" || response.body.type == "network") && response.body.type == settings.community.type) {
-                        // community already exists, we're good to add the community profile here
-                    if (response.body.community_profiles === undefined) {
-                        // create community_profiles
-                        response.body['community_profiles'] = {};
-                    }
-                    if (response.body.community_profiles[settings.location_key] === undefined) {
-                        // create this location
-                        response.body.community_profiles[settings.location_key] = {
-                            "name": settings.community.profile.name,
-                            "headline": settings.community.profile.headline,
-                            "icon": response.body.profile.icon,
-                            "parents": settings.community.parents,
-                            "industries": settings.community.profile.industries
-                        };
+                    var pathname = settings.community.url || encodeURI(settings.community.profile.name.toLowerCase());
 
-                        // add community
-                        if (!response.body.communities) {
-                            response.body["communities"] = {};
-                        }
+                    // check to see if the community exists
+                    db.get(config.db.communities, pathname)
+                        .then(function (response) {
 
-                        if (response.body.communities.indexOf(settings.location_key) < 0) {
-                            response.body.communities.push(settings.location_key);
-                        }
+                            if (response.body.type && (response.body.type == "cluster" || response.body.type == "network") && response.body.type == settings.community.type) {
+                                // community already exists, we're good to add the community profile here
+                                if (response.body.community_profiles === undefined) {
+                                    // create community_profiles
+                                    response.body['community_profiles'] = {};
+                                }
+                                if (response.body.community_profiles[settings.location_key] === undefined) {
+                                    // create this location
+                                    response.body.community_profiles[settings.location_key] = {
+                                        "name": settings.community.profile.name,
+                                        "headline": settings.community.profile.headline,
+                                        "icon": response.body.profile.icon,
+                                        "parents": settings.community.parents,
+                                        "industries": settings.community.profile.industries
+                                    };
 
-                        db.put(config.db.communities, pathname, response.body)
-                            .then(function (finalres) {
+                                    // add community
+                                    if (!response.body.communities) {
+                                        response.body["communities"] = {};
+                                    }
 
-                                update_user(req.user.value.key, 'leader', pathname, settings.location_key)
-                                    .then(function(response) {
-                                        console.log(response);
-                                        res.status(201).send({message: settings.community.type.toUpperCase() + settings.community.type.slice(1) + ' created!'});
-                                    })
-                            })
-                            .fail(function (err) {
-                                console.warn('WARNING: community533 ', err);
-                                res.status(202).send({message: "Something went wrong."});
-                            });
+                                    if (response.body.communities.indexOf(settings.location_key) < 0) {
+                                        response.body.communities.push(settings.location_key);
+                                    }
 
+                                    db.put(config.db.communities, pathname, response.body)
+                                        .then(function (finalres) {
 
-                    } else {
-                        res.status(202).send({message: settings.community.profile.name + ' already exists in this location. Please change the name or delete the other one first.'});
-                    }
-
-                } else {
-                    res.status(202).send({message: 'That name is taken. Try changing the name.'});
-                }
+                                            update_user(req.user, 'leader', pathname, settings.location_key)
+                                                .then(function(response) {
+                                                    console.log(response);
+                                                    res.status(201).send({message: settings.community.type.toUpperCase() + settings.community.type.slice(1) + ' created!'});
+                                                })
+                                        })
+                                        .fail(function (err) {
+                                            console.warn('WARNING: community533 ', err);
+                                            res.status(202).send({message: "Something went wrong."});
+                                        });
 
 
+                                } else {
+                                    res.status(202).send({message: settings.community.profile.name + ' already exists in this location. Please change the name or delete the other one first.'});
+                                }
 
-            })
-            .fail(function (err) {
+                            } else {
+                                res.status(202).send({message: 'That name is taken. Try changing the name.'});
+                            }
 
-                if (err.statusCode == '404') {
-                    // no existing path, go ahead and create
 
-                    var profile = schema.community(settings.community, settings.location_key);
 
-                    db.put(config.db.communities, pathname, profile)
-                        .then(function (finalres) {
-
-                            update_user(req.user.value.key, 'leader', pathname, settings.location_key)
-                                .then(function() {
-                                    res.status(201).send({message: settings.community.type[0].toUpperCase() + settings.community.type.slice(1) + ' created!'});
-                                })
                         })
                         .fail(function (err) {
-                            console.warn('WARNING: community565 ', err);
-                            res.status(202).send({message: "Something went wrong."});
+
+                            if (err.statusCode == '404') {
+                                // no existing path, go ahead and create
+
+                                var profile = schema.community(settings.community, settings.location_key);
+
+                                db.put(config.db.communities, pathname, profile)
+                                    .then(function (finalres) {
+
+                                        update_user(req.user, 'leader', pathname, settings.location_key)
+                                            .then(function() {
+                                                res.status(201).send({message: settings.community.type[0].toUpperCase() + settings.community.type.slice(1) + ' created!'});
+                                            })
+                                    })
+                                    .fail(function (err) {
+                                        console.warn('WARNING: community565 ', err);
+                                        res.status(202).send({message: "Something went wrong."});
+                                    });
+
+                            } else {
+                                console.warn('WARNING: community570', err);
+                                res.status(202).send({message: "Something went wrong."});
+                            }
+
                         });
 
                 } else {
-                    console.warn('WARNING: community570', err);
-                    res.status(202).send({message: "Something went wrong."});
+                    console.warn("User is not a member of community: " + settings.community.key + " and location: " + settings.location_key + "!");
+                    res.status(202).send({ message: 'You must be a member of this community to add to it.' });
                 }
 
-            });
+            } else {
+                console.warn('WARNING:  User not found.');
+            }
+        })
 
-    } else {
-        console.warn("User is not a member of community: " + settings.community.key + " and location: " + settings.location_key + "!");
-        res.status(202).send({ message: 'You must be a member of this community to add to it.' });
-    }
+        .fail(function (err) {
+            console.warn("WARNING: community611", err);
+        });
 
 }
 
@@ -587,69 +620,84 @@ function handleDeleteCommunity(req, res) {
 
     console.log('Deleting community: ' + settings.community.profile.name + ' in ' + settings.location_key);
 
-    // validate user is a leader of the community in this location
-    if (req.user.value.roles.leader[settings.community.key].indexOf(settings.location_key) > -1) {
+    db.get(config.db.communities, req.user)
+        .then(function (response) {
 
-        // get the community
-        db.get(config.db.communities, settings.community.key)
-            .then(function (response) {
+            if (response.body.code !== "items_not_found") {
+                var user = response.body;
 
-                // remove the location profile
+                // validate user is a leader of the community in this location
+                if (user.roles.leader[settings.community.key].indexOf(settings.location_key) > -1) {
 
-                if (response.body.type && (response.body.type == "cluster" || response.body.type == "network") && response.body.type == settings.community.type) {
+                    // get the community
+                    db.get(config.db.communities, settings.community.key)
+                        .then(function (response) {
 
-                    // community already exists, we're good to remove the community profile here
-                    if (response.body.community_profiles !== undefined && response.body.community_profiles[settings.location_key]) {
-                       delete response.body.community_profiles[settings.location_key];
-                    }
+                            // remove the location profile
 
-                    // remove from community
+                            if (response.body.type && (response.body.type == "cluster" || response.body.type == "network") && response.body.type == settings.community.type) {
 
-                    if (response.body.communities.indexOf(settings.location_key) > -1) {
-                        var index = response.body.communities.indexOf(settings.location_key);
-                        response.body.communities.splice(index, 1);
-                    }
+                                // community already exists, we're good to remove the community profile here
+                                if (response.body.community_profiles !== undefined && response.body.community_profiles[settings.location_key]) {
+                                    delete response.body.community_profiles[settings.location_key];
+                                }
 
-                    if (response.body.communities.length == 0) {
-                        // delete the whole thing
-                        db.remove(config.db.communities, settings.community.key, 'true')
-                            .then(function (finalres) {
-                                res.status(204).send({message: settings.community.type[0].toUpperCase() + settings.community.type.slice(1) + ' deleted!'});
-                            })
-                            .fail(function (err) {
-                                console.warn('WARNING: community620', err);
-                                res.status(202).send({message: "Something went wrong."});
-                            });
-                    } else {
-                        db.put(config.db.communities, settings.community.key, response.body)
-                            .then(function (finalres) {
-                                res.status(204).send({message: settings.community.type[0].toUpperCase() + settings.community.type.slice(1) + ' deleted!'});
-                            })
-                            .fail(function (err) {
-                                console.warn('WARNING: community629 ', err);
-                                res.status(202).send({message: "Something went wrong."});
-                            });
-                    }
+                                // remove from community
 
-                    update_user(req.user.value.key, 'delete', settings.community.key, settings.location_key);
+                                if (response.body.communities.indexOf(settings.location_key) > -1) {
+                                    var index = response.body.communities.indexOf(settings.location_key);
+                                    response.body.communities.splice(index, 1);
+                                }
+
+                                if (response.body.communities.length == 0) {
+                                    // delete the whole thing
+                                    db.remove(config.db.communities, settings.community.key, 'true')
+                                        .then(function (finalres) {
+                                            res.status(204).send({message: settings.community.type[0].toUpperCase() + settings.community.type.slice(1) + ' deleted!'});
+                                        })
+                                        .fail(function (err) {
+                                            console.warn('WARNING: community620', err);
+                                            res.status(202).send({message: "Something went wrong."});
+                                        });
+                                } else {
+                                    db.put(config.db.communities, settings.community.key, response.body)
+                                        .then(function (finalres) {
+                                            res.status(204).send({message: settings.community.type[0].toUpperCase() + settings.community.type.slice(1) + ' deleted!'});
+                                        })
+                                        .fail(function (err) {
+                                            console.warn('WARNING: community629 ', err);
+                                            res.status(202).send({message: "Something went wrong."});
+                                        });
+                                }
+
+                                update_user(req.user, 'delete', settings.community.key, settings.location_key);
+
+                            } else {
+                                console.log('WARNING: Cannot delete community');
+                                res.status(202).send({message: "You can't delete " + settings.community.profile.name + " for some reason, but we've been notified and will look into it."});
+                            }
+
+                        })
+                        .fail(function (err) {
+
+                            console.warn('WARNING: community644', err);
+                            res.status(202).send({message: "Something went wrong."});
+
+                        });
 
                 } else {
-                    console.log('WARNING: Cannot delete community');
-                    res.status(202).send({message: "You can't delete " + settings.community.profile.name + " for some reason, but we've been notified and will look into it."});
+                    console.warn("User is not a member of community: " + settings.community.key + " and location: " + settings.location_key + "!");
+                    res.status(202).send({ message: 'You must be a leader of this community to delete it.' });
                 }
 
-            })
-            .fail(function (err) {
+            } else {
+                console.warn('WARNING:  User not found.');
+            }
+        })
 
-                console.warn('WARNING: community644', err);
-                res.status(202).send({message: "Something went wrong."});
-
-            });
-
-    } else {
-        console.warn("User is not a member of community: " + settings.community.key + " and location: " + settings.location_key + "!");
-        res.status(202).send({ message: 'You must be a leader of this community to delete it.' });
-    }
+        .fail(function (err) {
+            console.warn("WARNING: community699", err);
+        });
 
 }
 
