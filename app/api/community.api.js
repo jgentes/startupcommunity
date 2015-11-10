@@ -184,18 +184,19 @@ function handleGetCommunity(req, res) {
                 if (result.body.results.length > 0) {
                     var found = false;
                     for (comm in result.body.results) {
+                        var m = result.body.results[comm];
 
-                        if (result.body.results[comm].path.key == community) {
+                        if (m.path.key == community) {
                             found = true;
 
-                            console.log('Pulling community for ' + result.body.results[comm].value.profile.name);
+                            console.log('Pulling community for ' + m.value.profile.name);
 
-                            if (result.body.results[comm].value.type == "user" ||
-                                result.body.results[comm].value.type == "company" ||
-                                result.body.results[comm].value.type == "network") {
+                            if (m.value.type == "user" ||
+                                m.value.type == "company" ||
+                                m.value.type == "network") {
 
                                 // pull communities within record
-                                var comm_items = result.body.results[comm].value.communities;
+                                var comm_items = m.value.communities;
                                 var search = community;
                                 if (comm_items) {
                                     search += " OR ";
@@ -209,15 +210,30 @@ function handleGetCommunity(req, res) {
 
                                 // also grab clusters
 
-                                if (!result.body.results[comm].value.parents) result.body.results[comm].value.parents = [];
-                                if (!result.body.results[comm].value.industries) result.body.results[comm].value.industries = [];
-                                if (!result.body.results[comm].value.skills) result.body.results[comm].value.skills = [];
+                                if (!m.value.profile.parents) m.value.profile.parents = [];
+                                if (!m.value.profile.industries) m.value.profile.industries = [];
+                                if (!m.value.profile.skills) m.value.profile.skills = [];
+
+                                var cluster_items = m.value.profile.parents.concat(m.value.profile.industries, m.value.profile.skills);
+                                var clusters = '"';
+
+                                if (cluster_items.length) {
+                                    for (c in cluster_items) {
+                                        if (c > 0 && c < cluster_items.length) {
+                                            clusters += '" OR "';
+                                        }
+                                        clusters += cluster_items[c];
+                                    }
+                                    clusters += '"';
+                                }
+
+                                var ubersearch = '(@path.key: (' + search + ')) OR (@value.type: cluster AND @value.communities: ' + m.value.profile.home + ' AND (@value.profile.industries: (' + clusters + ') OR @value.community_profiles.' + m.value.profile.home + '.industries: (' + clusters + ')))';
 
                                 db.newSearchBuilder()
                                     .collection(config.db.communities)
                                     .limit(100)
                                     .offset(0)
-                                    .query("@path.key: (" + search + ") OR " + clusters)
+                                    .query(ubersearch)
                                     .then(function (result2) {
                                         finalize(result2.body.results);
                                     })
