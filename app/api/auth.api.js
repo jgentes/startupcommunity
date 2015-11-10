@@ -87,22 +87,14 @@ function handleEnsureAuthenticated(req, res, next) {
     }
     try {
 
-        if (req.headers.authorization && req.headers.authorization.split(' ')[0] === 'Bearer') {
-            req.user = jwt.verify(req.headers.authorization.split(' ')[1], config.token_secret);
-        }
-
-        //var token = req.headers.authorization.split(' ')[1];
-        //var payload = jwt.decode(token, config.token_secret);
-
-       /* if (payload.exp <= Date.now()) {
-            console.log('Token has expired');
-            return res.status(204).end();
-        }*/
-
         if (!req.user || req.user === undefined) {
             req.user = {}; //required step to pursue auth through refresh
         } else {
             console.log('Existing user in request');
+        }
+
+        if (req.headers.authorization && req.headers.authorization.split(' ')[0] === 'Bearer') {
+            req.user = jwt.verify(req.headers.authorization.split(' ')[1], config.token_secret);
         }
 
         next();

@@ -5,7 +5,7 @@
                 <div class="row">
                     <div class="col-sm-12">
                         <div class="col-sm-2 col-lg-1">
-                            <img style="height:75px;" ng-src="{{profile.company.logo || profile.company.profile.avatar || profile.company.profile.angellist.thumb_url || '/public/images/blank_startup.jpg'}}" alt="{{::profile.company.profile.name}}">
+                            <img style="height:75px;" ng-src="{{profile.company.logo || profile.company.profile.avatar || profile.company.profile.angellist.thumb_url || '/public/images/blank_startup.jpg'}}" alt="{{::profile.company.profile.name}}" onerror="this.src='/public/images/blank_startup.jpg'">
                         </div>
                         <div class="col-sm-10 col-lg-11" style="padding-bottom: 15px;">
                             <div class="project-action" style="margin-right: -15px;">
