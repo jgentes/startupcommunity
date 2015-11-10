@@ -186,14 +186,16 @@ function CompanyProfileController($stateParams, $location, $mixpanel, user, comp
 
     $mixpanel.track('Viewed Company');
 
-    if (!jQuery.isEmptyObject($stateParams.profile)) {
+    /*if (!jQuery.isEmptyObject($stateParams.profile)) {
         this.company = $stateParams.profile;
     } else if (community && community.type == "company") {
         this.company = community;
-    }
-
+    }*/
+    console.log('companyprofile');
     var self = this;
     this.communities = communities.data;
+    this.company = this.communities[this.communities.key];
+    this.community = this.company;
     this.team = {};
     /*
     // sort team members
