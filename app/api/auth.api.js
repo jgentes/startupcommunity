@@ -554,6 +554,10 @@ function handleLinkedin(req, res) {
 function handleInviteUser(req, res) {
     var inviteUser = req.body.params;
 
+    if (!inviteUser.community_key) inviteUser.community_key = inviteUser.location.key;
+
+    console.log('Inviting ' + inviteUser.email + ' to ' + inviteUser.location_key + ' / ' + inviteUser.community_key);
+
     if (!req.user) {
         db.newSearchBuilder()
             .collection(config.db.communities)
@@ -573,10 +577,6 @@ function handleInviteUser(req, res) {
                 res.status(202).send({message: "Something went wrong."});
             });
     } else goInvite();
-
-    if (!inviteUser.community_key) inviteUser.community_key = inviteUser.location.key;
-
-    console.log('Inviting ' + inviteUser.email + ' to ' + inviteUser.location_key + ' / ' + inviteUser.community_key);
 
     var goInvite = function() {
         // validate user has leader role within the location/community, or let them through if they are a member of the location
