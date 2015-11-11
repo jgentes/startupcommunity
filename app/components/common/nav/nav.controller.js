@@ -389,7 +389,7 @@ function NavigationController($auth, $state, $window, $timeout, $location, $scop
         }
     }
 
-    //this.embedded = true; // for testing
+    this.embedded = true; // for testing
 
 }
 
