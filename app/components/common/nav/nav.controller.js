@@ -360,7 +360,7 @@ function NavigationController($auth, $state, $window, $timeout, $location, $scop
         domain = domain.split(':')[0];
 
         // use localStorage to persist 'allowed to embed' across communities if the initial referral domain is verified
-        if ($window.localStorage) {
+        if ($window.localStorage && $window.localStorage.getItem('startupcommunity-embed')) {
             var storage = JSON.parse($window.localStorage.getItem('startupcommunity-embed'))[domain];
             verified = storage.verified;
             expired = storage.expired > Date.now();
