@@ -368,22 +368,20 @@ function NavigationController($auth, $state, $window, $timeout, $location, $scop
             } else embed = this.community.profile.embed;
 
             if (embed) {
-                console.log(embed);
                 for (u in embed) {
                     if (embed[u].url == domain) {
                         verified = true;
                         this.color = embed[u].color;
-                        if (embed[u].full) this.embedded = false;
                         $window.localStorage && $window.localStorage.setItem(domain + '_embed_verified', true);
                         $window.localStorage && $window.localStorage.setItem(domain + '_embed_color', this.color);
                         $window.localStorage && $window.localStorage.setItem(domain + '_embed_full', embed[u].full);
+                        if (embed[u].full) this.embedded = false;
                     }
                 }
             }
 
             if (!verified) $state.go('500');
         } else {
-            console.log($window.localStorage);
             this.color = $window.localStorage.getItem(domain + '_embed_color');
             if ($window.localStorage.getItem(domain + '_embed_full')) this.embedded = false;
         }
