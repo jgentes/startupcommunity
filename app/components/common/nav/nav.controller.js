@@ -375,7 +375,7 @@ function NavigationController($auth, $state, $window, $timeout, $location, $scop
                         if (embed[u].full) this.embedded = false;
                         $window.localStorage && $window.localStorage.setItem(domain + '_embed_verified', true);
                         $window.localStorage && $window.localStorage.setItem(domain + '_embed_color', this.color);
-                        $window.localStorage && $window.localStorage.setItem(domain + '_embed_full', this.full);
+                        $window.localStorage && $window.localStorage.setItem(domain + '_embed_full', embed[u].full);
                     }
                 }
             }
