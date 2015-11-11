@@ -361,7 +361,7 @@ function NavigationController($auth, $state, $window, $timeout, $location, $scop
         // use localStorage to persist 'allowed to embed' across communities if the initial referral domain is verified
         if ($window.localStorage) verified = $window.localStorage.getItem(domain + '_embed_verified');
         var expired = $window.localStorage.getItem(domain + 'embed_expire') > Date.now() || $window.localStorage.getItem(domain + 'embed_expire') == null;
-
+        console.log($window.localStorage.getItem(domain + 'embed_expire'));
         if (!verified && !expired) {
 
             if (this.community.type === 'cluster' && this.community.community_profiles[this.location_path] && this.community.community_profiles[this.location_path].embed) {
