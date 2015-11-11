@@ -345,6 +345,7 @@ function NavigationController($auth, $state, $window, $timeout, $location, $scop
 
     if (this.embedded) {
         var verified = false,
+            expired = true,
             domain;
 
         //find & remove protocol (http, ftp, etc.) and get domain
@@ -359,10 +360,13 @@ function NavigationController($auth, $state, $window, $timeout, $location, $scop
         domain = domain.split(':')[0];
 
         // use localStorage to persist 'allowed to embed' across communities if the initial referral domain is verified
-        if ($window.localStorage) verified = $window.localStorage.getItem(domain + '_embed_verified');
-        var expired = $window.localStorage.getItem(domain + 'embed_expire') > Date.now();
+        if ($window.localStorage) {
+            var storage = JSON.parse($window.localStorage.getItem('startupcommunity-embed'))[domain];
+            verified = storage.verified;
+            expired = storage.expired > Date.now();
+        }
 
-        if (!verified && !expired) {
+        if (!verified || expired) {
 
             if (this.community.type === 'cluster' && this.community.community_profiles[this.location_path] && this.community.community_profiles[this.location_path].embed) {
                 embed = this.community.community_profiles[this.location_path].embed;
@@ -373,10 +377,16 @@ function NavigationController($auth, $state, $window, $timeout, $location, $scop
                     if (embed[u].url == domain) {
                         verified = true;
                         this.color = embed[u].color;
-                        $window.localStorage && $window.localStorage.setItem(domain + '_embed_verified', true);
-                        $window.localStorage && $window.localStorage.setItem(domain + '_embed_color', this.color);
-                        $window.localStorage && $window.localStorage.setItem(domain + '_embed_full', embed[u].full);
-                        $window.localStorage && $window.localStorage.setItem(domain + '_embed_expire', Date.now() + 1800);
+                        if ($window.localStorage) {
+                            var domain_embed = {};
+                            domain_embed[domain] = {
+                                "verified" : true,
+                                "color" : this.color,
+                                "full" : embed[u].full,
+                                "expire" : Date.now() + 1800
+                            };
+                            $window.localStorage.setItem('startupcommunity-embed',JSON.stringify(domain_embed));
+                        }
                         if (embed[u].full) this.embedded = false;
                     }
                 }
@@ -384,8 +394,10 @@ function NavigationController($auth, $state, $window, $timeout, $location, $scop
 
             if (!verified) $state.go('500');
         } else {
-            this.color = $window.localStorage.getItem(domain + '_embed_color');
-            if ($window.localStorage.getItem(domain + '_embed_full')) this.embedded = false;
+            if (storage) {
+                this.color = storage.color;
+                if (storage.full) this.embedded = false;
+            }
         }
     }
 
