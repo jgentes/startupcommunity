@@ -368,6 +368,7 @@ function NavigationController($auth, $state, $window, $timeout, $location, $scop
             } else embed = this.community.profile.embed;
 
             if (embed) {
+                console.log(embed);
                 for (u in embed) {
                     if (embed[u].url == domain) {
                         verified = true;
@@ -382,6 +383,7 @@ function NavigationController($auth, $state, $window, $timeout, $location, $scop
 
             if (!verified) $state.go('500');
         } else {
+            console.log($window.localStorage);
             this.color = $window.localStorage.getItem(domain + '_embed_color');
             if ($window.localStorage.getItem(domain + '_embed_full')) this.embedded = false;
         }
