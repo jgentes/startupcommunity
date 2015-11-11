@@ -360,8 +360,9 @@ function NavigationController($auth, $state, $window, $timeout, $location, $scop
 
         // use localStorage to persist 'allowed to embed' across communities if the initial referral domain is verified
         if ($window.localStorage) verified = $window.localStorage.getItem(domain + '_embed_verified');
+        var expired = $window.localStorage.getItem(domain + 'embed_expire') > Date.now();
 
-        if (!verified) {
+        if (!verified && !expired) {
 
             if (this.community.type === 'cluster' && this.community.community_profiles[this.location_path] && this.community.community_profiles[this.location_path].embed) {
                 embed = this.community.community_profiles[this.location_path].embed;
@@ -375,6 +376,7 @@ function NavigationController($auth, $state, $window, $timeout, $location, $scop
                         $window.localStorage && $window.localStorage.setItem(domain + '_embed_verified', true);
                         $window.localStorage && $window.localStorage.setItem(domain + '_embed_color', this.color);
                         $window.localStorage && $window.localStorage.setItem(domain + '_embed_full', embed[u].full);
+                        $window.localStorage && $window.localStorage.setItem(domain + '_embed_expire', Date.now() + 1800);
                         if (embed[u].full) this.embedded = false;
                     }
                 }
@@ -391,7 +393,7 @@ function NavigationController($auth, $state, $window, $timeout, $location, $scop
 
 }
 
-function CommunitySettingsController($modalInstance, $http, $state, sweet, user, community_service, community, location, location_key){
+function CommunitySettingsController($modalInstance, $window, $state, sweet, user, community_service, community, location, location_key){
 
     this.user = user;
     this.community = community;
