@@ -389,7 +389,7 @@ function NavigationController($auth, $state, $window, $timeout, $location, $scop
 
 }
 
-function CommunitySettingsController($modalInstance, $stateParams, $state, sweet, user, community_service, community, location, location_key){
+function CommunitySettingsController($modalInstance, $state, sweet, user, community_service, community, location, location_key){
 
     this.user = user;
     this.community = community;
@@ -435,12 +435,9 @@ function CommunitySettingsController($modalInstance, $stateParams, $state, sweet
                         title: "Settings saved!",
                         type: "success"
                     }, function(){
+                        $http.get('/api/2.1/community/' + self.community.key); // refresh outdated cache
                         $modalInstance.close();
-                        $state.transitionTo($state.current, $stateParams, {
-                            reload: true,
-                            inherit: false,
-                            notify: true
-                        });
+                        $state.reload();
                     });
                 }
             });
