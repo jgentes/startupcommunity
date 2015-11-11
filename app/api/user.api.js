@@ -376,7 +376,6 @@ function handleGetProfile(req, res) {
                 res.status(200).send({ message: 'User not found.' });
             }
         })
-
         .fail(function(err){
             console.warn("WARNING: user390", err.body);
             res.status(400).send({ message: "Problem pulling user, sending 400 response."});
