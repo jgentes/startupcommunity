@@ -436,7 +436,7 @@ function CommunitySettingsController($modalInstance, $state, sweet, user, commun
                         type: "success"
                     }, function(){
                         $modalInstance.close();
-                        $state.reload();
+                        $state.go($state.current, {}, {reload: true});
                     });
                 }
             });
