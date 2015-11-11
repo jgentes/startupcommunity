@@ -188,7 +188,7 @@ function CompanyProfileController($stateParams, $location, $mixpanel, user, comp
     } else if (community && community.type == "company") {
         this.company = community;
     }*/
-    console.log('companyprofile');
+
     var self = this;
     this.communities = communities.data;
     this.company = this.communities[this.communities.key];
