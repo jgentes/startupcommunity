@@ -120,7 +120,7 @@ app.get('/api/2.1/angel/startups', angellistApis.getStartups);
 app.get('/api/2.1/angel/startup', angellistApis.getStartup);
 app.get('/api/2.1/profile', auth.ensureAuthenticated, userApis.getProfile); // must ensureAuth to send userid to getProfile
 app.get('/api/2.1/profile/getkey', auth.ensureAuthenticated, auth.createAPIToken);
-app.post('/api/2.1/invite', auth.ensureAuthenticated, auth.inviteUser);
+app.post('/api/2.1/invite', auth.inviteUser);
 app.put('/api/2.1/profile/role', auth.ensureAuthenticated, userApis.setRole);
 app.post('/api/2.1/profile/remove/:userid', auth.ensureAuthenticated, userApis.removeProfile);
 app.post('/api/2.1/feedback', auth.ensureAuthenticated, userApis.feedback);

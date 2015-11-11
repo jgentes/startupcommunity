@@ -26,9 +26,16 @@
             <div ng-if="!nav.embedded" class="navbar-right">
                 <ul class="nav navbar-nav no-borders">
                     <li ng-if="!nav.user" class="dropdown">
-                        <div style="padding-top: 12px; margin-right: 8px;" ng-controller="LoginController as login">
+                        <div style="padding-top: 12px; margin-right: 8px;">
+                            <a class="btn btn-info">
+                                <div ng-click="nav.requestInvitation()" style="font-size: 16px; color: #fff;">Join</div>
+                            </a>
+                        </div>
+                    </li>
+                    <li ng-if="!nav.user" class="dropdown">
+                        <div style="padding-top: 12px; margin-right: 26px;" ng-controller="LoginController as login">
                             <a class="btn btn-success">
-                                <div ng-click="login.authenticate('linkedin')" style="font-size: 16px; color: #fff;">Log In&nbsp;</div>
+                                <div ng-click="login.authenticate('linkedin')" style="font-size: 16px; color: #fff;">Log In</div>
                             </a>
                         </div>
                     </li>
@@ -37,7 +44,7 @@
                             <i class="pe-7s-bell"></i>
                         </a>
                     </li>
-                    <li class="dropdown">
+                    <li ng-if="nav.user" class="dropdown">
                         <a ng-click="nav.openChat()" tooltip-placement="left" tooltip="Help">
                             <i class="pe-7s-help1"></i>
                         </a>
@@ -220,7 +227,7 @@
     <!-- Main Content -->
     <div ui-view >
         <div ng-style="{'background-color': nav.color}" ng-class="{'wrapper' : !nav.embedded}">
-            <div class="splash"><div class="splash-title"><a href="/"><img src="/public/images/sc_logo.png" style="width: 75%;" alt="StartupCommunity.org Logo"/></a><img src="/public/images/loading-bars.svg" width="64" height="64" /> </div></div>
+            <div class="splash" id="minorsplash"><div class="splash-title"><a href="/"><img src="/public/images/sc_logo.png" style="width: 75%;" alt="StartupCommunity.org Logo"/></a><img src="/public/images/loading-bars.svg" width="64" height="64" /> </div></div>
             <div ng-class="{'embed_header' : nav.embedded}" ui-view="header"></div>
             <div ng-class="{'content' : !nav.embedded}">
                 <div ui-view="content"></div>

@@ -237,6 +237,32 @@ function NavigationController($auth, $state, $window, $timeout, $location, $scop
         });
     };
 
+    // REQUEST INVITATION
+
+    this.requestInvitation = function() {
+
+        var modalInstance = $modal.open({
+            templateUrl: 'components/users/user.request_invite.html',
+            controller: InviteUserController,
+            controllerAs: 'invite',
+            windowClass: "hmodal-info",
+            resolve: {
+                user: function() {
+                    return null;
+                },
+                community: function() {
+                    return self.location;
+                },
+                communities: function() {
+                    return self.communities;
+                },
+                location: function() {
+                    return self.location;
+                }
+            }
+        });
+    };
+
     // INVITE PEOPLE
 
     this.invitePeople = function() {
