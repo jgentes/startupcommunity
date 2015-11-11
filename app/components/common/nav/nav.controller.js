@@ -389,7 +389,7 @@ function NavigationController($auth, $state, $window, $timeout, $location, $scop
 
 }
 
-function CommunitySettingsController($modalInstance, $state, sweet, user, community_service, community, location, location_key){
+function CommunitySettingsController($modalInstance, $http, $state, sweet, user, community_service, community, location, location_key){
 
     this.user = user;
     this.community = community;
