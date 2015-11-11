@@ -436,7 +436,11 @@ function CommunitySettingsController($modalInstance, $state, sweet, user, commun
                         type: "success"
                     }, function(){
                         $modalInstance.close();
-                        $state.go($state.current, {}, {reload: true});
+                        $state.transitionTo($state.current, $stateParams, {
+                            reload: true,
+                            inherit: false,
+                            notify: true
+                        });
                     });
                 }
             });
