@@ -1,7 +1,7 @@
 <div tour backdrop="true" on-end="nav.end()">
     <!-- Header -->
     <div id="header" ng-class="{'no-sides' : !nav.embedded}">
-        <div ng-class="{'bright-line' : !nav.embedded, 'grey-line' : nav.embedded}">
+        <div class="grey-line">
         </div>
         <div id="logo" class="light-version">
             <a href="https://startupcommunity.org" target="_blank"><img src="/public/images/sc_logo.png"/></a>
@@ -78,7 +78,7 @@
                     </div>
                 </div>
             </div>
-            <div ng-if="nav.location.profile.sc_logo" style="margin-left: -21px;"><img style="width:182px; border: 1px solid #ddd;" ng-src="{{nav.location.profile.sc_logo}}"/></div>
+            <div ng-if="nav.location.profile.sc_logo" style="margin-left: -21px;"><img class="profile-logo" ng-src="{{nav.location.profile.sc_logo}}"/></div>
         </div>
 
         <ul side-navigation class="nav" id="side-menu" style="border-top: 1px solid #eee;">
