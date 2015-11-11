@@ -11,20 +11,25 @@
                 <div class="panel-body">
                     <table style="border-collapse:separate; border-spacing:0 8px;">
                         <tr>
-                            <td style="width:60%;">
-                                <label>Your website domain:</label>
+                            <td style="width:50%;">
+                                <label>Your website domain: (no http://)</label>
                             </td>
-                            <td style="width:40%; padding-left: 20px;">
-                                <label>Custom background color:</label>
+                            <td style="width:35%; padding-left: 20px;">
+                                <label>Background color:</label>
                             </td>
-                            <td style="width:10%;"></td>
+                            <td style="width:15%; text-align:right;">
+                                <label title="Full site shows left navigation bar and join/login buttons">Full Site?</label>
+                            </td>
                         </tr>
                         <tr>
                             <td>
-                                <input type="text" placeholder="yourdomain.com (no http://)" class="form-control input-lg" required name="embed_url" ng-model="settings.formdata.embed_url_value">
+                                <input type="text" placeholder="yourdomain.com" class="form-control input-lg" required name="embed_url" ng-model="settings.formdata.embed_url_value">
                             </td>
                             <td style="padding-left: 20px;">
                                 <input type="text" placeholder="#F1F3F6" class="form-control input-lg" name="embed_color" ng-model="settings.formdata.embed_color_value">
+                            </td>
+                            <td style="padding-left: 20px;">
+                                <input type="checkbox" class="form-control checkbox" name="embed_full" ng-model="settings.formdata.embed_full_value">
                             </td>
                         </tr>
                         <tr>
@@ -44,13 +49,15 @@
                     <h3 ng-show="!settings.embed || settings.embed.length == 0">None yet!</h3>
                     <table ng-show="settings.embed.length > 0" style="border-collapse:separate; border-spacing:0 8px;">
                         <tr>
-                            <td style="width:60%;">
+                            <td style="width:50%;">
                                 <label>Domain:</label>
                             </td>
-                            <td style="width:30%; padding-left: 20px;">
+                            <td style="width:35%; padding-left: 20px;">
                                 <label>Color:</label>
                             </td>
-                            <td style="width:10%;"></td>
+                            <td style="width:15%; text-align:right;">
+                                <label>Full Site:</label>
+                            </td>
                         </tr>
                         <tr ng-repeat="domain in settings.embed">
                             <td>
@@ -58,6 +65,9 @@
                             </td>
                             <td style="padding-left: 20px;">
                                 <input type="text" class="form-control input-lg" placeholder="{{domain.color}}" disabled>
+                            </td>
+                            <td style="padding-left: 20px;">
+                                <input type="checkbox" class="form-control checkbox" checked="{{domain.full}}" disabled>
                             </td>
                             <td style="padding-left: 20px;">
                                 <i class="pe-7s-close-circle" ng-click="settings.removeEmbed($index)" style="font-size: 28px; cursor: pointer;"></i>

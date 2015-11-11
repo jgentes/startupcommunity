@@ -459,14 +459,13 @@ function handleSetCommunity(req, res) {
     var settings = req.body.params;
 
     console.log('Updating settings for ' + settings.location_key + ' / ' + settings.community_key);
-
+    console.log(settings);
 
     db.get(config.db.communities, req.user)
         .then(function (response) {
 
             if (response.body.code !== "items_not_found") {
                 var user = response.body;
-                console.log(user.roles.leader);
 
                 // validate user has leader role within the location/community
                 if (user.roles.leader[settings.community_key] && user.roles.leader[settings.community_key].indexOf(settings.location_key) > -1) {

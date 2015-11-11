@@ -363,7 +363,6 @@ function NavigationController($auth, $state, $window, $timeout, $location, $scop
 
         if (!verified) {
 
-
             if (this.community.type === 'cluster' && this.community.community_profiles[this.location_path] && this.community.community_profiles[this.location_path].embed) {
                 embed = this.community.community_profiles[this.location_path].embed;
             } else embed = this.community.profile.embed;
@@ -373,8 +372,10 @@ function NavigationController($auth, $state, $window, $timeout, $location, $scop
                     if (embed[u].url == domain) {
                         verified = true;
                         this.color = embed[u].color;
+                        if (embed[u].full) this.embedded = false;
                         $window.localStorage && $window.localStorage.setItem(domain + '_embed_verified', true);
                         $window.localStorage && $window.localStorage.setItem(domain + '_embed_color', this.color);
+                        $window.localStorage && $window.localStorage.setItem(domain + '_embed_full', this.full);
                     }
                 }
             }
@@ -382,6 +383,7 @@ function NavigationController($auth, $state, $window, $timeout, $location, $scop
             if (!verified) $state.go('500');
         } else {
             this.color = $window.localStorage.getItem(domain + '_embed_color');
+            if ($window.localStorage.getItem(domain + '_embed_full')) this.embedded = false;
         }
     }
 
@@ -407,7 +409,8 @@ function CommunitySettingsController($modalInstance, $http, $state, sweet, user,
             }
             self.embed.push({
                 "url" : self.formdata.embed_url_value,
-                "color" : self.formdata.embed_color_value
+                "color" : self.formdata.embed_color_value,
+                "full" : self.formdata.embed_full_value
             })
         } else {
             self.form.submitted = true;
@@ -435,16 +438,14 @@ function CommunitySettingsController($modalInstance, $http, $state, sweet, user,
                         title: "Settings saved!",
                         type: "success"
                     }, function(){
-                        $http.get('/api/2.1/community/' + self.community.key); // refresh outdated cache
                         $modalInstance.close();
-                        $state.reload();
                     });
                 }
             });
     };
 
     this.delete = function () {
-        console.log(location);
+
         sweet.show({
             title: "Are you sure?",
             text: "You cannot recover this once it has been deleted!",
