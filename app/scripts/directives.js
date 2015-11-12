@@ -95,7 +95,7 @@ function sideNavigation() {
 function minimalizaMenu() {
     return {
         restrict: 'EA',
-        template: '<div class="header-link hide-menu" id="toggleNav" ng-click="menu.minimalize()"><i class="pe-7s-way" style="font-size:36px;"></i></div>',
+        template: '<div class="header-link hide-menu" id="toggleNav" ng-click="menu.minimalize()"><i class="pe-7s-way" style="font-size:31px;"></i></div>',
         controllerAs: 'menu',
         controller: function () {
 
