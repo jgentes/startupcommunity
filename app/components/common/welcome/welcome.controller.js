@@ -220,6 +220,9 @@ function WelcomeController($auth, $q, $http, $mixpanel, $stateParams, $scope, $s
                         if (response.data.results[0].value.profile.industries) self.selectedCompany.industries = response.data.results[0].value.profile.industries;
                         if (response.data.results[0].value.profile.parents) self.selectedCompany.parent = response.data.results[0].value.profile.parents[0];
                         if (response.data.results[0].value.profile.stage) self.selectedCompany.stage = response.data.results[0].value.profile.stage;
+                        if (response.data.results[0].value.profile.headline) self.selectedCompany.high_concept = response.data.results[0].value.profile.headline;
+                        if (response.data.results[0].value.profile.summary) self.selectedCompany.product_desc = response.data.results[0].value.profile.summary;
+                        if (response.data.results[0].value.profile.avatar) self.selectedCompany.thumb_url = response.data.results[0].value.profile.avatar;
                         self.alert = { type: 'warning', message: self.selectedCompany.name + ' is already in the system, but you may update the company record.'};
                     }
                 })

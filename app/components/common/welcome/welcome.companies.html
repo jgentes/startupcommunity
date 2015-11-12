@@ -22,6 +22,9 @@
                 <a style="font-size: 12px; padding-top: 3px; color: #777;" class="pull-right" ng-click="welcome.shouldIadd()">should I add a company?</a>
 
             </div>
+
+            <div alert-box this-alert="welcome.alert"></div>
+
             <input type="submit" style="float:left" class="finish btn-success btn" ng-class="{'disabled' : disabled || welcome.working || !welcome.selectedCompany}" value="{{ (welcome.updateCompany ? 'Update ' : 'Add ') + (welcome.selectedCompany.name || 'Company') }}" />
             <a ng-show="!welcome.selectedCompany" style="padding-left: 15px; line-height: 2.5; color: #777;" ng-click="welcome.notListed()">not listed?</a>
             <a ng-show="welcome.selectedCompany && !welcome.working" ng-click="welcome.selectedCompany = undefined; welcome.company = undefined; welcome.alert = undefined; welcome.updateRole = false; welcome.selectedRole = 'none'; welcome.updateCompany = false; welcome.submitted = false;" style="padding-left: 15px; line-height: 2.5;">cancel</a>
@@ -62,7 +65,6 @@
             </div>
         </div>
     </div>
-    <div alert-box this-alert="welcome.alert"></div>
     <h4 style="margin-bottom: 13px;">
         <a class="btn btn-info pull-left" ui-sref="welcome.skills">Back</a>
         <a class="btn btn-info pull-right" ng-click="welcome.next()">Continue</a></h4>
