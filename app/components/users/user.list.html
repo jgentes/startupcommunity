@@ -78,7 +78,7 @@
                         </li>
                         <hr style="margin: 10px 0 10px 0;">
                         <li ng-repeat="network in nav.networks" ng-class="{'active':users.selectedNetworks.indexOf(network.key) >= 0}" ng-click="users.allNetworks=false; users.filterNetworks(network.key);">
-                            <a><i class="fa {{network.profile.icon}}"></i> {{network.profile.name}}</a>
+                            <a>{{network.profile.name}}</a>
                         </li>
                     </ul>
                 </div>
