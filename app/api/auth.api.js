@@ -683,6 +683,7 @@ function handleInviteUser(req, res) {
                             });
                     } else {
                         console.warn("User is not a leader in community: " + inviteUser.community_key + " for location: " + inviteUser.location_key + "!");
+                        console.log(user);
                         res.status(202).send({ message: 'You must be a member of this location and/or a leader of this network to invite someone.' });
                     }
 
