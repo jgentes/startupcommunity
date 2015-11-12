@@ -348,6 +348,12 @@ function NavigationController($auth, $state, $window, $timeout, $location, $scop
             expired = true,
             domain;
 
+        angular.element(document).ready(function () {
+            setTimeout(function() {
+                jQuery('#toggleNav').trigger('click');
+            }, 1000);
+        });
+
         //find & remove protocol (http, ftp, etc.) and get domain
         if (document.referrer.indexOf("://") > -1) {
             domain = document.referrer.split('/')[2];
