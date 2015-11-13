@@ -233,6 +233,8 @@ function UserProfileController($stateParams, $http, $location, $modal, $mixpanel
         this.user = community;
     } else this.user = user.data.user;
 
+    this.loggedin = !!user;
+
     var self = this;
     this.community = community;
     this.communities = communities.data;
@@ -296,7 +298,7 @@ function UserProfileController($stateParams, $http, $location, $modal, $mixpanel
     this.askQuestion = function() {
         self.working = true;
 
-        if (self.question) {
+        if (self.question && user.data.user) {
             // update user profile
 
             message_service.addMessage('question', user.data.user, this.user, self.question)
@@ -318,7 +320,7 @@ function UserProfileController($stateParams, $http, $location, $modal, $mixpanel
                     self.working = false;
                     self.alert = {type: 'danger', message: String(error.data.message)};
                 });
-        }
+        } else self.alert = {type: 'danger', message: 'Please login before posting a question'};
     };
 
     this.working = false;
@@ -334,7 +336,7 @@ function UserProfileController($stateParams, $http, $location, $modal, $mixpanel
     this.postReply = function(parent) {
         self.working[parent.key] = true;
 
-        if (self.reply[parent.key]) {
+        if (self.reply[parent.key] && user.data.user) {
             // update user profile
 
             message_service.addMessage('reply', user.data.user, this.user, self.reply[parent.key], parent)
@@ -357,7 +359,7 @@ function UserProfileController($stateParams, $http, $location, $modal, $mixpanel
                     self.working[parent.key] = false;
                     self.alert = {type: 'danger', message: String(error.data.message)};
                 });
-        }
+        } else self.alert = {type: 'danger', message: 'Please login before posting a comment'};
     }
 }
 
