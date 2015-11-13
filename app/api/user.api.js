@@ -119,6 +119,7 @@ var searchInCommunity = function(communities, clusters, roles, limit, offset, qu
       .collection(config.db.communities)
       .limit(Number(limit) || 18)
       .offset(Number(offset) || 0)
+      .sort('@path.reftime', 'desc')
       .query(searchstring)
       .then(function(result){
           var i;
