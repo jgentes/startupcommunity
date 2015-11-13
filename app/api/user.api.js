@@ -1,6 +1,5 @@
 var Q = require('q'),
     request = require('request'),
-    moment = require('moment'),
     url = require('url'),
     jwt = require('jsonwebtoken'),
     config = require('../config.json')[process.env.NODE_ENV || 'development'],
