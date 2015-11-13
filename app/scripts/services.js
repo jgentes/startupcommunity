@@ -78,6 +78,15 @@ angular
                     }
                 });
             },
+            join: function(email, community_name, location_key) {
+                return $http.post('/api/2.1/join', {
+                    params: {
+                        email: email,
+                        community_name: community_name,
+                        location_key: location_key
+                    }
+                });
+            },
             getKey: function() {
                 return $http.get('/api/2.1/profile/getkey');
             },

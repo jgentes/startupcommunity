@@ -33,7 +33,9 @@ function WelcomeController($auth, $q, $http, $mixpanel, $stateParams, $scope, $s
         if (self.user.roles) {
             if (!self.roles) self["roles"] = {};
             for (role in self.user.roles) {
-                self.roles[role] = true;
+                if (role !== 'leader') {
+                    self.roles[role] = true;
+                }
             }
         }
 
@@ -217,12 +219,23 @@ function WelcomeController($auth, $q, $http, $mixpanel, $stateParams, $scope, $s
                 .then(function(response) {
                     if (response.data.count > 0) {
                         self.updateCompany = true;
-                        if (response.data.results[0].value.profile.industries) self.selectedCompany.industries = response.data.results[0].value.profile.industries;
-                        if (response.data.results[0].value.profile.parents) self.selectedCompany.parent = response.data.results[0].value.profile.parents[0];
-                        if (response.data.results[0].value.profile.stage) self.selectedCompany.stage = response.data.results[0].value.profile.stage;
-                        if (response.data.results[0].value.profile.headline) self.selectedCompany.high_concept = response.data.results[0].value.profile.headline;
-                        if (response.data.results[0].value.profile.summary) self.selectedCompany.product_desc = response.data.results[0].value.profile.summary;
-                        if (response.data.results[0].value.profile.avatar) self.selectedCompany.thumb_url = response.data.results[0].value.profile.avatar;
+                        var oldco = response.data.results[0].value;
+                        if (oldco.profile.industries) self.selectedCompany.industries = oldco.profile.industries;
+                        if (oldco.profile.parents) self.selectedCompany.parent = oldco.profile.parents[0];
+                        if (oldco.profile.stage) self.selectedCompany.stage = oldco.profile.stage;
+                        if (oldco.profile.headline) self.selectedCompany.high_concept = oldco.profile.headline;
+                        if (oldco.profile.summary) self.selectedCompany.product_desc = oldco.profile.summary;
+                        if (oldco.profile.avatar) self.selectedCompany.thumb_url = oldco.profile.avatar;
+
+                        for (role in self.user.roles) {
+                            for (co in self.user.roles[role]) {
+                                if (co == response.data.results[0].path.key) {
+                                    self.selectedRole = role;
+                                    break;
+                                }
+                            }
+                        }
+
                         self.alert = { type: 'warning', message: self.selectedCompany.name + ' is already in the system, but you may update the company record.'};
                     }
                 })
@@ -243,8 +256,8 @@ function WelcomeController($auth, $q, $http, $mixpanel, $stateParams, $scope, $s
             var role = self.selectedRole == 'none' ? undefined : self.selectedRole;
 
             if (community.type == 'cluster') community_path = location.key; // do not allow companies to be added directly to clusters
-            if (community.type == 'network' && !(self.user.roles && self.user.roles.leader && self.user.roles.leader[community.key] && self.user.roles.leader[community.key].indexOf(location.key) < 0)) community_path = location.key;
-
+            if (community.type == 'network' && (self.user.roles && self.user.roles.leader && self.user.roles.leader[community.key]) && (self.user.roles.leader[community.key].indexOf(location.key) < 0)) community_path = location.key;
+            
             company_service.addCompany(self.selectedCompany, role, location.key, community_path)
                 .then(function(response) {
 

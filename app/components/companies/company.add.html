@@ -26,6 +26,8 @@
                     <a style="padding-top: 3px; color: #777;" class="pull-right" ng-click="welcome.notListed()">not listed?</a>
                 </div>
 
+                <div alert-box this-alert="welcome.alert" style="padding-top:10px;"></div>
+
                 <div ng-show="welcome.selectedCompany" style="padding-top: 10px;">
                     <h4 style="line-height:1.75;">
                         Your primary role at <a href="{{welcome.selectedCompany.angellist_url}}" target="_blank" title="{{welcome.selectedCompany.name}}'s AngelList Profile">{{welcome.selectedCompany.name}}</a> is <a href="#" editable-select="welcome.selectedRole" e-ng-options="r.value as r.text for r in welcome.selectRoles">{{ welcome.showRole() }}</a>.<br/>
@@ -63,7 +65,6 @@
                     </div>
                 </div>
             </div>
-            <div alert-box this-alert="welcome.alert"></div>
         </div>
     </div>
     <div class="modal-footer">
