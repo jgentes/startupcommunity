@@ -16,10 +16,9 @@ coverage
 
 # Grunt intermediate storage (http://gruntjs.com/creating-plugins#storing-task-files)
 .grunt
-app/styles/style.css
 
 # Compiled binary addons (http://nodejs.org/api/addons.html)
-build/Release
+build
 
 # Dependency directory
 app/app
@@ -28,7 +27,6 @@ bower_components
 dist
 
 # dev
-.c9
 .idea
 
 # theme
