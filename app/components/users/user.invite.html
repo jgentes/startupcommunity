@@ -10,12 +10,9 @@
             <div style="padding-bottom: 30px;">
                 <form role="form" name="invite.form" novalidate ng-submit="invite.inviteUser()">
                     <div class="form-group">
-                        <input type="email" placeholder="new@mentor.com" class="form-control input-lg" required name="email" ng-model="invite.form.email_value">
-                        <div class="m-t-xs" ng-show="invite.form.email.$invalid && invite.form.submitted">
-                            <span class="text-danger" ng-show="invite.form.email.$error">&nbsp;&nbsp;<i class="fa fa-exclamation-triangle"></i> Please enter a valid email address..</span>
-                        </div>
+                        <input type="text" placeholder="new@mentor.com, new@investor.com" class="form-control input-lg" required name="email" ng-model="invite.form.email_value">
                     </div>
-                    <input type="submit" style="float:left" class="finish btn-success btn" ng-class="{'disabled' : disabled}" value="Invite Person" /><div style="padding-top: 6px; margin-bottom: -24px;" ng-show="invite.working" loading-bars></div>
+                    <input type="submit" style="float:left" class="finish btn-success btn" ng-class="{'disabled' : disabled}" value="Send Invitation" /><div style="padding-top: 6px; margin-bottom: -24px;" ng-show="invite.working" loading-bars></div>
                 </form>
             </div>
         </div>

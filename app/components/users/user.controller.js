@@ -369,61 +369,67 @@ function InviteUserController($mixpanel, user, user_service, community, location
 
     this.inviteUser = function() {
 
-        this.working = true;
+        if (community.type == 'cluster') community.key = location.key;
 
-        if (self.form.$valid) {
-            var formdata = {
-                "email" : self.form.email_value
-            };
+        var emails = self.form.email_value.split(/\s*,\s*/),
+            formdata;
 
-            if (community.type == 'cluster') community.key = location.key;
-            if (user) {
-                if (community.type == 'network' && (user.roles && user.roles.leader && user.roles.leader[community.key]) && (user.roles.leader[community.key].indexOf(location.key) < 0)) community.key = location.key;
+        if (self.form.$valid || emails.length > 1) {
 
-                user_service.inviteUser(formdata.email, location.profile.name, location.key, community.key)
-                    .then(function(response) {
-                        self.working = false;
+            for (e in emails) {
 
-                        if (response.status !== 200) {
-                            self.alert = { type: 'danger', message: String(response.data.message) };
-                        } else {
-                            self.alert = { type: 'success', message: response.data.message };
-                        }
+                this.working = true;
 
-                        self.form.email_value = "";
-                        $mixpanel.track('Sent Invite');
-                    })
-                    .catch(function(error) {
-                        self.working = false;
-                        self.alert = { type: 'danger', message: String(error.data.message) };
-                    })
-            } else {
-                user_service.join(formdata.email, location.profile.name, location.key)
-                    .then(function(response) {
-                        self.working = false;
+                formdata = {
+                    "email" : emails[e]
+                };
 
-                        if (response.status !== 200) {
-                            self.alert = { type: 'danger', message: String(response.data.message) };
-                        } else {
-                            self.alert = { type: 'success', message: response.data.message };
-                        }
+                if (user) {
+                    if (community.type == 'network' && (user.roles && user.roles.leader && user.roles.leader[community.key]) && (user.roles.leader[community.key].indexOf(location.key) < 0)) community.key = location.key;
 
-                        self.form.email_value = "";
-                        $mixpanel.track('Sent Invite');
-                    })
-                    .catch(function(error) {
-                        self.working = false;
-                        self.alert = { type: 'danger', message: String(error.data.message) };
-                    })
+                    user_service.inviteUser(formdata.email, location.profile.name, location.key, community.key)
+                        .then(function(response) {
+                            self.working = false;
+
+                            if (response.status !== 200) {
+                                self.alert ? self.alert.message += '<br> ' + String(response.data.message) : self.alert = { type: 'danger', message: String(response.data.message) };
+                            } else {
+                                self.alert ? self.alert.message += '<br> ' + String(response.data.message) : self.alert = { type: 'success', message: response.data.message };
+                            }
+
+                            self.form.email_value = "";
+                            $mixpanel.track('Sent Invite');
+                        })
+                        .catch(function(error) {
+                            self.working = false;
+                            self.alert = { type: 'danger', message: String(error.data.message) };
+                        })
+                } else {
+                    user_service.join(formdata.email, location.profile.name, location.key)
+                        .then(function(response) {
+                            self.working = false;
+
+                            if (response.status !== 200) {
+                                self.alert = { type: 'danger', message: String(response.data.message) };
+                            } else {
+                                self.alert = { type: 'success', message: response.data.message };
+                            }
+
+                            self.form.email_value = "";
+                            $mixpanel.track('Sent Invite');
+                        })
+                        .catch(function(error) {
+                            self.working = false;
+                            self.alert = { type: 'danger', message: String(error.data.message) };
+                        })
+                }
+
             }
-
-
 
         } else {
             this.working = false;
             self.form.submitted = true;
         }
-
     };
 
     this.working = false;
