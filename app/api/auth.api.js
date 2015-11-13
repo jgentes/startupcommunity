@@ -1,5 +1,4 @@
 var bcrypt = require('bcryptjs'),
-    moment = require('moment'),
     request = require('request'),
     jwt = require('jsonwebtoken'),
     crypto = require('crypto'),

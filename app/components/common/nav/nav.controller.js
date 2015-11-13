@@ -55,8 +55,8 @@ function NavigationController($auth, $state, $window, $timeout, $location, $scop
                     user_id: self.user.key,
                     signature: response.data
                 });
+                $window.HelpCrunch('openChat');
             });
-        $window.HelpCrunch('openChat');
     };
 
     // PRIMARY LEFT-NAV ITEM LIST
