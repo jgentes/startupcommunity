@@ -554,29 +554,9 @@ function handleLinkedin(req, res) {
 function handleInviteUser(req, res) {
     var inviteUser = req.body.params;
 
-    if (!inviteUser.community_key) inviteUser.community_key = inviteUser.location.key;
+    if (!inviteUser.community_key) inviteUser.community_key = inviteUser.location_key;
 
     console.log('Inviting ' + inviteUser.email + ' to ' + inviteUser.location_key + ' / ' + inviteUser.community_key);
-
-    if (!req.user) {
-        db.newSearchBuilder()
-            .collection(config.db.communities)
-            .limit(1)
-            .query('@value.type: "user" AND @value.roles.leader.' + inviteUser.location_key + ': "' + inviteUser.location_key + '"')
-            .then(function (result) {
-                if (result.body.results.length > 0) {
-                    req.user = result.body.results[0].path.key;
-                    goInvite();
-                } else {
-                    console.warn('WARNING: No leader found! Need one for user invitations to be sent.');
-                    res.status(202).send({message: "There doesn't appear to be a leader for this community! We've been alerted and will look into it."});
-                }
-            })
-            .fail(function (err) {
-                console.warn("WARNING: auth572", err);
-                res.status(202).send({message: "Something went wrong."});
-            });
-    } else goInvite();
 
     var goInvite = function() {
         // validate user has leader role within the location/community, or let them through if they are a member of the location
@@ -696,6 +676,27 @@ function handleInviteUser(req, res) {
                 console.warn("WARNING: auth688", err);
             });
     }
+
+    if (!req.user) {
+        db.newSearchBuilder()
+            .collection(config.db.communities)
+            .limit(1)
+            .query('@value.type: "user" AND @value.roles.leader.' + inviteUser.location_key + ': "' + inviteUser.location_key + '"')
+            .then(function (result) {
+                if (result.body.results.length > 0) {
+                    console.log('Found leader to use for invite.');
+                    req.user = result.body.results[0].path.key;
+                    goInvite();
+                } else {
+                    console.warn('WARNING: No leader found! Need one for user invitations to be sent.');
+                    res.status(202).send({message: "There doesn't appear to be a leader for this community! We've been alerted and will look into it."});
+                }
+            })
+            .fail(function (err) {
+                console.warn("WARNING: auth572", err);
+                res.status(202).send({message: "Something went wrong."});
+            });
+    } else goInvite();
 
 }
 
