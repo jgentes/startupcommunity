@@ -148,7 +148,7 @@ function handleGetCommunity(req, res) {
                             .limit(100)
                             .offset(0)
                             .sort('@value.published', 'asc')
-                            .query('@value.to:' + newresponse.key)
+                            .query('@value.to: "' + newresponse.key + '"')
                             .then(function (messages) {
                                 messages.body.results.sort(function (a, b) {
                                     return a.value.published < b.value.published;
@@ -227,7 +227,7 @@ function handleGetCommunity(req, res) {
                                     clusters += '"';
                                 }
 
-                                var ubersearch = '(@path.key: (' + search + ')) OR (@value.type: cluster AND @value.communities: ' + m.value.profile.home + ' AND (@value.profile.industries: (' + clusters + ') OR @value.community_profiles.' + m.value.profile.home + '.industries: (' + clusters + ')))';
+                                var ubersearch = '(@path.key: (' + search + ')) OR (@value.type: "cluster" AND @value.communities: "' + m.value.profile.home + '" AND (@value.profile.industries: (' + clusters + ') OR @value.community_profiles.' + m.value.profile.home + '.industries: (' + clusters + ')))';
 
                                 db.newSearchBuilder()
                                     .collection(config.db.communities)
@@ -314,7 +314,7 @@ function handleGetTop(req, res) {
 
     } else if (!community_key || community_key == 'undefined') community_key = location_key;
 
-    var search = '@value.communities:' + location_key + ' AND @value.communities:' + community_key + '';
+    var search = '@value.communities: "' + location_key + '" AND @value.communities: "' + community_key + '"';
 
     // get companies and industries
 
@@ -376,7 +376,7 @@ function handleGetTop(req, res) {
                         db.newSearchBuilder()
                             .collection(config.db.communities)
                             .sort('@path.reftime', 'desc')
-                            .query('@value.roles.leader.' + community_key + ':' + location_key + ' AND @value.type: "user"')
+                            .query('@value.roles.leader.' + community_key + ': "' + location_key + '" AND @value.type: "user"')
                             .then(function (result) {
 
                                 top_results.leaders = addkeys(result.body.results).slice(0,5);
