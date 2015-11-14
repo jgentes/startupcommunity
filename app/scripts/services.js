@@ -68,20 +68,22 @@ angular
                       callback(response);
                   })
             },
-            inviteUser: function(email, community_name, location_key, community_key) {
+            inviteUser: function(email, message, community_name, location_key, community_key) {
                 return $http.post('/api/2.1/invite', {
                     params: {
                         email: email,
+                        message: message,
                         community_name: community_name,
                         location_key: location_key,
                         community_key: community_key
                     }
                 });
             },
-            join: function(email, community_name, location_key) {
+            join: function(email, message, community_name, location_key) {
                 return $http.post('/api/2.1/join', {
                     params: {
                         email: email,
+                        message: message,
                         community_name: community_name,
                         location_key: location_key
                     }

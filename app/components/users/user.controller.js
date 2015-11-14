@@ -372,22 +372,24 @@ function InviteUserController($mixpanel, user, user_service, community, location
         if (community.type == 'cluster') community.key = location.key;
 
         var emails = self.form.email_value.split(/\s*,\s*/),
+            message = self.form.message_value || "",
             formdata;
 
-        if (self.form.$valid || emails.length > 1) {
+        if (self.form.$valid || emails.length > 1) {git
 
             for (e in emails) {
 
                 this.working = true;
 
                 formdata = {
-                    "email" : emails[e]
+                    "email" : emails[e],
+                    "message" : message
                 };
 
                 if (user) {
                     if (community.type == 'network' && (user.roles && user.roles.leader && user.roles.leader[community.key]) && (user.roles.leader[community.key].indexOf(location.key) < 0)) community.key = location.key;
 
-                    user_service.inviteUser(formdata.email, location.profile.name, location.key, community.key)
+                    user_service.inviteUser(formdata.email, formdata.message, location.profile.name, location.key, community.key)
                         .then(function(response) {
                             self.working = false;
 
@@ -398,6 +400,7 @@ function InviteUserController($mixpanel, user, user_service, community, location
                             }
 
                             self.form.email_value = "";
+                            self.form.message_value = "";
                             $mixpanel.track('Sent Invite');
                         })
                         .catch(function(error) {
@@ -405,7 +408,7 @@ function InviteUserController($mixpanel, user, user_service, community, location
                             self.alert = { type: 'danger', message: String(error.data.message) };
                         })
                 } else {
-                    user_service.join(formdata.email, location.profile.name, location.key)
+                    user_service.join(formdata.email, formdata.message, location.profile.name, location.key)
                         .then(function(response) {
                             self.working = false;
 
@@ -416,6 +419,7 @@ function InviteUserController($mixpanel, user, user_service, community, location
                             }
 
                             self.form.email_value = "";
+                            self.form.message_value = "";
                             $mixpanel.track('Sent Invite');
                         })
                         .catch(function(error) {

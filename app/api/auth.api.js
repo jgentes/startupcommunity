@@ -634,6 +634,7 @@ function handleInviteUser(req, res) {
                                                                         "invite_community": inviteUser.community_name.split(',')[0],
                                                                         "invite_url": community_url,
                                                                         "invite_code": userkey,
+                                                                        "invite_message": inviteUser.message,
                                                                         "invitor_name": user.profile.name,
                                                                         "invitor_email": user.profile.email,
                                                                         "invitor_image": user.profile.avatar,

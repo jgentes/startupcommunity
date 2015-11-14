@@ -6,11 +6,14 @@
     </div>
     <div class="modal-body">
         <div class="hpanel">
-            <div class="panel-heading" style="font-size: 20px;">Enter email addresses:</div>
+            <div class="panel-heading" style="font-size: 20px;">Enter email addresses and an optional message:</div>
             <div style="padding-bottom: 30px;">
                 <form role="form" name="invite.form" novalidate ng-submit="invite.inviteUser()">
                     <div class="form-group">
                         <input type="text" placeholder="new@mentor.com, new@investor.com" class="form-control input-lg" required name="email" ng-model="invite.form.email_value">
+                    </div>
+                    <div class="form-group">
+                        <input type="text" placeholder="Optional message.." class="form-control input-lg" name="message" ng-model="invite.form.message_value">
                     </div>
                     <input type="submit" style="float:left" class="finish btn-success btn" ng-class="{'disabled' : disabled}" value="Send Invitation" /><div style="padding-top: 6px; margin-bottom: -24px;" ng-show="invite.working" loading-bars></div>
                 </form>
