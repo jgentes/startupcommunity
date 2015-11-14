@@ -371,69 +371,76 @@ function InviteUserController($mixpanel, user, user_service, community, location
 
         if (community.type == 'cluster') community.key = location.key;
 
-        var emails = self.form.email_value.split(/\s*,\s*/),
-            message = self.form.message_value || "",
-            formdata;
+        if (self.form.email_value) {
 
-        if (self.form.$valid || emails.length > 1) {git
+            var emails = self.form.email_value.split(/\s*,\s*/),
+                message = self.form.message_value || "",
+                formdata;
 
-            for (e in emails) {
+            if (self.form.$valid || emails.length > 1) {
 
-                this.working = true;
+                for (e in emails) {
 
-                formdata = {
-                    "email" : emails[e],
-                    "message" : message
-                };
+                    this.working = true;
 
-                if (user) {
-                    if (community.type == 'network' && (user.roles && user.roles.leader && user.roles.leader[community.key]) && (user.roles.leader[community.key].indexOf(location.key) < 0)) community.key = location.key;
+                    formdata = {
+                        "email" : emails[e],
+                        "message" : message
+                    };
 
-                    user_service.inviteUser(formdata.email, formdata.message, location.profile.name, location.key, community.key)
-                        .then(function(response) {
-                            self.working = false;
+                    if (user) {
+                        if (community.type == 'network' && (user.roles && user.roles.leader && user.roles.leader[community.key]) && (user.roles.leader[community.key].indexOf(location.key) < 0)) community.key = location.key;
 
-                            if (response.status !== 200) {
-                                self.alert ? self.alert.message += '<br> ' + String(response.data.message) : self.alert = { type: 'danger', message: String(response.data.message) };
-                            } else {
-                                self.alert ? self.alert.message += '<br> ' + String(response.data.message) : self.alert = { type: 'success', message: response.data.message };
-                            }
+                        user_service.inviteUser(formdata.email, formdata.message, location.profile.name, location.key, community.key)
+                            .then(function(response) {
+                                self.working = false;
 
-                            self.form.email_value = "";
-                            self.form.message_value = "";
-                            $mixpanel.track('Sent Invite');
-                        })
-                        .catch(function(error) {
-                            self.working = false;
-                            self.alert = { type: 'danger', message: String(error.data.message) };
-                        })
-                } else {
-                    user_service.join(formdata.email, formdata.message, location.profile.name, location.key)
-                        .then(function(response) {
-                            self.working = false;
+                                if (response.status !== 200) {
+                                    self.alert ? self.alert.message += '<br> ' + String(response.data.message) : self.alert = { type: 'danger', message: String(response.data.message) };
+                                } else {
+                                    self.alert ? self.alert.message += '<br> ' + String(response.data.message) : self.alert = { type: 'success', message: response.data.message };
+                                }
 
-                            if (response.status !== 200) {
-                                self.alert = { type: 'danger', message: String(response.data.message) };
-                            } else {
-                                self.alert = { type: 'success', message: response.data.message };
-                            }
+                                self.form.email_value = "";
+                                self.form.message_value = "";
+                                $mixpanel.track('Sent Invite');
+                            })
+                            .catch(function(error) {
+                                self.working = false;
+                                self.alert = { type: 'danger', message: String(error.data.message) };
+                            })
+                    } else {
+                        user_service.join(formdata.email, formdata.message, location.profile.name, location.key)
+                            .then(function(response) {
+                                self.working = false;
 
-                            self.form.email_value = "";
-                            self.form.message_value = "";
-                            $mixpanel.track('Sent Invite');
-                        })
-                        .catch(function(error) {
-                            self.working = false;
-                            self.alert = { type: 'danger', message: String(error.data.message) };
-                        })
+                                if (response.status !== 200) {
+                                    self.alert = { type: 'danger', message: String(response.data.message) };
+                                } else {
+                                    self.alert = { type: 'success', message: response.data.message };
+                                }
+
+                                self.form.email_value = "";
+                                self.form.message_value = "";
+                                $mixpanel.track('Sent Invite');
+                            })
+                            .catch(function(error) {
+                                self.working = false;
+                                self.alert = { type: 'danger', message: String(error.data.message) };
+                            })
+                    }
+
                 }
 
+            } else {
+                this.working = false;
+                self.form.submitted = true;
             }
-
         } else {
             this.working = false;
             self.form.submitted = true;
         }
+
     };
 
     this.working = false;
