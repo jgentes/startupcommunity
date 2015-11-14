@@ -116,7 +116,7 @@ function handleCreateToken(req, user) {
 function handleHelpToken(req, res) {
     // this is for HelpCrunch live chat support to send over user data
 
-    var hmac = crypto.createHmac('sha256', config.helpscout);
+    var hmac = crypto.createHmac('sha256', config.helpcrunch);
     hmac.setEncoding('hex');
     hmac.write(req.user);
     hmac.end();
