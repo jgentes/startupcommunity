@@ -394,6 +394,7 @@ function InviteUserController($mixpanel, user, user_service, community, location
                         user_service.inviteUser(formdata.email, formdata.message, location.profile.name, location.key, community.key)
                             .then(function(response) {
                                 self.working = false;
+                                self.form.submitted = false;
 
                                 if (response.status !== 200) {
                                     self.alert ? self.alert.message += '<br> ' + String(response.data.message) : self.alert = { type: 'danger', message: String(response.data.message) };
@@ -407,12 +408,14 @@ function InviteUserController($mixpanel, user, user_service, community, location
                             })
                             .catch(function(error) {
                                 self.working = false;
+                                self.form.submitted = false;
                                 self.alert = { type: 'danger', message: String(error.data.message) };
                             })
                     } else {
                         user_service.join(formdata.email, formdata.message, location.profile.name, location.key)
                             .then(function(response) {
                                 self.working = false;
+                                self.form.submitted = false;
 
                                 if (response.status !== 200) {
                                     self.alert = { type: 'danger', message: String(response.data.message) };
@@ -426,6 +429,7 @@ function InviteUserController($mixpanel, user, user_service, community, location
                             })
                             .catch(function(error) {
                                 self.working = false;
+                                self.form.submitted = false;
                                 self.alert = { type: 'danger', message: String(error.data.message) };
                             })
                     }

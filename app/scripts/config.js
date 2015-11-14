@@ -394,9 +394,9 @@ angular
         });
         $rootScope.$on('$viewContentLoaded', function(){
             // remove the splash screen
-            $('#minorsplash').css('display', 'none');
             $timeout( function() {
                 $('#majorsplash').css('display', 'none');
+                $('#minorsplash').css('display', 'none');
             }, 500);
         });
 /*
