@@ -217,6 +217,7 @@ function WelcomeController($auth, $q, $http, $mixpanel, $stateParams, $scope, $s
 
             company_service.search(null, null, 'value.profile.angellist.id: ' + newVal, null, 1)
                 .then(function(response) {
+                    console.log(response.data);
                     if (response.data.count > 0) {
                         self.updateCompany = true;
                         var oldco = response.data.results[0].value;
