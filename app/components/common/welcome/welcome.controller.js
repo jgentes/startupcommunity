@@ -209,37 +209,36 @@ function WelcomeController($auth, $q, $http, $mixpanel, $stateParams, $scope, $s
                         self.alert = { type: 'danger', message: String(response.data.message) };
                     } else {
                         self.selectedCompany = response.data;
+
+                        company_service.search(null, null, 'value.profile.angellist.id: ' + newVal, null, 1)
+                            .then(function(response) {
+                                if (response.data.count > 0) {
+                                    self.updateCompany = true;
+                                    var oldco = response.data.results[0].value;
+                                    if (oldco.profile.industries) self.selectedCompany.industries = oldco.profile.industries;
+                                    if (oldco.profile.parents) self.selectedCompany.parent = oldco.profile.parents[0];
+                                    if (oldco.profile.stage) self.selectedCompany.stage = oldco.profile.stage;
+                                    if (oldco.profile.headline) self.selectedCompany.high_concept = oldco.profile.headline;
+                                    if (oldco.profile.summary) self.selectedCompany.product_desc = oldco.profile.summary;
+                                    if (oldco.profile.avatar) self.selectedCompany.thumb_url = oldco.profile.avatar;
+
+                                    for (role in self.user.roles) {
+                                        for (co in self.user.roles[role]) {
+                                            if (co == response.data.results[0].path.key) {
+                                                self.selectedRole = role;
+                                                break;
+                                            }
+                                        }
+                                    }
+
+                                    self.alert = { type: 'warning', message: self.selectedCompany.name + ' is already in the system, but you may update the company record.'};
+                                }
+                            })
                     }
                 }, function(error) {
                     self.alert = { type: 'danger', message: 'There was a problem!' };
                     console.warn(error);
                 });
-
-            company_service.search(null, null, 'value.profile.angellist.id: ' + newVal, null, 1)
-                .then(function(response) {
-                    console.log(response.data);
-                    if (response.data.count > 0) {
-                        self.updateCompany = true;
-                        var oldco = response.data.results[0].value;
-                        if (oldco.profile.industries) self.selectedCompany.industries = oldco.profile.industries;
-                        if (oldco.profile.parents) self.selectedCompany.parent = oldco.profile.parents[0];
-                        if (oldco.profile.stage) self.selectedCompany.stage = oldco.profile.stage;
-                        if (oldco.profile.headline) self.selectedCompany.high_concept = oldco.profile.headline;
-                        if (oldco.profile.summary) self.selectedCompany.product_desc = oldco.profile.summary;
-                        if (oldco.profile.avatar) self.selectedCompany.thumb_url = oldco.profile.avatar;
-
-                        for (role in self.user.roles) {
-                            for (co in self.user.roles[role]) {
-                                if (co == response.data.results[0].path.key) {
-                                    self.selectedRole = role;
-                                    break;
-                                }
-                            }
-                        }
-
-                        self.alert = { type: 'warning', message: self.selectedCompany.name + ' is already in the system, but you may update the company record.'};
-                    }
-                })
         }
     });
 
