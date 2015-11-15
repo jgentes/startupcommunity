@@ -22,16 +22,20 @@
             <div style="padding: 20px;">
 
                 <div class="form-group">
-                    <input type="text" ng-model="welcome.company" placeholder="Search by company name.." autofocus="true" typeahead="company.name for company in welcome.getCompanies($viewValue)" typeahead-editable="false" typeahead-on-select="welcome.selectedCompany = $item;" class="form-control input-lg">
-                    <a style="padding-top: 3px; color: #777;" class="pull-right" ng-click="welcome.notListed()">not listed?</a>
+                    <input type="text" ng-model="welcome.company" placeholder="Search by company name.." autofocus="true" typeahead="company.name for company in welcome.getCompanies($viewValue)" typeahead-editable="true" typeahead-on-select="welcome.selectedCompany = $item;" class="form-control input-lg">
+                    <a style="padding-top: 3px; color: #777;" class="pull-right" ng-click="notlisted = !notlisted">not listed?  add it here.</a>
                 </div>
-
                 <div alert-box this-alert="welcome.alert" style="padding-top:10px;"></div>
-
+                <div ng-show="notlisted" class="input-group" style="padding-top:10px;">
+                    <input type="text" class="form-control" ng-model="welcome.selectedCompany.name" placeholder="{{welcome.company}}">
+                    <span class="input-group-btn">
+                        <button type="button" class="btn btn-primary" ng-click="welcome.checkName()">Confirm name </button>
+                    </span>
+                </div>
                 <div ng-show="welcome.selectedCompany" style="padding-top: 10px;">
                     <h4 style="line-height:1.75;">
                         Your primary role at <a href="{{welcome.selectedCompany.angellist_url}}" target="_blank" title="{{welcome.selectedCompany.name}}'s AngelList Profile">{{welcome.selectedCompany.name}}</a> is <a href="#" editable-select="welcome.selectedRole" e-ng-options="r.value as r.text for r in welcome.selectRoles">{{ welcome.showRole() }}</a>.<br/>
-                        <a href="{{welcome.selectedCompany.angellist_url}}" target="_blank" title="{{welcome.selectedCompany.name}}'s AngelList Profile">{{welcome.selectedCompany.name}}</a>'s headline is <a style="color:#4ea5e0;" editable-text="welcome.selectedCompany.high_concept">{{welcome.selectedCompany.high_concept || 'empty'}}</a>.
+                        <a href="{{welcome.selectedCompany.angellist_url}}" target="_blank" title="{{welcome.selectedCompany.name}}'s AngelList Profile">{{welcome.selectedCompany.name}}</a>'s company headline is <a style="color:#4ea5e0;" editable-text="welcome.selectedCompany.high_concept">{{welcome.selectedCompany.high_concept || 'empty'}}</a>.
                         <br><br>
                         Select a primary industry for <a href="{{welcome.selectedCompany.angellist_url}}" target="_blank" title="{{welcome.selectedCompany.name}}'s AngelList Profile">{{welcome.selectedCompany.name}}</a>:
                         <select class="form-control m-b" ng-model="welcome.selectedCompany.parent" style="margin-bottom: 5px;" required>

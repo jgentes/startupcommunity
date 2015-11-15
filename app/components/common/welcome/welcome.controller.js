@@ -19,10 +19,6 @@ function WelcomeController($auth, $q, $http, $mixpanel, $stateParams, $scope, $s
         self.alert = {type: "warning", message: "Startups find experts based on their work experience. If you work with the company while living in the community, you should add it."}
     };
 
-    this.notListed = function() {
-        this.alert = {type: "warning", message: "Please <a href='https://angel.co/intro' target='_blank'>click here</a> to create a profile for the startup on AngelList."}
-    };
-
     var checkProfile = function() {
         if (!self.user.profile["name"]) self.user.profile["name"] = self.user.profile.linkedin.firstName + ' ' + self.user.profile.linkedin.lastName;
         if (!self.user.profile["email"]) self.user.profile["email"] = self.user.profile.linkedin.emailAddress;
@@ -201,6 +197,27 @@ function WelcomeController($auth, $q, $http, $mixpanel, $stateParams, $scope, $s
 
     });
 
+    var showCurrent = function(profile) {
+        self.updateCompany = true;
+        var oldco = profile;
+        if (oldco.profile.industries) self.selectedCompany.industries = oldco.profile.industries;
+        if (oldco.profile.parents) self.selectedCompany.parent = oldco.profile.parents[0];
+        if (oldco.profile.stage) self.selectedCompany.stage = oldco.profile.stage;
+        if (oldco.profile.headline) self.selectedCompany.high_concept = oldco.profile.headline;
+        if (oldco.profile.summary) self.selectedCompany.product_desc = oldco.profile.summary;
+        if (oldco.profile.avatar) self.selectedCompany.thumb_url = oldco.profile.avatar;
+
+        for (role in self.user.roles) {
+            for (co in self.user.roles[role]) {
+                if (co == response.data.results[0].path.key) {
+                    self.selectedRole = role;
+                    break;
+                }
+            }
+        }
+        self.alert = { type: 'warning', message: self.selectedCompany.name + ' is already in the system, but you may update the company record.'};
+    };
+
     $scope.$watch('welcome.selectedCompany.id', function(newVal, oldVal) {
         if (newVal) {
             $http.get('/api/2.1/angel/startup?id=' + newVal)
@@ -209,29 +226,11 @@ function WelcomeController($auth, $q, $http, $mixpanel, $stateParams, $scope, $s
                         self.alert = { type: 'danger', message: String(response.data.message) };
                     } else {
                         self.selectedCompany = response.data;
-
-                        company_service.search(null, null, 'value.profile.angellist.id: ' + newVal, null, 1)
+                        // check whether company exists in local db, and if so, fill out fields with existing data
+                        company_service.search(null, null, '@value.profile.angellist.id: ' + newVal, null, 1)
                             .then(function(response) {
                                 if (response.data.count > 0) {
-                                    self.updateCompany = true;
-                                    var oldco = response.data.results[0].value;
-                                    if (oldco.profile.industries) self.selectedCompany.industries = oldco.profile.industries;
-                                    if (oldco.profile.parents) self.selectedCompany.parent = oldco.profile.parents[0];
-                                    if (oldco.profile.stage) self.selectedCompany.stage = oldco.profile.stage;
-                                    if (oldco.profile.headline) self.selectedCompany.high_concept = oldco.profile.headline;
-                                    if (oldco.profile.summary) self.selectedCompany.product_desc = oldco.profile.summary;
-                                    if (oldco.profile.avatar) self.selectedCompany.thumb_url = oldco.profile.avatar;
-
-                                    for (role in self.user.roles) {
-                                        for (co in self.user.roles[role]) {
-                                            if (co == response.data.results[0].path.key) {
-                                                self.selectedRole = role;
-                                                break;
-                                            }
-                                        }
-                                    }
-
-                                    self.alert = { type: 'warning', message: self.selectedCompany.name + ' is already in the system, but you may update the company record.'};
+                                    showCurrent(response.data.results[0].value);
                                 }
                             })
                     }
@@ -241,6 +240,16 @@ function WelcomeController($auth, $q, $http, $mixpanel, $stateParams, $scope, $s
                 });
         }
     });
+
+    this.checkName = function() {
+        company_service.search(null, null, '@value.profile.name: (' + self.selectedCompany.name + ') AND @value.type: "company"', null, 10)
+            .then(function(response) {
+                if (response.data.count > 0) {
+                    // display list of potential matches to user
+                    self.alert = { type: 'warning', message: "Please ensure the company isn't a duplicate of <a ng-repeat='c in response.data.results' ng-click='welcome.showCurrent(c)'>{{c.value.name}}<span ng-if='!$last'>, </span></a>."}
+                }
+            })
+    };
 
     // used in add company view
     this.showRole = function() {
