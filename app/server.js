@@ -155,8 +155,7 @@ app.get('/api/maint', maint.maintenance);
 
 // Client logger
 app.post('/api/logger', function (req, res) {
-    console.warn('WARNING: Angular Error:');
-    console.log(req.body);
+    console.warn('WARNING: Angular Error:', req.body);
     res.end();
 });
 
