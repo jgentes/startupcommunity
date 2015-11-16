@@ -450,8 +450,8 @@ angular
                         url: "/api/logger",
                         contentType: "application/json",
                         data: angular.toJson({
-                            errorUrl: $window.location.href,
                             errorMessage: errorMessage,
+                            errorUrl: $window.location.href,
                             //stackTrace: stackTrace,
                             cause: ( cause || "" )
                         })
