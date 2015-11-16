@@ -432,7 +432,7 @@ angular
             }
         }
     )
-
+    // this factory pushes the exceptions to the server
     .factory(
         "errorLogService",
         function( $log, $window, stacktraceService) {
@@ -465,7 +465,7 @@ angular
             return( log );
         }
     )
-
+    // this factory is used to capture sourcemaps
     .factory('$exceptionHandler',
         function($log, $window, $injector, errorLogService) {
             var getSourceMappedStackTrace = function(exception) {

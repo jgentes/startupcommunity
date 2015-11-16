@@ -197,9 +197,10 @@ function WelcomeController($auth, $q, $http, $mixpanel, $stateParams, $scope, $s
 
     });
 
-    var showCurrent = function(profile) {
+    this.showCurrent = function(profile) {
         self.updateCompany = true;
         var oldco = profile;
+        console.log(oldco);
         if (oldco.profile.industries) self.selectedCompany.industries = oldco.profile.industries;
         if (oldco.profile.parents) self.selectedCompany.parent = oldco.profile.parents[0];
         if (oldco.profile.stage) self.selectedCompany.stage = oldco.profile.stage;
@@ -209,7 +210,7 @@ function WelcomeController($auth, $q, $http, $mixpanel, $stateParams, $scope, $s
 
         for (role in self.user.roles) {
             for (co in self.user.roles[role]) {
-                if (co == response.data.results[0].path.key) {
+                if (co == oldco.key) {
                     self.selectedRole = role;
                     break;
                 }
@@ -230,7 +231,7 @@ function WelcomeController($auth, $q, $http, $mixpanel, $stateParams, $scope, $s
                         company_service.search(null, null, '@value.profile.angellist.id: ' + newVal, null, 1)
                             .then(function(response) {
                                 if (response.data.count > 0) {
-                                    showCurrent(response.data.results[0].value);
+                                    self.showCurrent(response.data.results[0].value);
                                 }
                             })
                     }
@@ -242,12 +243,19 @@ function WelcomeController($auth, $q, $http, $mixpanel, $stateParams, $scope, $s
     });
 
     this.checkName = function() {
-        company_service.search(null, null, '@value.profile.name: (' + self.selectedCompany.name + ') AND @value.type: "company"', null, 10)
+        self.checking = true;
+        company_service.search(null, null, '@value.profile.name: (' + self.company + ') AND @value.type: "company"', null, 10)
             .then(function(response) {
                 if (response.data.count > 0) {
+                    self.duplist = response.data.results;
                     // display list of potential matches to user
-                    self.alert = { type: 'warning', message: "Please ensure the company isn't a duplicate of <a ng-repeat='c in response.data.results' ng-click='welcome.showCurrent(c)'>{{c.value.name}}<span ng-if='!$last'>, </span></a>."}
+                    self.dups = [];
+                    for (c in self.duplist) {
+                        self.dups.push(self.duplist[c]);
+                    }
                 }
+                self.selectedCompany = { name: self.company };
+                self.checking = false;
             })
     };
 
@@ -279,6 +287,8 @@ function WelcomeController($auth, $q, $http, $mixpanel, $stateParams, $scope, $s
                         self.updateCompany = false;
                         self.selectedRole = 'none';
                         self.submitted = false;
+                        self.dups = undefined;
+                        self.notlisted = false;
                         self.alert = { type: 'success', message: String(response.data.message) };
                     }
                 })

@@ -22,14 +22,21 @@
             <div style="padding: 20px;">
 
                 <div class="form-group">
-                    <input type="text" ng-model="welcome.company" placeholder="Search by company name.." autofocus="true" typeahead="company.name for company in welcome.getCompanies($viewValue)" typeahead-editable="true" typeahead-on-select="welcome.selectedCompany = $item;" class="form-control input-lg">
-                    <a style="padding-top: 3px; color: #777;" class="pull-right" ng-click="notlisted = !notlisted">not listed?  add it here.</a>
+                    <input type="text" ng-model="welcome.company" placeholder="Search by company name.." autofocus="true" typeahead="company.name for company in welcome.getCompanies($viewValue)" typeahead-editable="true" typeahead-on-select="welcome.selectedCompany = $item; welcome.notlisted = false;" class="form-control input-lg">
+                    <a style="padding-top: 3px; color: #777;" class="pull-right" ng-click="welcome.notlisted = !welcome.notlisted">not listed?  add it here.</a>
                 </div>
                 <div alert-box this-alert="welcome.alert" style="padding-top:10px;"></div>
-                <div ng-show="notlisted" class="input-group" style="padding-top:10px;">
-                    <input type="text" class="form-control" ng-model="welcome.selectedCompany.name" placeholder="{{welcome.company}}">
+                <div ng-show="welcome.notlisted" class="input-group" style="padding-top:10px;">
+                    <input type="text" class="form-control" ng-model="welcome.company" placeholder="{{welcome.company}}">
                     <span class="input-group-btn">
                         <button type="button" class="btn btn-primary" ng-click="welcome.checkName()">Confirm name </button>
+                        <div loading-bars ng-show="welcome.checking" style="padding-top: 7px; float: right;"></div>
+                    </span>
+                </div>
+                <div ng-show="welcome.dups" class="alert alert-warning" style="margin-top:10px;">Please ensure {{welcome.company}} isn't a duplicate of
+                    <span ng-repeat="d in welcome.dups">
+                        <a ng-click="welcome.showCurrent(d.value)">{{d.value.profile.name}}</a>
+                        <span ng-show="!$last"> or </span>
                     </span>
                 </div>
                 <div ng-show="welcome.selectedCompany" style="padding-top: 10px;">
@@ -73,7 +80,7 @@
     </div>
     <div class="modal-footer">
         <input ng-click="welcome.addCompany()" type="submit" class="finish btn-success btn pull-right" ng-class="{'disabled' : disabled || welcome.working || !welcome.selectedCompany}" value="{{ (welcome.updateCompany ? 'Update ' : 'Add ') + (welcome.selectedCompany.name || 'Company') }}"/>
-        <button type="button" class="btn btn-default pull-right" style="margin-right: 15px;" ng-show="welcome.selectedCompany && !welcome.working" ng-click="welcome.selectedCompany = undefined; welcome.company = undefined; welcome.alert = undefined; welcome.updateRole = false; welcome.selectedRole = 'none'; welcome.updateCompany = false; welcome.submitted = false;">Clear Form</button>
+        <button type="button" class="btn btn-default pull-right" style="margin-right: 15px;" ng-show="welcome.selectedCompany && !welcome.working" ng-click="welcome.selectedCompany = undefined; welcome.company = undefined; welcome.alert = undefined; welcome.updateRole = false; welcome.selectedRole = 'none'; welcome.updateCompany = false; welcome.submitted = false; welcome.notlisted = false; welcome.dups = undefined;">Clear Form</button>
         <div loading-bars ng-show="welcome.working" style="padding-top: 5px; float: left;"></div>
         <button type="button" class="btn btn-default pull-left" ng-click="$close();$state.reload();">Go Back</button>
     </div>
