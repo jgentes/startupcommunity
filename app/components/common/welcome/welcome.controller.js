@@ -99,7 +99,7 @@ function WelcomeController($auth, $q, $http, $mixpanel, $stateParams, $scope, $s
             this.auth = true;
             $state.go($stateParams.go);
         }
-    };
+    }
 
     // for profile pic upload to S3
     this.uploadAvatar = function (file) {
@@ -199,8 +199,10 @@ function WelcomeController($auth, $q, $http, $mixpanel, $stateParams, $scope, $s
 
     this.showCurrent = function(profile) {
         self.updateCompany = true;
+        self.notlisted = false;
         var oldco = profile;
-        console.log(oldco);
+        self.company = oldco.profile.name;
+        self.selectedCompany.name = oldco.profile.name;
         if (oldco.profile.industries) self.selectedCompany.industries = oldco.profile.industries;
         if (oldco.profile.parents) self.selectedCompany.parent = oldco.profile.parents[0];
         if (oldco.profile.stage) self.selectedCompany.stage = oldco.profile.stage;

@@ -233,7 +233,7 @@ function UserProfileController($stateParams, $http, $location, $modal, $mixpanel
         this.user = community;
     } else this.user = user.data.user;
 
-    this.loggedin = !!user;
+    this.loggedin = !!user.data.user;
 
     var self = this;
     this.community = community;

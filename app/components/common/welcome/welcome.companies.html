@@ -18,18 +18,29 @@
     <div style="padding: 20px;">
         <form role="form" name="welcome.founder.form" novalidate ng-submit="welcome.addCompany()" style="padding-bottom: 30px;">
             <div class="form-group">
-                <input type="text" ng-model="welcome.company" placeholder="Search by company name.." autofocus="true" typeahead="company.name for company in welcome.getCompanies($viewValue)" typeahead-editable="false" typeahead-on-select="welcome.selectedCompany = $item;" class="form-control input-lg">
-                <a style="font-size: 12px; padding-top: 3px; color: #777;" class="pull-right" ng-click="welcome.shouldIadd()">should I add a company?</a>
+                <input type="text" ng-model="welcome.company" placeholder="Search by company name.." autofocus="true" typeahead="company.name for company in welcome.getCompanies($viewValue)" typeahead-editable="true" typeahead-on-select="welcome.selectedCompany = $item; welcome.notlisted = false;" class="form-control input-lg">
             </div>
-
+            <a ng-show="!welcome.selectedCompany" class="pull-right" style="font-size: 12px; margin-top: -10px; color: #777;" ng-click="welcome.notlisted = !welcome.notlisted">not listed?  add it here.</a>
             <input type="submit" style="float:left" class="finish btn-success btn" ng-class="{'disabled' : disabled || welcome.working || !welcome.selectedCompany}" value="{{ (welcome.updateCompany ? 'Update ' : 'Add ') + (welcome.selectedCompany.name || 'Company') }}" />
-            <a ng-show="!welcome.selectedCompany" style="padding-left: 15px; line-height: 2.5; color: #777;" ng-click="welcome.notListed()">not listed?</a>
-            <a ng-show="welcome.selectedCompany && !welcome.working" ng-click="welcome.selectedCompany = undefined; welcome.company = undefined; welcome.alert = undefined; welcome.updateRole = false; welcome.selectedRole = 'none'; welcome.updateCompany = false; welcome.submitted = false;" style="padding-left: 15px; line-height: 2.5;">cancel</a>
+
+            <a ng-show="welcome.selectedCompany && !welcome.working" ng-click="welcome.selectedCompany = undefined; welcome.company = undefined; welcome.alert = undefined; welcome.updateRole = false; welcome.selectedRole = 'none'; welcome.updateCompany = false; welcome.submitted = false; welcome.notlisted = false; welcome.dups = undefined;" style="padding-left: 15px; line-height: 2.5;">cancel</a>
             <div loading-bars ng-show="welcome.working" style="padding-top: 5px;"></div>
         </form>
 
-        <div alert-box this-alert="welcome.alert"></div>
-
+        <div alert-box this-alert="welcome.alert" style="margin-top: 15px;"></div>
+        <div ng-show="welcome.notlisted" class="input-group" style="padding-top:10px;">
+            <input type="text" class="form-control" ng-model="welcome.company" placeholder="{{welcome.company}}">
+                    <span class="input-group-btn">
+                        <button type="button" class="btn btn-primary" ng-click="welcome.checkName()">Confirm name </button>
+                        <div loading-bars ng-show="welcome.checking" style="padding-top: 7px; float: right;"></div>
+                    </span>
+        </div>
+        <div ng-show="welcome.dups" class="alert alert-warning" style="margin-top:10px;">Please ensure {{welcome.company}} isn't a duplicate of
+                    <span ng-repeat="d in welcome.dups">
+                        <a ng-click="welcome.showCurrent(d.value)">{{d.value.profile.name}}</a>
+                        <span ng-show="!$last"> or </span>
+                    </span>
+        </div>
         <div ng-show="welcome.selectedCompany">
             <h4 style="line-height:1.75;">
                 Your primary role at <a href="{{welcome.selectedCompany.angellist_url}}" target="_blank" title="{{welcome.selectedCompany.name}}'s AngelList Profile">{{welcome.selectedCompany.name}}</a> is <a href="#" editable-select="welcome.selectedRole" e-ng-options="r.value as r.text for r in welcome.selectRoles">{{ welcome.showRole() }}</a>.<br/>
@@ -67,5 +78,9 @@
     </div>
     <h4 style="margin-bottom: 13px;">
         <a class="btn btn-info pull-left" ui-sref="welcome.skills">Back</a>
-        <a class="btn btn-info pull-right" ng-click="welcome.next()">Continue</a></h4>
+        <a class="btn btn-info pull-right" ng-click="welcome.next()">Continue</a>
+    </h4>
+</div>
+<div style="text-align: center;">
+    <a style="font-size: 12px; padding-top: 3px; color: #777;" ng-click="welcome.shouldIadd()">Should I add a company?</a>
 </div>
