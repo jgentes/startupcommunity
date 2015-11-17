@@ -606,33 +606,20 @@ function handleInviteUser(req, res) {
                                                 console.log("Existing invite found!");
                                                 res.status(200).send({message: 'An invitation has already been sent to ' + inviteUser.email + '. We will send a reminder.'});
 
-                                                /*var knowtifyClient = new knowtify.Knowtify(config.knowtify, false);
-                                                //TODO CHANGE TO REMINDER ONCE KNOWTIFY IS BACK ONLINE
+                                                var knowtifyClient = new knowtify.Knowtify(config.knowtify, false);
+
                                                 knowtifyClient.contacts.upsert({
-                                                        "event": "invitation",
+                                                        "event": "reminder",
                                                         "contacts": [{
-                                                            "email": inviteUser.email,
-                                                            "data": {
-                                                                "invite_community": inviteUser.community_name.split(',')[0],
-                                                                "invite_url": community_url,
-                                                                "invite_code": userkey,
-                                                                "invite_message": inviteUser.message,
-                                                                "invitor_name": user.profile.name,
-                                                                "invitor_email": user.profile.email,
-                                                                "invitor_image": user.profile.avatar,
-                                                                "invite_accepted": false
-                                                            }
+                                                            "email": inviteUser.email
                                                         }]
                                                     },
                                                     function (success) {
-                                                        console.log('Invitation sent to ' + inviteUser.email + ' (' + userkey + ')');
-                                                        res.status(200).send({message: "Done! We've sent an invitation to " + inviteUser.email});
+                                                        console.log('Invitation reminder sent to ' + inviteUser.email);
                                                     },
                                                     function (error) {
-                                                        console.log('WARNING: auth636');
-                                                        console.log(error);
-                                                        res.status(202).send({message: "Woah! Something went wrong, but we've been notified and will take care of it."});
-                                                    });*/
+                                                        console.log('WARNING:', error);
+                                                    });
 
                                             } else {
                                                 // create user record with email address and community data
