@@ -376,7 +376,7 @@ function handleGetTop(req, res) {
                         db.newSearchBuilder()
                             .collection(config.db.communities)
                             .sort('@path.reftime', 'desc')
-                            .query('@value.roles.leader.' + community_key + ': "' + location_key + '" AND @value.type: "user"')
+                            .query('@value.roles.leader.' + (cluster_key ? cluster_key : community_key) + ': "' + location_key + '" AND @value.type: "user"')
                             .then(function (result) {
 
                                 top_results.leaders = addkeys(result.body.results).slice(0,5);
