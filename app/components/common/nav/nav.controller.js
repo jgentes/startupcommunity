@@ -350,7 +350,7 @@ function NavigationController($auth, $state, $window, $timeout, $location, $scop
 
         angular.element(document).ready(function () {
             setTimeout(function() {
-                jQuery('#toggleNav').trigger('click');
+                $("body").toggleClass("hide-sidebar");
             }, 1000);
         });
 
