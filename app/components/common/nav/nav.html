@@ -31,16 +31,12 @@
                     <ul class="nav navbar-nav">
                         <li ng-if="!nav.user">
                             <div style="margin: 20px 0 0 20px;">
-                                <a class="btn btn-info">
-                                    <div ng-click="nav.requestInvitation()" style="font-size: 16px; color: #fff;">Join Free</div>
-                                </a>
+                                <button class="btn btn-info" ng-click="nav.requestInvitation()" style="font-size: 16px; color: #fff;">Join Free</button>
                             </div>
                         </li>
                         <li ng-if="!nav.user">
                             <div style="margin-left: 20px;" ng-controller="LoginController as login">
-                                <a class="btn btn-success">
-                                    <div ng-click="login.authenticate('linkedin')" style="font-size: 16px; color: #fff;">Log In</div>
-                                </a>
+                                <button class="btn btn-success" ng-click="login.authenticate('linkedin')" style="font-size: 16px; color: #fff;">Log In</button>
                             </div>
                         </li>
                         <li ng-if="nav.user" id="knowtify">
@@ -63,16 +59,12 @@
                 <ul class="nav navbar-nav no-borders">
                     <li ng-if="!nav.user" class="dropdown">
                         <div style="padding-top: 12px; margin-right: 8px;">
-                            <a class="btn btn-info">
-                                <div ng-click="nav.requestInvitation()" style="font-size: 16px; color: #fff;">Join Free</div>
-                            </a>
+                            <button class="btn btn-info" ng-click="nav.requestInvitation()" style="font-size: 16px; color: #fff;">Join Free</button>
                         </div>
                     </li>
                     <li ng-if="!nav.user" class="dropdown">
                         <div style="padding-top: 12px; margin-right: 26px;" ng-controller="LoginController as login">
-                            <a class="btn btn-success">
-                                <div ng-click="login.authenticate('linkedin')" style="font-size: 16px; color: #fff;">Log In</div>
-                            </a>
+                            <button class="btn btn-success" ng-click="login.authenticate('linkedin')" style="font-size: 16px; color: #fff;">Log In</button>
                         </div>
                     </li>
                     <li ng-if="nav.user" id="knowtify" class="dropdown">
