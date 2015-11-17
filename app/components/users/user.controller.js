@@ -397,9 +397,9 @@ function InviteUserController($mixpanel, user, user_service, community, location
                                 self.form.submitted = false;
 
                                 if (response.status !== 200) {
-                                    self.alert ? self.alert.message += '<br> ' + String(response.data.message) : self.alert = { type: 'danger', message: String(response.data.message) };
+                                    self.alert ? self.alert.message += '<br> ' + String(response.data.message) : self.alert = { type: 'danger', message: String(response.data.message || response.message) };
                                 } else {
-                                    self.alert ? self.alert.message += '<br> ' + String(response.data.message) : self.alert = { type: 'success', message: response.data.message };
+                                    self.alert ? self.alert.message += '<br> ' + String(response.data.message) : self.alert = { type: 'success', message: String(response.data.message || response.message) };
                                 }
 
                                 self.form.email_value = "";

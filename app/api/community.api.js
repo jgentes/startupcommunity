@@ -314,7 +314,7 @@ function handleGetTop(req, res) {
 
     } else if (!community_key || community_key == 'undefined') community_key = location_key;
 
-    var search = '@value.communities: "' + location_key + '" AND @value.communities: "' + community_key + '"';
+    var search = '@value.communities: "' + location_key + '" AND @value.communities: ' + (community_key == '*' ? '*' : '"' + community_key + '"');
 
     // get companies and industries
 

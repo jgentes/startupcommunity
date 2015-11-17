@@ -156,8 +156,8 @@ function handleCreateAPIToken(req, res) {
             }
         })
         .fail(function(err){
-            console.log("WARNING: auth170", err);
-            res.status(202).send({ message: 'Something went wrong: ' + err});
+            console.log("WARNING: ", err);
+            res.status(202).send({ message: 'Something went wrong: ' + String(err)});
         });
 
 }
@@ -241,8 +241,8 @@ function handleLogin(req, res) {
             }
         })
         .fail(function(err){
-            console.warn("WARNING: auth255" + err);
-            res.status(202).send('Something went wrong: ' + err);
+            console.warn("WARNING: ", err);
+            res.status(202).send('Something went wrong: ' + String(err));
         });
 }
 
@@ -366,9 +366,8 @@ function handleLinkedin(req, res) {
         request.get({url: peopleApiUrl, qs: params, json: true}, function (err, response, profile) {
 
             if (err) {
-                console.warn("WARNING: auth380");
-                console.warn(err);
-                return res.status(401).send({message: 'Something went wrong: ' + err});
+                console.warn("WARNING: ", err);
+                return res.status(401).send({message: 'Something went wrong: ' + String(err)});
             } else profile['access_token'] = params.oauth2_access_token;
 
             // if this is an invitation, pull that invite data first
@@ -440,8 +439,7 @@ function handleLinkedin(req, res) {
                                     add_knowtify(result.body.results[0].value);
                                 })
                                 .fail(function (err) {
-                                    console.error("Profile update failed:");
-                                    console.error(err);
+                                    console.error("Profile update failed: ", err);
                                 });
 
 
@@ -472,8 +470,7 @@ function handleLinkedin(req, res) {
                                                 add_knowtify(result.body.results[0].value);
                                             })
                                             .fail(function (err) {
-                                                console.warn("WARNING: auth485");
-                                                console.warn(err);
+                                                console.warn("WARNING: ", err);
                                             });
                                         res.send({
                                             token: handleCreateToken(req, result.body.results[0]),
@@ -516,7 +513,7 @@ function handleLinkedin(req, res) {
                                                     accept_invite(invite_profile.profile, invitor_email);
                                                 })
                                                 .fail(function (err) {
-                                                    console.warn("WARNING: auth529", err);
+                                                    console.warn("WARNING: ", err);
                                                 });
 
                                         } else {
@@ -529,13 +526,13 @@ function handleLinkedin(req, res) {
                                     }
                                 })
                                 .fail(function (err) {
-                                    console.warn("WARNING: auth543", err);
+                                    console.warn("WARNING:", err);
                                     res.status(202).send({message: "Something went wrong."});
                                 });
                         }
                     })
                     .fail(function (err) {
-                        console.warn("WARNING: auth549", "Something went wrong.");
+                        console.warn("WARNING:", "Something went wrong. " + String(err));
                     });
             }
 
@@ -594,8 +591,7 @@ function handleInviteUser(req, res) {
                                             res.status(200).send({message: 'Nice!  <a target="_blank" href="https://startupcommunity.org/' + result.body.results[0].path.key + '">' + result.body.results[0].value.profile.name + '</a> is a member of the community.'});
                                         })
                                         .fail(function(err) {
-                                            console.log('WARNING: auth600');
-                                            console.log(err);
+                                            console.log('WARNING: ', err);
                                             res.status(202).send({message: "Something went wrong."});
                                         })
 
@@ -609,7 +605,35 @@ function handleInviteUser(req, res) {
                                             if (result.body.results.length > 0) {
                                                 console.log("Existing invite found!");
                                                 res.status(200).send({message: 'An invitation has already been sent to ' + inviteUser.email + '. We will send a reminder.'});
-                                                //todo send a reminder
+
+                                                /*var knowtifyClient = new knowtify.Knowtify(config.knowtify, false);
+                                                //TODO CHANGE TO REMINDER ONCE KNOWTIFY IS BACK ONLINE
+                                                knowtifyClient.contacts.upsert({
+                                                        "event": "invitation",
+                                                        "contacts": [{
+                                                            "email": inviteUser.email,
+                                                            "data": {
+                                                                "invite_community": inviteUser.community_name.split(',')[0],
+                                                                "invite_url": community_url,
+                                                                "invite_code": userkey,
+                                                                "invite_message": inviteUser.message,
+                                                                "invitor_name": user.profile.name,
+                                                                "invitor_email": user.profile.email,
+                                                                "invitor_image": user.profile.avatar,
+                                                                "invite_accepted": false
+                                                            }
+                                                        }]
+                                                    },
+                                                    function (success) {
+                                                        console.log('Invitation sent to ' + inviteUser.email + ' (' + userkey + ')');
+                                                        res.status(200).send({message: "Done! We've sent an invitation to " + inviteUser.email});
+                                                    },
+                                                    function (error) {
+                                                        console.log('WARNING: auth636');
+                                                        console.log(error);
+                                                        res.status(202).send({message: "Woah! Something went wrong, but we've been notified and will take care of it."});
+                                                    });*/
+
                                             } else {
                                                 // create user record with email address and community data
                                                 var newUser = schema.invite(inviteUser.email, user.profile.email, inviteUser.location_key, inviteUser.community_key);
@@ -647,17 +671,22 @@ function handleInviteUser(req, res) {
                                                                 res.status(200).send({message: "Done! We've sent an invitation to " + inviteUser.email});
                                                             },
                                                             function (error) {
-                                                                console.log('WARNING: auth651');
-                                                                console.log(error);
-                                                                res.status(202).send({message: "Woah! Something went wrong, but we've been notified and will take care of it."});
+                                                                console.log('WARNING: ', error);
+                                                                res.status(202).send({message: "Woah! Something went wrong. We're looking into it, but also try waiting a few minutes and give it another shot."});
+
+                                                                // rollback invitation
+                                                                db.delete(config.db.communities, userkey, true)
                                                             });
-                                                    });
+                                                    })
+                                                    .fail(function(err) {
+                                                        console.log('WARNING: ', err);
+                                                        res.status(202).send({message: "Woah! Something went wrong.  We're looking into it, but also try waiting a few minutes and give it another shot."});
+                                                    })
                                             }
                                         })
                                         .fail(function(err) {
-                                            console.log('WARNING: auth659');
-                                            console.log(err);
-                                            res.status(202).send({message: "Woah! Something went wrong, but we've been notified and will take care of it."});
+                                            console.log('WARNING: ', err);
+                                            res.status(202).send({message: "Woah! Something went wrong. We're looking into it, but also try waiting a few minutes and give it another shot."});
                                         })
                                 }
                             });
@@ -673,7 +702,7 @@ function handleInviteUser(req, res) {
             })
 
             .fail(function(err){
-                console.warn("WARNING: auth688", err);
+                console.warn("WARNING:", err);
             });
     }
 
@@ -693,7 +722,7 @@ function handleInviteUser(req, res) {
                 }
             })
             .fail(function (err) {
-                console.warn("WARNING: auth572", err);
+                console.warn("WARNING: ", err);
                 res.status(202).send({message: "Something went wrong."});
             });
     } else goInvite();
