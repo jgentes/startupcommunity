@@ -1474,3 +1474,62 @@ a.list-group-item.active, a.list-group-item.active:hover, a.list-group-item.acti
 .badge.badge-primary {
   background-color: @color-navy-blue;
 }
+
+/* Mobile navbar */
+
+.mobile-menu {
+
+
+
+}
+
+@media (max-width: 768px) {
+  .mobile-menu-toggle {
+    display: block;
+  }
+
+  .mobile-menu {
+    .navbar-nav > li, .navbar-nav {
+      float: none;
+    }
+  }
+}
+
+.mobile-navbar {
+  position: absolute;
+  top: 62px;
+  left: 0;
+  right: 0;
+  background-color: #ffffff;
+  z-index: 100;
+  border-top: 1px solid #eee;
+
+  .navbar-nav {
+    padding: 0;
+    margin: 0;
+    border-bottom: 1px solid @border-color;
+  }
+
+  .navbar-nav > li > a {
+    padding: 15px 15px;
+    font-size: 14px;
+    color: @color-text;
+  }
+
+  .navbar-nav > li > a:hover, .navbar-nav > li > a:focus, .navbar-nav .open > a, .navbar-nav .open > a:hover, .navbar-nav .open > a:focus {
+    border-bottom: none;
+  }
+
+}
+
+@media (min-width: 769px) {
+  .mobile-navbar, .mobile-navbar.collapse.in {
+    display: none;
+  }
+
+}
+
+/* Fix for xeditable and chekcbox plugin in angularJS version */
+.x-edit-checkbox .checkbox label::before {
+  display: none;
+}
