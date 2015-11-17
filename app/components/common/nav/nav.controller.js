@@ -511,7 +511,7 @@ function CommunitySettingsController($modalInstance, $window, $state, sweet, use
     };
 }
 
-function addClusterController($modalInstance, $mixpanel, $state, sweet, community_service, location){
+function addClusterController($modalInstance, $stateParams, $mixpanel, sweet, community_service, location, $http, $window){
 
     this.location = location;
     this.name = ""; // to avoid 'undefined' for initial url
@@ -567,8 +567,9 @@ function addClusterController($modalInstance, $mixpanel, $state, sweet, communit
                             title: "Cluster created!",
                             type: "success"
                         }, function(){
+                            $http.get('/api/2.1/community/' + $stateParams.location_path); // refresh outdated cache
                             $modalInstance.close();
-                            $state.reload();
+                            $window.location.reload();
                         });
                     }
                     $mixpanel.track('Added Cluster');
@@ -586,7 +587,7 @@ function addClusterController($modalInstance, $mixpanel, $state, sweet, communit
     };
 }
 
-function addNetworkController($modalInstance, $mixpanel, $state, sweet, community_service, location){
+function addNetworkController($modalInstance, $stateParams, $mixpanel, sweet, community_service, location, $http, $window){
 
     this.location = location;
     this.name = ""; // to avoid 'undefined' for initial url
@@ -639,8 +640,9 @@ function addNetworkController($modalInstance, $mixpanel, $state, sweet, communit
                             title: "Network created!",
                             type: "success"
                         }, function(){
+                            $http.get('/api/2.1/community/' + $stateParams.location_path); // refresh outdated cache
                             $modalInstance.close();
-                            $state.reload();
+                            $window.location.reload();
                         });
                     }
                     $mixpanel.track('Added Network');
