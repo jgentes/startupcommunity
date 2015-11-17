@@ -129,9 +129,7 @@ var searchInCommunity = function(communities, clusters, roles, limit, offset, qu
                   if (result.body.results[i].path.ref) delete result.body.results[i].path.ref;
                   if (result.body.results[i].value.profile.password) delete result.body.results[i].value.profile.password;
 
-                  if (!allowed) {
-                      if (result.body.results[i].value.profile.email) delete result.body.results[i].value.profile.email;
-                  }
+                  if (result.body.results[i].value.profile.email) delete result.body.results[i].value.profile.email;
 
                   if (result.body.results[i].value.profile.linkedin) {
                       if (result.body.results[i].value.profile.linkedin.emailAddress) delete result.body.results[i].value.profile.linkedin.emailAddress;
@@ -182,9 +180,7 @@ function handleDirectSearch(req, res) {
                     if (result.body.results[i].path.ref) delete result.body.results[i].path.ref;
                     if (result.body.results[i].value.profile.password) delete result.body.results[i].value.profile.password;
 
-                    if (!allowed) {
-                        if (result.body.results[i].value.profile.email) delete result.body.results[i].value.profile.email;
-                    }
+                    if (result.body.results[i].value.profile.email) delete result.body.results[i].value.profile.email;
 
                     if (result.body.results[i].value.profile.linkedin) {
                         if (result.body.results[i].value.profile.linkedin.emailAddress) delete result.body.results[i].value.profile.linkedin.emailAddress;
