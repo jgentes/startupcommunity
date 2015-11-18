@@ -167,7 +167,7 @@
                 </span>
                 </a>
                 <ul class="nav nav-second-level">
-                    <li ng-if="!nav.locations">
+                    <li ng-if="!nav.locations || nav.locations === {}">
                         <a>No locations yet</a>
                     </li>
                     <li ng-repeat="item in nav.locations">
@@ -188,7 +188,7 @@
                     <div ng-if="nav.user.communities.indexOf(nav.location_path) > -1 && nav.communities[nav.location_path].type == 'location'" class="pe-7s-close fa-rotate-45 pull-right" ng-click="nav.addNetwork(); $event.stopPropagation();" tooltip-placement="left" tooltip="Add Network" style="opacity: .6; cursor: pointer; margin-top: 4px; font-size: 15px;"></div>
                 </a>
                 <ul class="nav nav-second-level">
-                    <li ng-if="!nav.networks">
+                    <li ng-if="!nav.networks || nav.networks === {}">
                         <a title="You must be invited to become a member of a network">No networks yet</a>
                     </li>
                     <li ng-repeat="item in nav.networks">
@@ -210,7 +210,7 @@
                     <div ng-if="nav.user.communities.indexOf(nav.location_path) > -1 && nav.communities[nav.location_path].type == 'location'" class="pe-7s-close fa-rotate-45 pull-right" ng-click="nav.addCluster(); $event.stopPropagation();" tooltip-placement="left" tooltip="Add Cluster" style="opacity: .6; cursor: pointer; margin-top: 4px; font-size: 15px;"></div>
                 </a>
                 <ul class="nav nav-second-level">
-                    <li ng-if="!nav.clusters">
+                    <li ng-if="!nav.clusters || nav.clusters === {}">
                         <a title="Edit the skills in your user profile to associate yourself with a cluster">No clusters yet</a>
                     </li>
                     <li ng-repeat="item in nav.clusters">
@@ -238,7 +238,7 @@
                 </span>
                 </a>
                 <ul class="nav nav-second-level">
-                    <li ng-if="!nav.parents">
+                    <li ng-if="!nav.parents || nav.parents === []">
                         <a title="Edit your user profile to associate yourself with an industry">No industries yet</a>
                     </li>
                     <li ng-repeat="item in nav.parents">
