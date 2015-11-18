@@ -570,7 +570,7 @@ function handleInviteUser(req, res) {
                             .limit(1)
                             .query('@value.type: "user" AND (@value.profile.linkedin.emailAddress: "' + inviteUser.email + '" OR @value.profile.email: "' + inviteUser.email + '")')
                             .then(function (result) {
-                                if (result.body.results.length > 0 && req.user !== 'james') {
+                                if (result.body.results.length > 0) {
                                     console.log("Existing user found!");
 
                                     var existing = result.body.results[0].value;
