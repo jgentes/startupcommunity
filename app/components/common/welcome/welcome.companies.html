@@ -2,10 +2,10 @@
     <div class="panel-heading" style="text-align:center;">
         <h4 style="font-size: 25px; line-height: 1.25;">Now add any companies <b>in {{::welcome.location}}</b> that you work with. </h4>
     </div>
-    <div ng-show="welcome.selectedCompany" style="text-align:center;">
+    <div ng-show="welcome.selectedCompany || welcome.company" style="text-align:center;">
         <a href="{{welcome.selectedCompany.angellist_url}}" target="_blank" title="{{welcome.selectedCompany.name}}'s AngelList Profile">
             <img style="height:75px;"
-             ngf-thumbnail="welcome.selectedCompany.thumb_url || file || '/public/images/blank_startup.png'">
+             ngf-thumbnail="welcome.selectedCompany.thumb_url || file || '/public/images/blank_startup.jpg'">
         </a>
         <br/>
         <label id="uploader_text">
