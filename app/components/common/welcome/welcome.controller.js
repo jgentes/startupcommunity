@@ -9,7 +9,9 @@ function WelcomeController($auth, $q, $http, $mixpanel, $stateParams, $scope, $s
     this.working = false; // used for waiting indicator
     this.updateCompany= false; // used if company already exists
     var community_path = $stateParams.community_path ? $stateParams.community_path : $stateParams.location_path;
+    this.industries = []; // need a placeholder until next call is resolved
     this.industries = community_service.industries();
+    this.parents = []; // need a placeholder until next call is resolved
     this.parents = community_service.parents();
     this.community = community; // used in add company (not welcome) modal
     this.stages = [ 'Bootstrap', 'Seed', 'Series A', 'Series B', 'Later'];
@@ -36,11 +38,8 @@ function WelcomeController($auth, $q, $http, $mixpanel, $stateParams, $scope, $s
         }
 
         if (self.user.profile.skills) {
-            if (!self.skills) self.skills =[];
-            for (skill in self.user.profile.skills) {
-                self.skills.push(self.user.profile.skills[skill]);
-            }
-        }
+            self.skills = self.user.profile.skills;
+        } else self.skills =[];
 
         if (self.user.profile.parents) {
             switch(self.user.profile.parents[0]) {

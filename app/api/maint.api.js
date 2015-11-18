@@ -24,8 +24,9 @@ function handleMaintenance(res) {
             .collection(collection)
             .limit(limit)
             .offset(startKey)
-            .query('@value.type:"industry"')
+            .query('@value.type:"user" AND @value.communities: "edco-stable-of-experts"')
             .then(function(data){
+                var emails = [];
                 for (var item in data.body.results) {
                     /*
                     var newdata = {
@@ -54,7 +55,7 @@ function handleMaintenance(res) {
 
                     // 1 Migration for production v2.1
                     var newdata = data.body.results[item].value; // get current record
-                    newdata.type = "cluster";
+                    //newdata.type = "cluster";
 
                     /*if (newdata.roles && newdata.roles.advisor) {
                         console.log('update!');
@@ -69,14 +70,15 @@ function handleMaintenance(res) {
                     //newdata.roles = { "mentor" : { "edco-stable-of-experts": ["bend-or"], "bend-or": ["bend-or"]}};
                     //newdata.profile["home"] = "bend-or";
 
-                    console.log('Updating record..');
-                    console.log(data.body.results[item].path.key);
+                    //console.log('Updating record..');
+                    //console.log(data.body.results[item].path.key);
                     //console.log(newdata);
 
                     // IMPORTANT! TEST FIRST BY COMMENTING OUT BELOW..
                     // ALSO BE CAREFUL TO NOT PULL FROM -DEV AND PUT INTO PRODUCTION DB!!
                     //db.put(collection, data.body.results[item].path.key, newdata);
                 }
+                console.log(emails);
 
                 if (data.body.next) {
                     startKey = startKey + limit;
