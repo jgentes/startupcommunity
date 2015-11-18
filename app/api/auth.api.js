@@ -2,8 +2,8 @@ var bcrypt = require('bcryptjs'),
     request = require('request'),
     jwt = require('jsonwebtoken'),
     crypto = require('crypto'),
-    config = require('../config.json')[process.env.NODE_ENV || 'development'],
-    db = require('orchestrate')(config.db.key),
+    keys = require('../keys.json')[process.env.NODE_ENV || 'development'],
+    db = require('orchestrate')(keys.db.key),
     knowtify = require('knowtify-node');
 
 //require('request-debug')(request); // Very useful for debugging oauth and api req/res
@@ -93,7 +93,7 @@ function handleEnsureAuthenticated(req, res, next) {
         }
 
         if (req.headers.authorization && req.headers.authorization.split(' ')[0] === 'Bearer') {
-            req.user = jwt.verify(req.headers.authorization.split(' ')[1], config.token_secret);
+            req.user = jwt.verify(req.headers.authorization.split(' ')[1], keys.token_secret);
         }
 
         next();
@@ -110,13 +110,13 @@ function handleEnsureAuthenticated(req, res, next) {
  |--------------------------------------------------------------------------
  */
 function handleCreateToken(req, user) {
-    return jwt.sign(user.path.key, config.token_secret, { expiresIn: "5h" });
+    return jwt.sign(user.path.key, keys.token_secret, { expiresIn: "5h" });
 }
 
 function handleHelpToken(req, res) {
     // this is for HelpCrunch live chat support to send over user data
 
-    var hmac = crypto.createHmac('sha256', config.helpcrunch);
+    var hmac = crypto.createHmac('sha256', keys.helpcrunch);
     hmac.setEncoding('hex');
     hmac.write(req.user);
     hmac.end();
@@ -133,16 +133,16 @@ function handleCreateAPIToken(req, res) {
         iat: moment().valueOf(),
         exp: moment().add(90, 'days').valueOf()
     };
-    res.status(201).send(jwt.encode(payload, config.API_token_secret));*/
+    res.status(201).send(jwt.encode(payload, keys.API_token_secret));*/
 
-    db.get(config.db.communities, req.user)
+    db.get(keys.db.communities, req.user)
         .then(function(response){
             if (response.body.code !== "items_not_found") {
                 console.log('Matching user found.');
                 if (response.body.profile.api_key === undefined) {
                     // todo update next line
-                    //response.body.profile["api_key"] = jwt.encode(payload, config.API_token_secret); // get user account and re-upload with api_key
-                    db.put(config.db.communities, req.user, response.body)
+                    //response.body.profile["api_key"] = jwt.encode(payload, keys.API_token_secret); // get user account and re-upload with api_key
+                    db.put(keys.db.communities, req.user, response.body)
                         .then(function () {
                             console.log("Profile updated.");
                         })
@@ -171,7 +171,7 @@ function handleSignup(req, res) {
     var user = schema.signupform(req.body);
 
     db.newSearchBuilder()
-        .collection(config.db.communities)
+        .collection(keys.db.communities)
         .limit(1)
         .query('@value.profile.email: "' + req.body.profile.email + '"')
         .then(function(result){
@@ -180,10 +180,10 @@ function handleSignup(req, res) {
                 res.status(401).send({ message: 'That email address is already registered to a user.'}); //username already exists
             } else {
                 console.log('Email is free for use');
-                db.post(config.db.communities, user)
+                db.post(keys.db.communities, user)
                     .then(function () {
                         db.newSearchBuilder()
-                            .collection(config.db.communities)
+                            .collection(keys.db.communities)
                             .limit(1)
                             .query('@value.profile.email: "' + req.body.profile.email + '"')
                             .then(function(result){
@@ -222,7 +222,7 @@ function handleSignup(req, res) {
 
 function handleLogin(req, res) {
     db.newSearchBuilder()
-        .collection(config.db.communities)
+        .collection(keys.db.communities)
         .limit(1)
         .query('@value.profile.email: "' + req.body.profile.email + '"')
         .then(function(result){
@@ -259,16 +259,16 @@ function handleLinkedin(req, res) {
         peopleApiUrl = 'https://api.linkedin.com/v1/people/~:(id,first-name,last-name,email-address,picture-url;secure=true,headline,location,specialties,positions,summary,industry,public-profile-url)';
 
     var params = {
-        client_id: config.linkedin.clientID,
+        client_id: keys.linkedin.clientID,
         redirect_uri: req.body.redirectUri,
-        client_secret: config.linkedin.clientSecret,
+        client_secret: keys.linkedin.clientSecret,
         code: req.body.code,
         grant_type: 'authorization_code'
     };
 
     var accept_invite = function(invitee, invitor_email) {
         // update Knowtify with invitation accepted
-        var knowtifyClient = new knowtify.Knowtify(config.knowtify, false);
+        var knowtifyClient = new knowtify.Knowtify(keys.knowtify, false);
 
         knowtifyClient.contacts.upsert({
             "event": 'invite_accepted',
@@ -311,7 +311,7 @@ function handleLinkedin(req, res) {
             "replies": []
         };
 
-        db.post(config.db.messages, question)
+        db.post(keys.db.messages, question)
             .then(function () {
                 console.log('Question posted to new user account')
             })
@@ -323,7 +323,7 @@ function handleLinkedin(req, res) {
     };
 
     var delete_invite = function() {
-        db.remove(config.db.communities, invite_code, true)
+        db.remove(keys.db.communities, invite_code, true)
             .then(function (result) {
                 console.log('Invitation applied and deleted: ' + invite_code);
             })
@@ -335,7 +335,7 @@ function handleLinkedin(req, res) {
     var add_knowtify = function(user) {
         // send user info to Knowtify
         console.log('updating Knowtify')
-        var knowtifyClient = new knowtify.Knowtify(config.knowtify, false);
+        var knowtifyClient = new knowtify.Knowtify(keys.knowtify, false);
 
         knowtifyClient.contacts.upsert({
             "contacts": [
@@ -373,7 +373,7 @@ function handleLinkedin(req, res) {
             // if this is an invitation, pull that invite data first
             if (invite_code) {
                 db.newSearchBuilder()
-                    .collection(config.db.communities)
+                    .collection(keys.db.communities)
                     .limit(1)
                     .query('@value.type: "invite" AND @path.key: ' + invite_code)
                     .then(function (result) {
@@ -406,7 +406,7 @@ function handleLinkedin(req, res) {
             function userCheck(invite_profile) {
                 // check to see if this linkedin account is already linked to an existing user
                 db.newSearchBuilder()
-                    .collection(config.db.communities)
+                    .collection(keys.db.communities)
                     .limit(1)
                     .query('@value.type: "user" AND @value.profile.linkedin.id: "' + profile.id + '"')
                     .then(function (result) {
@@ -429,7 +429,7 @@ function handleLinkedin(req, res) {
 
                             result.body.results[0] = addCommunities(result.body.results[0], invite_profile);
 
-                            db.put(config.db.communities, result.body.results[0].path.key, result.body.results[0].value)
+                            db.put(keys.db.communities, result.body.results[0].path.key, result.body.results[0].value)
                                 .then(function () {
                                     console.log("Profile updated: " + result.body.results[0].value.profile.name);
                                     if (invite_profile) {
@@ -450,7 +450,7 @@ function handleLinkedin(req, res) {
                         } else {
                             // search by email
                             db.newSearchBuilder()
-                                .collection(config.db.communities)
+                                .collection(keys.db.communities)
                                 .limit(1)
                                 .query('@value.type: "user" AND @value.profile.email: "' + profile.emailAddress + '"')
                                 .then(function (result) {
@@ -460,7 +460,7 @@ function handleLinkedin(req, res) {
 
                                         result.body.results[0] = addCommunities(result.body.results[0], invite_profile);
 
-                                        db.put(config.db.communities, result.body.results[0].path.key, result.body.results[0].value)
+                                        db.put(keys.db.communities, result.body.results[0].path.key, result.body.results[0].value)
                                             .then(function () {
                                                 console.log("Profile updated: " + profile.emailAddress);
                                                 if (invite_profile) {
@@ -502,7 +502,7 @@ function handleLinkedin(req, res) {
                                                 value: invite_profile
                                             };
 
-                                            db.put(config.db.communities, invite_code, invite_profile)
+                                            db.put(keys.db.communities, invite_code, invite_profile)
                                                 .then(function () {
                                                     console.log("Profile created: " + JSON.stringify(new_profile));
                                                     res.send({
@@ -557,7 +557,7 @@ function handleInviteUser(req, res) {
     var goInvite = function() {
         // validate user has leader role within the location/community, or let them through if they are a member of the location
 
-        db.get(config.db.communities, req.user)
+        db.get(keys.db.communities, req.user)
             .then(function(response){
 
                 if (response.body.code !== "items_not_found") {
@@ -566,7 +566,7 @@ function handleInviteUser(req, res) {
                     if (((inviteUser.location_key == inviteUser.community_key) && user.communities.indexOf(inviteUser.location_key) > -1) || (user.roles && user.roles.leader[inviteUser.community_key] && user.roles.leader[inviteUser.community_key].indexOf(inviteUser.location_key) > -1)) {
                         // check to see if the email address already exists within the system
                         db.newSearchBuilder()
-                            .collection(config.db.communities)
+                            .collection(keys.db.communities)
                             .limit(1)
                             .query('@value.type: "user" AND (@value.profile.linkedin.emailAddress: "' + inviteUser.email + '" OR @value.profile.email: "' + inviteUser.email + '")')
                             .then(function (result) {
@@ -585,7 +585,7 @@ function handleInviteUser(req, res) {
                                         existing.communities.push(inviteUser.location_key);
                                     }
 
-                                    db.put(config.db.communities, result.body.results[0].path.key, existing)
+                                    db.put(keys.db.communities, result.body.results[0].path.key, existing)
                                         .then(function (response) {
                                             console.log("User updated!");
                                             res.status(200).send({message: 'Nice!  <a target="_blank" href="https://startupcommunity.org/' + result.body.results[0].path.key + '">' + result.body.results[0].value.profile.name + '</a> is a member of the community.'});
@@ -598,7 +598,7 @@ function handleInviteUser(req, res) {
                                 } else {
                                     // no existing user, so search for existing invite
                                     db.newSearchBuilder()
-                                        .collection(config.db.communities)
+                                        .collection(keys.db.communities)
                                         .limit(1)
                                         .query('@value.type: "invite" AND @value.profile.email: "' + inviteUser.email + '"')
                                         .then(function (result) {
@@ -606,7 +606,7 @@ function handleInviteUser(req, res) {
                                                 console.log("Existing invite found!");
                                                 res.status(200).send({message: 'An invitation has already been sent to ' + inviteUser.email + '. We will send a reminder.'});
 
-                                                var knowtifyClient = new knowtify.Knowtify(config.knowtify, false);
+                                                var knowtifyClient = new knowtify.Knowtify(keys.knowtify, false);
 
                                                 knowtifyClient.contacts.upsert({
                                                         "event": "reminder",
@@ -630,12 +630,12 @@ function handleInviteUser(req, res) {
                                                         inviteUser.location_key :
                                                     inviteUser.location_key + '/' + inviteUser.community_key;
 
-                                                db.post(config.db.communities, newUser)
+                                                db.post(keys.db.communities, newUser)
                                                     .then(function (response) {
                                                         var userkey = response.headers.location.split('/')[3]; // hope their response format doesn't change :-/
 
                                                         // send email with knowtify with unique link
-                                                        var knowtifyClient = new knowtify.Knowtify(config.knowtify, false);
+                                                        var knowtifyClient = new knowtify.Knowtify(keys.knowtify, false);
 
                                                         knowtifyClient.contacts.upsert({
                                                                 "event": "invitation",
@@ -662,7 +662,7 @@ function handleInviteUser(req, res) {
                                                                 res.status(202).send({message: "Woah! Something went wrong. We're looking into it, but also try waiting a few minutes and give it another shot."});
 
                                                                 // rollback invitation
-                                                                db.delete(config.db.communities, userkey, true)
+                                                                db.delete(keys.db.communities, userkey, true)
                                                             });
                                                     })
                                                     .fail(function(err) {
@@ -695,7 +695,7 @@ function handleInviteUser(req, res) {
 
     if (!req.user) {
         db.newSearchBuilder()
-            .collection(config.db.communities)
+            .collection(keys.db.communities)
             .limit(1)
             .query('@value.type: "user" AND @value.roles.leader.' + inviteUser.location_key + ': "' + inviteUser.location_key + '"')
             .then(function (result) {

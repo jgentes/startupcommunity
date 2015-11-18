@@ -1,5 +1,5 @@
-var config = require('../config.json')[process.env.NODE_ENV || 'development'],
-    db = require('orchestrate')(config.db.key);
+var keys = require('../keys.json')[process.env.NODE_ENV || 'development'],
+    db = require('orchestrate')(keys.db.key);
 
 var MaintApi = function() {
     this.maintenance = handleMaintenance;
@@ -90,7 +90,7 @@ function handleMaintenance(res) {
                     /*
                      for (var user in userlist) {
                      console.log('Updating ' + userlist[user].value.name);
-                     db.put(config.db.collections.users, userlist[user].path.key, userlist[user].value)
+                     db.put(keys.db.collections.users, userlist[user].path.key, userlist[user].value)
                      .then(function(response) {
                      console.log('Record updated!');
                      });

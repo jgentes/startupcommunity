@@ -1,9 +1,9 @@
 var Q = require('q'),
     request = require('request'),
     url = require('url'),
-    config = require('../config.json')[process.env.NODE_ENV || 'development'],
+    keys = require('../keys.json')[process.env.NODE_ENV || 'development'],
     aws = require('aws-sdk'),
-    db = require('orchestrate')(config.db.key);
+    db = require('orchestrate')(keys.db.key);
 
 //require('request-debug')(request); // Very useful for debugging oauth and api req/res
 
@@ -64,12 +64,12 @@ var searchInCommunity = function(communities, clusters, stages, limit, offset, q
 
         if (key) { //check api key to determine if restricted profile data is included with results
                 try {
-                        //var payload = jwt.decode(key, config.API_token_secret);
+                        //var payload = jwt.decode(key, keys.API_token_secret);
                         // Assuming key never expires
                         //check perms!
                         console.log('test then remove me')
                         //todo THIS SECTION NEEDS TO BE REWRITTEN
-                        db.get(config.db.communities, payload.sub)
+                        db.get(keys.db.communities, payload.sub)
                             .then(function (response) {
                                     /*
                                      if (location && community) {
@@ -126,7 +126,7 @@ var searchInCommunity = function(communities, clusters, stages, limit, offset, q
 
         var deferred = Q.defer();
         db.newSearchBuilder()
-            .collection(config.db.communities)
+            .collection(keys.db.communities)
             .limit(Number(limit) || 18)
             .offset(Number(offset) || 0)
             .sort('@path.reftime', 'desc')
@@ -170,15 +170,15 @@ function handleGetLogoUrl(req, res) {
         filename = req.query.filename;
 
     aws.config.update({
-        accessKeyId: config.aws.aws_access_key_id,
-        secretAccessKey: config.aws.aws_secret_access_key,
+        accessKeyId: keys.aws.aws_access_key_id,
+        secretAccessKey: keys.aws.aws_secret_access_key,
         signatureVersion: 'v4',
         region: 'us-west-2'
     });
 
     var s3 = new aws.S3();
     var s3_params = {
-        Bucket: config.aws.bucket,
+        Bucket: keys.aws.bucket,
         Key:  'logos/' + company_name + '_' + filename,
         Expires: 60,
         ACL: 'public-read'
@@ -205,7 +205,7 @@ function handleAddCompany(req, res) {
         console.log('Adding company ' + addCompany.al_profile.name + ' to ' + addCompany.location_key + ' / ' + addCompany.community_key);
 
         // validate user is a member in the location/community
-        db.get(config.db.communities, req.user)
+        db.get(keys.db.communities, req.user)
             .then(function(response){
 
                 if (response.body.code !== "items_not_found") {
@@ -237,7 +237,7 @@ function handleAddCompany(req, res) {
 
 var addRole = function(company_key, role, location_key, user_key) {
 
-    db.get(config.db.communities, user_key)
+    db.get(keys.db.communities, user_key)
         .then(function(response){
 
             if (response.body.code !== "items_not_found") {
@@ -276,7 +276,7 @@ var addRole = function(company_key, role, location_key, user_key) {
                     response.body.communities.push(company_key);
                 }
 
-                db.put(config.db.communities, user_key, response.body)
+                db.put(keys.db.communities, user_key, response.body)
                     .then(function(result) {
                         console.log('User ' + user_key + ' updated with company role.');
                     })
@@ -298,7 +298,7 @@ var companyPull = function (company, role, location_key, user, callback) {
 
     console.log('Looking for existing company based on AngelList profile.');
 
-    db.search(config.db.communities, '@value.profile.angellist.id: ' + company.profile.angellist.id) // no quotes due to number not string
+    db.search(keys.db.communities, '@value.profile.angellist.id: ' + company.profile.angellist.id) // no quotes due to number not string
         .then(function (result){
 
             console.log('Result of db search: ' + result.body.total_count);
@@ -307,7 +307,7 @@ var companyPull = function (company, role, location_key, user, callback) {
 
                 console.log("Matched AngelList startup to database company: " + company.profile.name);
 
-                db.put(config.db.communities, result.body.results[0].path.key, company)
+                db.put(keys.db.communities, result.body.results[0].path.key, company)
                     .then(function (response) {
 
                         var companykey = response.headers.location.split('/')[3];
@@ -331,7 +331,7 @@ var companyPull = function (company, role, location_key, user, callback) {
 
                 console.log('No existing company found!');
 
-                db.post(config.db.communities, company)
+                db.post(keys.db.communities, company)
                     .then(function (response) {
 
                         var companykey = response.headers.location.split('/')[3];

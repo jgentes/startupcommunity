@@ -1,5 +1,5 @@
-var config = require('../config.json')[process.env.NODE_ENV || 'development'],
-  db = require('orchestrate')(config.db.key),
+var keys = require('../keys.json')[process.env.NODE_ENV || 'development'],
+  db = require('orchestrate')(keys.db.key),
   request = require('request');
 
 //require('request-debug')(request); // Very useful for debugging oauth and api req/res
@@ -12,7 +12,7 @@ var AngelListApi = function() {
 
 function handleSearchStartups(req, res) {
 
-    request.get({ url: 'https://api.angel.co/1/search?query=' + req.query.val + '&type=Startup&access_token=' + config.angellist.clientToken },
+    request.get({ url: 'https://api.angel.co/1/search?query=' + req.query.val + '&type=Startup&access_token=' + keys.angellist.clientToken },
         function(error, response, body) {
             if (error || body.error) {
                 console.warn('WARNING: AngelList API ERROR');
@@ -26,7 +26,7 @@ function handleSearchStartups(req, res) {
 
 function handleGetStartups(req, res) {
 
-    request.get({ url: 'https://api.angel.co/1/tags/' + req.query.id + '/startups?access_token=' + config.angellist.clientToken },
+    request.get({ url: 'https://api.angel.co/1/tags/' + req.query.id + '/startups?access_token=' + keys.angellist.clientToken },
         function(error, response, body) {
             if (error) {
                 console.log('AngelList API ERROR');
@@ -49,7 +49,7 @@ function handleGetStartups(req, res) {
 
 function handleGetStartup(req, res) {
 
-    request.get({ url: 'https://api.angel.co/1/startups/' + req.query.id + '?access_token=' + config.angellist.clientToken },
+    request.get({ url: 'https://api.angel.co/1/startups/' + req.query.id + '?access_token=' + keys.angellist.clientToken },
         function(error, response, body) {
 
             if (!body.status || body.status === 200) {

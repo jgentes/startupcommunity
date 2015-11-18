@@ -1,7 +1,7 @@
-var config = require('../config.json')[process.env.NODE_ENV || 'development'],
+var keys = require('../keys.json')[process.env.NODE_ENV || 'development'],
     memjs = require('memjs'),
     mc = memjs.Client.create(),
-    db = require('orchestrate')(config.db.key);
+    db = require('orchestrate')(keys.db.key);
 
 //var util = require('util'); //for util.inspect on request
 //request = require('request');
@@ -126,7 +126,7 @@ function handleGetCommunity(req, res) {
         // need to determine what 'this' community is, but to optimize the first query, grab all communities and then figure it out (rather than a 'get' for the first community, then another call for the rest)
 
         db.newSearchBuilder()
-            .collection(config.db.communities)
+            .collection(keys.db.communities)
             .limit(100)
             .offset(0)
             .query(searchString)
@@ -144,7 +144,7 @@ function handleGetCommunity(req, res) {
                     // get messages for users
                     if (newresponse[community].type == 'user') {
                         db.newSearchBuilder()
-                            .collection(config.db.messages)
+                            .collection(keys.db.messages)
                             .limit(100)
                             .offset(0)
                             .sort('@value.published', 'asc')
@@ -230,7 +230,7 @@ function handleGetCommunity(req, res) {
                                 var ubersearch = '(@path.key: (' + search + ')) OR (@value.type: "cluster" AND @value.communities: "' + m.value.profile.home + '" AND (@value.profile.industries: (' + clusters + ') OR @value.community_profiles.' + m.value.profile.home + '.industries: (' + clusters + ')))';
 
                                 db.newSearchBuilder()
-                                    .collection(config.db.communities)
+                                    .collection(keys.db.communities)
                                     .limit(100)
                                     .offset(0)
                                     .query(ubersearch)
@@ -334,7 +334,7 @@ function handleGetTop(req, res) {
     var pullTop = function(cache) {
 
         db.newSearchBuilder()
-            .collection(config.db.communities)
+            .collection(keys.db.communities)
             .aggregate('top_values', 'value.profile.industries', 10)
             .sort('@path.reftime', 'desc')
             .query(industrysearch + ' AND @value.type: "company"')
@@ -355,7 +355,7 @@ function handleGetTop(req, res) {
                 var skillsearch = cluster_search ? '(@value.profile.parents:(' + cluster_search + ') OR @value.profile.skills:(' + cluster_search + ')) AND ' + search : search;
 
                 db.newSearchBuilder()
-                    .collection(config.db.communities)
+                    .collection(keys.db.communities)
                     .aggregate('top_values', 'value.profile.skills', 10)
                     .sort('@path.reftime', 'desc')
                     .query(skillsearch + ' AND @value.type: "user"')
@@ -374,7 +374,7 @@ function handleGetTop(req, res) {
 
                         // get leaders
                         db.newSearchBuilder()
-                            .collection(config.db.communities)
+                            .collection(keys.db.communities)
                             .sort('@path.reftime', 'desc')
                             .query('@value.roles.leader.' + (cluster_key ? cluster_key : community_key) + ': "' + location_key + '" AND @value.type: "user"')
                             .then(function (result) {
@@ -393,7 +393,7 @@ function handleGetTop(req, res) {
                                 console.log('Updating ' + target + ' with top results..');
 
                                 //get current record
-                                db.get(config.db.communities, target)
+                                db.get(keys.db.communities, target)
                                     .then(function (response) {
                                         if (response.body.type == 'cluster' || response.body.type == 'network') { // use community_profiles
                                             if (response.body.community_profiles === undefined) { // create community_profiles
@@ -405,7 +405,7 @@ function handleGetTop(req, res) {
                                         } else response.body.profile["top"] = top_results;
 
                                         // update record with new data
-                                        db.put(config.db.communities, target, response.body)
+                                        db.put(keys.db.communities, target, response.body)
                                             .then(function (finalres) {
 
                                             })
@@ -461,7 +461,7 @@ function handleSetCommunity(req, res) {
     console.log('Updating settings for ' + settings.location_key + ' / ' + settings.community_key);
     console.log(settings);
 
-    db.get(config.db.communities, req.user)
+    db.get(keys.db.communities, req.user)
         .then(function (response) {
 
             if (response.body.code !== "items_not_found") {
@@ -470,7 +470,7 @@ function handleSetCommunity(req, res) {
                 // validate user has leader role within the location/community
                 if (user.roles.leader[settings.community_key] && user.roles.leader[settings.community_key].indexOf(settings.location_key) > -1) {
                     // update the community
-                    db.get(config.db.communities, settings.community_key)
+                    db.get(keys.db.communities, settings.community_key)
                         .then(function (response) {
                             if (response.body.type == 'cluster') { // use community_profiles
                                 if (response.body.community_profiles === undefined) { // create community_profiles
@@ -488,7 +488,7 @@ function handleSetCommunity(req, res) {
                                 }
                             } else response.body.profile["embed"] = settings.embed;
 
-                            db.put(config.db.communities, settings.community_key, response.body)
+                            db.put(keys.db.communities, settings.community_key, response.body)
                                 .then(function (finalres) {
                                     res.status(201).send({message: 'Community settings updated.'});
                                 })
@@ -527,7 +527,7 @@ function handleAddCommunity(req, res) {
 
     console.log('Adding community: ' + settings.community.profile.name + ' in ' + settings.location_key);
 
-    db.get(config.db.communities, req.user)
+    db.get(keys.db.communities, req.user)
         .then(function (response) {
 
             if (response.body.code !== "items_not_found") {
@@ -539,7 +539,7 @@ function handleAddCommunity(req, res) {
                     var pathname = settings.community.url || encodeURI(settings.community.profile.name.toLowerCase());
 
                     // check to see if the community exists
-                    db.get(config.db.communities, pathname)
+                    db.get(keys.db.communities, pathname)
                         .then(function (response) {
 
                             if (response.body.type && (response.body.type == "cluster" || response.body.type == "network") && response.body.type == settings.community.type) {
@@ -567,7 +567,7 @@ function handleAddCommunity(req, res) {
                                         response.body.communities.push(settings.location_key);
                                     }
 
-                                    db.put(config.db.communities, pathname, response.body)
+                                    db.put(keys.db.communities, pathname, response.body)
                                         .then(function (finalres) {
 
                                             update_user(req.user, 'leader', pathname, settings.location_key)
@@ -600,7 +600,7 @@ function handleAddCommunity(req, res) {
 
                                 var profile = schema.community(settings.community, settings.location_key);
 
-                                db.put(config.db.communities, pathname, profile)
+                                db.put(keys.db.communities, pathname, profile)
                                     .then(function (finalres) {
 
                                         update_user(req.user, 'leader', pathname, settings.location_key)
@@ -643,7 +643,7 @@ function handleDeleteCommunity(req, res) {
 
     console.log('Deleting community: ' + settings.community.profile.name + ' in ' + settings.location_key);
 
-    db.get(config.db.communities, req.user)
+    db.get(keys.db.communities, req.user)
         .then(function (response) {
 
             if (response.body.code !== "items_not_found") {
@@ -653,7 +653,7 @@ function handleDeleteCommunity(req, res) {
                 if (user.roles.leader[settings.community.key].indexOf(settings.location_key) > -1) {
 
                     // get the community
-                    db.get(config.db.communities, settings.community.key)
+                    db.get(keys.db.communities, settings.community.key)
                         .then(function (response) {
 
                             // remove the location profile
@@ -674,7 +674,7 @@ function handleDeleteCommunity(req, res) {
 
                                 if (response.body.communities.length == 0) {
                                     // delete the whole thing
-                                    db.remove(config.db.communities, settings.community.key, 'true')
+                                    db.remove(keys.db.communities, settings.community.key, 'true')
                                         .then(function (finalres) {
                                             res.status(204).send({message: settings.community.type[0].toUpperCase() + settings.community.type.slice(1) + ' deleted!'});
                                         })
@@ -683,7 +683,7 @@ function handleDeleteCommunity(req, res) {
                                             res.status(202).send({message: "Something went wrong."});
                                         });
                                 } else {
-                                    db.put(config.db.communities, settings.community.key, response.body)
+                                    db.put(keys.db.communities, settings.community.key, response.body)
                                         .then(function (finalres) {
                                             res.status(204).send({message: settings.community.type[0].toUpperCase() + settings.community.type.slice(1) + ' deleted!'});
                                         })
@@ -726,7 +726,7 @@ function handleDeleteCommunity(req, res) {
 
 var update_user = function(user_key, role, cluster_key, location_key) {
 
-    return db.get(config.db.communities, user_key)
+    return db.get(keys.db.communities, user_key)
         .then(function(response){
 
             if (response.body.code !== "items_not_found") {
@@ -769,7 +769,7 @@ var update_user = function(user_key, role, cluster_key, location_key) {
                     }
                 }
 
-                db.put(config.db.communities, user_key, response.body)
+                db.put(keys.db.communities, user_key, response.body)
                     .then(function(result) {
                         console.log('User ' + user_key + ' updated with community role.');
                     })
@@ -791,7 +791,7 @@ function handleGetKey(req, res) {
     console.log('Pulling key: ' + req.params.key);
 
     function pullKey() {
-        db.get(config.db.communities, req.params.key)
+        db.get(keys.db.communities, req.params.key)
             .then(function (result) {
                 if (result.statusCode == 200) {
                     result.body["key"] = req.params.key;

@@ -1,6 +1,6 @@
-var config = require('../config.json')[process.env.NODE_ENV || 'development'],
+var keys = require('../keys.json')[process.env.NODE_ENV || 'development'],
     knowtify = require('knowtify-node'),
-    db = require('orchestrate')(config.db.key);
+    db = require('orchestrate')(keys.db.key);
 
 var MessagesApi = function() {
         this.addMessage = handleAddMessage;
@@ -39,7 +39,7 @@ function handleAddMessage(req, res) {
         console.log('sending notification');
 
         // send email with knowtify with unique link
-        var knowtifyClient = new knowtify.Knowtify(config.knowtify, false);
+        var knowtifyClient = new knowtify.Knowtify(keys.knowtify, false);
 
         // note: message.type triggers Knowtify event of 'question' or 'reply'
 
@@ -100,7 +100,7 @@ function handleAddMessage(req, res) {
     // check if this is a reply to existing thread
     if (addMessage.parent) {
 
-        db.newPatchBuilder(config.db.messages, addMessage.parent.key)
+        db.newPatchBuilder(keys.db.messages, addMessage.parent.key)
             .append("replies", [message])
             .apply()
             .then(function (result) {
@@ -116,7 +116,7 @@ function handleAddMessage(req, res) {
 
     } else {
 
-        db.post(config.db.messages, message)
+        db.post(keys.db.messages, message)
             .then(function (response) {
                 addMessage["key"] = response.headers.location.split('/')[3];
                 message.key = addMessage.key;
