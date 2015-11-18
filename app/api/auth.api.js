@@ -563,7 +563,7 @@ function handleInviteUser(req, res) {
                 if (response.body.code !== "items_not_found") {
                     var user = response.body;
 
-                    if (((inviteUser.location_key == inviteUser.community_key) && user.communities.indexOf(inviteUser.location_key) > -1) || (user.roles && user.roles.leader[inviteUser.community_key] && user.roles.leader[inviteUser.community_key].indexOf(inviteUser.location_key) > -1)) {
+                    if (((inviteUser.location_key == inviteUser.community_key) && user.communities.indexOf(inviteUser.location_key) > -1) || (user.roles && user.roles.leader && user.roles.leader[inviteUser.community_key] && user.roles.leader[inviteUser.community_key].indexOf(inviteUser.location_key) > -1)) {
                         // check to see if the email address already exists within the system
                         db.newSearchBuilder()
                             .collection(keys.db.communities)
