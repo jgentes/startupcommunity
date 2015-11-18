@@ -210,7 +210,7 @@ function handleAddCompany(req, res) {
 
                 if (response.body.code !== "items_not_found") {
                     var user = response.body;
-                    if (((addCompany.location_key == addCompany.community_key) && user.communities.indexOf(addCompany.location_key) > -1) || (user.roles && user.roles.leader[addCompany.community_key] && user.roles.leader[addCompany.community_key].indexOf(addCompany.location_key) > -1)) {
+                    if (((addCompany.location_key == addCompany.community_key) && user.communities.indexOf(addCompany.location_key) > -1) || (user.roles && user.roles.leader && user.roles.leader[addCompany.community_key] && user.roles.leader[addCompany.community_key].indexOf(addCompany.location_key) > -1)) {
 
                         var company = schema.angellist(addCompany.al_profile, addCompany.location_key, addCompany.community_key);
                         if (company.profile.angellist.industries) delete company.profile.angellist.industries;

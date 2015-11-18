@@ -468,7 +468,7 @@ function handleSetCommunity(req, res) {
                 var user = response.body;
 
                 // validate user has leader role within the location/community
-                if (user.roles.leader[settings.community_key] && user.roles.leader[settings.community_key].indexOf(settings.location_key) > -1) {
+                if (user.roles.leader && user.roles.leader[settings.community_key] && user.roles.leader[settings.community_key].indexOf(settings.location_key) > -1) {
                     // update the community
                     db.get(keys.db.communities, settings.community_key)
                         .then(function (response) {
@@ -650,7 +650,7 @@ function handleDeleteCommunity(req, res) {
                 var user = response.body;
 
                 // validate user is a leader of the community in this location
-                if (user.roles.leader[settings.community.key].indexOf(settings.location_key) > -1) {
+                if (user.roles.leader && user.roles.leader[settings.community.key].indexOf(settings.location_key) > -1) {
 
                     // get the community
                     db.get(keys.db.communities, settings.community.key)
