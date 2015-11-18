@@ -16,7 +16,7 @@
         <div style="margin-left: -10px; padding-top: 1px;">
             <span ng-repeat="(item, val) in welcome.roles" class="user-role"><i
                     ng-attr-title="{{item.toUpperCase()[0] + item.slice(1);}}"
-                    ng-class="{'text-primary fa fa-rocket' : val && item == 'founder', 'text-info fa fa-graduation-cap' : val && item == 'mentor', 'text-success fa fa-leaf' : val && item == 'investor', 'text-default fa fa-dribbble' : val && item == 'team', 'text-warning fa fa-briefcase' : val && item == 'provider'}"></i></span>
+                    ng-class="{'text-primary pe-7s-paper-plane' : val && item == 'founder', 'text-danger pe-7s-flag' : val && item == 'leader', 'text-info pe-7s-study' : val && item == 'mentor', 'text-success pe-7s-gleam' : val && item == 'investor', 'text-default pe-7s-ball' : val && item == 'team', 'text-warning pe-7s-portfolio' : val && item == 'provider'}"></i></span>
         </div>
         <div>
             <h4 style="line-height:1.75;">

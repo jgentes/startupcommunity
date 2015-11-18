@@ -315,7 +315,7 @@ function WelcomeController($auth, $q, $http, $mixpanel, $stateParams, $scope, $s
             self.user["roles"] = {};
         }
 
-        for (role in self.user.roles) {
+        for (role in self.roles) {
             if (!self.user.roles[role]) {
                 self.user.roles[role] = {};
                 self.user.roles[role][community_path] = [$stateParams.location_path];
