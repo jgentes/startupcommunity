@@ -331,10 +331,13 @@ function WelcomeController($auth, $q, $http, $mixpanel, $stateParams, $scope, $s
         }
 
         // allow user to remove roles
-        for (dRole in ['founder', 'investor', 'team', 'mentor', 'provider']) {
-            if (self.roles && self.roles.length && self.roles[dRole] && self.roles[dRole] == false) {
-                if (self.user.roles[dRole] && self.user.roles[dRole][community_path]) delete self.user.roles[dRole][community_path];
-                if (self.user.roles[dRole] && self.user.roles[dRole][$stateParams.location_path]) delete self.user.roles[dRole][$stateParams.location_path];
+        var rolelist = ['founder', 'investor', 'team', 'mentor', 'provider'];
+
+        for (dRole in rolelist) {
+            if (self.roles && !self.roles[rolelist[dRole]]) {
+                if (self.user.roles[rolelist[dRole]] && self.user.roles[rolelist[dRole]][community_path]) delete self.user.roles[rolelist[dRole]][community_path];
+                if (self.user.roles[rolelist[dRole]] && self.user.roles[rolelist[dRole]][$stateParams.location_path]) delete self.user.roles[rolelist[dRole]][$stateParams.location_path];
+                if (jQuery.isEmptyObject(self.user.roles[rolelist[dRole]])) delete self.user.roles[rolelist[dRole]];
             }
         }
 
