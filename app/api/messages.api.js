@@ -52,7 +52,7 @@ function handleAddMessage(req, res) {
         if (!message.parent) message.parent = { content: "" };
 
         var go = function(notify) {
-
+            //todo fix this, need to pull record of user 'to'
             knowtifyClient.contacts.upsert({
                     "event": notify.type,
                     "contacts": [{

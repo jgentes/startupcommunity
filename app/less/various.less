@@ -204,6 +204,26 @@ h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
   cursor: pointer;
 }
 
+input.input-md, input.input-md:focus{
+  font-size: 14px;
+
+  &:-moz-placeholder {
+    padding: 5px 0 0 0;
+    font-size: 12px;
+    font-weight: 200;
+  }
+  &:-ms-input-placeholder {
+    padding: 5px 0 0 0;
+    font-size: 12px;
+    font-weight: 200;
+  }
+  &::-webkit-input-placeholder {
+    padding: 5px 0 0 0;
+    font-size: 12px;
+    font-weight: 200;
+  }
+}
+
 .industry_select input.ui-select-search.input-xs {
   font-size: 20px;
 }
@@ -972,7 +992,7 @@ a:hover, a:focus {
 .navbar-form-custom {
   display: inline-block;
   height: 52px;
-  width: 400px;
+  width: 350px;
   padding: 7px 0 0 0;
 }
 
@@ -1483,7 +1503,7 @@ a.list-group-item.active, a.list-group-item.active:hover, a.list-group-item.acti
 
 }
 
-@media (max-width: 768px) {
+@media (max-width: 1000px) {
   .mobile-menu-toggle {
     display: block;
   }
@@ -1492,6 +1512,10 @@ a.list-group-item.active, a.list-group-item.active:hover, a.list-group-item.acti
     .navbar-nav > li, .navbar-nav {
       float: none;
     }
+  }
+
+  .navbar-right {
+    display: none;
   }
 }
 
@@ -1522,7 +1546,7 @@ a.list-group-item.active, a.list-group-item.active:hover, a.list-group-item.acti
 
 }
 
-@media (min-width: 769px) {
+@media (min-width: 1000px) {
   .mobile-navbar, .mobile-navbar.collapse.in {
     display: none;
   }
