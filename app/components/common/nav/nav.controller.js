@@ -61,6 +61,7 @@ function NavigationController($auth, $state, $window, $timeout, $location, $scop
 
     // PRIMARY LEFT-NAV ITEM LIST
     if (!this.community) this.community = communities.data[this.location_path];
+    if (!this.community) $window.location.reload(); // if no community, there's a problem, reload the app
 
     var parents = community_service.parents();
     parents[parents.indexOf("Consumer Goods")] = "consumer-goods";
