@@ -382,7 +382,8 @@ function handleLinkedin(req, res) {
                             userCheck(result.body.results[0].value);
                         } else {
                             console.log('WARNING: Invalid invite code: ' + invite_code);
-                            return res.status(404).send({message: 'Sorry, this invite code is not valid: ' + invite_code});
+                            userCheck();
+                            //return res.status(404).send({message: 'Sorry, this invite code is not valid: ' + invite_code});
                         }
                     })
             } else userCheck();
@@ -550,8 +551,6 @@ function handleLinkedin(req, res) {
 function handleInviteUser(req, res) {
     var inviteUser = req.body.params;
 
-    if (!inviteUser.community_key) inviteUser.community_key = inviteUser.location_key;
-
     console.log('Inviting ' + inviteUser.email + ' to ' + inviteUser.location_key + ' / ' + inviteUser.community_key);
 
     var goInvite = function() {
@@ -563,7 +562,16 @@ function handleInviteUser(req, res) {
                 if (response.body.code !== "items_not_found") {
                     var user = response.body;
 
-                    if (((inviteUser.location_key == inviteUser.community_key) && user.communities.indexOf(inviteUser.location_key) > -1) || (user.roles && user.roles.leader && user.roles.leader[inviteUser.community_key] && user.roles.leader[inviteUser.community_key].indexOf(inviteUser.location_key) > -1)) {
+                    if (!inviteUser.location_key) inviteUser.location_key == inviteUser.community_key;
+
+                    if (user.communities.indexOf(inviteUser.location_key) < 0) {
+                        res.status(202).send({ message: 'You must be a member of this community to invite someone.' });
+                    } else if (!inviteUser.community_key || (user.roles && user.roles.leader && user.roles.leader[inviteUser.community_key] && user.roles.leader[inviteUser.community_key].indexOf(inviteUser.location_key) < 0)) {
+                        console.warn("No community specified, or user is not a leader in community: " + inviteUser.community_key + " for location: " + inviteUser.location_key + "!");
+                        inviteUser.community_key = inviteUser.location_key;
+                    } else console.warn("WARNING: Something odd happened!");
+
+                    //if (((inviteUser.location_key == inviteUser.community_key) && user.communities.indexOf(inviteUser.location_key) > -1) || (user.roles && user.roles.leader && user.roles.leader[inviteUser.community_key] && user.roles.leader[inviteUser.community_key].indexOf(inviteUser.location_key) > -1)) {
                         // check to see if the email address already exists within the system
                         db.newSearchBuilder()
                             .collection(keys.db.communities)
@@ -677,11 +685,13 @@ function handleInviteUser(req, res) {
                                         })
                                 }
                             });
+                    /*
                     } else {
                         console.warn("User is not a leader in community: " + inviteUser.community_key + " for location: " + inviteUser.location_key + "!");
                         console.log(user);
                         res.status(202).send({ message: 'You must be a member of this location and/or a leader of this network to invite someone.' });
                     }
+                    */
 
                 } else {
                     console.warn('WARNING:  User not found.');
