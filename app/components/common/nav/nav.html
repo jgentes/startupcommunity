@@ -112,35 +112,23 @@
             <div ng-if="nav.location.profile.sc_logo" style="margin-left: -21px;"><img class="profile-logo" ng-src="{{nav.location.profile.sc_logo}}"/></div>
         </div>
 
-        <ul side-navigation class="nav" id="side-menu" style="border-top: 1px solid #eee;">
+        <ul side-navigation class="nav" id="side-menu" style="border-top: 1px solid #ddd;">
 
-            <li ng-show="nav.community.type !== 'user' && nav.community.type !== 'company'" class="active" tour-step order="1" title="People and Companies" content="To view people by role, or sort companies by revenue, visit the People and Company pages." placement="right">
+            <li class="active" tour-step order="1" title="People and Companies" content="To view people by role, or sort companies by revenue, visit the People and Company pages." placement="right">
 
-                <a style="cursor: default;"><span class="pe-7s-angle-down" style="padding-top: 4px;
-    padding-right: 7px;"></span><span class="nav-label">
-
-                    Community
-
-                </span>
-                <div ng-if="nav.user.roles.leader[nav.community.key].indexOf(nav.location_path) > -1" class="fa fa-gear pull-right" ng-click="nav.communitySettings(); $event.stopPropagation();" tooltip-placement="left" tooltip="Settings" style="opacity: .6; cursor: pointer; margin-top: 5px;"></div>
-                </a>
-                    <!--<span class="fa fa-gear pull-right" ng-click="nav.changeLocation()" tooltip-placement="left" tooltip="Change Location" style="opacity: .6; margin-top: 4px; cursor: pointer;"></span>-->
-
-                <ul class="nav nav-second-level" style="white-space: nowrap;">
+                <ul class="nav nav-second-level">
                     <li>
-                        <a ui-sref="{{'community.dashboard' + nav.nav_url}}" ng-class="{active: nav.path.includes('/' + nav.location.key)}">
+                        <a ui-sref="{{'community.dashboard' + nav.nav_url}}" ng-class="{active: nav.path.includes('/' + nav.community.key)}" style="padding-left: 10px; font-size: 18px; font-weight: bold;">
                             <span ng-if="nav.community.community_profiles[nav.location_path]" ng-click="c_working = true">
-                                <i ng-if="nav.community.community_profiles[nav.location_path].icon" ng-class="'fa ' + nav.community.community_profiles[nav.location_path].icon"></i>
-                                <i ng-if="!nav.community.community_profiles[nav.location_path].icon" class="fa fa-globe"></i> {{nav.community.community_profiles[nav.location_path].name}}
+                                &nbsp;{{nav.community.community_profiles[nav.location_path].name}}
                                 <span loading-bars ng-show="c_working"></span>
                             </span>
                             <span ng-if="!nav.community.community_profiles[nav.location_path]">
-                                <i ng-if="nav.community.profile.icon" ng-class="'fa ' + nav.community.profile.icon"></i>
-                                <i ng-if="!nav.community.profile.icon" class="fa fa-globe"></i> {{nav.community.profile.name}}
+                                &nbsp;{{nav.community.profile.name}}
                                 <span loading-bars ng-show="c_working"></span>
                             </span>
                         </a>
-                        <ul ng-if="nav.community.type !== 'user' && nav.community.type !== 'company'" style="display: block;">
+                        <ul ng-if="nav.community.type !== 'user' && nav.community.type !== 'company'" style="display: block; padding-left: 8px;">
                             <li ui-sref="{{'user.list' + nav.nav_url}}" ng-class="{ 'active' : nav.path.endsWith(nav.community.key + '/people') }">
                                 <a><i class="fa fa-caret-right"></i>People
                                 </a>
@@ -158,6 +146,7 @@
                         </ul>
                     </li>
                 </ul>
+                <!--<span class="fa fa-gear pull-right" ng-click="nav.changeLocation()" tooltip-placement="left" tooltip="Change Location" style="opacity: .6; margin-top: 4px; cursor: pointer;"></span>-->
             </li>
 
             <li class="active" ng-show="nav.locations">

@@ -3,6 +3,7 @@
         <div class="col-md-6">
             <div class="hpanel">
                 <div class="panel-body" style="height: 85px;">
+                    <div ng-if="nav.user.roles.leader[nav.community.key].indexOf(nav.location_path) > -1" class="fa fa-gear pull-right" ng-click="nav.communitySettings(); $event.stopPropagation();" tooltip-placement="left" tooltip="Settings" style="opacity: .6; cursor: pointer; margin-top: 5px; font-size: 18px;"></div>
                     <h2 class="font-light m-b-xs" style="margin-bottom: 0;">
                         <span ng-if="nav.community.community_profiles[nav.location_path]">{{ nav.community.community_profiles[nav.location_path].name }}</span>
                         <span ng-if="!nav.community.community_profiles[nav.location_path]">{{ nav.community.profile.name }}</span>
