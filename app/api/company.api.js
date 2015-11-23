@@ -210,20 +210,29 @@ function handleAddCompany(req, res) {
 
                 if (response.body.code !== "items_not_found") {
                     var user = response.body;
-                    if (((addCompany.location_key == addCompany.community_key) && user.communities.indexOf(addCompany.location_key) > -1) || (user.roles && user.roles.leader && user.roles.leader[addCompany.community_key] && user.roles.leader[addCompany.community_key].indexOf(addCompany.location_key) > -1)) {
 
-                        var company = schema.angellist(addCompany.al_profile, addCompany.location_key, addCompany.community_key);
-                        if (company.profile.angellist.industries) delete company.profile.angellist.industries;
+                    if (!addCompany.location_key) addCompany.location_key == addCompany.community_key;
 
-                        //search for company and add if not there..
-                        companyPull(company, addCompany.role, addCompany.location_key, req.user, function(result) {
-                            res.status(result.status).send(result.data);
-                        });
+                    if (user.communities.indexOf(addCompany.location_key) < 0) {
+                        res.status(202).send({ message: 'You must be a member of this community to add a company.' });
+                    } else if (!addCompany.community_key || (user.roles && user.roles.leader && user.roles.leader[addCompany.community_key] && user.roles.leader[addCompany.community_key].indexOf(addCompany.location_key) < 0)) {
+                        console.warn("No community specified, or user is not a leader in community: " + addCompany.community_key + " for location: " + addCompany.location_key + "!");
+                        addCompany.community_key = addCompany.location_key;
+                    } else console.warn("WARNING: Something odd happened!");
 
+                    var company = schema.angellist(addCompany.al_profile, addCompany.location_key, addCompany.community_key);
+                    if (company.profile.angellist.industries) delete company.profile.angellist.industries;
+
+                    //search for company and add if not there..
+                    companyPull(company, addCompany.role, addCompany.location_key, req.user, function(result) {
+                        res.status(result.status).send(result.data);
+                    });
+/*
                     } else {
                         console.warn("User is not a member of community: " + addCompany.community_key + " and location: " + addCompany.location_key + "!");
                         res.status(400).send({ message: 'You must be a member of this community and/or a leader of this network to add a company to it.' });
                     }
+                    */
                 } else {
                     console.warn('WARNING:  User not found.');
                 }
