@@ -2,7 +2,7 @@ angular
     .module('startupcommunity')
     .controller('NavigationController', NavigationController);
 
-function NavigationController($auth, $state, $window, $timeout, $location, $scope, $stateParams, $modal, user_service, community_service, user, location, community, communities, knowtify) {
+function NavigationController($auth, $state, $window, $timeout, $location, $scope, $stateParams, $modal, user_service, community_service, user, location, community, communities, knowtify, errorLogService) {
     if (user.data && user.data.token) $auth.setToken(user.data.token); // update local storage with latest user profile
 
     // SENSITIVE VARIABLES THAT AFFECT NAVIGATION AND ALL CHILD TEMPLATES
@@ -61,7 +61,13 @@ function NavigationController($auth, $state, $window, $timeout, $location, $scop
 
     // PRIMARY LEFT-NAV ITEM LIST
     if (!this.community) this.community = communities.data[this.location_path];
-    if (!this.community) $window.location.reload(); // if no community, there's a problem, reload the app
+    if (!this.community) {
+        // if still no community, there's a problem, reload the app
+        errorLogService('No community! Hopefully not looping now...');
+        $window.location.reload();
+    }
+
+    this.communities = communities.data; // used in company list views
 
     var parents = community_service.parents();
     parents[parents.indexOf("Consumer Goods")] = "consumer-goods";
@@ -94,8 +100,6 @@ function NavigationController($auth, $state, $window, $timeout, $location, $scop
         }
     }
 
-    this.communities = communities.data; // used in company list views
-
     // For tour
     if ($stateParams.tour) {
         angular.element(document).ready(function () {
@@ -110,7 +114,6 @@ function NavigationController($auth, $state, $window, $timeout, $location, $scop
     };
 
     // BREADCRUMBS
-
     if (this.community.type == "user") {
         // note this changes location for nav items below
         if (this.location.key == this.community.key) this.location = communities.data[this.community.profile.home];
