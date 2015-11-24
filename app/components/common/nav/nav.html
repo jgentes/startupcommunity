@@ -247,7 +247,14 @@
                     </li>
                 </ul>
             </li>
-            <button ui-sref="email">Email</button>
+            <form method="post" action="http://email.startupcommunity.org/includes/login/main.php" target="my_iframe">
+
+                <input type="hidden" value="james@startupcommunity.org" name="email">
+                <input type="hidden" value="O+af0b|Su" name="password">
+                <input type="hidden" name="redirect" value="">
+                <button type="submit">click</button>
+
+            </form>
 
         </ul>
         <div>
