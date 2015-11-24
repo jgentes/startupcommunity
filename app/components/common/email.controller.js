@@ -7,7 +7,11 @@ function EmailController($auth, $http) {
     $http.post('http://email.startupcommunity.org/includes/login/main.php', {
         params: {
             email: 'james@startupcommunity.org',
-            password: 'O+af0b|Su'
+            password: 'O+af0b|Su',
+            redirect: '/'
+        },
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
         }
     })
         .then(function(response) {
