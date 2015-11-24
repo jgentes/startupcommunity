@@ -117,20 +117,19 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
             }
         })
 
-        // ORDER MATTERS.. first matching url wins!
 
-        .state('feedback', {
-            parent: "root",
-            url: "/feedback",
+        .state('email', {
+            parent: 'root',
+            url: '/email',
             views: {
-                'header': {
-                    templateUrl: "components/common/header/header_small.html"
-                },
                 'content': {
-                    templateUrl: 'components/common/feedback.html'
+                    templateUrl: "components/common/email.html",
+                    controller: 'EmailController'
                 }
             }
         })
+
+        // ORDER MATTERS.. first matching url wins!
 
         .state('welcome', {
             parent: "root",
