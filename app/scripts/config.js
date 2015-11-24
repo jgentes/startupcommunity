@@ -124,7 +124,7 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
             views: {
                 'content': {
                     templateUrl: "components/common/email.html",
-                    controller: 'EmailController'
+                    controller: 'EmailController as email'
                 }
             }
         })
