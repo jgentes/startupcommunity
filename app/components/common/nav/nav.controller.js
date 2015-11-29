@@ -63,7 +63,6 @@ function NavigationController($auth, $state, $window, $timeout, $location, $scop
     if (!this.community) this.community = communities.data[this.location_path];
     if (!this.community) {
         // if still no community, there's a problem, reload the app
-        errorLogService('No community! Hopefully not looping now...');
         $window.location.reload();
     }
 
