@@ -416,27 +416,37 @@ function NavigationController($auth, $state, $window, $timeout, $location, $scop
 
 }
 
-function CommunitySettingsController($modalInstance, $window, $state, sweet, user, community_service, community, location, location_key){
+function CommunitySettingsController($modalInstance, $state, sweet, user, community_service, community, location, location_key){
 
     this.user = user;
-    this.community = community;
     this.location_key = location_key;
     var self = this;
 
-    if (community.type == 'cluster' && self.community.community_profiles[location_key] && self.community.community_profiles[location_key].embed) {
-        this.embed = self.community.community_profiles[location_key].embed;
-    } else this.embed = this.community.profile.embed;
+    //force pull of community settings every time to avoid stale data
+    community_service.getKey(community.key)
+        .then(function(response) {
+            self.community = response.data;
+
+            if (community.type == 'cluster' && self.community.community_profiles[location_key] && self.community.community_profiles[location_key].embed) {
+                self.embed = self.community.community_profiles[location_key].embed;
+            } else self.embed = self.community.profile.embed;
+
+        });
+
+
 
     this.addEmbed = function() {
         if (self.form.$valid) {
             if (!self.embed) {
                 self.embed = [];
             }
+
             self.embed.push({
                 "url" : self.formdata.embed_url_value,
-                "color" : self.formdata.embed_color_value,
-                "full" : self.formdata.embed_full_value
-            })
+                "color" : self.formdata.embed_color_value || '#fff',
+                "full" : self.formdata.embed_full_value || false
+            });
+
         } else {
             self.form.submitted = true;
         }
@@ -510,7 +520,6 @@ function CommunitySettingsController($modalInstance, $window, $state, sweet, use
 
     this.cancel = function () {
         $modalInstance.dismiss('cancel');
-        $state.reload();
     };
 }
 
