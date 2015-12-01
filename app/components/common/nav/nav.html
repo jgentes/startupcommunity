@@ -120,11 +120,11 @@
                     <li>
                         <a ui-sref="{{'community.dashboard' + nav.nav_url}}" ng-class="{active: nav.path.includes('/' + nav.community.key)}" style="padding-left: 10px; font-size: 18px; font-weight: bold;">
                             <span ng-if="nav.community.community_profiles[nav.location_path]" ng-click="c_working = true">
-                                &nbsp;{{nav.community.community_profiles[nav.location_path].name}}
+                                {{nav.community.community_profiles[nav.location_path].name}}
                                 <span loading-bars ng-show="c_working"></span>
                             </span>
                             <span ng-if="!nav.community.community_profiles[nav.location_path]">
-                                &nbsp;{{nav.community.profile.name}}
+                                {{nav.community.profile.name}}
                                 <span loading-bars ng-show="c_working"></span>
                             </span>
                         </a>
