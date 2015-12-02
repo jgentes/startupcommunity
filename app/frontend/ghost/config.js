@@ -23,9 +23,13 @@ config = {
             }
         },
         database: {
-            client: 'sqlite3',
+            client: 'mysql',
             connection: {
-                filename: path.join(__dirname, '/content/data/ghost.db')
+                host: '52.33.123.128',
+                user: 'ghost',
+                password: 'f@b!Mbdp3',
+                database: 'ghost',
+                charset: 'utf8'
             },
             debug: false
         },
@@ -55,9 +59,13 @@ config = {
             }
         },
         database: {
-            client: 'sqlite3',
+            client: 'mysql',
             connection: {
-                filename: path.join(__dirname, '/content/data/ghost.db')
+                host: '52.33.123.128',
+                user: 'ghost',
+                password: 'f@b!Mbdp3',
+                database: 'ghost',
+                charset: 'utf8'
             },
             debug: false
         },
@@ -92,15 +100,19 @@ config = {
         },
 
         database: {
-            client: 'sqlite3',
+            client: 'mysql',
             connection: {
-                filename: path.join(__dirname, '/content/data/ghost.db')
+                host: '52.33.123.128',
+                user: 'ghost',
+                password: 'f@b!Mbdp3',
+                database: 'ghost',
+                charset: 'utf8'
             },
             debug: false
         },
         server: {
             // Host to be passed to node's `net.Server#listen()`
-            host: '0.0.0.0',
+            host: '127.0.0.1',
             // Port to be passed to node's `net.Server#listen()`, for iisnode set this to `process.env.PORT`
             port: '2368'
         },
@@ -125,7 +137,7 @@ config = {
                 }
             }
         },
-
+        /*
         database: {
             client: 'sqlite3',
             connection: {
@@ -133,6 +145,19 @@ config = {
             },
             debug: false
         },
+        */
+        database: {
+            client: 'mysql',
+            connection: {
+                host: '52.33.123.128',
+                user: 'ghost',
+                password: 'f@b!Mbdp3',
+                database: 'ghost',
+                charset: 'utf8'
+            },
+            debug: false
+        },
+
         server: {
             // Host to be passed to node's `net.Server#listen()`
             host: '127.0.0.1',
@@ -146,24 +171,6 @@ config = {
 
     // **Developers only need to edit below here**
 
-    // ### Testing
-    // Used when developing Ghost to run tests and check the health of Ghost
-    // Uses a different port number
-    testing: {
-        url: 'http://127.0.0.1:2369',
-        database: {
-            client: 'sqlite3',
-            connection: {
-                filename: path.join(__dirname, '/content/data/ghost-test.db')
-            }
-        },
-        server: {
-            host: '127.0.0.1',
-            port: '2369'
-        },
-        logging: false
-    },
-
     // ### Testing MySQL
     // Used by Travis - Automated testing run through GitHub
     'testing-mysql': {
@@ -171,33 +178,13 @@ config = {
         database: {
             client: 'mysql',
             connection: {
-                host     : '127.0.0.1',
-                user     : 'root',
-                password : '',
-                database : 'ghost_testing',
-                charset  : 'utf8'
-            }
-        },
-        server: {
-            host: '127.0.0.1',
-            port: '2369'
-        },
-        logging: false
-    },
-
-    // ### Testing pg
-    // Used by Travis - Automated testing run through GitHub
-    'testing-pg': {
-        url: 'http://127.0.0.1:2369',
-        database: {
-            client: 'pg',
-            connection: {
-                host     : '127.0.0.1',
-                user     : 'postgres',
-                password : '',
-                database : 'ghost_testing',
-                charset  : 'utf8'
-            }
+                host: 'the_server_ip',
+                user: 'ghost',
+                password: 'the_password',
+                database: 'ghost',
+                charset: 'utf8'
+            },
+            debug: true
         },
         server: {
             host: '127.0.0.1',
@@ -205,6 +192,7 @@ config = {
         },
         logging: false
     }
+
 };
 
 // Export config
