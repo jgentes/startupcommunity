@@ -33,7 +33,16 @@ config = {
             },
             debug: false
         },
-
+        storage: {
+            active: 'ghost-s3',
+            'ghost-s3': {
+                accessKeyId: 'AKIAJ2QG6OLLDEJUAOEQ',
+                secretAccessKey: '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',
+                bucket: 'startupcommunity/ghost',
+                region: 'us-west-2',
+                assetHost: 'https://s3-us-west-2.amazonaws.com/startupcommunity/ghost/'
+            }
+        },
         server: {
             // Host to be passed to node's `net.Server#listen()`
             host: '127.0.0.1',
@@ -69,7 +78,16 @@ config = {
             },
             debug: false
         },
-
+        storage: {
+            active: 'ghost-s3',
+            'ghost-s3': {
+                accessKeyId: 'AKIAJ2QG6OLLDEJUAOEQ',
+                secretAccessKey: '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',
+                bucket: 'startupcommunity/ghost',
+                region: 'us-west-2',
+                assetHost: 'https://s3-us-west-2.amazonaws.com/startupcommunity/ghost/'
+            }
+        },
         server: {
             // Host to be passed to node's `net.Server#listen()`
             host: '127.0.0.1',
@@ -98,7 +116,16 @@ config = {
                 }
             }
         },
-
+        storage: {
+            active: 'ghost-s3',
+            'ghost-s3': {
+                accessKeyId: 'AKIAJ2QG6OLLDEJUAOEQ',
+                secretAccessKey: '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',
+                bucket: 'startupcommunity/ghost',
+                region: 'us-west-2',
+                assetHost: 'https://s3-us-west-2.amazonaws.com/startupcommunity/ghost/'
+            }
+        },
         database: {
             client: 'mysql',
             connection: {
@@ -135,6 +162,16 @@ config = {
                     user: process.env.MANDRILL_USERNAME,
                     pass: process.env.MANDRILL_APIKEY
                 }
+            }
+        },
+        storage: {
+            active: 'ghost-s3',
+            'ghost-s3': {
+                accessKeyId: 'AKIAJ2QG6OLLDEJUAOEQ',
+                secretAccessKey: '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',
+                bucket: 'startupcommunity/ghost',
+                region: 'us-west-2',
+                assetHost: 'https://s3-us-west-2.amazonaws.com/startupcommunity/ghost/'
             }
         },
         /*
@@ -178,9 +215,9 @@ config = {
         database: {
             client: 'mysql',
             connection: {
-                host: 'the_server_ip',
+                host: '52.33.123.128',
                 user: 'ghost',
-                password: 'the_password',
+                password: 'f@b!Mbdp3',
                 database: 'ghost',
                 charset: 'utf8'
             },
