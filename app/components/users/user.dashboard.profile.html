@@ -5,7 +5,7 @@
                 <div class="pull-right">
                     <a href="{{::profile.user.profile.linkedin.publicProfileUrl}}" target="_blank"><i class="fa fa-linkedin btn btn-default btn-xs"></i>
                     </a>
-                    <button ng-if="nav.community.type == 'network' || nav.location.type == 'network'" ng-click="profile.contact(nav.location.key)" title="Contact {{item.value.profile.name}}" class="btn btn-xs btn-info pull-right" style="margin-left: 5px;">Contact me
+                    <button ng-click="profile.contact(nav.location.key)" title="Contact {{item.value.profile.name}}" class="btn btn-xs btn-info pull-right" style="margin-left: 5px;">Contact me
                     </button>
                 </div>
             </div>
