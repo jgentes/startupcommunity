@@ -396,7 +396,11 @@ function NavigationController($auth, $state, $window, $timeout, $location, $scop
                                 "full" : embed[u].full,
                                 "expire" : Date.now() + 1800
                             };
-                            $window.localStorage.setItem('startupcommunity-embed',JSON.stringify(domain_embed));
+                            try {
+                                $window.localStorage.setItem('startupcommunity-embed',JSON.stringify(domain_embed));
+                            } catch (e) {
+                                errorLogService(e);
+                            }
                         }
                         if (embed[u].full) this.embedded = false;
                     }
