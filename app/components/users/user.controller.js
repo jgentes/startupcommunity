@@ -394,7 +394,11 @@ function InviteUserController($mixpanel, user, user_service, community, location
                         user_service.inviteUser(formdata.email, formdata.message, location.profile.name, location.key, community.key)
                             .then(function(response) {
                                 self.working = false;
-                                self.form.submitted = false;
+                                self.form = {
+                                    submitted: false,
+                                    email_value: "",
+                                    message_value: ""
+                                };
 
                                 if (response.status !== 200) {
                                     self.alert ? self.alert.message += '<br> ' + String(response.data.message) : self.alert = { type: 'danger', message: String(response.data.message || response.message) };
@@ -402,20 +406,22 @@ function InviteUserController($mixpanel, user, user_service, community, location
                                     self.alert ? self.alert.message += '<br> ' + String(response.data.message) : self.alert = { type: 'success', message: String(response.data.message || response.message) };
                                 }
 
-                                self.form.email_value = "";
-                                self.form.message_value = "";
                                 $mixpanel.track('Sent Invite');
                             })
                             .catch(function(error) {
                                 self.working = false;
-                                self.form.submitted = false;
+                                self.form = { submitted: false };
                                 self.alert = { type: 'danger', message: String(error.data.message) };
                             })
                     } else {
                         user_service.join(formdata.email, formdata.message, location.profile.name, location.key)
                             .then(function(response) {
                                 self.working = false;
-                                self.form.submitted = false;
+                                self.form = {
+                                    submitted: false,
+                                    email_value: "",
+                                    message_value: ""
+                                };
 
                                 if (response.status !== 200) {
                                     self.alert = { type: 'danger', message: String(response.data.message) };
@@ -423,13 +429,11 @@ function InviteUserController($mixpanel, user, user_service, community, location
                                     self.alert = { type: 'success', message: response.data.message };
                                 }
 
-                                self.form.email_value = "";
-                                self.form.message_value = "";
                                 $mixpanel.track('Sent Invite');
                             })
                             .catch(function(error) {
                                 self.working = false;
-                                self.form.submitted = false;
+                                self.form = { submitted: false };
                                 self.alert = { type: 'danger', message: String(error.data.message) };
                             })
                     }
