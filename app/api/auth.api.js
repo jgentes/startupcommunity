@@ -381,7 +381,7 @@ function handleLinkedin(req, res) {
                             console.log('Verified invitation');
                             userCheck(result.body.results[0].value);
                         } else {
-                            console.log('WARNING: Invalid invite code: ' + invite_code);
+                            console.log('Invalid invite code: ' + invite_code);
                             userCheck();
                             //return res.status(404).send({message: 'Sorry, this invite code is not valid: ' + invite_code});
                         }
