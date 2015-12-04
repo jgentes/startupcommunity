@@ -17,14 +17,14 @@ function handleMaintenance(res) {
         startKey = 0,
         limit = 50,
         userlist = [],
-        collection = 'communities-staging';
+        collection = 'communities';
 
     function getList(startKey, userlist, limit) {
         db.newSearchBuilder()
             .collection(collection)
             .limit(limit)
             .offset(startKey)
-            .query('@value.type:"user" AND @value.communities: "edco-stable-of-experts"')
+            .query('@value.type: "invite" AND @value.invite_communities: "mentor-connect"')
             .then(function(data){
                 var emails = [];
                 for (var item in data.body.results) {
@@ -45,16 +45,39 @@ function handleMaintenance(res) {
                     };
 
                     if (data.body.results[item].value.cities) delete data.body.results[item].value.cities;
-                    if (data.body.results[item].value.beta) delete data.body.results[item].value.beta;
-                    if (data.body.results[item].value.name) delete data.body.results[item].value.name;
-                    if (data.body.results[item].value.email) delete data.body.results[item].value.email;
-                    if (data.body.results[item].value.avatar) delete data.body.results[item].value.avatar;
-                    if (data.body.results[item].value.linkedin) delete data.body.results[item].value.linkedin;
 
                      */
 
-                    // 1 Migration for production v2.1
+
                     var newdata = data.body.results[item].value; // get current record
+
+                    /* // CHANGE COMMUNITY
+                    if (data.body.results[item].value.communities.indexOf("mentor-connect") > -1) {
+                        data.body.results[item].value.communities.splice(data.body.results[item].value.communities.indexOf("mentor-connect"), 1);
+                        if (data.body.results[item].value.communities.indexOf("expert-connect") < 0) data.body.results[item].value.communities.push("expert-connect");
+                        console.log('replaced network', data.body.results[item].value.communities)
+                    }
+
+                    for (role in data.body.results[item].value.roles) {
+                        for (community in data.body.results[item].value.roles[role]) {
+                            if (community == 'mentor-connect') {
+                                data.body.results[item].value.roles[role]['expert-connect'] = data.body.results[item].value.roles[role]['mentor-connect'];
+                                delete data.body.results[item].value.roles[role]['mentor-connect'];
+                                console.log('replaced role')
+                            }
+                        }
+                    }*/
+
+                    //for invites
+                    if (data.body.results[item].value.invite_communities.indexOf("mentor-connect") > -1) {
+                        data.body.results[item].value.invite_communities.splice(data.body.results[item].value.invite_communities.indexOf("mentor-connect"), 1);
+                        if (data.body.results[item].value.invite_communities.indexOf("expert-connect") < 0) data.body.results[item].value.invite_communities.push("expert-connect");
+                        console.log('replaced network', data.body.results[item].value.invite_communities)
+                    }
+
+                    // END CHANGE COMMUNITY
+
+
                     //newdata.type = "cluster";
 
                     /*if (newdata.roles && newdata.roles.advisor) {
@@ -78,7 +101,6 @@ function handleMaintenance(res) {
                     // ALSO BE CAREFUL TO NOT PULL FROM -DEV AND PUT INTO PRODUCTION DB!!
                     //db.put(collection, data.body.results[item].path.key, newdata);
                 }
-                console.log(emails);
 
                 if (data.body.next) {
                     startKey = startKey + limit;
