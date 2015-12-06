@@ -288,7 +288,9 @@ function handleGetTop(req, res) {
         top_results = {
             people: {},
             companies: {},
-            skills: {}
+            skills: {},
+            people_parents: {},
+            company_parents: {}
         },
         cluster_search = "";
 
@@ -336,14 +338,25 @@ function handleGetTop(req, res) {
         db.newSearchBuilder()
             .collection(keys.db.communities)
             .aggregate('top_values', 'value.profile.industries', 10)
+            .aggregate('top_values', 'value.profile.parents', 10)
             .sort('@path.reftime', 'desc')
             .query(industrysearch + ' AND @value.type: "company"')
             .then(function (result) {
 
-                top_results.industries = {
-                    count: result.body.aggregates[0].value_count,
-                    entries: result.body.aggregates[0].entries
-                };
+                for (a in result.body.aggregates) {
+                    if (result.body.aggregates[a] == 'value.profile.industries') {
+                        top_results.industries = {
+                            count: result.body.aggregates[a].value_count,
+                            entries: result.body.aggregates[a].entries
+                        };
+                    }
+                    if (result.body.aggregates[a] == 'value.profile.parents') {
+                        top_results.company_parents = {
+                            count: result.body.aggregates[a].value_count,
+                            entries: result.body.aggregates[a].entries
+                        };
+                    }
+                }
 
                 top_results.companies = {
                     count: result.body.total_count,
@@ -357,14 +370,25 @@ function handleGetTop(req, res) {
                 db.newSearchBuilder()
                     .collection(keys.db.communities)
                     .aggregate('top_values', 'value.profile.skills', 10)
+                    .aggregate('top_values', 'value.profile.parents', 10)
                     .sort('@path.reftime', 'desc')
                     .query(skillsearch + ' AND @value.type: "user"')
                     .then(function (result) {
 
-                        top_results.skills = {
-                            count: result.body.aggregates[0].value_count,
-                            entries: result.body.aggregates[0].entries
-                        };
+                        for (b in result.body.aggregates) {
+                            if (result.body.aggregates[b] == 'value.profile.skills') {
+                                top_results.skills = {
+                                    count: result.body.aggregates[b].value_count,
+                                    entries: result.body.aggregates[b].entries
+                                };
+                            }
+                            if (result.body.aggregates[b] == 'value.profile.parents') {
+                                top_results.people_parents = {
+                                    count: result.body.aggregates[b].value_count,
+                                    entries: result.body.aggregates[b].entries
+                                };
+                            }
+                        }
 
                         top_results.people = {
                             count: result.body.total_count,
@@ -386,39 +410,6 @@ function handleGetTop(req, res) {
                                 mc.set(industrysearch, JSON.stringify(top_results), function(err, val) {
                                     if (err) console.warn('WARNING: Memcache error: ', err)
                                 });
-
-                                // removed due to move to memcache
-                                /*var target = cluster_key ? cluster_key : community_key;
-
-                                console.log('Updating ' + target + ' with top results..');
-
-                                //get current record
-                                db.get(keys.db.communities, target)
-                                    .then(function (response) {
-                                        if (response.body.type == 'cluster' || response.body.type == 'network') { // use community_profiles
-                                            if (response.body.community_profiles === undefined) { // create community_profiles
-                                                response.body['community_profiles'] = {};
-                                            }
-                                            if (response.body.community_profiles[location_key]) { // don't create the location if it doesn't exist
-                                                response.body.community_profiles[location_key]["top"] = top_results;
-                                            }
-                                        } else response.body.profile["top"] = top_results;
-
-                                        // update record with new data
-                                        db.put(keys.db.communities, target, response.body)
-                                            .then(function (finalres) {
-
-                                            })
-                                            .fail(function (err) {
-                                                console.warn('WARNING:  Problem with GetTop update: ' + err);
-                                                res.status(202).send({message: 'Something went wrong: ' + err});
-                                            });
-
-                                    })
-                                    .fail(function (err) {
-                                        console.warn('WARNING:  Problem with get: ' + err);
-                                        res.status(202).send({message: 'Something went wrong: ' + err});
-                                    });*/
 
                             })
                             .fail(function (err) {

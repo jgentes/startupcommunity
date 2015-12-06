@@ -311,7 +311,7 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
             abstract: true,
             views: {
                 'header': {
-                    templateUrl: "components/common/header/header_big.html"
+                    templateUrl: "components/common/header/header_small.html"
                 },
                 'content': {
                     template: "<div ui-view='people'></div>"
@@ -332,7 +332,6 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                     }]
             },
             views: {
-                'header@root': {},
                 'people': {
                     templateUrl: 'components/common/dashboard/dashboard.html',
                     controller: "DashboardController as dashboard"

@@ -17,16 +17,19 @@ function handleMaintenance(res) {
         startKey = 0,
         limit = 50,
         userlist = [],
-        collection = 'communities';
+        collection = 'communities-dev';
 
     function getList(startKey, userlist, limit) {
         db.newSearchBuilder()
             .collection(collection)
+            .aggregate('top_values', 'value.profile.parents', 5)
+            .aggregate('top_values', 'value.communities', 5)
             .limit(limit)
             .offset(startKey)
-            .query('@value.type: "invite" AND @value.invite_communities: "mentor-connect"')
+            .query('@value.type: "user" OR @value.type: "company"')
             .then(function(data){
                 var emails = [];
+                console.log(data.body.aggregates);
                 for (var item in data.body.results) {
                     /*
                     var newdata = {
@@ -69,11 +72,11 @@ function handleMaintenance(res) {
                     }*/
 
                     //for invites
-                    if (data.body.results[item].value.invite_communities.indexOf("mentor-connect") > -1) {
+                   /* if (data.body.results[item].value.invite_communities.indexOf("mentor-connect") > -1) {
                         data.body.results[item].value.invite_communities.splice(data.body.results[item].value.invite_communities.indexOf("mentor-connect"), 1);
                         if (data.body.results[item].value.invite_communities.indexOf("expert-connect") < 0) data.body.results[item].value.invite_communities.push("expert-connect");
                         console.log('replaced network', data.body.results[item].value.invite_communities)
-                    }
+                    }*/
 
                     // END CHANGE COMMUNITY
 
@@ -86,7 +89,6 @@ function handleMaintenance(res) {
                         delete newdata.roles.advisor;
                         console.log(newdata.roles);
                     }*/
-
 
 
                     //newdata.communities = ["bend-or", "oregon", "us", "edco-stable-of-experts"];
@@ -102,14 +104,19 @@ function handleMaintenance(res) {
                     //db.put(collection, data.body.results[item].path.key, newdata);
                 }
 
-                if (data.body.next) {
+                console.log('Job done!');
+                res.end();
+
+            /*    if (data.body.next) {
                     startKey = startKey + limit;
                     console.log('Getting next group..' + startKey);
                     getList(startKey, userlist, limit);
                 } else {
                     console.log('Job done!');
                     res.end();
-                    /*
+
+
+                    /!*
                      for (var user in userlist) {
                      console.log('Updating ' + userlist[user].value.name);
                      db.put(keys.db.collections.users, userlist[user].path.key, userlist[user].value)
@@ -117,8 +124,8 @@ function handleMaintenance(res) {
                      console.log('Record updated!');
                      });
                      }
-                     */
-                }
+                     *!/
+                }*/
 
 
             });
