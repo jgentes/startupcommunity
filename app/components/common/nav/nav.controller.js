@@ -379,9 +379,9 @@ function NavigationController($auth, $state, $window, $timeout, $location, $scop
 
         if (!verified || expired) {
 
-            if (this.community.type === 'cluster' && this.community.community_profiles[this.location_path] && this.community.community_profiles[this.location_path].embed) {
-                embed = this.community.community_profiles[this.location_path].embed;
-            } else embed = this.community.profile.embed;
+            if (this.location.type === 'cluster' && this.location.community_profiles[this.location_path] && this.location.community_profiles[this.location_path].embed) {
+                embed = this.location.community_profiles[this.location_path].embed;
+            } else embed = this.location.profile.embed;
 
             if (embed) {
                 for (u in embed) {
@@ -399,10 +399,11 @@ function NavigationController($auth, $state, $window, $timeout, $location, $scop
                             try {
                                 $window.localStorage.setItem('startupcommunity-embed',JSON.stringify(domain_embed));
                             } catch (e) {
-                                errorLogService(e);
+                                //errorLogService('Localstorage problem: ', e);
                             }
                         }
                         if (embed[u].full) this.embedded = false;
+                        break;
                     }
                 }
             }
