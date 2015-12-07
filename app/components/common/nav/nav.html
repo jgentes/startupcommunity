@@ -128,7 +128,7 @@
                                 <span loading-bars ng-show="c_working"></span>
                             </span>
                         </a>
-                        <ul ng-if="nav.community.type !== 'user' && nav.community.type !== 'company'" style="display: block; padding: 5px 0 0 8px;">
+                        <ul ng-if="nav.community.type !== 'user' && nav.community.type !== 'company'" style="display: block; padding: 0 0 0 8px;">
                             <li ui-sref="{{'user.list' + nav.nav_url}}" ng-class="{ 'active' : nav.path.endsWith(nav.community.key + '/people') }">
                                 <a><i class="fa fa-caret-right"></i>People
                                 </a>

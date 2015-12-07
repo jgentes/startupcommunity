@@ -1,6 +1,7 @@
 var keys = require('../keys.json')[process.env.NODE_ENV || 'development'],
     memjs = require('memjs'),
     mc = memjs.Client.create(),
+    _ = require('lodash'),
     db = require('orchestrate')(keys.db.key);
 
 //var util = require('util'); //for util.inspect on request
@@ -337,20 +338,20 @@ function handleGetTop(req, res) {
 
         db.newSearchBuilder()
             .collection(keys.db.communities)
-            .aggregate('top_values', 'value.profile.industries', 10)
-            .aggregate('top_values', 'value.profile.parents', 10)
+            .aggregate('top_values', 'value.profile.industries')
+            .aggregate('top_values', 'value.profile.parents')
             .sort('@path.reftime', 'desc')
             .query(industrysearch + ' AND @value.type: "company"')
             .then(function (result) {
 
                 for (a in result.body.aggregates) {
-                    if (result.body.aggregates[a] == 'value.profile.industries') {
+                    if (result.body.aggregates[a].field_name == 'value.profile.industries') {
                         top_results.industries = {
                             count: result.body.aggregates[a].value_count,
                             entries: result.body.aggregates[a].entries
                         };
                     }
-                    if (result.body.aggregates[a] == 'value.profile.parents') {
+                    if (result.body.aggregates[a].field_name == 'value.profile.parents') {
                         top_results.company_parents = {
                             count: result.body.aggregates[a].value_count,
                             entries: result.body.aggregates[a].entries
@@ -369,20 +370,20 @@ function handleGetTop(req, res) {
 
                 db.newSearchBuilder()
                     .collection(keys.db.communities)
-                    .aggregate('top_values', 'value.profile.skills', 10)
-                    .aggregate('top_values', 'value.profile.parents', 10)
+                    .aggregate('top_values', 'value.profile.skills')
+                    .aggregate('top_values', 'value.profile.parents')
                     .sort('@path.reftime', 'desc')
                     .query(skillsearch + ' AND @value.type: "user"')
                     .then(function (result) {
 
                         for (b in result.body.aggregates) {
-                            if (result.body.aggregates[b] == 'value.profile.skills') {
+                            if (result.body.aggregates[b].field_name == 'value.profile.skills') {
                                 top_results.skills = {
                                     count: result.body.aggregates[b].value_count,
                                     entries: result.body.aggregates[b].entries
                                 };
                             }
-                            if (result.body.aggregates[b] == 'value.profile.parents') {
+                            if (result.body.aggregates[b].field_name == 'value.profile.parents') {
                                 top_results.people_parents = {
                                     count: result.body.aggregates[b].value_count,
                                     entries: result.body.aggregates[b].entries
@@ -404,6 +405,57 @@ function handleGetTop(req, res) {
                             .then(function (result) {
 
                                 top_results.leaders = addkeys(result.body.results).slice(0,5);
+
+                                // BEGIN PARENTS (this is mostly to avoid another api call that includes both companies and users)
+
+                                var c_labels = [],
+                                    c_numbers = [],
+                                    p_labels = [],
+                                    p_numbers = [];
+
+                                for (c in top_results.company_parents.entries) {
+                                    if (top_results.company_parents.entries[c].value) {
+                                        c_labels.push(top_results.company_parents.entries[c].value);
+                                        c_numbers.push(top_results.company_parents.entries[c].count);
+                                    }
+                                }
+
+                                for (p in top_results.people_parents.entries) {
+                                    if (top_results.people_parents.entries[p].value) {
+                                        p_labels.push(top_results.people_parents.entries[p].value);
+                                        p_numbers.push(top_results.people_parents.entries[p].count);
+                                    }
+                                }
+
+                                top_results['parents'] = {
+                                    labels: _.union(c_labels, p_labels).slice(0,3),
+                                    values: []
+                                };
+
+                                for (l in top_results.parents.labels) {
+                                    var r = 0;
+                                    if (c_numbers[c_labels.indexOf(top_results.parents.labels[l])]) {
+                                        r += c_numbers[c_labels.indexOf(top_results.parents.labels[l])];
+                                    }
+                                    if (p_numbers[p_labels.indexOf(top_results.parents.labels[l])]) {
+                                        r += p_numbers[p_labels.indexOf(top_results.parents.labels[l])];
+                                    }
+                                    top_results.parents.values.push(r);
+                                }
+                                var temp = [];
+                                for (a in top_results.parents.labels) {
+                                    temp.push({
+                                        label: top_results.parents.labels[a],
+                                        value: top_results.parents.values[a]
+                                    });
+                                }
+
+                                top_results.parents = temp;
+
+                                delete top_results.people_parents;
+                                delete top_results.company_parents;
+
+                                // END PARENTS
 
                                 if (!cache) res.status(200).send(top_results);
 

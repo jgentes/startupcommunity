@@ -22,8 +22,8 @@ function handleMaintenance(res) {
     function getList(startKey, userlist, limit) {
         db.newSearchBuilder()
             .collection(collection)
-            .aggregate('top_values', 'value.profile.parents', 5)
-            .aggregate('top_values', 'value.communities', 5)
+            .aggregate('top_values', 'value.profile.parents')
+            .aggregate('top_values', 'value.communities')
             .limit(limit)
             .offset(startKey)
             .query('@value.type: "user" OR @value.type: "company"')

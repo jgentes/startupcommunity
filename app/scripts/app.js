@@ -8,7 +8,7 @@
         'ngSanitize',
         'hSweetAlert',
         'analytics.mixpanel',
-        'chart.js',
+        'angles',
         'satellizer',
         'services',
         'angulartics',

@@ -16,7 +16,6 @@
   "dependencies": {
     "angular": "~1.4.6",
     "angular-bootstrap": "~0.12.0",
-    "angular-chart.js": "~0.7.2",
     "angular-h-sweetalert": "~1.4.5",
     "angular-knowtify": "*",
     "angular-mixpanel": "~1.1.0",
@@ -45,7 +44,10 @@
     "ng-file-upload": "~8.0.1",
     "ng-file-upload-shim": "~8.0.1",
     "bootstrap-tour": "~0.10.2",
-    "angular-bootstrap-tour": "~0.3.3"
+    "angular-bootstrap-tour": "~0.3.3",
+    "angles": "*",
+    "chart.js": "~0.1.0",
+    "Chart.js": "~1.0.2"
   },
   "resolutions": {
     "angular": ">= 1.4.0",
