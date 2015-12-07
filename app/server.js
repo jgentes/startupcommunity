@@ -64,7 +64,7 @@ app.use("/public", express.static(root + '/public'));
 
 if (process.env.NODE_ENV === "production") {
     // production-only things go here
-    app.use(enforce.HTTPS());
+    app.use(enforce.HTTPS({ trustProtoHeader: true }));
     app.use(nodalytics('UA-58555092-2'));
 
 } else {
