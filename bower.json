@@ -44,10 +44,7 @@
     "ng-file-upload": "~8.0.1",
     "ng-file-upload-shim": "~8.0.1",
     "bootstrap-tour": "~0.10.2",
-    "angular-bootstrap-tour": "~0.3.3",
-    "angles": "*",
-    "chart.js": "~0.1.0",
-    "Chart.js": "~1.0.2"
+    "angular-bootstrap-tour": "~0.3.3"
   },
   "resolutions": {
     "angular": ">= 1.4.0",

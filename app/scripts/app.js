@@ -8,7 +8,6 @@
         'ngSanitize',
         'hSweetAlert',
         'analytics.mixpanel',
-        'angles',
         'satellizer',
         'services',
         'angulartics',
