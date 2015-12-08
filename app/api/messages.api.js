@@ -53,7 +53,7 @@ function handleAddMessage(req, res) {
                 .then(function(response) {
 
                     if (response.body.code !== "items_not_found") {
-                        var user = response.body.results[0].value;
+                        var user = response.body;
 
                         // send email with knowtify with unique link
                         var knowtifyClient = new knowtify.Knowtify(keys.knowtify, false);
