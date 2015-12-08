@@ -270,6 +270,7 @@ function handleLinkedin(req, res) {
         // update Knowtify with invitation accepted
         var knowtifyClient = new knowtify.Knowtify(keys.knowtify, false);
 
+        // send 'invite accepted' email to person who sent the invite
         knowtifyClient.contacts.upsert({
             "event": 'invite_accepted',
             "contacts": [
@@ -282,6 +283,7 @@ function handleLinkedin(req, res) {
             ]
         });
 
+        // update record of person who accepted the invite (to prevent reminder emails)
         knowtifyClient.contacts.upsert({
             "contacts": [
                 {

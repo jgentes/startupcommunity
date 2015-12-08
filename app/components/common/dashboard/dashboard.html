@@ -10,7 +10,7 @@
                     <div class="pull-right" style="width: 65%;">
                         <table style="width:100%;">
                             <tr ng-repeat="p in dashboard.top.parents">
-                                <td style="margin-top:-3px; float: right; padding-right: 5px; text-align: right; min-width: 115px;">{{p.label}}</td><td style="width:100%;"><progressbar value="p.value" max="dashboard.max" type="success" class="progress-small full">{{(p.value / dashboard.max * 100).toFixed(0)}}%</progressbar></td>
+                                <td style="margin-top:-3px; float: right; padding-right: 5px; text-align: right; min-width: 115px;">{{p.label}}</td><td style="width:100%;"><progressbar value="p.value" max="dashboard.max" type="success" class="progress-small full"></progressbar></td>
                             </tr>
                         </table>
                     </div>
