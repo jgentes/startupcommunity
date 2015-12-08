@@ -391,8 +391,8 @@ function NavigationController($auth, $state, $window, $timeout, $location, $scop
                             var domain_embed = {};
                             domain_embed[domain] = {
                                 "verified" : true,
-                                "color" : embed[u].color || '#fff',
-                                "full" : embed[u].full || false,
+                                "color" : embed[u].color,
+                                "full" : embed[u].full,
                                 "expire" : Date.now() + 1800
                             };
                             try {
