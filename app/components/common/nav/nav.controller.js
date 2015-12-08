@@ -408,7 +408,10 @@ function NavigationController($auth, $state, $window, $timeout, $location, $scop
                 }
             }
 
-            if (!verified) $state.go('500');
+            if (!verified) {
+                $state.go('500');
+                errorLogService('WARNING: Embed failure: ', domain, embed);
+            }
         } else {
             if (storage) {
                 this.color = storage.color;

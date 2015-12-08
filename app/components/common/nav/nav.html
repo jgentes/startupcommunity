@@ -129,7 +129,7 @@
                             </span>
                         </a>
                         <ul ng-if="nav.community.type !== 'user' && nav.community.type !== 'company'" style="display: block; padding: 0 0 0 8px;">
-                            <li ui-sref="{{'user.list' + nav.nav_url}}" ng-class="{ 'active' : nav.path.endsWith(nav.community.key + '/people') }">
+                            <li ui-sref="{{'user.list' + nav.nav_url}}" ng-class="{ 'active' : nav.path.endsWith(nav.community.key + '/people') }" style="padding-top: 10px;">
                                 <a><i class="fa fa-caret-right"></i>People
                                 </a>
                                 <li ng-if="nav.user && (nav.community.type == 'cluster' || (nav.community.type == 'network' && nav.user.roles.leader[nav.community.key].indexOf(nav.location_path) > -1) || (nav.community.type == 'location' && nav.user.communities.indexOf(nav.location_path) > -1))" class="nav-third-level" ng-click="nav.invitePeople();">
