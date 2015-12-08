@@ -7,8 +7,9 @@ function DashboardController($stateParams, top) {
     var self = this;
     if (top && top.data) this.top = top.data;
 
+    this.max = 0;
     for (val in this.top.parents) {
-        this.max = this.top.parents[val].value + this.max;
+        this.max += this.top.parents[val].value;
     }
 
     this.location_path = $stateParams.location_path;
