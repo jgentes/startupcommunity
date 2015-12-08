@@ -571,7 +571,7 @@ function handleInviteUser(req, res) {
                     } else if (!inviteUser.community_key || (user.roles && user.roles.leader && user.roles.leader[inviteUser.community_key] && user.roles.leader[inviteUser.community_key].indexOf(inviteUser.location_key) < 0)) {
                         console.warn("No community specified, or user is not a leader in community: " + inviteUser.community_key + " for location: " + inviteUser.location_key + "!");
                         inviteUser.community_key = inviteUser.location_key;
-                    } else console.warn("WARNING: Something odd happened!");
+                    }
 
                     //if (((inviteUser.location_key == inviteUser.community_key) && user.communities.indexOf(inviteUser.location_key) > -1) || (user.roles && user.roles.leader && user.roles.leader[inviteUser.community_key] && user.roles.leader[inviteUser.community_key].indexOf(inviteUser.location_key) > -1)) {
                         // check to see if the email address already exists within the system
