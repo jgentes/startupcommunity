@@ -618,18 +618,38 @@ function handleInviteUser(req, res) {
 
                                                 var knowtifyClient = new knowtify.Knowtify(keys.knowtify, false);
 
+                                                // update client with id of discovered invite
+
                                                 knowtifyClient.contacts.upsert({
-                                                        "event": "reminder",
-                                                        "contacts": [{
-                                                            "email": inviteUser.email
-                                                        }]
+                                                        "contacts": [
+                                                            {
+                                                                "email": inviteUser.email,
+                                                                "data": {
+                                                                    "invite_code": result.body.results[0].path.key
+                                                                }
+                                                            }
+                                                        ]
                                                     },
                                                     function (success) {
-                                                        console.log('Invitation reminder sent to ' + inviteUser.email);
+                                                        console.log('Record updated');
+                                                        knowtifyClient.contacts.upsert({
+                                                                "event": "reminder",
+                                                                "contacts": [{
+                                                                    "email": inviteUser.email
+                                                                }]
+                                                            },
+                                                            function (success) {
+                                                                console.log('Invitation reminder sent to ' + inviteUser.email);
+                                                            },
+                                                            function (error) {
+                                                                console.log('WARNING:', error);
+                                                            });
                                                     },
                                                     function (error) {
                                                         console.log('WARNING:', error);
                                                     });
+
+
 
                                             } else {
                                                 // create user record with email address and community data
