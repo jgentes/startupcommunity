@@ -387,13 +387,12 @@ function NavigationController($auth, $state, $window, $timeout, $location, $scop
                 for (u in embed) {
                     if (embed[u].url == domain) {
                         verified = true;
-                        this.color = embed[u].color;
                         if ($window.localStorage) {
                             var domain_embed = {};
                             domain_embed[domain] = {
                                 "verified" : true,
-                                "color" : this.color,
-                                "full" : embed[u].full,
+                                "color" : embed[u].color || '#fff',
+                                "full" : embed[u].full || false,
                                 "expire" : Date.now() + 1800
                             };
                             try {
@@ -410,7 +409,7 @@ function NavigationController($auth, $state, $window, $timeout, $location, $scop
 
             if (!verified) {
                 $state.go('500');
-                errorLogService('WARNING: Embed failure: ', domain, embed);
+                errorLogService('WARNING: Embed failure: ' + domain + JSON.stringify(embed));
             }
         } else {
             if (storage) {
