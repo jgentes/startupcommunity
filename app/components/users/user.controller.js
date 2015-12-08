@@ -301,7 +301,7 @@ function UserProfileController($stateParams, $http, $location, $modal, $mixpanel
         if (self.question && user.data.user) {
             // update user profile
 
-            message_service.addMessage('question', user.data.user, this.user, self.question)
+            message_service.addMessage('question', user.data.user, self.user, self.question)
                 .then(function (response) {
                     self.question = undefined;
 
@@ -339,7 +339,7 @@ function UserProfileController($stateParams, $http, $location, $modal, $mixpanel
         if (self.reply[parent.key] && user.data.user) {
             // update user profile
 
-            message_service.addMessage('reply', user.data.user, this.user, self.reply[parent.key], parent)
+            message_service.addMessage('reply', user.data.user, self.user, self.reply[parent.key], parent)
                 .then(function (response) {
                     self.reply[parent.key] = undefined;
 

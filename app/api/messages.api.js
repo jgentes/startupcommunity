@@ -53,25 +53,42 @@ function handleAddMessage(req, res) {
 
         var go = function(notify) {
             //todo fix this, need to pull record of user 'to'
-            knowtifyClient.contacts.upsert({
-                    "event": notify.type,
-                    "contacts": [{
-                        "email": notify.to.profile.email,
-                        "data": {
-                            "from_name": notify.from.profile.name,
-                            "from_image": notify.from.profile.avatar,
-                            "link": notify.link,
-                            "content": notify.content,
-                            "parent": notify.parent.content
-                        }
-                    }]
-                },
-                function (success) {
-                    console.log('Notification sent to ' + notify.to.profile.email);
-                },
-                function (error) {
-                    console.log('WARNING: messages73', error);
+
+            db.get(keys.db.communities, notify.to.key)
+                .then(function(response) {
+
+                    if (response.body.code !== "items_not_found") {
+                        var user = result.body.results[0].value;
+
+                        knowtifyClient.contacts.upsert({
+                                "event": notify.type,
+                                "contacts": [{
+                                    "email": notify.to.key,
+                                    "data": {
+                                        "from_name": notify.from.profile.name,
+                                        "from_image": notify.from.profile.avatar,
+                                        "link": notify.link,
+                                        "content": notify.content,
+                                        "parent": notify.parent.content
+                                    }
+                                }]
+                            },
+                            function (success) {
+                                console.log('Notification sent to ' + notify.to.key);
+                            },
+                            function (error) {
+                                console.log('WARNING: messages73', error);
+                            });
+
+                    }
+                })
+                .fail(function(err){
+                    console.warn("WARNING:", err);
                 });
+
+
+
+
         };
 
         go(message);
