@@ -38,11 +38,7 @@ function handleAddMessage(req, res) {
     var to_notify = function(message) {
         console.log('sending notification');
 
-        // send email with knowtify with unique link
-        var knowtifyClient = new knowtify.Knowtify(keys.knowtify, false);
-
         // note: message.type triggers Knowtify event of 'question' or 'reply'
-
         message["link"] = 'https://startupcommunity.org/' +
             (message.type == 'question' ?
                     message.to.key :
@@ -52,18 +48,20 @@ function handleAddMessage(req, res) {
         if (!message.parent) message.parent = { content: "" };
 
         var go = function(notify) {
-            //todo fix this, need to pull record of user 'to'
 
             db.get(keys.db.communities, notify.to.key)
                 .then(function(response) {
 
                     if (response.body.code !== "items_not_found") {
-                        var user = result.body.results[0].value;
+                        var user = response.body.results[0].value;
+
+                        // send email with knowtify with unique link
+                        var knowtifyClient = new knowtify.Knowtify(keys.knowtify, false);
 
                         knowtifyClient.contacts.upsert({
                                 "event": notify.type,
                                 "contacts": [{
-                                    "email": notify.to.key,
+                                    "email": user.profile.email,
                                     "data": {
                                         "from_name": notify.from.profile.name,
                                         "from_image": notify.from.profile.avatar,
@@ -74,7 +72,7 @@ function handleAddMessage(req, res) {
                                 }]
                             },
                             function (success) {
-                                console.log('Notification sent to ' + notify.to.key);
+                                console.log('Notification sent to ' + user.profile.email);
                             },
                             function (error) {
                                 console.log('WARNING: messages73', error);
