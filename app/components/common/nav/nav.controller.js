@@ -347,8 +347,7 @@ function NavigationController($auth, $state, $window, $timeout, $location, $scop
     }
 
     if (this.embedded) {
-        var verified = false,
-            expired = true,
+        var expired = true,
             domain;
 
         angular.element(document).ready(function () {
@@ -371,50 +370,35 @@ function NavigationController($auth, $state, $window, $timeout, $location, $scop
         // use localStorage to persist 'allowed to embed' across communities if the initial referral domain is verified
         if ($window.localStorage && $window.localStorage.getItem('startupcommunity-embed')) {
             var storage = JSON.parse($window.localStorage.getItem('startupcommunity-embed'))[domain];
-            if (storage) {
-                verified = storage.verified;
-                expired = storage.expired > Date.now();
-            }
         }
 
-        if (!verified || expired) {
+        if (storage) {
+            this.color = storage.color;
+            if (storage.full) this.embedded = false;
+        }
 
-            if (this.location.type === 'cluster' && this.location.community_profiles[this.location_path] && this.location.community_profiles[this.location_path].embed) {
-                embed = this.location.community_profiles[this.location_path].embed;
-            } else embed = this.location.profile.embed;
+        if (this.location.type === 'cluster' && this.location.community_profiles[this.location_path] && this.location.community_profiles[this.location_path].embed) {
+            embed = this.location.community_profiles[this.location_path].embed;
+        } else embed = this.location.profile.embed;
 
-            if (embed) {
-                for (u in embed) {
-                    if (embed[u].url == domain) {
-                        verified = true;
-                        if ($window.localStorage) {
-                            var domain_embed = {};
-                            domain_embed[domain] = {
-                                "verified" : true,
-                                "color" : embed[u].color || '#fff',
-                                "full" : embed[u].full || false,
-                                "expire" : Date.now() + 1800
-                            };
-                            try {
-                                $window.localStorage.setItem('startupcommunity-embed',JSON.stringify(domain_embed));
-                            } catch (e) {
-                                //errorLogService('Localstorage problem: ', e);
-                            }
+        if (embed) {
+            for (u in embed) {
+                if (embed[u].url == domain) {
+                    if ($window.localStorage) {
+                        var domain_embed = {};
+                        domain_embed[domain] = {
+                            "color" : embed[u].color || '#fff',
+                            "full" : embed[u].full || false
+                        };
+                        try {
+                            $window.localStorage.setItem('startupcommunity-embed',JSON.stringify(domain_embed));
+                        } catch (e) {
+                            //errorLogService('Localstorage problem: ', e);
                         }
-                        if (embed[u].full) this.embedded = false;
-                        break;
                     }
+                    if (embed[u].full) this.embedded = false;
+                    break;
                 }
-            }
-
-            if (!verified) {
-                $state.go('500');
-                errorLogService('WARNING: Embed failure: ' + domain + JSON.stringify(embed));
-            }
-        } else {
-            if (storage) {
-                this.color = storage.color;
-                if (storage.full) this.embedded = false;
             }
         }
     }
