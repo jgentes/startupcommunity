@@ -36,8 +36,8 @@ function handleAddMessage(req, res) {
     var message = schema.message(addMessage.type, addMessage.from, addMessage.to.key, addMessage.content);
 
     var to_notify = function(message) {
-        console.log('sending notification');
 
+        console.log('sending notification');
         // note: message.type triggers Knowtify event of 'question' or 'reply'
         message["link"] = 'https://startupcommunity.org/' +
             (message.type == 'question' ?
@@ -48,49 +48,41 @@ function handleAddMessage(req, res) {
         if (!message.parent) message.parent = { content: "" };
 
         var go = function(notify) {
-
             db.get(keys.db.communities, notify.to.key)
                 .then(function(response) {
 
-                    if (response.body.code !== "items_not_found") {
-                        var user = response.body;
+                    var user = response.body;
 
-                        // send email with knowtify with unique link
-                        var knowtifyClient = new knowtify.Knowtify(keys.knowtify, false);
+                    // send email with knowtify with unique link
+                    var knowtifyClient = new knowtify.Knowtify(keys.knowtify, false);
 
-                        knowtifyClient.contacts.upsert({
-                                "event": notify.type,
-                                "contacts": [{
-                                    "email": user.profile.email,
-                                    "data": {
-                                        "from_name": notify.from.profile.name,
-                                        "from_image": notify.from.profile.avatar,
-                                        "link": notify.link,
-                                        "content": notify.content,
-                                        "parent": notify.parent.content
-                                    }
-                                }]
-                            },
-                            function (success) {
-                                console.log('Notification sent to ' + user.profile.email);
-                            },
-                            function (error) {
-                                console.log('WARNING: messages73', error);
-                            });
+                    knowtifyClient.contacts.upsert({
+                            "event": notify.type,
+                            "contacts": [{
+                                "email": user.profile.email,
+                                "data": {
+                                    "from_name": notify.from.profile.name,
+                                    "from_image": notify.from.profile.avatar,
+                                    "link": notify.link,
+                                    "content": notify.content,
+                                    "parent": notify.parent.content
+                                }
+                            }]
+                        },
+                        function (success) {
+                            console.log('Notification sent to ' + user.profile.email);
+                        },
+                        function (error) {
+                            console.log('WARNING: messages73', error);
+                        });
 
-                    }
                 })
                 .fail(function(err){
-                    console.warn("WARNING:", err);
+                    console.log('User not found, no notification sent: ', notify.to.key);
                 });
-
-
-
-
         };
 
         go(message);
-
         // send notifications to other people on the thread
 
         if (message.parent && message.parent.replies) {
@@ -98,12 +90,12 @@ function handleAddMessage(req, res) {
             var newMessage = message,
                 nodups = [];
 
+            if (message.to.key) nodups.push(message.to.key);
+            if (message.from.key) nodups.push(message.from.key);
+
             for (reply in message.parent.replies) {
                 // never send multiple emails to same person
-                if (nodups.indexOf(message.parent.replies[reply].from.key) < 0 &&
-                    (message.parent.replies[reply].from.key !==
-                    (message.to.profile.key || message.from.profile.key))) {
-
+                if (nodups.indexOf(message.parent.replies[reply].from.key) < 0) {
                     newMessage.to = message.parent.replies[reply].from;
                     go(newMessage);
                     nodups.push(message.parent.replies[reply].from.key);
@@ -124,8 +116,7 @@ function handleAddMessage(req, res) {
                 res.status(200).send(message);
             })
             .fail(function (err) {
-                console.error("POST FAIL:");
-                console.error(err);
+                console.error("WARNING: ", err);
                 res.status(202).send({message: "Woah! Something went wrong, but we've been notified and will take care of it."});
             })
 
@@ -139,8 +130,7 @@ function handleAddMessage(req, res) {
                 res.status(200).send(message);
             })
             .fail(function (err) {
-                console.error("POST FAIL:");
-                console.error(err);
+                console.error("WARNING: ", err);
                 res.status(202).send({message: "Woah! Something went wrong, but we've been notified and will take care of it."});
             });
     }
