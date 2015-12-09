@@ -4,7 +4,7 @@
         <div class="grey-line">
         </div>
         <div id="logo" class="light-version" style="transition: all 0.4s ease 0s;">
-            <a ui-sref="community.dashboard({location_path: nav.location_path, community_path: '', community: nav.location, location: nav.location, query: '*'})"><img src="/public/images/sc_logo.png"/></a>
+            <a ui-sref="community.dashboard({location_path: nav.location.key, community: nav.location, query: '*'})"><img src="/public/images/sc_logo.png"/></a>
         </div>
         <nav role="navigation">
             <minimaliza-menu ng-if="!nav.embedded"></minimaliza-menu>
