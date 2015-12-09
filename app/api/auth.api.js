@@ -485,34 +485,34 @@ function handleLinkedin(req, res) {
 
                                         if (invite_profile) {
                                             // note that we don't validate the invite email matches the linkedin email, so anyone can use the invite once.
-
+                                            var new_invite_profile = invite_profile;
                                             // update the invite record with user details
-                                            invite_profile.type = "user";
-                                            invite_profile.profile.linkedin = profile;
-                                            invite_profile.profile.avatar = profile.pictureUrl;
-                                            invite_profile.profile.name = profile.firstName + ' ' + profile.lastName;
-                                            invite_profile.profile.email = profile.emailAddress;
-                                            invite_profile["communities"] = invite_profile.invite_communities;
-                                            delete invite_profile.invite_communities;
+                                            new_invite_profile.type = "user";
+                                            new_invite_profile.profile.linkedin = profile;
+                                            new_invite_profile.profile.avatar = profile.pictureUrl;
+                                            new_invite_profile.profile.name = profile.firstName + ' ' + profile.lastName;
+                                            new_invite_profile.profile.email = profile.emailAddress;
+                                            new_invite_profile["communities"] = invite_profile.invite_communities;
+                                            delete new_invite_profile.invite_communities;
                                             var invitor_email = invite_profile.invitor_email;
-                                            delete invite_profile.invitor_email;
+                                            delete new_invite_profile.invitor_email;
 
                                             // need to add path for res.send
                                             var new_profile = {
                                                 path: {
                                                     key: invite_code
                                                 },
-                                                value: invite_profile
+                                                value: new_invite_profile
                                             };
 
-                                            db.put(keys.db.communities, invite_code, invite_profile)
+                                            db.put(keys.db.communities, invite_code, new_invite_profile)
                                                 .then(function () {
                                                     console.log("Profile created: " + JSON.stringify(new_profile));
                                                     res.send({
                                                         token: handleCreateToken(req, new_profile),
                                                         user: new_profile
                                                     });
-                                                    add_knowtify(invite_profile);
+                                                    add_knowtify(new_invite_profile);
                                                     accept_invite(invite_profile.profile, invitor_email);
                                                 })
                                                 .fail(function (err) {

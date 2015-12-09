@@ -4,7 +4,7 @@
     </div>
     <div class="panel-body industry_select" style="padding:5px;">
             <ui-select multiple ng-model="welcome.skills" ng-disabled="disabled" tagging="true" close-on-select="false" tagging-label="(new)" autofocus="true" limit="10" alert_title="Sorry, only 10 items here." alert_text="Focus on industries or skills that you are truly badass with." alert_type="warning" style="border:none;">
-                    <ui-select-match placeholder="Search by industry or skill..">{{$item}}</ui-select-match>
+                    <ui-select-match placeholder="Start typing an industry or skill..">{{$item}}</ui-select-match>
                     <ui-select-choices repeat="skill in welcome.industries | filter:$select.search | limitTo: 25">
                         {{skill.replace('undefined','')}}
                     </ui-select-choices>
