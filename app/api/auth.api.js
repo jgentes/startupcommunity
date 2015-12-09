@@ -296,7 +296,6 @@ function handleLinkedin(req, res) {
         });
 
         // add a question for their profile
-
         var datetime = new Date(); // added as milliseconds since epoch
 
         var question = {
