@@ -3,7 +3,8 @@ var Q = require('q'),
     url = require('url'),
     jwt = require('jsonwebtoken'),
     keys = require('../keys.json')[process.env.NODE_ENV || 'development'],
-    comm_api = require('community.api.js'),
+    CommunityApi = require(__dirname + '/community.api.js'),
+    communityApis = new CommunityApi(),
     db = require('orchestrate')(keys.db.key),
     aws = require('aws-sdk'),
     knowtify = require('knowtify-node');
@@ -87,13 +88,13 @@ var searchInCommunity = function(communities, clusters, roles, limit, offset, qu
     for (c in communities) {
 
         // determine whether one of the communities is a state
-        var state_suffix = comm_api.convert_state(location_key.replace('-',' '), 'abbrev'); // returns false if no match
-        var state = state_suffix ? ' OR "*-' + state_suffix.toLowerCase() + '")' : ')';
+        var state_suffix = communityApis.convert_state(communities[c].replace('-',' '), 'abbrev'); // returns false if no match
 
         if (state_suffix) {
-            state = ' AND @value.profile.home: "*-' + state_suffix.toLowerCase() + '"';
+            var state = ' AND @value.profile.home: ("' + communities[c] + '" OR "*-' + state_suffix.toLowerCase() + '")';
             var remove = communities.indexOf(communities[c]);
             if (remove > -1) communities.splice(remove, 1); // to avoid issues with length check
+            if (communities.length == 0) searchstring += "*";
         } else {
             searchstring += '"' + communities[c] + '"';
             if (c < (communities.length - 1)) { searchstring += ' AND '; }
@@ -107,7 +108,7 @@ var searchInCommunity = function(communities, clusters, roles, limit, offset, qu
         searchstring += ' AND (';
 
         for (i in clusters) {
-            searchstring += '@value.profile.skills:"' + clusters[i] + '"'; // scope to industries within the cluster
+            searchstring += '@value.profile.skills:"' + clusters[i] + '" OR @value.profile.parents:"' + clusters[i] + '"'; // scope to industries within the cluster
             if (i < (clusters.length - 1)) { searchstring += ' OR '; }
         }
         searchstring += ')';

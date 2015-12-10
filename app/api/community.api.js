@@ -16,6 +16,7 @@ var CommunityApi = function () {
     this.deleteCommunity = handleDeleteCommunity;
     this.getKey = handleGetKey;
     this.getTop = handleGetTop;
+    this.convert_state = convert_state;
 };
 
 var convert_state = function (name, to) {

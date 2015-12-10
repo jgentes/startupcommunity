@@ -2,6 +2,8 @@ var Q = require('q'),
     request = require('request'),
     url = require('url'),
     keys = require('../keys.json')[process.env.NODE_ENV || 'development'],
+    CommunityApi = require(__dirname + '/community.api.js'),
+    communityApis = new CommunityApi(),
     aws = require('aws-sdk'),
     db = require('orchestrate')(keys.db.key);
 
@@ -91,21 +93,34 @@ var searchInCommunity = function(communities, clusters, stages, limit, offset, q
 
         // create searchstring
         searchstring = '@value.communities:(';
+        var state = "";
+
         if (communities) {
             for (c in communities) {
-                searchstring += '"' + communities[c] + '"';
-                if (c < (communities.length - 1)) { searchstring += ' AND '; }
+
+                // determine whether one of the communities is a state
+                var state_suffix = communityApis.convert_state(communities[c].replace('-',' '), 'abbrev'); // returns false if no match
+
+                if (state_suffix) {
+                    var state = ' AND @value.profile.home: ("' + communities[c] + '" OR "*-' + state_suffix.toLowerCase() + '")';
+                    var remove = communities.indexOf(communities[c]);
+                    if (remove > -1) communities.splice(remove, 1); // to avoid issues with length check
+                    if (communities.length == 0) searchstring += "*";
+                } else {
+                    searchstring += '"' + communities[c] + '"';
+                    if (c < (communities.length - 1)) { searchstring += ' AND '; }
+                }
             }
         } else searchstring += '*';
 
-        searchstring += ') AND @value.type: "company"';
+        searchstring += ') AND @value.type: "company"' + state;
 
         if (clusters && clusters.length > 0 && clusters[0] !== '*') {
             clusters = clusters.splice(',');
             searchstring += ' AND (';
 
             for (i in clusters) {
-                searchstring += '@value.profile.industries:"' + clusters[i] + '"'; // scope to industries within the cluster
+                searchstring += '@value.profile.industries:"' + clusters[i] + '" OR @value.profile.parents:"' + clusters[i] + '"'; // scope to industries within the cluster
                 if (i < (clusters.length - 1)) { searchstring += ' OR '; }
             }
             searchstring += ')';
