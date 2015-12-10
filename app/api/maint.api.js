@@ -21,15 +21,12 @@ function handleMaintenance(res) {
 
     function getList(startKey, userlist, limit) {
         db.newSearchBuilder()
-            .collection(collection)
-            .aggregate('top_values', 'value.profile.parents')
-            .aggregate('top_values', 'value.communities')
+            .collection('communities-dev')
             .limit(limit)
             .offset(startKey)
-            .query('@value.type: "user" OR @value.type: "company"')
+            .query('@value.profile.parents: ("Agriculture" OR "Art" OR "Construction" OR "Consumer Goods" OR "Corporate" OR "Education" OR "Finance" OR "Government" OR "Healthcare" OR "Legal" OR "Manufacturing" OR "Medical" OR "Non-Profit" OR "Recreation" OR "Services" OR "Tech" OR "Transportation")')
             .then(function(data){
                 var emails = [];
-                console.log(data.body.aggregates);
                 for (var item in data.body.results) {
                     /*
                     var newdata = {
@@ -53,6 +50,19 @@ function handleMaintenance(res) {
 
 
                     var newdata = data.body.results[item].value; // get current record
+
+                    var temp = [];
+                    if (data.body.results[item].value.profile.parents.length) {
+                        console.log(data.body.results[item].value.profile.name);
+                        for (r in data.body.results[item].value.profile.parents) {
+                            console.log(data.body.results[item].value.profile.parents[r]);
+                            temp.push(data.body.results[item].value.profile.parents[r].toLowerCase());
+                        }
+                        console.log(temp);
+                        console.log('parent updated');
+                    }
+
+                    newdata.profile.parents = temp;
 
                     /* // CHANGE COMMUNITY
                     if (data.body.results[item].value.communities.indexOf("mentor-connect") > -1) {
@@ -104,10 +114,10 @@ function handleMaintenance(res) {
                     //db.put(collection, data.body.results[item].path.key, newdata);
                 }
 
-                console.log('Job done!');
-                res.end();
+                /*console.log('Job done!');
+                res.end();*/
 
-            /*    if (data.body.next) {
+                if (data.body.next) {
                     startKey = startKey + limit;
                     console.log('Getting next group..' + startKey);
                     getList(startKey, userlist, limit);
@@ -116,7 +126,7 @@ function handleMaintenance(res) {
                     res.end();
 
 
-                    /!*
+                    /*
                      for (var user in userlist) {
                      console.log('Updating ' + userlist[user].value.name);
                      db.put(keys.db.collections.users, userlist[user].path.key, userlist[user].value)
@@ -124,8 +134,8 @@ function handleMaintenance(res) {
                      console.log('Record updated!');
                      });
                      }
-                     *!/
-                }*/
+                     */
+                }
 
 
             });

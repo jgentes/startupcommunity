@@ -24,7 +24,7 @@
                         <div class="pull-left">
                             <h2 class="font-light m-b-xs">Leaders</h2>
                             <div ng-repeat="lead in dashboard.top.leaders | limitTo: 5" style="float:left;">
-                                <a class="text-info" ui-sref="user.dashboard({profile: lead.value, location_path: lead.path.key, community: {}})"><small><span ng-if="$last && $index !== 0">&nbsp;and</span>&nbsp;{{lead.value.profile.name}}<span ng-if="!$last && dashboard.top.leaders.length > 2">,</span></small></a>
+                                <a class="text-info" ui-sref="user.dashboard({profile: lead.value, location_path: lead.path.key, community: {}})"><small><span ng-if="$last && $index !== 0">&nbsp;and</span>&nbsp;{{lead.value.profile.name.toUpperCase() + lead.value.profile.name.slice(1);}}<span ng-if="!$last && dashboard.top.leaders.length > 2">,</span></small></a>
                             </div>
                         </div>
                     </div>
