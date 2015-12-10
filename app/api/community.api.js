@@ -119,6 +119,7 @@ function handleGetCommunity(req, res) {
 
     var searchString = '@path.key: ' + community; // grab the primary community object, don't use parens here
     searchString += ' OR ((@value.communities: "' + community + '"'; // + grab anything associated with this community in this location
+    searchString += ' OR @value.primary: true '; // + pull primary industries (clusters)
     searchString += ' OR @value.parents: "' + community + '")'; // + grab anything that has this community as a parent
     searchString += ' AND NOT @value.type:("company" OR "user"))'; // exclude companies and users
 
@@ -316,15 +317,14 @@ function handleGetTop(req, res) {
 
     } else if (!community_key || community_key == 'undefined') {
         community_key = location_key;
-
-        // since this is a location, determine whether this is a state
-        var state_suffix = convert_state(location_key.replace('-',' '), 'abbrev'); // returns false if no match
-        var state = state_suffix ? ' OR "*-' + state_suffix.toLowerCase() + '")' : ')';
-
-        // if so, search based on home suffix (which allows for roll-up to state level)
-        var search = '@value.profile.home: ("' + location_key + '"' + state;
-
     }
+
+    // determine whether location is a state
+    var state_suffix = convert_state(location_key.replace('-',' '), 'abbrev'); // returns false if no match
+    var state = state_suffix ? ' OR "*-' + state_suffix.toLowerCase() + '")' : ')';
+
+    // if so, search based on home suffix (which allows for roll-up to state level)
+    var search = '@value.profile.home: ("' + location_key + '"' + state;
 
     if (!search) search = '@value.communities: "' + location_key + '" AND @value.communities: ' + (community_key == '*' ? '*' : '"' + community_key + '"');
 

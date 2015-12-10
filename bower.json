@@ -44,7 +44,8 @@
     "ng-file-upload": "~8.0.1",
     "ng-file-upload-shim": "~8.0.1",
     "bootstrap-tour": "~0.10.2",
-    "angular-bootstrap-tour": "~0.3.3"
+    "angular-bootstrap-tour": "~0.3.3",
+    "angular-toArrayFilter": "~1.0.1"
   },
   "resolutions": {
     "angular": ">= 1.4.0",

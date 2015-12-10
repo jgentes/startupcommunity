@@ -112,7 +112,7 @@
             <div ng-if="nav.location.profile.sc_logo" style="margin-left: -21px;"><img class="profile-logo" ng-src="{{nav.location.profile.sc_logo}}"/></div>
         </div>
 
-        <ul side-navigation class="nav" id="side-menu" style="border-top: 1px solid #ddd;">
+        <ul side-navigation class="nav" id="side-menu" style="border-top: 1px solid #ddd; margin-bottom: 50px;">
 
             <li class="active" tour-step order="1" title="People and Companies" content="To view people by role, or sort companies by revenue, visit the People and Company pages." placement="right">
 
@@ -203,7 +203,7 @@
                 </span>
                 </a>
                 <ul class="nav nav-second-level">
-                    <li ng-if="!nav.clusters || nav.clusters === {}">
+                    <li ng-if="!nav.clusters">
                         <a title="Edit the skills in your user profile to associate yourself with a cluster" class="nav-nohover">No clusters yet</a>
                     </li>
                     <li ng-repeat="item in nav.clusters">
@@ -237,7 +237,7 @@
                     <li ng-if="!nav.parents || nav.parents === []">
                         <a title="Edit your user profile to associate yourself with an industry" class="nav-nohover">No industries yet</a>
                     </li>
-                    <li ng-repeat="item in nav.parents">
+                    <li ng-repeat="item in nav.parents | toArray | orderBy: 'key'">
                         <a ui-sref="{{'community.dashboard' + nav.nav_jump}}" ng-class="{active: nav.path.includes('/' + item.key)}" ng-click="cl_working = true">
                             <span ng-if="item.community_profiles[nav.location_path]">
                                 <i ng-class="'fa ' + item.community_profiles[nav.location_path].icon"></i> {{item.community_profiles[nav.location_path].name}}

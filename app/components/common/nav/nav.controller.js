@@ -99,6 +99,8 @@ function NavigationController($auth, $state, $window, $timeout, $location, $scop
         }
     }
 
+    if (angular.equals({}, this.clusters)) this.clusters = undefined; // had a hard time checking for empty object in the html
+
     // For tour
     if ($stateParams.tour) {
         angular.element(document).ready(function () {

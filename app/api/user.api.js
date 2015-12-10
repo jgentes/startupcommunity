@@ -3,6 +3,7 @@ var Q = require('q'),
     url = require('url'),
     jwt = require('jsonwebtoken'),
     keys = require('../keys.json')[process.env.NODE_ENV || 'development'],
+    comm_api = require('community.api.js'),
     db = require('orchestrate')(keys.db.key),
     aws = require('aws-sdk'),
     knowtify = require('knowtify-node');
@@ -81,13 +82,25 @@ var searchInCommunity = function(communities, clusters, roles, limit, offset, qu
 
     // create searchstring
     searchstring = '@value.communities:(';
+    var state = "";
 
     for (c in communities) {
-        searchstring += '"' + communities[c] + '"';
-        if (c < (communities.length - 1)) { searchstring += ' AND '; }
+
+        // determine whether one of the communities is a state
+        var state_suffix = comm_api.convert_state(location_key.replace('-',' '), 'abbrev'); // returns false if no match
+        var state = state_suffix ? ' OR "*-' + state_suffix.toLowerCase() + '")' : ')';
+
+        if (state_suffix) {
+            state = ' AND @value.profile.home: "*-' + state_suffix.toLowerCase() + '"';
+            var remove = communities.indexOf(communities[c]);
+            if (remove > -1) communities.splice(remove, 1); // to avoid issues with length check
+        } else {
+            searchstring += '"' + communities[c] + '"';
+            if (c < (communities.length - 1)) { searchstring += ' AND '; }
+        }
     }
 
-    searchstring += ') AND @value.type: "user"';
+    searchstring += ') AND @value.type: "user"' + state;
 
     if (clusters && clusters.length > 0 && clusters[0] !== '*') {
         clusters = clusters.splice(',');
@@ -112,6 +125,7 @@ var searchInCommunity = function(communities, clusters, roles, limit, offset, qu
     }
 
     if (query) { searchstring += ' AND ' + '(' + query + ')'; }
+
     console.log(searchstring);
     var deferred = Q.defer();
     db.newSearchBuilder()
