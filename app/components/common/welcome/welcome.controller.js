@@ -347,6 +347,7 @@ function WelcomeController($auth, $q, $http, $mixpanel, $stateParams, $scope, $s
         // add parent industry
         switch(self.selectedParent) {
             case 'Consumer Goods':
+                // special because it needs to add a hyphen
                 self.user.profile["parents"] = ['consumer-goods'];
                 break;
             default:

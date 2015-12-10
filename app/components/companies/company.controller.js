@@ -240,6 +240,18 @@ function AddCompanyController($mixpanel, company_service, community) {
 
         if (community.type == 'cluster') community_path = location.key; // do not allow companies to be added directly to clusters
 
+        if (self.selectedCompany.parent) {
+            // adjust parent industry caps
+            switch(self.selectedCompany.parent) {
+                case 'Consumer Goods':
+                    // special because it needs to add a hyphen
+                    self.selectedCompany.parent = 'consumer-goods';
+                    break;
+                default:
+                    self.selectedCompany.parent = self.selectedCompany.parent.toLowerCase();
+            }
+        }
+
         company_service.addCompany(self.selectedCompany, role, location.key, community_path)
             .then(function(response) {
 

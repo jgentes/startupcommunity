@@ -218,7 +218,7 @@ function handleAddCompany(req, res) {
                     } else if (!addCompany.community_key || (user.roles && user.roles.leader && user.roles.leader[addCompany.community_key] && user.roles.leader[addCompany.community_key].indexOf(addCompany.location_key) < 0)) {
                         console.warn("No community specified, or user is not a leader in community: " + addCompany.community_key + " for location: " + addCompany.location_key + "!");
                         addCompany.community_key = addCompany.location_key;
-                    } else console.warn("WARNING: Something odd happened!");
+                    }
 
                     var company = schema.angellist(addCompany.al_profile, addCompany.location_key, addCompany.community_key);
                     if (company.profile.angellist.industries) delete company.profile.angellist.industries;
