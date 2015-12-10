@@ -279,7 +279,6 @@ function handleGetCommunity(req, res) {
 }
 
 function handleGetTop(req, res) {
-    // GetTop updates a db record that is used as cache for subsequent reads by client.. 4 calls is too expensive to call directly from the client
     //console.log(util.inspect(req)); // used for logging circular request
     var community_key = req.params.community_key,
         location_key = req.params.location_key,
@@ -315,9 +314,17 @@ function handleGetTop(req, res) {
             cluster_search += '"' + industry_keys[i] + '"';
         }
 
-    } else if (!community_key || community_key == 'undefined') community_key = location_key;
+    } else if (!community_key || community_key == 'undefined') {
+        community_key = location_key;
 
-    var search = '@value.communities: "' + location_key + '" AND @value.communities: ' + (community_key == '*' ? '*' : '"' + community_key + '"');
+        // since this is a location, determine whether this is a state
+        var state_suffix = convert_state(location_key.replace('-',' '), 'abbrev'); // returns false if no match
+        var state = state_suffix ? ' OR "*-' + state_suffix.toLowerCase() + '")' : ')';
+
+        // if so, search based on home suffix (which allows for roll-up to state level)
+        var search = '@value.profile.home: ("' + location_key + '"' + state;
+
+    } else search = '@value.communities: "' + location_key + '" AND @value.communities: ' + (community_key == '*' ? '*' : '"' + community_key + '"');
 
     // get companies and industries
 
