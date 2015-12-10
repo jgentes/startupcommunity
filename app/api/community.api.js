@@ -324,7 +324,9 @@ function handleGetTop(req, res) {
         // if so, search based on home suffix (which allows for roll-up to state level)
         var search = '@value.profile.home: ("' + location_key + '"' + state;
 
-    } else search = '@value.communities: "' + location_key + '" AND @value.communities: ' + (community_key == '*' ? '*' : '"' + community_key + '"');
+    }
+
+    if (!search) search = '@value.communities: "' + location_key + '" AND @value.communities: ' + (community_key == '*' ? '*' : '"' + community_key + '"');
 
     // get companies and industries
 

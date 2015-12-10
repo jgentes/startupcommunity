@@ -176,17 +176,20 @@
                     Networks
 
                 </span>
-                    <div ng-if="nav.user.communities.indexOf(nav.location_path) > -1 && nav.communities[nav.location_path].type == 'location'" class="pe-7s-close fa-rotate-45 pull-right" ng-click="nav.addNetwork(); $event.stopPropagation();" tooltip-placement="left" tooltip="Add Network" style="opacity: .6; cursor: pointer; margin-top: 4px; font-size: 15px;"></div>
+
                 </a>
                 <ul class="nav nav-second-level">
                     <li ng-if="!nav.networks || nav.networks === {}">
-                        <a title="You must be invited to become a member of a network">No networks yet</a>
+                        <a title="You must be invited to become a member of a network" class="nav-nohover">No networks yet</a>
                     </li>
                     <li ng-repeat="item in nav.networks">
                         <a ui-sref="{{'community.dashboard' + nav.nav_jump}}" ng-class="{active: nav.path.includes('/' + item.key)}" ng-click="n_working = true">
                                 <i ng-class="'fa ' + item.profile.icon"></i> {{item.profile.name}}
                                 <span loading-bars ng-show="n_working"></span>
                         </a>
+                    </li>
+                    <li ng-if="nav.user.communities.indexOf(nav.location_path) > -1 && nav.communities[nav.location_path].type == 'location'">
+                        <a ng-click="nav.addNetwork();" style="color: #aaa;">+&nbsp;&nbsp;Add Network</a>
                     </li>
                 </ul>
             </li>
@@ -198,11 +201,10 @@
                     Clusters
 
                 </span>
-                    <div ng-if="nav.user.communities.indexOf(nav.location_path) > -1 && nav.communities[nav.location_path].type == 'location'" class="pe-7s-close fa-rotate-45 pull-right" ng-click="nav.addCluster(); $event.stopPropagation();" tooltip-placement="left" tooltip="Add Cluster" style="opacity: .6; cursor: pointer; margin-top: 4px; font-size: 15px;"></div>
                 </a>
                 <ul class="nav nav-second-level">
                     <li ng-if="!nav.clusters || nav.clusters === {}">
-                        <a title="Edit the skills in your user profile to associate yourself with a cluster">No clusters yet</a>
+                        <a title="Edit the skills in your user profile to associate yourself with a cluster" class="nav-nohover">No clusters yet</a>
                     </li>
                     <li ng-repeat="item in nav.clusters">
                         <a ui-sref="{{'community.dashboard' + nav.nav_jump}}" ng-class="{active: nav.path.includes('/' + item.key)}" ng-click="cl_working = true">
@@ -217,6 +219,9 @@
 
                         </a>
                     </li>
+                    <li ng-if="nav.user.communities.indexOf(nav.location_path) > -1 && nav.communities[nav.location_path].type == 'location'">
+                        <a ng-click="nav.addCluster();" style="color: #aaa;">+&nbsp;&nbsp;Add Cluster</a>
+                    </li>
                 </ul>
             </li>
 
@@ -230,7 +235,7 @@
                 </a>
                 <ul class="nav nav-second-level">
                     <li ng-if="!nav.parents || nav.parents === []">
-                        <a title="Edit your user profile to associate yourself with an industry">No industries yet</a>
+                        <a title="Edit your user profile to associate yourself with an industry" class="nav-nohover">No industries yet</a>
                     </li>
                     <li ng-repeat="item in nav.parents">
                         <a ui-sref="{{'community.dashboard' + nav.nav_jump}}" ng-class="{active: nav.path.includes('/' + item.key)}" ng-click="cl_working = true">
