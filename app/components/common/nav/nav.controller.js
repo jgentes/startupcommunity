@@ -127,7 +127,6 @@ function NavigationController($auth, $state, $window, $timeout, $location, $scop
 
     this.nav_jump = (this.location && this.location.type == 'location') || ((this.community.type == "user" || this.community.type == "company") &&
         (this.location && this.location.type == 'location')) ?
-
         "({community_path: item.key, community: item, query: '*', location_path: nav.location.key})" :
         "({community_path: item.key, community: item, query: '*', location_path: nav.location.profile.home})";
 

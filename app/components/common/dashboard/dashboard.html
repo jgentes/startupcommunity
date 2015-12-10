@@ -10,7 +10,7 @@
                     <div class="pull-right" style="width: 65%;">
                         <table style="width:100%;">
                             <tr ng-repeat="p in dashboard.top.parents">
-                                <td style="margin-top:-3px; float: right; padding-right: 5px; text-align: right; min-width: 115px;"><a href="{{nav.community.key + '/' + p.label}}">{{p.label[0].toUpperCase() + p.label.slice(1);}}</a></td><td style="width:100%;"><progressbar value="p.value" max="dashboard.max" type="success" class="progress-small full"></progressbar></td>
+                                <td style="margin-top:-3px; float: right; padding-right: 5px; text-align: right; min-width: 115px;"><a ui-sref="community.dashboard({community_path: p.label, community: nav.communities[p.label], query: '*', location_path: nav.location.key})">{{p.label[0].toUpperCase() + p.label.slice(1);}}</a></td><td style="width:100%;"><progressbar value="p.value" max="dashboard.max" type="success" class="progress-small full"></progressbar></td>
                             </tr>
                         </table>
                     </div>
