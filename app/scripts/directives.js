@@ -320,7 +320,7 @@ function randomQuote() {
         restrict: 'A',
         replace: true,
         transclude: true,
-        template: '<li style="list-style: none;"><span id="quote">' + rand + '</span><a ng-click="auth.clickToTweet()"><img id="tweet-this" src="/public/images/twitter-16.png" style="margin-left: 5px; margin-top: -4px; height: 13px; width: 13px;"/></a></li>'
+        template: '<span>' + rand + '</span>'
     };
 }
 
