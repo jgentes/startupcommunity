@@ -59,4 +59,11 @@ function LoginController($auth, $state, $mixpanel, $stateParams, sweet) {
                 self.working = false;
             });
     };
+
+    this.clickToTweet = function() {
+        var getQuote = document.getElementById( "quote" ).innerHTML;
+
+        window.open( "http://twitter.com/intent/tweet?text=" + getQuote + "%20via%20StartupCommunity.org&related=startupyourcity&", "twitterwindow", "height=450, width=550, toolbar=0, location=0, menubar=0, directories=0, scrollbars=0" );
+
+    }
 }

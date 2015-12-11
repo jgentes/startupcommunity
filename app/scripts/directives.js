@@ -203,6 +203,7 @@ function backToTop() {
     };
 }
 
+
 function randomQuote() {
     var quotes = [
         "&quot;The best minute you spend is the one you invest in people.&quot;  -- Ken Blanchard", 
@@ -224,7 +225,7 @@ function randomQuote() {
         "&quot;Einstein explained his theory to me every day, and on my arrival, I was fully convinced that he understood it.&quot; -- Chaim Weizmann", 
         "&quot;Two roads diverged in a wood, and I - I took the one less traveled by, and that has made all the difference.&quot; -- Robert Frost", 
         "&quot;One person cannot do right in one department of life whilst they are occupied in doing wrong in any other departnment. Life is one indivisible whole.&quot; -- Mahatma Gandhi", 
-        "&quot;Lying makes a problem part of the future; truth makes a problem part of the past.&quot; -- Rick Pitino", 
+        "&quot;Lying makes a problem part of the future. Truth makes a problem part of the past.&quot; -- Rick Pitino",
         "&quot;Every man gives his life to what he believes. Every woman gives her life for what she believes. Sometimes people believe in little or nothing, and so they give their lives to little or nothing.&quot; -- Joan of Arc", 
         "&quot;Be who you are and say what you feel, because those who mind don't matter and those who matter don't mind.&quot; -- Dr. Seuss", 
         "&quot;Act as if what you do makes a difference. It does.&quot; -- William James", 
@@ -239,13 +240,13 @@ function randomQuote() {
         "&quot;The outstanding leaders of every age are those who set up their own quotas and constantly exceed them.&quot; -- Thomas J. Watson", 
         "&quot;In the business world, everyone is paid in two coins: cash and experience. Take the experience first; the cash will come later.&quot; -- Harold Geneen", 
         "&quot;They who every morning plan the transactions of the day and follows out that plan carries a thread that will guide them through the labrynth of the most busy life.&quot; -- Victor Hugo", 
-        "&quot;There are three marks of a superior person: being virtuous, they are free from anxiety; being wise, they are free from perplexity; being brave, they are free from fear.&quot; -- Confucius", 
+        "&quot;There are three marks of a superior person: Being virtuous, they are free from anxiety. Being wise, they are free from perplexity. Being brave, they are free from fear.&quot; -- Confucius",
         "&quot;Wherever a person goes to dwell, their character goes with them.&quot; -- African Proverb", 
         "&quot;The percentage of mistakes in quick decisions is no greater than in long-drown-out vacillations, and the effect of decisiveness itself makes things go and creates confidence.&quot; -- Anne O'Hare McCormick", 
         "&quot;If anyone thinks they have no responsibilities, it is because they have not sought them out.&quot; -- Mary Lyon", 
         "&quot;We are what we repeatedly do. Excellence, then, is not an act, but a habit.&quot; -- Aristotle", 
         "&quot;While one person hesitates because they feel inferior, the other is busy making mistakes and becoming superior.&quot; -- Henry C. Link", 
-        "&quot;Success is a process; goal-setting is a process; the value of both lies not only in achievement, but also in a sense of direction for one's life.&quot; -- Lennon Ledbetter", 
+        "&quot;Success is a process. Goal-setting is a process. The value of both lies not only in achievement, but also in a sense of direction for one's life.&quot; -- Lennon Ledbetter",
         "&quot;The starting point of all achievement is desire.&quot; -- Napoleon Hill", 
         "&quot;A person's success or failure in life is determined as much by how they act during their leisure as by how they act during their work hours. Tell me how a young person spends their evenings and I will tell you how they are likely to spend the latter part of their life.&quot; -- B. C. Forbes", 
         "&quot;Education is when you read the fine print. Experience is what you get if you don't.&quot; -- Peter Seeger", 
@@ -265,7 +266,7 @@ function randomQuote() {
         "&quot;No decision has been made unless carrying it out in specific steps has become someone's work assignment and responsibility.&quot; -- Peter F. Drucker", 
         "&quot;In the absence of clearly-defined goals, we become strangely loyal to performing daily trivia until ultimately we become enslaved by it.&quot; -- Robert Heinlein", 
         "&quot;Drastic action can be costly, but it can be less expensive than continuing inaction.&quot; -- Richard Neustadt", 
-        "&quot;Pain is inevitable; suffering is optional.&quot; -- H. Witte", 
+        "&quot;Pain is inevitable.. suffering is optional.&quot; -- H. Witte",
         "&quot;Be absolutely determined to enjoy what you do.&quot; -- Gerry Sikorski", 
         "&quot;You cannot truly listen to anyone and do anything else at the same time.&quot; -- M. Scott Peck", 
         "&quot;There are many wonderful things that will never be done if you do not do them.&quot; -- Charles D. Gill", 
@@ -296,7 +297,7 @@ function randomQuote() {
         "&quot;The No. 1 reason people fail in life is because they listen to their friends, family, and neighbors.&quot; -- Napoleon Hill", 
         "&quot;To be successful you must accept all challenges that come your way. You can't just accept the ones you like.&quot; -- Mike Gafka", 
         "&quot;You may have to fight a battle more than once to win it.&quot; -- Margaret Thatcher", 
-        "&quot;Be patient with yourself. Self-growth is tender; it's holy ground. There's no greater investment.&quot; -- Stephen Covey", 
+        "&quot;Be patient with yourself. Self-growth is tender - it's holy ground. There's no greater investment.&quot; -- Stephen Covey",
         "&quot;I owe my success to having listened respectfully to the very best advice, and then going away and doing the exact opposite.&quot; -- G. K. Chesterton", 
         "&quot;Many of life's failures are people who did not realize how close they were to success when they gave up.&quot; --Thomas A. Edison", 
         "&quot;What would you attempt to do if you knew you would not fail? -- Robert Schuller", 
@@ -308,7 +309,7 @@ function randomQuote() {
         "&quot;We forge the chains we wear in life.&quot; -- Charles Dickens", 
         "&quot;Tension is who you think you should be, relaxation is who you are.&quot; -- Chinese Proverb", 
         "&quot;Keep your fears to yourself, but share your courage with others.&quot; -- Robert Louis Stevenson", 
-        "&quot;Surround yourself with great people; delegate authority; get out of the way.&quot; -- Ronald Reagan", 
+        "&quot;Surround yourself with great people. Delegate authority. Get out of the way.&quot; -- Ronald Reagan",
         "&quot;Do it or not. There is no try.&quot; -- Yoda", 
         "&quot;The person who says it cannot be done should not interrupt the person who is doing it.&quot; -- Chinese proverb", 
         "&quot;The question isn't who is going to let me; it's who is going to stop me.&quot; -- Ayn Rand", 
@@ -319,7 +320,7 @@ function randomQuote() {
         restrict: 'A',
         replace: true,
         transclude: true,
-        template: '<li style="list-style: none;">' + rand + '</li>'
+        template: '<li style="list-style: none;"><span id="quote">' + rand + '</span><a ng-click="auth.clickToTweet()"><img id="tweet-this" src="/public/images/twitter-16.png" style="margin-left: 5px; margin-top: -4px; height: 13px; width: 13px;"/></a></li>'
     };
 }
 
