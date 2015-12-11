@@ -59,16 +59,16 @@
             </div>
 
             <div ng-if="!nav.embedded" class="navbar-right">
-                <ul class="nav navbar-nav no-borders" tour-step order="4" title="Your Profile" content="People can ask you questions on your profile page. Click 'End tour' to take a look." placement="bottom">
-                    <li ng-if="nav.user" class="dropdown" style="padding-top: 10px;">
-                        <div class="pull-left" style="padding-top: 3px; white-space: nowrap;     text-align: right; padding-right: 20px;" >
+                <ul class="nav navbar-nav no-borders">
+                    <li ng-if="nav.user" class="dropdown" style="padding-top: 10px; padding-left: 10px;" tour-step order="4" title="Your Profile" content="People can ask you questions on your profile page. Click 'End tour' to take a look." placement="bottom">
+                        <div class="pull-left" style="padding-top: 3px; white-space: nowrap;     text-align: right; padding-right: 20px;">
                             <a ui-sref="user.dashboard({profile: nav.user, location_path: nav.user.key, community: {}})">{{nav.user.profile.name}}</a>
                             <div style="margin-left: -10px; padding-top: 1px;">
                                 <span ng-repeat="(item, val) in nav.user.roles" class="user-role" ><i ng-attr-title="{{item[0].toUpperCase() + item.slice(1);}}" style="font-weight: bold;" ng-class="{'text-primary pe-7s-paper-plane' : item == 'founder', 'text-danger pe-7s-flag' : item == 'leader', 'text-info pe-7s-study' : item == 'mentor', 'text-success pe-7s-gleam' : item == 'investor', 'text-default pe-7s-ball' : item == 'team', 'text-warning pe-7s-portfolio' : item == 'provider'}"></i></span>
                             </div>
                         </div>
                         <div class="pull-right" style="padding-right: 10px;">
-                            <a ui-sref="user.dashboard({profile: nav.user, location_path: nav.user.key, community: {}})"><img class="img-circle m-b" ng-src="{{nav.user.profile.avatar || nav.user.profile.linkedin.pictureUrl || '/public/images/blank_avatar.png'}}" alt="{{nav.user.profile.name}}" style="height: 40px; width: 40px; " onerror="this.src='/public/images/blank_avatar.png'"/></a>
+                            <a ui-sref="user.dashboard({profile: nav.user, location_path: nav.user.key, community: {}})"><img title="Your Profile" class="img-circle m-b" ng-src="{{nav.user.profile.avatar || nav.user.profile.linkedin.pictureUrl || '/public/images/blank_avatar.png'}}" alt="{{nav.user.profile.name}}" style="height: 40px; width: 40px; " onerror="this.src='/public/images/blank_avatar.png'"/></a>
                         </div>
                     </li>
                     <li ng-if="!nav.user" class="dropdown">
@@ -82,20 +82,20 @@
                         </div>
                     </li>
                     <li ng-if="nav.user" id="knowtify" class="dropdown">
-                        <a>
+                        <a tooltip-placement="bottom" tooltip="Alerts">
                             <i class="pe-7s-bell"></i>
                         </a>
                     </li>
                     <li ng-if="nav.user" class="dropdown">
-                        <a ng-click="nav.openChat()" tooltip-placement="left" tooltip="Help">
+                        <a ng-click="nav.openChat()" tooltip-placement="bottom" tooltip="Help">
                             <i class="pe-7s-help1"></i>
                         </a>
-                        <span ng-show="nav.chatMessageCount">
+                        <a ng-show="nav.chatMessageCount">
                             <span class="helpcrunch_message_count" ng-bind="nav.chatMessageCount"></span>
-                        </span>
+                        </a>
                     </li>
                     <li ng-if="nav.user" class="dropdown">
-                        <a tooltip-placement="left" tooltip="Logout" href="/logout" style="padding-right: 30px;">
+                        <a tooltip-placement="bottom" tooltip="Logout" href="/logout" style="padding-right: 30px;">
                             <i class="pe-7s-upload pe-rotate-90"></i>
                         </a>
                     </li>

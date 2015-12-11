@@ -44,7 +44,7 @@ function WelcomeController($auth, $q, $http, $mixpanel, $stateParams, $scope, $s
         if (self.user.profile.parents) {
             switch(self.user.profile.parents[0]) {
                 case 'consumer-goods':
-                    self.selectedParent = 'Consumer Goods';
+                    self.selectedParent = 'Consumer-Goods';
                     break;
                 case 'non-profit':
                     self.selectedParent = 'Non-Profit';
@@ -345,14 +345,7 @@ function WelcomeController($auth, $q, $http, $mixpanel, $stateParams, $scope, $s
         self.user.profile["skills"] = self.skills;
 
         // add parent industry
-        switch(self.selectedParent) {
-            case 'Consumer Goods':
-                // special because it needs to add a hyphen
-                self.user.profile["parents"] = ['consumer-goods'];
-                break;
-            default:
-                self.user.profile["parents"] = [self.selectedParent.toLowerCase()];
-        }
+        self.user.profile["parents"] = [self.selectedParent.toLowerCase()];
 
         // update user profile
         user_service.updateProfile(self.user)

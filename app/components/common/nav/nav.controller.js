@@ -69,7 +69,6 @@ function NavigationController($auth, $state, $window, $timeout, $location, $scop
     this.communities = communities.data; // used in company list views
 
     var parents = community_service.parents();
-    parents[parents.indexOf("Consumer Goods")] = "consumer-goods";
     parents = parents.join('|').toLowerCase().split('|'); // change all to lowercase
 
     // sort communities for use in nav and child dashboard pages
@@ -521,7 +520,7 @@ function addClusterController($modalInstance, $stateParams, $mixpanel, sweet, co
     this.name = ""; // to avoid 'undefined' for initial url
     var self = this;
 
-    this.parents = [ 'Agriculture', 'Art', 'Construction', 'Consumer Goods', 'Corporate', 'Education', 'Finance', 'Government', 'Healthcare', 'Legal', 'Manufacturing', 'Medical', 'Non-Profit', 'Recreation', 'Services', 'Tech', 'Transportation' ];
+    this.parents = [ 'Agriculture', 'Art', 'Construction', 'Consumer-Goods', 'Corporate', 'Education', 'Finance', 'Government', 'Healthcare', 'Legal', 'Manufacturing', 'Medical', 'Non-Profit', 'Recreation', 'Services', 'Tech', 'Transportation' ];
 
     this.industryList = community_service.industries();
 

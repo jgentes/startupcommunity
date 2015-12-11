@@ -24,7 +24,7 @@ function handleMaintenance(res) {
             .collection('communities-dev')
             .limit(limit)
             .offset(startKey)
-            .query('@value.profile.parents: ("Agriculture" OR "Art" OR "Construction" OR "Consumer Goods" OR "Corporate" OR "Education" OR "Finance" OR "Government" OR "Healthcare" OR "Legal" OR "Manufacturing" OR "Medical" OR "Non-Profit" OR "Recreation" OR "Services" OR "Tech" OR "Transportation")')
+            .query('@value.profile.parents: ("Agriculture" OR "Art" OR "Construction" OR "Consumer-Goods" OR "Corporate" OR "Education" OR "Finance" OR "Government" OR "Healthcare" OR "Legal" OR "Manufacturing" OR "Medical" OR "Non-Profit" OR "Recreation" OR "Services" OR "Tech" OR "Transportation")')
             .then(function(data){
                 var emails = [];
                 for (var item in data.body.results) {
