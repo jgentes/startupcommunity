@@ -58,7 +58,7 @@ app.use(logger('dev'));
 app.use(methodOverride());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use("/", express.static(root + process.env.path));
+app.use("/", express.static(root + process.env.SC_PATH));
 app.use("/public", express.static(root + '/public'));
 
 if (process.env.NODE_ENV === "production") {
@@ -160,7 +160,7 @@ app.post('/api/logger', function (req, res) {
 
 // Frontend Homepage & Blog
 app.get('/', function (req, res, next) {
-  res.sendFile("frontend.html", {root: root + process.env.path});
+  res.sendFile("frontend.html", {root: root + process.env.SC_PATH});
 });
 
 ghost({
@@ -174,7 +174,7 @@ ghost({
 // Backend App
 
 app.get('/*', function (req, res, next) {
-  res.sendFile("app.html", {root: root + process.env.path});
+  res.sendFile("app.html", {root: root + process.env.SC_PATH});
 });
 
 var port = process.env.PORT || 5000;
