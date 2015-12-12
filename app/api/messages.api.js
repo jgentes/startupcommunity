@@ -1,6 +1,5 @@
-var keys = require('../keys.json')[process.env.NODE_ENV || 'development'],
-    knowtify = require('knowtify-node'),
-    db = require('orchestrate')(keys.db.key);
+var knowtify = require('knowtify-node'),
+    db = require('orchestrate')(process.env.DB_KEY);
 
 var MessagesApi = function() {
         this.addMessage = handleAddMessage;
@@ -48,13 +47,13 @@ function handleAddMessage(req, res) {
         if (!message.parent) message.parent = { content: "" };
 
         var go = function(notify) {
-            db.get(keys.db.communities, notify.to.key)
+            db.get(process.env.DB_COMMUNITIES, notify.to.key)
                 .then(function(response) {
 
                     var user = response.body;
 
                     // send email with knowtify with unique link
-                    var knowtifyClient = new knowtify.Knowtify(keys.knowtify, false);
+                    var knowtifyClient = new knowtify.Knowtify(process.env.KNOWTIFY, false);
 
                     knowtifyClient.contacts.upsert({
                             "event": notify.type,
@@ -107,7 +106,7 @@ function handleAddMessage(req, res) {
     // check if this is a reply to existing thread
     if (addMessage.parent) {
 
-        db.newPatchBuilder(keys.db.messages, addMessage.parent.key)
+        db.newPatchBuilder(process.env.DB_MESSAGES, addMessage.parent.key)
             .append("replies", [message])
             .apply()
             .then(function (result) {
@@ -122,7 +121,7 @@ function handleAddMessage(req, res) {
 
     } else {
 
-        db.post(keys.db.messages, message)
+        db.post(process.env.DB_MESSAGES, message)
             .then(function (response) {
                 addMessage["key"] = response.headers.location.split('/')[3];
                 message.key = addMessage.key;

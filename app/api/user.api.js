@@ -2,10 +2,9 @@ var Q = require('q'),
     request = require('request'),
     url = require('url'),
     jwt = require('jsonwebtoken'),
-    keys = require('../keys.json')[process.env.NODE_ENV || 'development'],
     CommunityApi = require(__dirname + '/community.api.js'),
     communityApis = new CommunityApi(),
-    db = require('orchestrate')(keys.db.key),
+    db = require('orchestrate')(process.env.DB_KEY),
     aws = require('aws-sdk'),
     knowtify = require('knowtify-node');
 
@@ -56,12 +55,12 @@ var searchInCommunity = function(communities, clusters, roles, limit, offset, qu
 
     if (key) { //check api key to determine if restricted profile data is included with results
         try {
-            //var payload = jwt.decode(key, keys.API_token_secret);
+            //var payload = jwt.decode(key, process.env.API_TOKEN_SECRET);
             // Assuming key never expires
             //check perms!
             console.log('test then remove me')
             //todo THIS SECTION NEEDS TO BE REWRITTEN
-            db.get(keys.db.communities, payload.sub)
+            db.get(process.env.DB_COMMUNITIES, payload.sub)
               .then(function (response) {
                     /*
                   if (location && community) {
@@ -130,7 +129,7 @@ var searchInCommunity = function(communities, clusters, roles, limit, offset, qu
     console.log(searchstring);
     var deferred = Q.defer();
     db.newSearchBuilder()
-      .collection(keys.db.communities)
+      .collection(process.env.DB_COMMUNITIES)
       .limit(Number(limit) || 18)
       .offset(Number(offset) || 0)
       .sort('@path.reftime', 'desc')
@@ -182,7 +181,7 @@ function handleDirectSearch(req, res) {
     var allowed = false;
 
     db.newSearchBuilder()
-        .collection(keys.db.communities)
+        .collection(process.env.DB_COMMUNITIES)
         .limit(Number(req.query.limit) || 100)
         .offset(Number(req.query.offset))
         .query(req.query.query)
@@ -247,7 +246,7 @@ function handleContactUser(req, res) {
     var searchstring = '(@value.roles.leader.' + community_key + ': *) AND @value.type: "user"';
 
     db.newSearchBuilder()
-        .collection(keys.db.communities)
+        .collection(process.env.DB_COMMUNITIES)
         .limit(10)
         .query(searchstring)
         .then(function(result){
@@ -259,11 +258,11 @@ function handleContactUser(req, res) {
                 }
 
                 // now get user record for email address
-                db.get(keys.db.communities, user_key)
+                db.get(process.env.DB_COMMUNITIES, user_key)
                     .then(function(response){
                         if (response.body.code !== "items_not_found") {
                             var contacts = [],
-                                knowtifyClient = new knowtify.Knowtify(keys.knowtify, false);
+                                knowtifyClient = new knowtify.Knowtify(process.env.KNOWTIFY, false);
 
                             for (leader in leaders) {
                                 contacts.push({
@@ -318,7 +317,7 @@ function handleContactUser(req, res) {
 
                                     // create event in user record for tracking purposes
                                     db.newEventBuilder()
-                                        .from(keys.db.communities, user_key)
+                                        .from(process.env.DB_COMMUNITIES, user_key)
                                         .type('contact_request')
                                         .data({
                                             "community_key" : community_key,
@@ -377,11 +376,11 @@ function handleGetProfile(req, res) {
     var userid = req.param.userid || req.user;
     console.log('Pulling user profile: ' + userid);
 
-    db.get(keys.db.communities, userid)
+    db.get(process.env.DB_COMMUNITIES, userid)
         .then(function(response){
             if (response.body.code !== "items_not_found") {
                 response.body["key"] = userid;
-                res.status(200).send({ token: jwt.sign(userid, keys.token_secret, { expiresIn: "5h" }), user: response.body });
+                res.status(200).send({ token: jwt.sign(userid, process.env.SC_TOKEN_SECRET, { expiresIn: "5h" }), user: response.body });
             } else {
                 console.warn('WARNING:  User not found.');
                 res.status(200).send({ message: 'User not found.' });
@@ -400,15 +399,15 @@ function handleGetProfileUrl(req, res) {
         filename = req.query.filename;
 
     aws.config.update({
-        accessKeyId: keys.aws.aws_access_key_id,
-        secretAccessKey: keys.aws.aws_secret_access_key,
+        accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+        secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
         signatureVersion: 'v4',
         region: 'us-west-2'
     });
 
     var s3 = new aws.S3();
     var s3_params = {
-        Bucket: keys.aws.bucket,
+        Bucket: process.env.AWS_BUCKET,
         Key:  'profiles/' + userid + '_' + filename,
         Expires: 60,
         ACL: 'public-read'
@@ -434,11 +433,11 @@ function handleUpdateProfile(req, res) {
     // validate user updates only their own record
     if (userid == profile.key) {
         delete profile.key;
-        db.put(keys.db.communities, userid, profile)
+        db.put(process.env.DB_COMMUNITIES, userid, profile)
             .then(function(response){
                 if (response.body.code !== "items_not_found") {
                     response.body["key"] = userid;
-                    res.status(200).send({ token: jwt.sign(userid, keys.token_secret, { expiresIn: "5h" }), user: response.body });
+                    res.status(200).send({ token: jwt.sign(userid, process.env.SC_TOKEN_SECRET, { expiresIn: "5h" }), user: response.body });
 
                 } else {
                     console.warn('WARNING:  User not found.');
@@ -465,7 +464,7 @@ function handleSetRole(req, res) {
 
     var checkperms = function(allowed, callback) {
         if (!allowed) {
-            db.get(keys.db.communities, req.user)
+            db.get(process.env.DB_COMMUNITIES, req.user)
               .then(function (response) {
                   userperms = findKey(response.body.communities, community, []); //todo this would mean an admin of anything would work, need to validate location + community
                   if (userperms[0].roles.indexOf("admin") > -1) { allowed=true; }
@@ -482,7 +481,7 @@ function handleSetRole(req, res) {
     if (userkey == req.user) { allowed = true; }
     checkperms(allowed, function (allowed) {
         if (allowed) {
-            db.get(keys.db.communities, userkey)
+            db.get(process.env.DB_COMMUNITIES, userkey)
               .then(function (response) {
                   if (response.body.cities[community].clusters === undefined) { //need to create clusters key
                       response.body.cities[community]['clusters'] = {};
@@ -504,7 +503,7 @@ function handleSetRole(req, res) {
                   }
                   response.body.cities[community].clusters[cluster] = thisindustry;
 
-                  db.put(keys.db.communities, userkey, response.body)
+                  db.put(process.env.DB_COMMUNITIES, userkey, response.body)
                     .then(function (finalres) {
                         res.status(201).send({ message: 'Profile updated.'});
                     })
@@ -528,11 +527,11 @@ function handleFeedback(req, res) {
     var userkey = req.user,
       data = JSON.parse(decodeURIComponent(req.query.data));
 
-    db.get(keys.db.communities, userkey)
+    db.get(process.env.DB_COMMUNITIES, userkey)
       .then(function (response) {
           response.body['beta'] = data;
 
-          db.put(keys.db.communities, userkey, response.body)
+          db.put(process.env.DB_COMMUNITIES, userkey, response.body)
             .then(function (finalres) {
                 res.status(201).send({ message: 'Profile updated.'});
             })
@@ -556,7 +555,7 @@ function handleFeedback(req, res) {
 
 function handleRemoveProfile(req, res) {
     var userid = req.params.userid;
-    db.remove(keys.db.communities, userid) // ideally I should store an undo option
+    db.remove(process.env.DB_COMMUNITIES, userid) // ideally I should store an undo option
       .then(function(result){
           console.log('User removed.');
           res.status(200).send({ message: 'User removed' });

@@ -1,5 +1,4 @@
-var keys = require('../keys.json')[process.env.NODE_ENV || 'development'],
-    db = require('orchestrate')(keys.db.key);
+var db = require('orchestrate')(process.env.DB_KEY);
 
 var MaintApi = function() {
     this.maintenance = handleMaintenance;

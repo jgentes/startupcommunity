@@ -6,7 +6,6 @@ var express = require('express'),
     enforce = require('express-sslify'),
     httpProxy = require('http-proxy'),
     blogProxy = httpProxy.createProxyServer(),
-    keys = require('./keys.json')[process.env.NODE_ENV || 'local'],
     bodyParser = require('body-parser'),
     methodOverride = require('method-override'),
     logger = require('morgan'),
@@ -59,7 +58,7 @@ app.use(logger('dev'));
 app.use(methodOverride());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use("/", express.static(root + keys.path));
+app.use("/", express.static(root + process.env.path));
 app.use("/public", express.static(root + '/public'));
 
 if (process.env.NODE_ENV === "production") {
@@ -161,7 +160,7 @@ app.post('/api/logger', function (req, res) {
 
 // Frontend Homepage & Blog
 app.get('/', function (req, res, next) {
-  res.sendFile("frontend.html", {root: root + keys.path});
+  res.sendFile("frontend.html", {root: root + process.env.path});
 });
 
 ghost({
@@ -175,7 +174,7 @@ ghost({
 // Backend App
 
 app.get('/*', function (req, res, next) {
-  res.sendFile("app.html", {root: root + keys.path});
+  res.sendFile("app.html", {root: root + process.env.path});
 });
 
 var port = process.env.PORT || 5000;

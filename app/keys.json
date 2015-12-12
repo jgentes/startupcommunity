@@ -73,8 +73,8 @@
       "bucket": "startupcommunity-dev"
     },
     "helpcrunch": "yCVzaQb6BMR7oHxYXpI373lTIg13+CVBtpvyd/dt3Rs=",
-    "token_secret": "2l3knfgqlkn2fvkl23nvklgnvkg23bhva08",
-    "API_token_secret": "2lknvqk32nvqknv3qlkvn3kvln234lknvqS",
+    "SC_token_secret": "2l3knfgqlkn2fvkl23nvklgnvkg23bhva08",
+    "SC_API_token_secret": "2lknvqk32nvqknv3qlkvn3kvln234lknvqS",
     "mailchimp": "4cd1eb319ae631eb57ef642b9340af68-us9",
     "knowtify": "e8644357ff8f2da492532e7617a88114",
     "path": "/app",
