@@ -26,6 +26,7 @@
     "q": "^1.4.1",
     "request": "^2.67.0",
     "request-debug": "^0.2.0",
+    "rollbar": "^0.5.10",
     "satellizer": "~0.13.0"
   },
   "devDependencies": {

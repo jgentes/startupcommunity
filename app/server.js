@@ -11,6 +11,7 @@ var express = require('express'),
     logger = require('morgan'),
     nodalytics = require('nodalytics'),
     ghost = require('ghost'),
+    rollbar = require("rollbar"),
     parentApp = express();
 
 var app = express();
@@ -65,6 +66,7 @@ if (process.env.NODE_ENV === "production") {
     // production-only things go here
     app.use(enforce.HTTPS({ trustProtoHeader: true }));
     app.use(nodalytics('UA-58555092-2'));
+    app.use(rollbar.errorHandler("ba5f8d28fd944ac0802b58a932f321ee"));
 
 } else {
     app.use("/bower_components", express.static(root + "/bower_components"));
