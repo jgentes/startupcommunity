@@ -514,7 +514,7 @@ function handleLinkedin(req, res) {
                                                         token: handleCreateToken(req, new_profile),
                                                         user: new_profile
                                                     });
-                                                    console.log(invite_profile)
+
                                                     add_knowtify(new_invite_profile);
                                                     accept_invite(invite_profile.profile, invitor_email);
                                                 })
