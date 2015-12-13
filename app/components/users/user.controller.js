@@ -377,11 +377,11 @@ function InviteUserController($mixpanel, user, user_service, community, location
                 message = self.form.message_value || "",
                 formdata;
 
-            if (self.form.$valid || emails.length > 1) {
+            if (self.form.$valid || emails.length > 0) {
 
                 for (e in emails) {
 
-                    this.working = true;
+                    self.working = true;
 
                     formdata = {
                         "email" : emails[e],
@@ -441,11 +441,11 @@ function InviteUserController($mixpanel, user, user_service, community, location
                 }
 
             } else {
-                this.working = false;
+                self.working = false;
                 self.form.submitted = true;
             }
         } else {
-            this.working = false;
+            self.working = false;
             self.form.submitted = true;
         }
 

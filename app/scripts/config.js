@@ -385,7 +385,7 @@ angular
         $rootScope.$on('$stateChangeError', function (evt, toState, toParams, fromState, fromParams, error) {
             //todo add exception logging here
             $auth.removeToken();
-            $state.go('login', {alert: error.statusText + ': Sorry, please login again.'}, {reload: true});
+            $state.go('login', {alert: error.statusText + ', please login again.'}, {reload: true});
         });
         $rootScope.$on('$stateChangeSuccess',function(){
             $("html, body").animate({ scrollTop: 0 }, 200);

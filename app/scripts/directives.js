@@ -236,7 +236,7 @@ function randomQuote() {
         "&quot;Between stimulus and response there is a space. In that space lies our freedom and power to choose our response. In our response lies our growth and our happiness.&quot; -- Stephen Covey", 
         "&quot;I like the dreams of the future better than the history of the past.&quot; -- Thomas Jefferson", 
         "&quot;It is not length of life, but depth of life.&quot; -- Ralph Waldo Emerson", 
-        "&quot;Let them who would move the world, first move themselves.&quot; -- Socrates",
+        "&quot;Let those who would move the world, first move themselves.&quot; -- Socrates",
         "&quot;The outstanding leaders of every age are those who set up their own quotas and constantly exceed them.&quot; -- Thomas J. Watson", 
         "&quot;In the business world, everyone is paid in two coins: cash and experience. Take the experience first; the cash will come later.&quot; -- Harold Geneen", 
         "&quot;They who every morning plan the transactions of the day and follows out that plan carries a thread that will guide them through the labrynth of the most busy life.&quot; -- Victor Hugo", 

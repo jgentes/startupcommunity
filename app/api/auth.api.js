@@ -406,6 +406,7 @@ function handleLinkedin(req, res) {
             }
 
             function userCheck(invite_profile) {
+
                 // check to see if this linkedin account is already linked to an existing user
                 db.newSearchBuilder()
                     .collection(process.env.DB_COMMUNITIES)
@@ -486,7 +487,7 @@ function handleLinkedin(req, res) {
 
                                         if (invite_profile) {
                                             // note that we don't validate the invite email matches the linkedin email, so anyone can use the invite once.
-                                            var new_invite_profile = invite_profile;
+                                            var new_invite_profile = JSON.parse(JSON.stringify(invite_profile)); // must copy object or variable change will affect original object
                                             // update the invite record with user details
                                             new_invite_profile.type = "user";
                                             new_invite_profile.profile.linkedin = profile;
@@ -513,6 +514,7 @@ function handleLinkedin(req, res) {
                                                         token: handleCreateToken(req, new_profile),
                                                         user: new_profile
                                                     });
+                                                    console.log(invite_profile)
                                                     add_knowtify(new_invite_profile);
                                                     accept_invite(invite_profile.profile, invitor_email);
                                                 })
