@@ -62,6 +62,21 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use("/", express.static(root + process.env.SC_PATH));
 app.use("/public", express.static(root + '/public'));
 
+if (process.env.NODE_ENV === "production") {
+    // production-only things go here
+    app.use(enforce.HTTPS({ trustProtoHeader: true }));
+    app.use(nodalytics('UA-58555092-2'));
+    opbeat.start({
+        organizationId: 'adf86d959a464b28a1df269d2e7ba468',
+        appId: 'e3089edc2b',
+        secretToken: '8c34c1bec488f932ca1bd4dedc3de98ab6c66d3d'
+    });
+
+} else {
+    app.use("/bower_components", express.static(root + "/bower_components"));
+    app.use("/build", express.static(root + "/build"));
+}
+
 // API ROUTE METHODS
 
 var AuthApi = require(__dirname + '/api/auth.api.js'),
@@ -169,21 +184,6 @@ ghost({
 app.get('/*', function (req, res, next) {
   res.sendFile("app.html", {root: root + process.env.SC_PATH});
 });
-
-if (process.env.NODE_ENV === "production") {
-    // production-only things go here
-    app.use(enforce.HTTPS({ trustProtoHeader: true }));
-    app.use(nodalytics('UA-58555092-2'));
-    opbeat.start({
-        organizationId: 'adf86d959a464b28a1df269d2e7ba468',
-        appId: 'e3089edc2b',
-        secretToken: '8c34c1bec488f932ca1bd4dedc3de98ab6c66d3d'
-    });
-
-} else {
-    app.use("/bower_components", express.static(root + "/bower_components"));
-    app.use("/build", express.static(root + "/build"));
-}
 
 var port = process.env.PORT || 5000;
 app.listen(port);
