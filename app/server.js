@@ -11,7 +11,6 @@ var express = require('express'),
     logger = require('morgan'),
     nodalytics = require('nodalytics'),
     ghost = require('ghost'),
-    rollbar = require("rollbar"),
     opbeat = require('opbeat'),
     parentApp = express();
 
@@ -63,21 +62,15 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use("/", express.static(root + process.env.SC_PATH));
 app.use("/public", express.static(root + '/public'));
 
-opbeat.start({
-    organizationId: 'adf86d959a464b28a1df269d2e7ba468',
-    appId: 'e3089edc2b',
-    secretToken: '8c34c1bec488f932ca1bd4dedc3de98ab6c66d3d'
-});
-
-opbeat.captureError(new Error('Ups, something broke'));
-
-
 if (process.env.NODE_ENV === "production") {
     // production-only things go here
     app.use(enforce.HTTPS({ trustProtoHeader: true }));
     app.use(nodalytics('UA-58555092-2'));
-    app.use(rollbar.errorHandler("ba5f8d28fd944ac0802b58a932f321ee"));
-
+    opbeat.start({
+        organizationId: 'adf86d959a464b28a1df269d2e7ba468',
+        appId: 'e3089edc2b',
+        secretToken: '8c34c1bec488f932ca1bd4dedc3de98ab6c66d3d'
+    });
 
 } else {
     app.use("/bower_components", express.static(root + "/bower_components"));
