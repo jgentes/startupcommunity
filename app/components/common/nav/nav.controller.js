@@ -373,6 +373,7 @@ function NavigationController($auth, $state, $window, $timeout, $location, $scop
         }
 
         if (storage) {
+            console.log(storage);
             this.color = storage.color;
             if (storage.full) this.embedded = false;
         }
