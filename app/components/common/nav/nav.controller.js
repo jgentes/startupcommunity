@@ -372,7 +372,7 @@ function NavigationController($auth, $state, $window, $timeout, $location, $scop
             var storage = JSON.parse($window.localStorage.getItem('startupcommunity-embed'))[domain];
         }
 
-        if (storage) {
+        if (storage) {npm
             this.color = storage.color;
             if (storage.full) this.embedded = false;
         }
