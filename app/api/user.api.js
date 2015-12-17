@@ -184,6 +184,7 @@ function handleDirectSearch(req, res) {
         .collection(process.env.DB_COMMUNITIES)
         .limit(Number(req.query.limit) || 100)
         .offset(Number(req.query.offset))
+        .sort('@path.reftime', 'desc')
         .query(req.query.query)
         .then(function(result){
             var i;
