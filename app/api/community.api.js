@@ -321,12 +321,12 @@ function handleGetTop(req, res) {
 
     // determine whether location is a state
     var state_suffix = convert_state(location_key.replace('-',' '), 'abbrev'); // returns false if no match
-    var state = state_suffix ? ' OR "*-' + state_suffix.toLowerCase() + '") AND ' : ') AND ';
+    var state = state_suffix ? ' OR "*-' + state_suffix.toLowerCase() + '")' : ')';
 
     // add search based on home suffix (which allows for roll-up to state level)
     var search = '@value.profile.home: ("' + location_key + '"' + state;
 
-    if (!state_suffix) search += '@value.communities: "' + location_key + '" AND @value.communities: ' + (community_key == '*' ? '*' : '"' + community_key + '"');
+    if (!state_suffix) search += 'AND @value.communities: "' + location_key + '" AND @value.communities: ' + (community_key == '*' ? '*' : '"' + community_key + '"');
 
     // get companies and industries
 
