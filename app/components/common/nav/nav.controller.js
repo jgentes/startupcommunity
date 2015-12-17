@@ -260,7 +260,9 @@ function NavigationController($auth, $state, $window, $timeout, $location, $scop
                     return self.communities;
                 },
                 location: function() {
-                    return self.location;
+                    if (self.location.type == 'network' || self.location.type == 'cluster') {
+                        return self.communities[self.location.profile.home];
+                    } else return self.location;
                 }
             }
         });

@@ -367,9 +367,9 @@ function InviteUserController($mixpanel, user, user_service, community, location
     var self = this;
     this.community = community;
 
-    this.inviteUser = function() {
+    if (this.community.type == 'cluster' || this.community.type == 'network' && location) this.community = location;
 
-        if (community.type == 'cluster') community.key = location.key;
+    this.inviteUser = function() {
 
         if (self.form.email_value) {
 
@@ -389,9 +389,9 @@ function InviteUserController($mixpanel, user, user_service, community, location
                     };
 
                     if (user) {
-                        if (community.type == 'network' && (user.roles && user.roles.leader && user.roles.leader[community.key]) && (user.roles.leader[community.key].indexOf(location.key) < 0)) community.key = location.key;
+                        if (self.community.type == 'network' && (user.roles && user.roles.leader && user.roles.leader[self.community.key]) && (user.roles.leader[self.community.key].indexOf(location.key) < 0)) self.community.key = location.key;
 
-                        user_service.inviteUser(formdata.email, formdata.message, location.profile.name, location.key, community.key)
+                        user_service.inviteUser(formdata.email, formdata.message, location.profile.name, location.key, self.community.key)
                             .then(function(response) {
                                 self.working = false;
                                 self.form = {
