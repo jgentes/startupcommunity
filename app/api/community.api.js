@@ -3,7 +3,7 @@ var memjs = require('memjs'),
     _ = require('lodash'),
     db = require('orchestrate')(process.env.DB_KEY);
 
-//var util = require('util'); //for util.inspect on request
+var util = require('util'); //for util.inspect on request
 //request = require('request');
 
 //require('request-debug')(request); // Very useful for debugging oauth and api req/res
@@ -321,12 +321,12 @@ function handleGetTop(req, res) {
 
     // determine whether location is a state
     var state_suffix = convert_state(location_key.replace('-',' '), 'abbrev'); // returns false if no match
-    var state = state_suffix ? ' OR "*-' + state_suffix.toLowerCase() + '")' : ')';
+    var state = state_suffix ? ' OR "*-' + state_suffix.toLowerCase() + '") AND ' : ') AND ';
 
-    // if so, search based on home suffix (which allows for roll-up to state level)
+    // add search based on home suffix (which allows for roll-up to state level)
     var search = '@value.profile.home: ("' + location_key + '"' + state;
 
-    if (!search) search = '@value.communities: "' + location_key + '" AND @value.communities: ' + (community_key == '*' ? '*' : '"' + community_key + '"');
+    if (!state_suffix) search += '@value.communities: "' + location_key + '" AND @value.communities: ' + (community_key == '*' ? '*' : '"' + community_key + '"');
 
     // get companies and industries
 
