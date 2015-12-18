@@ -15,8 +15,7 @@
         'knowtify',
         'ngFileUpload',
         'bm.bsTour',
-        'angular-toArrayFilter',
-        'ngOpbeat'
+        'angular-toArrayFilter'
     ]);
 })();
 

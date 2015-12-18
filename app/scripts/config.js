@@ -376,14 +376,6 @@ angular
             }
         });
     })
-    .config(function ($opbeatProvider) {
-        $opbeatProvider.config({
-            debug: false,
-            orgId: 'adf86d959a464b28a1df269d2e7ba468',
-            appId: '6fcd00ba8b'
-        });
-        $opbeatProvider.install()
-    })
     .run(function(editableOptions) {
         editableOptions.theme = 'bs3';
     })
