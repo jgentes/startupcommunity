@@ -1,4 +1,5 @@
-var db = require('orchestrate')(process.env.DB_KEY);
+var db = require('orchestrate')(process.env.DB_KEY),
+    knowtify = require('knowtify-node');
 
 var MaintApi = function() {
     this.maintenance = handleMaintenance;

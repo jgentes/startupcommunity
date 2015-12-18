@@ -313,7 +313,10 @@ function randomQuote() {
         "&quot;Do it or not. There is no try.&quot; -- Yoda", 
         "&quot;The person who says it cannot be done should not interrupt the person who is doing it.&quot; -- Chinese proverb", 
         "&quot;The question isn't who is going to let me; it's who is going to stop me.&quot; -- Ayn Rand", 
-        "&quot;The only way to do great work is to love what you do.&quot; -- Steve Jobs"
+        "&quot;The only way to do great work is to love what you do.&quot; -- Steve Jobs",
+        "&quot;If I had an hour to solve a problem, I'd spend 55 minutes thinking about the problem and 5 minutes thinking about solutions.&quot; -- Alert Einstein",
+        "&quot;The reasonable person adapts themselves to the world. The unreasonable one persists in trying to adapt the world to themselves. Therefore all progress depends on the unreasonable person.&quot; -- George Bernard Shaw"
+
     ];
     var rand = quotes[Math.floor(Math.random() * quotes.length)];
     return {
