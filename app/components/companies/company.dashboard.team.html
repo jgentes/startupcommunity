@@ -6,7 +6,7 @@
                     <div class="stats-title pull-left">
                         <a ui-sref="{{'user.list' + nav.nav_url}}">
                             <h3>Founders</h3>
-                            <h1 class="text-info">{{dashboard.top.people.count}}</h1>
+                            <h1 class="text-info">{{profile.team.count.founder}}</h1>
                         </a>
                     </div>
                 </div>
@@ -17,7 +17,7 @@
                 </div>
             </div>
             <div class="panel-footer" style="background: #fff;">
-                <div ng-repeat="item in dashboard.top.people.entries | limitTo: 3">
+                <div ng-repeat="item in profile.team.founder">
                     <div style="margin-right: -2px; margin-bottom:-5px;">
                         <div ng-if="$first" style="padding-top:5px;"></div>
                         <div class="row" ng-include="'components/users/user.list.item.html'"></div>
@@ -34,7 +34,7 @@
                     <div class="stats-title pull-left">
                         <a ui-sref="{{'user.list' + nav.nav_url}}">
                             <h3>Investors</h3>
-                            <h1 class="text-info">{{dashboard.top.people.count}}</h1>
+                            <h1 class="text-info">{{profile.team.count.investor}}</h1>
                         </a>
                     </div>
                 </div>
@@ -45,7 +45,7 @@
                 </div>
             </div>
             <div class="panel-footer" style="background: #fff;">
-                <div ng-repeat="item in dashboard.top.people.entries | limitTo: 3">
+                <div ng-repeat="item in profile.team.investor">
                     <div style="margin-right: -2px; margin-bottom:-5px;">
                         <div ng-if="$first" style="padding-top:5px;"></div>
                         <div class="row" ng-include="'components/users/user.list.item.html'"></div>
@@ -56,13 +56,13 @@
         </div>
     </div>
     <div class="col-xs-12 col-sm-6">
-        <div class="hpanel hyellow" >
+        <div class="hpanel hviolet" >
             <div class="panel-body" style="padding: 10px 5px;">
                 <div class="col-xs-8">
                     <div class="stats-title pull-left">
                         <a ui-sref="{{'user.list' + nav.nav_url}}">
                             <h3>Team Members</h3>
-                            <h1 class="text-info">{{dashboard.top.people.count}}</h1>
+                            <h1 class="text-info">{{profile.team.count.team}}</h1>
                         </a>
                     </div>
                 </div>
@@ -73,7 +73,7 @@
                 </div>
             </div>
             <div class="panel-footer" style="background: #fff;">
-                <div ng-repeat="item in dashboard.top.people.entries | limitTo: 3">
+                <div ng-repeat="item in profile.team.team">
                     <div style="margin-right: -2px; margin-bottom:-5px;">
                         <div ng-if="$first" style="padding-top:5px;"></div>
                         <div class="row" ng-include="'components/users/user.list.item.html'"></div>
@@ -90,7 +90,7 @@
                     <div class="stats-title pull-left">
                         <a ui-sref="{{'user.list' + nav.nav_url}}">
                             <h3>Mentors</h3>
-                            <h1 class="text-info">{{dashboard.top.people.count}}</h1>
+                            <h1 class="text-info">{{profile.team.count.mentor}}</h1>
                         </a>
                     </div>
                 </div>
@@ -101,7 +101,7 @@
                 </div>
             </div>
             <div class="panel-footer" style="background: #fff;">
-                <div ng-repeat="item in dashboard.top.people.entries | limitTo: 3">
+                <div ng-repeat="item in profile.team.mentor">
                     <div style="margin-right: -2px; margin-bottom:-5px;">
                         <div ng-if="$first" style="padding-top:5px;"></div>
                         <div class="row" ng-include="'components/users/user.list.item.html'"></div>
@@ -112,13 +112,13 @@
         </div>
     </div>
     <div class="col-xs-12 col-sm-6">
-        <div class="hpanel hblue" >
+        <div class="hpanel hyellow" >
             <div class="panel-body" style="padding: 10px 5px;">
                 <div class="col-xs-8">
                     <div class="stats-title pull-left">
                         <a ui-sref="{{'user.list' + nav.nav_url}}">
                             <h3>Service Providers</h3>
-                            <h1 class="text-info">{{dashboard.top.people.count}}</h1>
+                            <h1 class="text-info">{{profile.team.count.provider}}</h1>
                         </a>
                     </div>
                 </div>
@@ -129,7 +129,7 @@
                 </div>
             </div>
             <div class="panel-footer" style="background: #fff;">
-                <div ng-repeat="item in dashboard.top.people.entries | limitTo: 3">
+                <div ng-repeat="item in profile.team.provider">
                     <div style="margin-right: -2px; margin-bottom:-5px;">
                         <div ng-if="$first" style="padding-top:5px;"></div>
                         <div class="row" ng-include="'components/users/user.list.item.html'"></div>

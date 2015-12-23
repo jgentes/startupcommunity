@@ -193,20 +193,20 @@ function CompanyProfileController($stateParams, $location, $mixpanel, user, comp
     this.communities = communities.data;
     this.company = this.communities[this.communities.key];
     this.community = this.company;
-    this.team = {};
+    this.team = { "count" : {}};
 
     this.background_image = 'url(https://s3-us-west-2.amazonaws.com/startupcommunity/backgrounds/background' + Math.floor((Math.random() * 54) + 1) + '.jpg)';
 
     // sort team members
 
-    console.log(this.communities[this.company.key].team);
-
     for (member in this.communities[this.company.key].team) {
         for (role in this.communities[this.company.key].team[member].value.roles) {
-            for (item in this.communities[this.company.key].team.value.roles[role]) {
+            for (item in this.communities[this.company.key].team[member].value.roles[role]) {
                 if (item == this.company.key) {
                     if (!this.team[role]) this.team[role] = {};
-                    this.team[role][this.communities[this.company.key].team.value.key] = this.communities[this.company.key].team[member].value;
+                    if (!this.team.count[role]) this.team.count[role] = 0;
+                    this.team[role][member] = this.communities[this.company.key].team[member];
+                    ++ this.team.count[role];
                 }
             }
         }

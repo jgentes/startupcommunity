@@ -192,7 +192,7 @@ function handleGetCommunity(req, res) {
                                 newresponse[community].team = {};
                                 for (t in team.body.results) {
                                     team.body.results[t].value["key"] = team.body.results[t].path.key;
-                                    newresponse[community].team[team.body.results[t].path.key] = team.body.results[t].value;
+                                    newresponse[community].team[team.body.results[t].path.key] = team.body.results[t];
                                 }
 
                                 checkcache(cache, community, newresponse);
@@ -347,9 +347,9 @@ function handleGetTop(req, res) {
     var state = state_suffix ? ' OR "*-' + state_suffix.toLowerCase() + '")' : ')';
 
     // add search based on home suffix (which allows for roll-up to state level)
-    var search = '@value.profile.home: ("' + location_key + '"' + state;
-
-    if (!state_suffix) search += 'AND @value.communities: "' + location_key + '" AND @value.communities: ' + (community_key == '*' ? '*' : '"' + community_key + '"');
+    var search = state_suffix ?
+        '@value.profile.home: ("' + location_key + '"' + state :
+        '@value.communities: "' + location_key + '" AND @value.communities: ' + (community_key == '*' ? '*' : '"' + community_key + '"');
 
     // get companies and industries
 
