@@ -1,0 +1,62 @@
+<div class="row">
+    <div class="col-sm-12">
+        <div style="padding-bottom: 20px;">
+            <div>
+                <div class="pull-right">
+                    <a href="{{::profile.user.profile.linkedin.publicProfileUrl}}" target="_blank"><i class="fa fa-linkedin btn btn-default btn-xs"></i>
+                    </a>
+                </div>
+            </div>
+            <h3 style="padding-left: 4px;">{{::profile.user.profile.name | words:0}} {{::profile.user.profile.name |
+                words:1}} {{::profile.user.profile.name | words:2}}
+            </h3>
+            <h4>
+                {{::profile.user.profile.linkedin.headline}}
+            </h4>
+        </div>
+
+        <div class="row" style="float: left;">
+            <div class="no-overflow profile-div" ng-if="profile.user.roles.leader">
+                <ul class="profile-ul">
+                    <p style="font-size: 14px; padding: 2px 5px 0 20px; float: left;">Leader:</p>
+                    <li ng-repeat="(key, val) in profile.user.roles.leader" class="profile-roles">
+                        <a ui-sref="community.dashboard({location_path: key, community: profile.communities[key], query: &quot;&#42;&quot;})" class="btn btn-xs btn-outline" ng-class="{'btn-danger' : profile.communities[key].type == 'company', 'btn-info' : profile.communities[key].type == 'network', 'btn-primary' : profile.communities[key].type == 'cluster', 'btn-success' : profile.communities[key].type == 'location'}"><i class="fa {{profile.communities[key].profile.icon}}"></i> {{profile.communities[key].profile.name}}</a>
+                    </li>
+                </ul>
+            </div>
+            <div class="no-overflow profile-div" ng-if="profile.user.roles.founder">
+                <ul class="profile-ul">
+                    <p style="font-size: 14px; padding: 2px 5px 0 20px; float: left;">Founder:</p>
+                    <li ng-repeat="(key, val) in profile.user.roles.founder" class="profile-roles">
+                        <a ui-sref="{{'community.dashboard.' + profile.communities[key].type + '({location_path: key, community: profile.communities[key], query: &quot;&#42;&quot;})'}}" class="btn btn-xs btn-outline" ng-class="{'btn-danger' : profile.communities[key].type == 'company', 'btn-info' : profile.communities[key].type == 'network', 'btn-primary' : profile.communities[key].type == 'cluster', 'btn-success' : profile.communities[key].type == 'location'}"><i class="fa {{profile.communities[key].profile.icon}}"></i> {{profile.communities[key].profile.name}}</a>
+                    </li>
+                </ul>
+            </div>
+            <div class="no-overflow profile-div" ng-if="profile.user.roles.investor">
+                <ul class="profile-ul">
+                    <p style="font-size: 14px; padding: 2px 5px 0 20px; float: left;">Investor:</p>
+                    <li ng-repeat="(key, val) in profile.user.roles.investor" class="profile-roles">
+                        <a ui-sref="community.dashboard({location_path: key, community: profile.communities[key], query: &quot;&#42;&quot;})" class="btn btn-xs btn-outline" ng-class="{'btn-danger' : profile.communities[key].type == 'company', 'btn-info' : profile.communities[key].type == 'network', 'btn-primary' : profile.communities[key].type == 'cluster', 'btn-success' : profile.communities[key].type == 'location'}"><i class="fa {{profile.communities[key].profile.icon}}"></i> {{profile.communities[key].profile.name}}</a>
+                    </li>
+                </ul>
+            </div>
+            <div ng-if="profile.user.roles.mentor">
+                <ul class="profile-ul">
+                    <p style="font-size: 14px; padding: 2px 5px 0 20px; float: left;">Mentor:</p>
+                    <li ng-repeat="(key, val) in profile.user.roles.mentor" class="profile-roles">
+                        <a ui-sref="community.dashboard({location_path: key, community: profile.communities[key], query: &quot;&#42;&quot;})" class="btn btn-xs btn-outline" ng-class="{'btn-danger' : profile.communities[key].type == 'company', 'btn-info' : profile.communities[key].type == 'network', 'btn-primary' : profile.communities[key].type == 'cluster', 'btn-success' : profile.communities[key].type == 'location'}"><i class="fa {{profile.communities[key].profile.icon}}"></i> {{profile.communities[key].profile.name}}</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<div ng-show="profile.user.profile.linkedin.summary" class="panel-footer" style="margin-top:10px;">
+    <h3>Summary</h3>
+    <p style="white-space:pre-wrap;" ng-bind-html="::profile.user.profile.linkedin.summary | linky:'_blank'"></p>
+    <hr>
+    <h3 ng-show="profile.user.profile.skills">Skills & Industries</h3>
+    <li ng-repeat="skill in profile.user.profile.skills" class="label btn-default skills"><a href="#" ui-sref="search.dashboard({location_path: nav.location.key, community: nav.location, query: skill})">{{::skill}}</a></li>
+</div>

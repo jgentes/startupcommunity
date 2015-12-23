@@ -3,9 +3,10 @@
         <div style="padding: 20px 15px;">
             <header class="heading content" style="color:#fff">
                 <button ng-if="nav.location_path == nav.user.key" ui-sref="welcome({location: nav.location, location_path: nav.location.key, go: 'welcome.roles'})" class="btn btn-warning pull-right" style="margin-left:-100px;">Edit Profile</button>
-                <img class="img-circle m-b" style="height:100px;" ng-src="{{profile.user.profile.avatar || profile.user.profile.linkedin.pictureUrl || '/public/images/blank_avatar.png'}}" alt="{{::profile.user.profile.name}}" onerror="this.src='/public/images/blank_avatar.png'">
-                <div style="margin-top: -12px;">
-                    {{::profile.company.profile.parents[0]}}
+                <img class="img-circle m-b" style="height:100px;" ng-src="{{profile.company.profile.avatar || profile.company.profile.angellist.thumb_url || '/public/images/blank_startup.png'}}" alt="{{::profile.company.profile.name}}" onerror="this.src='/public/images/blank_startup.png'">
+                <div style="margin:-15px 0;"><span class="btn btn-default btn-xs">
+                        {{::profile.company.profile.parents[0]}}
+                    </span>
                 </div>
                 <h1 style="overflow:hidden; line-height: 1.25;">
                     {{::profile.company.profile.name}}
@@ -14,7 +15,7 @@
                     {{::profile.company.profile.angellist.high_concept}}
                 </h3>
                 <div style="padding-top:10px; overflow: hidden; height: 50px; margin-bottom: -10px;">
-                    <li ng-repeat="industry in profile.user.profile.industries" style="margin-right: 5px;" class="btn btn-outline btn-default btn-xs" ui-sref="search.dashboard({location_path: nav.location.key, community: nav.location, query: industry})">
+                    <li ng-repeat="industry in profile.company.profile.industries" style="margin-right: 5px;" class="btn btn-outline btn-default btn-xs" ui-sref="search.dashboard({location_path: nav.location.key, community: nav.location, query: industry})">
                         {{::industry}}
                     </li>
                 </div>
@@ -28,8 +29,8 @@
 
         <!-- BEGIN Nav tabs -->
         <ul class="nav nav-tabs" role="tablist">
-            <li id="ask_li" class="active"><a href="#ask" aria-controls="ask" role="tab" data-toggle="tab" aria-expanded="true"><span class="pe-7s-micro"></span>Ask a Question</a></li>
-            <li id="profile_li" ><a href="#profile" aria-controls="profile" role="tab" data-toggle="tab" aria-expanded="false"><span class="pe-7s-note2"></span>View Full Profile</a></li>
+            <li id="team_li" class="active"><a href="#team" aria-controls="team" role="tab" data-toggle="tab" aria-expanded="true"><span class="pe-7s-ball"></span>Team</a></li>
+            <li id="profile_li" ><a href="#profile" aria-controls="profile" role="tab" data-toggle="tab" aria-expanded="false"><span class="pe-7s-note2"></span>Full Profile</a></li>
         </ul>
         <!--/ END Nav tabs -->
 
@@ -38,15 +39,15 @@
         <!-- BEGIN Tab panes -->
         <div class="tab-content" style="position: static; padding: 30px;">
 
-            <div role="tabpanel" class="tab-pane active" id="ask">
+            <div role="tabpanel" class="tab-pane active" id="team">
 
-                <div ng-include="'components/users/user.dashboard.ask.html'"></div>
+                <div ng-include="'components/companies/company.dashboard.team.html'"></div>
 
             </div> <!-- First Tab Pane -->
 
             <div role="tabpanel" class="tab-pane" id="profile">
 
-                <div ng-include="'components/users/user.dashboard.profile.html'"></div>
+                <div ng-include="'components/companies/company.dashboard.profile.html'"></div>
 
             </div> <!-- Second Tab Pane -->
 

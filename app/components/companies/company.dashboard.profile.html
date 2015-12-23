@@ -1,0 +1,27 @@
+<div class="row">
+    <div class="col-sm-12">
+        <div style="padding-bottom: 20px;">
+            <div>
+                <div class="pull-right">
+                    <a href="{{::profile.company.profile.linkedin.publicProfileUrl}}" target="_blank"><i class="fa fa-linkedin btn btn-default btn-xs"></i>
+                    </a>
+                </div>
+            </div>
+            <h3 style="padding-left: 4px;">{{::profile.company.profile.name | words:0}} {{::profile.company.profile.name |
+                words:1}} {{::profile.company.profile.name | words:2}}
+            </h3>
+            <h4>
+                {{::profile.company.profile.headline}}
+            </h4>
+        </div>
+
+    </div>
+</div>
+
+<div ng-show="profile.company.profile.summary" class="panel-footer" style="margin-top:10px;">
+    <h3>Summary</h3>
+    <p style="white-space:pre-wrap;" ng-bind-html="::profile.company.profile.summary | linky:'_blank'"></p>
+    <hr>
+    <h3 ng-show="profile.company.profile.industries">Industries</h3>
+    <li ng-repeat="industry in profile.company.profile.industries" class="label btn-default skills"><a href="#" ui-sref="search.dashboard({location_path: nav.location.key, community: nav.location, query: industry})">{{::industry}}</a></li>
+</div>
