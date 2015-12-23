@@ -186,24 +186,20 @@ function handleGetCommunity(req, res) {
                             .limit(100)
                             .offset(0)
                             .sortRandom()
-                            .query('@value.to: "' + newresponse.key + '"')
-                            .then(function (messages) {
-                                messages.body.results.sort(function (a, b) {
-                                    return a.value.published < b.value.published;
-                                });
+                            .query('@value.type:"user" AND @value.roles.*.' + newresponse[community].key + ':*')
+                            .then(function (team) {
 
-                                newresponse.messages = {};
-                                for (m in messages.body.results) {
-
-                                    messages.body.results[m].value["key"] = messages.body.results[m].path.key;
-                                    newresponse.messages[messages.body.results[m].path.key] = messages.body.results[m].value;
+                                newresponse[community].team = {};
+                                for (t in team.body.results) {
+                                    team.body.results[t].value["key"] = team.body.results[t].path.key;
+                                    newresponse[community].team[team.body.results[t].path.key] = team.body.results[t].value;
                                 }
 
                                 checkcache(cache, community, newresponse);
 
                             })
                             .fail(function (err) {
-                                console.log("WARNING: community171", err);
+                                console.log("WARNING: ", err);
                                 res.status(200).send(newresponse);
                             });
 

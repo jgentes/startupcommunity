@@ -11,7 +11,7 @@ var express = require('express'),
     logger = require('morgan'),
     nodalytics = require('nodalytics'),
     ghost = require('ghost'),
-    opbeat = require('opbeat'),
+    //opbeat = require('opbeat'),
     parentApp = express();
 
 var app = express();
@@ -69,11 +69,11 @@ if (process.env.NODE_ENV === "production") {
     // production-only things go here
     app.use(enforce.HTTPS({ trustProtoHeader: true }));
     app.use(nodalytics('UA-58555092-2'));
-    opbeat.start({
+   /* opbeat.start({
         organizationId: 'adf86d959a464b28a1df269d2e7ba468',
         appId: 'e3089edc2b',
         secretToken: '8c34c1bec488f932ca1bd4dedc3de98ab6c66d3d'
-    });
+    });*/
 
 } else {
     app.use("/bower_components", express.static(root + "/bower_components"));
@@ -164,8 +164,7 @@ app.get('/api/maint', maint.maintenance);
 // Client logger
 app.post('/api/logger', function (req, res) {
     console.warn('WARNING: Angular Error:', req.body);
-    opbeat.captureError(new Error('WARNING: Angular Error:', req.body));
-
+    //opbeat.captureError(new Error('WARNING: Angular Error:', req.body));
     res.end();
 });
 

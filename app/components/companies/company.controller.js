@@ -197,20 +197,20 @@ function CompanyProfileController($stateParams, $location, $mixpanel, user, comp
 
     this.background_image = 'url(https://s3-us-west-2.amazonaws.com/startupcommunity/backgrounds/background' + Math.floor((Math.random() * 54) + 1) + '.jpg)';
 
-    /*
     // sort team members
 
-    for (member in team.data.results) {
-        for (role in team.data.results[member].value.roles) {
-            for (item in team.data.results[member].value.roles[role]) {
+    console.log(this.communities[this.company.key].team);
+
+    for (member in this.communities[this.company.key].team) {
+        for (role in this.communities[this.company.key].team[member].value.roles) {
+            for (item in this.communities[this.company.key].team.value.roles[role]) {
                 if (item == this.company.key) {
                     if (!this.team[role]) this.team[role] = {};
-                    this.team[role][team.data.results[member].value.key] = team.data.results[member].value;
+                    this.team[role][this.communities[this.company.key].team.value.key] = this.communities[this.company.key].team[member].value;
                 }
             }
         }
     }
-*/
 
     this.removeProfile = function(userid, name) {
         notify("Are you sure you want to remove " + name + "?", function(result) { //todo fix notify maybe with sweetalert
