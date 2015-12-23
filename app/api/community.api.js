@@ -115,8 +115,16 @@ var schema = {
 };
 
 function handleGetCommunity(req, res) {
-    var community = req.params.community;
 
+    var checkcache = function(cache, community, newresponse) {
+        if (!cache) res.status(200).send(newresponse);
+
+        mc.set(community, JSON.stringify(newresponse), function(err, val) {
+            if (err) console.warn('WARNING: Memcache error: ', err)
+        });
+    };
+
+    var community = req.params.community;
     var searchString = '@path.key: ' + community; // grab the primary community object, don't use parens here
     searchString += ' OR ((@value.communities: "' + community + '"'; // + grab anything associated with this community in this location
     searchString += ' OR @value.primary: true '; // + pull primary industries (clusters)
@@ -163,24 +171,43 @@ function handleGetCommunity(req, res) {
                                     newresponse.messages[messages.body.results[m].path.key] = messages.body.results[m].value;
                                 }
 
-                                if (!cache) res.status(200).send(newresponse);
+                                checkcache(cache, community, newresponse);
 
-                                mc.set(community, JSON.stringify(newresponse), function(err, val) {
-                                    if (err) console.warn('WARNING: Memcache error: ', err)
-                                });
                             })
                             .fail(function (err) {
                                 console.log("WARNING: community171", err);
                                 res.status(200).send(newresponse);
                             });
 
-                    } else {
-                        if (!cache) res.status(200).send(newresponse);
+                    } else if (newresponse[community].type == 'company') {
+                        // get team
+                        db.newSearchBuilder()
+                            .collection(process.env.DB_COMMUNITIES)
+                            .limit(100)
+                            .offset(0)
+                            .sortRandom()
+                            .query('@value.to: "' + newresponse.key + '"')
+                            .then(function (messages) {
+                                messages.body.results.sort(function (a, b) {
+                                    return a.value.published < b.value.published;
+                                });
 
-                        mc.set(community, JSON.stringify(newresponse), function(err, val) {
-                            if (err) console.warn('WARNING: Memcache error: ', err)
-                        });
-                    }
+                                newresponse.messages = {};
+                                for (m in messages.body.results) {
+
+                                    messages.body.results[m].value["key"] = messages.body.results[m].path.key;
+                                    newresponse.messages[messages.body.results[m].path.key] = messages.body.results[m].value;
+                                }
+
+                                checkcache(cache, community, newresponse);
+
+                            })
+                            .fail(function (err) {
+                                console.log("WARNING: community171", err);
+                                res.status(200).send(newresponse);
+                            });
+
+                    } else checkcache(cache, community, newresponse);
                 };
 
                 if (result.body.results.length > 0) {
@@ -349,7 +376,7 @@ function handleGetTop(req, res) {
             .collection(process.env.DB_COMMUNITIES)
             .aggregate('top_values', 'value.profile.industries')
             .aggregate('top_values', 'value.profile.parents')
-            .sort('@path.reftime', 'desc')
+            .sortRandom()
             .query(industrysearch + ' AND @value.type: "company"')
             .then(function (result) {
 
@@ -381,7 +408,7 @@ function handleGetTop(req, res) {
                     .collection(process.env.DB_COMMUNITIES)
                     .aggregate('top_values', 'value.profile.skills')
                     .aggregate('top_values', 'value.profile.parents')
-                    .sort('@path.reftime', 'desc')
+                    .sortRandom()
                     .query(skillsearch + ' AND @value.type: "user"')
                     .then(function (result) {
 
@@ -409,7 +436,7 @@ function handleGetTop(req, res) {
                         // get leaders
                         db.newSearchBuilder()
                             .collection(process.env.DB_COMMUNITIES)
-                            .sort('@path.reftime', 'desc')
+                            .sortRandom()
                             .query('@value.roles.leader.' + (cluster_key ? cluster_key : community_key) + ': "' + location_key + '" AND @value.type: "user"')
                             .then(function (result) {
 

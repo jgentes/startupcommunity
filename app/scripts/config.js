@@ -376,6 +376,14 @@ angular
             }
         });
     })
+    .config(function ($opbeatProvider) {
+        $opbeatProvider.config({
+            debug: false,
+            orgId: 'adf86d959a464b28a1df269d2e7ba468',
+            appId: '6fcd00ba8b'
+        });
+        $opbeatProvider.install()
+    })
     .run(function(editableOptions) {
         editableOptions.theme = 'bs3';
     })
@@ -385,7 +393,8 @@ angular
         $rootScope.$on('$stateChangeError', function (evt, toState, toParams, fromState, fromParams, error) {
             //todo add exception logging here
             $auth.removeToken();
-            $state.go('login', {alert: error.statusText + ', please login again.'}, {reload: true});
+
+            $state.go('login', {alert: 'Sorry, please login again. ' + error.statusText}, {reload: true});
         });
         $rootScope.$on('$stateChangeSuccess',function(){
             $("html, body").animate({ scrollTop: 0 }, 200);

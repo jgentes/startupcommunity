@@ -132,7 +132,7 @@ var searchInCommunity = function(communities, clusters, roles, limit, offset, qu
       .collection(process.env.DB_COMMUNITIES)
       .limit(Number(limit) || 18)
       .offset(Number(offset) || 0)
-      .sort('@path.reftime', 'desc')
+      .sortRandom()
       .query(searchstring)
       .then(function(result){
           var i;
@@ -184,7 +184,7 @@ function handleDirectSearch(req, res) {
         .collection(process.env.DB_COMMUNITIES)
         .limit(Number(req.query.limit) || 100)
         .offset(Number(req.query.offset))
-        .sort('@path.reftime', 'desc')
+        .sortRandom()
         .query(req.query.query)
         .then(function(result){
             var i;

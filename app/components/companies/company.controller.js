@@ -194,6 +194,9 @@ function CompanyProfileController($stateParams, $location, $mixpanel, user, comp
     this.company = this.communities[this.communities.key];
     this.community = this.company;
     this.team = {};
+
+    this.background_image = 'url(https://s3-us-west-2.amazonaws.com/startupcommunity/backgrounds/background' + Math.floor((Math.random() * 54) + 1) + '.jpg)';
+
     /*
     // sort team members
 
@@ -233,7 +236,6 @@ function CompanyProfileController($stateParams, $location, $mixpanel, user, comp
 
 function AddCompanyController($mixpanel, company_service, community) {
     var self = this;
-    this.background_image = 'url(https://s3-us-west-2.amazonaws.com/startupcommunity/backgrounds/background' + Math.floor((Math.random() * 54) + 1) + '.jpg)';
 
     this.addCompany = function() {
         this.working = true;

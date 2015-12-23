@@ -143,7 +143,7 @@ var searchInCommunity = function(communities, clusters, stages, limit, offset, q
             .collection(process.env.DB_COMMUNITIES)
             .limit(Number(limit) || 18)
             .offset(Number(offset) || 0)
-            .sort('@path.reftime', 'desc')
+            .sortRandom()
             .query(searchstring)
             .then(function(result){
 
