@@ -5,13 +5,7 @@
     "James Gentes"
   ],
   "description": "StartupCommunity.org - Kickstart your city's entrepreneurial ecosystem",
-  "main": "../app/index.html",
   "private": true,
-  "ignore": [
-    "**/.*",
-    "../node_modules",
-    "../bower_components"
-  ],
   "appPath": "app",
   "dependencies": {
     "angular": "~1.4.6",
