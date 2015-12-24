@@ -3,18 +3,69 @@
         <div style="padding-bottom: 20px;">
             <div>
                 <div class="pull-right">
-                    <a href="{{::profile.company.profile.linkedin.publicProfileUrl}}" target="_blank"><i class="fa fa-linkedin btn btn-default btn-xs"></i>
+                    <a href="{{::profile.company.profile.angellist.angellist_url}}" target="_blank"><i class="fa fa-angellist btn btn-default btn-xs"></i>
                     </a>
                 </div>
+                <div class="pull-left">
+                    <img ng-src="{{profile.company.profile.logo}}" style="height:60px;">
+                </div>
             </div>
-            <h3 style="padding-left: 4px;">{{::profile.company.profile.name | words:0}} {{::profile.company.profile.name |
-                words:1}} {{::profile.company.profile.name | words:2}}
-            </h3>
+            <h3 style="padding-left: 4px;">{{::profile.company.profile.name}}</h3>
             <h4>
                 {{::profile.company.profile.headline}}
             </h4>
         </div>
 
+    </div>
+</div>
+<div class="row">
+    <div class="no-overflow profile-div" ng-if="profile.team.founder">
+        <ul class="profile-ul">
+            <p style="font-size: 14px; padding: 2px 5px 0 20px; float: left;">Founders:</p>
+            <li ng-repeat="(key, val) in profile.team.founder" class="profile-roles">
+                <a ui-sref="user.dashboard({profile: profile.team.founder[key].value, location_path: profile.team.founder[key].path.key, location: nav.community, community: profile.team.founder[key].value })">{{profile.team.founder[key].value.profile.name}} </a>
+            </li>
+        </ul>
+    </div>
+    <div class="no-overflow profile-div" ng-if="profile.team.investor">
+        <ul class="profile-ul">
+            <p style="font-size: 14px; padding: 2px 5px 0 20px; float: left;">Investors:</p>
+            <li ng-repeat="(key, val) in profile.team.investor" class="profile-roles">
+                <a ui-sref="user.dashboard({profile: profile.team.investor[key].value, location_path: profile.team.investor[key].path.key, location: nav.community, community: profile.team.investor[key].value })">{{profile.team.investor[key].value.profile.name}} </a>
+            </li>
+        </ul>
+    </div>
+    <div class="no-overflow profile-div" ng-if="profile.team.team">
+        <ul class="profile-ul">
+            <p style="font-size: 14px; padding: 2px 5px 0 20px; float: left;">Team Members:</p>
+            <li ng-repeat="(key, val) in profile.team.team" class="profile-roles">
+                <a ui-sref="user.dashboard({profile: profile.team.team[key].value, location_path: profile.team.team[key].path.key, location: nav.community, community: profile.team.team[key].value })">{{profile.team.team[key].value.profile.name}} </a>
+            </li>
+        </ul>
+    </div>
+    <div class="no-overflow profile-div" ng-if="profile.team.mentor">
+        <ul class="profile-ul">
+            <p style="font-size: 14px; padding: 2px 5px 0 20px; float: left;">Mentors:</p>
+            <li ng-repeat="(key, val) in profile.team.mentor" class="profile-roles">
+                <a ui-sref="user.dashboard({profile: profile.team.mentor[key].value, location_path: profile.team.mentor[key].path.key, location: nav.community, community: profile.team.mentor[key].value })">{{profile.team.mentor[key].value.profile.name}} </a>
+            </li>
+        </ul>
+    </div>
+    <div class="no-overflow profile-div" ng-if="profile.team.provider">
+        <ul class="profile-ul">
+            <p style="font-size: 14px; padding: 2px 5px 0 20px; float: left;">Service Providers:</p>
+            <li ng-repeat="(key, val) in profile.team.provider" class="profile-roles">
+                <a ui-sref="user.dashboard({profile: profile.team.provider[key].value, location_path: profile.team.provider[key].path.key, location: nav.community, community: profile.team.provider[key].value })">{{profile.team.provider[key].value.profile.name}} </a>
+            </li>
+        </ul>
+    </div>
+    <div>
+        <ul class="profile-ul">
+            <p style="font-size: 14px; padding: 2px 5px 0 20px; float: left;">Communities:</p>
+            <li ng-repeat="community in profile.company.communities" class="profile-roles">
+                <a ui-sref="community.dashboard({location_path: community, community: profile.communities[community], query: &quot;&#42;&quot;})" class="btn btn-xs btn-outline" ng-class="{'btn-danger' : profile.communities[community].type == 'company', 'btn-info' : profile.communities[community].type == 'network', 'btn-primary' : profile.communities[community].type == 'cluster', 'btn-success' : profile.communities[community].type == 'location'}"><i class="fa {{profile.communities[community].profile.icon}}"></i> {{profile.communities[community].profile.name}}</a>
+            </li>
+        </ul>
     </div>
 </div>
 

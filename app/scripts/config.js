@@ -338,7 +338,6 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                 }
             }
         })
-        .state('community.dashboard.company',{})
         .state('community.dashboard.location',{})
         .state('community.dashboard.cluster',{})
 

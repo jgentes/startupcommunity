@@ -4,8 +4,12 @@
             <header class="heading content" style="color:#fff">
                 <button ng-if="nav.location_path == nav.user.key" ui-sref="welcome({location: nav.location, location_path: nav.location.key, go: 'welcome.roles'})" class="btn btn-warning pull-right" style="margin-left:-100px;">Edit Profile</button>
                 <img class="img-circle m-b" style="height:100px;" ng-src="{{profile.company.profile.avatar || profile.company.profile.angellist.thumb_url || '/public/images/blank_startup.png'}}" alt="{{::profile.company.profile.name}}" onerror="this.src='/public/images/blank_startup.png'">
-                <div style="margin:-15px 0;"><span class="btn btn-default btn-xs">
-                        {{::profile.company.profile.parents[0]}}
+                <div style="margin:-15px 0;">
+                    <span class="btn btn-default btn-xs">
+                        {{::profile.company.profile.parents[0][0].toUpperCase() + profile.company.profile.parents[0].slice(1);}}
+                    </span>
+                    <span class="btn btn-success btn-xs">
+                        {{::profile.company.profile.stage}}
                     </span>
                 </div>
                 <h1 style="overflow:hidden; line-height: 1.25;">

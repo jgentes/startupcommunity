@@ -2,7 +2,13 @@ angular
     .module('startupcommunity')
     .controller('DashboardController', DashboardController);
 
-function DashboardController($stateParams, top) {
+function DashboardController($stateParams, top, community, $state) {
+    // redirect if a user or company
+    if (community.type == 'user') {
+        $state.go('user.dashboard');
+    } else if (community.type == 'company') {
+        $state.go('company.dashboard');
+    }
 
     var self = this;
     if (top && top.data) this.top = top.data;
