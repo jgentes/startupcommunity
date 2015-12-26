@@ -15,7 +15,7 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
             params: {
                 alert: {}
             },
-            templateUrl: 'components/common/auth/login.html'
+            templateUrl: 'components/auth/login.html'
         })
         .state('logout', {
             url: "/logout",
@@ -34,7 +34,7 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
         // the root state with core dependencies for injection in child states
         .state('root', {
             url: "/:location_path",
-            templateUrl: "components/common/nav/nav.html",
+            templateUrl: "components/nav/nav.html",
             controller: "NavigationController as nav",
             params: {
                 profile: {},  // must include params here for inheritance
@@ -123,7 +123,7 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
             url: '/email',
             views: {
                 'content': {
-                    templateUrl: "components/common/email.html",
+                    templateUrl: "components/email.html",
                     controller: 'EmailController as email'
                 }
             }
@@ -143,25 +143,25 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
             },
             views: {
                 "@": { // this forces override of root template
-                    templateUrl: "components/common/welcome/welcome.html",
+                    templateUrl: "components/welcome/welcome.html",
                     controller: "WelcomeController as welcome"
                 }
             }
         })
         .state('welcome.roles', {
-            templateUrl: "components/common/welcome/welcome.roles.html"
+            templateUrl: "components/welcome/welcome.roles.html"
         })
         .state('welcome.skills', {
-            templateUrl: "components/common/welcome/welcome.skills.html"
+            templateUrl: "components/welcome/welcome.skills.html"
         })
         .state('welcome.profile', {
-            templateUrl: "components/common/welcome/welcome.profile.html"
+            templateUrl: "components/welcome/welcome.profile.html"
         })
         .state('welcome.companies', {
-            templateUrl: "components/common/welcome/welcome.companies.html"
+            templateUrl: "components/welcome/welcome.companies.html"
         })
         .state('welcome.invite', {
-            templateUrl: "components/common/welcome/welcome.invite.html",
+            templateUrl: "components/welcome/welcome.invite.html",
             controller: "InviteUserController as invite"
         })
 
@@ -170,10 +170,10 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
             abstract: true,
             views: {
                 'header': {
-                    templateUrl: "components/common/header/header_small.html"
+                    templateUrl: "components/header/header_small.html"
                 },
                 'content': {
-                    templateUrl: 'components/common/search/search.dashboard.html'
+                    templateUrl: 'components/search/search.dashboard.html'
                 }
             }
         })
@@ -212,7 +212,7 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
             },
             views: {
                 'header': {
-                    templateUrl: "components/common/header/header_small.html"
+                    templateUrl: "components/header/header_small.html"
                 },
                 'content': {
                     templateUrl: "components/users/user.dashboard.html",
@@ -232,7 +232,7 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
             },
             views: {
                 'header': {
-                    templateUrl: "components/common/header/header_small.html"
+                    templateUrl: "components/header/header_small.html"
                 },
                 'content': {
                     templateUrl: 'components/users/user.list.html',
@@ -254,7 +254,7 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
             },
             views: {
                 'header': {
-                    templateUrl: "components/common/header/header_small.html"
+                    templateUrl: "components/header/header_small.html"
                 },
                 'content': {
                     templateUrl: "../components/companies/company.dashboard.html",
@@ -273,7 +273,7 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
             },
             views: {
                 'header': {
-                    templateUrl: "components/common/header/header_small.html"
+                    templateUrl: "components/header/header_small.html"
                 },
                 'content': {
                     templateUrl: '../components/companies/company.list.html',
@@ -295,7 +295,7 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
             },
             views: {
                 'header': {
-                    templateUrl: "components/common/header/header_small.html"
+                    templateUrl: "components/header/header_small.html"
                 },
                 'content': {
                     templateUrl: '../components/companies/company.add.html',
@@ -311,7 +311,7 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
             abstract: true,
             views: {
                 'header': {
-                    templateUrl: "components/common/header/header_small.html"
+                    templateUrl: "components/header/header_small.html"
                 },
                 'content': {
                     template: "<div ui-view='people'></div>"
@@ -333,7 +333,7 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
             },
             views: {
                 'people': {
-                    templateUrl: 'components/common/dashboard/dashboard.html',
+                    templateUrl: 'components/dashboard/dashboard.html',
                     controller: "DashboardController as dashboard"
                 }
             }
@@ -343,12 +343,12 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
         .state('community.dashboard.company',{}) // for user profile page when companies are in communities
 
         .state('404', {
-            templateUrl: "components/common/errors/404.html",
+            templateUrl: "components/errors/404.html",
             controller: "ErrorPageController as error"
         })
 
         .state('500', {
-            templateUrl: "components/common/errors/500.html",
+            templateUrl: "components/errors/500.html",
             controller: "ErrorPageController as error"
         });
 

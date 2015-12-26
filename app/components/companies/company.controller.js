@@ -223,6 +223,10 @@ function CompanyProfileController($stateParams, $location, $mixpanel, user, comp
         });
     };
 
+    this.editProfile = function() {
+        // launch edit company modal
+    };
+
     this.updateProfile = function() {
         company_service.updateProfile({
             displayName: user.data.user.value.profile.name,
