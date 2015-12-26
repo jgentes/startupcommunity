@@ -340,6 +340,7 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
         })
         .state('community.dashboard.location',{})
         .state('community.dashboard.cluster',{})
+        .state('community.dashboard.company',{}) // for user profile page when companies are in communities
 
         .state('404', {
             templateUrl: "components/common/errors/404.html",
