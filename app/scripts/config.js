@@ -113,6 +113,10 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                                 return communities.data[$stateParams.location_path];
                             } else return {};
                         } else return $stateParams.location;
+                    }],
+                company: ['community',
+                    function(community) {
+                        return community.type == 'company' ? community : null;
                     }]
             }
         })
