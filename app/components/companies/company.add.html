@@ -1,6 +1,6 @@
 <div class="inmodal">
     <div class="color-line"></div>
-    <div class="modal-header">
+    <div class="modal-header" ng-show="!welcome.update">
         <h4 class="modal-title">Add a company to {{::welcome.community.profile.name}}</h4>
         <p class="font-bold">Only add companies that are part of your local startup community.</p>
     </div>
@@ -21,7 +21,7 @@
             </div>
             <div style="padding: 20px;">
 
-                <div class="form-group">
+                <div class="form-group" ng-show="!welcome.update">
                     <input type="text" ng-model="welcome.company" placeholder="Search by company name.." autofocus="true" typeahead="company.name for company in welcome.getCompanies($viewValue)" typeahead-editable="true" typeahead-on-select="welcome.selectedCompany = $item; welcome.notlisted = false;" class="form-control input-lg">
                     <a style="padding-top: 3px; color: #777;" class="pull-right" ng-click="welcome.notlisted = !welcome.notlisted">not listed?  add it here.</a>
                 </div>

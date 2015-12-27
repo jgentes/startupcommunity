@@ -302,7 +302,7 @@ function NavigationController($auth, $state, $window, $timeout, $location, $scop
 
     // ADD COMPANY
 
-    this.addCompany = function() {
+    this.addCompany = function(company) {
 
         var modalInstance = $modal.open({
             templateUrl: 'components/companies/company.add.html',
@@ -321,6 +321,9 @@ function NavigationController($auth, $state, $window, $timeout, $location, $scop
                 },
                 location: function() {
                     return self.location;
+                },
+                company: function() {
+                    return company || null;
                 }
             }
         });

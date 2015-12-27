@@ -2,7 +2,7 @@
     <div class="panel-body hero" style="padding: 10px 0;">
         <div style="padding: 20px 15px;">
             <header class="heading content" style="color:#fff">
-                <button ng-click="editProfile()" class="btn btn-warning pull-right" style="margin-left:-100px;">Edit Profile</button>
+                <button ng-click="nav.addCompany(profile.company)" class="btn btn-warning pull-right" style="margin-left:-100px;">Edit Profile</button>
                 <img class="img-circle m-b" style="height:100px;" ng-src="{{profile.company.profile.avatar || profile.company.profile.angellist.thumb_url || '/public/images/blank_startup.jpg'}}" alt="{{::profile.company.profile.name}}" onerror="this.src='/public/images/blank_startup.jpg'">
                 <div style="margin:-15px 0;">
                     <span ng-if="profile.company.profile.parents[0]" class="btn btn-default btn-xs">

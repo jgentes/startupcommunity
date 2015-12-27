@@ -2,7 +2,7 @@ angular
     .module('startupcommunity')
     .controller('WelcomeController', WelcomeController);
 
-function WelcomeController($auth, $q, $http, $mixpanel, $stateParams, $scope, $state, $filter, sweet, community, location, user_service, company_service, community_service, user) {
+function WelcomeController($auth, $q, $http, $mixpanel, $stateParams, $scope, $state, $filter, sweet, community, location, user_service, company_service, community_service, user, company) {
     var self = this;
     this.location = jQuery.isEmptyObject(location) ? community.profile.name : location.profile.name.split(',')[0];
     this.auth = false;
@@ -203,13 +203,14 @@ function WelcomeController($auth, $q, $http, $mixpanel, $stateParams, $scope, $s
         self.notlisted = false;
         var oldco = profile;
         self.company = oldco.profile.name;
-        self.selectedCompany.name = oldco.profile.name;
-        if (oldco.profile.industries) self.selectedCompany.industries = oldco.profile.industries;
-        if (oldco.profile.parents) self.selectedCompany.parent = oldco.profile.parents[0];
-        if (oldco.profile.stage) self.selectedCompany.stage = oldco.profile.stage;
-        if (oldco.profile.headline) self.selectedCompany.high_concept = oldco.profile.headline;
-        if (oldco.profile.summary) self.selectedCompany.product_desc = oldco.profile.summary;
-        if (oldco.profile.avatar) self.selectedCompany.thumb_url = oldco.profile.avatar;
+        if (!self.selectedCompany) self.selectedCompany = {};
+        self.selectedCompany['name'] = oldco.profile.name;
+        if (oldco.profile.industries) self.selectedCompany['industries'] = oldco.profile.industries;
+        if (oldco.profile.parents) self.selectedCompany['parent'] = oldco.profile.parents[0];
+        if (oldco.profile.stage) self.selectedCompany['stage'] = oldco.profile.stage;
+        if (oldco.profile.headline) self.selectedCompany['high_concept'] = oldco.profile.headline;
+        if (oldco.profile.summary) self.selectedCompany['product_desc'] = oldco.profile.summary;
+        if (oldco.profile.avatar) self.selectedCompany['thumb_url'] = oldco.profile.avatar;
 
         for (role in self.user.roles) {
             for (co in self.user.roles[role]) {
@@ -221,6 +222,12 @@ function WelcomeController($auth, $q, $http, $mixpanel, $stateParams, $scope, $s
         }
         self.alert = { type: 'warning', message: self.selectedCompany.name + ' is already in the system, but you may update the company record.'};
     };
+
+    if (company) {
+        this.showCurrent(company);
+        this.update = true;
+        this.alert = undefined;
+    } // if company is passed in, probably editing existing company profile
 
     $scope.$watch('welcome.selectedCompany.id', function(newVal, oldVal) {
         if (newVal) {
@@ -315,7 +322,7 @@ function WelcomeController($auth, $q, $http, $mixpanel, $stateParams, $scope, $s
 
         window.open( "http://twitter.com/intent/tweet?text=" + getQuote + "%20via%20StartupCommunity.org&related=startupyourcity&", "twitterwindow", "height=450, width=550, toolbar=0, location=0, menubar=0, directories=0, scrollbars=0" );
 
-    }
+    };
 
     this.submit = function() {
 
