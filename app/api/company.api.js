@@ -238,7 +238,7 @@ function handleAddCompany(req, res) {
                     if (company.profile.angellist.industries) delete company.profile.angellist.industries;
 
                     //search for company and add if not there..
-                    companyPull(company, addCompany.role, addCompany.location_key, req.user, function(result) {
+                    companyPull(company, addCompany.role, addCompany.location_key, req.user, addCompany.key, function(result) {
                         res.status(result.status).send(result.data);
                     });
 /*
@@ -317,18 +317,18 @@ var addRole = function(company_key, role, location_key, user_key) {
         });
 };
 
-var companyPull = function (company, role, location_key, user, callback) {
+var companyPull = function (company, role, location_key, user, key, callback) {
 
-    console.log('Looking for existing company based on AngelList profile.');
+    console.log('Looking for existing company based on key or AngelList profile.');
 
-    db.search(process.env.DB_COMMUNITIES, '@value.profile.angellist.id: ' + company.profile.angellist.id) // no quotes due to number not string
+    db.search(process.env.DB_COMMUNITIES, '@path.key:' + key + ' OR @value.profile.angellist.id: ' + company.profile.angellist.id) // no quotes due to number not string
         .then(function (result){
 
             console.log('Result of db search: ' + result.body.total_count);
 
             if (result.body.results.length > 0){
 
-                console.log("Matched AngelList startup to database company: " + company.profile.name);
+                console.log("Matched startup to database company: " + company.profile.name);
 
                 db.put(process.env.DB_COMMUNITIES, result.body.results[0].path.key, company)
                     .then(function (response) {

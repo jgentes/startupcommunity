@@ -11,6 +11,7 @@
                     <img style="height:75px;"
                          ngf-thumbnail="welcome.selectedCompany.thumb_url || file || '/public/images/blank_startup.jpg'">
                 </a>
+                <h4 ng-show="welcome.update">{{::welcome.community.profile.name}}</h4>
                 <br/>
                 <label id="uploader_text">
                     <input type="file" ng-model="logo_thumbnail" name="file" ngf-pattern="'image/*'"
@@ -79,7 +80,7 @@
         </div>
     </div>
     <div class="modal-footer">
-        <input ng-click="welcome.addCompany()" type="submit" class="finish btn-success btn pull-right" ng-class="{'disabled' : disabled || welcome.working || !welcome.selectedCompany}" value="{{ (welcome.updateCompany ? 'Update ' : 'Add ') + (welcome.selectedCompany.name || 'Company') }}"/>
+        <input ng-show="!welcome.updated" ng-click="welcome.addCompany()" type="submit" class="finish btn-success btn pull-right" ng-class="{'disabled' : disabled || welcome.working || !welcome.selectedCompany}" value="{{ (welcome.updateCompany ? 'Update ' : 'Add ') + (welcome.selectedCompany.name || 'Company') }}"/>
         <button type="button" class="btn btn-default pull-right" style="margin-right: 15px;" ng-show="welcome.selectedCompany && !welcome.working" ng-click="welcome.selectedCompany = undefined; welcome.company = undefined; welcome.alert = undefined; welcome.updateRole = false; welcome.selectedRole = 'none'; welcome.updateCompany = false; welcome.submitted = false; welcome.notlisted = false; welcome.dups = undefined;">Clear Form</button>
         <div loading-bars ng-show="welcome.working" style="padding-top: 5px; float: left;"></div>
         <button type="button" class="btn btn-default" ng-click="$close();$state.reload();" style="margin-right: 10px;">Close</button>

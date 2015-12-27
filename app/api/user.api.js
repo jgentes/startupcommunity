@@ -16,9 +16,6 @@ var UserApi = function() {
     this.contactUser = handleContactUser;
     this.getProfile = handleGetProfile;
     this.getProfileUrl = handleGetProfileUrl;
-    this.updateProfile = handleUpdateProfile;
-    this.setRole = handleSetRole;
-    this.removeProfile = handleRemoveProfile;
     this.feedback = handleFeedback;
 };
 
@@ -453,75 +450,6 @@ function handleUpdateProfile(req, res) {
     } else {
         res.status(400).send({ message: 'You may only update your own user record.'})
     }
-}
-
-function handleSetRole(req, res) {
-    var userkey = req.query.userkey,
-      community = req.query.community,
-      cluster = req.query.cluster,
-      role = req.query.role,
-      status = (req.query.status == 'true'), // will convert string to bool
-      allowed = false;
-
-    var checkperms = function(allowed, callback) {
-        if (!allowed) {
-            db.get(process.env.DB_COMMUNITIES, req.user)
-              .then(function (response) {
-                  userperms = findKey(response.body.communities, community, []); //todo this would mean an admin of anything would work, need to validate location + community
-                  if (userperms[0].roles.indexOf("admin") > -1) { allowed=true; }
-                  callback(allowed);
-              })
-              .fail(function(err){
-                  console.warn("WARNING: user482", err);
-                  res.status(202).send({ message: "Something went wrong."});
-              });
-        } else callback(allowed);
-    };
-
-    //check perms!
-    if (userkey == req.user) { allowed = true; }
-    checkperms(allowed, function (allowed) {
-        if (allowed) {
-            db.get(process.env.DB_COMMUNITIES, userkey)
-              .then(function (response) {
-                  if (response.body.cities[community].clusters === undefined) { //need to create clusters key
-                      response.body.cities[community]['clusters'] = {};
-                  }
-                  if (response.body.cities[community].clusters[cluster] === undefined) { //need to create the cluster in user profile
-                      console.log('Adding user to cluster: ' + cluster);
-                      response.body.cities[community].clusters[cluster] = { "roles": [] };
-                  }
-                  var thisindustry = response.body.cities[community].clusters[cluster];
-
-                  if (status === true) {
-                      if (thisindustry.roles.indexOf(role) < 0) {
-                          thisindustry.roles.push(role);
-                      } // else they already have the role, no action needed
-                  } else if (status === false) {
-                      if (thisindustry.roles.indexOf(role) >= 0) {
-                          thisindustry.roles.splice(thisindustry.roles.indexOf(role), 1);
-                      } // else they do not have the role, no action needed
-                  }
-                  response.body.cities[community].clusters[cluster] = thisindustry;
-
-                  db.put(process.env.DB_COMMUNITIES, userkey, response.body)
-                    .then(function (finalres) {
-                        res.status(201).send({ message: 'Profile updated.'});
-                    })
-                    .fail(function (err) {
-                        console.warn('WARNING: user519 ', err);
-                        res.status(202).send({ message: "Something went wrong."});
-                    });
-
-              })
-              .fail(function (err) {
-                  console.warn('WARNING: user525 ', err);
-                  res.status(202).send({ message: "Something went wrong."});
-              });
-        } else {
-            res.status(401).send({ message: 'You do not have permission to change this role.'});
-        }
-    });
 }
 
 function handleFeedback(req, res) {

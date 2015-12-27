@@ -265,26 +265,6 @@ function UserProfileController($stateParams, $http, $location, $modal, $mixpanel
         });
     };
 
-    this.removeProfile = function(userid, name) {
-        notify("Are you sure you want to remove " + name + "?", function(result) { //todo fix notify maybe with sweetalert
-            if (result) {
-                user_service.removeProfile(userid, function(response) {
-                    $location.path('/people');
-                    this.alert = { type: 'success', msg: "Person removed. Hopefully they'll return some day." };
-                });
-            }
-        });
-    };
-
-    this.updateProfile = function() {
-        user_service.updateProfile({
-            displayName: user.profile.name,
-            email: user.profile.email
-        }).then(function() {
-            this.alert = { type: 'success', msg: "Great news. Your profile has been updated."};
-        });
-    };
-
     this.getKey = function() {
         if (!user.profile.api_key) {
             user_services.getKey()

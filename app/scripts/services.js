@@ -62,12 +62,6 @@ angular
             getProfileUrl: function(filename) {
                 return $http.get('/api/2.1/profile/url?filename=' + filename);
             },
-            removeProfile: function(userid, callback) {
-                $http.post('/api/2.1/profile/remove/' + userid)
-                  .then( function(response) {
-                      callback(response);
-                  })
-            },
             inviteUser: function(email, message, community_name, location_key, community_key) {
                 return $http.post('/api/2.1/invite', {
                     params: {
@@ -94,12 +88,6 @@ angular
             },
             getHelpToken: function() {
                 return $http.get('/auth/helpToken');
-            },
-            setRole: function(userkey, communitykey, cluster, role, status, callback) {
-                $http.put('/api/2.1/profile/role?userkey=' + userkey + '&communitykey=' + communitykey + '&cluster=' + cluster + '&role=' + role + '&status=' + status)
-                  .then( function(data, status) {
-                      callback(data, status);
-                  })
             },
             feedback: function(data) {
                 $http.post('/api/2.1/feedback?data=' + encodeURIComponent(JSON.stringify(data)));
@@ -216,13 +204,14 @@ angular
                     });
                 return $http.get(alturl || urlString);
             },
-            addCompany: function(al_profile, role, location_key, community_key) {
+            addCompany: function(al_profile, role, location_key, community_key, company_key) {
                 return $http.post('/api/2.1/companies/add', {
                     params: {
                         al_profile: al_profile,
                         role: role,
                         location_key: location_key,
-                        community_key: community_key
+                        community_key: community_key,
+                        key: company_key
                     }
                 });
             },

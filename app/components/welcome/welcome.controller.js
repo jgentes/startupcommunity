@@ -205,6 +205,7 @@ function WelcomeController($auth, $q, $http, $mixpanel, $stateParams, $scope, $s
         self.company = oldco.profile.name;
         if (!self.selectedCompany) self.selectedCompany = {};
         self.selectedCompany['name'] = oldco.profile.name;
+        if (oldco.key) self.selectedCompany['key'] = oldco.key;
         if (oldco.profile.industries) self.selectedCompany['industries'] = oldco.profile.industries;
         if (oldco.profile.parents) self.selectedCompany['parent'] = oldco.profile.parents[0];
         if (oldco.profile.stage) self.selectedCompany['stage'] = oldco.profile.stage;
@@ -285,7 +286,7 @@ function WelcomeController($auth, $q, $http, $mixpanel, $stateParams, $scope, $s
             if (community.type == 'cluster') community_path = location.key; // do not allow companies to be added directly to clusters
             if (community.type == 'network' && (self.user.roles && self.user.roles.leader && self.user.roles.leader[community.key]) && (self.user.roles.leader[community.key].indexOf(location.key) < 0)) community_path = location.key;
             
-            company_service.addCompany(self.selectedCompany, role, location.key, community_path)
+            company_service.addCompany(self.selectedCompany, role, location.key, community_path, self.selectedCompany.key)
                 .then(function(response) {
 
                     self.working = false;
@@ -299,6 +300,7 @@ function WelcomeController($auth, $q, $http, $mixpanel, $stateParams, $scope, $s
                         self.submitted = false;
                         self.dups = undefined;
                         self.notlisted = false;
+                        if (self.update) self.updated = true;
                         self.alert = { type: 'success', message: String(response.data.message) };
                     }
                 })

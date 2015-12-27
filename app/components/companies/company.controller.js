@@ -212,26 +212,6 @@ function CompanyProfileController($stateParams, $location, $mixpanel, user, comp
         }
     }
 
-    this.removeProfile = function(userid, name) {
-        notify("Are you sure you want to remove " + name + "?", function(result) { //todo fix notify maybe with sweetalert
-            if (result) {
-                company_service.removeProfile(userid, function(response) {
-                    $location.path('/people');
-                    this.alert = { type: 'success', msg: "Person removed. Hopefully they'll return some day." };
-                });
-            }
-        });
-    };
-
-    this.updateProfile = function() {
-        company_service.updateProfile({
-            displayName: user.data.user.value.profile.name,
-            email: user.data.user.value.profile.email
-        }).then(function() {
-            this.alert = { type: 'success', msg: "Great news. Your profile has been updated."};
-        });
-    };
-
 }
 
 function AddCompanyController($mixpanel, company_service, community) {
