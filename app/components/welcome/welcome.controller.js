@@ -2,7 +2,7 @@ angular
     .module('startupcommunity')
     .controller('WelcomeController', WelcomeController);
 
-function WelcomeController($auth, $q, $http, $mixpanel, $stateParams, $scope, $state, $filter, sweet, community, location, user_service, company_service, community_service, user, company) {
+function WelcomeController($auth, $q, $http, $mixpanel, $stateParams, $timeout, $scope, $state, $filter, sweet, community, location, user_service, company_service, community_service, user, company) {
     var self = this;
     this.location = jQuery.isEmptyObject(location) ? community.profile.name : location.profile.name.split(',')[0];
     this.auth = false;
@@ -194,7 +194,7 @@ function WelcomeController($auth, $q, $http, $mixpanel, $stateParams, $scope, $s
             }
         }
 
-        self.selectedRole = 'none';
+        if (!self.selectedRole) self.selectedRole = 'none';
 
     });
 
@@ -225,10 +225,11 @@ function WelcomeController($auth, $q, $http, $mixpanel, $stateParams, $scope, $s
     };
 
     if (company) {
+        // if company is passed in, probably editing existing company profile
         this.showCurrent(company);
         this.update = true;
         this.alert = undefined;
-    } // if company is passed in, probably editing existing company profile
+    }
 
     $scope.$watch('welcome.selectedCompany.id', function(newVal, oldVal) {
         if (newVal) {
@@ -276,38 +277,47 @@ function WelcomeController($auth, $q, $http, $mixpanel, $stateParams, $scope, $s
         return selected[0].text;
     };
 
-    this.addCompany = function() {
+    this.addCompany = function(e) {
+        if (e) e.preventDefault();
 
         if (self.selectedCompany.parent) {
 
-            self.working = true;
-            var role = self.selectedRole == 'none' ? undefined : self.selectedRole;
+            if (angular.element('.summary_form a').hasClass('editable-hide')) {
+                // they've edited the summary but haven't clicked checkmark to accept changes
+                self.alert = { type: 'danger', message: 'You made changes to the summary. Please accept or cancel them before updating.' };
+            } else {
 
-            if (community.type == 'cluster') community_path = location.key; // do not allow companies to be added directly to clusters
-            if (community.type == 'network' && (self.user.roles && self.user.roles.leader && self.user.roles.leader[community.key]) && (self.user.roles.leader[community.key].indexOf(location.key) < 0)) community_path = location.key;
-            
-            company_service.addCompany(self.selectedCompany, role, location.key, community_path, self.selectedCompany.key)
-                .then(function(response) {
+                self.working = true;
+                var role = self.selectedRole == 'none' ? undefined : self.selectedRole;
 
-                    self.working = false;
-                    if (response.status !== 200) {
-                        self.alert = { type: 'danger', message: String(response.data.message) };
-                    } else {
-                        self.selectedCompany = undefined;
-                        self.company = undefined;
-                        self.updateCompany = false;
-                        self.selectedRole = 'none';
-                        self.submitted = false;
-                        self.dups = undefined;
-                        self.notlisted = false;
-                        if (self.update) self.updated = true;
-                        self.alert = { type: 'success', message: String(response.data.message) };
-                    }
-                })
-                .catch(function(error) {
-                    self.working = false;
-                    self.alert = { type: 'danger', message: String(error.data.message) };
-                })
+                if (community.type == 'cluster') community_path = location.key; // do not allow companies to be added directly to clusters
+                if (community.type == 'network' && (self.user.roles && self.user.roles.leader && self.user.roles.leader[community.key]) && (self.user.roles.leader[community.key].indexOf(location.key) < 0)) community_path = location.key;
+
+
+                    company_service.addCompany(self.selectedCompany, role, location.key, community_path, self.selectedCompany.key)
+                        .then(function(response) {
+
+                            self.working = false;
+                            if (response.status !== 200) {
+                                self.alert = { type: 'danger', message: String(response.data.message) };
+                            } else {
+                                if (self.selectedCompany.key) $http.get('/api/2.1/community/' + self.selectedCompany.key); // refresh outdated cache
+                                self.selectedCompany = undefined;
+                                self.company = undefined;
+                                self.updateCompany = false;
+                                self.selectedRole = 'none';
+                                self.submitted = false;
+                                self.dups = undefined;
+                                self.notlisted = false;
+                                if (self.update) self.updated = true;
+                                self.alert = { type: 'success', message: String(response.data.message) };
+                            }
+                        })
+                        .catch(function(error) {
+                            self.working = false;
+                            self.alert = { type: 'danger', message: String(error.data.message) };
+                        })
+            }
 
         } else self.submitted = true;
 
