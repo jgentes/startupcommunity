@@ -16,6 +16,7 @@ var UserApi = function() {
     this.contactUser = handleContactUser;
     this.getProfile = handleGetProfile;
     this.getProfileUrl = handleGetProfileUrl;
+    this.updateProfile = handleUpdateProfile;
     this.feedback = handleFeedback;
 };
 

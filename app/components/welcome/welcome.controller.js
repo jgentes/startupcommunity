@@ -204,9 +204,8 @@ function WelcomeController($auth, $q, $http, $mixpanel, $stateParams, $scope, $s
         var oldco = profile;
         self.company = oldco.profile.name;
         if (!self.selectedCompany) self.selectedCompany = {};
+        if (oldco.profile.angellist) self.selectedCompany = oldco.profile.angellist;
         self.selectedCompany['name'] = oldco.profile.name;
-        if (oldco.key) self.selectedCompany['key'] = oldco.key;
-        if (oldco.profile.angellist) self.selectedCompany['id'] = oldco.profile.angellist.id;
         if (oldco.profile.industries) self.selectedCompany['industries'] = oldco.profile.industries;
         if (oldco.profile.parents) self.selectedCompany['parent'] = oldco.profile.parents[0];
         if (oldco.profile.stage) self.selectedCompany['stage'] = oldco.profile.stage;

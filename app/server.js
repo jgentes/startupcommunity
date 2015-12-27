@@ -137,6 +137,7 @@ app.post('/api/2.1/contact', userApis.contactUser);
 
 // new for 2.1
 app.post('/api/2.1/companies/add', auth.ensureAuthenticated, companyApis.addCompany);
+app.post('/api/2.1/profile', auth.ensureAuthenticated, userApis.updateProfile);
 app.get('/api/2.1/profile/url', auth.ensureAuthenticated, userApis.getProfileUrl);
 app.get('/api/2.1/companies/url', auth.ensureAuthenticated, companyApis.getLogoUrl);
 app.get('/api/2.1/angel/startups/search', angellistApis.searchStartups);
