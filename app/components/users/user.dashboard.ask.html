@@ -1,6 +1,6 @@
 <form ng-if="nav.user" role="form" ng-submit="profile.askQuestion()">
     <div id="questionbox" class="input-group">
-        <input type="text" class="form-control input-lg" placeholder="Write your question here.." ng-model="profile.question" required>
+        <input type="text" class="form-control input-lg" placeholder="Write your question for {{profile.user.profile.name | words : 0}} here.." ng-model="profile.question" required>
                         <span class="input-group-btn">
                             <input type="submit" value="Ask a Question" class="btn btn-success" style="height: 46px;"/>
                         </span>

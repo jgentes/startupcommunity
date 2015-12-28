@@ -5,8 +5,8 @@
                 <div class="col-xs-8">
                     <div class="stats-title pull-left">
                         <a ui-sref="{{'user.list' + nav.nav_url}}">
-                            <h3>Founders</h3>
-                            <h1 class="text-info">{{profile.team.count.founder}}</h1>
+                            <h3>Founder</h3>
+                            <h1 class="text-info">{{profile.companies.count.founder}}</h1>
                         </a>
                     </div>
                 </div>
@@ -17,10 +17,10 @@
                 </div>
             </div>
             <div class="panel-footer" style="background: #fff;">
-                <div ng-repeat="item in profile.team.founder">
+                <div ng-repeat="item in profile.companies.founder">
                     <div style="margin-right: -2px; margin-bottom:-5px;">
                         <div ng-if="$first" style="padding-top:5px;"></div>
-                        <div class="row" ng-include="'components/users/user.list.item.html'" style="margin-right: -14px; margin-bottom: 1px;"></div>
+                        <div class="row" ng-include="'components/companies/company.list.item.html'" style="margin-right: -14px; margin-bottom: 1px;"></div>
                         <div ng-if="$last" style="margin-bottom:-32px;"></div>
                     </div>
                 </div>
@@ -33,8 +33,8 @@
                 <div class="col-xs-8">
                     <div class="stats-title pull-left">
                         <a ui-sref="{{'user.list' + nav.nav_url}}">
-                            <h3>Investors</h3>
-                            <h1 class="text-info">{{profile.team.count.investor}}</h1>
+                            <h3>Investor</h3>
+                            <h1 class="text-info">{{profile.companies.count.investor}}</h1>
                         </a>
                     </div>
                 </div>
@@ -45,10 +45,10 @@
                 </div>
             </div>
             <div class="panel-footer" style="background: #fff;">
-                <div ng-repeat="item in profile.team.investor">
+                <div ng-repeat="item in profile.companies.investor">
                     <div style="margin-right: -2px; margin-bottom:-5px;">
                         <div ng-if="$first" style="padding-top:5px;"></div>
-                        <div class="row" ng-include="'components/users/user.list.item.html'" style="margin-right: -14px; margin-bottom: 1px;"></div>
+                        <div class="row" ng-include="'components/companies/company.list.item.html'" style="margin-right: -14px; margin-bottom: 1px;"></div>
                         <div ng-if="$last" style="margin-bottom:-32px;"></div>
                     </div>
                 </div>
@@ -61,8 +61,8 @@
                 <div class="col-xs-8">
                     <div class="stats-title pull-left">
                         <a ui-sref="{{'user.list' + nav.nav_url}}">
-                            <h3>Team Members</h3>
-                            <h1 class="text-info">{{profile.team.count.team}}</h1>
+                            <h3>Team Member</h3>
+                            <h1 class="text-info">{{profile.companies.count.team}}</h1>
                         </a>
                     </div>
                 </div>
@@ -73,10 +73,10 @@
                 </div>
             </div>
             <div class="panel-footer" style="background: #fff;">
-                <div ng-repeat="item in profile.team.team">
+                <div ng-repeat="item in profile.companies.team">
                     <div style="margin-right: -2px; margin-bottom:-5px;">
                         <div ng-if="$first" style="padding-top:5px;"></div>
-                        <div class="row" ng-include="'components/users/user.list.item.html'" style="margin-right: -14px; margin-bottom: 1px;"></div>
+                        <div class="row" ng-include="'components/companies/company.list.item.html'" style="margin-right: -14px; margin-bottom: 1px;"></div>
                         <div ng-if="$last" style="margin-bottom:-32px;"></div>
                     </div>
                 </div>
@@ -89,8 +89,8 @@
                 <div class="col-xs-8">
                     <div class="stats-title pull-left">
                         <a ui-sref="{{'user.list' + nav.nav_url}}">
-                            <h3>Mentors</h3>
-                            <h1 class="text-info">{{profile.team.count.mentor}}</h1>
+                            <h3>Mentor</h3>
+                            <h1 class="text-info">{{profile.companies.count.mentor}}</h1>
                         </a>
                     </div>
                 </div>
@@ -101,10 +101,10 @@
                 </div>
             </div>
             <div class="panel-footer" style="background: #fff;">
-                <div ng-repeat="item in profile.team.mentor">
+                <div ng-repeat="item in profile.companies.mentor">
                     <div style="margin-right: -2px; margin-bottom:-5px;">
                         <div ng-if="$first" style="padding-top:5px;"></div>
-                        <div class="row" ng-include="'components/users/user.list.item.html'" style="margin-right: -14px; margin-bottom: 1px;"></div>
+                        <div class="row" ng-include="'components/companies/company.list.item.html'" style="margin-right: -14px; margin-bottom: 1px;"></div>
                         <div ng-if="$last" style="margin-bottom:-32px;"></div>
                     </div>
                 </div>
@@ -117,8 +117,8 @@
                 <div class="col-xs-8">
                     <div class="stats-title pull-left">
                         <a ui-sref="{{'user.list' + nav.nav_url}}">
-                            <h3>Service Providers</h3>
-                            <h1 class="text-info">{{profile.team.count.provider}}</h1>
+                            <h3>Service Provider</h3>
+                            <h1 class="text-info">{{profile.companies.count.provider}}</h1>
                         </a>
                     </div>
                 </div>
@@ -129,10 +129,10 @@
                 </div>
             </div>
             <div class="panel-footer" style="background: #fff;">
-                <div ng-repeat="item in profile.team.provider">
+                <div ng-repeat="item in profile.companies.provider">
                     <div style="margin-right: -2px; margin-bottom:-5px;">
                         <div ng-if="$first" style="padding-top:5px;"></div>
-                        <div class="row" ng-include="'components/users/user.list.item.html'" style="margin-right: -14px; margin-bottom: 1px;"></div>
+                        <div class="row" ng-include="'components/companies/company.list.item.html'" style="margin-right: -14px; margin-bottom: 1px;"></div>
                         <div ng-if="$last" style="margin-bottom:-32px;"></div>
                     </div>
                 </div>

@@ -225,7 +225,7 @@ function ContactUserController($modalInstance, notify_service, sweet, community_
     };
 }
 
-function UserProfileController($stateParams, $http, $location, $modal, $mixpanel, user, user_service, message_service, community, communities) {
+function UserProfileController($stateParams, $http, $modal, $mixpanel, user, user_service, message_service, community, communities) {
 
     if (!jQuery.isEmptyObject($stateParams.profile)) {
         this.user = $stateParams.profile;
@@ -241,6 +241,24 @@ function UserProfileController($stateParams, $http, $location, $modal, $mixpanel
     this.location = communities.data[this.community.profile.home];
     this.reply = {};
     this.background_image = 'url(https://s3-us-west-2.amazonaws.com/startupcommunity/backgrounds/background' + Math.floor((Math.random() * 54) + 1) + '.jpg)';
+
+    this.companies = { "count" : {}};
+
+    for (role in this.user.roles) {
+        for (comm in this.user.roles[role]) {
+            if (this.communities[comm].type == 'company') {
+                if (!this.companies[role]) this.companies[role] = {};
+                if (!this.companies.count[role]) this.companies.count[role] = 0;
+                this.companies[role][comm] = {
+                    "path": {
+                        "key": comm
+                    },
+                    "value" : this.communities[comm]
+                };
+                ++ this.companies.count[role];
+            }
+        }
+    }
 
     $mixpanel.track('Viewed Profile');
 
@@ -267,7 +285,7 @@ function UserProfileController($stateParams, $http, $location, $modal, $mixpanel
 
     this.getKey = function() {
         if (!user.profile.api_key) {
-            user_services.getKey()
+            user_service.getKey()
                 .then(function(response) {
                     var api_key = response.data;
                     notify({title: "See our <a href='http://startupcommunity.readme.io?appkey=" + api_key + "' target='_blank'>API documentation</a> for help using your key:", message: "<pre>" + api_key + "</pre>"});

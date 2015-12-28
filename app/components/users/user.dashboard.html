@@ -7,6 +7,20 @@
                 <div style="margin-top: -12px;">
                     <span ng-repeat="(item, val) in profile.user.roles" class="user-role" style="font-size: 24px;"><i ng-attr-title="{{item[0].toUpperCase() + item.slice(1);}}" ng-class="{'pe-7s-paper-plane' : item == 'founder', 'pe-7s-flag' : item == 'leader', 'pe-7s-study' : item == 'mentor', 'pe-7s-gleam' : item == 'investor', 'pe-7s-ball' : item == 'team', 'pe-7s-portfolio' : item == 'provider'}"></i></span>
                 </div>
+                <div style="margin:-15px 0;">
+                    <span ng-if="profile.user.profile.parents[0]" class="btn btn-default btn-xs">
+                        <a ui-sref="community.dashboard({location_path: profile.user.profile.parents[0], community: profile.communities[profile.user.profile.parents[0]], query: &quot;&#42;&quot;})">{{::profile.user.profile.parents[0][0].toUpperCase() + profile.user.profile.parents[0].slice(1);}}</a>
+                    </span>
+                    <span ng-if="profile.user.profile.home" class="btn btn-success btn-xs">
+                        <a ui-sref="community.dashboard({location_path: profile.user.profile.home, community: profile.communities[profile.user.profile.home], query: &quot;&#42;&quot;})"  style="color: #fff;">{{::profile.communities[profile.user.profile.home].profile.name}}</a>
+                    </span>
+                    <span ng-repeat="(key, val) in profile.user.roles.founder">
+                        <a ui-sref="community.dashboard({location_path: key, community: profile.communities[key], query: &quot;&#42;&quot;})" class="btn btn-xs" ng-class="{'btn-danger' : profile.communities[key].type == 'company', 'btn-info' : profile.communities[key].type == 'network', 'btn-primary' : profile.communities[key].type == 'cluster', 'btn-success' : profile.communities[key].type == 'location'}"><i class="fa {{profile.communities[key].profile.icon}}"></i> {{profile.communities[key].profile.name}}</a>
+                    </span>
+                    <span ng-repeat="(key, val) in profile.user.roles.leader" ng-if="key !== profile.user.profile.home && key !== profile.user.profile.parents[0]">
+                        <a ui-sref="community.dashboard({location_path: key, community: profile.communities[key], query: &quot;&#42;&quot;})" class="btn btn-xs" ng-class="{'btn-danger' : profile.communities[key].type == 'company', 'btn-info' : profile.communities[key].type == 'network', 'btn-primary' : profile.communities[key].type == 'cluster', 'btn-success' : profile.communities[key].type == 'location'}"><i class="fa {{profile.communities[key].profile.icon}}"></i> {{profile.communities[key].profile.name}}</a>
+                    </span>
+                </div>
                 <h1 style="overflow:hidden; line-height: 1.25;">
                     {{profile.user.profile.headline || profile.user.profile.linkedin.headline}}
                 </h1>
@@ -33,7 +47,8 @@
         <!-- BEGIN Nav tabs -->
         <ul class="nav nav-tabs" role="tablist">
             <li id="ask_li" class="active"><a href="#ask" aria-controls="ask" role="tab" data-toggle="tab" aria-expanded="true"><span class="pe-7s-micro"></span>Ask a Question</a></li>
-            <li id="profile_li" ><a href="#profile" aria-controls="profile" role="tab" data-toggle="tab" aria-expanded="false"><span class="pe-7s-note2"></span>View Full Profile</a></li>
+            <li id="companies_li" ><a href="#companies" aria-controls="companies" role="tab" data-toggle="tab" aria-expanded="false"><span class="pe-7s-power"></span>Companies</a></li>
+            <li id="profile_li" ><a href="#profile" aria-controls="profile" role="tab" data-toggle="tab" aria-expanded="false"><span class="pe-7s-note2"></span>Full Profile</a></li>
         </ul>
         <!--/ END Nav tabs -->
 
@@ -46,13 +61,19 @@
 
                 <div ng-include="'components/users/user.dashboard.ask.html'"></div>
 
-            </div> <!-- First Tab Pane -->
+            </div>
+
+            <div role="tabpanel" class="tab-pane" id="companies">
+
+                <div ng-include="'components/users/user.dashboard.companies.html'"></div>
+
+            </div>
 
             <div role="tabpanel" class="tab-pane" id="profile">
 
                 <div ng-include="'components/users/user.dashboard.profile.html'"></div>
 
-            </div> <!-- Second Tab Pane -->
+            </div>
 
         </div>
         <!--/ END Tab panes -->
