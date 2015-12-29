@@ -477,7 +477,7 @@ function handleRemoveCommunity(req, res) {
                             }
                         }
                         if (response.body.communities.indexOf(community.key) > -1) {
-                            response.body.communities.splice(1, response.body.communities.indexOf(community.key));
+                            response.body.communities.splice(response.body.communities.indexOf(community.key), 1);
                         }
                         db.put(process.env.DB_COMMUNITIES, user_key, response.body)
                             .then(function(response) {
