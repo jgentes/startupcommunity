@@ -17,6 +17,7 @@ var UserApi = function() {
     this.getProfile = handleGetProfile;
     this.getProfileUrl = handleGetProfileUrl;
     this.updateProfile = handleUpdateProfile;
+    this.removeCommunity = handleRemoveCommunity;
     this.feedback = handleFeedback;
 };
 
@@ -425,8 +426,9 @@ function handleGetProfileUrl(req, res) {
 
 function handleUpdateProfile(req, res) {
     // req data is guaranteed by ensureauth
-    var userid = req.user;
-    var profile = req.body.params.profile;
+    var userid = req.user,
+        profile = req.body.params.profile;
+
     console.log('Updating user profile: ' + userid);
 
     // validate user updates only their own record
@@ -451,6 +453,55 @@ function handleUpdateProfile(req, res) {
     } else {
         res.status(400).send({ message: 'You may only update your own user record.'})
     }
+}
+
+function handleRemoveCommunity(req, res) {
+    // req data is guaranteed by ensureauth
+    var userid = req.user,
+        user_key = req.body.params.user_key,
+        community = req.body.params.community;
+
+    console.log("Removing community '" + community.key + "' for user " + user_key);
+
+    // first confirm that req.user has leader role in community
+    db.get(process.env.DB_COMMUNITIES, userid)
+        .then(function(response) {
+            if (response.body.roles.leader[community.key]) {
+                db.get(process.env.DB_COMMUNITIES, user_key)
+                    .then(function(response) {
+                        for (role in response.body.roles) {
+                            for (comm in response.body.roles[role]) {
+                                if (response.body.roles[role][community.key]) {
+                                    delete response.body.roles[role][community.key];
+                                }
+                            }
+                        }
+                        if (response.body.communities.indexOf(community.key) > -1) {
+                            response.body.communities.splice(1, response.body.communities.indexOf(community.key));
+                        }
+                        db.put(process.env.DB_COMMUNITIES, user_key, response.body)
+                            .then(function(response) {
+                                console.log('Successfully removed community from user profile.');
+                                res.status(201).send({ message: 'Community removed.'});
+                            })
+                            .fail(function(err){
+                                console.warn("WARNING: ", err);
+                                res.status(202).send({ message: "Something went wrong."});
+                            });
+                    })
+                    .fail(function(err){
+                        console.warn("WARNING: ", err);
+                        res.status(202).send({ message: "Something went wrong."});
+                    });
+            } else {
+                console.warn('WARNING:  User does not have leader role in this community.');
+                res.status(202).send({ message: 'You do not have leader privileges for this community.' });
+            }
+        })
+        .fail(function(err){
+            console.warn("WARNING: ", err);
+            res.status(202).send({ message: "Something went wrong."});
+        });
 }
 
 function handleFeedback(req, res) {

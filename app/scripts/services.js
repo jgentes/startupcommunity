@@ -73,6 +73,14 @@ angular
                     }
                 });
             },
+            removeCommunity: function(user_key, community) {
+                return $http.post('/api/2.1/remove', {
+                    params: {
+                        user_key: user_key,
+                        community: community
+                    }
+                })
+            },
             join: function(email, message, community_name, location_key) {
                 return $http.post('/api/2.1/join', {
                     params: {
