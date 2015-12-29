@@ -61,11 +61,11 @@ function UserController($stateParams, user_service, result_service, $sce, commun
     this.remove = function(ruser) {
         sweet.show({
             title: "Are you sure?",
-            text: "Removing this user from the network does not remove them from the entire community. You can easily add them to the network again in the future.",
+            text: "Removing this user from " + community.profile.name + " does not remove them from the entire community. You can easily add them to the network again in the future.",
             type: "warning",
             showCancelButton: true,
             confirmButtonColor: "#DD6B55",
-            confirmButtonText: "Yes, remove them.",
+            confirmButtonText: "Yes, remove " + ruser.value.profile.name,
             closeOnConfirm: false
         }, function () {
             user_service.removeCommunity(ruser.path.key, community)
