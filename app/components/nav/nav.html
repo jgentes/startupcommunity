@@ -153,7 +153,7 @@
                             <li ui-sref="{{'company.list' + nav.nav_url}}" ng-class="{ 'active' : nav.path.endsWith(nav.community.key + '/companies') }">
                                 <a><i class="fa fa-caret-right"></i>Companies
                                 </a>
-                                <li ng-if="nav.user && (nav.community.type == 'cluster' || (nav.community.type == 'network' && nav.user.roles.leader[nav.community.key].indexOf(nav.location_path) > -1) || (nav.community.type == 'location' && nav.user.communities.indexOf(nav.location_path) > -1))" class="nav-third-level" ng-click="nav.addCompany();">
+                                <li ng-if="nav.user && (nav.community.type == 'cluster' || (nav.community.type == 'network' && nav.user.roles.leader[nav.community.key]) || (nav.community.type == 'location' && nav.user.communities.indexOf(nav.location_path) > -1))" class="nav-third-level" ng-click="nav.addCompany();">
                                     <a style="color: #aaa;">+&nbsp;&nbsp;Add Company</a>
                                 </li>
                             </li>
