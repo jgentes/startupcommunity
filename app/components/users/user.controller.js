@@ -272,7 +272,7 @@ function UserProfileController($stateParams, $http, $modal, $mixpanel, user, use
 
     for (role in this.user.roles) {
         for (comm in this.user.roles[role]) {
-            if (this.communities[comm].type == 'company') {
+            if (this.communities[comm] && this.communities[comm].type == 'company') {
                 if (!this.companies[role]) this.companies[role] = {};
                 if (!this.companies.count[role]) this.companies.count[role] = 0;
                 this.companies[role][comm] = {
