@@ -83,8 +83,10 @@ function NavigationController($auth, $state, $window, $timeout, $location, $scop
             if (communities.data[item]) {
                 switch (communities.data[item].type) {
                     case "location":
-                        if (!this.locations) this.locations = {};
-                        this.locations[item] = communities.data[item];
+                        if (item !== this.location.key) {
+                            if (!this.locations) this.locations = {};
+                            this.locations[item] = communities.data[item];
+                        }
                         break;
                     case "cluster":
                         if (!this.clusters) this.clusters = {};

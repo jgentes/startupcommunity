@@ -46,6 +46,9 @@
                             <a>Alerts</a>
                         </li>
                         <li ng-if="nav.user">
+                            <a ui-sref="settings">Settings</a>
+                        </li>
+                        <li ng-if="nav.user">
                             <a ng-click="nav.openChat()">Help</a>
                         <span ng-show="nav.chatMessageCount">
                             <span class="helpcrunch_message_count" ng-bind="nav.chatMessageCount"></span>
@@ -87,6 +90,11 @@
                         </a>
                     </li>
                     <li ng-if="nav.user" class="dropdown">
+                        <a ui-sref="settings" tooltip-placement="bottom" tooltip="Settings">
+                            <i class="pe-7s-config"></i>
+                        </a>
+                    </li>
+                    <li ng-if="nav.user" class="dropdown">
                         <a ng-click="nav.openChat()" tooltip-placement="bottom" tooltip="Help">
                             <i class="pe-7s-help1"></i>
                         </a>
@@ -118,7 +126,13 @@
 
                 <ul class="nav nav-second-level">
                     <li>
-                        <a ui-sref="{{'community.dashboard' + nav.nav_url}}" ng-class="{active: nav.path.includes('/' + nav.community.key)}" style="padding-left: 10px; font-size: 18px; font-weight: bold;">
+                        <a ng-if="nav.location.key !== nav.community.key" ui-sref="community.dashboard({location_path: nav.location.key, community_path: '', community: nav.location, location: nav.location, query: '*'})" ng-class="{active: nav.path.includes('/' + nav.community.key)}" style="padding-left: 10px; font-size: 15px; height: 30px;">
+                            <span ng-if="nav.location" ng-click="l_working = true">
+                                {{nav.location.profile.name}}
+                                <span loading-bars ng-show="l_working"></span>
+                            </span>
+                        </a>
+                        <a ui-sref="{{'community.dashboard' + nav.nav_url}}" ng-class="{active: nav.path.includes('/' + nav.community.key)}" style="padding-left: 15px; font-size: 16px; font-weight: bold;">
                             <span ng-if="nav.community.community_profiles[nav.location_path]" ng-click="c_working = true">
                                 {{nav.community.community_profiles[nav.location_path].name}}
                                 <span loading-bars ng-show="c_working"></span>
