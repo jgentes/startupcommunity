@@ -10,7 +10,7 @@ function NavigationController($auth, $state, $window, $timeout, $location, $scop
     try { // catch any initial db connectivity problems
 
         if (jQuery.isEmptyObject(location)) {
-            if (community.type !== 'location') {
+            if (community.type !== 'location' && community.profile && community.profile.home) {
                 this.location = communities.data[community.profile.home];
             } else this.location = community;
         } else this.location = location;
@@ -66,6 +66,7 @@ function NavigationController($auth, $state, $window, $timeout, $location, $scop
     };
 
     // PRIMARY LEFT-NAV ITEM LIST
+
     if (!this.community) this.community = communities.data[this.location_path];
     if (!this.community) {
         // if still no community, there's a problem, reload the app
