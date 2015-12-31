@@ -20,7 +20,7 @@
                 <hr>
                 <div ng-repeat="(k, v) in nav.user.roles.leader">
                     <div ng-if="nav.communities[k].type == 'network'" style="padding-bottom:10px; font-size: 18px;">{{ nav.communities[k].profile.name }}
-                        <button class="btn btn-xs pull-right">Edit</button>
+                        <button ng-click="nav.communitySettings();" class="btn btn-xs pull-right">Edit</button>
                     </div>
                 </div>
             </div>
@@ -35,7 +35,7 @@
                 <hr>
                 <div ng-repeat="(k, v) in nav.user.roles.leader">
                     <div ng-if="nav.communities[k].type == 'cluster'" style="padding-bottom:10px; font-size: 18px;">{{ nav.communities[k].profile.name }}
-                        <button class="btn btn-xs pull-right">Edit</button>
+                        <button ng-click="nav.communitySettings();" class="btn btn-xs pull-right">Edit</button>
                     </div>
                 </div>
             </div>
@@ -49,7 +49,7 @@
                 <hr>
                 <div ng-repeat="(k, v) in nav.user.roles.leader">
                     <div ng-if="nav.communities[k].type == 'location'" style="padding-bottom:10px; font-size: 18px;">{{ nav.communities[k].profile.name }}
-                        <button class="btn btn-xs pull-right">Edit</button>
+                        <button ng-click="nav.communitySettings();" class="btn btn-xs pull-right">Edit</button>
                     </div>
                 </div>
             </div>

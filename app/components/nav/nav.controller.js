@@ -437,8 +437,6 @@ function CommunitySettingsController($modalInstance, $state, sweet, user, commun
 
         });
 
-
-
     this.addEmbed = function() {
         if (self.form.$valid) {
             if (!self.embed) {
