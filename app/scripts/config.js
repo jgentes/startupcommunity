@@ -9,6 +9,8 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
 
     $stateProvider
 
+    // ORDER MATTERS.. first matching url wins!
+
         .state('login', {
             url: "/login",
             controller: "LoginController as auth",
@@ -121,7 +123,6 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
             }
         })
 
-
         .state('email', {
             parent: 'root',
             url: '/email',
@@ -133,7 +134,16 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
             }
         })
 
-        // ORDER MATTERS.. first matching url wins!
+        .state('settings', {
+            parent: 'root',
+            url: '/settings',
+            views: {
+                'content': {
+                    templateUrl: "components/settings.html",
+                    controller: 'SettingsController as settings'
+                }
+            }
+        })
 
         .state('welcome', {
             parent: "root",
