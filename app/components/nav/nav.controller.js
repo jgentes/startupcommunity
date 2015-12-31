@@ -244,6 +244,9 @@ function NavigationController($auth, $state, $window, $timeout, $location, $scop
                 },
                 community: function() {
                     return community;
+                },
+                user: function() {
+                    return self.user;
                 }
             }
         });
@@ -538,7 +541,7 @@ function CommunitySettingsController($modalInstance, $state, sweet, user, commun
     };
 }
 
-function addClusterController($modalInstance, $mixpanel, sweet, community_service, community, location, $http, $window){
+function addClusterController($modalInstance, $mixpanel, sweet, community_service, community, location, $http, $window, user){
 
     this.location = location;
     this.name = ""; // to avoid 'undefined' for initial url
@@ -603,8 +606,10 @@ function addClusterController($modalInstance, $mixpanel, sweet, community_servic
                             type: "success"
                         }, function(){
                             $http.get('/api/2.1/community/' + self.location.key); // refresh outdated cache
+                            $http.get('/api/2.1/community/' + user.key); // refresh outdated cache
                             $modalInstance.close();
-                            $window.location.reload();
+
+                            $window.location.href = '/' + self.location.key; // goes back to location because /settings won't show new cluster
                         });
                     }
                     $mixpanel.track('Added Cluster');

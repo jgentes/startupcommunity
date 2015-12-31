@@ -46,7 +46,7 @@
                             <a>Alerts</a>
                         </li>
                         <li ng-if="nav.user">
-                            <a href="{{ nav.user.key }}/settings">Settings</a>
+                            <a ui-sref="settings({location_path: nav.user.profile.home})">Settings</a>
                         </li>
                         <li ng-if="nav.user">
                             <a ng-click="nav.openChat()">Help</a>

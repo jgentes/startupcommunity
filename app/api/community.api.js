@@ -645,11 +645,9 @@ function handleAddCommunity(req, res) {
                                     db.put(process.env.DB_COMMUNITIES, pathname, response.body)
                                         .then(function (finalres) {
 
-                                            update_user(req.user, 'leader', pathname, settings.location_key)
-                                                .then(function(response) {
-                                                    console.log(response);
-                                                    res.status(201).send({message: settings.community.type.toUpperCase() + settings.community.type.slice(1) + ' created!'});
-                                                })
+                                            update_user(req.user, 'leader', pathname, settings.location_key, function() {
+                                                res.status(201).send({message: settings.community.type.toUpperCase() + settings.community.type.slice(1) + ' created!'});
+                                            })
                                         })
                                         .fail(function (err) {
                                             console.warn('WARNING: community533 ', err);
@@ -679,10 +677,9 @@ function handleAddCommunity(req, res) {
                                 db.put(process.env.DB_COMMUNITIES, pathname, profile)
                                     .then(function (finalres) {
 
-                                        update_user(req.user, 'leader', pathname, settings.location_key)
-                                            .then(function() {
-                                                res.status(201).send({message: settings.community.type[0].toUpperCase() + settings.community.type.slice(1) + ' created!'});
-                                            })
+                                        update_user(req.user, 'leader', pathname, settings.location_key, function() {
+                                            res.status(201).send({message: settings.community.type[0].toUpperCase() + settings.community.type.slice(1) + ' created!'});
+                                        })
                                     })
                                     .fail(function (err) {
                                         console.warn('WARNING: community565 ', err);
@@ -769,7 +766,9 @@ function handleDeleteCommunity(req, res) {
                                         });
                                 }
 
-                                update_user(req.user, 'delete', settings.community.key, settings.location_key);
+                                update_user(req.user, 'delete', settings.community.key, settings.location_key, function() {
+                                    console.log('Community deleted.');
+                                });
 
                             } else {
                                 console.log('WARNING: Cannot delete community');
@@ -800,9 +799,9 @@ function handleDeleteCommunity(req, res) {
 
 }
 
-var update_user = function(user_key, role, cluster_key, location_key) {
+var update_user = function(user_key, role, cluster_key, location_key, callback) {
 
-    return db.get(process.env.DB_COMMUNITIES, user_key)
+    db.get(process.env.DB_COMMUNITIES, user_key)
         .then(function(response){
 
             if (response.body.code !== "items_not_found") {
@@ -848,18 +847,22 @@ var update_user = function(user_key, role, cluster_key, location_key) {
                 db.put(process.env.DB_COMMUNITIES, user_key, response.body)
                     .then(function(result) {
                         console.log('User ' + user_key + ' updated with community role.');
+                        callback();
                     })
                     .fail(function(err){
                         console.warn("WARNING: community706", err);
+                        callback();
                     });
 
             } else {
                 console.warn('WARNING:  User not found.');
+                callback();
             }
         })
 
         .fail(function(err){
             console.warn("WARNING: community715", err);
+            callback();
         });
 };
 
