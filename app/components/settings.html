@@ -20,7 +20,8 @@
                 <hr>
                 <div ng-repeat="(k, v) in nav.user.roles.leader">
                     <div ng-if="nav.communities[k].type == 'network'" style="padding-bottom:10px; font-size: 18px;">{{ nav.communities[k].profile.name }}
-                        <button ng-click="nav.communitySettings(nav.communities[k]);" class="btn btn-xs pull-right">Edit</button>
+                        <button ng-click="nav.communitySettings(nav.communities[k], true);" class="btn btn-xs pull-right">Embed</button>
+                        <button ng-click="nav.communitySettings(nav.communities[k]);" class="btn btn-primary btn-xs pull-right" style="margin-right: 5px;">Edit</button>
                     </div>
                 </div>
                 <ul class="nav nav-second-level" style="margin-left: -15px;">
@@ -40,7 +41,8 @@
                 <hr>
                 <div ng-repeat="(k, v) in nav.user.roles.leader">
                     <div ng-if="nav.communities[k].type == 'cluster'" style="padding-bottom:10px; font-size: 18px;">{{ nav.communities[k].profile.name }}
-                        <button ng-click="nav.communitySettings(nav.communities[k]);" class="btn btn-xs pull-right">Edit</button>
+                        <button ng-click="nav.communitySettings(nav.communities[k], true);" class="btn btn-xs pull-right">Embed</button>
+                        <button ng-click="nav.addCluster(nav.communities[k]);" class="btn btn-primary btn-xs pull-right" style="margin-right: 5px;">Edit</button>
                     </div>
                 </div>
                 <ul class="nav nav-second-level" style="margin-left: -15px;">
@@ -58,11 +60,11 @@
                 </div>
                 <hr>
                 <div style="padding-bottom:10px; font-size: 18px;">{{ nav.communities[nav.user.profile.home].profile.name }}
-                    <button ng-click="nav.communitySettings(nav.communities[nav.user.profile.home]);" class="btn btn-xs pull-right">Edit</button>
+                    <button ng-click="nav.communitySettings(nav.communities[nav.user.profile.home], true);" class="btn btn-xs pull-right">Embed</button>
                 </div>
                 <div ng-repeat="(k, v) in nav.user.roles.leader">
                     <div ng-if="nav.communities[k].type == 'location' && k !== nav.user.profile.home" style="padding-bottom:10px; font-size: 18px;">{{ nav.communities[k].profile.name }}
-                        <button ng-click="nav.communitySettings(nav.communities[k]);" class="btn btn-xs pull-right">Edit</button>
+                        <button ng-click="nav.communitySettings(nav.communities[k], true);" class="btn btn-xs pull-right">Embed</button>
                     </div>
                 </div>
             </div>

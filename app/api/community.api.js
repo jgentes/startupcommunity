@@ -94,7 +94,7 @@ var schema = {
 
         var community_profiles = {};
         community_profiles[location_key] = {
-            "parents": community.parents,
+            "parents": community.profile.parents,
             "name": community.profile.name,
             "icon": "fa-circle-o",
             "headline": community.profile.headline,
@@ -674,6 +674,7 @@ function handleAddCommunity(req, res) {
                                 // no existing path, go ahead and create
 
                                 var profile = schema.community(settings.community, settings.location_key);
+                                console.log(profile);
 
                                 db.put(process.env.DB_COMMUNITIES, pathname, profile)
                                     .then(function (finalres) {

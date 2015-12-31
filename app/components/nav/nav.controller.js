@@ -189,10 +189,10 @@ function NavigationController($auth, $state, $window, $timeout, $location, $scop
 
     // COMMUNITY SETTINGS
 
-    this.communitySettings = function(community) {
+    this.communitySettings = function(community, embed) {
 
         var modalInstance = $modal.open({
-            templateUrl: 'components/nav/nav.community_settings.html',
+            templateUrl: 'components/nav/nav.' + (embed ? 'embed' : community.type) + '_settings.html',
             controller: CommunitySettingsController,
             controllerAs: 'settings',
             windowClass: "hmodal-success",
@@ -230,7 +230,7 @@ function NavigationController($auth, $state, $window, $timeout, $location, $scop
 
     // ADD CLUSTER
 
-    this.addCluster = function() {
+    this.addCluster = function(community) {
 
         var modalInstance = $modal.open({
             templateUrl: 'components/nav/nav.add_cluster.html',
@@ -240,6 +240,9 @@ function NavigationController($auth, $state, $window, $timeout, $location, $scop
             resolve: {
                 location: function() {
                     return self.location;
+                },
+                community: function() {
+                    return community;
                 }
             }
         });
@@ -432,9 +435,16 @@ function CommunitySettingsController($modalInstance, $state, sweet, user, commun
         .then(function(response) {
             self.community = response.data;
 
+            // load existing embed settings
             if (community.type == 'cluster' && self.community.community_profiles[location.key] && self.community.community_profiles[location.key].embed) {
                 self.embed = self.community.community_profiles[location.key].embed;
             } else self.embed = self.community.profile.embed;
+
+            // load existing config settings
+            if (community.type == 'network') {
+
+            }
+
 
         });
 
@@ -527,7 +537,7 @@ function CommunitySettingsController($modalInstance, $state, sweet, user, commun
     };
 }
 
-function addClusterController($modalInstance, $stateParams, $mixpanel, sweet, community_service, location, $http, $window){
+function addClusterController($modalInstance, $mixpanel, sweet, community_service, community, location, $http, $window){
 
     this.location = location;
     this.name = ""; // to avoid 'undefined' for initial url
@@ -540,6 +550,14 @@ function addClusterController($modalInstance, $stateParams, $mixpanel, sweet, co
     this.encode = function(uri) {
         return encodeURI(uri);
     };
+
+    if (community) {
+        this.name = community.profile.name;
+        this.headline = community.profile.headline;
+        this.parents = community.profile.parents[0][0].toUpperCase() + community.profile.parents[0].slice(1);
+        this.industries = community.profile.industries;
+        this.url = community.key;
+    }
 
     this.createCluster = function() {
         if (self.form.$valid) {
@@ -562,7 +580,7 @@ function addClusterController($modalInstance, $stateParams, $mixpanel, sweet, co
                 profile: {
                     name: self.name,
                     headline: self.headline,
-                    parents: [self.parent],
+                    parents: [self.parent.toLowerCase()],
                     industries: self.industries
                 },
                 url: self.url
@@ -583,7 +601,7 @@ function addClusterController($modalInstance, $stateParams, $mixpanel, sweet, co
                             title: "Cluster created!",
                             type: "success"
                         }, function(){
-                            $http.get('/api/2.1/community/' + $stateParams.location_path); // refresh outdated cache
+                            $http.get('/api/2.1/community/' + self.location.key); // refresh outdated cache
                             $modalInstance.close();
                             $window.location.reload();
                         });
