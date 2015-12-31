@@ -202,7 +202,7 @@
                                 <span loading-bars ng-show="n_working"></span>
                         </a>
                     </li>
-                    <li ng-if="nav.user.communities.indexOf(nav.location_path) > -1 && nav.communities[nav.location_path].type == 'location'">
+                    <li ng-if="nav.user.communities.indexOf(nav.location.key) > -1">
                         <a ng-click="nav.addNetwork();" style="color: #aaa;">+&nbsp;&nbsp;Add Network</a>
                     </li>
                 </ul>
@@ -233,7 +233,7 @@
 
                         </a>
                     </li>
-                    <li ng-if="nav.user.communities.indexOf(nav.location_path) > -1 && nav.communities[nav.location_path].type == 'location'">
+                    <li ng-if="nav.user.communities.indexOf(nav.location.key) > -1">
                         <a ng-click="nav.addCluster();" style="color: #aaa;">+&nbsp;&nbsp;Add Cluster</a>
                     </li>
                 </ul>

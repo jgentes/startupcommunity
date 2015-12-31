@@ -189,7 +189,7 @@ function NavigationController($auth, $state, $window, $timeout, $location, $scop
 
     // COMMUNITY SETTINGS
 
-    this.communitySettings = function() {
+    this.communitySettings = function(community) {
 
         var modalInstance = $modal.open({
             templateUrl: 'components/nav/nav.community_settings.html',
@@ -198,13 +198,10 @@ function NavigationController($auth, $state, $window, $timeout, $location, $scop
             windowClass: "hmodal-success",
             resolve: {
                 community: function() {
-                    return self.community;
+                    return community || self.community;
                 },
                 location: function() {
                     return self.location;
-                },
-                location_key: function() {
-                    return $stateParams.location_path;
                 },
                 user: function() {
                     return self.user;
@@ -424,19 +421,19 @@ function NavigationController($auth, $state, $window, $timeout, $location, $scop
 
 }
 
-function CommunitySettingsController($modalInstance, $state, sweet, user, community_service, community, location, location_key){
+function CommunitySettingsController($modalInstance, $state, sweet, user, community_service, community, location){
 
     this.user = user;
-    this.location_key = location_key;
     var self = this;
+    this.location = location; // used in view
 
     //force pull of community settings every time to avoid stale data
     community_service.getKey(community.key)
         .then(function(response) {
             self.community = response.data;
 
-            if (community.type == 'cluster' && self.community.community_profiles[location_key] && self.community.community_profiles[location_key].embed) {
-                self.embed = self.community.community_profiles[location_key].embed;
+            if (community.type == 'cluster' && self.community.community_profiles[location.key] && self.community.community_profiles[location.key].embed) {
+                self.embed = self.community.community_profiles[location.key].embed;
             } else self.embed = self.community.profile.embed;
 
         });
@@ -450,7 +447,8 @@ function CommunitySettingsController($modalInstance, $state, sweet, user, commun
             self.embed.push({
                 "url" : self.formdata.embed_url_value,
                 "color" : self.formdata.embed_color_value || '#fff',
-                "full" : self.formdata.embed_full_value || false
+                "full" : self.formdata.embed_full_value || false,
+                "creator" : self.user.key
             });
 
         } else {
@@ -464,7 +462,7 @@ function CommunitySettingsController($modalInstance, $state, sweet, user, commun
 
     this.save = function () {
 
-        community_service.setSettings(self.embed, self.location_key, self.community.key)
+        community_service.setSettings(self.embed, location.key, self.community.key)
             .then(function(response) {
 
                 if (response.status !== 201) {
@@ -497,7 +495,7 @@ function CommunitySettingsController($modalInstance, $state, sweet, user, commun
             closeOnConfirm: false
         }, function () {
 
-            community_service.deleteCommunity(self.community, self.location_key)
+            community_service.deleteCommunity(self.community, location.key)
                 .then(function(response) {
 
                     if (response.status !== 204) {
@@ -514,7 +512,7 @@ function CommunitySettingsController($modalInstance, $state, sweet, user, commun
                             type: "success"
                         }, function() {
                             $modalInstance.close();
-                            $state.go('community.dashboard', {location_path: self.location_key, community_path: null, community: location});
+                            $state.go('community.dashboard', {location_path: location.key, community_path: null, community: location});
                         })
                     }
                 });

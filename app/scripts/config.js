@@ -139,8 +139,7 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
             url: '/settings',
             views: {
                 'content': {
-                    templateUrl: "components/settings.html",
-                    controller: 'SettingsController as settings'
+                    templateUrl: "components/settings.html"
                 }
             }
         })

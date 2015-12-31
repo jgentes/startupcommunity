@@ -20,9 +20,14 @@
                 <hr>
                 <div ng-repeat="(k, v) in nav.user.roles.leader">
                     <div ng-if="nav.communities[k].type == 'network'" style="padding-bottom:10px; font-size: 18px;">{{ nav.communities[k].profile.name }}
-                        <button ng-click="nav.communitySettings();" class="btn btn-xs pull-right">Edit</button>
+                        <button ng-click="nav.communitySettings(nav.communities[k]);" class="btn btn-xs pull-right">Edit</button>
                     </div>
                 </div>
+                <ul class="nav nav-second-level" style="margin-left: -15px;">
+                    <li ng-if="nav.user.communities.indexOf(nav.location.key) > -1">
+                        <a ng-click="nav.addNetwork();" style="color: #aaa;">+&nbsp;&nbsp;Add Network</a>
+                    </li>
+                </ul>
             </div>
 
         </div>
@@ -35,9 +40,14 @@
                 <hr>
                 <div ng-repeat="(k, v) in nav.user.roles.leader">
                     <div ng-if="nav.communities[k].type == 'cluster'" style="padding-bottom:10px; font-size: 18px;">{{ nav.communities[k].profile.name }}
-                        <button ng-click="nav.communitySettings();" class="btn btn-xs pull-right">Edit</button>
+                        <button ng-click="nav.communitySettings(nav.communities[k]);" class="btn btn-xs pull-right">Edit</button>
                     </div>
                 </div>
+                <ul class="nav nav-second-level" style="margin-left: -15px;">
+                    <li ng-if="nav.user.communities.indexOf(nav.location.key) > -1">
+                        <a ng-click="nav.addCluster();" style="color: #aaa;">+&nbsp;&nbsp;Add Cluster</a>
+                    </li>
+                </ul>
             </div>
         </div>
 
@@ -47,9 +57,12 @@
                     <h3>Locations</h3>
                 </div>
                 <hr>
+                <div style="padding-bottom:10px; font-size: 18px;">{{ nav.communities[nav.user.profile.home].profile.name }}
+                    <button ng-click="nav.communitySettings(nav.communities[nav.user.profile.home]);" class="btn btn-xs pull-right">Edit</button>
+                </div>
                 <div ng-repeat="(k, v) in nav.user.roles.leader">
-                    <div ng-if="nav.communities[k].type == 'location'" style="padding-bottom:10px; font-size: 18px;">{{ nav.communities[k].profile.name }}
-                        <button ng-click="nav.communitySettings();" class="btn btn-xs pull-right">Edit</button>
+                    <div ng-if="nav.communities[k].type == 'location' && k !== nav.user.profile.home" style="padding-bottom:10px; font-size: 18px;">{{ nav.communities[k].profile.name }}
+                        <button ng-click="nav.communitySettings(nav.communities[k]);" class="btn btn-xs pull-right">Edit</button>
                     </div>
                 </div>
             </div>
