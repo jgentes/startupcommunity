@@ -14,27 +14,43 @@
     <div class="row">
         <div class="hpanel hblue col-xs-4" >
             <div class="panel-body">
-                <div class="stats-title pull-left">
+                <div class="stats-title">
                     <h3>Networks</h3>
                 </div>
                 <hr>
-
+                <div ng-repeat="(k, v) in nav.user.roles.leader">
+                    <div ng-if="nav.communities[k].type == 'network'" style="padding-bottom:10px; font-size: 18px;">{{ nav.communities[k].profile.name }}
+                        <button class="btn btn-xs pull-right">Edit</button>
+                    </div>
+                </div>
             </div>
 
         </div>
 
         <div class="hpanel hnavyblue col-xs-4" >
             <div class="panel-body">
-                <div class="stats-title pull-left">
+                <div class="stats-title">
                     <h3>Clusters</h3>
+                </div>
+                <hr>
+                <div ng-repeat="(k, v) in nav.user.roles.leader">
+                    <div ng-if="nav.communities[k].type == 'cluster'" style="padding-bottom:10px; font-size: 18px;">{{ nav.communities[k].profile.name }}
+                        <button class="btn btn-xs pull-right">Edit</button>
+                    </div>
                 </div>
             </div>
         </div>
 
         <div class="hpanel hgreen col-xs-4" >
             <div class="panel-body">
-                <div class="stats-title pull-left">
+                <div class="stats-title">
                     <h3>Locations</h3>
+                </div>
+                <hr>
+                <div ng-repeat="(k, v) in nav.user.roles.leader">
+                    <div ng-if="nav.communities[k].type == 'location'" style="padding-bottom:10px; font-size: 18px;">{{ nav.communities[k].profile.name }}
+                        <button class="btn btn-xs pull-right">Edit</button>
+                    </div>
                 </div>
             </div>
         </div>

@@ -46,7 +46,7 @@
                             <a>Alerts</a>
                         </li>
                         <li ng-if="nav.user">
-                            <a ui-sref="settings">Settings</a>
+                            <a href="{{ nav.user.key }}/settings">Settings</a>
                         </li>
                         <li ng-if="nav.user">
                             <a ng-click="nav.openChat()">Help</a>
@@ -90,7 +90,7 @@
                         </a>
                     </li>
                     <li ng-if="nav.user" class="dropdown">
-                        <a ui-sref="settings" tooltip-placement="bottom" tooltip="Settings">
+                        <a href="{{ nav.user.key }}/settings" tooltip-placement="bottom" tooltip="Settings">
                             <i class="pe-7s-config"></i>
                         </a>
                     </li>
