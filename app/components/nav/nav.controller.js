@@ -497,55 +497,19 @@ function CommunitySettingsController($modalInstance, $state, sweet, user, commun
             });
     };
 
-    this.delete = function () {
 
-        sweet.show({
-            title: "Are you sure?",
-            text: "You cannot recover this once it has been deleted!",
-            type: "warning",
-            showCancelButton: true,
-            confirmButtonColor: "#DD6B55",
-            confirmButtonText: "Yes, delete " + self.community.profile.name + "!",
-            closeOnConfirm: false
-        }, function () {
-
-            community_service.deleteCommunity(self.community, location.key)
-                .then(function(response) {
-
-                    if (response.status !== 204) {
-                        sweet.show({
-                            title: "Sorry, something went wrong.",
-                            text: response.data.message,
-                            type: "error"
-                        });
-
-                    } else {
-                        sweet.show({
-                            title: "Deleted!",
-                            text: "The " + self.community.profile.name + " community is gone.",
-                            type: "success"
-                        }, function() {
-                            $modalInstance.close();
-                            $state.go('community.dashboard', {location_path: location.key, community_path: null, community: location});
-                        })
-                    }
-                });
-
-        });
-
-
-    };
 
     this.cancel = function () {
         $modalInstance.dismiss('cancel');
     };
 }
 
-function addClusterController($modalInstance, $mixpanel, sweet, community_service, community, location, $http, $window, user){
+function addClusterController($modalInstance, $mixpanel, sweet, community_service, community, location, $http, $window, user, $state){
 
     this.location = location;
     this.name = ""; // to avoid 'undefined' for initial url
     var self = this;
+    this.update = false;
 
     this.parents = [ 'Agriculture', 'Art', 'Construction', 'Consumer-Goods', 'Corporate', 'Education', 'Finance', 'Government', 'Healthcare', 'Legal', 'Manufacturing', 'Medical', 'Non-Profit', 'Recreation', 'Services', 'Tech', 'Transportation' ];
 
@@ -555,11 +519,13 @@ function addClusterController($modalInstance, $mixpanel, sweet, community_servic
         return encodeURI(uri);
     };
 
-    if (community) {
-        this.name = community.profile.name;
-        this.headline = community.profile.headline;
-        this.parents = community.profile.parents[0][0].toUpperCase() + community.profile.parents[0].slice(1);
-        this.industries = community.profile.industries;
+    if (community && community.community_profiles && community.community_profiles[location.key]) {
+        this.update = true;
+        this.community = community.community_profiles[location.key];
+        this.name = this.community.name;
+        this.headline = this.community.headline;
+        this.parent = this.community.parents[0][0].toUpperCase() + this.community.parents[0].slice(1);
+        this.industries = this.community.industries;
         this.url = community.key;
     }
 
@@ -587,7 +553,7 @@ function addClusterController($modalInstance, $mixpanel, sweet, community_servic
                     parents: [self.parent.toLowerCase()],
                     industries: self.industries
                 },
-                url: self.url
+                url: self.url || encodeURI(self.name.toLowerCase())
             };
 
             community_service.addCommunity(cluster, self.location.key)
@@ -602,14 +568,17 @@ function addClusterController($modalInstance, $mixpanel, sweet, community_servic
 
                     } else {
                         sweet.show({
-                            title: "Cluster created!",
+                            title: "Cluster " + self.update ? "updated!" : "created!",
                             type: "success"
                         }, function(){
-                            $http.get('/api/2.1/community/' + self.location.key); // refresh outdated cache
-                            $http.get('/api/2.1/community/' + user.key); // refresh outdated cache
-                            $modalInstance.close();
+                            // refresh outdated cache
+                            $http.get('/api/2.1/community/' + user.key);
+                            $http.get('/api/2.1/community/' + self.location.key);
+                            $http.get('/api/2.1/community/' + self.location.key + '/' + cluster.url + '/top').then(function() {
+                                $window.location.href = '/'+ self.location.key + '/' + cluster.url;
+                            });
 
-                            $window.location.href = '/' + self.location.key; // goes back to location because /settings won't show new cluster
+                            $modalInstance.close();
                         });
                     }
                     $mixpanel.track('Added Cluster');
@@ -620,6 +589,46 @@ function addClusterController($modalInstance, $mixpanel, sweet, community_servic
         } else {
             self.submitted = true;
         }
+    };
+
+    this.deleteCluster = function () {
+
+        sweet.show({
+            title: "Are you sure?",
+            text: "You can recreate this cluster at any time.",
+            type: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#DD6B55",
+            confirmButtonText: "Yes, delete " + self.community.name + "!",
+            closeOnConfirm: false
+        }, function () {
+
+            community_service.deleteCommunity(community, self.location.key)
+                .then(function(response) {
+
+                    if (response.status !== 204) {
+                        sweet.show({
+                            title: "Sorry, something went wrong.",
+                            text: response.data.message,
+                            type: "error"
+                        });
+
+                    } else {
+                        sweet.show({
+                            title: "Deleted!",
+                            text: "The " + self.community.name + " community is gone.",
+                            type: "success"
+                        }, function() {
+                            $modalInstance.close();
+                            //$state.go('community.dashboard', {location_path: self.location.key, community_path: null, community: self.location});
+                            $state.reload();
+                        })
+                    }
+                });
+
+        });
+
+
     };
 
     this.cancel = function () {

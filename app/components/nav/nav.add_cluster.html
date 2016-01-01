@@ -1,7 +1,8 @@
 <div class="inmodal">
     <div class="color-line"></div>
     <div class="modal-header">
-        <h4 class="modal-title">Add a Cluster in {{add.location.profile.name}}</h4>
+        <h4 class="modal-title" ng-show="!add.update">Add a Cluster in {{add.location.profile.name}}</h4>
+        <h4 class="modal-title" ng-show="add.update">Update {{add.community.name}} in {{add.location.profile.name}}</h4>
         <p class="font-bold">A cluster is an entrepreneurial ecosystem in support of a specific industry. Clusters are made up of mentors, investors, companies, accelerators, coworking spaces, and events that connect people within the community and foster the creation of new business.</p>
     </div>
     <div class="modal-body">
@@ -49,7 +50,8 @@
     </div>
     <div class="modal-footer">
         <button type="button" class="btn btn-default" ng-click="add.cancel()">Cancel</button>
-        <button type="button" class="btn btn-primary" ng-click="add.createCluster()">Create {{add.name}} Cluster</button>
+        <button type="button" class="btn btn-danger" ng-click="add.deleteCluster()" ng-show="add.update">Delete {{add.name}} Cluster</button>
+        <button type="button" class="btn btn-primary" ng-click="add.createCluster()"><span ng-show="!add.update">Create</span><span ng-show="add.update">Update</span> {{add.name}} Cluster</button>
     </div>
 </div>
 
