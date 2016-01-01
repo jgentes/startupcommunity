@@ -814,11 +814,13 @@ var update_user = function(user_key, role, cluster_key, location_key, callback) 
 
                     try {
                         if (response.body.roles.leader[cluster_key].indexOf(location_key) > -1) {
-                            var index = response.body.roles.leader[cluster_key].indexOf(location_key);
-                            response.body.roles.leader[cluster_key].splice(index, 1);
+                            response.body.roles.leader[cluster_key].splice(response.body.roles.leader[cluster_key].indexOf(location_key), 1);
                         }
                         if (response.body.roles.leader[cluster_key].length == 0) {
                             delete response.body.roles.leader[cluster_key]
+                        }
+                        if (response.body.communities.indexOf(cluster_key) > -1) {
+                            response.body.communities.splice(response.body.communities.indexOf(cluster_key), 1);
                         }
                     }
                     catch (e) {}
