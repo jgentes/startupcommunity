@@ -17,6 +17,12 @@ var app = express();
 
 // Some things must come before Body Parser
 
+// Restrict access to dev.startupcommunity.org
+if (process.env.NODE_ENV === "development") {
+    var wwwhisper = require('connect-wwwhisper');
+    app.use(wwwhisper());
+}
+
 // change all www requests to non-www requests
 function wwwRedirect(req, res, next) {
     if (req.headers.host.slice(0, 4) === 'www.') {
@@ -41,14 +47,6 @@ app.use(function(req, res, next) {
     else
         next();
 });
-
-
-// Restrict access to dev.startupcommunity.org
-if (process.env.NODE_ENV === "development") {
-  var wwwhisper = require('connect-wwwhisper');
-  app.use(wwwhisper());
-}
-
 
 var root = __dirname.substring(0, __dirname.lastIndexOf('/')) || __dirname.substring(0, __dirname.lastIndexOf('\\')); // returns /app for heroku [should replace with path.join(__dirname, '../../dir')]
 
