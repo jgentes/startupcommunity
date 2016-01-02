@@ -3,7 +3,7 @@ var memjs = require('memjs'),
     _ = require('lodash'),
     db = require('orchestrate')(process.env.DB_KEY);
 
-var util = require('util'); //for util.inspect on request
+//var util = require('util'); //for util.inspect on request
 //request = require('request');
 
 //require('request-debug')(request); // Very useful for debugging oauth and api req/res
@@ -11,7 +11,7 @@ var util = require('util'); //for util.inspect on request
 var CommunityApi = function () {
     this.getCommunity = handleGetCommunity;
     this.setCommunity = handleSetCommunity;
-    this.addCommunity = handleAddCommunity;
+    this.editCommunity = handleEditCommunity;
     this.deleteCommunity = handleDeleteCommunity;
     this.getKey = handleGetKey;
     this.getTop = handleGetTop;
@@ -595,23 +595,29 @@ function handleSetCommunity(req, res) {
 
 }
 
-function handleAddCommunity(req, res) {
+function handleEditCommunity(req, res) {
 
     // always use ensureAuth before this (to acquire req.user)
     var settings = req.body.params;
 
-    console.log('Adding community: ' + settings.community.profile.name + ' in ' + settings.location_key);
+    console.log('Editing community: ' + settings.community.profile.name + ' in ' + settings.location_key);
 
     db.get(process.env.DB_COMMUNITIES, req.user)
         .then(function (response) {
 
             if (response.body.code !== "items_not_found") {
-                var user = response.body;
+                var user = response.body,
+                    leader = false;
 
                 // validate user is a member in the location
                 if (user.communities.indexOf(settings.location_key) > -1) {
 
                     var pathname = settings.community.url || encodeURI(settings.community.profile.name.toLowerCase());
+
+                    // check to see if user is a leader of the community
+                    if (user.roles && user.roles.leader && user.roles.leader[pathname] && user.roles.leader[pathname].indexOf(settings.location_key) > -1) {
+                        leader = true;
+                    }
 
                     // check to see if the community exists
                     db.get(process.env.DB_COMMUNITIES, pathname)
@@ -619,6 +625,7 @@ function handleAddCommunity(req, res) {
 
                             if (response.body.type && (response.body.type == "cluster" || response.body.type == "network") && response.body.type == settings.community.type) {
                                 // community already exists, we're good to add the community profile here
+
                                 if (response.body.community_profiles === undefined) {
                                     // create community_profiles
                                     response.body['community_profiles'] = {};
@@ -656,14 +663,41 @@ function handleAddCommunity(req, res) {
 
 
                                 } else {
-                                    res.status(202).send({message: settings.community.profile.name + ' already exists in this location. Please change the name or delete the other one first.'});
+
+                                    if (leader) {
+
+                                        response.body.community_profiles[settings.location_key] = {
+                                            "name": settings.community.profile.name,
+                                            "headline": settings.community.profile.headline,
+                                            "icon": response.body.profile.icon,
+                                            "parents": settings.community.parents,
+                                            "industries": settings.community.profile.industries
+                                        };
+
+                                        // add community
+                                        if (!response.body.communities) {
+                                            response.body["communities"] = {};
+                                        }
+
+                                        if (response.body.communities.indexOf(settings.location_key) < 0) {
+                                            response.body.communities.push(settings.location_key);
+                                        }
+
+                                        db.put(process.env.DB_COMMUNITIES, pathname, response.body)
+                                            .then(function (finalres) {
+                                                res.status(201).send({message: settings.community.type.toUpperCase() + settings.community.type.slice(1) + ' created!'});
+                                            })
+                                            .fail(function (err) {
+                                                console.warn('WARNING: ', err);
+                                                res.status(202).send({message: "Something went wrong."});
+                                            });
+
+                                    } else res.status(202).send({message: settings.community.profile.name + ' already exists in this location. Please change the name or delete the other one first.'});
                                 }
 
                             } else {
                                 res.status(202).send({message: 'That name is taken. Try changing the name.'});
                             }
-
-
 
                         })
                         .fail(function (err) {

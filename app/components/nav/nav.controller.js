@@ -432,7 +432,7 @@ function NavigationController($auth, $state, $window, $timeout, $location, $scop
 
 }
 
-function CommunitySettingsController($modalInstance, $state, sweet, user, community_service, community, location){
+function CommunitySettingsController($modalInstance, sweet, user, community_service, community, location){
 
     this.user = user;
     var self = this;
@@ -508,14 +508,12 @@ function CommunitySettingsController($modalInstance, $state, sweet, user, commun
     };
 }
 
-function addClusterController($modalInstance, $mixpanel, sweet, community_service, community, location, $http, $window, user, $state){
+function CommunityController($modalInstance, $mixpanel, sweet, community_service, community, location, $http, $window, user, $state){
 
     this.location = location;
     this.name = ""; // to avoid 'undefined' for initial url
     var self = this;
     this.update = false;
-
-    this.parents = [ 'Agriculture', 'Art', 'Construction', 'Consumer-Goods', 'Corporate', 'Education', 'Finance', 'Government', 'Healthcare', 'Legal', 'Manufacturing', 'Medical', 'Non-Profit', 'Recreation', 'Services', 'Tech', 'Transportation' ];
 
     this.industryList = community_service.industries();
 
@@ -533,7 +531,14 @@ function addClusterController($modalInstance, $mixpanel, sweet, community_servic
         this.url = community.key;
     }
 
-    this.createCluster = function() {
+    this.editCommunity = function() {
+
+        if (community.type == 'cluster') {
+            self.parents = community_service.parents();
+        } else if (community.type == 'network') {
+            self.parents = community_service.network_parents();
+        }
+
         if (self.form.$valid) {
 
             if (self.url) {
@@ -549,18 +554,21 @@ function addClusterController($modalInstance, $mixpanel, sweet, community_servic
                 }
             }
 
-            var cluster = {
-                type: "cluster",
+            var newCommunity = {
+                type: community.type,
                 profile: {
                     name: self.name,
                     headline: self.headline,
-                    parents: [self.parent.toLowerCase()],
-                    industries: self.industries
+                    parents: [self.parent.toLowerCase()]
                 },
                 url: self.url || encodeURI(self.name.toLowerCase())
             };
 
-            community_service.addCommunity(cluster, self.location.key)
+            if (type == 'cluster') {
+                newCommunity['industries'] = self.industries;
+            }
+
+            community_service.editCommunity(newCommunity, self.location.key)
                 .then(function(response) {
 
                     if (response.status !== 201) {
@@ -572,7 +580,7 @@ function addClusterController($modalInstance, $mixpanel, sweet, community_servic
 
                     } else {
                         sweet.show({
-                            title: "Cluster " + (self.update ? "updated!" : "created!"),
+                            title: community.type[0].toUpperCase() + community.type.slice(1) + (self.update ? " updated!" : " created!"),
                             type: "success"
                         }, function(){
                             // refresh outdated cache
@@ -585,21 +593,25 @@ function addClusterController($modalInstance, $mixpanel, sweet, community_servic
                             $modalInstance.close();
                         });
                     }
-                    $mixpanel.track('Added Cluster');
+                    $mixpanel.track('Added ' + community.type[0].toUpperCase() + community.type.slice(1));
                 });
-
-            //
 
         } else {
             self.submitted = true;
         }
     };
 
-    this.deleteCluster = function () {
+    this.deleteCommunity = function () {
+
+        if (community.type == 'cluster') {
+            var text = "You can recreate this cluster at any time.";
+        } else if (community.type == 'network') {
+            text = "Members will be removed from the network, but they will remain in the community."
+        } else text = "";
 
         sweet.show({
             title: "Are you sure?",
-            text: "You can recreate this cluster at any time.",
+            text: text,
             type: "warning",
             showCancelButton: true,
             confirmButtonColor: "#DD6B55",
@@ -624,88 +636,11 @@ function addClusterController($modalInstance, $mixpanel, sweet, community_servic
                             type: "success"
                         }, function() {
                             $modalInstance.close();
-                            //$state.go('community.dashboard', {location_path: self.location.key, community_path: null, community: self.location});
                             $state.reload();
                         })
                     }
                 });
-
         });
-
-
-    };
-
-    this.cancel = function () {
-        $modalInstance.dismiss('cancel');
-    };
-}
-
-function addNetworkController($modalInstance, $stateParams, $mixpanel, sweet, community_service, location, $http, $window){
-
-    this.location = location;
-    this.name = ""; // to avoid 'undefined' for initial url
-    var self = this;
-
-    this.parents = [ 'Accelerator', 'College', 'Coworking Space', 'Incubator', 'Investment Fund', 'Mentor Group', 'VC Firm' ];
-
-    this.encode = function(uri) {
-        return encodeURI(uri);
-    };
-
-    this.createNetwork = function() {
-        if (self.form.$valid) {
-
-            if (self.url) {
-                try {
-                    self.url = this.encode(self.url);
-                }
-                catch (e) {
-                    sweet.show({
-                        title: "Sorry, something is wrong with the url path.",
-                        type: "error"
-                    });
-                    self.submitted = true;
-                }
-            }
-
-            var network = {
-                type: "network",
-                profile: {
-                    name: self.name,
-                    headline: self.headline,
-                    parents: [self.parent]
-                },
-                url: self.url
-            };
-
-            community_service.addCommunity(network, self.location.key)
-                .then(function(response) {
-
-                    if (response.status !== 201) {
-                        sweet.show({
-                            title: "Sorry, something went wrong.",
-                            text: response.data.message,
-                            type: "error"
-                        });
-
-                    } else {
-                        sweet.show({
-                            title: "Network created!",
-                            type: "success"
-                        }, function(){
-                            $http.get('/api/2.1/community/' + $stateParams.location_path); // refresh outdated cache
-                            $modalInstance.close();
-                            $window.location.reload();
-                        });
-                    }
-                    $mixpanel.track('Added Network');
-                });
-
-            //
-
-        } else {
-            self.submitted = true;
-        }
     };
 
     this.cancel = function () {
