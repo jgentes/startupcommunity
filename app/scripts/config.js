@@ -392,9 +392,6 @@ angular
             }
         });
     })
-    .config( function( LogglyLoggerProvider ) {
-        LogglyLoggerProvider.inputToken( '243513e8-d95c-4a09-ac52-9efedc9281af' ).sendConsoleErrors(true);
-    })
     .run(function(editableOptions) {
         editableOptions.theme = 'bs3';
     })

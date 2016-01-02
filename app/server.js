@@ -73,18 +73,7 @@ if (process.env.NODE_ENV === "production") {
     app.use("/build", express.static(root + "/build"));
 }
 
-// for loggly testing
-var winston  = require('winston');
-require('winston-loggly');
-
-winston.add(winston.transports.Loggly, {
-    inputToken: "243513e8-d95c-4a09-ac52-9efedc9281af",
-    subdomain: "scdotorg",
-    tags: ["Winston-NodeJS"],
-    json:true
-});
-
-// for raygun testing
+// for raygun
 var raygun = require('raygun');
 var raygunClient = new raygun.Client().init({ apiKey: 'xdeVAN82mJfs+jiO4625Aw==' });
 
