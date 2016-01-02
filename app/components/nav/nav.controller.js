@@ -50,7 +50,7 @@ function NavigationController($auth, $state, $window, $timeout, $location, $scop
         };
 
         Raygun.init('xdeVAN82mJfs+jiO4625Aw==').attach();
-        Raygun.setUser(this.user.key, false, this.user.profile.email, this.user.profile.name.split(' ')[0], this.user.profile.name);
+        Raygun.setUser(this.user.key, false, this.user.profile.email, this.user.profile.name, this.user.profile.name.split(' ')[0]);
 
     }
 
@@ -572,7 +572,7 @@ function addClusterController($modalInstance, $mixpanel, sweet, community_servic
 
                     } else {
                         sweet.show({
-                            title: "Cluster " + self.update ? "updated!" : "created!",
+                            title: "Cluster " + (self.update ? "updated!" : "created!"),
                             type: "success"
                         }, function(){
                             // refresh outdated cache

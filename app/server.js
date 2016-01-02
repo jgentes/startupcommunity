@@ -20,7 +20,7 @@ var app = express();
 // Restrict access to dev.startupcommunity.org
 if (process.env.NODE_ENV === "development") {
     var wwwhisper = require('connect-wwwhisper');
-    app.use(wwwhisper());
+    app.use(wwwhisper(false));
 }
 
 // change all www requests to non-www requests
