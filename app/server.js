@@ -11,7 +11,6 @@ var express = require('express'),
     logger = require('morgan'),
     nodalytics = require('nodalytics'),
     ghost = require('ghost'),
-    //opbeat = require('opbeat'),
     parentApp = express();
 
 var app = express();
@@ -42,14 +41,14 @@ app.use(function(req, res, next) {
     else
         next();
 });
-/*
+
 
 // Restrict access to dev.startupcommunity.org
 if (process.env.NODE_ENV === "development") {
   var wwwhisper = require('connect-wwwhisper');
   app.use(wwwhisper());
 }
-*/
+
 
 var root = __dirname.substring(0, __dirname.lastIndexOf('/')) || __dirname.substring(0, __dirname.lastIndexOf('\\')); // returns /app for heroku [should replace with path.join(__dirname, '../../dir')]
 
@@ -69,16 +68,27 @@ if (process.env.NODE_ENV === "production") {
     // production-only things go here
     app.use(enforce.HTTPS({ trustProtoHeader: true }));
     app.use(nodalytics('UA-58555092-2'));
-   /* opbeat.start({
-        organizationId: 'adf86d959a464b28a1df269d2e7ba468',
-        appId: 'e3089edc2b',
-        secretToken: '8c34c1bec488f932ca1bd4dedc3de98ab6c66d3d'
-    });*/
-
 } else {
     app.use("/bower_components", express.static(root + "/bower_components"));
     app.use("/build", express.static(root + "/build"));
 }
+
+// for loggly testing
+var winston  = require('winston');
+require('winston-loggly');
+
+winston.add(winston.transports.Loggly, {
+    inputToken: "243513e8-d95c-4a09-ac52-9efedc9281af",
+    subdomain: "scdotorg",
+    tags: ["Winston-NodeJS"],
+    json:true
+});
+
+// for raygun testing
+var raygun = require('raygun');
+var raygunClient = new raygun.Client().init({ apiKey: 'xdeVAN82mJfs+jiO4625Aw==' });
+
+app.use(raygunClient.expressHandler);
 
 // API ROUTE METHODS
 

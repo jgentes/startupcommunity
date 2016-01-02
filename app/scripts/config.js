@@ -392,14 +392,9 @@ angular
             }
         });
     })
-    /*.config(function ($opbeatProvider) {
-        $opbeatProvider.config({
-            debug: false,
-            orgId: 'adf86d959a464b28a1df269d2e7ba468',
-            appId: '6fcd00ba8b'
-        });
-        $opbeatProvider.install()
-    })*/
+    .config( function( LogglyLoggerProvider ) {
+        LogglyLoggerProvider.inputToken( '243513e8-d95c-4a09-ac52-9efedc9281af' ).sendConsoleErrors(true);
+    })
     .run(function(editableOptions) {
         editableOptions.theme = 'bs3';
     })
@@ -455,6 +450,16 @@ angular
             }
         }
     )
+
+    .config(function ($provide) {
+        $provide.decorator("$exceptionHandler", ['$delegate', function($delegate) {
+            return function (exception, cause) {
+                Raygun.send(exception);
+                $delegate(exception, cause);
+            }
+        }])
+    })
+
     // this factory pushes the exceptions to the server
     .factory(
         "errorLogService",

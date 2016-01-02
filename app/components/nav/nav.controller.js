@@ -47,7 +47,11 @@ function NavigationController($auth, $state, $window, $timeout, $location, $scop
                     $scope.$apply();
                 });
             });
-        }
+        };
+
+        Raygun.init('xdeVAN82mJfs+jiO4625Aw==').attach();
+        Raygun.setUser(this.user.key, false, this.user.profile.name);
+
     }
 
     this.openChat = function() {

@@ -30,6 +30,14 @@
     <link rel="stylesheet" href="../build/styles/style.css">
     <!-- endbuild -->
 
+    <script type="text/javascript">
+        !function(a,b,c,d,e,f,g,h){a.RaygunObject=e,a[e]=a[e]||function(){
+                    (a[e].o=a[e].o||[]).push(arguments)},f=b.createElement(c),g=b.getElementsByTagName(c)[0],
+                f.async=1,f.src=d,g.parentNode.insertBefore(f,g),h=a.onerror,a.onerror=function(b,c,d,f,g){
+            h&&h(b,c,d,f,g),g||(g=new Error(b)),a[e].q=a[e].q||[],a[e].q.push({
+                e:g})}}(window,document,"script","//cdn.raygun.io/raygun4js/raygun.min.js","rg4js");
+    </script>
+
 </head>
 
 <!-- Body -->
@@ -118,6 +126,8 @@
 <script src="../bower_components/bootstrap-tour/build/js/bootstrap-tour.min.js"></script>
 <script src="../bower_components/angular-bootstrap-tour/dist/angular-bootstrap-tour.min.js"></script>
 <script src="../bower_components/angular-toArrayFilter/toArrayFilter.js"></script>
+<script src="../bower_components/angular-loggly-logger/angular-loggly-logger.min.js"></script>
+<script src="../bower_components/raygun4js/dist/raygun.min.js"></script>
 
 <!-- endbuild -->
 
@@ -138,5 +148,4 @@
 <!-- endbuild -->
 
 <script src="https://cdn.rawgit.com/mozilla/source-map/master/dist/source-map.min.js" defer></script>
-<!--<script src="https://d3tvtfb6518e3e.cloudfront.net/1/angular-opbeat.min.js"></script>-->
 </html>
