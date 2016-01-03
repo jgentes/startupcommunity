@@ -233,14 +233,14 @@ function NavigationController($auth, $state, $window, $timeout, $location, $scop
     };
 
 
-    // ADD CLUSTER
+    // ADD OR MODIFY CLUSTER, NETWORK, OR LOCATION
 
-    this.addCluster = function(community) {
+    this.editCommunity = function(community) {
 
         var modalInstance = $modal.open({
-            templateUrl: 'components/nav/nav.add_cluster.html',
-            controller: addClusterController,
-            controllerAs: 'add',
+            templateUrl: 'components/nav/nav.edit_cluster.html',
+            controller: CommunityController,
+            controllerAs: 'edit',
             windowClass: "hmodal-success",
             resolve: {
                 location: function() {
@@ -521,29 +521,44 @@ function CommunityController($modalInstance, $mixpanel, sweet, community_service
         return encodeURI(uri);
     };
 
+    if (community.type == 'cluster') {
+        self.parents = community_service.parents();
+    } else if (community.type == 'network') {
+        self.parents = community_service.network_parents();
+    }
+
     if (community && community.community_profiles && community.community_profiles[location.key]) {
         this.update = true;
         this.community = community.community_profiles[location.key];
-        this.name = this.community.name;
-        this.headline = this.community.headline;
-        this.parent = this.community.parents[0][0].toUpperCase() + this.community.parents[0].slice(1);
-        this.industries = this.community.industries;
-        this.url = community.key;
+        this.communityForm = {
+            "name": this.community.name,
+            "headline": this.community.headline,
+            "industries": this.community.industries,
+            "url": community.key
+        };
+
+        if (this.community.parents) {
+            switch (this.community.parents[0]) {
+                case 'consumer-goods':
+                    this.communityForm['parent'] = 'Consumer-Goods';
+                    break;
+                case 'non-profit':
+                    this.communityForm['parent'] = 'Non-Profit';
+                    break;
+                default:
+                    this.communityForm['parent'] = this.community.parents[0][0].toUpperCase() + this.community.parents[0].slice(1);
+            }
+        }
     }
 
     this.editCommunity = function() {
-
-        if (community.type == 'cluster') {
-            self.parents = community_service.parents();
-        } else if (community.type == 'network') {
-            self.parents = community_service.network_parents();
-        }
+        self.working = true;
 
         if (self.form.$valid) {
 
-            if (self.url) {
+            if (self.communityForm.url) {
                 try {
-                    self.url = this.encode(self.url);
+                    self.communityForm.url = this.encode(self.communityForm.url);
                 }
                 catch (e) {
                     sweet.show({
@@ -557,19 +572,20 @@ function CommunityController($modalInstance, $mixpanel, sweet, community_service
             var newCommunity = {
                 type: community.type,
                 profile: {
-                    name: self.name,
-                    headline: self.headline,
-                    parents: [self.parent.toLowerCase()]
+                    name: self.communityForm.name,
+                    headline: self.communityForm.headline,
+                    parents: [self.communityForm.parent.toLowerCase()]
                 },
-                url: self.url || encodeURI(self.name.toLowerCase())
+                url: self.url || encodeURI(self.communityForm.name.toLowerCase())
             };
 
-            if (type == 'cluster') {
-                newCommunity['industries'] = self.industries;
+            if (community.type == 'cluster') {
+                newCommunity.profile['industries'] = self.communityForm.industries;
             }
 
             community_service.editCommunity(newCommunity, self.location.key)
                 .then(function(response) {
+                    self.working = false;
 
                     if (response.status !== 201) {
                         sweet.show({
@@ -586,8 +602,8 @@ function CommunityController($modalInstance, $mixpanel, sweet, community_service
                             // refresh outdated cache
                             $http.get('/api/2.1/community/' + user.key);
                             $http.get('/api/2.1/community/' + self.location.key);
-                            $http.get('/api/2.1/community/' + self.location.key + '/' + cluster.url + '/top').then(function() {
-                                $window.location.href = '/'+ self.location.key + '/' + cluster.url;
+                            $http.get('/api/2.1/community/' + self.location.key + '/' + newCommunity.url + '/top').then(function() {
+                                $window.location.href = '/'+ self.location.key + '/' + newCommunity.url;
                             });
 
                             $modalInstance.close();
@@ -598,10 +614,12 @@ function CommunityController($modalInstance, $mixpanel, sweet, community_service
 
         } else {
             self.submitted = true;
+            self.working = false;
         }
     };
 
     this.deleteCommunity = function () {
+        self.working = true;
 
         if (community.type == 'cluster') {
             var text = "You can recreate this cluster at any time.";
@@ -621,6 +639,7 @@ function CommunityController($modalInstance, $mixpanel, sweet, community_service
 
             community_service.deleteCommunity(community, self.location.key)
                 .then(function(response) {
+                    self.working = false;
 
                     if (response.status !== 204) {
                         sweet.show({
@@ -644,6 +663,7 @@ function CommunityController($modalInstance, $mixpanel, sweet, community_service
     };
 
     this.cancel = function () {
+        self.working = false;
         $modalInstance.dismiss('cancel');
     };
 }

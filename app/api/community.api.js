@@ -624,7 +624,7 @@ function handleEditCommunity(req, res) {
                         .then(function (response) {
 
                             if (response.body.type && (response.body.type == "cluster" || response.body.type == "network") && response.body.type == settings.community.type) {
-                                // community already exists, we're good to add the community profile here
+                                // community already exists and it's the same type as what's being created, so we're good to add the community profile here
 
                                 if (response.body.community_profiles === undefined) {
                                     // create community_profiles
@@ -670,7 +670,7 @@ function handleEditCommunity(req, res) {
                                             "name": settings.community.profile.name,
                                             "headline": settings.community.profile.headline,
                                             "icon": response.body.profile.icon,
-                                            "parents": settings.community.parents,
+                                            "parents": settings.community.profile.parents,
                                             "industries": settings.community.profile.industries
                                         };
 
@@ -685,7 +685,7 @@ function handleEditCommunity(req, res) {
 
                                         db.put(process.env.DB_COMMUNITIES, pathname, response.body)
                                             .then(function (finalres) {
-                                                res.status(201).send({message: settings.community.type.toUpperCase() + settings.community.type.slice(1) + ' created!'});
+                                                res.status(201).send({message: settings.community.type.toUpperCase() + settings.community.type.slice(1) + ' updated!'});
                                             })
                                             .fail(function (err) {
                                                 console.warn('WARNING: ', err);

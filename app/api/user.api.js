@@ -380,7 +380,7 @@ function handleGetProfile(req, res) {
         .then(function(response){
             if (response.body.code !== "items_not_found") {
                 response.body["key"] = userid;
-                res.status(200).send({ token: jwt.sign(userid, process.env.SC_TOKEN_SECRET, { expiresIn: "5h" }), user: response.body });
+                res.status(200).send({ token: jwt.sign(userid, process.env.SC_TOKEN_SECRET), user: response.body });
             } else {
                 console.warn('WARNING:  User not found.');
                 res.status(200).send({ message: 'User not found.' });
@@ -438,7 +438,7 @@ function handleUpdateProfile(req, res) {
             .then(function(response){
                 if (response.body.code !== "items_not_found") {
                     response.body["key"] = userid;
-                    res.status(200).send({ token: jwt.sign(userid, process.env.SC_TOKEN_SECRET, { expiresIn: "5h" }), user: response.body });
+                    res.status(200).send({ token: jwt.sign(userid, process.env.SC_TOKEN_SECRET), user: response.body });
 
                 } else {
                     console.warn('WARNING:  User not found.');

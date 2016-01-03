@@ -109,7 +109,7 @@ function handleEnsureAuthenticated(req, res, next) {
  |--------------------------------------------------------------------------
  */
 function handleCreateToken(req, user) {
-    return jwt.sign(user.path.key, process.env.SC_TOKEN_SECRET, { expiresIn: "5h" });
+    return jwt.sign(user.path.key, process.env.SC_TOKEN_SECRET);
 }
 
 function handleHelpToken(req, res) {

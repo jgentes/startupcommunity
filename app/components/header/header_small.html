@@ -20,7 +20,8 @@
                 </ol>
             </div>
             <h6 class="font-light pull-right m-b-xs" style="margin-top:10px;">
-                <span style="text-transform: none;">{{ nav.community.profile.headline || nav.community.profile.description }}</span>
+                <span ng-if="!nav.community.community_profiles[nav.location_path]" style="text-transform: none;">{{ nav.community.profile.headline || nav.community.profile.description }}</span>
+                <span ng-if="nav.community.community_profiles[nav.location_path]" style="text-transform: none;">{{ nav.community.community_profiles[nav.location_path].headline || nav.community.community_profiles[nav.location_path].description }}</span>
             </h6>
         </div>
     </div>

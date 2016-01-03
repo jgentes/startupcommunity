@@ -42,12 +42,12 @@
                 <div ng-repeat="(k, v) in nav.user.roles.leader">
                     <div ng-if="nav.communities[k].type == 'cluster'" style="padding-bottom:10px; font-size: 18px;">{{ nav.communities[k].profile.name }}
                         <button ng-click="nav.communitySettings(nav.communities[k], true);" class="btn btn-xs pull-right">Embed</button>
-                        <button ng-click="nav.addCluster(nav.communities[k]);" class="btn btn-primary btn-xs pull-right" style="margin-right: 5px;">Edit</button>
+                        <button ng-click="nav.editCommunity(nav.communities[k]);" class="btn btn-primary btn-xs pull-right" style="margin-right: 5px;">Edit</button>
                     </div>
                 </div>
                 <ul class="nav nav-second-level" style="margin-left: -15px;">
                     <li ng-if="nav.user.communities.indexOf(nav.location.key) > -1">
-                        <a ng-click="nav.addCluster();" style="color: #aaa;">+&nbsp;&nbsp;Add Cluster</a>
+                        <a ng-click="nav.editCommunity();" style="color: #aaa;">+&nbsp;&nbsp;Add Cluster</a>
                     </li>
                 </ul>
             </div>
