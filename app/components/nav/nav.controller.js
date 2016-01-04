@@ -576,7 +576,7 @@ function CommunityController($modalInstance, $mixpanel, sweet, community_service
                     headline: self.communityForm.headline,
                     parents: [self.communityForm.parent.toLowerCase()]
                 },
-                url: self.url || encodeURI(self.communityForm.name.toLowerCase())
+                url: self.communityForm.url || encodeURI(self.communityForm.name.toLowerCase())
             };
 
             if (community.type == 'cluster') {
