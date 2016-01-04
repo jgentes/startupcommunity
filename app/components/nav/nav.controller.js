@@ -526,7 +526,7 @@ function CommunityController($modalInstance, $mixpanel, sweet, community_service
     } else if (community.type == 'network') {
         self.parents = community_service.network_parents();
     }
-
+    console.log(community)
     if (community && community.community_profiles && community.community_profiles[location.key]) {
         this.update = true;
         this.community = community.community_profiles[location.key];
