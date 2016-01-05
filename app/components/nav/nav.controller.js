@@ -235,7 +235,7 @@ function NavigationController($auth, $state, $window, $timeout, $location, $scop
 
     // ADD OR MODIFY CLUSTER, NETWORK, OR LOCATION
 
-    this.editCommunity = function(community) {
+    this.editCommunity = function(community) {e
 
         var modalInstance = $modal.open({
             templateUrl: 'components/nav/nav.edit_cluster.html',
