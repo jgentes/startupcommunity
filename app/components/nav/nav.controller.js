@@ -495,6 +495,7 @@ function CommunitySettingsController($modalInstance, sweet, user, community_serv
                         title: "Settings saved!",
                         type: "success"
                     }, function(){
+                        //$http.get('/api/2.1/community/' + location.key + '/' + self.community.key);
                         $modalInstance.close();
                     });
                 }
@@ -521,35 +522,42 @@ function CommunityController($modalInstance, $mixpanel, sweet, community_service
         return encodeURI(uri);
     };
 
-    if (community.type == 'cluster') {
-        self.parents = community_service.parents();
-    } else if (community.type == 'network') {
-        self.parents = community_service.network_parents();
-    }
-    console.log(community)
-    if (community && community.community_profiles && community.community_profiles[location.key]) {
-        this.update = true;
-        this.community = community.community_profiles[location.key];
-        this.communityForm = {
-            "name": this.community.name,
-            "headline": this.community.headline,
-            "industries": this.community.industries,
-            "url": community.key
-        };
+    //force pull of community settings every time to avoid stale data
+    community_service.getKey(community.key)
+        .then(function(response) {
+            community = response.data;
 
-        if (this.community.parents) {
-            switch (this.community.parents[0]) {
-                case 'consumer-goods':
-                    this.communityForm['parent'] = 'Consumer-Goods';
-                    break;
-                case 'non-profit':
-                    this.communityForm['parent'] = 'Non-Profit';
-                    break;
-                default:
-                    this.communityForm['parent'] = this.community.parents[0][0].toUpperCase() + this.community.parents[0].slice(1);
+            if (community.type == 'cluster') {
+                self.parents = community_service.parents();
+            } else if (community.type == 'network') {
+                self.parents = community_service.network_parents();
             }
-        }
-    }
+            console.log(community)
+            if (community && community.community_profiles && community.community_profiles[location.key]) {
+                self.update = true;
+                self.community = community.community_profiles[location.key];
+                self.communityForm = {
+                    "name": self.community.name,
+                    "headline": self.community.headline,
+                    "industries": self.community.industries,
+                    "url": community.key
+                };
+
+                if (self.community.parents) {
+                    switch (self.community.parents[0]) {
+                        case 'consumer-goods':
+                            self.communityForm['parent'] = 'Consumer-Goods';
+                            break;
+                        case 'non-profit':
+                            self.communityForm['parent'] = 'Non-Profit';
+                            break;
+                        default:
+                            self.communityForm['parent'] = self.community.parents[0][0].toUpperCase() + self.community.parents[0].slice(1);
+                    }
+                }
+            }
+
+        });
 
     this.editCommunity = function() {
         self.working = true;
@@ -584,8 +592,12 @@ function CommunityController($modalInstance, $mixpanel, sweet, community_service
                 newCommunity.profile['industries'] = self.communityForm.industries;
             }
 
-            if (community.key !== newCommunity.url) rename = true;
-            console.log(rename);
+            if (community.community_profiles && community.community_profiles[self.location.key] && community.community_profiles[self.location.key].embed) {
+                newCommunity.profile['embed'] = community.community_profiles[self.location.key].embed;
+            }
+
+            if (community.key !== newCommunity.url) rename = true; // determine if this is a rename operation
+
             community_service.editCommunity(newCommunity, self.location.key)
                 .then(function(response) {
                     self.working = false;
@@ -611,7 +623,7 @@ function CommunityController($modalInstance, $mixpanel, sweet, community_service
 
                             $modalInstance.close();
                         });
-                        if (rename) community_service.deleteCommunity(community, self.location.key);
+                        if (rename) community_service.deleteCommunity(community, self.location.key, newCommunity.key);
                     }
                     $mixpanel.track('Added ' + community.type[0].toUpperCase() + community.type.slice(1));
                 });

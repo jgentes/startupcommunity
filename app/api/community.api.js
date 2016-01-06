@@ -666,7 +666,8 @@ function handleEditCommunity(req, res) {
                                     db.put(process.env.DB_COMMUNITIES, pathname, response.body)
                                         .then(function (finalres) {
 
-                                            update_user(req.user, 'leader', pathname, settings.location_key, function() {
+                                            update_user(req.user, 'leader', pathname, settings.location_key)
+                                                .then(function() {
                                                 res.status(201).send({message: settings.community.type.toUpperCase() + settings.community.type.slice(1) + ' created!'});
                                             })
                                         })
@@ -685,7 +686,8 @@ function handleEditCommunity(req, res) {
                                             "headline": settings.community.profile.headline,
                                             "icon": response.body.profile.icon,
                                             "parents": settings.community.profile.parents,
-                                            "industries": settings.community.profile.industries
+                                            "industries": settings.community.profile.industries,
+                                            "embed" : response.body.community_profiles[settings.location_key].embed || []
                                         };
 
                                         // add community
@@ -722,12 +724,12 @@ function handleEditCommunity(req, res) {
                                 // no existing path, go ahead and create
 
                                 var profile = schema.community(settings.community, settings.location_key);
-                                console.log(profile);
 
                                 db.put(process.env.DB_COMMUNITIES, pathname, profile)
                                     .then(function (finalres) {
 
-                                        update_user(req.user, 'leader', pathname, settings.location_key, function() {
+                                        update_user(req.user, 'leader', pathname, settings.location_key)
+                                            .then(function() {
                                             res.status(201).send({message: settings.community.type[0].toUpperCase() + settings.community.type.slice(1) + ' created!'});
                                         })
                                     })
@@ -823,9 +825,19 @@ function handleDeleteCommunity(req, res) {
                                         });
                                 }
 
-                                update_user(req.user, 'delete', settings.community.key, settings.location_key, function() {
-                                    console.log('Community deleted.');
-                                });
+                                if (settings.old_community_key) {
+
+                                    // this is a rename operation
+
+                                    rename_community(settings.old_community_key, settings.location_key, settings.community.key);
+
+                                } else {
+
+                                    update_user(req.user, 'delete', settings.community.key, settings.location_key)
+                                        .then(function () {
+                                            console.log('Community deleted.');
+                                        })
+                                }
 
                             } else {
                                 console.log('WARNING: Cannot delete community');
@@ -856,9 +868,9 @@ function handleDeleteCommunity(req, res) {
 
 }
 
-var update_user = function(user_key, role, cluster_key, location_key, callback) {
+var update_user = function(user_key, role, community_key, location_key) {
 
-    db.get(process.env.DB_COMMUNITIES, user_key)
+    return db.get(process.env.DB_COMMUNITIES, user_key)
         .then(function(response){
 
             if (response.body.code !== "items_not_found") {
@@ -872,14 +884,14 @@ var update_user = function(user_key, role, cluster_key, location_key, callback) 
                 if (role == 'delete') {
 
                     try {
-                        if (response.body.roles.leader[cluster_key].indexOf(location_key) > -1) {
-                            response.body.roles.leader[cluster_key].splice(response.body.roles.leader[cluster_key].indexOf(location_key), 1);
+                        if (response.body.roles.leader[community_key].indexOf(location_key) > -1) {
+                            response.body.roles.leader[community_key].splice(response.body.roles.leader[community_key].indexOf(location_key), 1);
                         }
-                        if (response.body.roles.leader[cluster_key].length == 0) {
-                            delete response.body.roles.leader[cluster_key]
+                        if (response.body.roles.leader[community_key].length == 0) {
+                            delete response.body.roles.leader[community_key]
                         }
-                        if (response.body.communities.indexOf(cluster_key) > -1) {
-                            response.body.communities.splice(response.body.communities.indexOf(cluster_key), 1);
+                        if (response.body.communities.indexOf(community_key) > -1) {
+                            response.body.communities.splice(response.body.communities.indexOf(community_key), 1);
                         }
                     }
                     catch (e) {}
@@ -888,11 +900,11 @@ var update_user = function(user_key, role, cluster_key, location_key, callback) 
 
                     if (!response.body.roles[role]) {
                         response.body.roles[role] = {};
-                        response.body.roles[role][cluster_key] = [location_key];
-                    } else if (!response.body.roles[role][cluster_key]) {
-                        response.body.roles[role][cluster_key] = [location_key];
-                    } else if (response.body.roles[role][cluster_key].indexOf(location_key) < 0) {
-                        response.body.roles[role][cluster_key].push(location_key);
+                        response.body.roles[role][community_key] = [location_key];
+                    } else if (!response.body.roles[role][community_key]) {
+                        response.body.roles[role][community_key] = [location_key];
+                    } else if (response.body.roles[role][community_key].indexOf(location_key) < 0) {
+                        response.body.roles[role][community_key].push(location_key);
                     } // else the damn thing is already there
 
                     // add community
@@ -901,31 +913,81 @@ var update_user = function(user_key, role, cluster_key, location_key, callback) 
                         response.body["communities"] = {};
                     }
 
-                    if (response.body.communities.indexOf(cluster_key) < 0) {
-                        response.body.communities.push(cluster_key);
+                    if (response.body.communities.indexOf(community_key) < 0) {
+                        response.body.communities.push(community_key);
                     }
                 }
 
                 db.put(process.env.DB_COMMUNITIES, user_key, response.body)
                     .then(function(result) {
                         console.log('User ' + user_key + ' updated with community role.');
-                        callback();
                     })
                     .fail(function(err){
                         console.warn("WARNING: community706", err);
-                        callback();
                     });
 
             } else {
                 console.warn('WARNING:  User not found.');
-                callback();
             }
         })
 
         .fail(function(err){
             console.warn("WARNING: community715", err);
-            callback();
         });
+};
+
+var rename_community = function(old_community_key, location_key, new_community_key) {
+    var startKey = 0;
+
+    console.log('Renaming ' + old_community_key + ' to ' + new_community_key);
+
+    function getUsers(startKey) {
+
+        db.newSearchBuilder()
+            .collection(process.env.DB_COMMUNITIES)
+            .limit(50)
+            .offset(startKey)
+            .query('@value.communities: "' + old_community_key + '" OR @value.roles.*.' + old_community_key + ': "' + location_key + '"')
+            .then(function (data) {
+                var item;
+
+                for (item in data.body.results) {
+                    var newdata = data.body.results[item].value; // get current record
+                    // Rename community
+                    if (data.body.results[item].value.communities.indexOf(old_community_key) > -1) {
+
+                        // only add the new community if the old one existed
+
+                        if (data.body.results[item].value.communities.indexOf(new_community_key) < 0) data.body.results[item].value.communities.push(new_community_key);
+
+                        data.body.results[item].value.communities.splice(data.body.results[item].value.communities.indexOf(old_community_key), 1);
+                    }
+
+                    for (role in data.body.results[item].value.roles) {
+                        for (community in data.body.results[item].value.roles[role]) {
+                            if (community == old_community_key) {
+                                if (!data.body.results[item].value.roles[role][new_community_key]) data.body.results[item].value.roles[role][new_community_key] = [];
+                                if (data.body.results[item].value.roles[role][new_community_key].indexOf(location_key) < 0) data.body.results[item].value.roles[role][new_community_key].push(location_key);
+                                delete data.body.results[item].value.roles[role][old_community_key];
+                            }
+                        }
+                    }
+
+                    console.log('Updated ' + data.body.results[item].path.key);
+                }
+
+                if (data.body.next) {
+                    startKey = startKey + limit;
+                    console.log('Getting next group..' + startKey);
+                    getUsers(startKey);
+                } else {
+                    console.log('Community renamed.')
+                }
+            })
+            .fail(function(err){
+                console.warn("WARNING: community715", err);
+            });
+    }
 };
 
 function handleGetKey(req, res) {

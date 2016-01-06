@@ -184,11 +184,12 @@ angular
                       }
                   });
               },
-              deleteCommunity: function(community, location_key) {
+              deleteCommunity: function(community, location_key, new_community_key) {
                   return $http.post('/api/2.1/community/delete', {
                       params: {
                           community: community,
-                          location_key: location_key
+                          location_key: location_key,
+                          new_community_key: new_community_key
                       }
                   });
               },

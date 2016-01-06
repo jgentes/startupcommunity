@@ -64,22 +64,7 @@ function handleMaintenance(res) {
 
                     newdata.profile.parents = temp;
 
-                    /* // CHANGE COMMUNITY
-                    if (data.body.results[item].value.communities.indexOf("mentor-connect") > -1) {
-                        data.body.results[item].value.communities.splice(data.body.results[item].value.communities.indexOf("mentor-connect"), 1);
-                        if (data.body.results[item].value.communities.indexOf("expert-connect") < 0) data.body.results[item].value.communities.push("expert-connect");
-                        console.log('replaced network', data.body.results[item].value.communities)
-                    }
 
-                    for (role in data.body.results[item].value.roles) {
-                        for (community in data.body.results[item].value.roles[role]) {
-                            if (community == 'mentor-connect') {
-                                data.body.results[item].value.roles[role]['expert-connect'] = data.body.results[item].value.roles[role]['mentor-connect'];
-                                delete data.body.results[item].value.roles[role]['mentor-connect'];
-                                console.log('replaced role')
-                            }
-                        }
-                    }*/
 
                     //for invites
                    /* if (data.body.results[item].value.invite_communities.indexOf("mentor-connect") > -1) {
