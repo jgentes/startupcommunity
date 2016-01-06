@@ -531,6 +531,7 @@ function handleGetTop(req, res) {
 function handleSetCommunity(req, res) {
 
     // always use ensureAuth before this (to acquire req.user)
+
     var settings = req.body.params;
 
     console.log('Updating settings for ' + settings.location_key + ' / ' + settings.community_key);
@@ -543,8 +544,11 @@ function handleSetCommunity(req, res) {
                 var user = response.body;
 
                 // validate user has leader role within the location/community
+
                 if (user.roles && user.roles.leader && user.roles.leader[settings.community_key] && user.roles.leader[settings.community_key].indexOf(settings.location_key) > -1) {
+
                     // update the community
+
                     db.get(process.env.DB_COMMUNITIES, settings.community_key)
                         .then(function (response) {
                             if (response.body.type == 'cluster') { // use community_profiles
@@ -598,6 +602,7 @@ function handleSetCommunity(req, res) {
 function handleEditCommunity(req, res) {
 
     // always use ensureAuth before this (to acquire req.user)
+
     var settings = req.body.params;
 
     console.log('Editing community: ' + settings.community.profile.name + ' in ' + settings.location_key);
@@ -610,28 +615,36 @@ function handleEditCommunity(req, res) {
                     leader = false;
 
                 // validate user is a member in the location
+
                 if (user.communities.indexOf(settings.location_key) > -1) {
 
                     var pathname = settings.community.url || encodeURI(settings.community.profile.name.toLowerCase());
 
                     // check to see if user is a leader of the community
+
                     if (user.roles && user.roles.leader && user.roles.leader[pathname] && user.roles.leader[pathname].indexOf(settings.location_key) > -1) {
                         leader = true;
                     }
 
                     // check to see if the community exists
+
                     db.get(process.env.DB_COMMUNITIES, pathname)
                         .then(function (response) {
 
                             if (response.body.type && (response.body.type == "cluster" || response.body.type == "network") && response.body.type == settings.community.type) {
+
                                 // community already exists and it's the same type as what's being created, so we're good to add the community profile here
 
                                 if (response.body.community_profiles === undefined) {
+
                                     // create community_profiles
+
                                     response.body['community_profiles'] = {};
                                 }
                                 if (response.body.community_profiles[settings.location_key] === undefined) {
+
                                     // create this location
+
                                     response.body.community_profiles[settings.location_key] = {
                                         "name": settings.community.profile.name,
                                         "headline": settings.community.profile.headline,
@@ -641,6 +654,7 @@ function handleEditCommunity(req, res) {
                                     };
 
                                     // add community
+
                                     if (!response.body.communities) {
                                         response.body["communities"] = {};
                                     }
@@ -675,6 +689,7 @@ function handleEditCommunity(req, res) {
                                         };
 
                                         // add community
+
                                         if (!response.body.communities) {
                                             response.body["communities"] = {};
                                         }
@@ -703,6 +718,7 @@ function handleEditCommunity(req, res) {
                         .fail(function (err) {
 
                             if (err.statusCode == '404') {
+
                                 // no existing path, go ahead and create
 
                                 var profile = schema.community(settings.community, settings.location_key);
@@ -757,9 +773,11 @@ function handleDeleteCommunity(req, res) {
                 var user = response.body;
 
                 // validate user is a leader of the community in this location
+
                 if (user.roles && user.roles.leader && user.roles.leader[settings.community.key].indexOf(settings.location_key) > -1) {
 
                     // get the community
+
                     db.get(process.env.DB_COMMUNITIES, settings.community.key)
                         .then(function (response) {
 
@@ -768,6 +786,7 @@ function handleDeleteCommunity(req, res) {
                             if (response.body.type && (response.body.type == "cluster" || response.body.type == "network") && response.body.type == settings.community.type) {
 
                                 // community already exists, we're good to remove the community profile here
+
                                 if (response.body.community_profiles !== undefined && response.body.community_profiles[settings.location_key]) {
                                     delete response.body.community_profiles[settings.location_key];
                                 }
@@ -780,7 +799,9 @@ function handleDeleteCommunity(req, res) {
                                 }
 
                                 if (response.body.communities.length == 0) {
+
                                     // delete the whole thing
+
                                     db.remove(process.env.DB_COMMUNITIES, settings.community.key, 'true')
                                         .then(function (finalres) {
                                             res.status(204).send({message: settings.community.type[0].toUpperCase() + settings.community.type.slice(1) + ' deleted!'});
@@ -789,7 +810,9 @@ function handleDeleteCommunity(req, res) {
                                             console.warn('WARNING: community620', err);
                                             res.status(202).send({message: "Something went wrong."});
                                         });
+
                                 } else {
+
                                     db.put(process.env.DB_COMMUNITIES, settings.community.key, response.body)
                                         .then(function (finalres) {
                                             res.status(204).send({message: settings.community.type[0].toUpperCase() + settings.community.type.slice(1) + ' deleted!'});
@@ -839,7 +862,9 @@ var update_user = function(user_key, role, cluster_key, location_key, callback) 
         .then(function(response){
 
             if (response.body.code !== "items_not_found") {
+
                 // add role
+
                 if (!response.body.roles) {
                     response.body["roles"] = {};
                 }
@@ -871,6 +896,7 @@ var update_user = function(user_key, role, cluster_key, location_key, callback) 
                     } // else the damn thing is already there
 
                     // add community
+
                     if (!response.body.communities) {
                         response.body["communities"] = {};
                     }

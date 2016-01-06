@@ -235,7 +235,7 @@ function NavigationController($auth, $state, $window, $timeout, $location, $scop
 
     // ADD OR MODIFY CLUSTER, NETWORK, OR LOCATION
 
-    this.editCommunity = function(community) {e
+    this.editCommunity = function(community) {
 
         var modalInstance = $modal.open({
             templateUrl: 'components/nav/nav.edit_cluster.html',
@@ -553,6 +553,7 @@ function CommunityController($modalInstance, $mixpanel, sweet, community_service
 
     this.editCommunity = function() {
         self.working = true;
+        var rename = false;
 
         if (self.form.$valid) {
 
@@ -583,6 +584,8 @@ function CommunityController($modalInstance, $mixpanel, sweet, community_service
                 newCommunity.profile['industries'] = self.communityForm.industries;
             }
 
+            if (community.key !== newCommunity.url) rename = true;
+            console.log(rename);
             community_service.editCommunity(newCommunity, self.location.key)
                 .then(function(response) {
                     self.working = false;
@@ -608,6 +611,7 @@ function CommunityController($modalInstance, $mixpanel, sweet, community_service
 
                             $modalInstance.close();
                         });
+                        if (rename) community_service.deleteCommunity(community, self.location.key);
                     }
                     $mixpanel.track('Added ' + community.type[0].toUpperCase() + community.type.slice(1));
                 });
