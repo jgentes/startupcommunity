@@ -428,9 +428,9 @@ function EmbedSettingsController($modalInstance, sweet, user, community_service,
             self.community = response.data;
 
             // load existing embed settings
-            if (community.type == 'cluster' && self.community.community_profiles[location.key] && self.community.community_profiles[location.key].embed) {
+            if (self.community.community_profiles && self.community.community_profiles[location.key] && self.community.community_profiles[location.key].embed) {
                 self.embed = self.community.community_profiles[location.key].embed;
-            } else self.embed = self.community.profile.embed;
+            } else if (self.community.profile && self.community.profile.embed) self.embed = self.community.profile.embed; // for locations
         });
 
     this.addEmbed = function() {
@@ -487,7 +487,7 @@ function EmbedSettingsController($modalInstance, sweet, user, community_service,
 function CommunityController($modalInstance, $mixpanel, sweet, community_service, community, location, $http, $window, user, $state){
 
     this.location = location;
-    this.name = ""; // to avoid 'undefined' for initial url
+    this.communityForm = {"name":""}; // to avoid 'undefined' for initial url
     var self = this;
     this.update = false;
 
@@ -528,6 +528,15 @@ function CommunityController($modalInstance, $mixpanel, sweet, community_service
                                 break;
                             case 'non-profit':
                                 self.communityForm['parent'] = 'Non-Profit';
+                                break;
+                            case 'coworking space':
+                                self.communityForm['parent'] = 'Coworking Space';
+                                break;
+                            case 'investment fund':
+                                self.communityForm['parent'] = 'Investment Fund';
+                                break;
+                            case 'mentor group':
+                                self.communityForm['parent'] = 'Mentor Group';
                                 break;
                             default:
                                 self.communityForm['parent'] = self.community.parents[0][0].toUpperCase() + self.community.parents[0].slice(1);
@@ -602,7 +611,7 @@ function CommunityController($modalInstance, $mixpanel, sweet, community_service
 
                             $modalInstance.close();
                         });
-                        if (rename) community_service.deleteCommunity(community, self.location.key, newCommunity.key);
+                        if (rename) community_service.deleteCommunity(community, self.location.key, newCommunity.url);
                     }
                     $mixpanel.track('Added ' + community.type[0].toUpperCase() + community.type.slice(1));
                 });

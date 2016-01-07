@@ -98,7 +98,8 @@ var schema = {
             "name": community.profile.name,
             "icon": "fa-circle-o",
             "headline": community.profile.headline,
-            "industries": community.profile.industries
+            "industries": community.profile.industries,
+            "embed" : community.profile.embed || []
         };
 
         return {
@@ -537,7 +538,6 @@ function handleSetCommunity(req, res) {
     var settings = req.body.params;
 
     console.log('Updating settings for ' + settings.location_key + ' / ' + settings.community_key);
-    console.log(settings);
 
     db.get(process.env.DB_COMMUNITIES, req.user)
         .then(function (response) {
@@ -553,7 +553,7 @@ function handleSetCommunity(req, res) {
 
                     db.get(process.env.DB_COMMUNITIES, settings.community_key)
                         .then(function (response) {
-                            if (response.body.type == 'cluster') { // use community_profiles
+                            if (response.body.type !== 'location') { // use community_profiles
                                 if (response.body.community_profiles === undefined) { // create community_profiles
                                     response.body['community_profiles'] = {};
                                 }
@@ -632,17 +632,15 @@ function handleEditCommunity(req, res) {
 
                     db.get(process.env.DB_COMMUNITIES, pathname)
                         .then(function (response) {
+                            // go to .fail if community doesn't exist
+                            // if community already exists and it's the same type as what's being created, we're good to add the community profile here
 
                             if (response.body.type && (response.body.type == "cluster" || response.body.type == "network") && response.body.type == settings.community.type) {
 
-                                // community already exists and it's the same type as what's being created, so we're good to add the community profile here
+                                // create community_profiles
 
-                                if (response.body.community_profiles === undefined) {
+                                if (response.body.community_profiles === undefined) response.body['community_profiles'] = {};
 
-                                    // create community_profiles
-
-                                    response.body['community_profiles'] = {};
-                                }
                                 if (response.body.community_profiles[settings.location_key] === undefined) {
 
                                     // create this location
@@ -652,7 +650,8 @@ function handleEditCommunity(req, res) {
                                         "headline": settings.community.profile.headline,
                                         "icon": response.body.profile.icon,
                                         "parents": settings.community.parents,
-                                        "industries": settings.community.profile.industries
+                                        "industries": settings.community.profile.industries,
+                                        "embed" : settings.community.profile.embed || []
                                     };
 
                                     // add community
@@ -689,7 +688,7 @@ function handleEditCommunity(req, res) {
                                             "icon": response.body.profile.icon,
                                             "parents": settings.community.profile.parents,
                                             "industries": settings.community.profile.industries,
-                                            "embed" : response.body.community_profiles[settings.location_key].embed || []
+                                            "embed" : settings.community.profile.embed || []
                                         };
 
                                         // add community
