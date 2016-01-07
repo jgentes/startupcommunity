@@ -73,6 +73,8 @@ function NavigationController($auth, $state, $window, $timeout, $location, $scop
 
     if (!this.community) this.community = communities.data[this.location_path];
     if (!this.community) {
+        console.log(community);
+        console.log(communities.data)
         // if still no community, there's a problem, reload the app
         $window.location.reload();
     }
@@ -198,7 +200,7 @@ function NavigationController($auth, $state, $window, $timeout, $location, $scop
 
         var modalInstance = $modal.open({
             templateUrl: 'components/nav/nav.' + (embed ? 'embed' : community.type) + '_settings.html',
-            controller: CommunitySettingsController,
+            controller: EmbedSettingsController,
             controllerAs: 'settings',
             windowClass: "hmodal-success",
             resolve: {
@@ -238,7 +240,7 @@ function NavigationController($auth, $state, $window, $timeout, $location, $scop
     this.editCommunity = function(community) {
 
         var modalInstance = $modal.open({
-            templateUrl: 'components/nav/nav.edit_cluster.html',
+            templateUrl: 'components/nav/nav.edit_' + community.type + '.html',
             controller: CommunityController,
             controllerAs: 'edit',
             windowClass: "hmodal-success",
@@ -432,7 +434,7 @@ function NavigationController($auth, $state, $window, $timeout, $location, $scop
 
 }
 
-function CommunitySettingsController($modalInstance, sweet, user, community_service, community, location){
+function EmbedSettingsController($modalInstance, sweet, user, community_service, community, location){
 
     this.user = user;
     var self = this;
@@ -447,13 +449,6 @@ function CommunitySettingsController($modalInstance, sweet, user, community_serv
             if (community.type == 'cluster' && self.community.community_profiles[location.key] && self.community.community_profiles[location.key].embed) {
                 self.embed = self.community.community_profiles[location.key].embed;
             } else self.embed = self.community.profile.embed;
-
-            // load existing config settings
-            if (community.type == 'network') {
-
-            }
-
-
         });
 
     this.addEmbed = function() {
@@ -522,42 +517,46 @@ function CommunityController($modalInstance, $mixpanel, sweet, community_service
         return encodeURI(uri);
     };
 
-    //force pull of community settings every time to avoid stale data
-    community_service.getKey(community.key)
-        .then(function(response) {
-            community = response.data;
+    if (community.type == 'cluster') {
+        self.parents = community_service.parents();
+    } else if (community.type == 'network') {
+        self.parents = community_service.network_parents();
+    }
 
-            if (community.type == 'cluster') {
-                self.parents = community_service.parents();
-            } else if (community.type == 'network') {
-                self.parents = community_service.network_parents();
-            }
-            console.log(community)
-            if (community && community.community_profiles && community.community_profiles[location.key]) {
-                self.update = true;
-                self.community = community.community_profiles[location.key];
-                self.communityForm = {
-                    "name": self.community.name,
-                    "headline": self.community.headline,
-                    "industries": self.community.industries,
-                    "url": community.key
-                };
+    if (community.key) {
 
-                if (self.community.parents) {
-                    switch (self.community.parents[0]) {
-                        case 'consumer-goods':
-                            self.communityForm['parent'] = 'Consumer-Goods';
-                            break;
-                        case 'non-profit':
-                            self.communityForm['parent'] = 'Non-Profit';
-                            break;
-                        default:
-                            self.communityForm['parent'] = self.community.parents[0][0].toUpperCase() + self.community.parents[0].slice(1);
+        //force pull of community settings every time to avoid stale data
+
+        community_service.getKey(community.key)
+            .then(function(response) {
+                community = response.data;
+
+                if (community && community.community_profiles && community.community_profiles[location.key]) {
+                    self.update = true;
+                    self.community = community.community_profiles[location.key];
+                    self.communityForm = {
+                        "name": self.community.name,
+                        "headline": self.community.headline,
+                        "industries": self.community.industries,
+                        "url": community.key
+                    };
+
+                    if (self.community.parents) {
+                        switch (self.community.parents[0]) {
+                            case 'consumer-goods':
+                                self.communityForm['parent'] = 'Consumer-Goods';
+                                break;
+                            case 'non-profit':
+                                self.communityForm['parent'] = 'Non-Profit';
+                                break;
+                            default:
+                                self.communityForm['parent'] = self.community.parents[0][0].toUpperCase() + self.community.parents[0].slice(1);
+                        }
                     }
                 }
-            }
 
-        });
+            });
+    }
 
     this.editCommunity = function() {
         self.working = true;
@@ -596,7 +595,7 @@ function CommunityController($modalInstance, $mixpanel, sweet, community_service
                 newCommunity.profile['embed'] = community.community_profiles[self.location.key].embed;
             }
 
-            if (community.key !== newCommunity.url) rename = true; // determine if this is a rename operation
+            if (community.key && (community.key !== newCommunity.url)) rename = true; // determine if this is a rename operation
 
             community_service.editCommunity(newCommunity, self.location.key)
                 .then(function(response) {

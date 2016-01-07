@@ -25,7 +25,7 @@
                     </div>
                 </div>
                 <ul class="nav nav-second-level" style="margin-left: -15px;">
-                    <li ng-if="nav.user.communities.indexOf(nav.location.key) > -1">
+                    <li ng-if="nav.user.communities.indexOf(nav.user.profile.home) > -1">
                         <a ng-click="nav.addNetwork();" style="color: #aaa;">+&nbsp;&nbsp;Add Network</a>
                     </li>
                 </ul>
@@ -40,14 +40,14 @@
                 </div>
                 <hr>
                 <div ng-repeat="(k, v) in nav.user.roles.leader">
-                    <div ng-if="nav.communities[k].type == 'cluster'" style="padding-bottom:10px; font-size: 18px;">{{ nav.communities[k].community_profiles[nav.location.key].name }}
+                    <div ng-if="nav.communities[k].type == 'cluster'" style="padding-bottom:10px; font-size: 18px;">{{ nav.communities[k].community_profiles[nav.user.profile.home].name }}
                         <button ng-click="nav.communitySettings(nav.communities[k], true);" class="btn btn-xs pull-right">Embed</button>
                         <button ng-click="nav.editCommunity(nav.communities[k]);" class="btn btn-primary btn-xs pull-right" style="margin-right: 5px;">Edit</button>
                     </div>
                 </div>
                 <ul class="nav nav-second-level" style="margin-left: -15px;">
-                    <li ng-if="nav.user.communities.indexOf(nav.location.key) > -1">
-                        <a ng-click="nav.editCommunity();" style="color: #aaa;">+&nbsp;&nbsp;Add Cluster</a>
+                    <li ng-if="nav.user.communities.indexOf(nav.user.profile.home) > -1">
+                        <a ng-click="nav.editCommunity({'type':'cluster'});" style="color: #aaa;">+&nbsp;&nbsp;Add Cluster</a>
                     </li>
                 </ul>
             </div>

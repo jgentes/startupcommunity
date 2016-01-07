@@ -146,8 +146,10 @@ function handleGetCommunity(req, res) {
                 var finalize = function (results) {
 
                     for (item in results) {
-                        newresponse[results[item].path.key] = results[item].value;
-                        newresponse[results[item].path.key]["key"] = results[item].path.key;
+                        if (results[item].value) {
+                            newresponse[results[item].path.key] = results[item].value;
+                            newresponse[results[item].path.key]["key"] = results[item].path.key;
+                        }
                     }
                     newresponse["key"] = community;
 
@@ -157,13 +159,12 @@ function handleGetCommunity(req, res) {
                             .collection(process.env.DB_MESSAGES)
                             .limit(100)
                             .offset(0)
-                            .sort('@value.published', 'asc')
+                            .sortBy('@value.published:asc')
                             .query('@value.to: "' + newresponse.key + '"')
                             .then(function (messages) {
                                 messages.body.results.sort(function (a, b) {
                                     return a.value.published < b.value.published;
                                 });
-
                                 newresponse.messages = {};
                                 for (m in messages.body.results) {
 
@@ -189,7 +190,8 @@ function handleGetCommunity(req, res) {
                             .query('@value.type:"user" AND @value.roles.*.' + newresponse[community].key + ':*')
                             .then(function (team) {
 
-                                newresponse[community].team = {};
+                                newresponse[community]['team'] = {};
+
                                 for (t in team.body.results) {
                                     team.body.results[t].value["key"] = team.body.results[t].path.key;
                                     newresponse[community].team[team.body.results[t].path.key] = team.body.results[t];
