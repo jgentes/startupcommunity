@@ -196,10 +196,10 @@ function NavigationController($auth, $state, $window, $timeout, $location, $scop
 
     // COMMUNITY SETTINGS
 
-    this.communitySettings = function(community, embed) {
+    this.embedSettings = function(community) {
 
         var modalInstance = $modal.open({
-            templateUrl: 'components/nav/nav.' + (embed ? 'embed' : community.type) + '_settings.html',
+            templateUrl: 'components/nav/nav.embed_settings.html',
             controller: EmbedSettingsController,
             controllerAs: 'settings',
             windowClass: "hmodal-success",
@@ -216,24 +216,6 @@ function NavigationController($auth, $state, $window, $timeout, $location, $scop
             }
         });
     };
-
-    // ADD NETWORK
-
-    this.addNetwork = function() {
-
-        var modalInstance = $modal.open({
-            templateUrl: 'components/nav/nav.add_network.html',
-            controller: addNetworkController,
-            controllerAs: 'add',
-            windowClass: "hmodal-info",
-            resolve: {
-                location: function() {
-                    return self.location;
-                }
-            }
-        });
-    };
-
 
     // ADD OR MODIFY CLUSTER, NETWORK, OR LOCATION
 
@@ -496,8 +478,6 @@ function EmbedSettingsController($modalInstance, sweet, user, community_service,
                 }
             });
     };
-
-
 
     this.cancel = function () {
         $modalInstance.dismiss('cancel');

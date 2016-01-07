@@ -1,0 +1,45 @@
+<div class="inmodal">
+    <div class="color-line"></div>
+    <div class="modal-header">
+        <h4 class="modal-title">Add a Network in {{edit.location.profile.name}}</h4>
+        <p class="font-bold">Networks are groups of companies and people who are connected through a private, invitation-only community. Examples of networks include startup accelerators, coworking spaces, mentorship groups, and investment funds.</p>
+    </div>
+    <div class="modal-body">
+        <form name="edit.form">
+            <div class="hpanel">
+                <div class="panel-heading" style="font-size: 20px;">1. Select the type of network to create</div>
+                <select class="form-control m-b" ng-model="edit.parent" style="margin-bottom: 5px;" required>
+                    <option ng-repeat="parent in edit.parents">{{ parent }}</option>
+                </select>
+                <em><a href="mailto:james@startupcommunity.org?subject='I have a different type of network'" target="_blank">Type not listed?</a></em>
+                <div class="m-t-xs" ng-show="!edit.parent && edit.submitted">
+                    <span class="text-danger">&nbsp;&nbsp;<i class="fa fa-exclamation-triangle"></i> A type is required.</span>
+                </div>
+                <br><br>
+                <div class="panel-heading" style="font-size: 20px;">2. Give the network a name</div>
+                <input type="text" class="form-control input-lg" placeholder="Techstars" ng-model="edit.name" style="margin-bottom: 5px;" required>
+                <div class="m-t-xs" ng-show="!edit.name && edit.submitted">
+                    <span class="text-danger">&nbsp;&nbsp;<i class="fa fa-exclamation-triangle"></i> A name is required.</span>
+                </div>
+                <br>
+                <div class="panel-heading" style="font-size: 20px;">3. Customize the url path</div>
+                <input type="text" class="form-control input-lg" placeholder="{{ edit.encode(edit.name) }}" ng-model="edit.url" style="margin-bottom: 5px;">
+                <em>Your url will be: https://startupcommunity.org/<strong><span style="text-transform: lowercase;">{{ edit.encode(edit.url || edit.name) }}</span></strong></em>
+                <br><br>
+                <div class="panel-heading" style="font-size: 20px;">4. And a short description</div>
+                <input type="text" class="form-control input-lg" placeholder="An accelerator for early stage SaaS startups.." ng-model="edit.headline">
+                <br>
+                <br>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-default" ng-click="edit.cancel()">Cancel</button>
+        <button type="button" class="btn btn-danger pull-left" ng-click="edit.deleteCommunity()" ng-show="edit.update">Delete {{edit.name || 'Network'}}</button>
+        <button type="button" class="btn btn-primary" ng-click="edit.editCommunity()">
+            <span ng-show="!edit.update">Create</span><span ng-show="edit.update">Update</span> {{edit.name || 'Network'}}
+            <div loading-bars ng-show="edit.working" style="padding-top: 5px; display: inline;"></div>
+        </button>
+    </div>
+</div>
+

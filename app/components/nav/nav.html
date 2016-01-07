@@ -203,7 +203,7 @@
                         </a>
                     </li>
                     <li ng-if="nav.user.communities.indexOf(nav.location.key) > -1">
-                        <a ng-click="nav.addNetwork();" style="color: #aaa;">+&nbsp;&nbsp;Add Network</a>
+                        <a ng-click="nav.editCommunity({'type':'network'});" style="color: #aaa;">+&nbsp;&nbsp;Add Network</a>
                     </li>
                 </ul>
             </li>
@@ -229,7 +229,7 @@
                         </a>
                     </li>
                     <li ng-if="nav.user.communities.indexOf(nav.location.key) > -1">
-                        <a ng-click="nav.editCommunity({'type':'cluster'});" style="color: #aaa;">+&nbsp;&nbsp;Add Cluster</a>
+                        <a ng-click="nav.editCommunity({'type':'cluster'})" style="color: #aaa;">+&nbsp;&nbsp;Add Cluster</a>
                     </li>
                 </ul>
             </li>

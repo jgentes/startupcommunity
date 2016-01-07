@@ -50,9 +50,9 @@
     </div>
     <div class="modal-footer">
         <button type="button" class="btn btn-default" ng-click="edit.cancel()">Cancel</button>
-        <button type="button" class="btn btn-danger pull-left" ng-click="edit.deleteCommunity()" ng-show="edit.update">Delete {{edit.communityForm.name}} Cluster</button>
+        <button type="button" class="btn btn-danger pull-left" ng-click="edit.deleteCommunity()" ng-show="edit.update">Delete {{edit.communityForm.name || 'Cluster'}}</button>
         <button type="button" class="btn btn-primary" ng-click="edit.editCommunity()">
-            <span ng-show="!edit.update">Create</span><span ng-show="edit.update">Update</span> {{edit.communityForm.name}} Cluster
+            <span ng-show="!edit.update">Create</span><span ng-show="edit.update">Update</span> {{edit.communityForm.name || 'Cluster'}}
             <div loading-bars ng-show="edit.working" style="padding-top: 5px; display: inline;"></div>
         </button>
     </div>
