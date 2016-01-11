@@ -555,7 +555,7 @@ function CommunityController($modalInstance, $mixpanel, sweet, community_service
 
             if (self.communityForm.url) {
                 try {
-                    self.communityForm.url = this.encode(self.communityForm.url);
+                    this.encode(self.communityForm.url);
                 }
                 catch (e) {
                     sweet.show({
@@ -573,7 +573,7 @@ function CommunityController($modalInstance, $mixpanel, sweet, community_service
                     headline: self.communityForm.headline,
                     parents: [self.communityForm.parent.toLowerCase()]
                 },
-                url: self.communityForm.url || encodeURI(self.communityForm.name.toLowerCase())
+                url: self.communityForm.url || self.communityForm.name.toLowerCase()
             };
 
             if (community.type == 'cluster') {

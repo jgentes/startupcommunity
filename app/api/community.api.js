@@ -307,8 +307,8 @@ function handleGetCommunity(req, res) {
 
 function handleGetTop(req, res) {
     //console.log(util.inspect(req)); // used for logging circular request
-    var community_key = req.params.community_key,
-        location_key = req.params.location_key,
+    var community_key = encodeURI(req.params.community_key),
+        location_key = encodeURI(req.params.location_key),
         cluster_key = req.query.cluster_key,
         industry_keys = req.query.industry_keys,
         has_location = true,
@@ -948,7 +948,7 @@ var rename_community = function(old_community_key, location_key, new_community_k
             .collection(process.env.DB_COMMUNITIES)
             .limit(50)
             .offset(startKey)
-            .query('@value.communities: "' + old_community_key + '" OR @value.roles.*.' + old_community_key + ': "' + location_key + '"')
+            .query('@value.communities: "' + encodeURI(old_community_key) + '" OR @value.roles.*.' + encodeURI(old_community_key) + ': "' + encodeURI(location_key) + '"')
             .then(function (data) {
                 var item;
 
