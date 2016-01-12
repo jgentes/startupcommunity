@@ -21,10 +21,10 @@ function handleMaintenance(res) {
 
     function getList(startKey, userlist, limit) {
         db.newSearchBuilder()
-            .collection('communities-dev')
+            .collection(collection)
             .limit(limit)
             .offset(startKey)
-            .query('@value.profile.parents: ("Agriculture" OR "Art" OR "Construction" OR "Consumer-Goods" OR "Corporate" OR "Education" OR "Finance" OR "Government" OR "Healthcare" OR "Legal" OR "Manufacturing" OR "Medical" OR "Non-Profit" OR "Recreation" OR "Services" OR "Tech" OR "Transportation")')
+            .query('@value.profile.parents: "consumer%20goods"')
             .then(function(data){
                 var emails = [];
                 for (var item in data.body.results) {
@@ -51,20 +51,14 @@ function handleMaintenance(res) {
 
                     var newdata = data.body.results[item].value; // get current record
 
-                    var temp = [];
                     if (data.body.results[item].value.profile.parents.length) {
                         console.log(data.body.results[item].value.profile.name);
-                        for (r in data.body.results[item].value.profile.parents) {
-                            console.log(data.body.results[item].value.profile.parents[r]);
-                            temp.push(data.body.results[item].value.profile.parents[r].toLowerCase());
+                        if (data.body.results[item].value.profile.parents.indexOf('consumer%20goods') > -1) {
+                            data.body.results[item].value.profile.parents.push('consumer-goods');
+                            data.body.results[item].value.profile.parents.splice(data.body.results[item].value.profile.parents.indexOf('consumer%20goods'), 1);
                         }
-                        console.log(temp);
                         console.log('parent updated');
                     }
-
-                    newdata.profile.parents = temp;
-
-
 
                     //for invites
                    /* if (data.body.results[item].value.invite_communities.indexOf("mentor-connect") > -1) {
@@ -96,7 +90,7 @@ function handleMaintenance(res) {
 
                     // IMPORTANT! TEST FIRST BY COMMENTING OUT BELOW..
                     // ALSO BE CAREFUL TO NOT PULL FROM -DEV AND PUT INTO PRODUCTION DB!!
-                    //db.put(collection, data.body.results[item].path.key, newdata);
+                    db.put(collection, data.body.results[item].path.key, newdata);
                 }
 
                 /*console.log('Job done!');

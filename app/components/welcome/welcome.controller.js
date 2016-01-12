@@ -45,7 +45,7 @@ function WelcomeController($auth, $q, $http, $mixpanel, $stateParams, $scope, $s
         if (self.user.profile.parents) {
             switch(self.user.profile.parents[0]) {
                 case 'consumer-goods':
-                    self.selectedParent = 'Consumer-Goods';
+                    self.selectedParent = 'Consumer Goods';
                     break;
                 case 'non-profit':
                     self.selectedParent = 'Non-Profit';

@@ -73,8 +73,6 @@ function NavigationController($auth, $state, $window, $timeout, $location, $scop
 
     if (!this.community) this.community = communities.data[this.location_path];
     if (!this.community) {
-        console.log(community);
-        console.log(communities.data)
         // if still no community, there's a problem, reload the app
         $window.location.reload();
     }
@@ -524,7 +522,7 @@ function CommunityController($modalInstance, $mixpanel, sweet, community_service
                     if (self.community.parents) {
                         switch (self.community.parents[0]) {
                             case 'consumer-goods':
-                                self.communityForm['parent'] = 'Consumer-Goods';
+                                self.communityForm['parent'] = 'Consumer Goods';
                                 break;
                             case 'non-profit':
                                 self.communityForm['parent'] = 'Non-Profit';
