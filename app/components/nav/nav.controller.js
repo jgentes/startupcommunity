@@ -522,7 +522,7 @@ function CommunityController($modalInstance, $mixpanel, sweet, community_service
                         "name": self.community.name,
                         "headline": self.community.headline,
                         "industries": self.community.industries,
-                        "url": community.key
+                        "url": decodeURI(community.key)
                     };
 
                     if (self.community.parents) {
@@ -559,7 +559,7 @@ function CommunityController($modalInstance, $mixpanel, sweet, community_service
 
             if (self.communityForm.url) {
                 try {
-                    this.encode(self.communityForm.url);
+                    var encodedUrl = encodeURI(self.communityForm.url);
                 }
                 catch (e) {
                     sweet.show({
@@ -577,7 +577,7 @@ function CommunityController($modalInstance, $mixpanel, sweet, community_service
                     headline: self.communityForm.headline,
                     parents: [self.communityForm.parent.toLowerCase()]
                 },
-                url: self.communityForm.url || self.communityForm.name.toLowerCase()
+                url: encodedUrl || encodeURI(self.communityForm.name.toLowerCase())
             };
 
             if (community.type == 'cluster') {
