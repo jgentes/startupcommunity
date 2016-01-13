@@ -24,7 +24,7 @@ function handleMaintenance(res) {
             .collection(collection)
             .limit(limit)
             .offset(startKey)
-            .query('@value.profile.parents: "consumer%20goods"')
+            .query('@value.profile.parents: * AND @value.type: "company"')
             .then(function(data){
                 var emails = [];
                 for (var item in data.body.results) {
@@ -53,9 +53,9 @@ function handleMaintenance(res) {
 
                     if (data.body.results[item].value.profile.parents.length) {
                         console.log(data.body.results[item].value.profile.name);
-                        if (data.body.results[item].value.profile.parents.indexOf('consumer%20goods') > -1) {
-                            data.body.results[item].value.profile.parents.push('consumer-goods');
-                            data.body.results[item].value.profile.parents.splice(data.body.results[item].value.profile.parents.indexOf('consumer%20goods'), 1);
+                        if (data.body.results[item].value.profile.parents[0]) {
+                            data.body.results[item].value.profile.parents[0] = data.body.results[item].value.profile.parents[0].toLowerCase();
+                            //data.body.results[item].value.profile.parents.splice(data.body.results[item].value.profile.parents.indexOf('consumer%20goods'), 1);
                         }
                         console.log('parent updated');
                     }
@@ -90,7 +90,7 @@ function handleMaintenance(res) {
 
                     // IMPORTANT! TEST FIRST BY COMMENTING OUT BELOW..
                     // ALSO BE CAREFUL TO NOT PULL FROM -DEV AND PUT INTO PRODUCTION DB!!
-                    db.put(collection, data.body.results[item].path.key, newdata);
+                    //db.put(collection, data.body.results[item].path.key, newdata);
                 }
 
                 /*console.log('Job done!');

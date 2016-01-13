@@ -2,7 +2,7 @@ angular
     .module('startupcommunity')
     .controller('DashboardController', DashboardController);
 
-function DashboardController($stateParams, top, community, $state) {
+function DashboardController($stateParams, community, $state) {
     // redirect if a user or company
     if (community.type == 'user') {
         $state.go('user.dashboard');
@@ -11,12 +11,6 @@ function DashboardController($stateParams, top, community, $state) {
     }
 
     var self = this;
-    if (top && top.data) this.top = top.data;
-
-    this.max = 0;
-    for (val in this.top.parents) {
-        this.max += this.top.parents[val].value;
-    }
 
     this.location_path = $stateParams.location_path;
 

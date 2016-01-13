@@ -107,6 +107,10 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
 
                         } else return $stateParams.community;
                     }],
+                top: ['community_service', '$stateParams', 'community',
+                    function (community_service, $stateParams, community) {
+                        return community_service.getTop($stateParams.location_path, $stateParams.community_path || community.key, community);
+                    }],
                 location: ['$stateParams', 'community', 'communities',
                     function($stateParams, community, communities) {
 
@@ -340,12 +344,6 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                 location_path: null,
                 community_path: null,
                 tour: false
-            },
-            resolve: {
-                top: ['community_service', '$stateParams', 'community',
-                    function (community_service, $stateParams, community) {
-                        return community_service.getTop($stateParams.location_path, $stateParams.community_path, community);
-                    }]
             },
             views: {
                 'people': {

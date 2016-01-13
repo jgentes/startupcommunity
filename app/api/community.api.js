@@ -463,7 +463,7 @@ function handleGetTop(req, res) {
                                 }
 
                                 top_results['parents'] = {
-                                    labels: _.union(c_labels, p_labels).slice(0,3),
+                                    labels: _.union(c_labels, p_labels),
                                     values: []
                                 };
 

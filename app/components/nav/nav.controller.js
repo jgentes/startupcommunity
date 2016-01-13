@@ -2,7 +2,7 @@ angular
     .module('startupcommunity')
     .controller('NavigationController', NavigationController);
 
-function NavigationController($auth, $state, $window, $timeout, $location, $scope, $stateParams, $modal, user_service, community_service, user, location, community, communities, knowtify, errorLogService) {
+function NavigationController($auth, $state, $window, $timeout, $location, $scope, $stateParams, $modal, user_service, community_service, user, location, community, communities, top, knowtify, errorLogService) {
     if (user.data && user.data.token) $auth.setToken(user.data.token); // update local storage with latest user profile
 
     // SENSITIVE VARIABLES THAT AFFECT NAVIGATION AND ALL CHILD TEMPLATES
@@ -27,6 +27,13 @@ function NavigationController($auth, $state, $window, $timeout, $location, $scop
     }
 
     var self = this;
+
+    if (top && top.data) this.top = top.data;
+
+    this.max = 0;
+    for (val in this.top.parents) {
+        this.max += this.top.parents[val].value;
+    }
 
     // ANONYMOUS ACCESS OR PROFILE DISPLAY
 
@@ -95,10 +102,9 @@ function NavigationController($auth, $state, $window, $timeout, $location, $scop
                         break;
                     case "cluster":
                         if (!this.clusters) this.clusters = {};
-                        if (parents.indexOf(item) > -1) {
-                            if (!this.parents) this.parents = {};
-                            this.parents[item] = communities.data[item];
-                        } else this.clusters[item] = communities.data[item];
+                        if (parents.indexOf(item) < 0) {
+                            this.clusters[item] = communities.data[item];
+                        }
                         break;
                     case "network":
                         if (!this.networks) this.networks = {};

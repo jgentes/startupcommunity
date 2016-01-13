@@ -26,7 +26,7 @@ var schema = {
             "profile": {
                 "home": location_key,
                 "name": profile.name,
-                "parents": [profile.parent],
+                "parents": [profile.parent.toLowerCase()],
                 "angellist": profile,
                 "headline": profile.high_concept,
                 "summary": profile.product_desc,
