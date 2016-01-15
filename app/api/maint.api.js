@@ -48,15 +48,18 @@ function handleMaintenance(res) {
 
                      */
 
-
-                    var newdata = data.body.results[item].value; // get current record
-
                     if (data.body.results[item].value.profile.parents.length) {
                         console.log(data.body.results[item].value.profile.name);
-                        if (data.body.results[item].value.profile.parents[0]) {
-                            data.body.results[item].value.profile.parents[0] = data.body.results[item].value.profile.parents[0].toLowerCase();
-                            //data.body.results[item].value.profile.parents.splice(data.body.results[item].value.profile.parents.indexOf('consumer%20goods'), 1);
+
+                        /*if (data.body.results[item].value.profile.parents.indexOf('consumer%20goods') > -1) {
+                            data.body.results[item].value.profile.parents.push('consumer-goods');
+                            data.body.results[item].value.profile.parents.splice(data.body.results[item].value.profile.parents.indexOf('consumer%20goods'), 1);
+                        }*/
+                        for (p in data.body.results[item].value.profile.parents) {
+                            data.body.results[item].value.profile.parents[p] = data.body.results[item].value.profile.parents[p].toLowerCase();
+
                         }
+
                         console.log('parent updated');
                     }
 
@@ -90,7 +93,7 @@ function handleMaintenance(res) {
 
                     // IMPORTANT! TEST FIRST BY COMMENTING OUT BELOW..
                     // ALSO BE CAREFUL TO NOT PULL FROM -DEV AND PUT INTO PRODUCTION DB!!
-                    //db.put(collection, data.body.results[item].path.key, newdata);
+                    //db.put(collection, data.body.results[item].path.key, data.body.results[item].value);
                 }
 
                 /*console.log('Job done!');
