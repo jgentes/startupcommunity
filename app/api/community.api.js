@@ -995,10 +995,10 @@ function handleGetKey(req, res) {
     console.log('Pulling key: ' + req.params.key);
 
     function pullKey() {
-        db.get(process.env.DB_COMMUNITIES, req.params.key)
+        db.get(process.env.DB_COMMUNITIES, encodeURI(req.params.key))
             .then(function (result) {
                 if (result.statusCode == 200) {
-                    result.body["key"] = req.params.key;
+                    result.body["key"] = encodeURI(req.params.key);
                     res.status(200).send(result.body);
                 } else {
                     console.warn('WARNING: Key not found!');
