@@ -13,7 +13,7 @@ var MaintApi = function() {
 
 
 function handleMaintenance(res) {
-    var enabled = true,
+    var enabled = false,
         startKey = 0,
         limit = 50,
         userlist = [],
