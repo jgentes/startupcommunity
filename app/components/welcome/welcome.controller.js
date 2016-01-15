@@ -281,6 +281,8 @@ function WelcomeController($auth, $q, $http, $mixpanel, $stateParams, $scope, $s
         if (e) e.preventDefault();
 
         if (self.selectedCompany.parent) {
+            // adjust parent industry caps
+            self.selectedCompany.parent = self.selectedCompany.parent.toLowerCase();
 
             if (angular.element('.summary_form a').hasClass('editable-hide')) {
                 // they've edited the summary but haven't clicked checkmark to accept changes
