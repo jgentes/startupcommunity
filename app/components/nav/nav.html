@@ -199,7 +199,7 @@
                 </a>
                 <ul class="nav nav-second-level" ng-class="{in:nav.location.key == nav.community.key}">
                     <li ng-repeat="item in nav.networks.coworking">
-                        <a ui-sref="{{'community.dashboard' + nav.nav_jump}}" ng-click="nc_working = true">
+                        <a ui-sref="{{'community.dashboard' + nav.nav_jump}}" ng-class="{active: nav.path.includes('/' + item.label)}" ng-click="nc_working = true">
                             <i ng-class="'fa ' + item.profile.icon"></i> {{item.profile.name}}
                             <span loading-bars ng-show="nc_working"></span>
                         </a>
@@ -218,9 +218,9 @@
                 </a>
                 <ul class="nav nav-second-level" ng-class="{in:nav.location.key == nav.community.key}">
                     <li ng-repeat="item in nav.networks.investment">
-                        <a ui-sref="{{'community.dashboard' + nav.nav_jump}}" ng-click="ni_working = true">
-                                <i ng-class="'fa ' + item.profile.icon"></i> {{item.profile.name}}
-                                <span loading-bars ng-show="ni_working"></span>
+                        <a ui-sref="{{'community.dashboard' + nav.nav_jump}}" ng-class="{active: nav.path.includes('/' + item.label)}" ng-click="ni_working = true">
+                            <i ng-class="'fa ' + item.profile.icon"></i> {{item.profile.name}}
+                            <span loading-bars ng-show="ni_working"></span>
                         </a>
                     </li>
                 </ul>
@@ -237,7 +237,7 @@
                 </a>
                 <ul class="nav nav-second-level" ng-class="{in:nav.location.key == nav.community.key}">
                     <li ng-repeat="item in nav.networks.mentorship">
-                        <a ui-sref="{{'community.dashboard' + nav.nav_jump}}" ng-click="nm_working = true">
+                        <a ui-sref="{{'community.dashboard' + nav.nav_jump}}" ng-class="{active: nav.path.includes('/' + item.label)}" ng-click="nm_working = true">
                             <i ng-class="'fa ' + item.profile.icon"></i> {{item.profile.name}}
                             <span loading-bars ng-show="nm_working"></span>
                         </a>
@@ -255,7 +255,7 @@
                 </a>
                 <ul class="nav nav-second-level" ng-class="{in:nav.location.key == nav.community.key}">
                     <li ng-repeat="item in nav.top.parents | orderBy: 'item.value' : reverse">
-                        <a ng-show="nav.community.key !== item.label" ui-sref="community.dashboard({community_path: item.label, community: nav.communities[item.label], query: '*', location_path: nav.user.profile.home})" ng-click="cl_working = true">
+                        <a ui-sref="community.dashboard({community_path: item.label, community: nav.communities[item.label], query: '*', location_path: nav.user.profile.home})" ng-class="{active: nav.path.includes('/' + item.label)}" ng-click="cl_working = true">
                             <span>
                                 <i ng-class="'fa ' + nav.communities[item.label].profile.icon"></i> {{item.label[0].toUpperCase() + item.label.slice(1);}}
                                 <span loading-bars ng-show="cl_working"></span>

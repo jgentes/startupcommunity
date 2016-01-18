@@ -102,8 +102,10 @@ function NavigationController($auth, $state, $window, $timeout, $location, $scop
                         break;
                     case "cluster":
                         if (!this.clusters) this.clusters = {};
-                        if (parents.indexOf(item) < 0) {
-                            this.clusters[item] = communities.data[item];
+                        if (communities.data[item].community_profiles && communities.data[item].community_profiles[this.location.key] && communities.data[item].community_profiles[this.location.key].parents && communities.data[item].community_profiles[this.location.key].parents[0]) {
+                            var cluster_type = communities.data[item].community_profiles[this.location.key].parents[0];
+                            if (!this.clusters[cluster_type]) this.clusters[cluster_type] = {};
+                            this.clusters[cluster_type][item] = communities.data[item];
                         }
                         break;
                     case "network":
