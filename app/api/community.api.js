@@ -485,7 +485,9 @@ function handleGetTop(req, res) {
                                     });
                                 }
 
-                                top_results.parents = temp;
+                                if (!_.isEmpty(temp)) {
+                                    top_results.parents = temp;
+                                } else delete top_results.parents;
 
                                 delete top_results.people_parents;
                                 delete top_results.company_parents;

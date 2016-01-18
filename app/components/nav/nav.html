@@ -126,12 +126,7 @@
 
                 <ul class="nav nav-second-level">
                     <li>
-                        <a ng-if="nav.location.key !== nav.community.key" ui-sref="community.dashboard({location_path: nav.location.key, community_path: '', community: nav.location, location: nav.location, query: '*'})" ng-class="{active: nav.path.includes('/' + nav.community.key)}" style="padding-left: 10px; font-size: 15px; height: 30px;">
-                            <span ng-if="nav.location" ng-click="l_working = true">
-                                {{nav.location.profile.name}}
-                                <span loading-bars ng-show="l_working"></span>
-                            </span>
-                        </a>
+
                         <a ui-sref="{{'community.dashboard' + nav.nav_url}}" ng-class="{active: nav.path.includes('/' + nav.community.key)}" style="padding-left: 15px; font-size: 16px; font-weight: bold;">
                             <span ng-if="nav.community.community_profiles[nav.location.key]" ng-click="c_working = true">
                                 {{nav.community.community_profiles[nav.location.key].name}}
@@ -142,7 +137,7 @@
                                 <span loading-bars ng-show="c_working"></span>
                             </span>
                         </a>
-                        <ul ng-if="nav.community.type !== 'user' && nav.community.type !== 'company'" style="display: block; padding: 0 0 0 8px;">
+                        <ul ng-if="nav.community.type !== 'user' && nav.community.type !== 'company'" style="display: block; padding: 0 0 0 15px;">
                             <li ui-sref="{{'user.list' + nav.nav_url}}" ng-class="{ 'active' : nav.path.endsWith(nav.community.key + '/people') }" style="padding-top: 10px;">
                                 <a><i class="fa fa-caret-right"></i>People
                                 </a>
@@ -162,9 +157,21 @@
                 </ul>
                 <!--<span class="fa fa-gear pull-right" ng-click="nav.changeLocation()" tooltip-placement="left" tooltip="Change Location" style="opacity: .6; margin-top: 4px; cursor: pointer;"></span>-->
             </li>
+            <li class="active">
+                <ul class="nav nav-second-level">
+                    <li>
+                        <a ng-if="nav.location.key !== nav.community.key" ui-sref="community.dashboard({location_path: nav.location.key, community_path: '', community: nav.location, location: nav.location, query: '*'})" ng-class="{active: nav.path.includes('/' + nav.location.key)}" style="padding-left: 12px; font-size: 15px; font-weight: bold; border-top: 1px solid #ddd; border-left: none;">
+                            <span ng-if="nav.location" ng-click="l_working = true">
+                                <i class="fa fa-globe" style="color:#aaa;"></i>&nbsp;{{nav.location.profile.name}}
+                                <span loading-bars ng-show="l_working"></span>
+                            </span>
+                        </a>
+                    </li>
+                </ul>
+            </li>
 
             <li class="active" ng-show="nav.locations">
-                <a style="cursor: default;"><span class="pe-7s-angle-down" style="padding-top: 4px;
+                <a><span class="pe-7s-angle-down" style="padding-top: 4px;
     padding-right: 7px;"></span><span class="nav-label">
 
                     Locations
@@ -183,71 +190,72 @@
                 </ul>
             </li>
 
-            <li class="active" tour-step order="2" title="Private Networks" content="Networks are groups of companies and people who are connected through a private, invitation-only community.<br><br>Examples of networks include startup accelerators, coworking spaces, mentorship groups, and investment funds." placement="right">
-                <a style="cursor: default;"><span class="pe-7s-angle-down" style="padding-top: 4px;
+            <li ng-class="{active:nav.location.key == nav.community.key}" ng-show="nav.networks.coworking">
+                <a><span class="pe-7s-angle-down" style="padding-top: 4px; padding-right: 7px;"></span><span class="nav-label">
+
+                    Coworking
+
+                </span>
+                </a>
+                <ul class="nav nav-second-level" ng-class="{in:nav.location.key == nav.community.key}">
+                    <li ng-repeat="item in nav.networks.coworking">
+                        <a ui-sref="{{'community.dashboard' + nav.nav_jump}}" ng-click="nc_working = true">
+                            <i ng-class="'fa ' + item.profile.icon"></i> {{item.profile.name}}
+                            <span loading-bars ng-show="nc_working"></span>
+                        </a>
+                    </li>
+                </ul>
+            </li>
+
+            <li ng-class="{active:nav.location.key == nav.community.key}" ng-show="nav.networks.investment">
+                <a><span class="pe-7s-angle-down" style="padding-top: 4px;
     padding-right: 7px;"></span><span class="nav-label">
 
-                    Networks
+                    Investment
 
                 </span>
 
                 </a>
-                <ul class="nav nav-second-level">
-                    <li ng-if="!nav.networks || nav.networks === {}">
-                        <a title="You must be invited to become a member of a network" class="nav-nohover">No networks yet</a>
-                    </li>
-                    <li ng-repeat="item in nav.networks">
-                        <a ui-sref="{{'community.dashboard' + nav.nav_jump}}" ng-class="{active: nav.path.includes('/' + item.key)}" ng-click="n_working = true">
+                <ul class="nav nav-second-level" ng-class="{in:nav.location.key == nav.community.key}">
+                    <li ng-repeat="item in nav.networks.investment">
+                        <a ui-sref="{{'community.dashboard' + nav.nav_jump}}" ng-click="ni_working = true">
                                 <i ng-class="'fa ' + item.profile.icon"></i> {{item.profile.name}}
-                                <span loading-bars ng-show="n_working"></span>
+                                <span loading-bars ng-show="ni_working"></span>
                         </a>
-                    </li>
-                    <li ng-if="nav.user.communities.indexOf(nav.location.key) > -1">
-                        <a ng-click="nav.editCommunity({'type':'network'});" style="color: #aaa;">+&nbsp;&nbsp;Add Network</a>
                     </li>
                 </ul>
             </li>
 
-            <li class="active" tour-step order="3" title="Industry Clusters" content="A cluster is an entrepreneurial ecosystem in support of a specific industry.<br><br>Clusters are made up of mentors, investors, companies, accelerators, coworking spaces, and events that connect people within the community and foster the creation of new business." placement="right">
-                <a style="cursor: default;"><span class="pe-7s-angle-down" style="padding-top: 4px;
+            <li ng-class="{active:nav.location.key == nav.community.key}" ng-show="nav.networks.mentorship">
+                <a><span class="pe-7s-angle-down" style="padding-top: 4px;
     padding-right: 7px;"></span><span class="nav-label">
 
-                    Clusters
+                    Mentorship
 
                 </span>
+
                 </a>
-                <ul class="nav nav-second-level">
-                    <li ng-if="!nav.clusters">
-                        <a title="Edit the skills in your user profile to associate yourself with a cluster" class="nav-nohover">No clusters yet</a>
-                    </li>
-                    <li ng-repeat="item in nav.clusters">
-                        <a ui-sref="{{'community.dashboard' + nav.nav_jump}}" ng-class="{active: nav.path.includes('/' + item.key)}" ng-click="cl_working = true">
-                            <span ng-if="item.community_profiles[nav.location.key]">
-                                <i ng-class="'fa ' + item.community_profiles[nav.location.key].icon"></i> {{item.community_profiles[nav.location.key].name}}
-                                <span loading-bars ng-show="cl_working"></span>
-                            </span>
+                <ul class="nav nav-second-level" ng-class="{in:nav.location.key == nav.community.key}">
+                    <li ng-repeat="item in nav.networks.mentorship">
+                        <a ui-sref="{{'community.dashboard' + nav.nav_jump}}" ng-click="nm_working = true">
+                            <i ng-class="'fa ' + item.profile.icon"></i> {{item.profile.name}}
+                            <span loading-bars ng-show="nm_working"></span>
                         </a>
-                    </li>
-                    <li ng-if="nav.user.communities.indexOf(nav.location.key) > -1">
-                        <a ng-click="nav.editCommunity({'type':'cluster'})" style="color: #aaa;">+&nbsp;&nbsp;Add Cluster</a>
                     </li>
                 </ul>
             </li>
 
-            <li class="active">
-                <a style="cursor: default;"><span class="pe-7s-angle-down" style="padding-top: 4px;
+            <li ng-class="{active:nav.location.key == nav.community.key}" ng-show="nav.top.parents" tour-step order="3" title="Industry Clusters" content="A cluster is an entrepreneurial ecosystem in support of a specific industry.<br><br>Clusters are made up of mentors, investors, companies, accelerators, coworking spaces, and events that connect people within the community and foster the creation of new business." placement="right">
+                <a><span class="pe-7s-angle-down" style="padding-top: 4px;
     padding-right: 7px;"></span><span class="nav-label">
 
                     Industries
 
                 </span>
                 </a>
-                <ul class="nav nav-second-level">
-                    <li ng-if="!nav.top.parents || nav.top.parents === []">
-                        <a title="Edit your user profile to associate yourself with an industry" class="nav-nohover">No industries yet</a>
-                    </li>
+                <ul class="nav nav-second-level" ng-class="{in:nav.location.key == nav.community.key}">
                     <li ng-repeat="item in nav.top.parents | orderBy: 'item.value' : reverse">
-                        <a ui-sref="community.dashboard({community_path: item.label, community: nav.communities[item.label], query: '*', location_path: nav.user.profile.home})" ng-class="{active: nav.path.includes('/' + item.label)}" ng-click="cl_working = true">
+                        <a ng-show="nav.community.key !== item.label" ui-sref="community.dashboard({community_path: item.label, community: nav.communities[item.label], query: '*', location_path: nav.user.profile.home})" ng-click="cl_working = true">
                             <span>
                                 <i ng-class="'fa ' + nav.communities[item.label].profile.icon"></i> {{item.label[0].toUpperCase() + item.label.slice(1);}}
                                 <span loading-bars ng-show="cl_working"></span>

@@ -108,7 +108,11 @@ function NavigationController($auth, $state, $window, $timeout, $location, $scop
                         break;
                     case "network":
                         if (!this.networks) this.networks = {};
-                        this.networks[item] = communities.data[item];
+                        if (communities.data[item].community_profiles && communities.data[item].community_profiles[this.location.key] && communities.data[item].community_profiles[this.location.key].parents && communities.data[item].community_profiles[this.location.key].parents[0]) {
+                            var network_type = communities.data[item].community_profiles[this.location.key].parents[0];
+                            if (!this.networks[network_type]) this.networks[network_type] = {};
+                            this.networks[network_type][item] =  communities.data[item];
+                        }
                         break;
                     default:
                         break;
