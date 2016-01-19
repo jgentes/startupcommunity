@@ -486,7 +486,7 @@ function handleGetTop(req, res) {
                                 }
 
                                 if (!_.isEmpty(temp)) {
-                                    top_results.parents = temp;
+                                    top_results.parents = _.orderBy(temp, 'value', 'desc');
                                 } else delete top_results.parents;
 
                                 delete top_results.people_parents;
