@@ -91,36 +91,36 @@ function NavigationController($auth, $state, $window, $timeout, $location, $scop
 
     // sort communities for use in nav and child dashboard pages
     for (item in communities.data) { // no clue what item is here, esp if user or company
-        if (item !== this.community.key) { // ie. edco-stable-of-experts
-            if (communities.data[item]) {
-                switch (communities.data[item].type) {
-                    case "location":
-                        if (item !== this.location.key) {
-                            if (!this.locations) this.locations = {};
-                            this.locations[item] = communities.data[item];
-                        }
-                        break;
-                    case "cluster":
-                        if (!this.clusters) this.clusters = {};
-                        if (communities.data[item].community_profiles && communities.data[item].community_profiles[this.location.key] && communities.data[item].community_profiles[this.location.key].parents && communities.data[item].community_profiles[this.location.key].parents[0]) {
-                            var cluster_type = communities.data[item].community_profiles[this.location.key].parents[0];
-                            if (!this.clusters[cluster_type]) this.clusters[cluster_type] = {};
-                            this.clusters[cluster_type][item] = communities.data[item];
-                        }
-                        break;
-                    case "network":
-                        if (!this.networks) this.networks = {};
-                        if (communities.data[item].community_profiles && communities.data[item].community_profiles[this.location.key] && communities.data[item].community_profiles[this.location.key].parents && communities.data[item].community_profiles[this.location.key].parents[0]) {
-                            var network_type = communities.data[item].community_profiles[this.location.key].parents[0];
-                            if (!this.networks[network_type]) this.networks[network_type] = {};
-                            this.networks[network_type][item] =  communities.data[item];
-                        }
-                        break;
-                    default:
-                        break;
-                }
+
+        if (communities.data[item]) {
+            switch (communities.data[item].type) {
+                case "location":
+                    if (item !== this.location.key) {
+                        if (!this.locations) this.locations = {};
+                        this.locations[item] = communities.data[item];
+                    }
+                    break;
+                case "cluster":
+                    if (!this.clusters) this.clusters = {};
+                    if (communities.data[item].community_profiles && communities.data[item].community_profiles[this.location.key] && communities.data[item].community_profiles[this.location.key].parents && communities.data[item].community_profiles[this.location.key].parents[0]) {
+                        var cluster_type = communities.data[item].community_profiles[this.location.key].parents[0];
+                        if (!this.clusters[cluster_type]) this.clusters[cluster_type] = {};
+                        this.clusters[cluster_type][item] = communities.data[item];
+                    }
+                    break;
+                case "network":
+                    if (!this.networks) this.networks = {};
+                    if (communities.data[item].community_profiles && communities.data[item].community_profiles[this.location.key] && communities.data[item].community_profiles[this.location.key].parents && communities.data[item].community_profiles[this.location.key].parents[0]) {
+                        var network_type = communities.data[item].community_profiles[this.location.key].parents[0];
+                        if (!this.networks[network_type]) this.networks[network_type] = {};
+                        this.networks[network_type][item] =  communities.data[item];
+                    }
+                    break;
+                default:
+                    break;
             }
         }
+
     }
 
     if (angular.equals({}, this.clusters)) this.clusters = undefined; // had a hard time checking for empty object in the html

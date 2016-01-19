@@ -199,8 +199,8 @@
                 </a>
                 <ul class="nav nav-second-level" ng-class="{in:nav.location.key == nav.community.key}">
                     <li ng-repeat="item in nav.networks.coworking">
-                        <a ui-sref="{{'community.dashboard' + nav.nav_jump}}" ng-class="{active: nav.path.includes('/' + item.label)}" ng-click="nc_working = true">
-                            <i ng-class="'fa ' + item.profile.icon"></i> {{item.profile.name}}
+                        <a ui-sref="{{'community.dashboard' + nav.nav_jump}}" ng-class="{active: nav.path.includes('/' + item.key)}" ng-click="nc_working = true">
+                            <i ng-class="'fa ' + item.profile.icon"></i> {{item.community_profiles[nav.location.key].name}}
                             <span loading-bars ng-show="nc_working"></span>
                         </a>
                     </li>
@@ -218,8 +218,8 @@
                 </a>
                 <ul class="nav nav-second-level" ng-class="{in:nav.location.key == nav.community.key}">
                     <li ng-repeat="item in nav.networks.investment">
-                        <a ui-sref="{{'community.dashboard' + nav.nav_jump}}" ng-class="{active: nav.path.includes('/' + item.label)}" ng-click="ni_working = true">
-                            <i ng-class="'fa ' + item.profile.icon"></i> {{item.profile.name}}
+                        <a ui-sref="{{'community.dashboard' + nav.nav_jump}}" ng-class="{active: nav.path.includes('/' + item.key)}" ng-click="ni_working = true">
+                            <i ng-class="'fa ' + item.profile.icon"></i> {{item.community_profiles[nav.location.key].name}}
                             <span loading-bars ng-show="ni_working"></span>
                         </a>
                     </li>
@@ -237,8 +237,8 @@
                 </a>
                 <ul class="nav nav-second-level" ng-class="{in:nav.location.key == nav.community.key}">
                     <li ng-repeat="item in nav.networks.mentorship">
-                        <a ui-sref="{{'community.dashboard' + nav.nav_jump}}" ng-class="{active: nav.path.includes('/' + item.label)}" ng-click="nm_working = true">
-                            <i ng-class="'fa ' + item.profile.icon"></i> {{item.profile.name}}
+                        <a ui-sref="{{'community.dashboard' + nav.nav_jump}}" ng-class="{active: nav.path.includes('/' + item.key)}" ng-click="nm_working = true">
+                            <i ng-class="'fa ' + item.profile.icon"></i> {{item.community_profiles[nav.location.key].name}}
                             <span loading-bars ng-show="nm_working"></span>
                         </a>
                     </li>
@@ -257,8 +257,13 @@
                     <li ng-repeat="item in nav.top.parents | orderBy: 'item.value' : reverse">
                         <a ui-sref="community.dashboard({community_path: item.label, community: nav.communities[item.label], query: '*', location_path: nav.user.profile.home})" ng-class="{active: nav.path.includes('/' + item.label)}" ng-click="cl_working = true">
                             <span>
-                                <i ng-class="'fa ' + nav.communities[item.label].profile.icon"></i> {{item.label[0].toUpperCase() + item.label.slice(1);}}
+                                <i ng-class="'fa ' + nav.communities[item.label].profile.icon"></i> {{item.label[0].toUpperCase() + item.label.slice(1)}}
                                 <span loading-bars ng-show="cl_working"></span>
+
+                                <a ng-repeat="c in nav.clusters[item.label]" ui-sref="community.dashboard({community_path: c.key, community: nav.communities[c.key], query: '*', location_path: nav.user.profile.home})" ng-class="{active: nav.path.includes('/' + c.key)}" ng-click="clc_working = true" style="padding-left:40px;">
+                                    <i ng-class="'fa ' + nav.communities[item.label].profile.icon"></i> {{c.community_profiles[nav.location.key].name[0].toUpperCase() + c.community_profiles[nav.location.key].name.slice(1);}}
+                                    <span loading-bars ng-show="clc_working"></span>
+                                </a>
                             </span>
 
                         </a>
