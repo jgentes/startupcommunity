@@ -99,11 +99,34 @@
             </div>
         </div>
         <div class="row">
-            <div class="col-xs-12 col-sm-6">
+            <div class="col-xs-12 col-sm-6 col-md-4">
+                <div class="hpanel forum-box" style="overflow: hidden;">
+
+                    <div class="panel-heading" style="border-bottom: 2px solid #34495E;">
+                        <h3>Top Industry Clusters</h3>
+                        <small class="small-column-title"># Companies</small>
+                    </div>
+
+                    <div class="panel-body" ng-repeat="item in nav.top.parents | limitTo: 5">
+                        <div class="row">
+                            <div class="col-xs-10 forum-heading">
+                                <a ui-sref="community.dashboard({community_path: item.label, community: nav.communities[item.label], query: '*', location_path: nav.location.key})"><h4 style="font-weight: 200;">{{item.label[0].toUpperCase() + item.label.slice(1);}}</h4></a>
+                                <progressbar value="item.value" max="nav.max" type="success" class="progress-small full" style="margin-top: 7px;"></progressbar>
+                            </div>
+                            <div class="col-xs-2 forum-info">
+                                <span class="number number-column">{{item.value}}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            <div class="col-xs-12 col-sm-6 col-md-4">
                 <div class="hpanel forum-box" style="overflow: hidden;">
 
                     <div class="panel-heading" style="border-bottom: 2px solid #34495E;">
                         <h3>Top Markets</h3>
+                        <small class="small-column-title"># Companies</small>
                     </div>
 
                     <div class="panel-body" ng-repeat="item in nav.top.industries.entries | limitTo: 5">
@@ -113,19 +136,19 @@
                                 <progressbar ng-attr-value="(item.count/nav.top.industries.entries[0].count)*100" type="default" class="progress-small full" style="margin-top: 7px;"></progressbar>
                             </div>
                             <div class="col-xs-2 forum-info">
-                                <span class="number">{{item.count}}</span>
-                                <small>{{item.count == 1 ? 'Company' : 'Companies'}}</small>
+                                <span class="number number-column">{{item.count}}</span>
                             </div>
                         </div>
                     </div>
 
                 </div>
             </div>
-            <div class="col-xs-12 col-sm-6">
+            <div class="col-xs-12 col-sm-6 col-md-4">
                 <div class="hpanel forum-box" style="overflow: hidden;">
 
                     <div class="panel-heading" style="border-bottom: 2px solid #3498db">
                         <h3>Top Skills</h3>
+                        <small class="small-column-title"># People</small>
                     </div>
 
                     <div class="panel-body" ng-repeat="item in nav.top.skills.entries | limitTo: 5">
@@ -135,8 +158,7 @@
                                 <progressbar ng-attr-value="(item.count/nav.top.skills.entries[0].count)*100" type="info" class="progress-small full" style="margin-top: 7px;"></progressbar>
                             </div>
                             <div class="col-xs-2 forum-info">
-                                <span class="number">{{item.count}}</span>
-                                <small>{{item.count == 1 ? 'Person' : 'People'}}</small>
+                                <span class="number number-column">{{item.count}}</span>
                             </div>
                         </div>
                     </div>
