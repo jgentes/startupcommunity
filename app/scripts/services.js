@@ -112,7 +112,7 @@ angular
                   return $http.get('/api/2.1/key/' + key);
               },
               getTop: function(location_key, community_key, community) {
-                    console.log(location_key, community_key, community);
+
                   // this service relies on cache first, then calls the api to update the db for next pull
 
                   var industry_keys = [];
