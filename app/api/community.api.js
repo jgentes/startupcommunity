@@ -1,6 +1,7 @@
 var memjs = require('memjs'),
     mc = memjs.Client.create(),
-    _ = require('lodash'),
+    path = require('path'),
+    _ = require(path.join(__dirname, '../scripts/lodash40.js')),
     db = require('orchestrate')(process.env.DB_KEY);
 
 //var util = require('util'); //for util.inspect on request

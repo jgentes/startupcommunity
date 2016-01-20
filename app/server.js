@@ -10,7 +10,7 @@ var express = require('express'),
     methodOverride = require('method-override'),
     logger = require('morgan'),
     nodalytics = require('nodalytics'),
-    ghost = require(__dirname + '/ghost/core/index.js'),
+    ghost = require('ghost'),
     parentApp = express();
 
 var app = express();
