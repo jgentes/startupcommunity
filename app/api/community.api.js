@@ -307,6 +307,7 @@ function handleGetCommunity(req, res) {
 }
 
 function handleGetTop(req, res) {
+
     //console.log(util.inspect(req)); // used for logging circular request
     var community_key = encodeURI(req.params.community_key),
         location_key = encodeURI(req.params.location_key),
