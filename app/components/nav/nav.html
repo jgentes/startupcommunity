@@ -127,7 +127,7 @@
                 <ul class="nav nav-second-level">
                     <li>
 
-                        <a ui-sref="{{'community.dashboard' + nav.nav_url}}" ng-class="{active: nav.path.includes('/' + nav.community.key)}" style="padding-left: 15px; font-size: 16px; font-weight: bold;">
+                        <a ui-sref="{{'community.dashboard' + nav.nav_url}}" class="active" style="padding-left: 15px; font-size: 16px; font-weight: bold;">
                             <span ng-if="nav.community.community_profiles[nav.location.key]" ng-click="c_working = true">
                                 {{nav.community.community_profiles[nav.location.key].name}}
                                 <span loading-bars ng-show="c_working"></span>
@@ -138,14 +138,14 @@
                             </span>
                         </a>
                         <ul ng-if="nav.community.type !== 'user' && nav.community.type !== 'company'" style="display: block; padding: 0 0 0 15px;">
-                            <li ui-sref="{{'user.list' + nav.nav_url}}" ng-class="{ 'active' : nav.path.endsWith(nav.community.key + '/people') }" style="padding-top: 10px;">
+                            <li ui-sref="{{'user.list' + nav.nav_url}}" ng-class="{ 'active' : nav.state.current.name == 'user.list' }" style="padding-top: 10px;">
                                 <a><i class="fa fa-caret-right"></i>People
                                 </a>
                                 <li ng-if="nav.user && (nav.community.type == 'cluster' || (nav.community.type == 'network' && nav.user.roles.leader[nav.community.key]) || (nav.community.type == 'location' && nav.user.communities.indexOf(nav.location.key) > -1))" class="nav-third-level" ng-click="nav.invitePeople();">
                                     <a style="color: #aaa;">+&nbsp;&nbsp;Invite People</a>
                                 </li>
                             </li>
-                            <li ui-sref="{{'company.list' + nav.nav_url}}" ng-class="{ 'active' : nav.path.endsWith(nav.community.key + '/companies') }">
+                            <li ui-sref="{{'company.list' + nav.nav_url}}" ng-class="{ 'active' : nav.state.current.name == 'company.list' }">
                                 <a><i class="fa fa-caret-right"></i>Companies
                                 </a>
                                 <li ng-if="nav.user && (nav.community.type == 'cluster' || (nav.community.type == 'network' && nav.user.roles.leader[nav.community.key]) || (nav.community.type == 'location' && nav.user.communities.indexOf(nav.location.key) > -1))" class="nav-third-level" ng-click="nav.addCompany();">
