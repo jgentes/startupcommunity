@@ -3,6 +3,7 @@ angular
     .controller('DashboardController', DashboardController);
 
 function DashboardController($stateParams, community, $state) {
+
     // redirect if a user or company
     if (community.type == 'user') {
         $state.go('user.dashboard');

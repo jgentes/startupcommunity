@@ -108,8 +108,8 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                         } else return $stateParams.community;
                     }],
                 top: ['community_service', '$stateParams', 'community',
-                    function (community_service, $stateParams) {
-                        return community_service.getTop($stateParams.location_path);
+                    function (community_service, $stateParams, community) {
+                        return community_service.getTop($stateParams.location_path, community.key, community);
                     }],
                 location: ['$stateParams', 'community', 'communities',
                     function($stateParams, community, communities) {

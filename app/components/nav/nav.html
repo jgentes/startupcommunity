@@ -160,8 +160,8 @@
             <li class="active">
                 <ul class="nav nav-second-level">
                     <li>
-                        <a ng-if="nav.location.key !== nav.community.key" ui-sref="community.dashboard({location_path: nav.location.key, community_path: '', community: nav.location, location: nav.location, query: '*'})" ng-class="{active: nav.path.includes('/' + nav.location.key)}" style="padding-left: 12px; font-size: 15px; font-weight: bold; border-top: 1px solid #ddd; border-left: none;">
-                            <span ng-if="nav.location" ng-click="l_working = true">
+                        <a ng-if="nav.location.key !== nav.community.key" ui-sref="community.dashboard({location_path: nav.location.key, community_path: '', community: nav.location, location: nav.location, query: '*'})" ng-class="{active: nav.path.includes('/' + nav.location.key)}" style="padding-left: 12px; font-size: 15px; font-weight: bold; border-top: 1px solid #ddd; border-left: none;" ng-click="l_working = true">
+                            <span ng-if="nav.location">
                                 <i class="fa fa-globe" style="color:#aaa;"></i>&nbsp;{{nav.location.profile.name}}
                                 <span loading-bars ng-show="l_working"></span>
                             </span>
