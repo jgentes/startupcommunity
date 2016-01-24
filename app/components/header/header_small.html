@@ -2,8 +2,8 @@
     <div class="hpanel">
         <div class="panel-body" ng-class="{'header-embedded' : nav.embedded, 'no-sides' : !nav.embedded}">
             <div class="pull-left">
-                <ul id="header-nav">
-                    <li>
+                <ul id="header-nav" tour-step order="1" title="People and Companies" content="To view people by role, or sort companies by revenue, visit the People and Company pages." placement="right">
+                    <li ui-sref="{{'community.dashboard' + nav.nav_url}}" ng-class="{ 'active' : nav.state.current.name == 'community.dashboard' }">
                         <a>OVERVIEW</a>
                     </li>
                     <li ui-sref="{{'user.list' + nav.nav_url}}" ng-class="{ 'active' : nav.state.current.name == 'user.list' }">
