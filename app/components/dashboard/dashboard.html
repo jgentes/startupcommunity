@@ -1,29 +1,52 @@
 <div small-header class="normalheader" style="padding: 0 0 25px 0;">
     <div class="row" style="margin-top:-10px;">
-        <div class="col-md-6" style="padding-top:10px;">
+        <div class="col-md-4" style="padding-top:10px;">
             <div class="hpanel">
                 <div class="panel-body" style="height: 85px;">
-                    <div class="pull-left col-sm-2" style="padding-left:0;">
-                        <h2 class="font-light m-b-xs">Industries</h2>
-                    </div>
-                    <div class="pull-right col-sm-8" style="padding-right:0;">
-                        <div ng-repeat="p in nav.top.parents | limitTo: 3" style="padding-left: 0; padding-right: 0; ">
-                            <div class="col-sm-6" style="margin-top:-3px; padding-left: 0; padding-right: 0; text-align: right;"><a ui-sref="community.dashboard({community_path: p.label, community: nav.communities[p.label], query: '*', location_path: nav.location.key})">{{p.label[0].toUpperCase() + p.label.slice(1);}}</a></div>
-                            <div class="col-sm-6 hidden-xs" style="padding-left: 10px; padding-right: 0;"><progressbar value="p.value" max="nav.max" type="success" class="progress-small full"></progressbar></div>
+                    <div class="pull-left col-sm-6" style="padding-left:0;">
+                        <a ui-sref="community.dashboard({community_path: nav.community.key, community: nav.community})">
+                            <h2 ng-if="nav.community.community_profiles[nav.location_path]" class="font-light m-b-xs">{{ nav.community.community_profiles[nav.location_path].name }}</h2>
+                            <h2 ng-if="!nav.community.community_profiles[nav.location_path]" class="font-light m-b-xs">{{ nav.community.profile.name }}</h2>
+                        </a>
+                        <div style="float:left;">
+                            <small>
+                                {{nav.state.current.params.pageTitle}}
+                            </small>
                         </div>
                     </div>
-
                 </div>
             </div>
         </div>
-        <div class="col-md-6" style="padding-top:10px;">
+        <div class="col-md-4" style="padding-top:10px;">
+            <div class="hpanel">
+                <div class="panel-body" style="height: 85px;">
+                    <div style="padding-right:0;">
+                        <div ng-repeat="p in nav.top.parents | limitTo: 3" style="padding-left: 0; padding-right: 0; ">
+                            <div class="col-xs-4" style="margin-top:-3px; padding-left: 0; padding-right: 0; text-align: right;"><a ui-sref="community.dashboard({community_path: p.label, community: nav.communities[p.label], query: '*', location_path: nav.location.key})" style="white-space:nowrap;">{{p.label[0].toUpperCase() + p.label.slice(1);}}</a></div>
+                            <div class="col-xs-8" style="padding-left: 10px; padding-right: 0;"><progressbar value="p.value" max="nav.max" type="success" class="progress-small full"></progressbar></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4" style="padding-top:10px;">
             <div class="hpanel">
                 <div class="panel-body" style="padding: 10px 5px; height: 85px;">
                     <div class="col-xs-8">
                         <div class="pull-left">
                             <h2 class="font-light m-b-xs">Leaders</h2>
                             <div ng-repeat="lead in nav.top.leaders | limitTo: 5" style="float:left;">
-                                <a class="text-info" ui-sref="user.dashboard({profile: lead.value, location_path: lead.path.key, community: {}})"><small><span ng-if="$last && $index !== 0">&nbsp;and</span>&nbsp;{{lead.value.profile.name}}<span ng-if="!$last && nav.top.leaders.length > 2">,</span></small></a>
+                                <a class="text-info" ui-sref="user.dashboard({profile: lead.value, location_path: lead.path.key, community: {}})">
+                                    <small>
+                                        <span ng-if="$last && $index !== 0">
+                                            &nbsp;and
+                                        </span>
+                                        &nbsp;{{lead.value.profile.name}}
+                                        <span ng-if="!$last && nav.top.leaders.length > 2">
+                                            ,
+                                        </span>
+                                    </small>
+                                </a>
                             </div>
                         </div>
                     </div>

@@ -343,7 +343,8 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
             params: {
                 location_path: null,
                 community_path: null,
-                tour: false
+                tour: false,
+                pageTitle: 'Overview'
             },
             views: {
                 'people': {
