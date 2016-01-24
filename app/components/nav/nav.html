@@ -4,7 +4,10 @@
         <div class="grey-line">
         </div>
         <div id="logo" class="light-version" style="transition: all 0.4s ease 0s;">
-            <a ui-sref="community.dashboard({location_path: nav.location.key, community: nav.location, query: '*'})"><img src="/public/images/sc_logo.png"/></a>
+            <a ui-sref="community.dashboard({location_path: nav.location.key, community: nav.location, query: '*'})">
+                <img ng-if="!nav.community.profile.sc_logo" src="/public/images/sc_logo.png" style="padding: 9px 20px 6px 18px;"/>
+                <img ng-if="nav.community.profile.sc_logo" ng-src="{{nav.community.profile.sc_logo}}"/>
+            </a>
         </div>
         <nav role="navigation">
             <minimaliza-menu ng-if="!nav.embedded"></minimaliza-menu>
@@ -115,10 +118,6 @@
 
     <!-- Navigation -->
     <aside id="menu" ng-if="!nav.embedded">
-        <div class="profile-picture">
-
-            <div ng-if="nav.location.profile.sc_logo" style="margin-left: -21px;"><img class="profile-logo" ng-src="{{nav.location.profile.sc_logo}}"/></div>
-        </div>
 
         <ul side-navigation class="nav" id="side-menu" style="border-top: 1px solid #ddd; margin-bottom: 50px;">
 
@@ -137,6 +136,7 @@
                                 <span loading-bars ng-show="c_working"></span>
                             </span>
                         </a>
+                        <!--
                         <ul ng-if="nav.community.type !== 'user' && nav.community.type !== 'company'" style="display: block; padding: 0 0 0 15px;">
                             <li ui-sref="{{'user.list' + nav.nav_url}}" ng-class="{ 'active' : nav.state.current.name == 'user.list' }" style="padding-top: 10px;">
                                 <a><i class="fa fa-caret-right"></i>People
@@ -153,6 +153,7 @@
                                 </li>
                             </li>
                         </ul>
+                        -->
                     </li>
                 </ul>
                 <!--<span class="fa fa-gear pull-right" ng-click="nav.changeLocation()" tooltip-placement="left" tooltip="Change Location" style="opacity: .6; margin-top: 4px; cursor: pointer;"></span>-->

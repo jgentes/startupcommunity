@@ -1,7 +1,21 @@
 <div class="small-header">
     <div class="hpanel">
         <div class="panel-body" ng-class="{'header-embedded' : nav.embedded, 'no-sides' : !nav.embedded}">
-            <div id="hbreadcrumb" class="pull-left">
+            <div class="pull-left">
+                <ul id="header-nav">
+                    <li>
+                        <a>OVERVIEW</a>
+                    </li>
+                    <li ui-sref="{{'user.list' + nav.nav_url}}" ng-class="{ 'active' : nav.state.current.name == 'user.list' }">
+                        <a>PEOPLE</a>
+                    </li>
+                    <li ui-sref="{{'company.list' + nav.nav_url}}" ng-class="{ 'active' : nav.state.current.name == 'company.list' }">
+                        <a>COMPANIES</a>
+                    </li>
+                </ul>
+            </div>
+
+            <div id="hbreadcrumb" class="pull-right">
                 <ol class="hbreadcrumb">
                     <li ng-if="nav.location_path && (nav.location.key !== nav.community.key)"><a ui-sref="community.dashboard({location_path: nav.location.key, community: nav.location})">
                         <span ng-if="nav.location.profile.name">&nbsp;&nbsp;{{ nav.location.profile.name }}&nbsp;&nbsp;/</span></a>
@@ -19,10 +33,6 @@
                     </li>
                 </ol>
             </div>
-            <h6 class="font-light pull-right m-b-xs" style="margin-top:10px;">
-                <span ng-if="!nav.community.community_profiles[nav.location_path]" style="text-transform: none;">{{ nav.community.profile.headline || nav.community.profile.description }}</span>
-                <span ng-if="nav.community.community_profiles[nav.location_path]" style="text-transform: none;">{{ nav.community.community_profiles[nav.location_path].headline || nav.community.community_profiles[nav.location_path].description }}</span>
-            </h6>
         </div>
     </div>
 </div>
