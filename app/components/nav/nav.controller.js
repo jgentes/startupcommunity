@@ -91,7 +91,7 @@ function NavigationController($auth, $state, $window, $timeout, $location, $scop
     parents = parents.join('|').toLowerCase().split('|'); // change all to lowercase
 
     // sort communities for use in nav and child dashboard pages
-    for (item in communities.data) { // no clue what item is here, esp if user or company
+    for (item in communities.data) { // need to determine what item is here, esp if user or company
 
         if (communities.data[item]) {
             switch (communities.data[item].type) {
@@ -539,15 +539,6 @@ function CommunityController($modalInstance, $mixpanel, sweet, community_service
                                 break;
                             case 'non-profit':
                                 self.communityForm['parent'] = 'Non-Profit';
-                                break;
-                            case 'coworking space':
-                                self.communityForm['parent'] = 'Coworking Space';
-                                break;
-                            case 'investment fund':
-                                self.communityForm['parent'] = 'Investment Fund';
-                                break;
-                            case 'mentor group':
-                                self.communityForm['parent'] = 'Mentor Group';
                                 break;
                             default:
                                 self.communityForm['parent'] = self.community.parents[0][0].toUpperCase() + self.community.parents[0].slice(1);
