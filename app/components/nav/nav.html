@@ -128,7 +128,8 @@
                     <li>
                         <a ui-sref="community.dashboard({location_path: nav.location.key, community_path: '', community: nav.location, location: nav.location, query: '*'})" style="padding-left: 15px; font-size: 16px; font-weight: bold; border-bottom: 1px solid #eee; background-color:#F6F8F9; border-left: 2px solid #82BC4B;" ng-click="l_working = true">
                             <span ng-if="nav.location" style="white-space:nowrap;font-size:18px;">
-                                <i class="fa fa-globe" style="color:#bbb;font-size:16px;"></i>&nbsp;{{nav.location.profile.name.split(',').slice(0, (nav.location.profile.name.split(',').length - 1) || 1).join()}}
+                                <span class="fa fa-angle-down" style="font-size: 18px; margin: 0 -2px 0 -4px;"></span>
+                                &nbsp;{{nav.location.profile.name.split(',').slice(0, (nav.location.profile.name.split(',').length - 1) || 1).join()}}
                                 <span loading-bars ng-show="l_working"></span>
                             </span>
                         </a>
