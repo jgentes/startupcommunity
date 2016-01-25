@@ -50,12 +50,14 @@ function handleMaintenance(res) {
 
                     if (data.body.results[item].value.profile.parents.length) {
                         console.log(data.body.results[item].value.profile.name);
+
                         /*if (data.body.results[item].value.profile.parents.indexOf('consumer%20goods') > -1) {
                             data.body.results[item].value.profile.parents.push('consumer-goods');
                             data.body.results[item].value.profile.parents.splice(data.body.results[item].value.profile.parents.indexOf('consumer%20goods'), 1);
                         }*/
                         for (p in data.body.results[item].value.profile.parents) {
                             data.body.results[item].value.profile.parents[p] = data.body.results[item].value.profile.parents[p].toLowerCase();
+
                         }
 
                         console.log('parent updated');

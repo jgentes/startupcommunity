@@ -112,7 +112,7 @@ var searchInCommunity = function(communities, clusters, roles, limit, offset, qu
         searchstring += ')';
     }
 
-    if (roles && roles.length > 0) {
+    if (roles && roles.length > 0 && roles[0] !== "*") {
         roles = roles.splice(',');
         searchstring += ' AND (';
 
@@ -183,7 +183,6 @@ function handleDirectSearch(req, res) {
         .collection(process.env.DB_COMMUNITIES)
         .limit(Number(req.query.limit) || 100)
         .offset(Number(req.query.offset))
-        .sortRandom()
         .query(req.query.query)
         .then(function(result){
             var i;

@@ -1,28 +1,40 @@
 <div class="small-header">
     <div class="hpanel">
         <div class="panel-body" ng-class="{'header-embedded' : nav.embedded, 'no-sides' : !nav.embedded}">
-            <div id="hbreadcrumb" class="pull-left">
-                <ol class="hbreadcrumb">
-                    <li ng-if="nav.location_path && (nav.location.key !== nav.community.key)"><a ui-sref="community.dashboard({location_path: nav.location.key, community: nav.location})">
-                        <span ng-if="nav.location.profile.name">&nbsp;&nbsp;{{ nav.location.profile.name }}&nbsp;&nbsp;/</span></a>
+            <div class="pull-left" tour-step order="1" title="People and Companies" content="To view people by role or industry, or sort companies by investment, visit the People and Company pages." placement="bottom">
+                <ul ng-if="nav.community.type !== 'user' && nav.community.type !== 'company'" class="header-nav">
+                    <li ui-sref="{{'community.dashboard' + nav.nav_url}}" ng-class="{ 'active' : nav.state.current.name == 'community.dashboard' }">
+                        <a>OVERVIEW</a>
                     </li>
-                    <li ng-if="nav.community.type == 'user' || nav.community.type == 'company'">
-                        &nbsp;&nbsp;{{ nav.community.profile.name }}&nbsp;&nbsp;/
+                    <li ui-sref="{{'user.list' + nav.nav_url}}" ng-class="{ 'active' : nav.state.current.name == 'user.list' }">
+                        <a>PEOPLE</a>
                     </li>
-                    <li ng-if="nav.community.type !== 'user' && nav.community.type !== 'company'"><a ui-sref="community.dashboard({community_path: nav.community.key, community: nav.community})"><span ng-if="nav.community.community_profiles[nav.location_path]">&nbsp;&nbsp;{{ nav.community.community_profiles[nav.location_path].name }}</span>
-                        <span ng-if="!nav.community.community_profiles[nav.location_path]">&nbsp;&nbsp;{{ nav.community.profile.name }}</span>
-                        &nbsp;&nbsp;/</a>
+                    <li ui-sref="{{'company.list' + nav.nav_url}}" ng-class="{ 'active' : nav.state.current.name == 'company.list' }">
+                        <a>COMPANIES</a>
                     </li>
-                    <li ng-repeat="state in $state.$current.path" ng-class="{active: $last}">
-                        <a ng-if="state.params.pageTitle.config.value && !(!!state.abstract) && !$last" href="#{{state.url.format($stateParams)}}">&nbsp;&nbsp;{{state.params.pageTitle.config.value}}&nbsp;&nbsp;/</a>
-                        <span ng-if="$last">&nbsp;&nbsp;{{ $state.params.pageTitle || nav.community.type[0].toUpperCase() + nav.community.type.slice(1) }}</span>
+                </ul>
+
+                <ul ng-if="nav.community.type == 'user' || nav.community.type == 'company'" class="header-nav" style="margin-left:-40px;" >
+                    <li ng-if="nav.location_path && (nav.location.key !== nav.community.key)">
+                        <a ui-sref="community.dashboard({location_path: nav.location.key, community: nav.location})">
+                            &nbsp;&nbsp;{{ nav.location.profile.name.toUpperCase() }}&nbsp;&nbsp;</a>/
                     </li>
-                </ol>
+                    <li ng-if="nav.community.type == 'user' || nav.community.type == 'company'" style="margin-left:-17px;">
+                        <a style="color:#bbb;">&nbsp;&nbsp;{{ nav.community.profile.name.toUpperCase() }}</a>
+                    </li>
+                </ul>
             </div>
-            <h6 class="font-light pull-right m-b-xs" style="margin-top:10px;">
-                <span ng-if="!nav.community.community_profiles[nav.location_path]" style="text-transform: none;">{{ nav.community.profile.headline || nav.community.profile.description }}</span>
-                <span ng-if="nav.community.community_profiles[nav.location_path]" style="text-transform: none;">{{ nav.community.community_profiles[nav.location_path].headline || nav.community.community_profiles[nav.location_path].description }}</span>
-            </h6>
+
+
+            <div class="pull-right">
+                <div ng-if="nav.user && (nav.community.type == 'cluster' || (nav.community.type == 'network' && nav.user.roles.leader[nav.community.key]) || (nav.community.type == 'location' && nav.user.communities.indexOf(nav.location.key) > -1))" style="padding-top: 6px; margin-right: 8px; float: right;">
+                    <button class="btn btn-sm btn-success" ng-click="nav.addCompany();" style="font-size: 12px; color: #fff;">Add Company</button>
+                </div>
+
+                <div ng-if="nav.user && (nav.community.type == 'cluster' || (nav.community.type == 'network' && nav.user.roles.leader[nav.community.key]) || (nav.community.type == 'location' && nav.user.communities.indexOf(nav.location.key) > -1))" style="padding-top: 6px; margin-right: 8px; float: right;">
+                    <button class="btn btn-sm btn-info" ng-click="nav.invitePeople();" style="font-size: 12px; color: #fff;">Invite People</button>
+                </div>
+            </div>
         </div>
     </div>
 </div>

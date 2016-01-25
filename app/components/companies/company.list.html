@@ -6,7 +6,6 @@
                 <div class="panel-footer top" style="font-size: 17px;">
                     <strong>Stage</strong> Filters
                     <div loading-bars ng-show="users.loadingStage" style="display: inline;"></div>
-                    <small class="pull-right text-muted" style="padding:7px 2px 0 0; font-size: 12px;">(Investment)</small>
                 </div>
                 <div class="panel-body filternav">
 
@@ -47,26 +46,29 @@
                     </ul>
                 </div>
             </div>
-            <!--
-            <div class="hpanel hnavyblue" ng-if="companies.community.type !== 'cluster'">
+
+            <div class="hpanel hnavyblue">
                 <div class="panel-footer top" style="font-size: 17px;">
-                    <strong>Cluster</strong> Filters
+                    <strong>Industry</strong> Filters
                     <div loading-bars ng-show="companies.loadingCluster" style="display: inline;"></div>
                 </div>
                 <div class="panel-body filternav">
                     <ul class="panel-list">
-                        <li ng-init="companies.allClusters=true" ng-class="{'active':companies.allClusters}" ng-click="companies.loadingCluster=true; companies.allClusters=true; companies.filterClusters();">
+                        <li ng-if="companies.community.type !== 'cluster'" ng-init="companies.allClusters=true" ng-class="{'active':companies.allClusters}" ng-click="companies.loadingCluster=true; companies.allClusters=true; companies.filterClusters();">
                             <a><i class="fa fa-fw fa-globe themed-color-dark icon-push"></i> All</a>
                         </li>
+                        <li ng-if="companies.community.type == 'cluster'" class="active">
+                            <a><i class="fa fa-fw fa-globe themed-color-dark icon-push"></i> {{companies.community.profile.name}}</a>
+                        </li>
                         <hr style="margin: 10px 0 10px 0;">
-                        <li ng-repeat="cluster in nav.clusters" ng-class="{'active':companies.selectedClusters.indexOf(cluster.key) >= 0}" ng-click="companies.loadingCluster=true;  companies.allClusters=false; companies.filterClusters(cluster.key);">
-                            <a><i class="fa {{cluster.profile.icon}}"></i> {{cluster.profile.name}}</a>
+                        <li ng-if="companies.community.type !== 'cluster'" ng-repeat="cluster in nav.top.parents" ng-class="{'active':companies.selectedClusters.indexOf(cluster.label) >= 0}" ng-click="companies.loadingCluster=true;  companies.allClusters=false; companies.filterClusters(cluster.label);">
+                            <a>{{cluster.label[0].toUpperCase() + cluster.label.slice(1)}}</a>
                         </li>
                     </ul>
                 </div>
             </div>
-            -->
-            <div class="hpanel hblue">
+
+           <!-- <div class="hpanel hblue">
                 <div class="panel-footer top" style="font-size: 17px;">
                     <strong>Network</strong> Filters
                     <div loading-bars ng-show="companies.loadingNetwork" style="display: inline;"></div>
@@ -82,7 +84,7 @@
                         </li>
                     </ul>
                 </div>
-            </div>
+            </div>-->
         </div>
 
 

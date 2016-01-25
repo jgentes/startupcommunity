@@ -71,12 +71,6 @@ if (process.env.NODE_ENV === "production") {
     app.use("/build", express.static(root + "/build"));
 }
 
-// for raygun
-var raygun = require('raygun');
-var raygunClient = new raygun.Client().init({ apiKey: 'xdeVAN82mJfs+jiO4625Aw==' });
-
-app.use(raygunClient.expressHandler);
-
 // API ROUTE METHODS
 
 var AuthApi = require(__dirname + '/api/auth.api.js'),

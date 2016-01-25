@@ -14,8 +14,7 @@
         'angulartics.google.analytics',
         'knowtify',
         'ngFileUpload',
-        'bm.bsTour',
-        'angular-toArrayFilter'
+        'bm.bsTour'
     ]);
 })();
 

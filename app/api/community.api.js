@@ -1,6 +1,7 @@
 var memjs = require('memjs'),
     mc = memjs.Client.create(),
-    _ = require('lodash'),
+    path = require('path'),
+    _ = require(path.join(__dirname, '../scripts/lodash40.js')),
     db = require('orchestrate')(process.env.DB_KEY);
 
 //var util = require('util'); //for util.inspect on request
@@ -20,57 +21,18 @@ var CommunityApi = function () {
 
 var convert_state = function (name, to) {
     name = name.toUpperCase();
-    var states = new Array({'name': 'Alabama', 'abbrev': 'AL'}, {'name': 'Alaska', 'abbrev': 'AK'},
-        {'name': 'Arizona', 'abbrev': 'AZ'}, {'name': 'Arkansas', 'abbrev': 'AR'}, {
-            'name': 'California',
-            'abbrev': 'CA'
-        },
-        {'name': 'Colorado', 'abbrev': 'CO'}, {'name': 'Connecticut', 'abbrev': 'CT'}, {
-            'name': 'Delaware',
-            'abbrev': 'DE'
-        },
-        {'name': 'Florida', 'abbrev': 'FL'}, {'name': 'Georgia', 'abbrev': 'GA'}, {'name': 'Hawaii', 'abbrev': 'HI'},
-        {'name': 'Idaho', 'abbrev': 'ID'}, {'name': 'Illinois', 'abbrev': 'IL'}, {'name': 'Indiana', 'abbrev': 'IN'},
-        {'name': 'Iowa', 'abbrev': 'IA'}, {'name': 'Kansas', 'abbrev': 'KS'}, {'name': 'Kentucky', 'abbrev': 'KY'},
-        {'name': 'Louisiana', 'abbrev': 'LA'}, {'name': 'Maine', 'abbrev': 'ME'}, {'name': 'Maryland', 'abbrev': 'MD'},
-        {'name': 'Massachusetts', 'abbrev': 'MA'}, {'name': 'Michigan', 'abbrev': 'MI'}, {
-            'name': 'Minnesota',
-            'abbrev': 'MN'
-        },
-        {'name': 'Mississippi', 'abbrev': 'MS'}, {'name': 'Missouri', 'abbrev': 'MO'}, {
-            'name': 'Montana',
-            'abbrev': 'MT'
-        },
-        {'name': 'Nebraska', 'abbrev': 'NE'}, {'name': 'Nevada', 'abbrev': 'NV'}, {
-            'name': 'New Hampshire',
-            'abbrev': 'NH'
-        },
-        {'name': 'New Jersey', 'abbrev': 'NJ'}, {'name': 'New Mexico', 'abbrev': 'NM'}, {
-            'name': 'New York',
-            'abbrev': 'NY'
-        },
-        {'name': 'North Carolina', 'abbrev': 'NC'}, {'name': 'North Dakota', 'abbrev': 'ND'}, {
-            'name': 'Ohio',
-            'abbrev': 'OH'
-        },
-        {'name': 'Oklahoma', 'abbrev': 'OK'}, {'name': 'Oregon', 'abbrev': 'OR'}, {
-            'name': 'Pennsylvania',
-            'abbrev': 'PA'
-        },
-        {'name': 'Rhode Island', 'abbrev': 'RI'}, {'name': 'South Carolina', 'abbrev': 'SC'}, {
-            'name': 'South Dakota',
-            'abbrev': 'SD'
-        },
-        {'name': 'Tennessee', 'abbrev': 'TN'}, {'name': 'Texas', 'abbrev': 'TX'}, {'name': 'Utah', 'abbrev': 'UT'},
-        {'name': 'Vermont', 'abbrev': 'VT'}, {'name': 'Virginia', 'abbrev': 'VA'}, {
-            'name': 'Washington',
-            'abbrev': 'WA'
-        },
-        {'name': 'West Virginia', 'abbrev': 'WV'}, {'name': 'Wisconsin', 'abbrev': 'WI'}, {
-            'name': 'Wyoming',
-            'abbrev': 'WY'
-        }
-    );
+    var states = [
+        {'name': 'Alabama', 'abbrev': 'AL'}, {'name': 'Alaska', 'abbrev': 'AK'}, {'name': 'Arizona', 'abbrev': 'AZ'}, {'name': 'Arkansas', 'abbrev': 'AR'}, {'name': 'California', 'abbrev': 'CA'},
+        {'name': 'Colorado', 'abbrev': 'CO'}, {'name': 'Connecticut', 'abbrev': 'CT'}, {'name': 'Delaware', 'abbrev': 'DE'}, {'name': 'Florida', 'abbrev': 'FL'}, {'name': 'Georgia', 'abbrev': 'GA'},
+        {'name': 'Hawaii', 'abbrev': 'HI'}, {'name': 'Idaho', 'abbrev': 'ID'}, {'name': 'Illinois', 'abbrev': 'IL'}, {'name': 'Indiana', 'abbrev': 'IN'}, {'name': 'Iowa', 'abbrev': 'IA'},
+        {'name': 'Kansas', 'abbrev': 'KS'}, {'name': 'Kentucky', 'abbrev': 'KY'}, {'name': 'Louisiana', 'abbrev': 'LA'}, {'name': 'Maine', 'abbrev': 'ME'}, {'name': 'Maryland', 'abbrev': 'MD'},
+        {'name': 'Massachusetts', 'abbrev': 'MA'}, {'name': 'Michigan', 'abbrev': 'MI'}, {'name': 'Minnesota', 'abbrev': 'MN'}, {'name': 'Mississippi', 'abbrev': 'MS'},  {'name': 'Missouri', 'abbrev': 'MO'},
+        {'name': 'Montana', 'abbrev': 'MT'}, {'name': 'Nebraska', 'abbrev': 'NE'}, {'name': 'Nevada', 'abbrev': 'NV'}, {'name': 'New Hampshire', 'abbrev': 'NH'}, {'name': 'New Jersey', 'abbrev': 'NJ'},
+        {'name': 'New Mexico', 'abbrev': 'NM'}, {'name': 'New York', 'abbrev': 'NY'}, {'name': 'North Carolina', 'abbrev': 'NC'}, {'name': 'North Dakota', 'abbrev': 'ND'}, {'name': 'Ohio', 'abbrev': 'OH'},
+        {'name': 'Oklahoma', 'abbrev': 'OK'}, {'name': 'Oregon', 'abbrev': 'OR'}, {'name': 'Pennsylvania','abbrev': 'PA'}, {'name': 'Rhode Island', 'abbrev': 'RI'}, {'name': 'South Carolina', 'abbrev': 'SC'},
+        {'name': 'South Dakota','abbrev': 'SD'}, {'name': 'Tennessee', 'abbrev': 'TN'}, {'name': 'Texas', 'abbrev': 'TX'}, {'name': 'Utah', 'abbrev': 'UT'}, {'name': 'Vermont', 'abbrev': 'VT'},
+        {'name': 'Virginia', 'abbrev': 'VA'}, {'name': 'Washington', 'abbrev': 'WA'}, {'name': 'West Virginia', 'abbrev': 'WV'}, {'name': 'Wisconsin', 'abbrev': 'WI'}, {'name': 'Wyoming', 'abbrev': 'WY'}
+    ];
     var returnthis = false;
     for (var i = 0; i < states.length; i++) {
         if (to == 'name') {
@@ -297,7 +259,6 @@ function handleGetCommunity(req, res) {
                 res.status(200).send(value);
                 pullCommunity(true);
             } else {
-                console.log('Pulling community: ' + community);
                 pullCommunity(false);
             }
         })
@@ -306,6 +267,7 @@ function handleGetCommunity(req, res) {
 }
 
 function handleGetTop(req, res) {
+
     //console.log(util.inspect(req)); // used for logging circular request
     var community_key = encodeURI(req.params.community_key),
         location_key = encodeURI(req.params.location_key),
@@ -463,7 +425,7 @@ function handleGetTop(req, res) {
                                 }
 
                                 top_results['parents'] = {
-                                    labels: _.union(c_labels, p_labels).slice(0,3),
+                                    labels: _.union(c_labels, p_labels),
                                     values: []
                                 };
 
@@ -485,7 +447,9 @@ function handleGetTop(req, res) {
                                     });
                                 }
 
-                                top_results.parents = temp;
+                                if (!_.isEmpty(temp)) {
+                                    top_results.parents = _.orderBy(temp, 'value', 'desc');
+                                } else delete top_results.parents;
 
                                 delete top_results.people_parents;
                                 delete top_results.company_parents;
@@ -523,7 +487,6 @@ function handleGetTop(req, res) {
                 res.status(200).send(value);
                 pullTop(true);
             } else {
-                console.log('Pulling top: ' + industrysearch);
                 pullTop(false);
             }
         })
