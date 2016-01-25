@@ -259,7 +259,6 @@ function handleGetCommunity(req, res) {
                 res.status(200).send(value);
                 pullCommunity(true);
             } else {
-                console.log('Pulling community: ' + community);
                 pullCommunity(false);
             }
         })
@@ -488,7 +487,6 @@ function handleGetTop(req, res) {
                 res.status(200).send(value);
                 pullTop(true);
             } else {
-                console.log('Pulling top: ' + industrysearch);
                 pullTop(false);
             }
         })
