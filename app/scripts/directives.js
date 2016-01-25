@@ -218,13 +218,13 @@ function randomQuote() {
         "&quot;Your goals, minus your doubts, equal your reality.&quot; -- Ralph Marston", 
         "&quot;Small deeds done are greater than great deeds planned.&quot; -- Peter Marshall", 
         "&quot;The aim of all education is, or should be, to teach people to educate themselves.&quot; -- Arnold J. Toynbee", 
-        "&quot;I think there is something more important that believing: Action! The world is full of dreamers, there aren't enough who will move ahead and begin to take concrete steps to actualize their vision.&quot; -- W. Clement Stone", 
+        "&quot;I think there is something more important than believing: Action! The world is full of dreamers. There aren't enough who will move ahead and begin to take concrete steps to actualize their vision.&quot; -- W. Clement Stone",
         "&quot;Why do we put off living the way we want to live, as if we have all the time in the world? -- Barbara de Angelis", 
         "&quot;The truth is that there is nothing noble in being superior to somebody else. The only real nobility is in being superior to your former self.&quot; -- Whitney Young", 
         "&quot;Relentlessly pursue the quality of life you envision.&quot; -- White Eagle", 
         "&quot;Einstein explained his theory to me every day, and on my arrival, I was fully convinced that he understood it.&quot; -- Chaim Weizmann", 
         "&quot;Two roads diverged in a wood, and I - I took the one less traveled by, and that has made all the difference.&quot; -- Robert Frost", 
-        "&quot;One person cannot do right in one department of life whilst they are occupied in doing wrong in any other departnment. Life is one indivisible whole.&quot; -- Mahatma Gandhi", 
+        "&quot;One person cannot do right in one department of life whilst they are occupied in doing wrong in any other department. Life is one indivisible whole.&quot; -- Mahatma Gandhi",
         "&quot;Lying makes a problem part of the future. Truth makes a problem part of the past.&quot; -- Rick Pitino",
         "&quot;Every man gives his life to what he believes. Every woman gives her life for what she believes. Sometimes people believe in little or nothing, and so they give their lives to little or nothing.&quot; -- Joan of Arc", 
         "&quot;Be who you are and say what you feel, because those who mind don't matter and those who matter don't mind.&quot; -- Dr. Seuss", 
@@ -315,7 +315,8 @@ function randomQuote() {
         "&quot;The question isn't who is going to let me; it's who is going to stop me.&quot; -- Ayn Rand", 
         "&quot;The only way to do great work is to love what you do.&quot; -- Steve Jobs",
         "&quot;If I had an hour to solve a problem, I'd spend 55 minutes thinking about the problem and 5 minutes thinking about solutions.&quot; -- Alert Einstein",
-        "&quot;The reasonable person adapts themselves to the world. The unreasonable one persists in trying to adapt the world to themselves. Therefore all progress depends on the unreasonable person.&quot; -- George Bernard Shaw"
+        "&quot;The reasonable person adapts themselves to the world. The unreasonable one persists in trying to adapt the world to themselves. Therefore all progress depends on the unreasonable person.&quot; -- George Bernard Shaw",
+        "&quot;The truth is, the cost of preventing errors is often far greater than the cost of fixing them.&quot; -- Ed Catmull, President of Pixar"
 
     ];
     var rand = quotes[Math.floor(Math.random() * quotes.length)];
