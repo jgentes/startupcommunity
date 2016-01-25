@@ -462,15 +462,6 @@ angular
         }
     )
 
-    .config(function ($provide) {
-        $provide.decorator("$exceptionHandler", ['$delegate', function($delegate) {
-            return function (exception, cause) {
-                Raygun.send(exception);
-                $delegate(exception, cause);
-            }
-        }])
-    })
-
     // this factory pushes the exceptions to the server
     .factory(
         "errorLogService",

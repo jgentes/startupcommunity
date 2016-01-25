@@ -57,9 +57,6 @@ function NavigationController($auth, $state, $window, $timeout, $location, $scop
             });
         };
 
-        Raygun.init('xdeVAN82mJfs+jiO4625Aw==').attach();
-        Raygun.setUser(this.user.key, false, this.user.profile.email, this.user.profile.name, this.user.profile.name.split(' ')[0]);
-
     }
 
     this.openChat = function() {
