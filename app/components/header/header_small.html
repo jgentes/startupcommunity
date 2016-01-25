@@ -1,8 +1,8 @@
 <div class="small-header">
     <div class="hpanel">
         <div class="panel-body" ng-class="{'header-embedded' : nav.embedded, 'no-sides' : !nav.embedded}">
-            <div class="pull-left">
-                <ul id="header-nav" tour-step order="1" title="People and Companies" content="To view people by role, or sort companies by revenue, visit the People and Company pages." placement="right">
+            <div class="pull-left" >
+                <ul ng-if="nav.community.type !== 'user' && nav.community.type !== 'company'" class="header-nav" tour-step order="1" title="People and Companies" content="To view people by role, or sort companies by revenue, visit the People and Company pages." placement="right">
                     <li ui-sref="{{'community.dashboard' + nav.nav_url}}" ng-class="{ 'active' : nav.state.current.name == 'community.dashboard' }">
                         <a>OVERVIEW</a>
                     </li>
@@ -13,7 +13,18 @@
                         <a>COMPANIES</a>
                     </li>
                 </ul>
+
+                <ul ng-if="nav.community.type == 'user' || nav.community.type == 'company'" class="header-nav" style="margin-left:-40px;" >
+                    <li ng-if="nav.location_path && (nav.location.key !== nav.community.key)">
+                        <a ui-sref="community.dashboard({location_path: nav.location.key, community: nav.location})">
+                            &nbsp;&nbsp;{{ nav.location.profile.name.toUpperCase() }}&nbsp;&nbsp;</a>/
+                    </li>
+                    <li ng-if="nav.community.type == 'user' || nav.community.type == 'company'" style="margin-left:-17px;">
+                        <a style="color:#bbb;">&nbsp;&nbsp;{{ nav.community.profile.name.toUpperCase() }}</a>
+                    </li>
+                </ul>
             </div>
+
 
             <div class="pull-right">
                 <li ng-if="nav.user && (nav.community.type == 'cluster' || (nav.community.type == 'network' && nav.user.roles.leader[nav.community.key]) || (nav.community.type == 'location' && nav.user.communities.indexOf(nav.location.key) > -1))" class="nav-third-level" ng-click="nav.invitePeople();">
