@@ -48,20 +48,24 @@
                 </div>
             </div>
 
-            <div class="hpanel hnavyblue" ng-if="users.community.type !== 'cluster'">
+            <div class="hpanel hnavyblue">
                 <div class="panel-footer top" style="font-size: 17px;">
                     <strong>Industry</strong> Filters
                     <div loading-bars ng-show="users.loadingCluster" style="display: inline;"></div>
                 </div>
                 <div class="panel-body filternav">
                     <ul class="panel-list">
-                        <li ng-init="users.allClusters=true" ng-class="{'active':users.allClusters}" ng-click="users.loadingCluster=true; users.allClusters=true; users.filterClusters();">
+                        <li ng-if="users.community.type !== 'cluster'" ng-init="users.allClusters=true" ng-class="{'active':users.allClusters}" ng-click="users.loadingCluster=true; users.allClusters=true; users.filterClusters();">
                             <a><i class="fa fa-fw fa-globe themed-color-dark icon-push"></i> All</a>
                         </li>
+                        <li ng-if="users.community.type == 'cluster'" class="active">
+                            <a><i class="fa fa-fw fa-globe themed-color-dark icon-push"></i> {{users.community.profile.name}}</a>
+                        </li>
                         <hr style="margin: 10px 0 10px 0;">
-                        <li ng-repeat="cluster in nav.top.parents" ng-class="{'active':users.selectedClusters.indexOf(cluster.label) >= 0}" ng-click="users.loadingCluster=true;  users.allClusters=false; users.filterClusters(cluster.label);">
+                        <li ng-if="users.community.type !== 'cluster'" ng-repeat="cluster in nav.top.parents" ng-class="{'active':users.selectedClusters.indexOf(cluster.label) >= 0}" ng-click="users.loadingCluster=true;  users.allClusters=false; users.filterClusters(cluster.label);">
                             <a>{{cluster.label[0].toUpperCase() + cluster.label.slice(1)}}</a>
                         </li>
+
                     </ul>
                 </div>
             </div>

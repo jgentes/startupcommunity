@@ -47,18 +47,21 @@
                 </div>
             </div>
 
-            <div class="hpanel hnavyblue" ng-if="companies.community.type !== 'cluster'">
+            <div class="hpanel hnavyblue">
                 <div class="panel-footer top" style="font-size: 17px;">
                     <strong>Industry</strong> Filters
                     <div loading-bars ng-show="companies.loadingCluster" style="display: inline;"></div>
                 </div>
                 <div class="panel-body filternav">
                     <ul class="panel-list">
-                        <li ng-init="companies.allClusters=true" ng-class="{'active':companies.allClusters}" ng-click="companies.loadingCluster=true; companies.allClusters=true; companies.filterClusters();">
+                        <li ng-if="companies.community.type !== 'cluster'" ng-init="companies.allClusters=true" ng-class="{'active':companies.allClusters}" ng-click="companies.loadingCluster=true; companies.allClusters=true; companies.filterClusters();">
                             <a><i class="fa fa-fw fa-globe themed-color-dark icon-push"></i> All</a>
                         </li>
+                        <li ng-if="companies.community.type == 'cluster'" class="active">
+                            <a><i class="fa fa-fw fa-globe themed-color-dark icon-push"></i> {{companies.community.profile.name}}</a>
+                        </li>
                         <hr style="margin: 10px 0 10px 0;">
-                        <li ng-repeat="cluster in nav.top.parents" ng-class="{'active':companies.selectedClusters.indexOf(cluster.label) >= 0}" ng-click="companies.loadingCluster=true;  companies.allClusters=false; companies.filterClusters(cluster.label);">
+                        <li ng-if="companies.community.type !== 'cluster'" ng-repeat="cluster in nav.top.parents" ng-class="{'active':companies.selectedClusters.indexOf(cluster.label) >= 0}" ng-click="companies.loadingCluster=true;  companies.allClusters=false; companies.filterClusters(cluster.label);">
                             <a>{{cluster.label[0].toUpperCase() + cluster.label.slice(1)}}</a>
                         </li>
                     </ul>
