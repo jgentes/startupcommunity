@@ -51,7 +51,7 @@
                             <a>Alerts</a>
                         </li>
                         <li ng-if="nav.user">
-                            <a ui-sref="settings({location_path: nav.user.key, location: nav.communities[nav.user.profile.home], community: nav.communities[nav.user.profile.home]})">Settings</a>
+                            <a ui-sref="settings({location_path: nav.user.key, location: nav.nav_communities[nav.user.profile.home], community: nav.nav_communities[nav.user.profile.home]})">Settings</a>
                         </li>
                         <li ng-if="nav.user">
                             <a ng-click="nav.openChat()">Help</a>
@@ -95,7 +95,7 @@
                         </a>
                     </li>
                     <li ng-if="nav.user" class="dropdown">
-                        <a ui-sref="settings({location_path: nav.user.key, location: nav.communities[nav.user.profile.home], community: nav.communities[nav.user.profile.home]})" tooltip-placement="bottom" tooltip="Settings">
+                        <a ui-sref="settings({location_path: nav.user.key, location: nav.nav_communities[nav.user.profile.home], community: nav.nav_communities[nav.user.profile.home]})" tooltip-placement="bottom" tooltip="Settings">
                             <i class="pe-7s-config"></i>
                         </a>
                     </li>
@@ -148,8 +148,8 @@
                         <a>No locations yet</a>
                     </li>
                     <li ng-repeat="item in nav.locations">
-                        <a ui-sref="community.dashboard({location_path: item.key, community_path: '', community: item, location: item, query: '*'})" ng-class="{active: nav.path.includes('/' + item.key)}" ng-click="l_working = true"><i class="fa fa-globe"></i> {{item.profile.name}}
-                        <span loading-bars ng-show="l_working"></span>
+                        <a ui-sref="community.dashboard({location_path: item.key, community_path: '', community: item, location: item, query: '*'})" ng-class="{active: nav.path.includes('/' + item.key)}" ng-click="li_working = true"><i class="fa fa-globe"></i> {{item.profile.name}}
+                        <span loading-bars ng-show="li_working"></span>
                         </a>
                     </li>
                 </ul>
@@ -181,13 +181,13 @@
                 </a>
                 <ul class="nav nav-second-level">
                     <li ng-repeat="item in nav.top.parents | orderBy: 'item.value' : reverse">
-                        <a ui-sref="community.dashboard({community_path: item.label, community: nav.communities[item.label], query: '*', location_path: nav.location.key || nav.user.profile.home})" ng-class="{active: nav.path.includes('/' + item.label)}" ng-click="cl_working = true">
+                        <a ui-sref="community.dashboard({community_path: item.label, community: nav.nav_communities[item.label], query: '*', location_path: nav.location.key || nav.user.profile.home})" ng-class="{active: nav.path.includes('/' + item.label)}" ng-click="cl_working = true">
                             <span>
-                                <i ng-class="'fa ' + nav.communities[item.label].profile.icon"></i> {{item.label[0].toUpperCase() + item.label.slice(1)}}
+                                <i ng-class="'fa ' + nav.nav_communities[item.label].profile.icon"></i> {{item.label[0].toUpperCase() + item.label.slice(1)}}
                                 <span loading-bars ng-show="cl_working"></span>
 
-                                <a ng-repeat="c in nav.clusters[item.label]" ui-sref="community.dashboard({community_path: c.key, community: nav.communities[c.key], query: '*', location_path: nav.location.key || nav.user.profile.home})" ng-class="{active: nav.path.includes('/' + c.key)}" ng-click="clc_working = true" style="padding-left:40px;">
-                                    <i ng-class="'fa ' + nav.communities[item.label].profile.icon"></i> {{c.community_profiles[nav.location.key].name[0].toUpperCase() + c.community_profiles[nav.location.key].name.slice(1);}}
+                                <a ng-repeat="c in nav.clusters[item.label]" ui-sref="community.dashboard({community_path: c.key, community: nav.nav_communities[c.key], query: '*', location_path: nav.location.key || nav.user.profile.home})" ng-class="{active: nav.path.includes('/' + c.key)}" ng-click="clc_working = true" style="padding-left:40px;">
+                                    <i ng-class="'fa ' + nav.nav_communities[item.label].profile.icon"></i> {{c.community_profiles[nav.location.key].name[0].toUpperCase() + c.community_profiles[nav.location.key].name.slice(1);}}
                                     <span loading-bars ng-show="clc_working"></span>
                                 </a>
                             </span>

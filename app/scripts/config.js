@@ -107,18 +107,33 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
 
                         } else return $stateParams.community;
                     }],
-                top: ['community_service', '$stateParams', 'community',
-                    function (community_service, $stateParams, community) {
-                        return community_service.getTop($stateParams.location_path, community.key, community);
-                    }],
-                location: ['$stateParams', 'community', 'communities',
-                    function($stateParams, community, communities) {
-
-                        if(jQuery.isEmptyObject($stateParams.location)) {
+                location: ['$stateParams', 'communities', 'community',
+                    function($stateParams, communities, community) {
+                        if (community.type == 'user' || community.type == 'company') {
+                            return communities.data[community.profile.home];
+                        } else if(jQuery.isEmptyObject($stateParams.location)) {
                             if (communities.data[$stateParams.location_path] && communities.data[$stateParams.location_path].type == 'location') {
                                 return communities.data[$stateParams.location_path];
                             } else return {};
                         } else return $stateParams.location;
+                    }],
+                nav_communities: ['community_service', 'communities', 'location',
+                    function(community_service, communities, location) {
+                        return (location.key == communities.data.key) ? communities :
+                            community_service.getCommunity(location.key)
+                                .error(function(response) {
+                                    console.log(response);
+                                });
+                    }],
+                top: ['community_service', 'location',
+                    function (community_service, location) {
+                        return community_service.getTop(location.key);
+                    }],
+                community_top: ['community_service', 'community', 'location', 'top',
+                    function (community_service, community, location, top) {
+                        if (community.key !== location.key) {
+                            return community_service.getTop(location.key, community.key, community);
+                        } else return top;
                     }],
                 company: ['community',
                     function(community) {

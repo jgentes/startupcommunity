@@ -2,7 +2,7 @@ angular
     .module('startupcommunity')
     .controller('NavigationController', NavigationController);
 
-function NavigationController($auth, $state, $window, $timeout, $location, $scope, $stateParams, $modal, user_service, community_service, user, location, community, communities, top, knowtify, errorLogService) {
+function NavigationController($auth, $state, $window, $timeout, $location, $scope, $stateParams, $modal, user_service, community_service, user, location, community, communities, nav_communities, top, knowtify, errorLogService) {
     if (user.data && user.data.token) $auth.setToken(user.data.token); // update local storage with latest user profile
 
     // SENSITIVE VARIABLES THAT AFFECT NAVIGATION AND ALL CHILD TEMPLATES
@@ -79,42 +79,45 @@ function NavigationController($auth, $state, $window, $timeout, $location, $scop
 
     // PRIMARY LEFT-NAV ITEM LIST
 
-    if (!this.community) this.community = communities.data[this.location_path];
+    this.communities = communities.data; // used in company list views
+    this.nav_communities = nav_communities.data;
+
+    if (!this.community) this.community = this.communities.data[this.location_path];
     if (!this.community) {
         // if still no community, there's a problem, reload the app
         $window.location.reload();
     }
 
-    this.communities = communities.data; // used in company list views
+
 
     var parents = community_service.parents();
     parents = parents.join('|').toLowerCase().split('|'); // change all to lowercase
 
     // sort communities for use in nav and child dashboard pages
-    for (item in communities.data) { // need to determine what item is here, esp if user or company
+    for (item in this.nav_communities) { // need to determine what item is here, esp if user or company
 
-        if (communities.data[item]) {
-            switch (communities.data[item].type) {
+        if (this.nav_communities[item]) {
+            switch (this.nav_communities[item].type) {
                 case "location":
                     if (item !== this.location.key) {
                         if (!this.locations) this.locations = {};
-                        this.locations[item] = communities.data[item];
+                        this.locations[item] = this.nav_communities[item];
                     }
                     break;
                 case "cluster":
                     if (!this.clusters) this.clusters = {};
-                    if (communities.data[item].community_profiles && communities.data[item].community_profiles[this.location.key] && communities.data[item].community_profiles[this.location.key].parents && communities.data[item].community_profiles[this.location.key].parents[0]) {
-                        var cluster_type = communities.data[item].community_profiles[this.location.key].parents[0];
+                    if (this.nav_communities[item].community_profiles && this.nav_communities[item].community_profiles[this.location.key] && this.nav_communities[item].community_profiles[this.location.key].parents && this.nav_communities[item].community_profiles[this.location.key].parents[0]) {
+                        var cluster_type = this.nav_communities[item].community_profiles[this.location.key].parents[0];
                         if (!this.clusters[cluster_type]) this.clusters[cluster_type] = {};
-                        this.clusters[cluster_type][item] = communities.data[item];
+                        this.clusters[cluster_type][item] = this.nav_communities[item];
                     }
                     break;
                 case "network":
                     if (!this.networks) this.networks = {};
-                    if (communities.data[item].community_profiles && communities.data[item].community_profiles[this.location.key] && communities.data[item].community_profiles[this.location.key].parents && communities.data[item].community_profiles[this.location.key].parents[0]) {
-                        var network_type = communities.data[item].community_profiles[this.location.key].parents[0];
+                    if (this.nav_communities[item].community_profiles && this.nav_communities[item].community_profiles[this.location.key] && this.nav_communities[item].community_profiles[this.location.key].parents && this.nav_communities[item].community_profiles[this.location.key].parents[0]) {
+                        var network_type = this.nav_communities[item].community_profiles[this.location.key].parents[0];
                         if (!this.networks[network_type]) this.networks[network_type] = {};
-                        this.networks[network_type][item] =  communities.data[item];
+                        this.networks[network_type][item] =  this.nav_communities[item];
                     }
                     break;
                 default:
@@ -142,7 +145,7 @@ function NavigationController($auth, $state, $window, $timeout, $location, $scop
     // BREADCRUMBS
     if (this.community.type == "user") {
         // note this changes location for nav items below
-        if (this.location.key == this.community.key) this.location = communities.data[this.community.profile.home];
+        if (this.location.key == this.community.key) this.location = this.communities.data[this.community.profile.home];
     }
 
     // to avoid duplicate location_path / community_path when navigating to people & companies
