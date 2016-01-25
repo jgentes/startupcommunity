@@ -112,7 +112,7 @@ var searchInCommunity = function(communities, clusters, roles, limit, offset, qu
         searchstring += ')';
     }
 
-    if (roles && roles.length > 0) {
+    if (roles && roles.length > 0 && roles[0] !== "*") {
         roles = roles.splice(',');
         searchstring += ' AND (';
 
