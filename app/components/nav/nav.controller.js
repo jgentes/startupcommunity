@@ -340,6 +340,8 @@ function NavigationController($auth, $state, $window, $timeout, $location, $scop
     // *** ROUTING OF ROOT PATHS ***
     this.state = $state; // used in view because path doesn't always update properly.. esp. for /people
     this.path = $location.path().replace(/\/$/, ""); //used for routing and used in view
+    console.log(this.path);
+    console.log((this.path.split('/').length < 3))
     if (this.path.split('/').length < 3) {
         switch (this.community.type) {
             case 'user':
