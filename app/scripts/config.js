@@ -213,7 +213,7 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
             }
         })
         .state('search.dashboard', {
-            url: "/:community_path/search",
+            url: "^/:location_path/:community_path/search",
             params: {
                 community_path: {
                     value: null,
