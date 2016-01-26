@@ -6,7 +6,7 @@
                     <li ui-sref="{{'community.dashboard' + nav.nav_url}}" ng-class="{ 'active' : nav.state.current.name == 'community.dashboard' }">
                         <a>OVERVIEW</a>
                     </li>
-                    <li ui-sref="{{'user.list' + nav.nav_url}}" ng-class="{ 'active' : nav.state.current.name == 'user.list' }">
+                    <li ui-sref="{{'user.list' + nav.nav_url}}" ng-class="{ 'active' : nav.state.current.name == 'user.list' }" ng-click="$event.stopPropagation()">
                         <a>PEOPLE</a>
                     </li>
                     <li ui-sref="{{'company.list' + nav.nav_url}}" ng-class="{ 'active' : nav.state.current.name == 'company.list' }">
