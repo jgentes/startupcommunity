@@ -354,21 +354,6 @@ function NavigationController($auth, $state, $window, $timeout, $location, $scop
         }
     }
 
-    // Temporary fix for very odd ui-sref behavior (state changes to community.dashboard on initial user.list or company.list click, but only on heroku :(
-
-    var go_params = this.location_path == this.community.key ?
-        {location_path: self.location_path, community: self.community, query: '*'} :
-        {location_path: self.location_path, community: self.community, query: '*', community_path: self.community.key};
-
-    this.goPeople = function() {
-        $state.go('user.list', go_params)
-    };
-
-    this.goCompanies = function() {
-        $state.go('company.list', go_params)
-    };
-
-
     // CHECK FOR IFRAME (redirect, if needed, must happen after routing)
     var embed;
     this.embedded = false;
