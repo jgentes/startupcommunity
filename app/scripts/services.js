@@ -62,14 +62,14 @@ angular
             getProfileUrl: function(filename) {
                 return $http.get('/api/2.1/profile/url?filename=' + filename);
             },
-            inviteUser: function(email, message, location_name, location_key, community_key) {
+            inviteUser: function(email, message, location_name, location_key, networks) {
                 return $http.post('/api/2.1/invite', {
                     params: {
                         email: email,
                         message: message,
                         location_name: location_name,
                         location_key: location_key,
-                        community_key: community_key
+                        networks: networks
                     }
                 });
             },

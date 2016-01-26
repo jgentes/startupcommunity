@@ -402,7 +402,7 @@ function InviteUserController($mixpanel, user, user_service, community, communit
 
             var emails = self.form.email_value.split(/\s*,\s*/),
                 message = self.form.message_value || "",
-                networks = (self.form.networks && self.form.networks.length) ? Object.keys(self.form.networks) : undefined,
+                networks = self.form.networks ? Object.keys(self.form.networks) : undefined,
                 formdata;
 
 

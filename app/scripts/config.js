@@ -119,21 +119,26 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                     }],
                 nav_communities: ['community_service', 'communities', 'location',
                     function(community_service, communities, location) {
-                        console.log(location);
-                        return (location.key == communities.data.key) ? communities.data :
-                            community_service.getCommunity(location.key)
-                                .error(function(response) {
-                                    console.log(response);
-                                });
+                        if (communities && communities.data && communities.data.key && location && location.key) {
+                            return (location.key == communities.data.key) ? communities :
+                                community_service.getCommunity(location.key)
+                                    .error(function(response) {
+                                        console.log(response);
+                                    });
+                        } else return communities;
                     }],
                 top: ['community_service', 'location',
                     function (community_service, location) {
-                        return community_service.getTop(location.key);
+                        if (location && location.key) {
+                            return community_service.getTop(location.key);
+                        } else return undefined;
                     }],
                 community_top: ['community_service', 'community', 'location', 'top',
                     function (community_service, community, location, top) {
-                        if (community.key !== location.key) {
-                            return community_service.getTop(location.key, community.key, community);
+                        if (community && community.key && location && location.key) {
+                            if (community.key !== location.key) {
+                                return community_service.getTop(location.key, community.key, community);
+                            } else return top;
                         } else return top;
                     }],
                 company: ['community',

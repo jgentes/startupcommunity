@@ -6,7 +6,7 @@ function NavigationController($auth, $state, $window, $timeout, $location, $scop
     if (user.data && user.data.token) $auth.setToken(user.data.token); // update local storage with latest user profile
 
     // SENSITIVE VARIABLES THAT AFFECT NAVIGATION AND ALL CHILD TEMPLATES
-    // When used in ui-sref links: location_path affects the url, location affects header and content, community affects header and secondary url
+    // When used in ui-sref links: location_path affects the url, location affects header and content, community affects header and second url parameter
     try { // catch any initial db connectivity problems
 
         if (jQuery.isEmptyObject(location)) {
@@ -20,9 +20,11 @@ function NavigationController($auth, $state, $window, $timeout, $location, $scop
                 community :
                 this.location) :
             $stateParams.community;
+
         this.location_path = $stateParams.location_path || $stateParams.location.key || this.community.key;
     }
     catch(err) {
+        errorLogService('NavController Catch27: ' + err);
         $state.go('404');
     }
 
