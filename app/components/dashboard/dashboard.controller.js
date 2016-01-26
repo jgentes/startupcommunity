@@ -11,6 +11,9 @@ function DashboardController($stateParams, community, $state, community_top) {
         $state.go('company.dashboard');
     }
 
+    if ($state.current.name == 'user.list') $state.go('user.list');
+    if ($state.current.name == 'company.list') $state.go('company.list');
+
     var self = this;
     this.top = community_top.data;
     this.location_path = $stateParams.location_path;
