@@ -263,12 +263,8 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
         })
 
         .state('user.list', {
-            url: "^/:location_path/:community_path/people",
+            url: "/people",
             params: {
-                community_path: {
-                    value: null,
-                    squash: true
-                },
                 pageTitle: 'People'
             },
             views: {
@@ -440,10 +436,8 @@ angular
                 console.log(event);
                 console.log('from: ');
                 console.log(fromState);
-                console.log(fromParams);
                 console.log('to:');
                 console.log(toState);
-                console.log(toParams);
             })
 
     })
