@@ -263,8 +263,12 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
         })
 
         .state('user.list', {
-            url: "/people",
+            url: "/:community_path/people",
             params: {
+                community_path: {
+                    value: null,
+                    squash: true
+                },
                 pageTitle: 'People'
             },
             views: {
