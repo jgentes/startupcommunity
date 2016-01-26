@@ -387,11 +387,16 @@ function UserProfileController($stateParams, $http, $modal, $mixpanel, user, use
     }
 }
 
-function InviteUserController($mixpanel, user, user_service, community, location) {
+function InviteUserController($mixpanel, user, user_service, community, communities, location) {
     var self = this;
+    this.user = user;
     this.community = community;
+    this.communities = communities;
+    this.location = location;
 
     if (this.community.type == 'cluster' || this.community.type == 'network' && location) this.community = location;
+
+
 
     this.inviteUser = function() {
 

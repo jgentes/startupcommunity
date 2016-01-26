@@ -415,7 +415,7 @@ angular
         $rootScope.$on('$stateChangeError', function (evt, toState, toParams, fromState, fromParams, error) {
             //todo add exception logging here
             $auth.removeToken();
-
+            console.log(evt, error);
             $state.go('login', {alert: 'Sorry, please login again. ' + error.statusText}, {reload: true});
         });
         $rootScope.$on('$stateChangeSuccess',function(){
@@ -428,7 +428,7 @@ angular
                 $('#minorsplash').css('display', 'none');
             }, 500);
         });
-/*
+
         $rootScope.$on('$stateChangeStart',
             function(event, toState, toParams, fromState, fromParams){
                 //console.log('from: ');
@@ -436,7 +436,7 @@ angular
                 console.log('to:');
                 console.log(toState);
             })
-*/
+
     })
 
 
