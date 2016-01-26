@@ -76,6 +76,70 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
             }
         })
 
+        // Company views
+        .state('company', {
+            parent: 'root',
+            abstract: true
+        })
+        .state('company.dashboard', {
+            params: {
+                profile: {},
+                location: {},
+                pageTitle: 'Company Profile'
+            },
+            views: {
+                'header': {
+                    templateUrl: "components/header/header_small.html"
+                },
+                'content': {
+                    templateUrl: "../components/companies/company.dashboard.html",
+                    controller: 'CompanyProfileController as profile'
+                }
+            }
+        })
+        .state('company.list', {
+            url: "^/:location_path/:community_path/companies",
+            params: {
+                community_path: {
+                    value: null,
+                    squash: true
+                },
+                pageTitle: 'Companies'
+            },
+            views: {
+                'header': {
+                    templateUrl: "components/header/header_small.html"
+                },
+                'content': {
+                    templateUrl: '../components/companies/company.list.html',
+                    controller: "CompanyController as companies"
+                }
+            }
+        })
+        .state('company.add', {
+            url: "/:community_path/companies/add",
+            params: {
+                community: {},
+                community_path: {
+                    value: null,
+                    squash: true
+                },
+                pageTitle: 'Add Company',
+                pageDescription: 'AngelList URL is required to pull the logo, headline, and summary for each company.',
+                icon: 'pe-7s-id'
+            },
+            views: {
+                'header': {
+                    templateUrl: "components/header/header_small.html"
+                },
+                'content': {
+                    templateUrl: '../components/companies/company.add.html',
+                    controller: "AddCompanyController as add"
+                }
+            }
+
+        })
+
         // the root state with core dependencies for injection in child states
         .state('root', {
             url: "/:location_path",
@@ -284,69 +348,7 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
         })
 
         
-        // Company views
-        .state('company', {
-            parent: 'root',
-            abstract: true
-        })
-        .state('company.dashboard', {
-            params: {
-                profile: {},
-                location: {},
-                pageTitle: 'Company Profile'
-            },
-            views: {
-                'header': {
-                    templateUrl: "components/header/header_small.html"
-                },
-                'content': {
-                    templateUrl: "../components/companies/company.dashboard.html",
-                    controller: 'CompanyProfileController as profile'
-                }
-            }
-        })
-        .state('company.list', {
-            url: "^/:location_path/:community_path/companies",
-            params: {
-                community_path: {
-                    value: null,
-                    squash: true
-                },
-                pageTitle: 'Companies'
-            },
-            views: {
-                'header': {
-                    templateUrl: "components/header/header_small.html"
-                },
-                'content': {
-                    templateUrl: '../components/companies/company.list.html',
-                    controller: "CompanyController as companies"
-                }
-            }
-        })
-        .state('company.add', {
-            url: "/:community_path/companies/add",
-            params: {
-                community: {},
-                community_path: {
-                    value: null,
-                    squash: true
-                },
-                pageTitle: 'Add Company',
-                pageDescription: 'AngelList URL is required to pull the logo, headline, and summary for each company.',
-                icon: 'pe-7s-id'
-            },
-            views: {
-                'header': {
-                    templateUrl: "components/header/header_small.html"
-                },
-                'content': {
-                    templateUrl: '../components/companies/company.add.html',
-                    controller: "AddCompanyController as add"
-                }
-            }
 
-        })
 
         // Community views
         .state('community', {
