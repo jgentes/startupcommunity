@@ -347,9 +347,7 @@ function NavigationController($auth, $state, $window, $timeout, $location, $scop
                 $state.go('company.dashboard');
                 break;
             default:
-                if (this.path.split('/')[this.path.split('/').length - 1] == 'search') {
-                    $state.go('search.dashboard');
-                } else $state.go('community.dashboard');
+                $state.go('community.dashboard');
         }
     }
 

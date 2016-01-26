@@ -119,7 +119,8 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                     }],
                 nav_communities: ['community_service', 'communities', 'location',
                     function(community_service, communities, location) {
-                        return (location.key == communities.data.key) ? communities :
+                        console.log(location);
+                        return (location.key == communities.data.key) ? communities.data :
                             community_service.getCommunity(location.key)
                                 .error(function(response) {
                                     console.log(response);
