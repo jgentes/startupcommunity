@@ -434,15 +434,18 @@ angular
                 $('#minorsplash').css('display', 'none');
             }, 500);
         });
-/*
+
         $rootScope.$on('$stateChangeStart',
             function(event, toState, toParams, fromState, fromParams){
-                //console.log('from: ');
-                //console.log(fromState);
+                console.log(event);
+                console.log('from: ');
+                console.log(fromState);
+                console.log(fromParams);
                 console.log('to:');
                 console.log(toState);
+                console.log(toParams);
             })
-*/
+
     })
 
 
