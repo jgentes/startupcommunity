@@ -6,10 +6,10 @@
                     <li ui-sref="{{'community.dashboard' + nav.nav_url}}" ng-class="{ 'active' : nav.state.current.name == 'community.dashboard' }">
                         <a>OVERVIEW</a>
                     </li>
-                    <li ng-class="{ 'active' : nav.state.current.name == 'user.list' }">
-                        <a ui-sref="{{'user.list' + nav.nav_url}}" >PEOPLE</a>
+                    <li ng-click="nav.goPeople()" ng-class="{ 'active' : nav.state.current.name == 'user.list' }">
+                        <a>PEOPLE</a>
                     </li>
-                    <li ui-sref="{{'company.list' + nav.nav_url}}" ng-class="{ 'active' : nav.state.current.name == 'company.list' }">
+                    <li ng-click="nav.goCompanies()" ng-class="{ 'active' : nav.state.current.name == 'company.list' }">
                         <a>COMPANIES</a>
                     </li>
                 </ul>
