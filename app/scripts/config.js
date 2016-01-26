@@ -33,6 +33,49 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
             }
         })
 
+
+        // User views
+        .state('user', {
+            parent: 'root',
+            abstract: true
+        })
+        .state('user.dashboard', {
+            params: {
+                profile: {},
+                location: {},
+                pageTitle: 'User Profile'
+            },
+            views: {
+                'header': {
+                    templateUrl: "components/header/header_small.html"
+                },
+                'content': {
+                    templateUrl: "components/users/user.dashboard.html",
+                    controller: 'UserProfileController as profile'
+                }
+            }
+        })
+
+        .state('user.list', {
+            url: "/:community_path/people",
+            params: {
+                community_path: {
+                    value: null,
+                    squash: true
+                },
+                pageTitle: 'People'
+            },
+            views: {
+                'header': {
+                    templateUrl: "components/header/header_small.html"
+                },
+                'content': {
+                    templateUrl: 'components/users/user.list.html',
+                    controller: "UserController as users"
+                }
+            }
+        })
+
         // the root state with core dependencies for injection in child states
         .state('root', {
             url: "/:location_path",
@@ -240,47 +283,6 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
             }
         })
 
-        // User views
-        .state('user', {
-            parent: 'root',
-            abstract: true
-        })
-        .state('user.dashboard', {
-            params: {
-                profile: {},
-                location: {},
-                pageTitle: 'User Profile'
-            },
-            views: {
-                'header': {
-                    templateUrl: "components/header/header_small.html"
-                },
-                'content': {
-                    templateUrl: "components/users/user.dashboard.html",
-                    controller: 'UserProfileController as profile'
-                }
-            }
-        })
-
-        .state('user.list', {
-            url: "/:community_path/people",
-            params: {
-                community_path: {
-                    value: null,
-                    squash: true
-                },
-                pageTitle: 'People'
-            },
-            views: {
-                'header': {
-                    templateUrl: "components/header/header_small.html"
-                },
-                'content': {
-                    templateUrl: 'components/users/user.list.html',
-                    controller: "UserController as users"
-                }
-            }
-        })
         
         // Company views
         .state('company', {
