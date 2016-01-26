@@ -2,7 +2,7 @@
     <div class="color-line"></div>
     <div class="modal-header">
         <h4 class="modal-title">Invite people to join {{invite.community.profile.name}}</h4>
-        <p class="font-bold">If you invite someone who is already in the system, they will be added to your {{invite.community.type}} immediately without being notified. Otherwise we will send them an invitation by email.</p>
+        <p class="font-bold">If you invite someone who is already in the system, they will be added to your community immediately without being notified. Otherwise we will send them an invitation by email.</p>
     </div>
     <div class="modal-body">
         <div class="hpanel">
@@ -15,6 +15,16 @@
                     <div class="form-group">
                         <input type="text" placeholder="Optional message.." class="form-control input-lg" name="message" ng-model="invite.form.message_value">
                     </div>
+                    <table class="form-group" style="font-size: 20px; font-weight:300;">
+                        <tr ng-repeat="(k, v) in invite.user.roles.leader" ng-if="invite.communities[k].type == 'network'">
+                            <td style="width:20px;">
+                                <input type="checkbox" class="form-control checkbox" ng-model="invite.form.networks[k]">
+                            </td>
+                            <td style="padding-left:5px; padding-top:5px;">
+                                Add them to {{ invite.communities[k].community_profiles[invite.location.key].name }}
+                            </td>
+                        </tr>
+                    </table>
                     <input type="submit" style="float:left" class="finish btn-success btn" ng-class="{'disabled' : disabled}" value="Send Invitation" /><div style="padding-top: 6px; margin-bottom: -24px;" ng-show="invite.working" loading-bars></div>
                 </form>
             </div>

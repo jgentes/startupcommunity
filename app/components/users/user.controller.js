@@ -387,9 +387,12 @@ function UserProfileController($stateParams, $http, $modal, $mixpanel, user, use
     }
 }
 
-function InviteUserController($mixpanel, user, user_service, community, location) {
+function InviteUserController($mixpanel, user, user_service, community, communities, location) {
     var self = this;
+    this.user = user;
     this.community = community;
+    this.communities = communities;
+    this.location = location;
 
     if (this.community.type == 'cluster' || this.community.type == 'network' && location) this.community = location;
 
@@ -399,7 +402,10 @@ function InviteUserController($mixpanel, user, user_service, community, location
 
             var emails = self.form.email_value.split(/\s*,\s*/),
                 message = self.form.message_value || "",
+                networks = self.form.networks ? Object.keys(self.form.networks) : undefined,
                 formdata;
+
+
 
             if (self.form.$valid || emails.length > 0) {
 
@@ -409,19 +415,20 @@ function InviteUserController($mixpanel, user, user_service, community, location
 
                     formdata = {
                         "email" : emails[e],
-                        "message" : message
+                        "message" : message,
+                        "networks" : networks
                     };
 
                     if (user) {
-                        if (self.community.type == 'network' && (user.roles && user.roles.leader && user.roles.leader[self.community.key]) && (user.roles.leader[self.community.key].indexOf(location.key) < 0)) self.community.key = location.key;
 
-                        user_service.inviteUser(formdata.email, formdata.message, location.profile.name, location.key, self.community.key)
+                        user_service.inviteUser(formdata.email, formdata.message, location.profile.name, location.key, formdata.networks)
                             .then(function(response) {
                                 self.working = false;
                                 self.form = {
                                     submitted: false,
                                     email_value: "",
-                                    message_value: ""
+                                    message_value: "",
+                                    networks: {}
                                 };
 
                                 if (response.status !== 200) {

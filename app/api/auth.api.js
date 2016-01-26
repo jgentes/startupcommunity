@@ -25,11 +25,13 @@ var AuthApi = function() {
  */
 
 var schema = {
-    invite: function(email, invitor_email, location_key, community_key) {
+    invite: function(email, invitor_email, location_key, networks) {
 
-        var communities = location_key == community_key ?
-                [location_key] :
-                [location_key, community_key];
+        var communities = [location_key];
+
+        for (n in networks) {
+            communities.push(networks[n]);
+        }
 
         return {
             "type": "invite",
@@ -555,8 +557,9 @@ function handleLinkedin(req, res) {
 
 function handleInviteUser(req, res) {
     var inviteUser = req.body.params;
+    console.log(inviteUser);
 
-    console.log('Inviting ' + inviteUser.email + ' to ' + inviteUser.location_key + ' / ' + inviteUser.community_key);
+    console.log('Inviting ' + inviteUser.email + ' to ' + inviteUser.location_key + ' / ' + inviteUser.networks);
 
     var goInvite = function() {
         // validate user has leader role within the location/community, or let them through if they are a member of the location
@@ -567,156 +570,141 @@ function handleInviteUser(req, res) {
                 if (response.body.code !== "items_not_found") {
                     var user = response.body;
 
-                    if (!inviteUser.location_key) inviteUser.location_key == inviteUser.community_key;
-
                     if (user.communities.indexOf(inviteUser.location_key) < 0) {
                         res.status(202).send({ message: 'You must be a member of this community to invite someone.' });
-                    } else if (!inviteUser.community_key || (user.roles && user.roles.leader && user.roles.leader[inviteUser.community_key] && user.roles.leader[inviteUser.community_key].indexOf(inviteUser.location_key) < 0)) {
-                        console.warn("No community specified, or user is not a leader in community: " + inviteUser.community_key + " for location: " + inviteUser.location_key + "!");
-                        inviteUser.community_key = inviteUser.location_key;
                     }
 
-                    //if (((inviteUser.location_key == inviteUser.community_key) && user.communities.indexOf(inviteUser.location_key) > -1) || (user.roles && user.roles.leader && user.roles.leader[inviteUser.community_key] && user.roles.leader[inviteUser.community_key].indexOf(inviteUser.location_key) > -1)) {
-                        // check to see if the email address already exists within the system
-                        db.newSearchBuilder()
-                            .collection(process.env.DB_COMMUNITIES)
-                            .limit(1)
-                            .query('@value.type: "user" AND (@value.profile.linkedin.emailAddress: "' + inviteUser.email + '" OR @value.profile.email: "' + inviteUser.email + '")')
-                            .then(function (result) {
-                                if (result.body.results.length > 0) {
-                                    console.log("Existing user found!");
+                    // check to see if the email address already exists within the system
+                    db.newSearchBuilder()
+                        .collection(process.env.DB_COMMUNITIES)
+                        .limit(1)
+                        .query('@value.type: "user" AND (@value.profile.linkedin.emailAddress: "' + inviteUser.email + '" OR @value.profile.email: "' + inviteUser.email + '")')
+                        .then(function (result) {
+                            if (result.body.results.length > 0) {
+                                console.log("Existing user found!");
 
-                                    var existing = result.body.results[0].value;
+                                var existing = result.body.results[0].value;
 
-                                    if (!existing.communities) existing.communities = [];
+                                if (!existing.communities) existing.communities = [];
 
-                                    if (existing.communities.indexOf(inviteUser.community_key) == -1) {
-                                        existing.communities.push(inviteUser.community_key);
+                                for (n in inviteUser.networks) {
+                                    if (existing.communities.indexOf(inviteUser.networks[n]) == -1) {
+                                        existing.communities.push(inviteUser.networks[n]);
                                     }
+                                }
 
-                                    if (existing.communities.indexOf(inviteUser.location_key) == -1) {
-                                        existing.communities.push(inviteUser.location_key);
-                                    }
+                                if (existing.communities.indexOf(inviteUser.location_key) == -1) {
+                                    existing.communities.push(inviteUser.location_key);
+                                }
 
-                                    db.put(process.env.DB_COMMUNITIES, result.body.results[0].path.key, existing)
-                                        .then(function (response) {
-                                            console.log("User updated!");
-                                            res.status(200).send({message: 'Nice!  <a target="_blank" href="https://startupcommunity.org/' + result.body.results[0].path.key + '">' + result.body.results[0].value.profile.name + '</a> is a member of the community.'});
-                                        })
-                                        .fail(function(err) {
-                                            console.log('WARNING: ', err);
-                                            res.status(202).send({message: "Something went wrong."});
-                                        })
+                                db.put(process.env.DB_COMMUNITIES, result.body.results[0].path.key, existing)
+                                    .then(function (response) {
+                                        console.log("User updated!");
+                                        res.status(200).send({message: 'Nice!  <a target="_blank" href="https://startupcommunity.org/' + result.body.results[0].path.key + '">' + result.body.results[0].value.profile.name + '</a> is a member of the community.'});
+                                    })
+                                    .fail(function(err) {
+                                        console.log('WARNING: ', err);
+                                        res.status(202).send({message: "Something went wrong."});
+                                    })
 
-                                } else {
-                                    // no existing user, so search for existing invite
-                                    db.newSearchBuilder()
-                                        .collection(process.env.DB_COMMUNITIES)
-                                        .limit(1)
-                                        .query('@value.type: "invite" AND @value.profile.email: "' + inviteUser.email + '"')
-                                        .then(function (result) {
-                                            if (result.body.results.length > 0) {
-                                                console.log("Existing invite found!");
-                                                res.status(200).send({message: 'An invitation has already been sent to ' + inviteUser.email + '. We will send a reminder.'});
+                            } else {
+                                // no existing user, so search for existing invite
+                                db.newSearchBuilder()
+                                    .collection(process.env.DB_COMMUNITIES)
+                                    .limit(1)
+                                    .query('@value.type: "invite" AND @value.profile.email: "' + inviteUser.email + '"')
+                                    .then(function (result) {
+                                        if (result.body.results.length > 0) {
+                                            console.log("Existing invite found!");
+                                            res.status(200).send({message: 'An invitation has already been sent to ' + inviteUser.email + '. We will send a reminder.'});
 
-                                                var knowtifyClient = new knowtify.Knowtify(process.env.KNOWTIFY, false);
+                                            var knowtifyClient = new knowtify.Knowtify(process.env.KNOWTIFY, false);
 
-                                                // update client with id of discovered invite
+                                            // update client with id of discovered invite
 
-                                                knowtifyClient.contacts.upsert({
-                                                        "contacts": [
-                                                            {
+                                            knowtifyClient.contacts.upsert({
+                                                    "contacts": [
+                                                        {
+                                                            "email": inviteUser.email,
+                                                            "data": {
+                                                                "invite_code": result.body.results[0].path.key
+                                                            }
+                                                        }
+                                                    ]
+                                                },
+                                                function (success) {
+                                                    console.log('Record updated');
+                                                    knowtifyClient.contacts.upsert({
+                                                            "event": "reminder",
+                                                            "contacts": [{
+                                                                "email": inviteUser.email
+                                                            }]
+                                                        },
+                                                        function (success) {
+                                                            console.log('Invitation reminder sent to ' + inviteUser.email);
+                                                        },
+                                                        function (error) {
+                                                            console.log('WARNING:', error);
+                                                        });
+                                                },
+                                                function (error) {
+                                                    console.log('WARNING:', error);
+                                                });
+
+
+
+                                        } else {
+                                            // create user record with email address and community data
+                                            var newUser = schema.invite(inviteUser.email, user.profile.email, inviteUser.location_key, inviteUser.networks);
+                                            console.log('creating user');
+
+                                            db.post(process.env.DB_COMMUNITIES, newUser)
+                                                .then(function (response) {
+                                                    var userkey = response.headers.location.split('/')[3]; // hope their response format doesn't change :-/
+
+                                                    // send email with knowtify with unique link
+                                                    var knowtifyClient = new knowtify.Knowtify(process.env.KNOWTIFY, false);
+
+                                                    knowtifyClient.contacts.upsert({
+                                                            "event": "invitation",
+                                                            "contacts": [{
                                                                 "email": inviteUser.email,
                                                                 "data": {
-                                                                    "invite_code": result.body.results[0].path.key
+                                                                    "invite_community": inviteUser.location_name.split(',')[0],
+                                                                    "invite_url": inviteUser.location_key,
+                                                                    "invite_code": userkey,
+                                                                    "invite_message": inviteUser.message,
+                                                                    "invitor_name": user.profile.name,
+                                                                    "invitor_email": user.profile.email,
+                                                                    "invitor_image": user.profile.avatar,
+                                                                    "invite_accepted": false
                                                                 }
-                                                            }
-                                                        ]
-                                                    },
-                                                    function (success) {
-                                                        console.log('Record updated');
-                                                        knowtifyClient.contacts.upsert({
-                                                                "event": "reminder",
-                                                                "contacts": [{
-                                                                    "email": inviteUser.email
-                                                                }]
-                                                            },
-                                                            function (success) {
-                                                                console.log('Invitation reminder sent to ' + inviteUser.email);
-                                                            },
-                                                            function (error) {
-                                                                console.log('WARNING:', error);
-                                                            });
-                                                    },
-                                                    function (error) {
-                                                        console.log('WARNING:', error);
-                                                    });
+                                                            }]
+                                                        },
+                                                        function (success) {
+                                                            console.log('Invitation sent to ' + inviteUser.email + ' (' + userkey + ')');
+                                                            res.status(200).send({message: "Done! We've sent an invitation to " + inviteUser.email});
+                                                        },
+                                                        function (error) {
+                                                            console.log('WARNING: ', error);
+                                                            res.status(202).send({message: "Woah! Something went wrong. We're looking into it, but also try waiting a few minutes and give it another shot."});
 
-
-
-                                            } else {
-                                                // create user record with email address and community data
-                                                var newUser = schema.invite(inviteUser.email, user.profile.email, inviteUser.location_key, inviteUser.community_key);
-                                                console.log('creating user');
-                                                var community_url =
-                                                    inviteUser.location_key == inviteUser.community_key ?
-                                                        inviteUser.location_key :
-                                                    inviteUser.location_key + '/' + inviteUser.community_key;
-
-                                                db.post(process.env.DB_COMMUNITIES, newUser)
-                                                    .then(function (response) {
-                                                        var userkey = response.headers.location.split('/')[3]; // hope their response format doesn't change :-/
-
-                                                        // send email with knowtify with unique link
-                                                        var knowtifyClient = new knowtify.Knowtify(process.env.KNOWTIFY, false);
-
-                                                        knowtifyClient.contacts.upsert({
-                                                                "event": "invitation",
-                                                                "contacts": [{
-                                                                    "email": inviteUser.email,
-                                                                    "data": {
-                                                                        "invite_community": inviteUser.community_name.split(',')[0],
-                                                                        "invite_url": community_url,
-                                                                        "invite_code": userkey,
-                                                                        "invite_message": inviteUser.message,
-                                                                        "invitor_name": user.profile.name,
-                                                                        "invitor_email": user.profile.email,
-                                                                        "invitor_image": user.profile.avatar,
-                                                                        "invite_accepted": false
-                                                                    }
-                                                                }]
-                                                            },
-                                                            function (success) {
-                                                                console.log('Invitation sent to ' + inviteUser.email + ' (' + userkey + ')');
-                                                                res.status(200).send({message: "Done! We've sent an invitation to " + inviteUser.email});
-                                                            },
-                                                            function (error) {
-                                                                console.log('WARNING: ', error);
-                                                                res.status(202).send({message: "Woah! Something went wrong. We're looking into it, but also try waiting a few minutes and give it another shot."});
-
-                                                                // rollback invitation
-                                                                db.delete(process.env.DB_COMMUNITIES, userkey, true)
-                                                            });
-                                                    })
-                                                    .fail(function(err) {
-                                                        console.log('WARNING: ', err);
-                                                        res.status(202).send({message: "Woah! Something went wrong.  We're looking into it, but also try waiting a few minutes and give it another shot."});
-                                                    })
-                                            }
-                                        })
-                                        .fail(function(err) {
-                                            console.log('WARNING: ', err);
-                                            res.status(202).send({message: "Woah! Something went wrong. We're looking into it, but also try waiting a few minutes and give it another shot."});
-                                        })
-                                }
-                            });
-                    /*
-                    } else {
-                        console.warn("User is not a leader in community: " + inviteUser.community_key + " for location: " + inviteUser.location_key + "!");
-                        console.log(user);
-                        res.status(202).send({ message: 'You must be a member of this location and/or a leader of this network to invite someone.' });
-                    }
-                    */
+                                                            // rollback invitation
+                                                            db.delete(process.env.DB_COMMUNITIES, userkey, true)
+                                                        });
+                                                })
+                                                .fail(function(err) {
+                                                    console.log('WARNING: ', err);
+                                                    res.status(202).send({message: "Woah! Something went wrong.  We're looking into it, but also try waiting a few minutes and give it another shot."});
+                                                })
+                                        }
+                                    })
+                                    .fail(function(err) {
+                                        console.log('WARNING: ', err);
+                                        res.status(202).send({message: "Woah! Something went wrong. We're looking into it, but also try waiting a few minutes and give it another shot."});
+                                    })
+                            }
+                        });
 
                 } else {
                     console.warn('WARNING:  User not found.');

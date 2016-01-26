@@ -155,7 +155,7 @@
                     <div class="panel-body" ng-repeat="item in dashboard.top.industries.entries | limitTo: 5">
                         <div class="row">
                             <div class="col-xs-10 forum-heading">
-                                <a ui-sref="search.dashboard({location_path: dashboard.location_path, query: item.value})"><h4 style="font-weight: 200;">{{item.value}}</h4></a>
+                                <a ui-sref="search.dashboard({location_path: dashboard.location_path, community_path: dashboard.community_path, query: item.value})"><h4 style="font-weight: 200;">{{item.value}}</h4></a>
                                 <progressbar ng-attr-value="(item.count/dashboard.top.industries.entries[0].count)*100" type="default" class="progress-small full" style="margin-top: 7px;"></progressbar>
                             </div>
                             <div class="col-xs-2 forum-info">
@@ -177,7 +177,7 @@
                     <div class="panel-body" ng-repeat="item in dashboard.top.skills.entries | limitTo: 5">
                         <div class="row">
                             <div class="col-xs-10 forum-heading">
-                                <a ui-sref="search.dashboard({location_path: dashboard.location_path, query: item.value})"><h4 style="font-weight: 200;">{{item.value}}</h4></a>
+                                <a ui-sref="search.dashboard({location_path: dashboard.location_path, community_path: dashboard.community_path, query: item.value})"><h4 style="font-weight: 200;">{{item.value}}</h4></a>
                                 <progressbar ng-attr-value="(item.count/dashboard.top.skills.entries[0].count)*100" type="info" class="progress-small full" style="margin-top: 7px;"></progressbar>
                             </div>
                             <div class="col-xs-2 forum-info">

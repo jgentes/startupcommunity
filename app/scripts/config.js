@@ -33,6 +33,113 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
             }
         })
 
+
+        // User views
+        .state('user', {
+            parent: 'root',
+            abstract: true
+        })
+        .state('user.dashboard', {
+            params: {
+                profile: {},
+                location: {},
+                pageTitle: 'User Profile'
+            },
+            views: {
+                'header': {
+                    templateUrl: "components/header/header_small.html"
+                },
+                'content': {
+                    templateUrl: "components/users/user.dashboard.html",
+                    controller: 'UserProfileController as profile'
+                }
+            }
+        })
+
+        .state('user.list', {
+            url: "/:community_path/people",
+            params: {
+                community_path: {
+                    value: null,
+                    squash: true
+                },
+                pageTitle: 'People'
+            },
+            views: {
+                'header': {
+                    templateUrl: "components/header/header_small.html"
+                },
+                'content': {
+                    templateUrl: 'components/users/user.list.html',
+                    controller: "UserController as users"
+                }
+            }
+        })
+
+        // Company views
+        .state('company', {
+            parent: 'root',
+            abstract: true
+        })
+        .state('company.dashboard', {
+            params: {
+                profile: {},
+                location: {},
+                pageTitle: 'Company Profile'
+            },
+            views: {
+                'header': {
+                    templateUrl: "components/header/header_small.html"
+                },
+                'content': {
+                    templateUrl: "../components/companies/company.dashboard.html",
+                    controller: 'CompanyProfileController as profile'
+                }
+            }
+        })
+        .state('company.list', {
+            url: "^/:location_path/:community_path/companies",
+            params: {
+                community_path: {
+                    value: null,
+                    squash: true
+                },
+                pageTitle: 'Companies'
+            },
+            views: {
+                'header': {
+                    templateUrl: "components/header/header_small.html"
+                },
+                'content': {
+                    templateUrl: '../components/companies/company.list.html',
+                    controller: "CompanyController as companies"
+                }
+            }
+        })
+        .state('company.add', {
+            url: "/:community_path/companies/add",
+            params: {
+                community: {},
+                community_path: {
+                    value: null,
+                    squash: true
+                },
+                pageTitle: 'Add Company',
+                pageDescription: 'AngelList URL is required to pull the logo, headline, and summary for each company.',
+                icon: 'pe-7s-id'
+            },
+            views: {
+                'header': {
+                    templateUrl: "components/header/header_small.html"
+                },
+                'content': {
+                    templateUrl: '../components/companies/company.add.html',
+                    controller: "AddCompanyController as add"
+                }
+            }
+
+        })
+
         // the root state with core dependencies for injection in child states
         .state('root', {
             url: "/:location_path",
@@ -119,20 +226,26 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                     }],
                 nav_communities: ['community_service', 'communities', 'location',
                     function(community_service, communities, location) {
-                        return (location.key == communities.data.key) ? communities :
-                            community_service.getCommunity(location.key)
-                                .error(function(response) {
-                                    console.log(response);
-                                });
+                        if (communities && communities.data && communities.data.key && location && location.key) {
+                            return (location.key == communities.data.key) ? communities :
+                                community_service.getCommunity(location.key)
+                                    .error(function(response) {
+                                        console.log(response);
+                                    });
+                        } else return communities;
                     }],
                 top: ['community_service', 'location',
                     function (community_service, location) {
-                        return community_service.getTop(location.key);
+                        if (location && location.key) {
+                            return community_service.getTop(location.key);
+                        } else return undefined;
                     }],
                 community_top: ['community_service', 'community', 'location', 'top',
                     function (community_service, community, location, top) {
-                        if (community.key !== location.key) {
-                            return community_service.getTop(location.key, community.key, community);
+                        if (community && community.key && location && location.key) {
+                            if (community.key !== location.key) {
+                                return community_service.getTop(location.key, community.key, community);
+                            } else return top;
                         } else return top;
                     }],
                 company: ['community',
@@ -234,111 +347,8 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
             }
         })
 
-        // User views
-        .state('user', {
-            parent: 'root',
-            abstract: true
-        })
-        .state('user.dashboard', {
-            params: {
-                profile: {},
-                location: {},
-                pageTitle: 'User Profile'
-            },
-            views: {
-                'header': {
-                    templateUrl: "components/header/header_small.html"
-                },
-                'content': {
-                    templateUrl: "components/users/user.dashboard.html",
-                    controller: 'UserProfileController as profile'
-                }
-            }
-        })
-
-        .state('user.list', {
-            url: "^/:location_path/:community_path/people",
-            params: {
-                community_path: {
-                    value: null,
-                    squash: true
-                },
-                pageTitle: 'People'
-            },
-            views: {
-                'header': {
-                    templateUrl: "components/header/header_small.html"
-                },
-                'content': {
-                    templateUrl: 'components/users/user.list.html',
-                    controller: "UserController as users"
-                }
-            }
-        })
         
-        // Company views
-        .state('company', {
-            parent: 'root',
-            abstract: true
-        })
-        .state('company.dashboard', {
-            params: {
-                profile: {},
-                location: {},
-                pageTitle: 'Company Profile'
-            },
-            views: {
-                'header': {
-                    templateUrl: "components/header/header_small.html"
-                },
-                'content': {
-                    templateUrl: "../components/companies/company.dashboard.html",
-                    controller: 'CompanyProfileController as profile'
-                }
-            }
-        })
-        .state('company.list', {
-            url: "^/:location_path/:community_path/companies",
-            params: {
-                community_path: {
-                    value: null,
-                    squash: true
-                },
-                pageTitle: 'Companies'
-            },
-            views: {
-                'header': {
-                    templateUrl: "components/header/header_small.html"
-                },
-                'content': {
-                    templateUrl: '../components/companies/company.list.html',
-                    controller: "CompanyController as companies"
-                }
-            }
-        })
-        .state('company.add', {
-            url: "/:community_path/companies/add",
-            params: {
-                community: {},
-                community_path: {
-                    value: null,
-                    squash: true
-                },
-                pageTitle: 'Add Company',
-                pageDescription: 'AngelList URL is required to pull the logo, headline, and summary for each company.',
-                icon: 'pe-7s-id'
-            },
-            views: {
-                'header': {
-                    templateUrl: "components/header/header_small.html"
-                },
-                'content': {
-                    templateUrl: '../components/companies/company.add.html',
-                    controller: "AddCompanyController as add"
-                }
-            }
 
-        })
 
         // Community views
         .state('community', {
@@ -415,7 +425,7 @@ angular
         $rootScope.$on('$stateChangeError', function (evt, toState, toParams, fromState, fromParams, error) {
             //todo add exception logging here
             $auth.removeToken();
-
+            console.log(evt, error);
             $state.go('login', {alert: 'Sorry, please login again. ' + error.statusText}, {reload: true});
         });
         $rootScope.$on('$stateChangeSuccess',function(){
@@ -431,12 +441,13 @@ angular
 /*
         $rootScope.$on('$stateChangeStart',
             function(event, toState, toParams, fromState, fromParams){
-                //console.log('from: ');
-                //console.log(fromState);
+                console.log(event);
+                console.log('from: ');
+                console.log(fromState);
                 console.log('to:');
                 console.log(toState);
-            })
-*/
+            })*/
+
     })
 
 

@@ -88,11 +88,12 @@ function handleGetCommunity(req, res) {
     };
 
     var community = req.params.community;
+
     var searchString = '@path.key: ' + community; // grab the primary community object, don't use parens here
     searchString += ' OR ((@value.communities: "' + community + '"'; // + grab anything associated with this community in this location
     searchString += ' OR @value.primary: true '; // + pull primary industries (clusters)
     searchString += ' OR @value.parents: "' + community + '")'; // + grab anything that has this community as a parent
-    searchString += ' AND NOT @value.type:("company" OR "user"))'; // exclude companies and users
+    searchString += ' AND NOT @value.type:("company" OR "user"))'; // exclude companies and user
 
     var pullCommunity = function(cache) {
 
@@ -197,6 +198,7 @@ function handleGetCommunity(req, res) {
                                         search += comm_items[i];
                                     }
                                 }
+/*
 
                                 // also grab clusters
 
@@ -218,7 +220,11 @@ function handleGetCommunity(req, res) {
                                 }
 
                                 var ubersearch = '(@path.key: (' + search + ')) OR (@value.type: "cluster" AND @value.communities: "' + m.value.profile.home + '" AND (@value.profile.industries: (' + clusters + ') OR @value.community_profiles.' + m.value.profile.home + '.industries: (' + clusters + ')))';
+*/
 
+                                var ubersearch = '(@path.key: (' + search + '))';
+
+                                console.log(ubersearch) // LEAVE THIS HERE.. NEED TO FIGURE OUT HOW TO NOT PULL ALL THIS SHIT TO IMPROVE PERFORMANCE
                                 db.newSearchBuilder()
                                     .collection(process.env.DB_COMMUNITIES)
                                     .limit(100)
