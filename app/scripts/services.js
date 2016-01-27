@@ -81,12 +81,12 @@ angular
                     }
                 })
             },
-            join: function(email, message, community_name, location_key) {
+            join: function(email, message, location_name, location_key) {
                 return $http.post('/api/2.1/join', {
                     params: {
                         email: email,
                         message: message,
-                        community_name: community_name,
+                        location_name: location_name,
                         location_key: location_key
                     }
                 });
