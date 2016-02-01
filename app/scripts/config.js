@@ -34,41 +34,6 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
         })
 
 
-        .state('welcome', {
-            parent: "root",
-            url: "^/:location_path/:community_path/welcome?invite_code",
-            params: {
-                community_path: {
-                    value: null,
-                    squash: true
-                },
-                go: null
-            },
-            views: {
-                "@": { // this forces override of root template
-                    templateUrl: "components/welcome/welcome.html",
-                    controller: "WelcomeController as welcome"
-                }
-            }
-        })
-        .state('welcome.roles', {
-            templateUrl: "components/welcome/welcome.roles.html"
-        })
-        .state('welcome.skills', {
-            templateUrl: "components/welcome/welcome.skills.html"
-        })
-        .state('welcome.profile', {
-            templateUrl: "components/welcome/welcome.profile.html"
-        })
-        .state('welcome.companies', {
-            templateUrl: "components/welcome/welcome.companies.html"
-        })
-        .state('welcome.invite', {
-            templateUrl: "components/welcome/welcome.invite.html",
-            controller: "InviteUserController as invite"
-        })
-
-
         // User views
         .state('user', {
             parent: 'root',
@@ -312,6 +277,40 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                     templateUrl: "components/settings.html"
                 }
             }
+        })
+
+        .state('welcome', {
+            parent: "root",
+            url: "^/:location_path/:community_path/welcome?invite_code",
+            params: {
+                community_path: {
+                    value: null,
+                    squash: true
+                },
+                go: null
+            },
+            views: {
+                "@": { // this forces override of root template
+                    templateUrl: "components/welcome/welcome.html",
+                    controller: "WelcomeController as welcome"
+                }
+            }
+        })
+        .state('welcome.roles', {
+            templateUrl: "components/welcome/welcome.roles.html"
+        })
+        .state('welcome.skills', {
+            templateUrl: "components/welcome/welcome.skills.html"
+        })
+        .state('welcome.profile', {
+            templateUrl: "components/welcome/welcome.profile.html"
+        })
+        .state('welcome.companies', {
+            templateUrl: "components/welcome/welcome.companies.html"
+        })
+        .state('welcome.invite', {
+            templateUrl: "components/welcome/welcome.invite.html",
+            controller: "InviteUserController as invite"
         })
 
         .state('search', {
