@@ -43,122 +43,12 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
             controller: "ErrorPageController as error"
         })
 
-
-        // User views
-        .state('user', {
-            parent: 'root',
-            abstract: true
-        })
-        .state('user.dashboard', {
-            params: {
-                profile: {},
-                location: {},
-                pageTitle: 'User Profile'
-            },
-            views: {
-                'header': {
-                    templateUrl: "components/header/header_small.html"
-                },
-                'content': {
-                    templateUrl: "components/users/user.dashboard.html",
-                    controller: 'UserProfileController as profile'
-                }
-            }
-        })
-
-        .state('user.list', {
-            url: "/:community_path/people",
-            params: {
-                community_path: {
-                    value: null,
-                    squash: true
-                },
-                pageTitle: 'People'
-            },
-            views: {
-                'header': {
-                    templateUrl: "components/header/header_small.html"
-                },
-                'content': {
-                    templateUrl: 'components/users/user.list.html',
-                    controller: "UserController as users"
-                }
-            }
-        })
-
-        // Company views
-        .state('company', {
-            parent: 'root',
-            abstract: true
-        })
-        .state('company.dashboard', {
-            params: {
-                profile: {},
-                location: {},
-                pageTitle: 'Company Profile'
-            },
-            views: {
-                'header': {
-                    templateUrl: "components/header/header_small.html"
-                },
-                'content': {
-                    templateUrl: "../components/companies/company.dashboard.html",
-                    controller: 'CompanyProfileController as profile'
-                }
-            }
-        })
-        .state('company.list', {
-            url: "^/:location_path/:community_path/companies",
-            params: {
-                community_path: {
-                    value: null,
-                    squash: true
-                },
-                pageTitle: 'Companies'
-            },
-            views: {
-                'header': {
-                    templateUrl: "components/header/header_small.html"
-                },
-                'content': {
-                    templateUrl: '../components/companies/company.list.html',
-                    controller: "CompanyController as companies"
-                }
-            }
-        })
-        .state('company.add', {
-            url: "/:community_path/companies/add",
-            params: {
-                community: {},
-                community_path: {
-                    value: null,
-                    squash: true
-                },
-                pageTitle: 'Add Company',
-                pageDescription: 'AngelList URL is required to pull the logo, headline, and summary for each company.',
-                icon: 'pe-7s-id'
-            },
-            views: {
-                'header': {
-                    templateUrl: "components/header/header_small.html"
-                },
-                'content': {
-                    templateUrl: '../components/companies/company.add.html',
-                    controller: "AddCompanyController as add"
-                }
-            }
-
-        })
-
-
-
         // the root state with core dependencies for injection in child states
         .state('root', {
             url: "/:location_path",
             templateUrl: "components/nav/nav.html",
             controller: "NavigationController as nav",
             params: {
-                profile: {},  // must include params here for inheritance
                 community: {},
                 location: {},
                 tour: false
@@ -266,6 +156,131 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                     }]
             }
         })
+
+        // User views
+        .state('user', {
+            parent: 'root',
+            abstract: true
+        })
+        .state('user.dashboard', {
+            url: "^/:location_path/:community_path/:user_path",
+            params: {
+                location_path: {
+                    value: null,
+                    squash: true
+                },
+                community_path: {
+                    value: null,
+                    squash: true
+                },
+                pageTitle: 'User Profile'
+            },
+            resolve: {
+                profile: ['$stateParams', 'community_service',
+                    function($stateParams, community_service) {
+                        return community_service.getCommunity($stateParams.user_path)
+                            .error(function(response) {
+                                console.log(response);
+                                $state.go('404', { message: String(response) });
+                            });
+                    }
+                ]
+            },
+            views: {
+                'header': {
+                    templateUrl: "components/header/header_small.html"
+                },
+                'content': {
+                    templateUrl: "components/users/user.dashboard.html",
+                    controller: 'UserProfileController as profile'
+                }
+            }
+        })
+
+        .state('user.list', {
+            url: "/:community_path/people",
+            params: {
+                community_path: {
+                    value: null,
+                    squash: true
+                },
+                pageTitle: 'People'
+            },
+            views: {
+                'header': {
+                    templateUrl: "components/header/header_small.html"
+                },
+                'content': {
+                    templateUrl: 'components/users/user.list.html',
+                    controller: "UserController as users"
+                }
+            }
+        })
+
+        // Company views
+        .state('company', {
+            parent: 'root',
+            abstract: true
+        })
+        .state('company.dashboard', {
+            params: {
+                profile: {},
+                location: {},
+                pageTitle: 'Company Profile'
+            },
+            views: {
+                'header': {
+                    templateUrl: "components/header/header_small.html"
+                },
+                'content': {
+                    templateUrl: "../components/companies/company.dashboard.html",
+                    controller: 'CompanyProfileController as profile'
+                }
+            }
+        })
+        .state('company.list', {
+            url: "^/:location_path/:community_path/companies",
+            params: {
+                community_path: {
+                    value: null,
+                    squash: true
+                },
+                pageTitle: 'Companies'
+            },
+            views: {
+                'header': {
+                    templateUrl: "components/header/header_small.html"
+                },
+                'content': {
+                    templateUrl: '../components/companies/company.list.html',
+                    controller: "CompanyController as companies"
+                }
+            }
+        })
+        .state('company.add', {
+            url: "/:community_path/companies/add",
+            params: {
+                community: {},
+                community_path: {
+                    value: null,
+                    squash: true
+                },
+                pageTitle: 'Add Company',
+                pageDescription: 'AngelList URL is required to pull the logo, headline, and summary for each company.',
+                icon: 'pe-7s-id'
+            },
+            views: {
+                'header': {
+                    templateUrl: "components/header/header_small.html"
+                },
+                'content': {
+                    templateUrl: '../components/companies/company.add.html',
+                    controller: "AddCompanyController as add"
+                }
+            }
+
+        })
+
 
         .state('welcome', {
             parent: "root",
