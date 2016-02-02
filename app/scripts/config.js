@@ -33,6 +33,16 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
             }
         })
 
+        .state('404', {
+            templateUrl: "components/errors/404.html",
+            controller: "ErrorPageController as error"
+        })
+
+        .state('500', {
+            templateUrl: "components/errors/500.html",
+            controller: "ErrorPageController as error"
+        })
+
 
         // User views
         .state('user', {
@@ -139,6 +149,8 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
             }
 
         })
+
+
 
         // the root state with core dependencies for injection in child states
         .state('root', {
@@ -255,30 +267,6 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
             }
         })
 
-        .state('email', {
-            parent: 'root',
-            url: '/email',
-            views: {
-                'content': {
-                    templateUrl: "components/email.html",
-                    controller: 'EmailController as email'
-                }
-            }
-        })
-
-        .state('settings', {
-            parent: 'root',
-            url: '/settings',
-            params: {
-                location_path: null
-            },
-            views: {
-                'content': {
-                    templateUrl: "components/settings.html"
-                }
-            }
-        })
-
         .state('welcome', {
             parent: "root",
             url: "^/:location_path/:community_path/welcome?invite_code",
@@ -312,6 +300,64 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
             templateUrl: "components/welcome/welcome.invite.html",
             controller: "InviteUserController as invite"
         })
+
+        // Community views
+        .state('community', {
+            parent: "root",
+            abstract: true,
+            views: {
+                'header': {
+                    templateUrl: "components/header/header_small.html"
+                },
+                'content': {
+                    template: "<div ui-view='people'></div>"
+                }
+            }
+        })
+        .state('community.dashboard', {
+            url: "/:community_path",
+            params: {
+                location_path: null,
+                community_path: null,
+                tour: false,
+                pageTitle: 'Overview'
+            },
+            views: {
+                'people': {
+                    templateUrl: 'components/dashboard/dashboard.html',
+                    controller: "DashboardController as dashboard"
+                }
+            }
+        })
+        .state('community.dashboard.location',{})
+        .state('community.dashboard.cluster',{})
+        .state('community.dashboard.company',{}) // for user profile page when companies are in communities
+
+        .state('email', {
+            parent: 'root',
+            url: '/email',
+            views: {
+                'content': {
+                    templateUrl: "components/email.html",
+                    controller: 'EmailController as email'
+                }
+            }
+        })
+
+        .state('settings', {
+            parent: 'root',
+            url: '/settings',
+            params: {
+                location_path: null
+            },
+            views: {
+                'content': {
+                    templateUrl: "components/settings.html"
+                }
+            }
+        })
+
+
 
         .state('search', {
             parent: 'root',
@@ -350,47 +396,7 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
         
 
 
-        // Community views
-        .state('community', {
-            parent: "root",
-            abstract: true,
-            views: {
-                'header': {
-                    templateUrl: "components/header/header_small.html"
-                },
-                'content': {
-                    template: "<div ui-view='people'></div>"
-                }
-            }
-        })
-        .state('community.dashboard', {
-            url: "/:community_path",
-            params: {
-                location_path: null,
-                community_path: null,
-                tour: false,
-                pageTitle: 'Overview'
-            },
-            views: {
-                'people': {
-                    templateUrl: 'components/dashboard/dashboard.html',
-                    controller: "DashboardController as dashboard"
-                }
-            }
-        })
-        .state('community.dashboard.location',{})
-        .state('community.dashboard.cluster',{})
-        .state('community.dashboard.company',{}) // for user profile page when companies are in communities
 
-        .state('404', {
-            templateUrl: "components/errors/404.html",
-            controller: "ErrorPageController as error"
-        })
-
-        .state('500', {
-            templateUrl: "components/errors/500.html",
-            controller: "ErrorPageController as error"
-        });
 
     // Set default unmatched url stat
     $urlRouterProvider.otherwise(
@@ -438,7 +444,7 @@ angular
                 $('#minorsplash').css('display', 'none');
             }, 500);
         });
-/*
+
         $rootScope.$on('$stateChangeStart',
             function(event, toState, toParams, fromState, fromParams){
                 console.log(event);
@@ -446,7 +452,7 @@ angular
                 console.log(fromState);
                 console.log('to:');
                 console.log(toState);
-            })*/
+            })
 
     })
 
