@@ -357,8 +357,6 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
             }
         })
 
-
-
         .state('search', {
             parent: 'root',
             abstract: true,
@@ -392,8 +390,6 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                 }
             }
         })
-
-        
 
 
 
@@ -445,7 +441,7 @@ angular
             }, 500);
         });
 
-        $rootScope.$on('$stateChangeStart',
+       /* $rootScope.$on('$stateChangeStart',
             function(event, toState, toParams, fromState, fromParams){
                 console.log(event);
                 console.log('from: ');
@@ -453,7 +449,7 @@ angular
                 console.log('to:');
                 console.log(toState);
             })
-
+*/
     })
 
 
