@@ -265,37 +265,55 @@ function handleDeleteCompany(req, res) {
     var params = req.body.params;
 
     var delete_it = function() {
-        db.remove(process.env.DB_COMMUNITIES, params.company_key, 'true')
-            .then(function () {
 
-                // company has been deleted, now delete references in user records
+        // pull it first to make sure it's a company
 
-                db.newSearchBuilder()
-                    .collection(process.env.DB_COMMUNITIES)
-                    .limit(100)
-                    .offset(0)
-                    .sortRandom()
-                    .query('@value.type:"user" AND @value.roles.*.' + params.company_key + ':*')
-                    .then(function (flush) {
-                        for (r in flush.body.results) {
-                            for (i in flush.body.results[r].value.roles) {
-                                for (c in flush.body.results[r].value.roles[i]) {
-                                    if (c == params.company_key) delete flush.body.results[r].value.roles[i][c];
-                                    console.log('Deleted ' + i + ' from ' + flush.body.results[r].path.key);
-                                }
-                            }
-                        }
-                        res.status(204).send({message: 'Company deleted!'});
-                    })
-                    .fail(function (err) {
-                        console.log("WARNING: ", err);
-                        res.status(202).send({message: "The company has been deleted, but something else went wrong."});
-                    });
+        db.get(process.env.DB_COMMUNITIES, params.company_key)
+            .then(function(response) {
+
+                if (response.body.type == 'company') {
+
+                    db.remove(process.env.DB_COMMUNITIES, params.company_key, 'true')
+                        .then(function () {
+
+                            // company has been deleted, now delete references in user records
+
+                            db.newSearchBuilder()
+                                .collection(process.env.DB_COMMUNITIES)
+                                .limit(100)
+                                .offset(0)
+                                .sortRandom()
+                                .query('@value.type:"user" AND @value.roles.*.' + params.company_key + ':*')
+                                .then(function (flush) {
+                                    for (r in flush.body.results) {
+                                        for (i in flush.body.results[r].value.roles) {
+                                            for (c in flush.body.results[r].value.roles[i]) {
+                                                if (c == params.company_key) delete flush.body.results[r].value.roles[i][c];
+                                                console.log('Deleted ' + i + ' from ' + flush.body.results[r].path.key);
+                                            }
+                                        }
+                                    }
+                                    res.status(204).send({message: 'Company deleted!'});
+                                })
+                                .fail(function (err) {
+                                    console.log("WARNING: ", err);
+                                    res.status(202).send({message: "The company has been deleted, but something else went wrong."});
+                                });
+                        })
+                        .fail(function (err) {
+                            console.warn('WARNING: community620', err);
+                            res.status(202).send({message: "Something went wrong."});
+                        });
+                } else {
+                    console.warn('Not a company!');
+                    res.status(202).send({message: "This isn't a company!"});
+                }
             })
             .fail(function (err) {
-                console.warn('WARNING: community620', err);
-                res.status(202).send({message: "Something went wrong."});
+                console.warn('No company found!');
+                res.status(202).send({message: "No company found!"});
             });
+
     };
 
     try {

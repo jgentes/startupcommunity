@@ -289,6 +289,9 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                 },
                 go: null
             },
+            resolve: {
+              $modalInstance: function() { return null; } // necessary to avoid unknown provider for $modalInstance when controller not invoked through modal
+            },
             views: {
                 "@": { // this forces override of root template
                     templateUrl: "components/welcome/welcome.html",
