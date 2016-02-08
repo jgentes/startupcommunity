@@ -261,6 +261,7 @@ function handleGetCommunity(req, res) {
     if (community) {
 
         mc.get(community, function(err, value) {
+
             if (value) {
                 res.status(200).send(value);
                 pullCommunity(true);

@@ -11,7 +11,7 @@ function NavigationController($auth, $state, $window, $timeout, $location, $scop
 
         if (jQuery.isEmptyObject(location)) {
             if (community.type !== 'location' && community.profile && community.profile.home) {
-                this.location = communities.data[community.profile.home];
+                this.location = communities[community.profile.home];
             } else this.location = community;
         } else this.location = location;
 
@@ -48,8 +48,8 @@ function NavigationController($auth, $state, $window, $timeout, $location, $scop
     var self = this;
     this.max = 0;
 
-    if (top && top.data) {
-        this.top = top.data;
+    if (top) {
+        this.top = top;
         for (val in this.top.parents) {
             this.max += this.top.parents[val].value;
         }
@@ -95,10 +95,10 @@ function NavigationController($auth, $state, $window, $timeout, $location, $scop
 
     // PRIMARY LEFT-NAV ITEM LIST
 
-    this.communities = communities.data; // used in company list views
-    this.nav_communities = nav_communities.data;
+    this.communities = communities; // used in company list views
+    this.nav_communities = nav_communities;
 
-    if (!this.community) this.community = this.communities.data[this.location_path];
+    if (!this.community) this.community = this.communities[this.location_path];
     if (!this.community) {
         // if still no community, there's a problem, reload the app
         $window.location.reload();
@@ -161,7 +161,7 @@ function NavigationController($auth, $state, $window, $timeout, $location, $scop
     // BREADCRUMBS
     if (this.community.type == "user") {
         // note this changes location for nav items below
-        if (this.location.key == this.community.key) this.location = this.communities.data[this.community.profile.home];
+        if (this.location.key == this.community.key) this.location = this.communities[this.community.profile.home];
     }
 
     // to avoid duplicate location_path / community_path when navigating to people & companies

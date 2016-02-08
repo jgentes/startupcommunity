@@ -311,7 +311,7 @@ function handleDeleteCompany(req, res) {
             .query('@value.type:"user" AND (@value.roles.founder.' + params.company_key + ':* OR @value.roles.team.' + params.company_key + ':*)')
             .then(function (team) {
 
-                if (team.body && team.body.count && team.body.count == 0) {
+                if (team.body && (team.body.count == 0)) {
 
                     // no founders or team members, so it can be deleted by anyone
 
@@ -321,16 +321,17 @@ function handleDeleteCompany(req, res) {
 
                     // need to validate whether the current user is one of the founders or team members
 
+                    var del = false;
                     for (t in team.body.results) {
 
                         if (team.body.results[t].path.key == req.user) {
+                            del = true;
                             delete_it();
-                            break;
-                        } else {
-                            res.status(202).send({message: "Only a founder or team member of this company may delete it."});
                             break;
                         }
                     }
+
+                    if (!del) res.status(202).send({message: "Only a founder or team member of this company may delete it."});
                 }
             })
             .fail(function (err) {

@@ -7,7 +7,7 @@ angular
 function CompanyController($stateParams, company_service, result_service, $sce, community, communities) {
 
     this.community = community;
-    this.communities = communities.data;
+    this.communities = communities;
     this.selectedClusters = [];
     this.selectedNetworks = [];
     this.selectedStage = ['*'];
@@ -190,7 +190,7 @@ function CompanyProfileController($stateParams, $location, $mixpanel, user, comp
     }*/
 
     var self = this;
-    this.communities = communities.data;
+    this.communities = communities;
     this.company = this.communities[this.communities.key];
     this.community = this.company;
     this.team = { "count" : {}};

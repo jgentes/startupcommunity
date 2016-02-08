@@ -12,7 +12,7 @@ function DashboardController($stateParams, community, $state, community_top) {
     }
 
     var self = this;
-    this.top = community_top.data;
+    this.top = community_top;
     this.location_path = $stateParams.location_path;
     this.community_path = community.key == this.location_path ? undefined : community.key;
 

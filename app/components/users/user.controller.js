@@ -8,7 +8,7 @@ angular
 function UserController($stateParams, user_service, result_service, $sce, community, communities, sweet) {
     //todo usercontroller and company controller are dups, need to be consolidated
     this.community = community;
-    this.communities = communities.data;
+    this.communities = communities;
     this.selectedClusters = [];
     this.selectedNetworks = [];
     this.selectedRole = ['*'];
@@ -251,7 +251,7 @@ function ContactUserController($modalInstance, notify_service, sweet, community_
     };
 }
 
-function UserProfileController($stateParams, $http, $modal, $mixpanel, user, user_service, message_service, community, communities, profile) {
+function UserProfileController($stateParams, $http, $modal, $mixpanel, user, user_service, message_service, community, communities) {
 
     if (!jQuery.isEmptyObject($stateParams.profile)) {
         this.user = $stateParams.profile;
@@ -263,8 +263,8 @@ function UserProfileController($stateParams, $http, $modal, $mixpanel, user, use
 
     var self = this;
     this.community = community;
-    this.communities = communities.data;
-    this.location = communities.data[this.community.profile.home];
+    this.communities = communities;
+    this.location = communities[this.community.profile.home];
     this.reply = {};
     this.background_image = 'url(https://s3-us-west-2.amazonaws.com/startupcommunity/backgrounds/background' + Math.floor((Math.random() * 54) + 1) + '.jpg)';
 

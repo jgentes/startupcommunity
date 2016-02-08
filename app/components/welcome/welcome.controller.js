@@ -2,7 +2,7 @@ angular
     .module('startupcommunity')
     .controller('WelcomeController', WelcomeController);
 
-function WelcomeController($auth, $q, $http, $mixpanel, $stateParams, $scope, $state, $filter, sweet, community, location, user_service, company_service, community_service, user, company) {
+function WelcomeController($auth, $q, $http, $mixpanel, $modalInstance, $stateParams, $scope, $state, $filter, sweet, community, location, user_service, company_service, community_service, user, company) {
     var self = this;
     this.location = jQuery.isEmptyObject(location) ? community.profile.name : location.profile.name.split(',')[0];
     this.auth = false;
@@ -352,11 +352,11 @@ function WelcomeController($auth, $q, $http, $mixpanel, $stateParams, $scope, $s
                     } else {
                         sweet.show({
                             title: "Deleted!",
-                            text: self.selectedCompany.name + " is gone.",
+                            text: self.selectedCompany.name + " is gone. Note: There may be a delay before it is entirely removed from the community.",
                             type: "success"
                         }, function() {
                             $modalInstance.close();
-                            $state.reload();
+                            $state.go('community.dashboard', { location_path: self.user.profile.home });
                         })
                     }
                 });

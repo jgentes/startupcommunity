@@ -52,6 +52,7 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                 profile: {},
                 community: {},
                 location: {},
+                top: null,
                 tour: false
             },
             resolve: {
@@ -78,10 +79,13 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                             });
                     }],
                 communities: ['$stateParams', 'community_service', 'user',
-                    function($stateParams, community_service, user) {
+                    function($stateParams, community_service, user) {                        
                         // user is injected to prevent communities from loading until user is valid
                         return community_service.getCommunity($stateParams.location_path)
-                            .error(function(response) {
+                            .then(function(response) {
+                                return response.data;
+                            })
+                            .catch(function(response) {
                                 console.log(response);
                                 $state.go('404', { message: String(response) });
                             });
@@ -92,11 +96,13 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                         if (jQuery.isEmptyObject($stateParams.community)) { // if community is passed in via ui-sref, just use that
 
                             var pullCommunity = function () {
-                                if (communities.data[$stateParams.location_path]) { // if location_path has already been pulled, use that
-                                    return communities.data[$stateParams.location_path]; // this should also avoid re-pull for /people and /companies
+                                if (communities[$stateParams.location_path]) { // if location_path has already been pulled, use that
+                                    return communities[$stateParams.location_path]; // this should also avoid re-pull for /people and /companies
                                 } else {
-                                    var communityData = community_service.getCommunity($stateParams.location_path);
-                                    return communityData.data;
+                                    return community_service.getCommunity($stateParams.location_path)
+                                        .then(function(response) {
+                                            return response.data;
+                                        })
                                 }
                             };
 
@@ -108,10 +114,10 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
 
                                 if (lastitem == "people" || lastitem == "companies" || lastitem == "search" || lastitem == "invite" || lastitem == "add" || lastitem == "welcome") {
                                     if (lastitem == "invite" || lastitem == "add") {
-                                        return communities.data[url.pop()];
-                                    } else return communities.data[root]; // return preceding url path as community, such as tech for 'bend-or/tech/people'
-                                } else if (communities.data[lastitem] && (communities.data[lastitem].type == "cluster" || communities.data[lastitem].type == "network")) {
-                                    return communities.data[lastitem]; // return tech in 'bend-or/tech'
+                                        return communities[url.pop()];
+                                    } else return communities[root]; // return preceding url path as community, such as tech for 'bend-or/tech/people'
+                                } else if (communities[lastitem] && (communities[lastitem].type == "cluster" || communities[lastitem].type == "network")) {
+                                    return communities[lastitem]; // return tech in 'bend-or/tech'
                                 } else return pullCommunity();
                             } else return pullCommunity();
 
@@ -120,19 +126,22 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                 location: ['$stateParams', 'communities', 'community',
                     function($stateParams, communities, community) {
                         if (community.type == 'user' || community.type == 'company') {
-                            return communities.data[community.profile.home];
+                            return communities[community.profile.home];
                         } else if(jQuery.isEmptyObject($stateParams.location)) {
-                            if (communities.data[$stateParams.location_path] && communities.data[$stateParams.location_path].type == 'location') {
-                                return communities.data[$stateParams.location_path];
+                            if (communities[$stateParams.location_path] && communities[$stateParams.location_path].type == 'location') {
+                                return communities[$stateParams.location_path];
                             } else return {};
                         } else return $stateParams.location;
                     }],
-                nav_communities: ['community_service', 'communities', 'location',
-                    function(community_service, communities, location) {
-                        if (communities && communities.data && communities.data.key && location && location.key) {
-                            return (location.key == communities.data.key) ? communities :
+                nav_communities: ['community_service', 'communities', 'community', 'location', '$stateParams',
+                    function(community_service, communities, community, location, $stateParams) {
+                        if (communities && communities.key && location && location.key) {
+                            return (location.key == communities.key) ? communities :
                                 community_service.getCommunity(location.key)
-                                    .error(function(response) {
+                                    .then(function(response) {
+                                        return response.data;
+                                    })
+                                    .catch(function(response) {
                                         console.log(response);
                                     });
                         } else return communities;
@@ -142,14 +151,20 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                         if ($stateParams.top) {
                             return $stateParams.top;
                         } else if (location && location.key) {
-                            return community_service.getTop(location.key);
+                            return community_service.getTop(location.key)
+                                .then(function(response) {
+                                    return response.data;
+                                })
                         } else return undefined;
                     }],
                 community_top: ['community_service', 'community', 'location', 'top',
                     function (community_service, community, location, top) {
                         if (community && community.key && location && location.key) {
                             if (community.key !== location.key) {
-                                return community_service.getTop(location.key, community.key, community);
+                                return community_service.getTop(location.key, community.key, community)
+                                    .then(function(response) {
+                                        return response.data;
+                                    })
                             } else return top;
                         } else return top;
                     }],
