@@ -163,28 +163,8 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
             abstract: true
         })
         .state('user.dashboard', {
-            url: "^/:location_path/:community_path/:user_path",
             params: {
-                location_path: {
-                    value: null,
-                    squash: true
-                },
-                community_path: {
-                    value: null,
-                    squash: true
-                },
                 pageTitle: 'User Profile'
-            },
-            resolve: {
-                profile: ['$stateParams', 'community_service',
-                    function($stateParams, community_service) {
-                        return community_service.getCommunity($stateParams.user_path)
-                            .error(function(response) {
-                                console.log(response);
-                                $state.go('404', { message: String(response) });
-                            });
-                    }
-                ]
             },
             views: {
                 'header': {
@@ -196,7 +176,6 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                 }
             }
         })
-
         .state('user.list', {
             url: "/:community_path/people",
             params: {

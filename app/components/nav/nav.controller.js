@@ -28,6 +28,24 @@ function NavigationController($auth, $state, $window, $timeout, $location, $scop
         $state.go('404');
     }
 
+    // *** ROUTING OF ROOT PATHS ***
+    this.state = $state; // used in view because path doesn't always update properly.. esp. for /people
+    this.path = $location.path().replace(/\/$/, ""); //used for routing and used in view
+
+    if (this.path.split('/').length < 3) {
+        console.log(this.community);
+        switch (this.community.type) {
+            case 'user':
+                $state.go('user.dashboard');
+                break;
+            case 'company':
+                $state.go('company.dashboard');
+                break;
+            default:
+                $state.go('community.dashboard');
+        }
+    }
+
     var self = this;
     this.max = 0;
 
@@ -335,24 +353,6 @@ function NavigationController($auth, $state, $window, $timeout, $location, $scop
             }
         });
     };
-
-
-    // *** ROUTING OF ROOT PATHS ***
-    this.state = $state; // used in view because path doesn't always update properly.. esp. for /people
-    this.path = $location.path().replace(/\/$/, ""); //used for routing and used in view
-
-    if (this.path.split('/').length < 3) {
-        switch (this.community.type) {
-            case 'user':
-                $state.go('user.dashboard');
-                break;
-            case 'company':
-                $state.go('company.dashboard');
-                break;
-            default:
-                $state.go('community.dashboard');
-        }
-    }
 
     // CHECK FOR IFRAME (redirect, if needed, must happen after routing)
     var embed;
