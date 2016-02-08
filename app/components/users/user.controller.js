@@ -251,10 +251,15 @@ function ContactUserController($modalInstance, notify_service, sweet, community_
     };
 }
 
-function UserProfileController($http, $modal, $mixpanel, user, user_service, message_service, community, communities, profile) {
+function UserProfileController($stateParams, $http, $modal, $mixpanel, user, user_service, message_service, community, communities, profile) {
+
+    if (!jQuery.isEmptyObject($stateParams.profile)) {
+        this.user = $stateParams.profile;
+    } else if (community && community.type == "user") {
+        this.user = community;
+    } else this.user = user.data.user;
 
     this.loggedin = !!user.data.user;
-    this.user = profile;
 
     var self = this;
     this.community = community;

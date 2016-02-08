@@ -49,6 +49,7 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
             templateUrl: "components/nav/nav.html",
             controller: "NavigationController as nav",
             params: {
+                profile: {},
                 community: {},
                 location: {},
                 tour: false
@@ -136,9 +137,11 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                                     });
                         } else return communities;
                     }],
-                top: ['community_service', 'location',
-                    function (community_service, location) {
-                        if (location && location.key) {
+                top: ['community_service', 'location', '$stateParams',
+                    function (community_service, location, $stateParams) {
+                        if ($stateParams.top) {
+                            return $stateParams.top;
+                        } else if (location && location.key) {
                             return community_service.getTop(location.key);
                         } else return undefined;
                     }],
@@ -177,7 +180,7 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
             }
         })
         .state('user.list', {
-            url: "/:community_path/people",
+            url: "^/:location_path/:community_path/people",
             params: {
                 community_path: {
                     value: null,

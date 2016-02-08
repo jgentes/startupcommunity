@@ -33,7 +33,6 @@ function NavigationController($auth, $state, $window, $timeout, $location, $scop
     this.path = $location.path().replace(/\/$/, ""); //used for routing and used in view
 
     if (this.path.split('/').length < 3) {
-        console.log(this.community);
         switch (this.community.type) {
             case 'user':
                 $state.go('user.dashboard');
@@ -167,15 +166,15 @@ function NavigationController($auth, $state, $window, $timeout, $location, $scop
 
     // to avoid duplicate location_path / community_path when navigating to people & companies
     this.nav_url = this.location_path == this.community.key ?
-        "({location_path: nav.location_path, community: nav.community, query: '*'})" :
-        "({location_path: nav.location_path, community: nav.community, query: '*', community_path: nav.community.key})";
+        "({location_path: nav.location_path, community: nav.community, query: '*', top: nav.top})" :
+        "({location_path: nav.location_path, community: nav.community, query: '*', community_path: nav.community.key, top: nav.top})";
 
     // to set correct root path when navigating from user or company page
 
     this.nav_jump = (this.location && this.location.type == 'location') || ((this.community.type == "user" || this.community.type == "company") &&
         (this.location && this.location.type == 'location')) ?
-        "({community_path: item.key, community: item, query: '*', location_path: nav.location.key})" :
-        "({community_path: item.key, community: item, query: '*', location_path: nav.user.profile.home})";
+        "({community_path: item.key, community: item, query: '*', location_path: nav.location.key, top: nav.top})" :
+        "({community_path: item.key, community: item, query: '*', location_path: nav.user.profile.home, top: nav.top})";
 
     // SEARCH
 

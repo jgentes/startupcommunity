@@ -4,7 +4,7 @@
         <div class="grey-line">
         </div>
         <div id="logo" class="light-version" style="transition: all 0.4s ease 0s;">
-            <a ui-sref="community.dashboard({location_path: nav.location.key, community: nav.location, query: '*'})">
+            <a ui-sref="community.dashboard({location_path: nav.location.key, community: nav.location, query: '*', top: nav.top})">
                 <img ng-if="nav.community.profile && nav.community.profile.sc_logo" ng-src="{{nav.community.profile.sc_logo}}"/>
                 <img ng-if="!(nav.community.profile && nav.community.profile.sc_logo) && (nav.location.profile && nav.location.profile.sc_logo)" ng-src="{{nav.location.profile.sc_logo}}"/>
                 <img ng-if="!(nav.community.profile && nav.community.profile.sc_logo) && !(nav.location.profile && nav.location.profile.sc_logo)" src="/public/images/sc_logo.png" style="padding: 9px 20px 6px 18px;"/>
@@ -51,7 +51,7 @@
                             <a>Alerts</a>
                         </li>
                         <li ng-if="nav.user">
-                            <a ui-sref="settings({location_path: nav.user.key, location: nav.nav_communities[nav.user.profile.home], community: nav.nav_communities[nav.user.profile.home]})">Settings</a>
+                            <a ui-sref="settings({location_path: nav.user.key, location: nav.nav_communities[nav.user.profile.home], community: nav.nav_communities[nav.user.profile.home], top: nav.top})">Settings</a>
                         </li>
                         <li ng-if="nav.user">
                             <a ng-click="nav.openChat()">Help</a>
@@ -126,7 +126,7 @@
             <li class="active">
                 <ul class="nav nav-second-level">
                     <li>
-                        <a ui-sref="community.dashboard({location_path: nav.location.key, community_path: '', community: nav.location, location: nav.location, query: '*'})" style="padding-left: 15px; font-size: 16px; font-weight: bold; border-bottom: 1px solid #eee; background-color:#F6F8F9; border-left: 2px solid #82BC4B;" ng-click="l_working = true">
+                        <a ui-sref="community.dashboard({location_path: nav.location.key, community_path: '', community: nav.location, location: nav.location, query: '*', top: nav.top})" style="padding-left: 15px; font-size: 16px; font-weight: bold; border-bottom: 1px solid #eee; background-color:#F6F8F9; border-left: 2px solid #82BC4B;" ng-click="l_working = true">
                             <span ng-if="nav.location" style="white-space:nowrap;font-size:18px;">
                                 <span class="fa fa-angle-down" style="font-size: 18px; margin: 0 -2px 0 -4px;"></span>
                                 &nbsp;{{nav.location.profile.name.split(',').slice(0, (nav.location.profile.name.split(',').length - 1) || 1).join()}}
@@ -149,7 +149,7 @@
                         <a>No locations yet</a>
                     </li>
                     <li ng-repeat="item in nav.locations">
-                        <a ui-sref="community.dashboard({location_path: item.key, community_path: '', community: item, location: item, query: '*'})" ng-class="{active: nav.path.includes('/' + item.key)}" ng-click="li_working = true"><i class="fa fa-globe"></i> {{item.profile.name}}
+                        <a ui-sref="community.dashboard({location_path: item.key, community_path: '', community: item, location: item, query: '*', top: nav.top})" ng-class="{active: nav.path.includes('/' + item.key)}" ng-click="li_working = true"><i class="fa fa-globe"></i> {{item.profile.name}}
                         <span loading-bars ng-show="li_working"></span>
                         </a>
                     </li>
@@ -182,12 +182,12 @@
                 </a>
                 <ul class="nav nav-second-level">
                     <li ng-repeat="item in nav.top.parents | orderBy: 'item.value' : reverse">
-                        <a ui-sref="community.dashboard({community_path: item.label, community: nav.nav_communities[item.label], query: '*', location_path: nav.location.key || nav.user.profile.home})" ng-class="{active: nav.path.includes('/' + item.label)}" ng-click="cl_working = true">
+                        <a ui-sref="community.dashboard({community_path: item.label, community: nav.nav_communities[item.label], query: '*', location_path: nav.location.key || nav.user.profile.home, top: nav.top})" ng-class="{active: nav.path.includes('/' + item.label)}" ng-click="cl_working = true">
                             <span>
                                 <i ng-class="'fa ' + nav.nav_communities[item.label].profile.icon"></i> {{item.label[0].toUpperCase() + item.label.slice(1)}}
                                 <span loading-bars ng-show="cl_working"></span>
 
-                                <a ng-repeat="c in nav.clusters[item.label]" ui-sref="community.dashboard({community_path: c.key, community: nav.nav_communities[c.key], query: '*', location_path: nav.location.key || nav.user.profile.home})" ng-class="{active: nav.path.includes('/' + c.key)}" ng-click="clc_working = true" style="padding-left:40px;">
+                                <a ng-repeat="c in nav.clusters[item.label]" ui-sref="community.dashboard({community_path: c.key, community: nav.nav_communities[c.key], query: '*', location_path: nav.location.key || nav.user.profile.home, top: nav.top})" ng-class="{active: nav.path.includes('/' + c.key)}" ng-click="clc_working = true" style="padding-left:40px;">
                                     <i ng-class="'fa ' + nav.nav_communities[item.label].profile.icon"></i> {{c.community_profiles[nav.location.key].name[0].toUpperCase() + c.community_profiles[nav.location.key].name.slice(1);}}
                                     <span loading-bars ng-show="clc_working"></span>
                                 </a>
