@@ -140,6 +140,7 @@ app.post('/api/2.1/messages/add', auth.ensureAuthenticated, messagesApis.addMess
 
 // new for 2.2
 app.post('/api/2.1/remove', auth.ensureAuthenticated, userApis.removeCommunity);
+app.post('/api/2.2/companies/delete', auth.ensureAuthenticated, companyApis.deleteCompany);
 
 // Auth
 app.post('/auth/linkedin', auth.linkedin);

@@ -227,6 +227,13 @@ angular
                     }
                 });
             },
+            deleteCompany: function(company_key) {
+                return $http.post('/api/2.2/companies/delete', {
+                    params: {
+                        company_key: company_key
+                    }
+                });
+            },
             getLogoUrl: function(filename, company_name) {
                 return $http.get('/api/2.1/companies/url?filename=' + filename + '&company_name=' + company_name);
             }

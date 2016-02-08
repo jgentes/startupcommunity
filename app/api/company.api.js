@@ -11,6 +11,7 @@ var Q = require('q'),
 var CompanyApi = function() {
         this.companySearch = handleCompanySearch;
         this.addCompany = handleAddCompany;
+        this.deleteCompany = handleDeleteCompany;
         this.getLogoUrl = handleGetLogoUrl;
 };
 
@@ -380,6 +381,72 @@ var companyPull = function (company, role, location_key, user, key, callback) {
             res.status(500).send({ message: "Something went wrong."});
         });
 
+};
+
+function handleDeleteCompany(req, res) {
+
+    // always use ensureAuth before this (to acquire req.user)
+    var params = req.body.params;
+
+    var delete_it = function() {
+        db.remove(process.env.DB_COMMUNITIES, params.company_key, 'true')
+            .then(function (finalres) {
+
+
+                res.status(204).send({message: 'Company deleted!'});
+            })
+            .fail(function (err) {
+                console.warn('WARNING: community620', err);
+                res.status(202).send({message: "Something went wrong."});
+            });
+    }
+
+    try {
+        console.log('Deleting company: ' + params.company_key);
+
+        // first determine if the company has founders or team members. Pull from DB to prevent tampering.
+
+        db.newSearchBuilder()
+            .collection(process.env.DB_COMMUNITIES)
+            .limit(100)
+            .offset(0)
+            .sortRandom()
+            .query('@value.type:"user" AND (@value.roles.founder.' + params.company_key + ':* OR @value.roles.team.' + params.company_key + ':*)')
+            .then(function (team) {
+
+                if (team.body && team.body.count && team.body.count == 0) {
+
+                    // no founders or team members, so it can be deleted by anyone
+
+                    delete_it();
+
+                } else {
+
+                    // need to validate whether the current user is one of the founders or team members
+
+                    for (t in team.body.results) {
+
+                        if (team.body.results[t].path.key == req.user) {
+                            delete_it();
+                            break;
+                        } else {
+                            res.status(202).send({message: "Only a founder or team member of this company may delete it."});
+                            break;
+                        }
+                    }
+                }
+            })
+            .fail(function (err) {
+                console.log("WARNING: ", err);
+                res.status(202).send({message: err});
+            });
+
+
+    }
+    catch(err) {
+        console.warn("WARNING: ", err);
+        res.status(202).send({message: err});
+    }
 };
 
 module.exports = CompanyApi;

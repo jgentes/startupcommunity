@@ -271,7 +271,7 @@ function WelcomeController($auth, $q, $http, $mixpanel, $stateParams, $scope, $s
             })
     };
 
-    // used in add company view
+    // used in add/edit company view
     this.showRole = function() {
         var selected = $filter('filter')(self.selectRoles, {value: self.selectedRole}, true);
         return selected[0].text;
@@ -323,6 +323,44 @@ function WelcomeController($auth, $q, $http, $mixpanel, $stateParams, $scope, $s
 
         } else self.submitted = true;
 
+    };
+
+    this.deleteCompany = function (company_key) {
+        self.working = true;
+
+        sweet.show({
+            title: "Are you sure?",
+            text: "If this company has founders or team members in the system, only they can delete it.",
+            type: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#DD6B55",
+            confirmButtonText: "Yes, delete " + self.selectedCompany.name + "!",
+            closeOnConfirm: false
+        }, function () {
+
+            company_service.deleteCompany(company_key)
+                .then(function(response) {
+                    self.working = false;
+
+                    if (response.status !== 204) {
+                        sweet.show({
+                            title: "Sorry, something went wrong.",
+                            text: response.data.message,
+                            type: "error"
+                        });
+
+                    } else {
+                        sweet.show({
+                            title: "Deleted!",
+                            text: self.selectedCompany.name + " is gone.",
+                            type: "success"
+                        }, function() {
+                            $modalInstance.close();
+                            $state.reload();
+                        })
+                    }
+                });
+        });
     };
 
     this.next = function() {
