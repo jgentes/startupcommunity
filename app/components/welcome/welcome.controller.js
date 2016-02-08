@@ -94,7 +94,7 @@ function WelcomeController($auth, $q, $http, $mixpanel, $stateParams, $scope, $s
     };
 
     // if already authenticated, just move straight to roles
-    if (this.user.profile) {
+    if (this.user && this.user.profile) {
         checkProfile();
         if ($stateParams.go) {
             this.auth = true;
