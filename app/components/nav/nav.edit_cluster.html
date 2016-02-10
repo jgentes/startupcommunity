@@ -1,14 +1,14 @@
 <div class="inmodal">
     <div class="color-line"></div>
     <div class="modal-header">
-        <h4 class="modal-title" ng-show="!edit.update">Add a Cluster in {{edit.location.profile.name}}</h4>
+        <h4 class="modal-title" ng-show="!edit.update">Add an Industry in {{edit.location.profile.name}}</h4>
         <h4 class="modal-title" ng-show="edit.update">Update {{edit.community.name}} in {{edit.location.profile.name}}</h4>
-        <p class="font-bold">A cluster is an entrepreneurial ecosystem in support of a specific industry. Clusters are made up of mentors, investors, companies, accelerators, coworking spaces, and events that connect people within the community and foster the creation of new business.</p>
+        <p class="font-bold">An industry cluster is an entrepreneurial ecosystem in support of a specific industry. Industries are made up of mentors, investors, companies, accelerators, coworking spaces, and events that connect people within the community and foster the creation of new business.</p>
     </div>
     <div class="modal-body">
         <form name="edit.form">
             <div class="hpanel">
-                <div class="panel-heading" style="font-size: 20px;">1. Select a parent industry for this cluster</div>
+                <div class="panel-heading" style="font-size: 20px;">1. Select a parent for this industry</div>
                 <select class="form-control m-b" ng-model="edit.communityForm.parent" style="margin-bottom: 5px;" required>
                     <option ng-repeat="parent in edit.parents">{{ parent }}</option>
                 </select>
@@ -16,8 +16,7 @@
                 <div class="m-t-xs" ng-show="!edit.communityForm.parent && edit.submitted">
                     <span class="text-danger">&nbsp;&nbsp;<i class="fa fa-exclamation-triangle"></i> A parent is required.</span>
                 </div>
-                <br><br>
-                <div class="panel-heading" style="font-size: 20px;">2. Give the cluster a name</div>
+                <div class="panel-heading" style="font-size: 20px;">2. Give the industry a name</div>
                 <input type="text" class="form-control input-lg" placeholder="Tech, Bio-Science, Craft Brew, etc.." ng-model="edit.communityForm.name" style="margin-bottom: 5px;" required>
                 <div class="m-t-xs" ng-show="!edit.communityForm.name && edit.submitted">
                     <span class="text-danger">&nbsp;&nbsp;<i class="fa fa-exclamation-triangle"></i> A name is required.</span>
@@ -30,7 +29,7 @@
                 <div class="panel-heading" style="font-size: 20px;">4. And a short description</div>
                 <input type="text" class="form-control input-lg" placeholder="Local hardware and software product companies" ng-model="edit.communityForm.headline">
                 <br>
-                <div class="panel-heading" style="font-size: 20px;">5. Select the sub-industries that make up this cluster</div>
+                <div class="panel-heading" style="font-size: 20px;">5. Select the markets that make up this industry</div>
                 <div class="panel-body industry_select" style="padding:5px; margin-bottom:5px;">
                     <ui-select multiple ng-model="edit.communityForm.industries" style="border:none;" required>
                         <ui-select-match placeholder="Search by industry..">{{$item}}</ui-select-match>
@@ -39,18 +38,18 @@
                         </ui-select-choices>
                     </ui-select>
                 </div>
-                <em>Your cluster will consist of companies that have associated themselves with these industries.</em>
+                <em>Your industries will consist of companies that have associated themselves with these markets.</em>
                 <div class="m-t-xs" ng-show="!edit.communityForm.industries && edit.submitted">
-                    <span class="text-danger">&nbsp;&nbsp;<i class="fa fa-exclamation-triangle"></i> At least one industry is required.</span>
+                    <span class="text-danger">&nbsp;&nbsp;<i class="fa fa-exclamation-triangle"></i> At least one market is required.</span>
                 </div>
             </div>
         </form>
     </div>
     <div class="modal-footer">
         <button type="button" class="btn btn-default" ng-click="edit.cancel()">Cancel</button>
-        <button type="button" class="btn btn-danger pull-left" ng-click="edit.deleteCommunity()" ng-show="edit.update">Delete {{edit.communityForm.name || 'Cluster'}}</button>
+        <button type="button" class="btn btn-danger pull-left" ng-click="edit.deleteCommunity()" ng-show="edit.update">Delete {{edit.communityForm.name || 'Industry'}}</button>
         <button type="button" class="btn btn-primary" ng-click="edit.editCommunity()">
-            <span ng-show="!edit.update">Create</span><span ng-show="edit.update">Update</span> {{edit.communityForm.name || 'Cluster'}}
+            <span ng-show="!edit.update">Create</span><span ng-show="edit.update">Update</span> {{edit.communityForm.name || 'Industry'}}
             <div loading-bars ng-show="edit.working" style="padding-top: 5px; display: inline;"></div>
         </button>
     </div>

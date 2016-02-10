@@ -316,6 +316,19 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
             controller: "InviteUserController as invite"
         })
 
+        .state('settings', {
+            parent: 'root',
+            url: '/settings',
+            params: {
+                location_path: null
+            },
+            views: {
+                'content': {
+                    templateUrl: "components/settings.html"
+                }
+            }
+        })
+
         // Community views
         .state('community', {
             parent: "root",
@@ -355,19 +368,6 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                 'content': {
                     templateUrl: "components/email.html",
                     controller: 'EmailController as email'
-                }
-            }
-        })
-
-        .state('settings', {
-            parent: 'root',
-            url: '/settings',
-            params: {
-                location_path: null
-            },
-            views: {
-                'content': {
-                    templateUrl: "components/settings.html"
                 }
             }
         })
