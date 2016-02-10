@@ -53,6 +53,7 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                 community: {},
                 location: {},
                 top: null,
+                communities: null,
                 tour: false
             },
             resolve: {
@@ -101,6 +102,7 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                                 } else {
                                     return community_service.getCommunity($stateParams.location_path)
                                         .then(function(response) {
+                                            console.log('got com1')
                                             return response.data;
                                         })
                                 }
@@ -135,9 +137,12 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                     }],
                 nav_communities: ['community_service', 'communities', 'community', 'location', '$stateParams',
                     function(community_service, communities, community, location, $stateParams) {
-                        console.log($stateParams)
+                        // this logic is mostly to avoid pulling community from db if it can be passed from previous state
                         if (communities && communities.key && location && location.key) {
-                            return (location.key == communities.key) ? communities :
+                            return (location.key == communities.key) ?
+                                communities :
+                                ($stateParams.communities && $stateParams.communities.key == location.key) ?
+                                $stateParams.communities :
                                 community_service.getCommunity(location.key)
                                     .then(function(response) {
                                         return response.data;
