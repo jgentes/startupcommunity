@@ -135,6 +135,7 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                     }],
                 nav_communities: ['community_service', 'communities', 'community', 'location', '$stateParams',
                     function(community_service, communities, community, location, $stateParams) {
+                        console.log($stateParams)
                         if (communities && communities.key && location && location.key) {
                             return (location.key == communities.key) ? communities :
                                 community_service.getCommunity(location.key)
