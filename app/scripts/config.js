@@ -156,7 +156,7 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                     function (community_service, location, $stateParams) {
                         if ($stateParams.top) {
                             return $stateParams.top;
-                        } else if (location && location.key) {
+                        } else if (location && location.key && ((location.type == 'location') || (location.type == 'network') || (location.type == 'industry'))) {
                             return community_service.getTop(location.key)
                                 .then(function(response) {
                                     return response.data;
@@ -166,7 +166,7 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                 community_top: ['community_service', 'community', 'location', 'top',
                     function (community_service, community, location, top) {
                         if (community && community.key && location && location.key) {
-                            if (community.key !== location.key) {
+                            if (community.key !== location.key && ((community.type == 'location') || (community.type == 'network') || (community.type == 'industry'))) {
                                 return community_service.getTop(location.key, community.key, community)
                                     .then(function(response) {
                                         return response.data;
