@@ -91,7 +91,7 @@ function handleGetCommunity(req, res) {
 
     var searchString = '@path.key: ' + community; // grab the primary community object, don't use parens here
     searchString += ' OR ((@value.communities: "' + community + '"'; // + grab anything associated with this community in this location
-    //searchString += ' OR @value.primary: true '; // + pull primary industries (clusters)
+    searchString += ' OR @value.primary: true '; // + pull primary industries (clusters)
     searchString += ' OR @value.parents: "' + community + '")'; // + grab anything that has this community as a parent
     searchString += ' AND NOT @value.type:("company" OR "user"))'; // exclude companies and users, except if @path.key is a company or user
 
@@ -172,10 +172,6 @@ function handleGetCommunity(req, res) {
                     } else checkcache(cache, community, newresponse);
                 };
 
-                for (a in result.body.results) {
-                    console.log(result.body.results[a].path.key);
-                }
-
                 if (result.body.results.length > 0) {
                     var found = false;
                     for (comm in result.body.results) {
@@ -233,9 +229,6 @@ function handleGetCommunity(req, res) {
                                     .offset(0)
                                     .query(ubersearch)
                                     .then(function (result2) {
-                                        for (t in result2.body.results) {
-                                            console.log(result2.body.results[t].path.key);
-                                        }
                                         finalize(result2.body.results);
                                     })
                                     .fail(function (err) {

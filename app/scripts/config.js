@@ -82,7 +82,9 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                 communities: ['$stateParams', 'community_service', 'user',
                     function($stateParams, community_service, user) {                        
                         // user is injected to prevent communities from loading until user is valid
-                        return community_service.getCommunity($stateParams.location_path)
+                        if ($stateParams.communities && ($stateParams.communities.key == $stateParams.location_path)) {
+                            return $stateParams.communities;
+                        } else return community_service.getCommunity($stateParams.location_path)
                             .then(function(response) {
                                 return response.data;
                             })
@@ -93,7 +95,6 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                     }],
                 community: ['$stateParams', '$location', 'communities', 'community_service',
                     function($stateParams, $location, communities, community_service) {
-
                         if (jQuery.isEmptyObject($stateParams.community)) { // if community is passed in via ui-sref, just use that
 
                             var pullCommunity = function () {
@@ -102,7 +103,6 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                                 } else {
                                     return community_service.getCommunity($stateParams.location_path)
                                         .then(function(response) {
-                                            console.log('got com1')
                                             return response.data;
                                         })
                                 }
@@ -138,15 +138,14 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                 nav_communities: ['community_service', 'communities', 'community', 'location', '$stateParams',
                     function(community_service, communities, community, location, $stateParams) {
                         // this logic is mostly to avoid pulling community from db if it can be passed from previous state
-                        if ($stateParams.communities && ($stateParams.communities.key == location.key)) {
-                            return $stateParams.communities;
-                        } else if (communities && communities.key && location && location.key) {
+                        if (communities && communities.key && location && location.key) {
                             return (location.key == communities.key) ?
                                 communities :
                                 ($stateParams.communities && $stateParams.communities.key == location.key) ?
                                 $stateParams.communities :
                                 community_service.getCommunity(location.key)
                                     .then(function(response) {
+                                        console.log('pulled')
                                         return response.data;
                                     })
                                     .catch(function(response) {
@@ -158,7 +157,7 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                     function (community_service, location, $stateParams) {
                         if ($stateParams.top) {
                             return $stateParams.top;
-                        } else if (location && location.key && ((location.type == 'location') || (location.type == 'network') || (location.type == 'industry'))) {
+                        } else if (location && location.key && ((location.type == 'location') || (location.type == 'network') || (location.type == 'cluster'))) {
                             return community_service.getTop(location.key)
                                 .then(function(response) {
                                     return response.data;
@@ -168,7 +167,7 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                 community_top: ['community_service', 'community', 'location', 'top',
                     function (community_service, community, location, top) {
                         if (community && community.key && location && location.key) {
-                            if (community.key !== location.key && ((community.type == 'location') || (community.type == 'network') || (community.type == 'industry'))) {
+                            if (community.key !== location.key && ((community.type == 'location') || (community.type == 'network') || (community.type == 'cluster'))) {
                                 return community_service.getTop(location.key, community.key, community)
                                     .then(function(response) {
                                         return response.data;

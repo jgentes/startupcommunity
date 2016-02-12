@@ -182,12 +182,12 @@
                 </a>
                 <ul class="nav nav-second-level">
                     <li ng-repeat="item in nav.top.parents | orderBy: 'item.value' : reverse">
-                        <a ui-sref="community.dashboard({community_path: item.label, community: nav.nav_communities[item.label], query: '*', location_path: nav.location.key, communities: nav.communities || nav.user.profile.home, top: nav.top, communities: nav.communities})" ng-class="{active: nav.path.includes('/' + item.label)}" ng-click="cl_working = true">
+                        <a ui-sref="community.dashboard({community_path: item.label, community: nav.nav_communities[item.label], query: '*', location_path: (nav.location.key || nav.user.profile.home), top: nav.top, communities: nav.communities})" ng-class="{active: nav.path.includes('/' + item.label)}" ng-click="cl_working = true">
                             <span>
                                 <i ng-class="'fa ' + nav.industry_icons[item.label].icon"></i> {{item.label[0].toUpperCase() + item.label.slice(1)}}
                                 <span loading-bars ng-show="cl_working"></span>
 
-                                <a ng-repeat="c in nav.clusters[item.label]" ui-sref="community.dashboard({community_path: c.key, community: nav.nav_communities[c.key], query: '*', location_path: nav.location.key, communities: nav.communities || nav.user.profile.home, top: nav.top, communities: nav.communities })" ng-class="{active: nav.path.includes('/' + c.key)}" ng-click="clc_working = true" style="padding-left:40px;">
+                                <a ng-repeat="c in nav.clusters[item.label]" ui-sref="community.dashboard({community_path: c.key, community: nav.nav_communities[c.key], query: '*', location_path: (nav.location.key || nav.user.profile.home), top: nav.top, communities: nav.communities })" ng-class="{active: nav.path.includes('/' + c.key)}" ng-click="clc_working = true" style="padding-left:40px;">
                                     <i ng-class="'fa ' + nav.industry_icons[item.label].icon"></i> {{c.community_profiles[nav.location.key].name[0].toUpperCase() + c.community_profiles[nav.location.key].name.slice(1);}}
                                     <span loading-bars ng-show="clc_working"></span>
                                 </a>
