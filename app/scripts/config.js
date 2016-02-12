@@ -138,7 +138,9 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                 nav_communities: ['community_service', 'communities', 'community', 'location', '$stateParams',
                     function(community_service, communities, community, location, $stateParams) {
                         // this logic is mostly to avoid pulling community from db if it can be passed from previous state
-                        if (communities && communities.key && location && location.key) {
+                        if ($stateParams.communities && ($stateParams.communities.key == location.key)) {
+                            return $stateParams.communities;
+                        } else if (communities && communities.key && location && location.key) {
                             return (location.key == communities.key) ?
                                 communities :
                                 ($stateParams.communities && $stateParams.communities.key == location.key) ?
