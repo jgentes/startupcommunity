@@ -218,15 +218,15 @@ function NavigationController($auth, $state, $window, $timeout, $location, $scop
 
     // to avoid duplicate location_path / community_path when navigating to people & companies
     this.nav_url = this.location_path == this.community.key ?
-        "({location_path: nav.location_path, community: nav.community, query: '*', top: nav.top, communities: nav.communities})" :
-        "({location_path: nav.location_path, community: nav.community, query: '*', community_path: nav.community.key, top: nav.top, communities: nav.communities})";
+        "({location_path: nav.location_path, community: nav.community, query: '*', top: nav.top, communities: nav.communities, user: nav.user })" :
+        "({location_path: nav.location_path, community: nav.community, query: '*', community_path: nav.community.key, top: nav.top, communities: nav.communities, user: nav.user })";
 
     // to set correct root path when navigating from user or company page
 
     this.nav_jump = (this.location && this.location.type == 'location') || ((this.community.type == "user" || this.community.type == "company") &&
         (this.location && this.location.type == 'location')) ?
-        "({community_path: item.key, community: item, query: '*', location_path: nav.location.key, top: nav.top, communities: nav.communities })" :
-        "({community_path: item.key, community: item, query: '*', location_path: nav.user.profile.home, top: nav.top, communities: nav.communities})";
+        "({community_path: item.key, community: item, query: '*', location_path: nav.location.key, top: nav.top, communities: nav.communities, user: nav.user })" :
+        "({community_path: item.key, community: item, query: '*', location_path: nav.user.profile.home, top: nav.top, communities: nav.communities, user: nav.user })";
 
     // SEARCH
 

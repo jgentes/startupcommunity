@@ -57,9 +57,11 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                 tour: false
             },
             resolve: {
-                user: ['user_service', '$state', '$mixpanel', '$location',
-                    function(user_service, $state, $mixpanel, $location) {
-                        return user_service.getProfile()
+                user: ['user_service', '$state', '$mixpanel', '$location', '$stateParams',
+                    function(user_service, $state, $mixpanel, $location, $stateParams) {
+                        if ($stateParams.user) {
+                            return $stateParams.user;
+                        } else return user_service.getProfile()
                             .success(function(response) {
 
                                 if (response.message) {
