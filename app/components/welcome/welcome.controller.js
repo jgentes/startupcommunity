@@ -15,7 +15,7 @@ function WelcomeController($auth, $q, $http, $window, $mixpanel, $uibModalInstan
     this.parents = community_service.parents();
     this.community = community; // used in add company (not welcome) modal
     this.stages = [ 'Bootstrap', 'Seed', 'Series A', 'Series B', 'Later'];
-    this.user = (user && user.data && user.data.user) ? user.data.user : user;
+    this.user = user;
     this.quote = true;
 
     this.shouldIadd = function() {

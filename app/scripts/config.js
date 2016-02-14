@@ -54,15 +54,17 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                 location: {},
                 top: null,
                 communities: null,
+                user: null,
                 tour: false
             },
             resolve: {
                 user: ['user_service', '$state', '$mixpanel', '$location', '$stateParams',
                     function(user_service, $state, $mixpanel, $location, $stateParams) {
+                        console.log($stateParams);
                         if ($stateParams.user) {
                             return $stateParams.user;
                         } else return user_service.getProfile()
-                            .success(function(response) {
+                            .then(function(response) {
 
                                 if (response.message) {
                                     $location.url('/logout');
@@ -73,10 +75,12 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                                         "$name": response.profile.name,
                                         "$email": response.profile.email
                                     });
-
                                 }
+
+                                return response.data;
+
                             })
-                            .error(function(response) {
+                            .catch(function(response) {
                                 //todo add exception logging here
                                 $location.url('/logout');
                             });

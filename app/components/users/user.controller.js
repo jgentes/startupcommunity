@@ -257,9 +257,9 @@ function UserProfileController($stateParams, $http, $uibModal, $mixpanel, user, 
         this.user = $stateParams.profile;
     } else if (community && community.type == "user") {
         this.user = community;
-    } else this.user = user.data.user;
+    } else this.user = user;
 
-    this.loggedin = !!user.data.user;
+    this.loggedin = !!user;
 
     var self = this;
     this.community = community;
@@ -322,10 +322,10 @@ function UserProfileController($stateParams, $http, $uibModal, $mixpanel, user, 
     this.askQuestion = function() {
         self.working = true;
 
-        if (self.question && user.data.user) {
+        if (self.question && user) {
             // update user profile
 
-            message_service.addMessage('question', user.data.user, self.user, self.question)
+            message_service.addMessage('question', user, self.user, self.question)
                 .then(function (response) {
                     self.question = undefined;
 
@@ -360,10 +360,10 @@ function UserProfileController($stateParams, $http, $uibModal, $mixpanel, user, 
     this.postReply = function(parent) {
         self.working[parent.key] = true;
 
-        if (self.reply[parent.key] && user.data.user) {
+        if (self.reply[parent.key] && user) {
             // update user profile
 
-            message_service.addMessage('reply', user.data.user, self.user, self.reply[parent.key], parent)
+            message_service.addMessage('reply', user, self.user, self.reply[parent.key], parent)
                 .then(function (response) {
                     self.reply[parent.key] = undefined;
 

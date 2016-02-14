@@ -3,7 +3,8 @@ angular
     .controller('NavigationController', NavigationController);
 
 function NavigationController($auth, $state, $window, $timeout, $location, $scope, $stateParams, $uibModal, user_service, community_service, user, location, community, communities, nav_communities, top, knowtify, errorLogService) {
-    if (user.data && user.data.token) $auth.setToken(user.data.token); // update local storage with latest user profile
+   
+    if (user && user.token) $auth.setToken(user.token); // update local storage with latest user profile
 
     // SENSITIVE VARIABLES THAT AFFECT NAVIGATION AND ALL CHILD TEMPLATES
     // When used in ui-sref links: location_path affects the url, location affects header and content, community affects header and second url parameter
@@ -57,9 +58,9 @@ function NavigationController($auth, $state, $window, $timeout, $location, $scop
 
     // ANONYMOUS ACCESS OR PROFILE DISPLAY
 
-    if ($auth.isAuthenticated() && user.data.user) {
+    if ($auth.isAuthenticated() && user) {
 
-        this.user = user.data.user; // reference 'this' by using 'nav' from 'NavigationController as nav' - * nav is also usable in child views *
+        this.user = user; // reference 'this' by using 'nav' from 'NavigationController as nav' - * nav is also usable in child views *
 
         knowtify.push(['load_inbox', 'knowtify', {email: this.user.profile.email}]);
 

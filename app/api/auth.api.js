@@ -191,6 +191,7 @@ function handleSignup(req, res) {
                                 if (result.body.results.length > 0) {
                                     console.log("USER:");
                                     console.log(user);
+                                    // TODO put token in user record
                                     res.send({ token: handleCreateToken(req, result.body.results[0]), user: result.body.results[0] });
                                 } else {
                                     console.warn("WARNING: Search couldn't find user after posting new user!");
@@ -231,6 +232,7 @@ function handleLogin(req, res) {
                 console.log("FOUND USER");
                 var hash = result.body.results[0].value.profile.password;
                 if (bcrypt.compareSync(req.body.profile.password, hash)) {
+                    // TODO put token in user record
                     res.send({ token: handleCreateToken(req, result.body.results[0]), user: result.body.results[0] });
                 } else {
                     console.log("PASSWORDS DO NOT MATCH");
@@ -448,11 +450,9 @@ function handleLinkedin(req, res) {
                                     console.error("Profile update failed: ", err);
                                 });
 
-
-                            res.send({
-                                token: handleCreateToken(req, result.body.results[0]),
-                                user: result.body.results[0]
-                            });
+                            var newresponse = result.body.results[0];
+                            newresponse['token'] = handleCreateToken(req, result.body.results[0])
+                            res.send(newresponse);
                         } else {
                             // search by email
                             db.newSearchBuilder()
@@ -479,10 +479,10 @@ function handleLinkedin(req, res) {
                                             .fail(function (err) {
                                                 console.warn("WARNING: ", err);
                                             });
-                                        res.send({
-                                            token: handleCreateToken(req, result.body.results[0]),
-                                            user: result.body.results[0]
-                                        });
+
+                                        var newresponse = result.body.results[0];
+                                        newresponse['token'] = handleCreateToken(req, result.body.results[0])
+                                        res.send(newresponse);
 
                                     } else {
                                         console.log('No existing user found!');
@@ -512,10 +512,11 @@ function handleLinkedin(req, res) {
                                             db.put(process.env.DB_COMMUNITIES, invite_code, new_invite_profile)
                                                 .then(function () {
                                                     console.log("Profile created: " + JSON.stringify(new_profile));
-                                                    res.send({
-                                                        token: handleCreateToken(req, new_profile),
-                                                        user: new_profile
-                                                    });
+
+                                                    var newresponse = new_profile;
+                                                    newresponse['token'] = handleCreateToken(req, new_profile);
+
+                                                    res.send(newresponse);
 
                                                     add_knowtify(new_invite_profile);
                                                     accept_invite(invite_profile.profile.email, new_invite_profile.profile.name, invitor_email);
