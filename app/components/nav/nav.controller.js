@@ -3,7 +3,7 @@ angular
     .controller('NavigationController', NavigationController);
 
 function NavigationController($auth, $state, $window, $timeout, $location, $scope, $stateParams, $uibModal, user_service, community_service, user, location, community, communities, nav_communities, top, knowtify, errorLogService) {
-   
+
     if (user && user.token) $auth.setToken(user.token); // update local storage with latest user profile
 
     // SENSITIVE VARIABLES THAT AFFECT NAVIGATION AND ALL CHILD TEMPLATES
@@ -70,6 +70,7 @@ function NavigationController($auth, $state, $window, $timeout, $location, $scop
 
         var newMessage = function() {
             $window.HelpCrunch('onNewUnreadMessages', function(event) {
+                event.setMaxListeners(1); // to avoid (node) warning: possible EventEmitter memory leak detected. 11 listeners added. Use emitter.setMaxListeners() to increase limit.
                 self.chatMessageCount = event.unreadMessages;
                 $timeout(function() {
                     $scope.$apply();

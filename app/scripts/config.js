@@ -60,7 +60,7 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
             resolve: {
                 user: ['user_service', '$state', '$mixpanel', '$location', '$stateParams',
                     function(user_service, $state, $mixpanel, $location, $stateParams) {
-                        console.log($stateParams);
+
                         if ($stateParams.user) {
                             return $stateParams.user;
                         } else return user_service.getProfile()
@@ -135,11 +135,13 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                     function($stateParams, communities, community) {
                         if (community.type == 'user' || community.type == 'company') {
                             return communities[community.profile.home];
-                        } else if(jQuery.isEmptyObject($stateParams.location)) {
+                        } else if(jQuery.isEmptyObject($stateParams.location) || $stateParams.location.type !== 'location') {
                             if (communities[$stateParams.location_path] && communities[$stateParams.location_path].type == 'location') {
                                 return communities[$stateParams.location_path];
                             } else return {};
-                        } else return $stateParams.location;
+                        } else if ($stateParams.location.type == 'location') {
+                            return $stateParams.location;
+                        } else return {};
                     }],
                 nav_communities: ['community_service', 'communities', 'community', 'location', '$stateParams',
                     function(community_service, communities, community, location, $stateParams) {
@@ -151,7 +153,6 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                                 $stateParams.communities :
                                 community_service.getCommunity(location.key)
                                     .then(function(response) {
-                                        console.log('pulled')
                                         return response.data;
                                     })
                                     .catch(function(response) {
