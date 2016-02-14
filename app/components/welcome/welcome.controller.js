@@ -2,7 +2,7 @@ angular
     .module('startupcommunity')
     .controller('WelcomeController', WelcomeController);
 
-function WelcomeController($auth, $q, $http, $window, $mixpanel, $modalInstance, $stateParams, $scope, $state, $filter, sweet, community, location, user_service, company_service, community_service, user, company) {
+function WelcomeController($auth, $q, $http, $window, $mixpanel, $uibModalInstance, $stateParams, $scope, $state, $filter, sweet, community, location, user_service, company_service, community_service, user, company) {
     var self = this;
     this.location = jQuery.isEmptyObject(location) ? community.profile.name : location.profile.name.split(',')[0];
     this.auth = false;
@@ -356,7 +356,7 @@ function WelcomeController($auth, $q, $http, $window, $mixpanel, $modalInstance,
                             type: "success"
                         }, function() {
                             $http.get('/api/2.1/community/' + self.user.profile.home); // refresh outdated cache
-                            $modalInstance.close();
+                            $uibModalInstance.close();
                             $window.location.href = '/' + self.user.profile.home;
                         })
                     }

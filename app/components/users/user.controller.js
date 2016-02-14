@@ -203,7 +203,7 @@ function UserController($stateParams, user_service, result_service, $sce, commun
     };
 }
 
-function ContactUserController($modalInstance, notify_service, sweet, community_key, location_key, user){
+function ContactUserController($uibModalInstance, notify_service, sweet, community_key, location_key, user){
 
     this.user = user; //used in view
     var self = this;
@@ -221,7 +221,7 @@ function ContactUserController($modalInstance, notify_service, sweet, community_
             notify_service.contact(user.key, formdata, community_key, location_key)
                 .then(function(response) {
 
-                    $modalInstance.close();
+                    $uibModalInstance.close();
 
                     if (response.status !== 200) {
                         sweet.show({
@@ -247,11 +247,11 @@ function ContactUserController($modalInstance, notify_service, sweet, community_
     };
 
     this.cancel = function () {
-        $modalInstance.dismiss('cancel');
+        $uibModalInstance.dismiss('cancel');
     };
 }
 
-function UserProfileController($stateParams, $http, $modal, $mixpanel, user, user_service, message_service, community, communities) {
+function UserProfileController($stateParams, $http, $uibModal, $mixpanel, user, user_service, message_service, community, communities) {
 
     if (!jQuery.isEmptyObject($stateParams.profile)) {
         this.user = $stateParams.profile;
@@ -290,7 +290,7 @@ function UserProfileController($stateParams, $http, $modal, $mixpanel, user, use
 
     this.contact = function(community_key) {
 
-        var modalInstance = $modal.open({
+        var modalInstance = $uibModal.open({
             templateUrl: 'components/users/user.contact.html',
             controller: ContactUserController,
             controllerAs: 'contact',

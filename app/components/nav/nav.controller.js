@@ -2,7 +2,7 @@ angular
     .module('startupcommunity')
     .controller('NavigationController', NavigationController);
 
-function NavigationController($auth, $state, $window, $timeout, $location, $scope, $stateParams, $modal, user_service, community_service, user, location, community, communities, nav_communities, top, knowtify, errorLogService) {
+function NavigationController($auth, $state, $window, $timeout, $location, $scope, $stateParams, $uibModal, user_service, community_service, user, location, community, communities, nav_communities, top, knowtify, errorLogService) {
     if (user.data && user.data.token) $auth.setToken(user.data.token); // update local storage with latest user profile
 
     // SENSITIVE VARIABLES THAT AFFECT NAVIGATION AND ALL CHILD TEMPLATES
@@ -256,7 +256,7 @@ function NavigationController($auth, $state, $window, $timeout, $location, $scop
 
     this.contact = function(user) {
 
-        var modalInstance = $modal.open({
+        var modalInstance = $uibModal.open({
             templateUrl: 'components/users/user.contact.html',
             controller: ContactUserController,
             controllerAs: 'contact',
@@ -280,7 +280,7 @@ function NavigationController($auth, $state, $window, $timeout, $location, $scop
 
     this.embedSettings = function(community) {
 
-        var modalInstance = $modal.open({
+        var modalInstance = $uibModal.open({
             templateUrl: 'components/nav/nav.embed_settings.html',
             controller: EmbedSettingsController,
             controllerAs: 'settings',
@@ -303,7 +303,7 @@ function NavigationController($auth, $state, $window, $timeout, $location, $scop
 
     this.editCommunity = function(community) {
 
-        var modalInstance = $modal.open({
+        var modalInstance = $uibModal.open({
             templateUrl: 'components/nav/nav.edit_' + community.type + '.html',
             controller: CommunityController,
             controllerAs: 'edit',
@@ -326,7 +326,7 @@ function NavigationController($auth, $state, $window, $timeout, $location, $scop
 
     this.requestInvitation = function() {
 
-        var modalInstance = $modal.open({
+        var modalInstance = $uibModal.open({
             templateUrl: 'components/users/user.request_invite.html',
             controller: InviteUserController,
             controllerAs: 'invite',
@@ -354,7 +354,7 @@ function NavigationController($auth, $state, $window, $timeout, $location, $scop
 
     this.invitePeople = function() {
 
-        var modalInstance = $modal.open({
+        var modalInstance = $uibModal.open({
             templateUrl: 'components/users/user.invite.html',
             controller: InviteUserController,
             controllerAs: 'invite',
@@ -380,7 +380,7 @@ function NavigationController($auth, $state, $window, $timeout, $location, $scop
 
     this.addCompany = function(company) {
 
-        var modalInstance = $modal.open({
+        var modalInstance = $uibModal.open({
             templateUrl: 'components/companies/company.add.html',
             controller: WelcomeController,
             controllerAs: 'welcome',
@@ -480,7 +480,7 @@ function NavigationController($auth, $state, $window, $timeout, $location, $scop
 
 }
 
-function EmbedSettingsController($modalInstance, sweet, user, community_service, community, location){
+function EmbedSettingsController($uibModalInstance, sweet, user, community_service, community, location){
 
     this.user = user;
     var self = this;
@@ -537,18 +537,18 @@ function EmbedSettingsController($modalInstance, sweet, user, community_service,
                         type: "success"
                     }, function(){
                         //$http.get('/api/2.1/community/' + location.key + '/' + self.community.key);
-                        $modalInstance.close();
+                        $uibModalInstance.close();
                     });
                 }
             });
     };
 
     this.cancel = function () {
-        $modalInstance.dismiss('cancel');
+        $uibModalInstance.dismiss('cancel');
     };
 }
 
-function CommunityController($modalInstance, $mixpanel, sweet, community_service, community, location, $http, $window, user, $state){
+function CommunityController($uibModalInstance, $mixpanel, sweet, community_service, community, location, $http, $window, user, $state){
 
     this.location = location;
     this.communityForm = {"name":""}; // to avoid 'undefined' for initial url
@@ -664,7 +664,7 @@ function CommunityController($modalInstance, $mixpanel, sweet, community_service
                                 $window.location.href = '/'+ self.location.key + '/' + newCommunity.url;
                             });
 
-                            $modalInstance.close();
+                            $uibModalInstance.close();
                         });
                         if (rename) community_service.deleteCommunity(community, self.location.key, newCommunity.url);
                     }
@@ -713,7 +713,7 @@ function CommunityController($modalInstance, $mixpanel, sweet, community_service
                             text: "The " + self.community.name + " community is gone.",
                             type: "success"
                         }, function() {
-                            $modalInstance.close();
+                            $uibModalInstance.close();
                             $state.reload();
                         })
                     }
@@ -723,6 +723,6 @@ function CommunityController($modalInstance, $mixpanel, sweet, community_service
 
     this.cancel = function () {
         self.working = false;
-        $modalInstance.dismiss('cancel');
+        $uibModalInstance.dismiss('cancel');
     };
 }
