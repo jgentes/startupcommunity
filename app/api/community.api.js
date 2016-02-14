@@ -186,6 +186,10 @@ function handleGetCommunity(req, res) {
 
                                 // pull communities within record
                                 var comm_items = m.value.communities;
+
+                                // grab parent
+                                if (m.value.profile.parents && m.value.profile.parents[0]) comm_items.push(m.value.profile.parents[0]);
+
                                 var search = community;
                                 if (comm_items) {
                                     search += " OR ";
@@ -196,6 +200,7 @@ function handleGetCommunity(req, res) {
                                         search += comm_items[i];
                                     }
                                 }
+
 /*
 
                                 // also grab clusters
