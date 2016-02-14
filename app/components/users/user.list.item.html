@@ -1,6 +1,6 @@
 <div class="col-md-12 dash-table">
     <div>
-        <a ui-sref="user.dashboard({profile: item.value, location_path: item.path.key, location: nav.community, community: item.value, top: nav.top })" title="View {{::item.value.profile.name | words:0}}'s Profile">
+        <a ui-sref="user.dashboard({profile: item.value, location_path: item.path.key, location: nav.community, community: item.value, top: nav.top, communities: nav.communities, user: nav.user })" title="View {{::item.value.profile.name | words:0}}'s Profile">
             <img ng-src="{{item.value.profile.avatar || item.value.profile.linkedin.pictureUrl || '/public/images/blank_avatar.png'}}" alt="{{::item.value.profile.name}}" class="user-img widget-image img-circle pull-left" onerror="this.src='/public/images/blank_avatar.png'"/>
         </a>
     </div>
@@ -8,7 +8,7 @@
         <a ng-if="(nav.community.type == 'network' || nav.location.type == 'network') && nav.user.roles.leader[nav.community.key]" ng-click="users.remove(item)" title="Remove {{item.value.profile.name}} from {{nav.community.profile.name}}" style="color:#bbb;">remove</a>
     </div>
     <div class="user-row" ng-class="{'user-row-border': $index % 2 == 0}">
-        <a ui-sref="user.dashboard({profile: item.value, location_path: item.path.key, location: nav.community, community: item.value, top: nav.top })" title="View {{::item.value.profile.name | words:0}}'s Profile" style="float: left; "><strong>{{::item.value.profile.name}} </strong></a>
+        <a ui-sref="user.dashboard({profile: item.value, location_path: item.path.key, location: nav.community, community: item.value, top: nav.top, communities: nav.communities, user: nav.user })" title="View {{::item.value.profile.name | words:0}}'s Profile" style="float: left; "><strong>{{::item.value.profile.name}} </strong></a>
         <a ng-if="nav.community.type == 'network' || nav.location.type == 'network'" ng-click="nav.contact(item)" title="Contact {{item.value.profile.name}}" class="pull-left" style="margin-left: 6px; margin-top: 2px; padding: 0 8px 0 5px; line-height: 0;">
             <i class="pe-7s-mail" style="font-size: 20px; opacity: .45;"></i></a>
         <a ng-show="{{(item.value.profile.summary).length > 0 || (item.value.profile.linkedin.summary).length > 0}}" title="Show Summary" ng-click="showSummary = !showSummary" class="user-summary">&nbsp;<i class="fa fa-chevron-down fa-fw"></i></a>
@@ -23,7 +23,7 @@
                 <span class="text-muted" style="white-space:pre-wrap;" ng-bind-html="(item.value.profile.summary || item.value.profile.linkedin.summary) | linky:'_blank' | highlight:users.lastQuery | safe_html"></span>
                 <div id="skills" ng-show="(showSummary || users.lastQuery) && (item.value.profile.summary || item.value.profile.linkedin.summary)" class="skills-top">
                     <li ng-repeat="skill in item.value.profile.skills" class="label btn-default skills">
-                        <a><span ui-sref="search.dashboard({location_path: nav.location.key, community: nav.location, query: skill})" ng-bind-html="::skill | highlight:users.lastQuery"></span></a>
+                        <a><span ui-sref="search.dashboard({location_path: nav.location.key, community: nav.location, query: skill, user: nav.user, communities: nav.communities, top: nav.top})" ng-bind-html="::skill | highlight:users.lastQuery"></span></a>
                     </li>
                 </div>
             </div>

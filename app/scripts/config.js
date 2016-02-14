@@ -53,13 +53,18 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                 community: {},
                 location: {},
                 top: null,
+                communities: null,
+                user: null,
                 tour: false
             },
             resolve: {
-                user: ['user_service', '$state', '$mixpanel', '$location',
-                    function(user_service, $state, $mixpanel, $location) {
-                        return user_service.getProfile()
-                            .success(function(response) {
+                user: ['user_service', '$state', '$mixpanel', '$location', '$stateParams',
+                    function(user_service, $state, $mixpanel, $location, $stateParams) {
+
+                        if ($stateParams.user) {
+                            return $stateParams.user;
+                        } else return user_service.getProfile()
+                            .then(function(response) {
 
                                 if (response.message) {
                                     $location.url('/logout');
@@ -70,10 +75,12 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                                         "$name": response.profile.name,
                                         "$email": response.profile.email
                                     });
-
                                 }
+
+                                return response.data;
+
                             })
-                            .error(function(response) {
+                            .catch(function(response) {
                                 //todo add exception logging here
                                 $location.url('/logout');
                             });
@@ -81,7 +88,9 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                 communities: ['$stateParams', 'community_service', 'user',
                     function($stateParams, community_service, user) {                        
                         // user is injected to prevent communities from loading until user is valid
-                        return community_service.getCommunity($stateParams.location_path)
+                        if ($stateParams.communities && ($stateParams.communities.key == $stateParams.location_path)) {
+                            return $stateParams.communities;
+                        } else return community_service.getCommunity($stateParams.location_path)
                             .then(function(response) {
                                 return response.data;
                             })
@@ -92,7 +101,6 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                     }],
                 community: ['$stateParams', '$location', 'communities', 'community_service',
                     function($stateParams, $location, communities, community_service) {
-
                         if (jQuery.isEmptyObject($stateParams.community)) { // if community is passed in via ui-sref, just use that
 
                             var pullCommunity = function () {
@@ -127,16 +135,22 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                     function($stateParams, communities, community) {
                         if (community.type == 'user' || community.type == 'company') {
                             return communities[community.profile.home];
-                        } else if(jQuery.isEmptyObject($stateParams.location)) {
+                        } else if(jQuery.isEmptyObject($stateParams.location) || $stateParams.location.type !== 'location') {
                             if (communities[$stateParams.location_path] && communities[$stateParams.location_path].type == 'location') {
                                 return communities[$stateParams.location_path];
                             } else return {};
-                        } else return $stateParams.location;
+                        } else if ($stateParams.location.type == 'location') {
+                            return $stateParams.location;
+                        } else return {};
                     }],
                 nav_communities: ['community_service', 'communities', 'community', 'location', '$stateParams',
                     function(community_service, communities, community, location, $stateParams) {
+                        // this logic is mostly to avoid pulling community from db if it can be passed from previous state
                         if (communities && communities.key && location && location.key) {
-                            return (location.key == communities.key) ? communities :
+                            return (location.key == communities.key) ?
+                                communities :
+                                ($stateParams.communities && $stateParams.communities.key == location.key) ?
+                                $stateParams.communities :
                                 community_service.getCommunity(location.key)
                                     .then(function(response) {
                                         return response.data;
@@ -150,7 +164,7 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                     function (community_service, location, $stateParams) {
                         if ($stateParams.top) {
                             return $stateParams.top;
-                        } else if (location && location.key) {
+                        } else if (location && location.key && ((location.type == 'location') || (location.type == 'network') || (location.type == 'cluster'))) {
                             return community_service.getTop(location.key)
                                 .then(function(response) {
                                     return response.data;
@@ -160,7 +174,7 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                 community_top: ['community_service', 'community', 'location', 'top',
                     function (community_service, community, location, top) {
                         if (community && community.key && location && location.key) {
-                            if (community.key !== location.key) {
+                            if (community.key !== location.key && ((community.type == 'location') || (community.type == 'network') || (community.type == 'cluster'))) {
                                 return community_service.getTop(location.key, community.key, community)
                                     .then(function(response) {
                                         return response.data;
@@ -290,7 +304,7 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                 go: null
             },
             resolve: {
-              $modalInstance: function() { return null; } // necessary to avoid unknown provider for $modalInstance when controller not invoked through modalgit
+              $uibModalInstance: function() { return null; } // necessary to avoid unknown provider for $uibModalInstance when controller not invoked through modalgit
             },
             views: {
                 "@": { // this forces override of root template

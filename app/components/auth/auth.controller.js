@@ -7,13 +7,15 @@ function LoginController($auth, $state, $mixpanel, $stateParams, sweet) {
     if (!jQuery.isEmptyObject($stateParams.alert)) this.alert = {type: 'danger', msg: $stateParams.alert};
     var self = this;
     this.working = false;
+
     var postLogin = function(auth_response) { // from getprofile
-        auth_response.data.user.value["key"] = auth_response.data.user.path.key;
+
+        auth_response.data.value["key"] = auth_response.data.path.key;
         if (auth_response.config.data.state !== '/login') {
             $state.reload();
-        } else $state.go('user.dashboard', {profile: auth_response.data.user.value, location_path: auth_response.data.user.value.key, community: {}});
+        } else $state.go('user.dashboard', {profile: auth_response.data.value, location_path: auth_response.data.value.key, community: {}});
 
-        $mixpanel.identify(auth_response.data.user.path.key);
+        $mixpanel.identify(auth_response.data.path.key);
         $mixpanel.track('Logged in');
     };
 

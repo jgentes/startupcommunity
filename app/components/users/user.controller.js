@@ -203,7 +203,7 @@ function UserController($stateParams, user_service, result_service, $sce, commun
     };
 }
 
-function ContactUserController($modalInstance, notify_service, sweet, community_key, location_key, user){
+function ContactUserController($uibModalInstance, notify_service, sweet, community_key, location_key, user){
 
     this.user = user; //used in view
     var self = this;
@@ -221,7 +221,7 @@ function ContactUserController($modalInstance, notify_service, sweet, community_
             notify_service.contact(user.key, formdata, community_key, location_key)
                 .then(function(response) {
 
-                    $modalInstance.close();
+                    $uibModalInstance.close();
 
                     if (response.status !== 200) {
                         sweet.show({
@@ -247,19 +247,19 @@ function ContactUserController($modalInstance, notify_service, sweet, community_
     };
 
     this.cancel = function () {
-        $modalInstance.dismiss('cancel');
+        $uibModalInstance.dismiss('cancel');
     };
 }
 
-function UserProfileController($stateParams, $http, $modal, $mixpanel, user, user_service, message_service, community, communities) {
+function UserProfileController($stateParams, $http, $uibModal, $mixpanel, user, user_service, message_service, community, communities) {
 
     if (!jQuery.isEmptyObject($stateParams.profile)) {
         this.user = $stateParams.profile;
     } else if (community && community.type == "user") {
         this.user = community;
-    } else this.user = user.data.user;
+    } else this.user = user;
 
-    this.loggedin = !!user.data.user;
+    this.loggedin = !!user;
 
     var self = this;
     this.community = community;
@@ -290,7 +290,7 @@ function UserProfileController($stateParams, $http, $modal, $mixpanel, user, use
 
     this.contact = function(community_key) {
 
-        var modalInstance = $modal.open({
+        var modalInstance = $uibModal.open({
             templateUrl: 'components/users/user.contact.html',
             controller: ContactUserController,
             controllerAs: 'contact',
@@ -322,10 +322,10 @@ function UserProfileController($stateParams, $http, $modal, $mixpanel, user, use
     this.askQuestion = function() {
         self.working = true;
 
-        if (self.question && user.data.user) {
+        if (self.question && user) {
             // update user profile
 
-            message_service.addMessage('question', user.data.user, self.user, self.question)
+            message_service.addMessage('question', user, self.user, self.question)
                 .then(function (response) {
                     self.question = undefined;
 
@@ -360,10 +360,10 @@ function UserProfileController($stateParams, $http, $modal, $mixpanel, user, use
     this.postReply = function(parent) {
         self.working[parent.key] = true;
 
-        if (self.reply[parent.key] && user.data.user) {
+        if (self.reply[parent.key] && user) {
             // update user profile
 
-            message_service.addMessage('reply', user.data.user, self.user, self.reply[parent.key], parent)
+            message_service.addMessage('reply', user, self.user, self.reply[parent.key], parent)
                 .then(function (response) {
                     self.reply[parent.key] = undefined;
 

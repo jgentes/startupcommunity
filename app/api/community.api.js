@@ -93,7 +93,7 @@ function handleGetCommunity(req, res) {
     searchString += ' OR ((@value.communities: "' + community + '"'; // + grab anything associated with this community in this location
     searchString += ' OR @value.primary: true '; // + pull primary industries (clusters)
     searchString += ' OR @value.parents: "' + community + '")'; // + grab anything that has this community as a parent
-    searchString += ' AND NOT @value.type:("company" OR "user"))'; // exclude companies and user
+    searchString += ' AND NOT @value.type:("company" OR "user"))'; // exclude companies and users, except if @path.key is a company or user
 
     var pullCommunity = function(cache) {
 
@@ -176,18 +176,20 @@ function handleGetCommunity(req, res) {
                     var found = false;
                     for (comm in result.body.results) {
                         var m = result.body.results[comm];
-
                         if (m.path.key == community) {
                             found = true;
 
                             console.log('Pulling community for ' + m.value.profile.name);
 
                             if (m.value.type == "user" ||
-                                m.value.type == "company" ||
-                                m.value.type == "network") {
+                                m.value.type == "company") {
 
                                 // pull communities within record
                                 var comm_items = m.value.communities;
+
+                                // grab parent
+                                if (m.value.profile.parents && m.value.profile.parents[0]) comm_items.push(m.value.profile.parents[0]);
+
                                 var search = community;
                                 if (comm_items) {
                                     search += " OR ";
@@ -198,6 +200,7 @@ function handleGetCommunity(req, res) {
                                         search += comm_items[i];
                                     }
                                 }
+
 /*
 
                                 // also grab clusters
