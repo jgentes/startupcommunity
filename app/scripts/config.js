@@ -304,7 +304,7 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                 go: null
             },
             resolve: {
-              $modalInstance: function() { return null; } // necessary to avoid unknown provider for $modalInstance when controller not invoked through modalgit
+              $uibModalInstance: function() { return null; } // necessary to avoid unknown provider for $uibModalInstance when controller not invoked through modalgit
             },
             views: {
                 "@": { // this forces override of root template
