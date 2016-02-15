@@ -15,14 +15,6 @@ module.exports = function (grunt) {
     // Grunt configuration
     grunt.initConfig({
 
-        raygun_deployment: {
-            options: {
-                // You need to fill this in with your own data
-                raygunApiKey: 'xdeVAN82mJfs+jiO4625Aw==',
-                raygunAuthToken: 'RLdV3tTbyFDQ5vVaPe44bIutwc5MHeLt'
-            }
-        },
-
         // Project settings
         startupcommunity: appConfig,
 
@@ -246,8 +238,7 @@ module.exports = function (grunt) {
         'uglify',
         //'filerev', caused issues with cloudflare
         'usemin',
-        'htmlmin',
-        'raygun_deployment'
+        'htmlmin'
     ]);
 
     grunt.registerTask('test', [
