@@ -42,7 +42,7 @@ app.all("/blog*", function(req, res){
 
 // Proxy for Email, which runs on /email
 app.all("/email*", function(req, res){
-    res.redirect('http://startupcommunity-sendy.herokuapp.com' + req.url)
+    res.redirect('http://ec2-52-33-123-128.us-west-2.compute.amazonaws.com' + req.url)
 });
 
 // remove trailing slash
