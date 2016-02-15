@@ -6,6 +6,7 @@ var express = require('express'),
     enforce = require('express-sslify'),
     httpProxy = require('http-proxy'),
     blogProxy = httpProxy.createProxyServer(),
+    emailProxy = httpProxy.createProxyServer(),
     bodyParser = require('body-parser'),
     methodOverride = require('method-override'),
     logger = require('morgan'),
@@ -39,6 +40,11 @@ app.use(wwwRedirect);
 app.all("/blog*", function(req, res){
     blogProxy.web(req, res, { target: 'http://localhost:2368' });
 });
+
+// Proxy for Email, which runs on /email
+app.all("/email*", function(req, res){
+    emailProxy.web(req, res, { target: 'http://startupcommunity-sendy.herokuapp.com' })
+})
 
 // remove trailing slash
 app.use(function(req, res, next) {
