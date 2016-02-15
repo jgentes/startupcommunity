@@ -6,6 +6,7 @@ var express = require('express'),
     enforce = require('express-sslify'),
     httpProxy = require('http-proxy'),
     blogProxy = httpProxy.createProxyServer(),
+    emailProxy = httpProxy.createProxyServer(),
     bodyParser = require('body-parser'),
     methodOverride = require('method-override'),
     logger = require('morgan'),
@@ -42,7 +43,9 @@ app.all("/blog*", function(req, res){
 
 // Proxy for Email, which runs on /email
 app.all("/email*", function(req, res){
-    res.redirect('http://ec2-52-33-123-128.us-west-2.compute.amazonaws.com' + req.url)
+    console.log(req.url);
+    emailProxy.web(req, res, { target: 'http://ec2-52-33-123-128.us-west-2.compute.amazonaws.com' });
+    //res.redirect('http://ec2-52-33-123-128.us-west-2.compute.amazonaws.com' + req.url)
 });
 
 // remove trailing slash
