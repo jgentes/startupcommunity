@@ -43,10 +43,7 @@ app.all("/blog*", function(req, res){
 
 // Proxy for Email, which runs on /email
 app.all("/email*", function(req, res){
-    console.log(req.url);
-
-    emailProxy.web(req, res, { target: 'http://ec2-52-33-123-128.us-west-2.compute.amazonaws.com' });
-    //res.redirect('http://ec2-52-33-123-128.us-west-2.compute.amazonaws.com' + req.url)
+    emailProxy.web(req, res, { target: 'http://ec2-52-33-123-128.us-west-2.compute.amazonaws.com/email' });
 });
 
 // remove trailing slash
