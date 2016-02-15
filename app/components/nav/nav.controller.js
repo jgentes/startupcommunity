@@ -254,6 +254,16 @@ function NavigationController($auth, $state, $window, $timeout, $location, $scop
 
     };
 
+    // EMAIL ANNOUNCEMENTS
+
+    this.goToEmail = function() {
+        $state.go('email');
+        setTimeout(function() {
+            $('#email_form').submit();
+        }, 2000);
+    };
+
+
     // CONTACT USER
 
     this.contact = function(user) {
