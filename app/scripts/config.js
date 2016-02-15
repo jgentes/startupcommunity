@@ -343,6 +343,17 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
             }
         })
 
+        .state('email', {
+            parent: 'root',
+            url: '/email',
+            views: {
+                'content': {
+                    templateUrl: "components/email.html",
+                    controller: 'EmailController as email'
+                }
+            }
+        })
+
         // Community views
         .state('community', {
             parent: "root",
@@ -374,17 +385,6 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
         .state('community.dashboard.location',{})
         .state('community.dashboard.cluster',{})
         .state('community.dashboard.company',{}) // for user profile page when companies are in communities
-
-        .state('email', {
-            parent: 'root',
-            url: '/email',
-            views: {
-                'content': {
-                    templateUrl: "components/email.html",
-                    controller: 'EmailController as email'
-                }
-            }
-        })
 
         .state('search', {
             parent: 'root',
