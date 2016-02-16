@@ -70,13 +70,13 @@ function WelcomeController($auth, $q, $http, $window, $mixpanel, $uibModalInstan
                         self.alert = { type: 'danger', message: 'There was a problem: ' + String(response.data.message) };
                     } else {
                         self.auth = true;
-                        self.user = response.data.user.value;
-                        self.user["key"] = response.data.user.path.key;
+                        self.user = response.data.value;
+                        self.user["key"] = response.data.path.key;
                         self.quote = false;
 
                         checkProfile();
 
-                        $mixpanel.identify(response.data.user.path.key);
+                        $mixpanel.identify(response.data.path.key);
                         $mixpanel.track('Accepted Invite');
 
                         $state.go('welcome.roles');
