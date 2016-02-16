@@ -14,7 +14,7 @@ function EmailController($http, $httpParamSerializer) {
             'reply_to': "james@bendtech.com"
         });
 */
-        $http.post('http://email.startupcommunity.org/includes/app/create.php', {
+        $http.post('https://email2.startupcommunity.org/includes/app/create.php', {
                 params: {
                     app_name: "push_brand_test",
                     from_name: "James Zibtru",
@@ -40,7 +40,7 @@ function EmailController($http, $httpParamSerializer) {
          'reply_to': "james@bendtech.com"
          });
          */
-        $http.post('http://email.startupcommunity.org/includes/login/main.php', {
+        $http.post('https://email2.startupcommunity.org/includes/login/main.php', {
                 params: {
                     email: "jgentes@gmail.com",
                     password: "3OreHw2Z",
