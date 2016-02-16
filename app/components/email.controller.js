@@ -14,7 +14,7 @@ function EmailController($http, $httpParamSerializer) {
             'reply_to': "james@bendtech.com"
         });
 */
-        $http.post('https://email2.startupcommunity.org/includes/app/create.php', {
+        $http.post('https://email.startupcommunity.org/includes/app/create.php', {
                 params: {
                     app_name: "push_brand_test",
                     from_name: "James Zibtru",
@@ -43,7 +43,7 @@ function EmailController($http, $httpParamSerializer) {
          */
 
         $http({
-            url: 'https://email2.startupcommunity.org/includes/login/main.php',
+            url: 'https://email.startupcommunity.org/includes/login/main.php',
             method: 'POST',
             data: $httpParamSerializer({
                 email: "jgentes@gmail.com",
