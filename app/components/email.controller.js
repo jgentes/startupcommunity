@@ -32,6 +32,7 @@ function EmailController($http, $httpParamSerializer) {
     }
 
     this.login = function() {
+        self.working = true;
         /*
          $httpParamSerializer({
          'app_name': "push_brand_test",
@@ -40,19 +41,24 @@ function EmailController($http, $httpParamSerializer) {
          'reply_to': "james@bendtech.com"
          });
          */
-        $http.post('https://email2.startupcommunity.org/includes/login/main.php', {
-                params: {
-                    email: "jgentes@gmail.com",
-                    password: "3OreHw2Z",
-                    redirect: ""
-                },
-                headers: {
-                    "Content-Type": "application/x-www-form-urlencoded; charset=utf-8"
-                }
-            })
-            .then(function(response) {
-                console.log(response);
-            })
+
+        $http({
+            url: 'https://email2.startupcommunity.org/includes/login/main.php',
+            method: 'POST',
+            data: $httpParamSerializer({
+                email: "jgentes@gmail.com",
+                password: "3OreHw2Z",
+                redirect: ""
+            }),
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            }
+        })
+        .then(function (response) {
+            self.working = false;
+            document.getElementById('framed_email').src = document.getElementById('framed_email').src;
+        })
+
     }
 
 }
