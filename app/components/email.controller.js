@@ -34,29 +34,62 @@ function EmailController($http, $httpParamSerializer, $sce, user) {
 
 
     this.createBrand = function() {
-/*
-        $httpParamSerializer({
-            'app_name': "push_brand_test",
-            'from_name': "James Zibtru",
-            'from_email': "james@bendtech.com",
-            'reply_to': "james@bendtech.com"
-        });
-*/
-        $http.post('https://email.startupcommunity.org/includes/app/create.php', {
-                params: {
-                    app_name: "push_brand_test",
-                    from_name: "James Zibtru",
-                    from_email: "james@bendtech.com",
-                    reply_to: "james@bendtech.com"
-                },
-                transformRequest: angular.identity,
-                headers: {
-                    "Content-Type": undefined
-                }
-            })
+
+        $http({
+            url: 'https://email.startupcommunity.org/includes/app/create.php',
+            data: $httpParamSerializer({
+                app_name: "push_brand_test",
+                from_name: "James Zibtru",
+                from_email: "james@bendtech.com",
+                reply_to: "james@bendtech.com"
+            }),
+            withCredentials: true,
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            }
+        })
             .then(function(response) {
-                console.log(response);
+                self.frame_content = $sce.trustAsHtml(response.data);
             })
-    }
+    };
+
+    this.createList = function() {
+
+        $http({
+            url: 'https://email.startupcommunity.org/includes/subscribers/import-add.php',
+            data: $httpParamSerializer({
+                list_name: "list_test",
+                app: "???????????????????"
+            }),
+            withCredentials: true,
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            }
+        })
+            .then(function(response) {
+                self.frame_content = $sce.trustAsHtml(response.data);
+            })
+    };
+
+    this.addSubscriber = function() {
+
+        $http({
+            url: 'https://email.startupcommunity.org/includes/subscribers/line-update.php',
+            data: $httpParamSerializer({
+                line: "James Gentes, jgentes@gmail.com",
+                list_id: "?????????????????????????",
+                app: "???????????????????"
+            }),
+            withCredentials: true,
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            }
+        })
+            .then(function(response) {
+                self.frame_content = $sce.trustAsHtml(response.data);
+            })
+    };
+
+
 
 }
