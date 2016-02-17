@@ -4,7 +4,6 @@ angular
 
 function EmailController($http, $httpParamSerializer, $sce, user) {
     var self = this;
-    console.log(user);
 
     if (user) {
 
@@ -27,6 +26,12 @@ function EmailController($http, $httpParamSerializer, $sce, user) {
                 //$cookies.put('logged_in', cookie);
 
                 self.frame_content = $sce.trustAsHtml(response.data);
+
+                var parser = new DOMParser();
+                var parse_content = parser.parseFromString(response.data, "text/xml");
+
+                console.log(parse_content);
+
 
             });
 
@@ -89,7 +94,4 @@ function EmailController($http, $httpParamSerializer, $sce, user) {
                 self.frame_content = $sce.trustAsHtml(response.data);
             })
     };
-
-
-
 }
