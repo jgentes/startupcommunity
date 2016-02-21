@@ -18,7 +18,7 @@
     <div style="padding: 20px;">
         <form role="form" name="welcome.founder.form" novalidate ng-submit="welcome.addCompany($event)" style="padding-bottom: 30px;">
             <div class="form-group">
-                <input type="text" ng-model="welcome.company" placeholder="Search by company name.." autofocus="true" typeahead="company.name for company in welcome.getCompanies($viewValue)" typeahead-editable="true" typeahead-on-select="welcome.selectedCompany = $item; welcome.notlisted = false;" class="form-control input-lg">
+                <input type="text" ng-model="welcome.company" placeholder="Search by company name.." autofocus="true" uib-typeahead="company.name for company in welcome.getCompanies($viewValue)" typeahead-editable="true" typeahead-on-select="welcome.selectedCompany = $item; welcome.notlisted = false;" class="form-control input-lg">
             </div>
             <a ng-show="!welcome.selectedCompany" class="pull-right" style="font-size: 12px; margin-top: -10px; color: #777;" ng-click="welcome.notlisted = !welcome.notlisted">not listed?  add it here.</a>
             <input type="submit" style="float:left" class="finish btn-success btn" ng-class="{'disabled' : disabled || welcome.working || !welcome.selectedCompany}" value="{{ (welcome.updateCompany ? 'Update ' : 'Add ') + (welcome.selectedCompany.name || 'Company') }}" />
