@@ -354,38 +354,6 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
             }
         })
 
-        // Community views
-        .state('community', {
-            parent: "root",
-            abstract: true,
-            views: {
-                'header': {
-                    templateUrl: "components/header/header_small.html"
-                },
-                'content': {
-                    template: "<div ui-view='people'></div>"
-                }
-            }
-        })
-        .state('community.dashboard', {
-            url: "/:community_path",
-            params: {
-                location_path: null,
-                community_path: null,
-                tour: false,
-                pageTitle: 'Overview'
-            },
-            views: {
-                'people': {
-                    templateUrl: 'components/dashboard/dashboard.html',
-                    controller: "DashboardController as dashboard"
-                }
-            }
-        })
-        .state('community.dashboard.location',{})
-        .state('community.dashboard.cluster',{})
-        .state('community.dashboard.company',{}) // for user profile page when companies are in communities
-
         .state('search', {
             parent: 'root',
             abstract: true,
@@ -420,8 +388,39 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
             }
         })
 
+        // Community views
+        .state('community', {
+            parent: "root",
+            abstract: true,
+            views: {
+                'header': {
+                    templateUrl: "components/header/header_small.html"
+                },
+                'content': {
+                    template: "<div ui-view='people'></div>"
+                }
+            }
+        })
+        .state('community.dashboard', {
+            url: "/:community_path",
+            params: {
+                location_path: null,
+                community_path: null,
+                tour: false,
+                pageTitle: 'Overview'
+            },
+            views: {
+                'people': {
+                    templateUrl: 'components/dashboard/dashboard.html',
+                    controller: "DashboardController as dashboard"
+                }
+            }
+        })
+        .state('community.dashboard.location',{})
+        .state('community.dashboard.cluster',{})
+        .state('community.dashboard.company',{}) // for user profile page when companies are in communities
 
-
+        // BE CAREFUL NOT TO PUT STATES AFTER COMMUNITY.. COMMUNITY SEEMS TO TRUMP ANYTHING FOLLOWING IT
 
     // Set default unmatched url stat
     $urlRouterProvider.otherwise(
