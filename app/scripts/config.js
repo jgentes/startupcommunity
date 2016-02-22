@@ -136,7 +136,7 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                         if (community.type == 'user' || community.type == 'company') {
                             return communities[community.profile.home];
                         } else if(jQuery.isEmptyObject($stateParams.location) || $stateParams.location.type !== 'location') {
-                            if (communities[$stateParams.location_path] && communities[$stateParams.location_path].type == 'location') {
+                            if (communities[$stateParams.location_path]) {
                                 return communities[$stateParams.location_path];
                             } else return {};
                         } else if ($stateParams.location.type == 'location') {
