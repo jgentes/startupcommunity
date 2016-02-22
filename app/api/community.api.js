@@ -116,7 +116,7 @@ function handleGetCommunity(req, res) {
                         }
                     }
                     newresponse["key"] = community;
-
+                    console.log(newresponse);
                     // get messages for users
                     if (newresponse[community].type == 'user') {
                         db.newSearchBuilder()
@@ -181,65 +181,80 @@ function handleGetCommunity(req, res) {
 
                             console.log('Pulling community for ' + m.value.profile.name);
 
+                            // grab home
+                            if (m.value.profile.home) var m_home = m.value.profile.home;
+
                             if (m.value.type == "user" ||
-                                m.value.type == "company") {
+                                m.value.type == "company" ||
+                                m.value.type == "network") {
 
-                                // pull communities within record
-                                var comm_items = m.value.communities;
+                                if (m.value.type !== "network") {
 
-                                // grab parent
-                                if (m.value.profile.parents && m.value.profile.parents[0]) comm_items.push(m.value.profile.parents[0]);
+                                    // pull communities within record
+                                    var comm_items = m.value.communities;
 
-                                var search = community;
-                                if (comm_items) {
-                                    search += " OR ";
-                                    for (i in comm_items) {
-                                        if (i > 0) {
-                                            search += ' OR ';
+                                    // grab parent
+                                    if (m.value.profile.parents && m.value.profile.parents[0]) comm_items.push(m.value.profile.parents[0]);
+
+                                    var search = community;
+
+                                    if (comm_items) {
+                                        search += " OR ";
+                                        for (i in comm_items) {
+                                            if (i > 0) {
+                                                search += ' OR ';
+                                            }
+                                            search += comm_items[i];
                                         }
-                                        search += comm_items[i];
                                     }
-                                }
 
-/*
+                                    /*
 
-                                // also grab clusters
+                                     // also grab clusters
 
-                                if (!m.value.profile.parents) m.value.profile.parents = [];
-                                if (!m.value.profile.industries) m.value.profile.industries = [];
-                                if (!m.value.profile.skills) m.value.profile.skills = [];
+                                     if (!m.value.profile.parents) m.value.profile.parents = [];
+                                     if (!m.value.profile.industries) m.value.profile.industries = [];
+                                     if (!m.value.profile.skills) m.value.profile.skills = [];
 
-                                var cluster_items = m.value.profile.parents.concat(m.value.profile.industries, m.value.profile.skills);
-                                var clusters = '"';
+                                     var cluster_items = m.value.profile.parents.concat(m.value.profile.industries, m.value.profile.skills);
+                                     var clusters = '"';
 
-                                if (cluster_items.length) {
-                                    for (c in cluster_items) {
-                                        if (c > 0 && c < cluster_items.length) {
-                                            clusters += '" OR "';
-                                        }
-                                        clusters += cluster_items[c];
-                                    }
-                                    clusters += '"';
-                                }
+                                     if (cluster_items.length) {
+                                     for (c in cluster_items) {
+                                     if (c > 0 && c < cluster_items.length) {
+                                     clusters += '" OR "';
+                                     }
+                                     clusters += cluster_items[c];
+                                     }
+                                     clusters += '"';
+                                     }
 
-                                var ubersearch = '(@path.key: (' + search + ')) OR (@value.type: "cluster" AND @value.communities: "' + m.value.profile.home + '" AND (@value.profile.industries: (' + clusters + ') OR @value.community_profiles.' + m.value.profile.home + '.industries: (' + clusters + ')))';
-*/
+                                     var ubersearch = '(@path.key: (' + search + ')) OR (@value.type: "cluster" AND @value.communities: "' + m.value.profile.home + '" AND (@value.profile.industries: (' + clusters + ') OR @value.community_profiles.' + m.value.profile.home + '.industries: (' + clusters + ')))';
+                                     */
 
-                                var ubersearch = '(@path.key: (' + search + '))';
+                                    var ubersearch = '(@path.key: (' + search + '))';
+
+                                } else if (m_home) {
+                                    ubersearch = '(@path.key: ' + m_home + ')';
+                                } else ubersearch = undefined;
 
                                 console.log(ubersearch) // LEAVE THIS HERE.. NEED TO FIGURE OUT HOW TO NOT PULL ALL THIS SHIT TO IMPROVE PERFORMANCE
-                                db.newSearchBuilder()
-                                    .collection(process.env.DB_COMMUNITIES)
-                                    .limit(100)
-                                    .offset(0)
-                                    .query(ubersearch)
-                                    .then(function (result2) {
-                                        finalize(result2.body.results);
-                                    })
-                                    .fail(function (err) {
-                                        console.log("WARNING: community219", err);
-                                        finalize(result.body.results);
-                                    });
+
+                                if (ubersearch) {
+
+                                    db.newSearchBuilder()
+                                        .collection(process.env.DB_COMMUNITIES)
+                                        .limit(100)
+                                        .offset(0)
+                                        .query(ubersearch)
+                                        .then(function (result2) {
+                                            finalize(result2.body.results);
+                                        })
+                                        .fail(function (err) {
+                                            console.log("WARNING: community219", err);
+                                            finalize(result.body.results);
+                                        });
+                                }
 
                             } else finalize(result.body.results);
 
