@@ -12,6 +12,9 @@
                     <li ui-sref="{{'company.list' + nav.nav_url}}" ng-class="{ 'active' : nav.state.current.name == 'company.list' }">
                         <a>COMPANIES</a>
                     </li>
+                    <li ui-sref="{{'networks.list' + nav.nav_url}}" ng-class="{ 'active' : nav.state.current.name == 'networks.list' }">
+                        <a>NETWORKS</a>
+                    </li>
                 </ul>
 
                 <ul ng-if="nav.community.type == 'user' || nav.community.type == 'company'" class="header-nav" style="margin-left:-40px;" >

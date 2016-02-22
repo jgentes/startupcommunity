@@ -1,0 +1,105 @@
+<div>
+    <div class="row">
+        <div ng-if="!$state.includes('search.*') && !nav.embedded" class="col-lg-2 col-md-3 col-sm-4">
+            <!-- Navigation Block -->
+            <div class="hpanel hgreen">
+                <div class="panel-footer top" style="font-size: 17px;">
+                    <strong>Stage</strong> Filters
+                    <div loading-bars ng-show="users.loadingStage" style="display: inline;"></div>
+                </div>
+                <div class="panel-body filternav">
+
+                    <ul class="panel-list">
+                        <li ng-class="{'active':companies.selectedStage.indexOf('*') >= 0}" ng-click="companies.filterStage('*')">
+                            <a>
+                                <i class="fa fa-fw fa-globe themed-color-dark"></i> <strong>All</strong>
+                            </a>
+                        </li>
+                        <li>
+                            <hr style="margin: 10px 0 10px 0;">
+                        </li>
+                        <li ng-class="{'active':companies.selectedStage.indexOf('Bootstrap') >= 0}" ng-click="companies.filterStage('Bootstrap')">
+                            <a>
+                                Bootstrap
+                            </a>
+                        </li>
+                        <li ng-class="{'active':companies.selectedStage.indexOf('Seed') >= 0}" ng-click="companies.filterStage('Seed')">
+                            <a>
+                                Seed / Angel
+                            </a>
+                        </li>
+                        <li ng-class="{'active':companies.selectedStage.indexOf('Series A') >= 0}" ng-click="companies.filterStage('Series A')">
+                            <a>
+                                Series A
+                            </a>
+                        </li>
+                        <li ng-class="{'active':companies.selectedStage.indexOf('Series B') >= 0}" ng-click="companies.filterStage('Series B')">
+                            <a>
+                                Series B
+                            </a>
+                        </li>
+                        <li ng-class="{'active':companies.selectedStage.indexOf('Later') >= 0}" ng-click="companies.filterStage('Later')">
+                            <a>
+                                Later Stage
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="hpanel hnavyblue">
+                <div class="panel-footer top" style="font-size: 17px;">
+                    <strong>Industry</strong> Filters
+                    <div loading-bars ng-show="companies.loadingCluster" style="display: inline;"></div>
+                </div>
+                <div class="panel-body filternav">
+                    <ul class="panel-list">
+                        <li ng-if="companies.community.type !== 'cluster'" ng-init="companies.allClusters=true" ng-class="{'active':companies.allClusters}" ng-click="companies.loadingCluster=true; companies.allClusters=true; companies.filterClusters();">
+                            <a><i class="fa fa-fw fa-globe themed-color-dark icon-push"></i> All</a>
+                        </li>
+                        <li ng-if="companies.community.type == 'cluster'" class="active">
+                            <a><i class="fa fa-fw fa-globe themed-color-dark icon-push"></i> {{companies.community.profile.name}}</a>
+                        </li>
+                        <hr style="margin: 10px 0 10px 0;">
+                        <li ng-if="companies.community.type !== 'cluster'" ng-repeat="cluster in nav.top.parents" ng-class="{'active':companies.selectedClusters.indexOf(cluster.label) >= 0}" ng-click="companies.loadingCluster=true;  companies.allClusters=false; companies.filterClusters(cluster.label);">
+                            <a>{{cluster.label[0].toUpperCase() + cluster.label.slice(1)}}</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+
+
+        <div ng-class="{'col-lg-10 col-md-9 col-sm-8' : !$state.includes('search.*') && !nav.embedded}" style="padding-left: 15px; padding-right: 15px;">
+
+            <div class="hpanel">
+                <div class="panel-body content">
+                    <h3>{{networks.pageTitle}}</h3>
+                    <div class="row">
+                        <td style="border-bottom: 1px solid #fff; border-top: none; padding: 0;" colspan="3"></td>
+                    </div>
+                    <div ng-show="companies.tag" style="text-align: center" ng-cloak><h2><br/>Searching for {{companies.tag}}..</h2><br/><br/></div>
+                    <div ng-show="companies.companies.results.length == 0" style="text-align: center" ng-cloak><h2><br/>Nothing here!</h2><br/><br/></div>
+                    <div ng-repeat="item in companies.companies.results" ng-switch on="$index % 2" style="margin-top: 10px;">
+                        <div class="col-md-6" ng-switch-when="0">
+                            <div class="row"  ng-include="'components/companies/company.list.item.html'"></div>
+                        </div>
+                        <div class="col-md-6" ng-switch-when="1">
+                            <div class="row"  ng-include="'components/companies/company.list.item.html'"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="panel-footer" style="height:45px;">
+                    <div class="pull-right">
+                        <strong>{{companies.companies.start}} - {{companies.companies.end}}</strong> of <strong>{{companies.companies.total_count}}&nbsp;&nbsp;</strong>
+                        <div class="btn-group btn-group-sm" style="margin-top: -2px;">
+                            <span ng-if="companies.companies.prev"><a ng-click="companies.searchCompanies(companies.companies.prev)" class="btn btn-sm btn-default" style="background-color: #fff;"><i class="fa fa-angle-left"></i></a></span>
+                            <span ng-if="companies.companies.next"><a ng-click="companies.searchCompanies(companies.companies.next)" class="btn btn-sm btn-default" style="background-color: #fff;"><i class="fa fa-angle-right"></i></a></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
