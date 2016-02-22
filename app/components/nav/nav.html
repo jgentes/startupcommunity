@@ -90,17 +90,17 @@
                         </div>
                     </li>
                     <li ng-if="nav.user" id="knowtify" class="dropdown">
-                        <a tooltip-placement="bottom" tooltip="Alerts">
+                        <a tooltip-placement="bottom" uib-tooltip="Alerts">
                             <i class="pe-7s-bell"></i>
                         </a>
                     </li>
                     <li ng-if="nav.user" class="dropdown">
-                        <a ui-sref="settings({location_path: nav.user.key, location: nav.nav_communities[nav.user.profile.home], community: nav.nav_communities[nav.user.profile.home], communities: nav.communities, user: nav.user })" tooltip-placement="bottom" tooltip="Settings">
+                        <a ui-sref="settings({location_path: nav.user.key, location: nav.nav_communities[nav.user.profile.home], community: nav.nav_communities[nav.user.profile.home], communities: nav.communities, user: nav.user })" tooltip-placement="bottom" uib-tooltip="Settings">
                             <i class="pe-7s-config"></i>
                         </a>
                     </li>
                     <li ng-if="nav.user" class="dropdown">
-                        <a ng-click="nav.openChat()" tooltip-placement="bottom" tooltip="Help">
+                        <a ng-click="nav.openChat()" tooltip-placement="bottom" uib-tooltip="Help">
                             <i class="pe-7s-help1"></i>
                         </a>
                         <a ng-show="nav.chatMessageCount">
@@ -108,7 +108,7 @@
                         </a>
                     </li>
                     <li ng-if="nav.user" class="dropdown">
-                        <a tooltip-placement="bottom" tooltip="Logout" href="/logout" style="padding-right: 30px;">
+                        <a tooltip-placement="bottom" uib-tooltip="Logout" href="/logout" style="padding-right: 30px;">
                             <i class="pe-7s-upload pe-rotate-90"></i>
                         </a>
                     </li>
