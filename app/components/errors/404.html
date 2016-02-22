@@ -12,7 +12,7 @@
             <p style="font-size: 8em;"><i style="font-size: .9em;" class="fa fa-exclamation-triangle text-info animation-pulse"></i> 404</p>
             <p style="font-size: 2em;">Sorry, we couldn't find that page.</p>
             <div ng-show="error.alert" style="margin-top: 15px;">
-				<alert type="{{error.alert.type}}" style="margin: 2px;" ng-click="error.alert = undefined"><span ng-bind-html="error.alert.msg | safe_html"></span></alert>
+				<uib-alert type="{{error.alert.type}}" style="margin: 2px;" ng-click="error.alert = undefined"><span ng-bind-html="error.alert.msg | safe_html"></span></uib-alert>
 			</div>
         </div>
     </div>

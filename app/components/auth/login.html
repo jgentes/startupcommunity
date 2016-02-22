@@ -17,7 +17,7 @@
                         </h4>
 
                         <div ng-show="auth.alert">
-                            <alert type="{{auth.alert.type}}" style="margin: 2px;" ng-click="auth.alert = undefined"><span ng-bind-html="auth.alert.msg | safe_html"></span></alert>
+                            <uib-alert type="{{auth.alert.type}}" style="margin: 2px;" ng-click="auth.alert = undefined"><span ng-bind-html="auth.alert.msg | safe_html"></span></uib-alert>
                         </div>
                     </div>
                 </div>

@@ -91,20 +91,20 @@ function handleGetCommunity(req, res) {
 
     var searchString = '@path.key: ' + community; // grab the primary community object, don't use parens here
     searchString += ' OR ((@value.communities: "' + community + '"'; // + grab anything associated with this community in this location
-    searchString += ' OR @value.primary: true '; // + pull primary industries (clusters)
     searchString += ' OR @value.parents: "' + community + '")'; // + grab anything that has this community as a parent
     searchString += ' AND NOT @value.type:("company" OR "user"))'; // exclude companies and users, except if @path.key is a company or user
 
     var pullCommunity = function(cache) {
 
         // need to determine what 'this' community is, but to optimize the first query, grab all communities and then figure it out (rather than a 'get' for the first community, then another call for the rest)
-
+        console.log(searchString);
         db.newSearchBuilder()
             .collection(process.env.DB_COMMUNITIES)
             .limit(100)
             .offset(0)
             .query(searchString)
             .then(function (result) {
+
                 var newresponse = {};
 
                 var finalize = function (results) {
@@ -181,8 +181,10 @@ function handleGetCommunity(req, res) {
 
                             console.log('Pulling community for ' + m.value.profile.name);
 
-                            if (m.value.type == "user" ||
-                                m.value.type == "company") {
+                            // grab home
+                            if (m.value.profile.home) var m_home = m.value.profile.home;
+
+                            if (m.value.type !== "network" || m.value.type !== "location") {
 
                                 // pull communities within record
                                 var comm_items = m.value.communities;
@@ -190,7 +192,10 @@ function handleGetCommunity(req, res) {
                                 // grab parent
                                 if (m.value.profile.parents && m.value.profile.parents[0]) comm_items.push(m.value.profile.parents[0]);
 
+                                if (m_home) comm_items.push(m_home);
+
                                 var search = community;
+
                                 if (comm_items) {
                                     search += " OR ";
                                     for (i in comm_items) {
@@ -201,47 +206,60 @@ function handleGetCommunity(req, res) {
                                     }
                                 }
 
-/*
+                                /*
 
-                                // also grab clusters
+                                 // also grab clusters
 
-                                if (!m.value.profile.parents) m.value.profile.parents = [];
-                                if (!m.value.profile.industries) m.value.profile.industries = [];
-                                if (!m.value.profile.skills) m.value.profile.skills = [];
+                                 if (!m.value.profile.parents) m.value.profile.parents = [];
+                                 if (!m.value.profile.industries) m.value.profile.industries = [];
+                                 if (!m.value.profile.skills) m.value.profile.skills = [];
 
-                                var cluster_items = m.value.profile.parents.concat(m.value.profile.industries, m.value.profile.skills);
-                                var clusters = '"';
+                                 var cluster_items = m.value.profile.parents.concat(m.value.profile.industries, m.value.profile.skills);
+                                 var clusters = '"';
 
-                                if (cluster_items.length) {
-                                    for (c in cluster_items) {
-                                        if (c > 0 && c < cluster_items.length) {
-                                            clusters += '" OR "';
-                                        }
-                                        clusters += cluster_items[c];
-                                    }
-                                    clusters += '"';
-                                }
+                                 if (cluster_items.length) {
+                                 for (c in cluster_items) {
+                                 if (c > 0 && c < cluster_items.length) {
+                                 clusters += '" OR "';
+                                 }
+                                 clusters += cluster_items[c];
+                                 }
+                                 clusters += '"';
+                                 }
 
-                                var ubersearch = '(@path.key: (' + search + ')) OR (@value.type: "cluster" AND @value.communities: "' + m.value.profile.home + '" AND (@value.profile.industries: (' + clusters + ') OR @value.community_profiles.' + m.value.profile.home + '.industries: (' + clusters + ')))';
-*/
+                                 var ubersearch = '(@path.key: (' + search + ')) OR (@value.type: "cluster" AND @value.communities: "' + m.value.profile.home + '" AND (@value.profile.industries: (' + clusters + ') OR @value.community_profiles.' + m.value.profile.home + '.industries: (' + clusters + ')))';
+                                 */
 
                                 var ubersearch = '(@path.key: (' + search + '))';
 
-                                console.log(ubersearch) // LEAVE THIS HERE.. NEED TO FIGURE OUT HOW TO NOT PULL ALL THIS SHIT TO IMPROVE PERFORMANCE
+                            } else if (m_home) {
+                                ubersearch = '(@path.key: ' + m_home + ')';
+                            } else ubersearch = "";
+
+                            if (m.value.type == "location") ubersearch += ' OR @value.primary: true '; // + pull primary industries (clusters)
+
+                            console.log(ubersearch)
+
+                            if (ubersearch) {
+
                                 db.newSearchBuilder()
                                     .collection(process.env.DB_COMMUNITIES)
                                     .limit(100)
                                     .offset(0)
                                     .query(ubersearch)
-                                    .then(function (result2) {
-                                        finalize(result2.body.results);
+                                    .then(function (uber_result) {
+
+                                        if (m_home || m.value.type == "location") {
+                                            var both = result.body.results.concat(uber_result.body.results);
+                                            finalize(both);
+                                        } else finalize(uber_result.body.results);
                                     })
                                     .fail(function (err) {
                                         console.log("WARNING: community219", err);
                                         finalize(result.body.results);
                                     });
+                            }
 
-                            } else finalize(result.body.results);
 
                             break;
                         }
