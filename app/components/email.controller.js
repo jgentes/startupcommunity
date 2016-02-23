@@ -27,11 +27,11 @@ function EmailController($http, $httpParamSerializer, $sce, user) {
 
                 self.frame_content = $sce.trustAsHtml(response.data);
 
-                var parser = new DOMParser();
-                var parse_content = parser.parseFromString(response.data, "text/xml");
-
-                console.log(parse_content);
-
+                // pull the app_id from the url by parsing the html of the frame
+                var el = document.createElement( 'html' );
+                el.innerHTML = response.data.toString();
+                var url = el.getElementsByClassName('brand')[0].href;
+                self.app_id = url.split("?")[1].split("=")[1];
 
             });
 
@@ -64,7 +64,7 @@ function EmailController($http, $httpParamSerializer, $sce, user) {
             url: 'https://email.startupcommunity.org/includes/subscribers/import-add.php',
             data: $httpParamSerializer({
                 list_name: "list_test",
-                app: "???????????????????"
+                app: self.app_id
             }),
             withCredentials: true,
             headers: {
@@ -72,7 +72,7 @@ function EmailController($http, $httpParamSerializer, $sce, user) {
             }
         })
             .then(function(response) {
-                self.frame_content = $sce.trustAsHtml(response.data);
+                //self.frame_content = $sce.trustAsHtml(response.data);
             })
     };
 
@@ -83,7 +83,7 @@ function EmailController($http, $httpParamSerializer, $sce, user) {
             data: $httpParamSerializer({
                 line: "James Gentes, jgentes@gmail.com",
                 list_id: "?????????????????????????",
-                app: "???????????????????"
+                app: self.app_id
             }),
             withCredentials: true,
             headers: {
