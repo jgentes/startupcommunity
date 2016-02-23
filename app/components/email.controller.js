@@ -78,13 +78,11 @@ function EmailController($http, $httpParamSerializer, $sce, user) {
                 // pull the list_id from the url by parsing the html of the frame
                 var el = document.createElement( 'html' );
                 el.innerHTML = response.data.toString();
-                self.test = el;
-                console.log(response);
-                console.log(response.headers())
+                var url = $("a[href*='&l=']", el);
+                console.log(url[0]);
+                self.list_id = url[0].href.split("&")[1].split("=")[1];
 
-                //var url = el.getElementsByClassName('brand')[0].href;
-                //self.app_id = url.split("?")[1].split("=")[1];
-                //self.frame_content = $sce.trustAsHtml(response.data);
+                self.frame_content = $sce.trustAsHtml(response.data);
             })
     };
 
@@ -92,9 +90,30 @@ function EmailController($http, $httpParamSerializer, $sce, user) {
 
         $http({
             url: 'https://email.startupcommunity.org/includes/subscribers/line-update.php',
+            method: 'POST',
             data: $httpParamSerializer({
                 line: "James Gentes, jgentes@gmail.com",
-                list_id: "?????????????????????????",
+                list_id: '4',
+                app: self.app_id
+            }),
+            withCredentials: true,
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            }
+        })
+            .then(function(response) {
+                self.frame_content = $sce.trustAsHtml(response.data);
+            })
+    };
+
+    this.removeSubscriber = function() {
+
+        $http({
+            url: 'https://email.startupcommunity.org/includes/subscribers/line-delete.php',
+            method: 'POST',
+            data: $httpParamSerializer({
+                line: "jgentes@gmail.com",
+                list_id: '4',
                 app: self.app_id
             }),
             withCredentials: true,
