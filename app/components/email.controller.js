@@ -27,7 +27,7 @@ function EmailController($http, $httpParamSerializer, $sce, user) {
 
                 self.frame_content = $sce.trustAsHtml(response.data);
 
-                // pull the app_id from the url by parsing the html of the frame
+                // pull the app_id (brand) from the url by parsing the html of the frame
                 var el = document.createElement( 'html' );
                 el.innerHTML = response.data.toString();
                 var url = el.getElementsByClassName('brand')[0].href;
@@ -74,6 +74,16 @@ function EmailController($http, $httpParamSerializer, $sce, user) {
             }
         })
             .then(function(response) {
+
+                // pull the list_id from the url by parsing the html of the frame
+                var el = document.createElement( 'html' );
+                el.innerHTML = response.data.toString();
+                self.test = el;
+                console.log(response);
+                console.log(response.headers())
+
+                //var url = el.getElementsByClassName('brand')[0].href;
+                //self.app_id = url.split("?")[1].split("=")[1];
                 //self.frame_content = $sce.trustAsHtml(response.data);
             })
     };
