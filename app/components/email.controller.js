@@ -42,6 +42,7 @@ function EmailController($http, $httpParamSerializer, $sce, user) {
 
         $http({
             url: 'https://email.startupcommunity.org/includes/app/create.php',
+            method: 'POST',
             data: $httpParamSerializer({
                 app_name: "push_brand_test",
                 from_name: "James Zibtru",
@@ -62,6 +63,7 @@ function EmailController($http, $httpParamSerializer, $sce, user) {
 
         $http({
             url: 'https://email.startupcommunity.org/includes/subscribers/import-add.php',
+            method: 'POST',
             data: $httpParamSerializer({
                 list_name: "list_test",
                 app: self.app_id
