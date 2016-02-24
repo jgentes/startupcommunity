@@ -1,6 +1,79 @@
 angular
     .module('services', [])
 
+    .factory('newsletter_service', function($http, $httpParamSerializer) {
+        return {
+            createBrand: function() {
+                $http({
+                    url: 'https://email.startupcommunity.org/includes/app/create.php',
+                    method: 'POST',
+                    data: $httpParamSerializer({
+                        app_name: "push_brand_test",
+                        from_name: "James Zibtru",
+                        from_email: "james@bendtech.com",
+                        reply_to: "james@bendtech.com"
+                    }),
+                    withCredentials: true,
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    }
+                })
+            },
+            createList: function() {
+                $http({
+                    url: 'https://email.startupcommunity.org/includes/subscribers/import-add.php',
+                    method: 'POST',
+                    data: $httpParamSerializer({
+                        list_name: "list_test",
+                        app: self.app_id
+                    }),
+                    withCredentials: true,
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    }
+                })
+                    .then(function(response) {
+                    // pull the list_id from the url by parsing the html of the frame
+                    var el = document.createElement( 'html' );
+                    el.innerHTML = response.data.toString();
+                    var url = $("a[href*='&l=']", el);
+
+                    return url[0].href.split("&")[1].split("=")[1];
+                })
+            },
+            addSubscriber: function() {
+                $http({
+                    url: 'https://email.startupcommunity.org/includes/subscribers/line-update.php',
+                    method: 'POST',
+                    data: $httpParamSerializer({
+                        line: "James Gentes, jgentes@gmail.com",
+                        list_id: '4',
+                        app: self.app_id
+                    }),
+                    withCredentials: true,
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    }
+                })
+            },
+            removeSubscriber: function () {
+                return $http({
+                    url: 'https://email.startupcommunity.org/includes/subscribers/line-delete.php',
+                    method: 'POST',
+                    data: $httpParamSerializer({
+                        line: "jgentes@gmail.com",
+                        list_id: '4',
+                        app: self.app_id
+                    }),
+                    withCredentials: true,
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    }
+                })
+            }
+        }
+    })
+
     .factory('notify_service', function($http) {
         return {
             contact: function(user_key, formdata, community_key, location_key) {
