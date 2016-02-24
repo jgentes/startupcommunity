@@ -18,12 +18,12 @@
                     <li ng-repeat="item in networks.networks[parent.id] track by $index">
                         <div class="col-md-12">
                             <a ui-sref="{{'community.dashboard' + networks.nav_jump}}">
-                                <strong>{{item.community_profiles[networks.location.key].name}}&nbsp;<i class="fa fa-chevron-right fa-fw"></i></strong>
+                                <strong>{{item.community_profiles[networks.location.key].name}}</strong></i>
                                 <span loading-bars ng-show="nc_working"></span>
                             </a>
 
-                            <div ng-if="item.community_profiles[networks.location.key].description !== ''">
-                                {{item.community_profiles[networks.location.key].description}}
+                            <div>
+                                {{item.community_profiles[networks.location.key].description || item.profile.description}}
                             </div>
 
                             <hr>
