@@ -58,16 +58,18 @@ function NetworksController($stateParams, location, communities, nav_communities
     this.communities = communities;
     this.user = $auth.isAuthenticated() ? user : {};
     this.nav_communities = nav_communities;
+
     this.location = location;
     this.location_key = this.location.key;
-    this.nav_jump = (this.location && this.location.type == 'location') || ((this.community.type == "user" || this.community.type == "company") &&
-    (this.location && this.location.type == 'location')) ?
+    this.nav_jump = (this.location && this.location.type === 'location') ||
+                    ((this.community.type === 'user' || this.community.type === 'company') &&
+                    (this.location && this.location.type === 'location')) ?
         "({community_path: item.key, community: item, query: '*', location_path: networks.location.key, top: networks.top, communities: networks.communities, user: networks.user })" :
         "({community_path: item.key, community: item, query: '*', location_path: networks.user.profile.home, top: networks.top, communities: networks.communities, user: networks.user })";
 
-    for (item in this.nav_communities) {
+    for (var item in this.nav_communities) {
         var currentItem = this.nav_communities[item];
-        if (currentItem['type'] === 'network') {
+        if (currentItem.type === 'network') {
             var community = this.nav_communities[item];
             if (community.community_profiles) {
                 var communityProfile = community.community_profiles[this.location_key] || false;
