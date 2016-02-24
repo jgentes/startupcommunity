@@ -5,7 +5,7 @@ angular
         return {
             createBrand: function() {
                 $http({
-                    url: 'https://email.startupcommunity.org/includes/app/create.php',
+                    url: 'https://newsletter.startupcommunity.org/includes/app/create.php',
                     method: 'POST',
                     data: $httpParamSerializer({
                         app_name: "push_brand_test",
@@ -18,10 +18,18 @@ angular
                         'Content-Type': 'application/x-www-form-urlencoded'
                     }
                 })
+                    .then(function(response) {
+                        // pull the brand_id from the url by parsing the html of the frame
+                        var el = document.createElement( 'html' );
+                        el.innerHTML = response.data.toString();
+                        var url = $("a[href*='&l=']", el);
+
+                        return url[0].href.split("&")[1].split("=")[1];
+                    })
             },
             createList: function() {
                 $http({
-                    url: 'https://email.startupcommunity.org/includes/subscribers/import-add.php',
+                    url: 'https://newsletter.startupcommunity.org/includes/subscribers/import-add.php',
                     method: 'POST',
                     data: $httpParamSerializer({
                         list_name: "list_test",
@@ -43,7 +51,7 @@ angular
             },
             addSubscriber: function() {
                 $http({
-                    url: 'https://email.startupcommunity.org/includes/subscribers/line-update.php',
+                    url: 'https://newsletter.startupcommunity.org/includes/subscribers/line-update.php',
                     method: 'POST',
                     data: $httpParamSerializer({
                         line: "James Gentes, jgentes@gmail.com",
@@ -58,7 +66,7 @@ angular
             },
             removeSubscriber: function () {
                 return $http({
-                    url: 'https://email.startupcommunity.org/includes/subscribers/line-delete.php',
+                    url: 'https://newsletter.startupcommunity.org/includes/subscribers/line-delete.php',
                     method: 'POST',
                     data: $httpParamSerializer({
                         line: "jgentes@gmail.com",

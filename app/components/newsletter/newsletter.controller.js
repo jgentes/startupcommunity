@@ -1,14 +1,16 @@
 angular
     .module('startupcommunity')
-    .controller('EmailController', EmailController);
+    .controller('NewsletterController', NewsletterController);
 
-function EmailController($http, $httpParamSerializer, $sce, newsletter_service, user) {
+function NewsletterController($http, $httpParamSerializer, $sce, newsletter_service, user) {
     var self = this;
+
+
 
     if (user) {
 
         $http({
-            url: 'https://email.startupcommunity.org/includes/login/main.php',
+            url: 'https://newsletter.startupcommunity.org/includes/login/main.php',
             method: 'POST',
             data: $httpParamSerializer({
                 email: "jgentes@gmail.com",

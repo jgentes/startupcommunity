@@ -343,13 +343,13 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
             }
         })
 
-        .state('email', {
+        .state('newsletter', {
             parent: 'root',
-            url: '/email',
+            url: '/newsletter',
             views: {
                 'content': {
-                    templateUrl: "components/email.html",
-                    controller: 'EmailController as email'
+                    templateUrl: "components/newsletter/newsletter.html",
+                    controller: 'NewsletterController as news'
                 }
             }
         })
