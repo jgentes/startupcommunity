@@ -12,7 +12,7 @@
                     <li ui-sref="{{'company.list' + nav.nav_url}}" ng-class="{ 'active' : nav.state.current.name == 'company.list' }">
                         <a>COMPANIES</a>
                     </li>
-                    <li ui-sref="{{'networks.list' + nav.nav_url}}" ng-class="{ 'active' : nav.state.current.name == 'networks.list' }">
+                    <li ui-sref="{{'networks.list' + nav.nav_url}}" ng-class="{ 'active' : nav.state.current.name == 'networks.list' }" ng-if="nav.community.type !== 'network'">
                         <a>NETWORKS</a>
                     </li>
                 </ul>
