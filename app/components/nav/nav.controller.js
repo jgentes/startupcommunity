@@ -2,7 +2,14 @@ angular
     .module('startupcommunity')
     .controller('NavigationController', NavigationController);
 
-function NavigationController($auth, $state, $window, $timeout, $location, $scope, $stateParams, $uibModal, user_service, community_service, user, location, community, communities, nav_communities, top, knowtify, errorLogService) {
+function NavigationController($auth, $state, $window, $timeout, $location, $scope, $stateParams, $uibModal, user_service, community_service, user, location, community, communities, nav_communities, top, knowtify, errorLogService, newsletter_service) {
+
+    this.createBrand = function() {
+        newsletter_service.createBrand()
+            .then(function(response) {
+                console.log(response);
+            })
+    };
 
     if (user && user.token) $auth.setToken(user.token); // update local storage with latest user profile
 

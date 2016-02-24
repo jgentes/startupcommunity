@@ -3,15 +3,33 @@ angular
 
     .factory('newsletter_service', function($http, $httpParamSerializer) {
         return {
-            createBrand: function() {
-                $http({
+            createBrand: function(app_name, from_name, from_email, password) {
+
+                return $http({
                     url: 'https://newsletter.startupcommunity.org/includes/app/create.php',
                     method: 'POST',
                     data: $httpParamSerializer({
                         app_name: "push_brand_test",
                         from_name: "James Zibtru",
                         from_email: "james@bendtech.com",
-                        reply_to: "james@bendtech.com"
+                        reply_to: "james@bendtech.com",
+                        allowed_attachments: "jpeg,jpg,gif,png,pdf,zip",
+                        logo: "",
+                        uid: "1",
+                        smtp_host: "",
+                        smtp_port: "",
+                        smtp_ssl: "",
+                        smtp_username: "",
+                        smtp_password: "",
+                        login_email: "james@bendtech.com",
+                        language: "en_US",
+                        pass: "Password",
+                        currency: "USD",
+                        delivery_fee: "",
+                        cost_per_recipient: "",
+                        "choose-limit": "unlimited",
+                        "monthly-limit": "",
+                        "reset-on-day": "1"
                     }),
                     withCredentials: true,
                     headers: {
@@ -19,16 +37,17 @@ angular
                     }
                 })
                     .then(function(response) {
+                        console.log(response);
                         // pull the brand_id from the url by parsing the html of the frame
                         var el = document.createElement( 'html' );
                         el.innerHTML = response.data.toString();
-                        var url = $("a[href*='&l=']", el);
+                        var url = $("a:contains('push_brand_test')", el).attr('href')
 
-                        return url[0].href.split("&")[1].split("=")[1];
+                        return url.split("?")[1].split("=")[1];
                     })
             },
             createList: function() {
-                $http({
+                return $http({
                     url: 'https://newsletter.startupcommunity.org/includes/subscribers/import-add.php',
                     method: 'POST',
                     data: $httpParamSerializer({
@@ -50,7 +69,7 @@ angular
                 })
             },
             addSubscriber: function() {
-                $http({
+                return $http({
                     url: 'https://newsletter.startupcommunity.org/includes/subscribers/line-update.php',
                     method: 'POST',
                     data: $httpParamSerializer({
