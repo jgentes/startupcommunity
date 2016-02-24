@@ -186,8 +186,9 @@ function NavigationController($auth, $state, $window, $timeout, $location, $scop
                     if (!this.networks) this.networks = {};
                     if (this.nav_communities[item].community_profiles && this.nav_communities[item].community_profiles[this.location.key] && this.nav_communities[item].community_profiles[this.location.key].parents && this.nav_communities[item].community_profiles[this.location.key].parents[0]) {
                         var network_type = this.nav_communities[item].community_profiles[this.location.key].parents[0];
-                        if (!this.networks[network_type]) this.networks[network_type] = {};
-                        this.networks[network_type][item] =  this.nav_communities[item];
+                        //if (!this.networks[network_type]) this.networks[network_type] = {};
+                        //this.networks[network_type][item] =  this.nav_communities[item];
+                        this.networks[item] = this.nav_communities[item];
                     }
                     break;
                 default:

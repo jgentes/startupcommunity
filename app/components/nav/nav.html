@@ -157,12 +157,20 @@
             </li>
 
             <li class="active" tour-step order="2" title="Private Networks" content="Networks are groups of companies and people who are connected through a private, invitation-only community.<br><br>Examples of networks include startup accelerators, coworking spaces, mentorship groups, and investment funds." placement="right">
-                <a ui-sref="networks.list({location_path: nav.location.key, community_path: '', community: nav.location, location: nav.location, query: '*', top: nav.top, communities: nav.communities, user: nav.user })"><span>
+                <a style="cursor:default;"><span>
 
                     Networks
 
                 </span>
                 </a>
+                <ul class="nav nav-second-level">
+                    <li ng-repeat="item in nav.networks">
+                        <a ui-sref="{{'community.dashboard' + nav.nav_jump}}" ng-class="{active: nav.path.includes('/' + item.key)}" ng-click="nc_working = true">
+                            <i ng-class="'fa ' + item.profile.icon"></i> {{item.community_profiles[nav.location.key].name}}
+                            <span loading-bars ng-show="nc_working"></span>
+                        </a>
+                    </li>
+                </ul>
             </li>
 
             <li class="active" ng-show="nav.top.parents" tour-step order="3" title="Industry Clusters" content="A cluster is an entrepreneurial ecosystem in support of a specific industry.<br><br>Clusters are made up of mentors, investors, companies, accelerators, coworking spaces, and events that connect people and foster creation of new startups." placement="right">
