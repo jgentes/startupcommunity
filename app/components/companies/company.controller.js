@@ -42,6 +42,9 @@ function CompanyController($stateParams, company_service, result_service, $sce, 
     this.searchCompanies = function(alturl) {
         self.loadingUser = true;
 
+        // remove random sort
+        if (alturl) alturl = alturl.replace(/([&\?]sort=_random*$|sort=_random&|[?&]sort=_random(?=#))/, '');
+
         if (query !== '*') {
             self.tag = query;
         } else self.tag = undefined;
