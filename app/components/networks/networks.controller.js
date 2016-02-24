@@ -57,6 +57,10 @@ function NetworksController($stateParams, location, nav_communities, community_s
     this.nav_communities = nav_communities;
     this.location = location;
     this.location_key = this.location.key;
+    this.nav_jump = (this.location && this.location.type == 'location') || ((this.community.type == "user" || this.community.type == "company") &&
+    (this.location && this.location.type == 'location')) ?
+        "({community_path: item.key, community: item, query: '*', location_path: nav.location.key, top: nav.top, communities: nav.communities, user: nav.user })" :
+        "({community_path: item.key, community: item, query: '*', location_path: nav.user.profile.home, top: nav.top, communities: nav.communities, user: nav.user })";
 
     for (item in this.nav_communities) {
         var currentItem = this.nav_communities[item];
