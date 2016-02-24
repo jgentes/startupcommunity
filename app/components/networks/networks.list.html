@@ -16,10 +16,18 @@
             <div class="panel-footer" style="background: #fff;">
                 <ul class="nav nav-second-level" ng-if="networks.networks[parent.id]">
                     <li ng-repeat="item in networks.networks[parent.id] track by $index">
-                        <a ui-sref="{{'community.dashboard' + networks.nav_jump}}" ng-click="nc_working = true">
-                            <i ng-class="'fa ' + item.profile.icon"></i> {{item.community_profiles[networks.location.key].name}}
-                            <span loading-bars ng-show="nc_working"></span>
-                        </a>
+                        <div class="col-md-12">
+                            <a ui-sref="{{'community.dashboard' + networks.nav_jump}}">
+                                <strong>{{item.community_profiles[networks.location.key].name}}&nbsp;<i class="fa fa-chevron-right fa-fw"></i></strong>
+                                <span loading-bars ng-show="nc_working"></span>
+                            </a>
+
+                            <div ng-if="item.community_profiles[networks.location.key].description !== ''">
+                                {{item.community_profiles[networks.location.key].description}}
+                            </div>
+
+                            <hr>
+                        </div>
                     </li>
                 </ul>
             </div>
