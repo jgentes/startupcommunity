@@ -15,13 +15,13 @@ function NavigationController($auth, $state, $window, $timeout, $location, $scop
                 this.location = communities[community.profile.home];
             } else this.location = community;
         } else this.location = location;
-        console.log(communities)
+
         this.community = jQuery.isEmptyObject($stateParams.community) ?
             (community.key !== this.location.key ?
                 community :
                 this.location) :
             $stateParams.community;
-        console.log('2')
+
         this.location_path = $stateParams.location_path || $stateParams.location.key || this.community.key;
     }
     catch(err) {
