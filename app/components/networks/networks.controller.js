@@ -78,8 +78,9 @@ function NetworksController($stateParams, location, communities, nav_communities
                     communityProfile.parents &&
                     communityProfile.parents[0]) {
                     var network_type = communityProfile.parents[0];
-                    if (!this.networks[network_type]) this.networks[network_type] = {};
-                    this.networks[network_type][item] = this.nav_communities[item];
+
+                    this.networks[network_type] = this.networks[network_type] || [];
+                    this.networks[network_type].push(this.nav_communities[item]);
                 }
             }
         }
