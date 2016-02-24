@@ -16,8 +16,8 @@
             <div class="panel-footer" style="background: #fff;">
                 <ul class="nav nav-second-level" ng-if="networks.networks[parent.id]">
                     <li ng-repeat="item in networks.networks[parent.id] track by $index">
-                        <a ui-sref="{{'community.dashboard' + nav.nav_jump}}" ng-class="{active: nav.path.includes('/' + item.key)}" ng-click="nc_working = true">
-                            <i ng-class="'fa ' + item.profile.icon"></i> {{item.community_profiles[nav.location.key].name}}
+                        <a ui-sref="{{'community.dashboard' + networks.nav_jump}}" ng-click="nc_working = true">
+                            <i ng-class="'fa ' + item.profile.icon"></i> {{item.community_profiles[networks.location.key].name}}
                             <span loading-bars ng-show="nc_working"></span>
                         </a>
                     </li>

@@ -2,7 +2,7 @@ angular
     .module('startupcommunity')
     .controller('NetworksController', NetworksController)
 
-function NetworksController($stateParams, location, nav_communities, community_service) {
+function NetworksController($stateParams, location, communities, nav_communities, community_service, top, user, $auth) {
     var self = this;
 
     this.networkPresentation = {
@@ -53,14 +53,17 @@ function NetworksController($stateParams, location, nav_communities, community_s
     this.network_parents = community_service.network_parents().map(function(item) {
         return self.networkPresentation[item.toLowerCase()];
     });
+    this.top = top || {};
     this.networks = this.networks || {};
+    this.communities = communities;
+    this.user = $auth.isAuthenticated() ? user : {};
     this.nav_communities = nav_communities;
     this.location = location;
     this.location_key = this.location.key;
     this.nav_jump = (this.location && this.location.type == 'location') || ((this.community.type == "user" || this.community.type == "company") &&
     (this.location && this.location.type == 'location')) ?
-        "({community_path: item.key, community: item, query: '*', location_path: nav.location.key, top: nav.top, communities: nav.communities, user: nav.user })" :
-        "({community_path: item.key, community: item, query: '*', location_path: nav.user.profile.home, top: nav.top, communities: nav.communities, user: nav.user })";
+        "({community_path: item.key, community: item, query: '*', location_path: networks.location.key, top: networks.top, communities: networks.communities, user: networks.user })" :
+        "({community_path: item.key, community: item, query: '*', location_path: networks.user.profile.home, top: networks.top, communities: networks.communities, user: networks.user })";
 
     for (item in this.nav_communities) {
         var currentItem = this.nav_communities[item];
