@@ -1,0 +1,38 @@
+<div class="row">
+    <div class="col-xs-12 col-sm-6" ng-repeat="parent in networks.network_parents track by $index" ng-if="networks.network_parents.length > 0">
+        <div class="hpanel" ng-class="::parent.color">
+            <div class="panel-body" style="padding: 10px 5px;">
+                <div class="col-xs-8">
+                    <div class="stats-title pull-left">
+                        <h3>{{::parent.title}}</h3>
+                    </div>
+                </div>
+                <div class="col-xs-4">
+                    <div class="stats-icon pull-right">
+                        <i class="fa-4x" ng-class="::parent.icon"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="panel-footer" style="background: #fff;">
+                <ul class="nav nav-second-level" ng-if="networks.networks[parent.id]">
+                    <li ng-repeat="item in networks.networks[parent.id] track by $index">
+                        <div class="col-md-12">
+                            <a ui-sref="{{'community.dashboard' + networks.nav_jump}}">
+                                <strong>{{item.community_profiles[networks.location.key].name}}</strong></i>
+                                <span loading-bars ng-show="nc_working"></span>
+                            </a>
+
+                            <div>
+                                {{item.community_profiles[networks.location.key].description || item.profile.description}}
+                            </div>
+
+                            <hr>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div ng-show="networks.network_parents.length === 0" style="text-align: center" ng-cloak><h2><br/>Nothing here!</h2><br/><br/></div>
+</div>
