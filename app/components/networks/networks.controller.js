@@ -82,8 +82,4 @@ function NetworksController($stateParams, location, communities, nav_communities
             }
         }
     }
-
-    console.log(this.network_parents);
-
-    console.log(this.networks);
 }
