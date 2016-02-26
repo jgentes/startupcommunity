@@ -26,12 +26,17 @@
                 </div>
                 <ul class="nav nav-second-level" style="margin-left: -15px;">
                     <li ng-if="nav.user.communities.indexOf(nav.user.profile.home) > -1">
-                        <button class="btn btn-info" ng-click="nav.editCommunity({'type':'network'});" style="margin: 10px 15px;">+&nbsp;&nbsp;Add Network</button>
+                        <button class="btn btn-success" ng-click="nav.editCommunity({'type':'network'});" style="margin: 10px 15px;">+&nbsp;&nbsp;Add Network</button>
                     </li>
                 </ul>
             </div>
 
+            <button ng-if="nav.user.communities.indexOf(nav.user.profile.home) > -1 && !nav.user.newsletter" class="btn btn-info pull-right" ng-click="nav.setupNewsletter();" style="margin-top:15px; width: 100%;">Setup Email Newsletter</button>
+
+            <button ng-if="nav.user.communities.indexOf(nav.user.profile.home) > -1 && nav.user.newsletter" class="btn btn-info pull-right" ui-sref="newsletter" style="margin-top:15px; width: 100%;">Create / Edit Email Newsletters</button>
+
         </div>
+
 
         <div class="hpanel hnavyblue col-xs-12 col-sm-6 col-md-4" >
             <div class="panel-body">
@@ -47,7 +52,7 @@
                 </div>
                 <ul class="nav nav-second-level" style="margin-left: -15px;">
                     <li ng-if="nav.user.communities.indexOf(nav.user.profile.home) > -1">
-                        <button class="btn btn-primary" ng-click="nav.editCommunity({type:'cluster'});" style="margin: 10px 15px;">+&nbsp;&nbsp;Add Industry</button>
+                        <button class="btn btn-success" ng-click="nav.editCommunity({type:'cluster'});" style="margin: 10px 15px;">+&nbsp;&nbsp;Add Industry</button>
                     </li>
                 </ul>
             </div>

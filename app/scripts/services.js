@@ -3,14 +3,14 @@ angular
 
     .factory('newsletter_service', function($http, $httpParamSerializer) {
         return {
-            createBrand: function(app_name, from_name, from_email, password) {
+            createBrand: function(brand_name, from_name, from_email, password) {
 
                 return $http({
                     url: 'https://newsletter.startupcommunity.org/includes/app/create.php',
                     method: 'POST',
                     data: $httpParamSerializer({
-                        app_name: "push_brand_test",
-                        from_name: "James Zibtru",
+                        app_name: brand_name,
+                        from_name: from_name,
                         from_email: "james@bendtech.com",
                         reply_to: "james@bendtech.com",
                         allowed_attachments: "jpeg,jpg,gif,png,pdf,zip",

@@ -349,6 +349,16 @@ function NavigationController($auth, $state, $window, $timeout, $location, $scop
         });
     };
 
+    this.setupNewsletter = function() {
+
+        var modalInstance = $uibModal.open({
+            templateUrl: 'components/newsletter/setup_newsletter.html',
+            controller: SetupNewsController,
+            controllerAs: 'news',
+            windowClass: "hmodal-info"            
+        });
+    };
+
     // REQUEST INVITATION
 
     this.requestInvitation = function() {

@@ -1,6 +1,7 @@
 var memjs = require('memjs'),
     mc = memjs.Client.create(),
     path = require('path'),
+    request = require('request'),
     _ = require(path.join(__dirname, '../scripts/lodash40.js')),
     db = require('orchestrate')(process.env.DB_KEY);
 
@@ -720,6 +721,13 @@ function handleEditCommunity(req, res) {
                                 db.put(process.env.DB_COMMUNITIES, pathname, profile)
                                     .then(function (finalres) {
 
+                                        // check for newsletter settings
+                                        //todo CHANGE TO CREATE LIST
+                                        if (settings.community.type == 'network') {
+                                            user["key"] = req.user;
+                                            create_brand(user, settings.community.profile.name, user.profile.name, user.profile.email);
+                                        }
+
                                         update_user(req.user, 'leader', pathname, settings.location_key)
                                             .then(function() {
                                             res.status(201).send({message: settings.community.type[0].toUpperCase() + settings.community.type.slice(1) + ' created!'});
@@ -858,6 +866,146 @@ function handleDeleteCommunity(req, res) {
             console.warn("WARNING: community699", err);
         });
 
+}
+
+function create_brand(req, res) {
+    // always use ensureAuth before this (to acquire req.user)
+    var settings = req.body.params;
+    
+    // expect brand_name, from_name, from_email, smtp settings, 
+
+    console.log('Creating brand: ' + settings.brand_name);
+
+    db.get(process.env.DB_COMMUNITIES, req.user)
+        .then(function (response) {
+
+            if (response.body.code !== "items_not_found") {
+                var user = response.body;
+
+                // validate user is a leader of the network
+
+                if (user.roles && user.roles.leader && user.roles.leader[settings.network_key].indexOf(settings.location_key) > -1) {                    
+
+                    var password = Math.random().toString(36).slice(-8);
+            
+                    request.post('https://newsletter.startupcommunity.org/includes/app/create.php', {
+                            form: {
+                                app_name: brand_name,
+                                from_name: from_name,
+                                from_email: from_email,
+                                reply_to: from_email,
+                                allowed_attachments: "jpeg,jpg,gif,png,pdf,zip",
+                                logo: "",
+                                uid: "1",
+                                smtp_host: "",
+                                smtp_port: "",
+                                smtp_ssl: "",
+                                smtp_username: "",
+                                smtp_password: "",
+                                login_email: from_email,
+                                language: "en_US",
+                                pass: password,
+                                currency: "USD",
+                                delivery_fee: "",
+                                cost_per_recipient: "",
+                                "choose-limit": "unlimited",
+                                "monthly-limit": "",
+                                "reset-on-day": "1"
+                            }
+                        },
+                        function (err, response, body) {
+                            if (err) console.log("WARNING: ", err);
+                            console.log(response, body);
+                            // pull the brand_id from the url by parsing the html of the frame
+                            var el = document.createElement( 'html' );
+                            el.innerHTML = body.toString();
+                            var url = $("a:contains('push_brand_test')", el).attr('href')
+            
+                            newsletter_set(user_key, url.split("?")[1].split("=")[1]);
+                        })
+
+                } else {
+                    console.warn("User is not a leader of this network: " + settings.network_key + " and location: " + settings.location_key + "!");
+                    res.status(202).send({ message: 'You must be a leader of this network to delete it.' });
+                }
+            } else {
+                console.warn('WARNING:  User not found.');
+            }
+        })
+
+        .fail(function (err) {
+            console.warn("WARNING: community699", err);
+        });
+}
+
+function create_list(req, res) {
+    // always use ensureAuth before this (to acquire req.user)
+    var settings = req.body.params;
+
+    // expect brand_name, network_key, location_key, from_name, from_email, smtp settings, 
+
+    console.log('Creating brand: ' + settings.brand_name);
+
+    db.get(process.env.DB_COMMUNITIES, req.user)
+        .then(function (response) {
+
+            if (response.body.code !== "items_not_found") {
+                var user = response.body;
+
+                // validate user is a leader of the network
+
+                if (user.roles && user.roles.leader && user.roles.leader[settings.network_key].indexOf(settings.location_key) > -1) {
+
+                    var password = Math.random().toString(36).slice(-8);
+
+                    request.post('https://newsletter.startupcommunity.org/includes/app/create.php', {
+                            form: {
+                                app_name: brand_name,
+                                from_name: from_name,
+                                from_email: from_email,
+                                reply_to: from_email,
+                                allowed_attachments: "jpeg,jpg,gif,png,pdf,zip",
+                                logo: "",
+                                uid: "1",
+                                smtp_host: "",
+                                smtp_port: "",
+                                smtp_ssl: "",
+                                smtp_username: "",
+                                smtp_password: "",
+                                login_email: from_email,
+                                language: "en_US",
+                                pass: password,
+                                currency: "USD",
+                                delivery_fee: "",
+                                cost_per_recipient: "",
+                                "choose-limit": "unlimited",
+                                "monthly-limit": "",
+                                "reset-on-day": "1"
+                            }
+                        },
+                        function (err, response, body) {
+                            if (err) console.log("WARNING: ", err);
+                            console.log(response, body);
+                            // pull the brand_id from the url by parsing the html of the frame
+                            var el = document.createElement( 'html' );
+                            el.innerHTML = body.toString();
+                            var url = $("a:contains('push_brand_test')", el).attr('href')
+
+                            newsletter_set(user_key, url.split("?")[1].split("=")[1]);
+                        })
+
+                } else {
+                    console.warn("User is not a leader of this network: " + settings.network_key + " and location: " + settings.location_key + "!");
+                    res.status(202).send({ message: 'You must be a leader of this network to delete it.' });
+                }
+            } else {
+                console.warn('WARNING:  User not found.');
+            }
+        })
+
+        .fail(function (err) {
+            console.warn("WARNING: community699", err);
+        });
 }
 
 var update_user = function(user_key, role, community_key, location_key) {
