@@ -171,8 +171,9 @@ function NavigationController($auth, $state, $window, $timeout, $location, $scop
     parents = parents.join('|').toLowerCase().split('|'); // change all to lowercase
 
     // sort communities for use in nav and child dashboard pages
-    for (item in this.nav_communities) { // need to determine what item is here, esp if user or company
+    this.networks = [];
 
+    for (item in this.nav_communities) { // need to determine what item is here, esp if user or company
         if (this.nav_communities[item]) {
             switch (this.nav_communities[item].type) {
                 case "location":
@@ -190,19 +191,26 @@ function NavigationController($auth, $state, $window, $timeout, $location, $scop
                     }
                     break;
                 case "network":
-                    if (!this.networks) this.networks = {};
                     if (this.nav_communities[item].community_profiles && this.nav_communities[item].community_profiles[this.location.key] && this.nav_communities[item].community_profiles[this.location.key].parents && this.nav_communities[item].community_profiles[this.location.key].parents[0]) {
                         var network_type = this.nav_communities[item].community_profiles[this.location.key].parents[0];
-                        if (!this.networks[network_type]) this.networks[network_type] = {};
-                        this.networks[network_type][item] =  this.nav_communities[item];
+                        //if (!this.networks[network_type]) this.networks[network_type] = {};
+                        //this.networks[network_type][item] =  this.nav_communities[item];
+                        this.networks.push(this.nav_communities[item]);
                     }
+
                     break;
                 default:
                     break;
             }
         }
-
     }
+
+    var location_key = this.location.key;
+    this.networks = this.networks.sort(function(a, b) {
+        var x = a.community_profiles[location_key].name;
+        var y = b.community_profiles[location_key].name;
+        return ((x < y) ? -1 : ((x > y) ? 1 : 0));
+    });
 
     if (angular.equals({}, this.clusters)) this.clusters = undefined; // had a hard time checking for empty object in the html
 
