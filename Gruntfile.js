@@ -18,16 +18,6 @@ module.exports = function (grunt) {
         // Project settings
         startupcommunity: appConfig,
 
-        env : {
-            options : {
-                //Shared Options Hash
-            },
-            dev : {
-                NODE_ENV : 'local',
-                DEST     : appConfig.app
-            }
-        },
-
         express: {
             options: {
                 harmony: true,
@@ -267,9 +257,7 @@ module.exports = function (grunt) {
         'clean:server',
         'copy:backstyles',
         'copy:frontstyles',
-        //'connect:test',
-        'env:dev',
-        'express:dev',
+        'connect:test',
         'protractor:run'
     ]);
 
