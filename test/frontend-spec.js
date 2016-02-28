@@ -50,7 +50,7 @@ describe('Startup Community blog page', function() {
     expect(browser.getCurrentUrl()).toBe(browser.baseUrl + '/blog/');
   });
 
-  it('have header and footer', function() {
+  it('have header, posts and footer', function() {
     // Header
     expect(element(by.id('header')).isPresent()).toBe(true);
 
