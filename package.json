@@ -51,7 +51,8 @@
     "node": "0.12.4"
   },
   "scripts": {
-    "test": "./node_modules/protractor/bin/webdriver-manager update && grunt test",
+    "test": "grunt test",
+    "pretest": "node -v && npm -v && ./node_modules/protractor/bin/webdriver-manager update",
     "postinstall": "bower install"
   }
 }
