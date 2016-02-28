@@ -208,7 +208,7 @@ module.exports = function (grunt) {
         },
         protractor: {
             options: {
-                keepAlive: true,
+                keepAlive: false,
                 configFile: "test/protractor.conf.js"
             },
             run: {}
@@ -245,8 +245,8 @@ module.exports = function (grunt) {
         'clean:server',
         'copy:backstyles',
         'copy:frontstyles',
-        'connect:test'
-        //'protractor:run'
+        //'connect:test',
+        'protractor:run'
     ]);
 
     grunt.registerTask('fast', [
