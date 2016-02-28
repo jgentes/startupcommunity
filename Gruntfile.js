@@ -18,6 +18,18 @@ module.exports = function (grunt) {
         // Project settings
         startupcommunity: appConfig,
 
+        express: {
+            options: {
+                harmony: true,
+                port: 5000
+            },
+            dev: {
+                options: {
+                    script: 'app/server.js'
+                }
+            }
+        },
+
         // The grunt server settings
         connect: {
             options: {
@@ -246,6 +258,7 @@ module.exports = function (grunt) {
         'copy:backstyles',
         'copy:frontstyles',
         //'connect:test',
+        'express:dev',
         'protractor:run'
     ]);
 

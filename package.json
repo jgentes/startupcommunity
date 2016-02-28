@@ -39,6 +39,7 @@
     "grunt-contrib-less": "^1.1.0",
     "grunt-contrib-uglify": "^0.11.0",
     "grunt-contrib-watch": "^0.6.1",
+    "grunt-express-server": "^0.5.2",
     "grunt-filerev": "^2.0.0",
     "grunt-protractor-runner": "^3.0.0",
     "grunt-usemin": "^3.1.1",
@@ -53,7 +54,7 @@
   },
   "scripts": {
     "test": "grunt test",
-    "pretest": "node -v && npm -v && ./node_modules/protractor/bin/webdriver-manager update",
+    "pretest": "node -v && npm -v && ./node_modules/protractor/bin/webdriver-manager update && export PATH=$PATH:./node_modules/.bin/",
     "postinstall": "bower install"
   }
 }

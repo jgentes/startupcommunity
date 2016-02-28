@@ -45,7 +45,7 @@ describe('Startup Community blog page', function() {
   });
 
   it('should open blog home', function() {
-    browser.get('/blog');
+    browser.get(browser.baseUrl + '/blog');
 
     expect(browser.getCurrentUrl()).toBe(browser.baseUrl + '/blog/');
   });
