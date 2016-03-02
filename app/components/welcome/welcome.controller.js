@@ -166,6 +166,7 @@ function WelcomeController($auth, $q, $http, $window, $mixpanel, $uibModalInstan
     this.getCompanies = function(val) {
         return $http.get('/api/2.1/angel/startups/search?val=' + val)
         .then(function(response){
+            console.log(response);
             if (!response.data.error) {
                 return response.data.slice(0,6).map(function(item){
                     return item;
@@ -280,7 +281,7 @@ function WelcomeController($auth, $q, $http, $window, $mixpanel, $uibModalInstan
     this.addCompany = function(e) {
         if (e) e.preventDefault();
 
-        if (self.selectedCompany.parent) {
+        if (self.selectedCompany && self.selectedCompany.parent) {
             // adjust parent industry caps
             self.selectedCompany.parent = self.selectedCompany.parent.toLowerCase();
 
