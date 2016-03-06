@@ -33,11 +33,13 @@ describe('Users:List', function () {
                 expect(
                     element.all( by.css('[ng-click^="users.filterRole"]') ).
                         count()
-                ).toBe(7);
+                ).toBe( 7 );
 
-                //debugger;
-                //if (users) {
-                //}
+                // verify number of rendered users boxes in list
+                expect(
+                    element.all( by.exactRepeater('item in users.users.results') ).
+                        count()
+                ).toBe(users.users.count);
             });
 
 /*
@@ -103,5 +105,40 @@ describe('Users:List', function () {
                         ).toEqual(v.length * 2);  // appears two times on page, so need to multiply checked value by 2
                     });
  */
+    });
+
+    it('user list pagination works correctly', function () {
+        usersRef().
+            then(function(users) {
+                if (users.users.count > 0) {
+                    if (users.users.count > users.users.total_count) {
+                        // check if pagination next/prev controls should appear
+                        if (users.users.end < users.users.end) {
+                            expect(
+                                element( by.css('[ng-click^="users.searchUsers(users.users.next"]') ).
+                                    isPresent()
+                            ).toBeTruthy();
+                        }
+
+                        if (users.users.start > 1) {
+                            expect(
+                                element( by.css('[ng-click^="users.searchUsers(users.users.prev"]') ).
+                                    isPresent()
+                            ).toBeTruthy();
+                        }
+                    }
+
+                    //debugger;
+                    //if (users) {
+                    //}
+                }
+                else {
+                    expect(
+                        element( by.css('[ng-click^="users.searchUsers(users.users"]') ).
+                            isPresent()
+                    ).not.toBeTruthy();
+                }
+            });
+
     });
 });
