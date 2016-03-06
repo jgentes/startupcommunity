@@ -28,46 +28,46 @@ describe('Startup Community frontend page', function() {
         element(
             by.css('nav.navbar')
         ).isPresent()
-    ).toBe(true);
+    ).toBeTruthy();
 
     // Menu
     expect(
         element(
             by.id('myMenu')
         ).isPresent()
-    ).toBe(true);
+    ).toBeTruthy();
 
     expect(
         element(
             by.id('AnimatedBg')
         ).isPresent()
-    ).toBe(true);
+    ).toBeTruthy();
 
     // Invite form
     expect(
         element(
             by.id('inviteForm')
         ).isPresent()
-    ).toBe(true);
+    ).toBeTruthy();
 
     // Pricing table
     expect(
         element(
             by.id('pricing')
         ).isPresent()
-    ).toBe(true);
+    ).toBeTruthy();
 
     // Footer
     expect(
         element(
             by.css('footer > .main-footer')
         ).isPresent()
-    ).toBe(true);
+    ).toBeTruthy();
 
     expect(
         element(
             by.css('footer > .sub-footer')
         ).isPresent()
-    ).toBe(true);
+    ).toBeTruthy();
   });
 });

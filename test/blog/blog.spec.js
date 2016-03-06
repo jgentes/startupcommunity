@@ -17,27 +17,27 @@ describe('Startup Community blog page', function() {
             element(
                 by.id('header')
             ).isPresent()
-        ).toBe(true);
+        ).toBeTruthy();
 
         // Content area
         expect(
             element(
                 by.css('main.content')
             ).isPresent()
-        ).toBe(true);
+        ).toBeTruthy();
 
         // Contains posts
         expect(
             element(
                 by.css('div.timeline article.post')
             ).isPresent()
-        ).toBe(true);
+        ).toBeTruthy();
 
         // Footer
         expect(
             element(
                 by.id('footer')
             ).isPresent()
-        ).toBe(true);
+        ).toBeTruthy();
     });
 });
