@@ -8,8 +8,6 @@ module.exports = function (grunt) {
 
     grunt.loadNpmTasks('grunt-env');
 
-    grunt.loadNpmTasks('grunt-contrib-jshint');
-
     // Configurable paths for the app
     var appConfig = {
         app: 'app',
