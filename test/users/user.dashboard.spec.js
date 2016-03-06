@@ -1,26 +1,54 @@
-describe('Startup Community user dashboard', function() {
-    beforeEach(function() {
+describe('User:Dashboard', function () {
+    beforeEach(function () {
         isAngularSite(true);
+
+        browser.get('/james');
     });
 
-    it('should open user dashboard', function() {
-        browser.get(browser.baseUrl + '/james');
-
+    it('has user information', function () {
+        // user.key == 'james'
         expect(
-            browser.getCurrentUrl()
-        ).toBe(browser.baseUrl + '/james');
-    });
+            element.all( by.binding('profile.user') ).
+                first().
+                    evaluate('profile.user.key')
+        ).toBe('james');
 
-    it('have user information', function() {
-        var skillsList = element.all(
-            by.repeater('skill in profile.user.profile.skills')
-        );
+        // user.type == 'user'
         expect(
-            skillsList.count()
-        ).toEqual(20);     // two times - one in hero panel and one at full profile tab
+            element.all( by.binding('profile.user') ).
+                first().
+                    evaluate('profile.user.type')
+        ).toBe('user');
 
-        //element(by.model('profile.user.profile.headline')).toEqual();
+        // user.profile.email == 'james@startupcommunity.org'
+        expect(
+            element.all( by.binding('profile.user') ).
+                first().
+                    evaluate('profile.user.profile.email')
+        ).toBe('james@startupcommunity.org');
 
-        //expect(element(by.css('div.hero')).isPresent()).toBe(true);
+        // user.communities contains user.profile.home
+        expect(
+            element.all( by.binding('profile.user') ).
+                first().
+                    evaluate('profile.user.communities.indexOf(profile.user.profile.home) >= 0')
+        ).toBeTruthy();
+
+        // user.roles.founder defined and contains some data
+        expect(
+            element.all( by.binding('profile.user') ).
+                first().
+                    evaluate('profile.user.roles.founder')
+        ).toBeTruthy();
+
+        // check rendered skill list agains number of skills in user.profile.skills
+        element.all( by.binding('profile.user') ).
+            first().
+                evaluate('profile.user.profile.skills').then(function(v) {
+                    expect(
+                        element.all( by.repeater('skill in profile.user.profile.skills') ).
+                            count()
+                    ).toEqual(v.length * 2);  // appears two times on page, so need to multiply checked value by 2
+                });
     });
 });
