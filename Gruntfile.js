@@ -41,9 +41,7 @@ module.exports = function (grunt) {
             },
             local: {
                 options: {
-                    debug: true,
                     script: 'app/server.js',
-                    background: false
                 }
             },
             prod: {
@@ -53,7 +51,9 @@ module.exports = function (grunt) {
             },
             dev: {
                 options: {
-                    script: 'app/server.js'
+                    debug: true,
+                    script: 'app/server.js',
+                    background: false
                 }
             }
         },
@@ -287,7 +287,7 @@ module.exports = function (grunt) {
         'local',
         [
             'env:local',
-            'express:local'
+            'express:dev'
         ]
     );
 
