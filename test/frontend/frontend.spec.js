@@ -1,6 +1,5 @@
 describe('Startup Community frontend page', function() {
   var self = this;
-  console.log('Env: ', process.env);
 
   beforeEach(function() {
     isAngularSite(false);

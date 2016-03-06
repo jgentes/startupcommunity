@@ -6,11 +6,15 @@ module.exports = function (grunt) {
     // Show grunt task time
     require('time-grunt')(grunt);
 
+    grunt.loadNpmTasks('grunt-env');
+
     // Configurable paths for the app
     var appConfig = {
         app: 'app',
         dist: 'dist'
     };
+
+    var NODE_ENV = process.env.NODE_ENV || 'local';
 
     // Grunt configuration
     grunt.initConfig({
@@ -18,10 +22,31 @@ module.exports = function (grunt) {
         // Project settings
         startupcommunity: appConfig,
 
+        env : {
+            dev : {
+                //NODE_ENV : 'development'
+            },
+            local : {
+                src: 'config.local.env'
+                //NODE_ENV : 'local'
+            }
+        },
+
         express: {
             options: {
+                debug: false,
                 harmony: true,
                 port: 5000
+            },
+            test: {
+                options: {
+                    script: 'app/server.js'
+                }
+            },
+            prod: {
+                options: {
+                    script: 'app/server.js'
+                }
             },
             dev: {
                 options: {
@@ -253,13 +278,14 @@ module.exports = function (grunt) {
         'htmlmin'
     ]);
 
-    grunt.registerTask('test', [
-        'clean:server',
-        'copy:backstyles',
-        'copy:frontstyles',
-        'connect:test',
-        'protractor:run'
-    ]);
+    grunt.registerTask(
+        'test',
+        [
+            'env:local',
+            'express:test',
+            'protractor:run'
+        ]
+    );
 
     grunt.registerTask('fast', [
         //'clean:dist',

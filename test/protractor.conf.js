@@ -5,7 +5,8 @@ exports.config = {
     };
   },
 
-  verbose: true,
+  debug: false,
+  verbose: false,
 
   capabilities: {
     'phantomjs.binary.path': './node_modules/.bin/phantomjs',
@@ -19,5 +20,9 @@ exports.config = {
     './frontend/*.spec.js',
     './blog/*.spec.js',
     './users/*.spec.js'
-  ]
+  ],
+
+  jasmineNodeOpts: {
+    showColors: true
+  }
 };
