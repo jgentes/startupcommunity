@@ -36,11 +36,12 @@ module.exports = function (grunt) {
             options: {
                 debug: false,
                 harmony: true,
+                output: "Ghost is running",     // wait for Ghost to start
                 port: 5000
             },
-            test: {
+            local: {
                 options: {
-                    script: 'app/server.js'
+                    script: 'app/server.js',
                 }
             },
             prod: {
@@ -282,7 +283,7 @@ module.exports = function (grunt) {
         'test',
         [
             'env:local',
-            'express:test',
+            'express:local',
             'protractor:run'
         ]
     );

@@ -3,7 +3,6 @@ describe('Startup Community blog page', function() {
         isAngularSite(false);
     });
 
-/*
     it('should open blog home', function() {
         browser.get(browser.baseUrl + '/blog');
 
@@ -41,5 +40,4 @@ describe('Startup Community blog page', function() {
             ).isPresent()
         ).toBe(true);
     });
-*/
 });
