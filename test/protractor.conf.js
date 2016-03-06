@@ -11,7 +11,7 @@ exports.config = {
   capabilities: {
     'phantomjs.binary.path': './node_modules/.bin/phantomjs',
     'phantomjs.cli.args': ['--webdriver-loglevel=DEBUG'],
-    'browserName': /*'phantomjs'*/'chrome'
+    'browserName': (process.env.NODE_ENV === 'local') ? 'chrome' : 'phantomjs'
   },
 
   baseUrl: process.env.API_BASE_URL || 'http://localhost:5000',
