@@ -16,7 +16,6 @@ exports.config = {
   baseUrl: process.env['API_BASE_URL'] || 'http://localhost:5000',
 
   specs: [
-    './*.spec.js',
     './frontend/*.spec.js',
     './blog/*.spec.js',
     './users/*.spec.js'
