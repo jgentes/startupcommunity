@@ -1,6 +1,4 @@
 describe('Startup Community user dashboard', function() {
-    var self = this;
-
     beforeEach(function() {
         isAngularSite(true);
     });

@@ -41,7 +41,9 @@ module.exports = function (grunt) {
             },
             local: {
                 options: {
+                    debug: true,
                     script: 'app/server.js',
+                    background: false
                 }
             },
             prod: {
@@ -249,7 +251,9 @@ module.exports = function (grunt) {
                 keepAlive: false,
                 configFile: "test/protractor.conf.js"
             },
-            run: {}
+            run: {
+
+            }
         }
     });
 
@@ -278,6 +282,14 @@ module.exports = function (grunt) {
         'usemin',
         'htmlmin'
     ]);
+
+    grunt.registerTask(
+        'local',
+        [
+            'env:local',
+            'express:local'
+        ]
+    );
 
     grunt.registerTask(
         'test',

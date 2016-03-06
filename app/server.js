@@ -52,7 +52,9 @@ var root = __dirname.substring(0, __dirname.lastIndexOf('/')) || __dirname.subst
 
 // Order really matters here..!
 app.disable('x-powered-by');
-app.use(logger('dev'));
+if (process.env.SC_DISABLE_API_LOG !== "1") {
+    app.use(logger('dev'));
+}
 app.use(methodOverride());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
