@@ -5,7 +5,7 @@ angular
     .controller('InviteUserController', InviteUserController)
     .controller('ContactUserController', ContactUserController);
 
-function UserController($stateParams, user_service, result_service, $sce, community, communities, sweet) {
+function UserController($stateParams, $location, user_service, result_service, $sce, community, communities, sweet) {
     //todo usercontroller and company controller are dups, need to be consolidated
     this.community = community;
     this.communities = communities;
