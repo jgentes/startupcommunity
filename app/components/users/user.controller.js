@@ -272,7 +272,7 @@ function UserProfileController($stateParams, $http, $uibModal, $mixpanel, user, 
     this.background_image = 'url(https://s3-us-west-2.amazonaws.com/startupcommunity/backgrounds/background' + Math.floor((Math.random() * 54) + 1) + '.jpg)';
 
     this.companies = { "count" : {}};
-    console.log(this.communities);
+    
     for (role in this.user.roles) {
         for (comm in this.user.roles[role]) {
             if (this.communities[comm] && this.communities[comm].type == 'company') {
