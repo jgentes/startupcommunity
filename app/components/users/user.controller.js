@@ -50,7 +50,9 @@ function UserController($stateParams, user_service, result_service, $sce, commun
             self.tag = query;
         } else self.tag = undefined;
 
-        user_service.search(communityFilter, clusterFilter, query, undefined, self.usercount, alturl)
+        var limit = $location.search().limit;
+
+        user_service.search(communityFilter, clusterFilter, query, undefined, limit || self.usercount, alturl)
             .then(function (response) {
                 self.tag = undefined;
                 self.users = result_service.setPage(response.data);

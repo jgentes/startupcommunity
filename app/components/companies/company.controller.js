@@ -4,7 +4,7 @@ angular
     .controller('CompanyProfileController', CompanyProfileController)
     .controller('AddCompanyController', AddCompanyController);
 
-function CompanyController($stateParams, company_service, result_service, $sce, community, communities) {
+function CompanyController($stateParams, $location, company_service, result_service, $sce, community, communities) {
 
     this.community = community;
     this.communities = communities;
@@ -49,7 +49,9 @@ function CompanyController($stateParams, company_service, result_service, $sce, 
             self.tag = query;
         } else self.tag = undefined;
 
-        company_service.search(communityFilter, clusterFilter, query, undefined, self.usercount, alturl)
+        var limit = $location.search().limit;
+
+        company_service.search(communityFilter, clusterFilter, query, undefined, limit || self.usercount, alturl)
             .then(function (response) {
                 self.tag = undefined;
                 self.companies = result_service.setPage(response.data);
