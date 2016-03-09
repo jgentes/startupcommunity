@@ -95,7 +95,7 @@
                         </a>
                     </li>
                     <li ng-if="nav.user" class="dropdown">
-                        <a ui-sref="settings({location_path: nav.user.key, location: nav.nav_communities[nav.user.profile.home], community: nav.nav_communities[nav.user.profile.home], communities: nav.communities, user: nav.user })" tooltip-placement="bottom" uib-tooltip="Settings">
+                        <a ui-sref="settings({ user: nav.user })" tooltip-placement="bottom" uib-tooltip="Settings">
                             <i class="pe-7s-config"></i>
                         </a>
                     </li>

@@ -59,7 +59,7 @@
                     <h3>Locations</h3>
                 </div>
                 <hr>
-                <div style="padding-bottom:10px; font-size: 18px;">{{ nav.communities[nav.user.profile.home].profile.name }}
+                <div ng-if="nav.communities[nav.user.profile.home]" style="padding-bottom:10px; font-size: 18px;">{{ nav.communities[nav.user.profile.home].profile.name }}
                     <button ng-click="nav.embedSettings(nav.communities[nav.user.profile.home]);" class="btn btn-xs pull-right">Embed</button>
                 </div>
                 <div ng-repeat="(k, v) in nav.user.roles.leader">

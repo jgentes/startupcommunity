@@ -1,7 +1,7 @@
 <div class="inmodal">
     <div class="color-line"></div>
     <div class="modal-header">
-        <h4 class="modal-title">Add a Network in {{edit.location.profile.name}}</h4>
+        <h4 class="modal-title"><span ng-show="!edit.update">Add</span><span ng-show="edit.update">Update</span> a Network in {{edit.location.profile.name}}</h4>
         <p class="font-bold">Networks are groups of companies and people who are connected through a private, invitation-only community. Examples of networks include startup accelerators, coworking spaces, mentorship groups, and investment funds.</p>
     </div>
     <div class="modal-body">
@@ -34,7 +34,7 @@
                 <br>
                 <div class="panel-heading" style="font-size: 20px;">3. Customize the url path</div>
                 <input type="text" class="form-control input-lg" placeholder="{{ edit.encode(edit.communityForm.name) }}" ng-model="edit.communityForm.url" style="margin-bottom: 5px;">
-                <em>Your url will be: https://startupcommunity.org/<strong><span style="text-transform: lowercase;">{{ edit.encode(edit.communityForm.url || edit.communityForm.name) }}</span></strong></em>
+                <em>Your url will be: https://startupcommunity.org/{{ edit.location.key }}/<strong><span style="text-transform: lowercase;">{{ edit.encode(edit.communityForm.url || edit.communityForm.name) }}</span></strong></em>
                 <br><br>
                 <div class="panel-heading" style="font-size: 20px;">4. And a short description</div>
                 <input type="text" class="form-control input-lg" placeholder="An accelerator for early stage SaaS startups.." ng-model="edit.communityForm.headline">
