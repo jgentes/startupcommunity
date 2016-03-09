@@ -7,11 +7,11 @@
     <div class="modal-body">
         <form name="edit.form">
             <div class="hpanel">
-                <div class="panel-heading" style="font-size: 20px;">1. Select the types of network to create</div>
+                <div class="panel-heading" style="font-size: 20px;">1. Select one or more network types</div>
 
                 <!-- <dropdown-multiselect list="edit.parents" ng-model="edit.communityForm.parent"></dropdown-multiselect> -->
-                <ui-select multiple="multiple" ng-model="edit.communityForm.parent" ng-disabled="disabled" theme="bootstrap" style="margin-bottom: 5px">
-                    <ui-select-match placeholder="Select networks types...">{{$item.label}}</ui-select-match>
+                <ui-select class="industry_select" multiple="multiple" ng-model="edit.communityForm.parent" ng-disabled="disabled" style="margin-bottom: 5px; padding:5px;">
+                    <ui-select-match placeholder="College, Acclerator, etc">{{$item.label}}</ui-select-match>
                     <ui-select-choices repeat="p.id as p in edit.parentTypes | filter: $select.search">
                         <div ng-bind-html="p.label | highlight: $select.search"></div>
                     </ui-select-choices>
