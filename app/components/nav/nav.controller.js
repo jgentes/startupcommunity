@@ -571,6 +571,7 @@ function EmbedSettingsController($uibModalInstance, sweet, user, community_servi
 function CommunityController($uibModalInstance, $mixpanel, sweet, community_service, community, location, $http, $window, user, $state){
 
     this.location = location;
+    var loc_key = user.roles.leader[community.key][0]; // this will need to be selected by the user if they are a leader of one network in multiple locations
     this.communityForm = {"name":""}; // to avoid 'undefined' for initial url
     var self = this;
     this.update = false;
@@ -596,11 +597,11 @@ function CommunityController($uibModalInstance, $mixpanel, sweet, community_serv
 
         community_service.getKey(community.key)
             .then(function(response) {
-                community = response.data;
+                var community = response.data;
 
-                if (community && community.community_profiles && community.community_profiles[location.key]) {
+                if (community && community.community_profiles && community.community_profiles[loc_key]) {
                     self.update = true;
-                    self.community = community.community_profiles[location.key];
+                    self.community = community.community_profiles[loc_key];
                     self.communityForm = {
                         "name": self.community.name,
                         "headline": self.community.headline,
@@ -667,13 +668,13 @@ function CommunityController($uibModalInstance, $mixpanel, sweet, community_serv
                 newCommunity.profile['industries'] = self.communityForm.industries;
             }
 
-            if (community.community_profiles && community.community_profiles[self.location.key] && community.community_profiles[self.location.key].embed) {
-                newCommunity.profile['embed'] = community.community_profiles[self.location.key].embed;
+            if (community.community_profiles && community.community_profiles[loc_key] && community.community_profiles[loc_key].embed) {
+                newCommunity.profile['embed'] = community.community_profiles[loc_key].embed;
             }
 
             if (community.key && (community.key !== newCommunity.url)) rename = true; // determine if this is a rename operation
 
-            community_service.editCommunity(newCommunity, self.location.key)
+            community_service.editCommunity(newCommunity, loc_key)
                 .then(function(response) {
                     self.working = false;
 
@@ -691,14 +692,14 @@ function CommunityController($uibModalInstance, $mixpanel, sweet, community_serv
                         }, function(){
                             // refresh outdated cache
                             $http.get('/api/2.1/community/' + user.key);
-                            $http.get('/api/2.1/community/' + self.location.key);
-                            $http.get('/api/2.1/community/' + self.location.key + '/' + newCommunity.url + '/top').then(function() {
-                                $window.location.href = '/'+ self.location.key + '/' + newCommunity.url;
+                            $http.get('/api/2.1/community/' + loc_key);
+                            $http.get('/api/2.1/community/' + loc_key + '/' + newCommunity.url + '/top').then(function() {
+                                $window.location.href = '/'+ loc_key + '/' + newCommunity.url;
                             });
 
                             $uibModalInstance.close();
                         });
-                        if (rename) community_service.deleteCommunity(community, self.location.key, newCommunity.url);
+                        if (rename) community_service.deleteCommunity(community, loc_key, newCommunity.url);
                     }
                     $mixpanel.track('Added ' + community.type[0].toUpperCase() + community.type.slice(1));
                 });
@@ -728,7 +729,7 @@ function CommunityController($uibModalInstance, $mixpanel, sweet, community_serv
             closeOnConfirm: false
         }, function () {
 
-            community_service.deleteCommunity(community, self.location.key)
+            community_service.deleteCommunity(community, loc_key)
                 .then(function(response) {
                     self.working = false;
 
