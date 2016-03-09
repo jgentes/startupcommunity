@@ -75,12 +75,11 @@ function NetworksController($stateParams, location, communities, nav_communities
                 var communityProfile = community.community_profiles[this.location_key] || false;
 
                 if (communityProfile &&
-                    communityProfile.parents &&
-                    communityProfile.parents[0]) {
-                    var network_type = communityProfile.parents[0];
-
-                    this.networks[network_type] = this.networks[network_type] || [];
-                    this.networks[network_type].push(this.nav_communities[item]);
+                    communityProfile.parents) {
+                    communityProfile.parents.map(function(network_type) {
+                        self.networks[network_type] = self.networks[network_type] || [];
+                        self.networks[network_type].push(community);
+                    });
                 }
             }
         }

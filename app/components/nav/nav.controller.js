@@ -585,6 +585,9 @@ function CommunityController($uibModalInstance, $mixpanel, sweet, community_serv
         self.parents = community_service.parents();
     } else if (community.type == 'network') {
         self.parents = community_service.network_parents();
+        self.parentTypes = self.parents.map(function(item) {
+            return { id: item.toLowerCase(), label: item}
+        });
     }
 
     if (community.key) {
@@ -614,7 +617,16 @@ function CommunityController($uibModalInstance, $mixpanel, sweet, community_serv
                                 self.communityForm['parent'] = 'Non-Profit';
                                 break;
                             default:
-                                self.communityForm['parent'] = self.community.parents[0][0].toUpperCase() + self.community.parents[0].slice(1);
+                                if (community.type == 'network') {
+                                    // allow multiply types only for networks
+                                    var _parents = self.community.parents || [];
+                                    self.communityForm['parent'] = _parents.filter(function(item) {
+                                        return item !== null;
+                                    });
+                                }
+                                else {
+                                    self.communityForm['parent'] = self.community.parents[0][0].toUpperCase() + self.community.parents[0].slice(1);
+                                }
                         }
                     }
                 }
@@ -646,7 +658,7 @@ function CommunityController($uibModalInstance, $mixpanel, sweet, community_serv
                 profile: {
                     name: self.communityForm.name,
                     headline: self.communityForm.headline,
-                    parents: [self.communityForm.parent.toLowerCase()]
+                    parents: (angular.isArray(self.communityForm.parent)) ? self.communityForm.parent : [self.communityForm.parent.toLowerCase()]
                 },
                 url: encodedUrl || encodeURI(self.communityForm.name.toLowerCase())
             };
