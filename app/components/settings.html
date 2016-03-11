@@ -31,7 +31,7 @@
                 </ul>
             </div>
 
-            <button ng-if="nav.user.communities.indexOf(nav.user.profile.home) > -1 && !nav.user.newsletter" class="btn btn-info pull-right" ng-click="nav.setupNewsletter();" style="margin-top:15px; width: 100%;">Setup Email Newsletter</button>
+            <button ng-if="nav.user.communities.indexOf(nav.user.profile.home) > -1 && !nav.user.newsletter" class="btn btn-warning pull-right" ng-click="nav.setupNewsletter();" style="margin-top:15px; width: 100%;">Setup Email Newsletter</button>
 
             <button ng-if="nav.user.communities.indexOf(nav.user.profile.home) > -1 && nav.user.newsletter" class="btn btn-info pull-right" ui-sref="newsletter" style="margin-top:15px; width: 100%;">Create / Edit Email Newsletters</button>
 

@@ -40,7 +40,10 @@ function NewsletterController($http, $httpParamSerializer, $sce, user) {
     
 }
 
-function SetupNewsController($uibModalInstance, sweet, newsletter_service) {
+function SetupNewsController($uibModalInstance, sweet, newsletter_service, user) {
+    var self = this;
+    
+    // retrieve existing settings first? check for user.newsletter
     
     this.setup = function() {
         
@@ -58,9 +61,9 @@ function SetupNewsController($uibModalInstance, sweet, newsletter_service) {
                 password : self.setupForm.password
             };
 
-            newsletter_service.createBrand(self.embed, location.key, self.community.key)
+            newsletter_service.createBrand(user, self.settings)
                 .then(function(response) {
-
+                    console.log(response)
                     if (response.status !== 201) {
                         sweet.show({
                             title: "Sorry, something went wrong.",
@@ -80,7 +83,7 @@ function SetupNewsController($uibModalInstance, sweet, newsletter_service) {
                 });
 
         } else {
-            self.form.submitted = true;
+            self.submitted = true;
         }
     }
     this.cancel = function () {

@@ -355,7 +355,12 @@ function NavigationController($auth, $state, $window, $timeout, $location, $scop
             templateUrl: 'components/newsletter/setup_newsletter.html',
             controller: SetupNewsController,
             controllerAs: 'news',
-            windowClass: "hmodal-info"            
+            windowClass: "hmodal-warning",
+            resolve: {
+                user: function() {
+                    return self.user;
+                }
+            }
         });
     };
 
