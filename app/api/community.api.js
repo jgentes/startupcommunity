@@ -618,6 +618,7 @@ function handleEditCommunity(req, res) {
 
                     if (user.roles && user.roles.leader && user.roles.leader[pathname] && user.roles.leader[pathname].indexOf(settings.location_key) > -1) {
                         leader = true;
+                        console.log('confirmed leader');
                     }
 
                     // check to see if the community exists
@@ -629,13 +630,14 @@ function handleEditCommunity(req, res) {
 
                             if (response.body.type && (response.body.type == "cluster" || response.body.type == "network") && response.body.type == settings.community.type) {
 
-                                // create community_profiles
+                                // create community_profiles (leadership not required if this is a new community)
 
                                 if (response.body.community_profiles === undefined) response.body['community_profiles'] = {};
 
                                 if (response.body.community_profiles[settings.location_key] === undefined) {
 
                                     // create this location
+                                    console.log('creating location profile')
 
                                     response.body.community_profiles[settings.location_key] = {
                                         "name": settings.community.profile.name,
@@ -825,11 +827,11 @@ function handleDeleteCommunity(req, res) {
                                         });
                                 }
 
-                                if (settings.old_community_key) {
+                                if (settings.new_community_key) {
 
                                     // this is a rename operation
 
-                                    rename_community(settings.old_community_key, settings.location_key, settings.community.key);
+                                    rename_community(settings.community.key, settings.location_key, settings.new_community_key);
 
                                 } else {
 
@@ -1081,39 +1083,64 @@ var rename_community = function(old_community_key, location_key, new_community_k
 
     console.log('Renaming ' + old_community_key + ' to ' + new_community_key);
 
-    function getUsers(startKey) {
+    var getUsers = function(startKey) {
 
         db.newSearchBuilder()
             .collection(process.env.DB_COMMUNITIES)
             .limit(50)
             .offset(startKey)
-            .query('@value.communities: "' + encodeURI(old_community_key) + '" OR @value.roles.*.' + encodeURI(old_community_key) + ': "' + encodeURI(location_key) + '"')
+            .query('@value.communities: "' + encodeURI(old_community_key) + '" OR @value.roles.*.' + encodeURI(old_community_key) + ': "' + encodeURI(location_key) + '" OR @value.invite_communities: "' + encodeURI(old_community_key) + '"')
             .then(function (data) {
                 var item;
 
                 for (item in data.body.results) {
-                    var newdata = data.body.results[item].value; // get current record
-                    // Rename community
-                    if (data.body.results[item].value.communities.indexOf(old_community_key) > -1) {
+                    var key = data.body.results[item].path.key,
+                        newdata = data.body.results[item].value; // get current record
 
-                        // only add the new community if the old one existed
+                    if (newdata.type == "invite") {
 
-                        if (data.body.results[item].value.communities.indexOf(new_community_key) < 0) data.body.results[item].value.communities.push(new_community_key);
+                        // Rename community
+                        if (newdata.invite_communities.indexOf(old_community_key) > -1) {
 
-                        data.body.results[item].value.communities.splice(data.body.results[item].value.communities.indexOf(old_community_key), 1);
-                    }
+                            // only add the new community if the old one existed
 
-                    for (role in data.body.results[item].value.roles) {
-                        for (community in data.body.results[item].value.roles[role]) {
-                            if (community == old_community_key) {
-                                if (!data.body.results[item].value.roles[role][new_community_key]) data.body.results[item].value.roles[role][new_community_key] = [];
-                                if (data.body.results[item].value.roles[role][new_community_key].indexOf(location_key) < 0) data.body.results[item].value.roles[role][new_community_key].push(location_key);
-                                delete data.body.results[item].value.roles[role][old_community_key];
+                            if (newdata.invite_communities.indexOf(new_community_key) < 0) newdata.invite_communities.push(new_community_key);
+
+                            newdata.invite_communities.splice(newdata.invite_communities.indexOf(old_community_key), 1);
+                        }
+
+                    } else {
+
+                        // Rename community
+                        if (newdata.communities.indexOf(old_community_key) > -1) {
+
+                            // only add the new community if the old one existed
+
+                            if (newdata.communities.indexOf(new_community_key) < 0) newdata.communities.push(new_community_key);
+
+                            newdata.communities.splice(newdata.communities.indexOf(old_community_key), 1);
+                        }
+
+                        for (role in newdata.roles) {
+                            for (community in newdata.roles[role]) {
+                                if (community == old_community_key) {
+                                    if (!newdata.roles[role][new_community_key]) newdata.roles[role][new_community_key] = [];
+                                    if (newdata.roles[role][new_community_key].indexOf(location_key) < 0) newdata.roles[role][new_community_key].push(location_key);
+                                    delete newdata.roles[role][old_community_key];
+                                }
                             }
                         }
+
                     }
 
-                    console.log('Updated ' + data.body.results[item].path.key);
+                    db.put(process.env.DB_COMMUNITIES, key, newdata)
+                        .then(function(result) {
+                            console.log('User ' + result.headers.location.split('/')[3] + ' updated with new community data.');
+                        })
+                        .fail(function(err){
+                            console.warn("WARNING: community706", err);
+                        });
+
                 }
 
                 if (data.body.next) {
@@ -1128,6 +1155,9 @@ var rename_community = function(old_community_key, location_key, new_community_k
                 console.warn("WARNING: community715", err);
             });
     }
+
+    getUsers(startKey);
+
 };
 
 function handleGetKey(req, res) {
