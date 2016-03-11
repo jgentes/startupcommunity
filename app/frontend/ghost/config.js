@@ -13,12 +13,11 @@ config = {
         url: 'https://startupcommunity.org/blog',
         mail: {
             transport: 'SMTP',
-            host: 'smtp.mandrillapp.com',
             options: {
-                service: 'Mandrill',
+                service: 'Sendgrid',
                 auth: {
-                    user: process.env.MANDRILL_USERNAME,
-                    pass: process.env.MANDRILL_APIKEY
+                    user: process.env.SENDGRID_USERNAME,
+                    pass: process.env.SENDGRID_PASSWORD
                 }
             }
         },
@@ -58,12 +57,11 @@ config = {
         url: 'http://localhost:5000/blog',
         mail: {
             transport: 'SMTP',
-            host: 'smtp.mandrillapp.com',
             options: {
-                service: 'Mandrill',
+                service: 'Sendgrid',
                 auth: {
-                    user: process.env.MANDRILL_USERNAME,
-                    pass: process.env.MANDRILL_APIKEY
+                    user: process.env.SENDGRID_USERNAME,
+                    pass: process.env.SENDGRID_PASSWORD
                 }
             }
         },
@@ -107,12 +105,11 @@ config = {
 
         mail: {
             transport: 'SMTP',
-            host: 'smtp.mandrillapp.com',
             options: {
-                service: 'Mandrill',
+                service: 'Sendgrid',
                 auth: {
-                    user: process.env.MANDRILL_USERNAME,
-                    pass: process.env.MANDRILL_APIKEY
+                    user: process.env.SENDGRID_USERNAME,
+                    pass: process.env.SENDGRID_PASSWORD
                 }
             }
         },
@@ -155,12 +152,11 @@ config = {
 
         mail: {
             transport: 'SMTP',
-            host: 'smtp.mandrillapp.com',
             options: {
-                service: 'Mandrill',
+                service: 'Sendgrid',
                 auth: {
-                    user: process.env.MANDRILL_USERNAME,
-                    pass: process.env.MANDRILL_APIKEY
+                    user: process.env.SENDGRID_USERNAME,
+                    pass: process.env.SENDGRID_PASSWORD
                 }
             }
         },
