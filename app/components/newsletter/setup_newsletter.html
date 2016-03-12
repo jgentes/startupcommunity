@@ -70,9 +70,8 @@
     </div>
     <div class="modal-footer">
         <button type="button" class="btn btn-default" ng-click="news.cancel()">Cancel</button>
-        <button type="button" class="btn btn-primary" ng-click="news.setup()">
+        <button ladda="news.working" class="ladda-button btn btn-primary" data-style="zoom-in" data-spinner-size="25" ng-click="news.setup()">
             Update Settings
-            <div loading-bars ng-show="news.working" style="padding-top: 5px; display: inline;"></div>
         </button>
     </div>
 </div>
