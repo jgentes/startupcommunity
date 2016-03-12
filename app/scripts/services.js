@@ -44,7 +44,7 @@ angular
                         var el = document.createElement( 'html' );
                         el.innerHTML = response.data.toString();
                         var url = $("a:contains('" + settings.brand_name + "')", el).attr('href');
-
+                        // return brand_id
                         return url.split("?")[1].split("=")[1];
                     })
 
@@ -68,9 +68,25 @@ angular
                     var el = document.createElement( 'html' );
                     el.innerHTML = response.data.toString();
                     var url = $("a[href*='&l=']", el);
-
+                    // return list_id
                     return url[0].href.split("&")[1].split("=")[1];
                 })
+            },
+            createCustomField: function(field_name, field_type, app_id, list_id) {
+              return $http({
+                  url: 'https://newsletter.startupcommunity.org/includes/list/add-custom-field.php',
+                  method: 'POST',
+                  data: $httpParamSerializer({
+                      c_field: field_name,
+                      c_type: field_type,
+                      id: app_id,
+                      list: list_id
+                  }),
+                  withCredentials: true,
+                  headers: {
+                      'Content-Type': 'application/x-www-form-urlencoded'
+                  }
+              })
             },
             addSubscriber: function() {
                 return $http({
@@ -87,6 +103,22 @@ angular
                     }
                 })
             },
+            addSubscriberCSV: function() {
+                return $http({
+                    url: 'https://newsletter.startupcommunity.org/includes/subscribers/import-update.php',
+                    method: 'POST',
+                    data: $httpParamSerializer({
+                        csv_file: file,
+                        app: app_id,
+                        list_id: list_id,
+                        cron: 1
+                    }),
+                    withCredentials: true,
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    }
+                })
+            }
             removeSubscriber: function () {
                 return $http({
                     url: 'https://newsletter.startupcommunity.org/includes/subscribers/line-delete.php',
