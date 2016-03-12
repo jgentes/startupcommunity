@@ -103,7 +103,7 @@ angular
                     }
                 })
             },
-            addSubscriberCSV: function() {
+            addSubscriberCSV: function(file, app_id, list_id) {
                 return $http({
                     url: 'https://newsletter.startupcommunity.org/includes/subscribers/import-update.php',
                     method: 'POST',
@@ -118,7 +118,7 @@ angular
                         'Content-Type': 'application/x-www-form-urlencoded'
                     }
                 })
-            }
+            },
             removeSubscriber: function () {
                 return $http({
                     url: 'https://newsletter.startupcommunity.org/includes/subscribers/line-delete.php',
