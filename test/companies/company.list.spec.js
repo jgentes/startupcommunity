@@ -13,20 +13,20 @@ describe('Company:List', function () {
 
     it('contains valid company list', function () {
         companiesRef().
-            then(function(users) {
+            then(function(companies) {
                 // check community URL key
                 expect(
-                    users.community.key
+                    companies.community.key
                 ).toBe('bend-or');
 
                 // check community title
                 expect(
-                    users.selection
+                    companies.selection
                 ).toBe('Bend, OR');
 
                 // check community type
                 expect(
-                    users.community.type
+                    companies.community.type
                 ).not.toBe('cluster');
 
                 // check number of role filters in sidebar
@@ -45,7 +45,7 @@ describe('Company:List', function () {
 
     it('companies list pagination works correctly', function () {
         companiesRef().
-            then(function(users) {
+            then(function(companies) {
                 //if (users.users.count > 0) {
                 //    if (users.users.count > users.users.total_count) {
                 //        // check if pagination next/prev controls should appear
@@ -71,6 +71,5 @@ describe('Company:List', function () {
                 //    ).not.toBeTruthy();
                 //}
             });
-
     });
 });
