@@ -83,6 +83,8 @@ var AuthApi = require(__dirname + '/api/auth.api.js'),
     communityApis = new CommunityApi(),
     MessagesApi = require(__dirname + '/api/messages.api.js'),
     messagesApis = new MessagesApi(),
+    NewsletterApi = require(__dirname + '/api/newsletter.api.js'),
+    newsletterApis = new NewsletterApi(),
     AngelListApi = require(__dirname + '/api/angellist.api.js'),
     angellistApis = new AngelListApi(),
     MaintApi = require(__dirname + '/api/maint.api.js'),
@@ -143,7 +145,7 @@ app.post('/api/2.1/remove', auth.ensureAuthenticated, userApis.removeCommunity);
 app.post('/api/2.2/companies/delete', auth.ensureAuthenticated, companyApis.deleteCompany);
 
 // new for 2.3
-app.post('/api/2.3/newsletter/pass', auth.ensureAuthenticated, userApis.getNewsletterPass);
+app.post('/api/2.3/newsletter/setup', auth.ensureAuthenticated, newsletterApis.setupNewsletter);
 
 // Auth
 app.post('/auth/linkedin', auth.linkedin);

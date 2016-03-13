@@ -360,6 +360,9 @@ function NavigationController($auth, $state, $window, $timeout, $location, $scop
                 user: function() {
                     return self.user;
                 },
+                location: function() {
+                    return self.location;
+                },
                 communities: function() {
                     return self.communities;
                 }

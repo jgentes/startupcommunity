@@ -5,22 +5,16 @@ angular
 
 function NewsletterController(newsletter_service, $sce, $state, user) {
     var self = this;
-    self.working = true;
+    self.splash = true;
 
     if (user.newsletter) {
 
         newsletter_service.login(user)
             .then(function (response) {
-                self.working = false;
+                self.splash = false;
 
                 self.frame_content = $sce.trustAsHtml(response.data);
-                /*
-                 // pull the app_id (brand) from the url by parsing the html of the frame
-                 var el = document.createElement( 'html' );
-                 el.innerHTML = response.data.toString();
-                 var url = el.getElementsByClassName('brand')[0].href;
-                 self.app_id = url.split("?")[1].split("=")[1];
-                 */
+         
             }, function errorCallback(response) {
                 console.log(response);
             });
@@ -37,7 +31,7 @@ function SetupNewsController($uibModalInstance, sweet, newsletter_service, user_
 
         if (self.form.$valid) {
 
-            self.settings = {
+            var settings = {
                 brand_name : self.setupForm.brand_name,
                 from_name : self.setupForm.from_name,
                 from_email : self.setupForm.from_email,
@@ -49,102 +43,12 @@ function SetupNewsController($uibModalInstance, sweet, newsletter_service, user_
                 password : self.setupForm.password
             };
 
-            newsletter_service.getPass()
-                .then(function(response) {
-                    var pass = response.data;
-
-                    newsletter_service.createBrand(user, pass, self.settings)
-                        .then(function(response) {
-                            var brand_id = response,
-                                newprofile = user;
-
-                            // push settings to user profile
-                            
-                            newprofile['newsletter'] = {
-                                brand_id: brand_id,
-                                username: newprofile.profile.email,
-                                password: pass,
-                                lists: {}
-                            };
-
-
-
-                            // create lists for networks that the user is a leader of
-                            for (network in user.roles.leader) {
-                                if (communities[network] && communities[network].type == 'network') {
-
-                                    newsletter_service.createList(brand_id, network)
-                                        .then(function(response) {
-                                            var list_id = response;
-
-                                            // capture the list id and update the user profile
-
-                                            newprofile.newsletter.lists[network] = list_id;
-
-                                            // add subscribers
-                                            /*
-                                            user_service.search(network, null, null, null, null)
-                                                .then(function(response) {
-                                                    for (x in response.body) {
-                                                        console.log(x);
-                                                    }
-                                                })
-                                                */
-
-                                            newsletter_service.createCustomField('Industry', 'Text', brand_id, list_id)
-                                            .then(function(response) {
-                                                // create csv
-
-                                                var data = [["James Gentes", "james@jgentes.com", "Tech"], ["James G", "jgentes@gmail.com", "Recreation"]];
-                                                var csvContent = "data:text/csv;charset=utf-8,";
-                                                data.forEach(function(infoArray, index){
-
-                                                    dataString = infoArray.join(",");
-                                                    csvContent += index < data.length ? dataString+ "\n" : dataString;
-
-                                                });
-
-                                                newsletter_service.addSubscriberCSV(csvContent, brand_id, list_id)
-                                                    .then(function(response) {
-                                                        console.log(response);
-                                                    })
-                                            })
-                                        })
-                                }
-                            }
-
-                            user_service.updateProfile(newprofile)
-                                .then(function(response) {
-
-                                    self.working = false;
-
-                                    if (response.status !== 200) {
-                                        sweet.show({
-                                            title: "Sorry, something went wrong.",
-                                            text: response.data.message,
-                                            type: "error"
-                                        });
-
-                                    } else {
-                                        sweet.show({
-                                            title: "Settings saved!",
-                                            type: "success"
-                                        }, function(){
-                                            //$http.get('/api/2.1/community/' + location.key + '/' + self.community.key);
-                                            $uibModalInstance.close();
-                                        });
-                                    }
-
-                                })
-
-                        });
-                });
-
-            $state.go('newsletter');
+            user_service.setupNewsletter(settings, communities);
 
         } else {
             self.submitted = true;
         }
+
     };
 
     this.cancel = function () {

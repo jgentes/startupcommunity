@@ -17,7 +17,7 @@ var UserApi = function() {
     this.getProfile = handleGetProfile;
     this.getProfileUrl = handleGetProfileUrl;
     this.updateProfile = handleUpdateProfile;
-    this.getNewsletterPass = handleGetNewsletterPass;
+    this.setupNewsletter = handleSetupNewsletter;
     this.removeCommunity = handleRemoveCommunity;
     this.feedback = handleFeedback;
 };
@@ -453,16 +453,6 @@ function handleUpdateProfile(req, res) {
             });
     } else {
         res.status(400).send({ message: 'You may only update your own user record.'})
-    }
-}
-
-function handleGetNewsletterPass(req, res) {
-    try {
-        var password = jwt.sign(req.user, 'NewsletterSecretPasswordCryptoKey');
-        res.status(201).send(password);
-    }
-    catch (e) {
-        res.status(202).send({ message: "Something went wrong: " + e});
     }
 }
 

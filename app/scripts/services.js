@@ -21,50 +21,7 @@ angular
             getPass: function() {
                 // get password for newsletter service for logged in user
                 return $http.post('/api/2.3/newsletter/pass');                    
-            },
-            createBrand: function(user, pass, settings) {
-                return $http({
-                    url: 'https://newsletter.startupcommunity.org/includes/app/create.php',
-                    method: 'POST',
-                    data: $httpParamSerializer({
-                        app_name: settings.brand_name,
-                        from_name: settings.from_name,
-                        from_email: settings.from_email,
-                        reply_to: settings.reply_email,
-                        allowed_attachments: "jpeg,jpg,gif,png,pdf,zip",
-                        logo: "",
-                        uid: "1",
-                        smtp_host: settings.host,
-                        smtp_port: settings.port,
-                        smtp_ssl: settings.ssl,
-                        smtp_username: settings.username,
-                        smtp_password: settings.password,
-                        login_email: user.profile.email,
-                        language: "en_US",
-                        pass: pass,
-                        currency: "USD",
-                        delivery_fee: "",
-                        cost_per_recipient: "",
-                        "choose-limit": "unlimited",
-                        "monthly-limit": "",
-                        "reset-on-day": "1"
-                    }),
-                    withCredentials: true,
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded'
-                    }
-                })
-                    .then(function(response) {                        
-                        // pull the brand_id from the url by parsing the html of the frame
-                        var el = document.createElement( 'html' );
-                        el.innerHTML = response.data.toString();
-                        var url = $("a:contains('" + settings.brand_name + "')", el).attr('href');
-                        // return brand_id
-                        return url.split("?")[1].split("=")[1];
-                    })
-
-
-            },
+            },            
             createList: function(brand_id, list_name) {
                 return $http({
                     url: 'https://newsletter.startupcommunity.org/includes/subscribers/import-add.php',
@@ -83,6 +40,7 @@ angular
                     var el = document.createElement( 'html' );
                     el.innerHTML = response.data.toString();
                     var url = $("a[href*='&l=']", el);
+
                     // return list_id
                     return url[0].href.split("&")[1].split("=")[1];
                 })
@@ -251,6 +209,13 @@ angular
                         message: message,
                         location_name: location_name,
                         location_key: location_key
+                    }
+                });
+            },
+            setupNewsletter: function(settings, communities) {
+                return $http.post('/api/2.3/newsletter/setup', {
+                    params: {
+                        settings: settings
                     }
                 });
             },
