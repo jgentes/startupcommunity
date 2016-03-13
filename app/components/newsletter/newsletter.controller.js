@@ -3,46 +3,51 @@ angular
     .controller('NewsletterController', NewsletterController)
     .controller('SetupNewsController', SetupNewsController);
 
-function NewsletterController($http, $httpParamSerializer, $sce, user) {
+function NewsletterController(newsletter_service, $sce, $state, user) {
     var self = this;
     self.working = true;
 
-    if (user) {
-        console.log(user.newsletter);
+    if (user.newsletter) {
 
-        $http({
-            url: 'https://newsletter.startupcommunity.org/includes/login/main.php',
-            method: 'POST',
-            data: $httpParamSerializer({
-                email: user.newsletter.username,
-                password: user.newsletter.password,
-                redirect: ""
-            }),
-            withCredentials: true,
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded'
-            }
-        })
+        newsletter_service.login(user)
             .then(function (response) {
                 self.working = false;
 
                 self.frame_content = $sce.trustAsHtml(response.data);
                 /*
-                // pull the app_id (brand) from the url by parsing the html of the frame
-                var el = document.createElement( 'html' );
-                el.innerHTML = response.data.toString();
-                var url = el.getElementsByClassName('brand')[0].href;
-                self.app_id = url.split("?")[1].split("=")[1];
-                */
+                 // pull the app_id (brand) from the url by parsing the html of the frame
+                 var el = document.createElement( 'html' );
+                 el.innerHTML = response.data.toString();
+                 var url = el.getElementsByClassName('brand')[0].href;
+                 self.app_id = url.split("?")[1].split("=")[1];
+                 */
             }, function errorCallback(response) {
                 console.log(response);
             });
 
-    } else self.frame_content = "<p style='font-size: 24px;'>Please <a href='/login'>log in</a> to access this feature..</p>";
+    } else $state.go('settings');
+
+    //todo found solution here: http://shazwazza.com/post/uploading-files-and-json-data-in-the-same-request-with-angular-js/
+
+    this.test = function() {
+        var data = [["James Gentes", "james@jgentes.com", "Tech"], ["James G", "jgentes@gmail.com", "Recreation"]];
+        var csvContent = "data:text/csv;charset=utf-8,";
+        data.forEach(function(infoArray, index){
+
+            dataString = infoArray.join(",");
+            csvContent += index < data.length ? dataString+ "\n" : dataString;
+
+        });
+
+        newsletter_service.addSubscriberCSV(csvContent, 23, 39)
+            .then(function(response) {
+                self.frame_content = $sce.trustAsHtml(response.data);
+            })
+    }
     
 }
 
-function SetupNewsController($uibModalInstance, sweet, newsletter_service, user_service, user) {
+function SetupNewsController($uibModalInstance, sweet, newsletter_service, user_service, user, communities) {
     var self = this;
     
     this.setup = function() {
@@ -80,23 +85,48 @@ function SetupNewsController($uibModalInstance, sweet, newsletter_service, user_
                                 lists: {}
                             };
 
+
+
                             // create lists for networks that the user is a leader of
                             for (network in user.roles.leader) {
-                                if (user.roles.leader[network].type == 'network') {
-                                    newsletter_service.createList(brand_id, list_name)
+                                if (communities[network] && communities[network].type == 'network') {
+
+                                    newsletter_service.createList(brand_id, network)
                                         .then(function(response) {
+                                            var list_id = response;
+
                                             // capture the list id and update the user profile
-                                            newprofile.newsletter.lists[list_name] = response;
+
+                                            newprofile.newsletter.lists[network] = list_id;
 
                                             // add subscribers
+                                            /*
                                             user_service.search(network, null, null, null, null)
                                                 .then(function(response) {
                                                     for (x in response.body) {
                                                         console.log(x);
                                                     }
                                                 })
+                                                */
 
+                                            newsletter_service.createCustomField('Industry', 'Text', brand_id, list_id)
+                                            .then(function(response) {
+                                                // create csv
 
+                                                var data = [["James Gentes", "james@jgentes.com", "Tech"], ["James G", "jgentes@gmail.com", "Recreation"]];
+                                                var csvContent = "data:text/csv;charset=utf-8,";
+                                                data.forEach(function(infoArray, index){
+
+                                                    dataString = infoArray.join(",");
+                                                    csvContent += index < data.length ? dataString+ "\n" : dataString;
+
+                                                });
+
+                                                newsletter_service.addSubscriberCSV(csvContent, brand_id, list_id)
+                                                    .then(function(response) {
+                                                        console.log(response);
+                                                    })
+                                            })
                                         })
                                 }
                             }

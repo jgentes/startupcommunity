@@ -359,6 +359,9 @@ function NavigationController($auth, $state, $window, $timeout, $location, $scop
             resolve: {
                 user: function() {
                     return self.user;
+                },
+                communities: function() {
+                    return self.communities;
                 }
             }
         });

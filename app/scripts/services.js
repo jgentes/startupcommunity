@@ -3,6 +3,21 @@ angular
 
     .factory('newsletter_service', function($http, $httpParamSerializer) {
         return {
+            login: function(user) {
+                return $http({
+                    url: 'https://newsletter.startupcommunity.org/includes/login/main.php',
+                    method: 'POST',
+                    data: $httpParamSerializer({
+                        email: user.newsletter.username,
+                        password: user.newsletter.password,
+                        redirect: ""
+                    }),
+                    withCredentials: true,
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    }
+                })
+            },
             getPass: function() {
                 // get password for newsletter service for logged in user
                 return $http.post('/api/2.3/newsletter/pass');                    
@@ -114,8 +129,9 @@ angular
                         cron: 1
                     }),
                     withCredentials: true,
+                    transformRequest: angular.identity,
                     headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded'
+                        'Content-Type': undefined
                     }
                 })
             },
