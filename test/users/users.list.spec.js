@@ -41,70 +41,6 @@ describe('Users:List', function () {
                         count()
                 ).toBe(users.users.count);
             });
-
-/*
-        // user.type == 'user'
-        expect(
-            element.all( by.binding('profile.user') ).
-                first().
-                    evaluate('profile.user.type')
-        ).toBe('user');
-
-        // user.profile.email == 'james@startupcommunity.org'
-        expect(
-            element.all( by.binding('profile.user') ).
-                first().
-                    evaluate('profile.user.profile.email')
-        ).toBe('james@startupcommunity.org');
-
-        // user.communities contains user.profile.home
-        expect(
-            element.all( by.binding('profile.user') ).
-                first().
-                    evaluate('profile.user.communities.indexOf(profile.user.profile.home) >= 0')
-        ).toBeTruthy();
-
-        // user.roles.founder defined and contains some data
-        expect(
-            element.all( by.binding('profile.user') ).
-                first().
-                    evaluate('profile.user.roles.founder')
-        ).toBeTruthy();
-
-        // check if displayed number of companies on tab matches actual number of companies on profile
-        element.all( by.binding('profile.user') ).
-            first().
-                evaluate('profile.companies.founder').
-                    then(function(founder) {
-                        expect(
-                            element.all( by.exactBinding('profile.companies.count.founder') ).
-                                count()
-                        ).toEqual(Object.keys(founder).length);
-                    });
-
-        // button "Ask me..." is present
-        expect(
-            element( by.css('[ng-click^="profile.ask"]') ).
-                isPresent()
-        ).toBeTruthy();
-
-        // button "Contact me..." is present
-        expect(
-            element( by.css('[ng-click^="profile.contact"]') ).
-                isPresent()
-        ).toBeTruthy();
-
-        // check rendered skill list agains number of skills in user.profile.skills
-        element.all( by.binding('profile.user') ).
-            first().
-                evaluate('profile.user.profile.skills').
-                    then(function(v) {
-                        expect(
-                            element.all( by.exactRepeater('skill in profile.user.profile.skills') ).
-                                count()
-                        ).toEqual(v.length * 2);  // appears two times on page, so need to multiply checked value by 2
-                    });
- */
     });
 
     it('user list pagination works correctly', function () {
@@ -127,10 +63,6 @@ describe('Users:List', function () {
                             ).toBeTruthy();
                         }
                     }
-
-                    //debugger;
-                    //if (users) {
-                    //}
                 }
                 else {
                     expect(
