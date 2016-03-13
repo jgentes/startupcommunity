@@ -118,21 +118,32 @@ angular
                     }
                 })
             },
-            addSubscriberCSV: function(file, app_id, list_id) {
+            addSubscriberCSV: function(array_for_csv, app_id, list_id) {
+                // funky setup here because it needs to send a csv file along with form data
+
+                var fd = new FormData();
+                fd.append("app", app_id);
+                fd.append("list_id", list_id);
+                fd.append("cron", 1);
+
+                var csv = "";
+                array_for_csv.forEach(function(infoArray, index){
+
+                    dataString = infoArray.join(",");
+                    csv += index < array_for_csv.length ? dataString+ "\n" : dataString;
+
+                });
+
+                var oBlob = new Blob([csv], { type: "text/csv"});
+                fd.append("csv_file", oBlob,'import.csv');
+
                 return $http({
                     url: 'https://newsletter.startupcommunity.org/includes/subscribers/import-update.php',
                     method: 'POST',
-                    data: $httpParamSerializer({
-                        csv_file: file,
-                        app: app_id,
-                        list_id: list_id,
-                        cron: 1
-                    }),
                     withCredentials: true,
+                    data: fd,
                     transformRequest: angular.identity,
-                    headers: {
-                        'Content-Type': undefined
-                    }
+                    headers: {'Content-Type': undefined}
                 })
             },
             removeSubscriber: function () {

@@ -26,24 +26,6 @@ function NewsletterController(newsletter_service, $sce, $state, user) {
             });
 
     } else $state.go('settings');
-
-    //todo found solution here: http://shazwazza.com/post/uploading-files-and-json-data-in-the-same-request-with-angular-js/
-
-    this.test = function() {
-        var data = [["James Gentes", "james@jgentes.com", "Tech"], ["James G", "jgentes@gmail.com", "Recreation"]];
-        var csvContent = "data:text/csv;charset=utf-8,";
-        data.forEach(function(infoArray, index){
-
-            dataString = infoArray.join(",");
-            csvContent += index < data.length ? dataString+ "\n" : dataString;
-
-        });
-
-        newsletter_service.addSubscriberCSV(csvContent, 23, 39)
-            .then(function(response) {
-                self.frame_content = $sce.trustAsHtml(response.data);
-            })
-    }
     
 }
 
