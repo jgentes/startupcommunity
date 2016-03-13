@@ -7,8 +7,8 @@ describe('Company:Dashboard', function () {
 
     function companyRef() {
         return element.all( by.binding('profile.company') ).
-            first().
-            evaluate('profile');
+                    first().
+                        evaluate('profile');
     };
 
     it('contains valid company details', function () {

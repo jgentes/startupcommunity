@@ -7,8 +7,8 @@ describe('Company:List', function () {
 
     function companiesRef() {
         return element.all( by.binding('companies.companies') ).
-            first().
-            evaluate('companies');
+                    first().
+                        evaluate('companies');
     };
 
     it('contains valid company list', function () {

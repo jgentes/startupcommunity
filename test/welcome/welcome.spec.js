@@ -10,8 +10,8 @@ describe('Startup Community welcome page', function () {
 
     function welcomeRef() {
         return element.all( by.binding('welcome.location') ).
-            first().
-            evaluate('welcome');
+                    first().
+                        evaluate('welcome');
     };
 
     it('should open correct page', function () {
