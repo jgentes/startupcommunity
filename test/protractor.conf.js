@@ -11,7 +11,7 @@ exports.config = {
   capabilities: {
     'phantomjs.binary.path': './node_modules/.bin/phantomjs',
     'phantomjs.cli.args': ['--webdriver-loglevel=DEBUG'],
-    //'browserName': (process.env.NODE_ENV === 'local') ? 'chrome' : 'phantomjs'
+    //'browserName': 'chrome'
     'browserName': 'phantomjs'
   },
 
@@ -19,9 +19,11 @@ exports.config = {
 
   specs: [
     './frontend/*.spec.js',
+    './welcome/*.spec.js',
     './auth/*.spec.js',
     './blog/*.spec.js',
-    './users/*.spec.js'
+    './users/*.spec.js',
+    './companies/*.spec.js'
   ],
 
   jasmineNodeOpts: {

@@ -9,12 +9,12 @@ describe('Startup Community welcome page', function () {
     });
 
     function welcomeRef() {
-        return element.all( by.binding('welcome.auth') ).
+        return element.all( by.binding('welcome.location') ).
             first().
             evaluate('welcome');
     };
 
-    it('should open welcome page', function () {
+    it('should open correct page', function () {
         welcomeRef().
             then(function(welcome) {
                 expect(
@@ -24,7 +24,6 @@ describe('Startup Community welcome page', function () {
     });
 
     it('should have required controls', function () {
-        // Header
         expect(
             element(
                 by.css('.welcome-container')
