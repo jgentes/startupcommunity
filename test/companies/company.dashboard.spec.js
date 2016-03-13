@@ -21,7 +21,7 @@ describe('Company:Dashboard', function () {
 
                 // check community title
                 expect(
-                    company.profile.home
+                    company.company.profile.home
                 ).toBe('bend-or');
 
                 // check community type
