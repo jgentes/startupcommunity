@@ -54,6 +54,7 @@ function SetupNewsController($uibModalInstance, sweet, newsletter_service, commu
              username : 'test',
              password : 'test'
              };
+            // pull some of this back from server.. createbrand and createlist
 /*
             newsletter_service.getPass()
                 .then(function(response) {
