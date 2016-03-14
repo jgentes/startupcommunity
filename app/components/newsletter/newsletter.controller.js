@@ -54,6 +54,54 @@ function SetupNewsController($uibModalInstance, sweet, newsletter_service, commu
              username : 'test',
              password : 'test'
              };
+/*
+            newsletter_service.getPass()
+                .then(function(response) {
+                    var pass = response.data;
+
+                    newsletter_service.createBrand(user, pass, self.settings)
+                        .then(function(response) {
+                            var brand_id = response,
+                                newprofile = user;
+
+                            // push settings to user profile
+
+                            newprofile['newsletter'] = {
+                                brand_id: brand_id,
+                                username: newprofile.profile.email,
+                                password: pass,
+                                lists: {}
+                            };
+
+
+
+                            // create lists for networks that the user is a leader of
+                            for (network in user.roles.leader) {
+                                if (communities[network] && communities[network].type == 'network') {
+
+                                    newsletter_service.createList(brand_id, network)
+                                        .then(function(response) {
+                                            var list_id = response;
+
+                                            // capture the list id and update the user profile
+
+                                            newprofile.newsletter.lists[network] = list_id;
+
+                                            // add subscribers
+                                            /!*
+                                             user_service.search(network, null, null, null, null)
+                                             .then(function(response) {
+                                             for (x in response.body) {
+                                             console.log(x);
+                                             }
+                                             })
+                                             *!/
+
+                                            newsletter_service.createCustomField('Industry', 'Text', brand_id, list_id)
+                                                .then(function(response) {
+                                                    // create csv
+
+                                                    */
 
             newsletter_service.setup(settings, communities)
                 .then(function(response) {
