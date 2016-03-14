@@ -23,15 +23,15 @@ function NewsletterController(newsletter_service, $sce, $state, user) {
     
 }
 
-function SetupNewsController($uibModalInstance, sweet, newsletter_service, user_service, user, communities) {
+function SetupNewsController($uibModalInstance, sweet, newsletter_service, communities) {
     var self = this;
     
     this.setup = function() {
         self.working = true;
 
-        if (self.form.$valid) {
+        if (self.form.$valid || true) {
 
-            var settings = {
+            /*var settings = {
                 brand_name : self.setupForm.brand_name,
                 from_name : self.setupForm.from_name,
                 from_email : self.setupForm.from_email,
@@ -41,9 +41,42 @@ function SetupNewsController($uibModalInstance, sweet, newsletter_service, user_
                 ssl : self.setupForm.ssl,
                 username : self.setupForm.username,
                 password : self.setupForm.password
-            };
+            };*/
 
-            user_service.setupNewsletter(settings, communities);
+            var settings = {
+             brand_name : 'test',
+             from_name : 'James G',
+             from_email : 'jgentes@gmail.com',
+             reply_email : 'jgentes@gmail.com',
+             host : 'test.gmail.com',
+             port : 343,
+             ssl : 'SSL',
+             username : 'test',
+             password : 'test'
+             };
+
+            newsletter_service.setup(settings, communities)
+                .then(function(response) {
+                    self.working = false;
+
+                    if (response.status !== 200) {
+                        sweet.show({
+                            title: "Sorry, something went wrong.",
+                            text: response.data.message,
+                            type: "error"
+                        });
+
+                    } else {
+
+                        sweet.show({
+                            title: "Settings saved!",
+                            type: "success"
+                        }, function () {
+                            //$http.get('/api/2.1/community/' + location.key + '/' + self.community.key);
+                            $uibModalInstance.close();
+                        });
+                    }
+            });
 
         } else {
             self.submitted = true;

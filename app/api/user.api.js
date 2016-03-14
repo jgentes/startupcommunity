@@ -17,7 +17,6 @@ var UserApi = function() {
     this.getProfile = handleGetProfile;
     this.getProfileUrl = handleGetProfileUrl;
     this.updateProfile = handleUpdateProfile;
-    this.setupNewsletter = handleSetupNewsletter;
     this.removeCommunity = handleRemoveCommunity;
     this.feedback = handleFeedback;
 };
@@ -373,7 +372,7 @@ function handleContactUser(req, res) {
 
 function handleGetProfile(req, res) {
     // req data is guaranteed by ensureauth
-    var userid = req.param.userid || req.user;
+    var userid = req.params.userid || req.user;
     console.log('Pulling user profile: ' + userid);
 
     db.get(process.env.DB_COMMUNITIES, userid)
@@ -396,7 +395,7 @@ function handleGetProfile(req, res) {
 
 function handleGetProfileUrl(req, res) {
     // req data is guaranteed by ensureauth
-    var userid = req.param.userid || req.user,
+    var userid = req.params.userid || req.user,
         filename = req.query.filename;
 
     aws.config.update({

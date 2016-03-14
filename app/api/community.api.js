@@ -6,7 +6,6 @@ var memjs = require('memjs'),
     db = require('orchestrate')(process.env.DB_KEY);
 
 //var util = require('util'); //for util.inspect on request
-//request = require('request');
 
 //require('request-debug')(request); // Very useful for debugging oauth and api req/res
 

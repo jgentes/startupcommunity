@@ -1,21 +1,35 @@
 var jwt = require('jsonwebtoken'),
     db = require('orchestrate')(process.env.DB_KEY),
-    request = require('request');
+    request = require('request'),
+    htmlparser = require("htmlparser2"),
+    $ = require('jQuery');
+
+//var util = require('util'); //for util.inspect on request
 
 var NewsletterApi = function() {
     this.setupNewsletter = handleSetupNewsletter;
 };
 
 function handleSetupNewsletter(req, res) {
-    var settings = req.param.settings,
-        communities = req.param.communities,
-        getPass, createBrand, createList, getMembers, createCustomField, addSubscriberCSV, updateProfile, newprofile;
+
+    var settings = req.body.settings,
+        communities = req.body.communities,
+        createBrand,
+        createList,
+        getMembers,
+        createCustomField,
+        addSubscriberCSV,
+        updateProfile,
+        addSubscriber,
+        removeSubscriber,
+        newprofile;
 
     // get user record and assign to newprofile
     db.get(process.env.DB_COMMUNITIES, req.user)
         .then(function(response) {
+            console.log('pulling user record');
 
-            if (response.body.code !== "items_not_found") {
+            if (response.body !== "items_not_found") {
                 newprofile = response.body;
 
                 // create password
@@ -41,6 +55,7 @@ function handleSetupNewsletter(req, res) {
         });
 
     createBrand = function(pass, settings) {
+        console.log('creating brand: ' + settings.brand_name);
 
         request.post({
             url: 'https://newsletter.startupcommunity.org/includes/app/create.php',            
@@ -68,42 +83,56 @@ function handleSetupNewsletter(req, res) {
                 "reset-on-day": "1"
             }
         }, function(err, response, body) {
-            console.log(body);
             // pull the brand_id from the url by parsing the html of the frame
-            var el = document.createElement( 'html' );
-            el.innerHTML = body.toString();
 
-            var url = $("a", el).filter(function() {
-                return $(this).text() == settings.brand_name;
-            }).attr('href');
+            var handler = new htmlparser.DomHandler(function (error, dom) {
+                if (error)
+                    console.log(error);
+                else
+                var el = dom;
 
-            var brand_id = url.split("?")[1].split("=")[1];
+                //var el = document.createElement( 'html' );
+                el.innerHTML = body.toString();
 
-            // push settings to user profile
-            
-            newprofile['newsletter'] = {
-                brand_id: brand_id,
-                username: newprofile.profile.email,
-                password: pass,
-                lists: {}
-            };
+                var url = $("a", el).filter(function() {
+                    return $(this).text() == settings.brand_name;
+                }).attr('href');
 
-            // create lists for networks that the user is a leader of
-            for (var network in newprofile.roles.leader) {                
-                if (communities[network] && communities[network].type == 'network') {                   
+                var brand_id = url.split("?")[1].split("=")[1];
 
-                    createList(brand_id, network);
-                    
+                // push settings to user profile
+
+                newprofile['newsletter'] = {
+                    brand_id: brand_id,
+                    username: newprofile.profile.email,
+                    password: pass,
+                    lists: {}
+                };
+
+                // create lists for networks that the user is a leader of
+                for (var network in newprofile.roles.leader) {
+                    if (communities[network] && communities[network].type == 'network') {
+
+                        createList(brand_id, network);
+
+                    }
                 }
-            }
 
-            updateProfile(newprofile);
+                updateProfile(newprofile);
+
+            });
+            var parser = new htmlparser.Parser(handler);
+            parser.write(body.toString());
+            parser.done();
+
+
             
         });
         
     };
 
     createList = function(brand_id, network) {
+        console.log('creating list: ' + network);
 
         request.post({
             url: 'https://newsletter.startupcommunity.org/includes/subscribers/import-add.php',
@@ -135,6 +164,8 @@ function handleSetupNewsletter(req, res) {
     };
 
     getMembers = function(locations, brand_id, list_id) {
+        console.log('getting members: ' + locations);
+
         var csv_data = [];
 
         var search = function (startKey) {
@@ -180,6 +211,7 @@ function handleSetupNewsletter(req, res) {
         };
 
         createCustomField = function (brand_id, list_id, csv_data) {
+            console.log('creating custom field');
 
             request.post({
                 url: 'https://newsletter.startupcommunity.org/includes/list/add-custom-field.php',
@@ -197,6 +229,7 @@ function handleSetupNewsletter(req, res) {
         };
 
         addSubscriberCSV = function (csv_data, brand_id, list_id) {
+            console.log('adding subscribers');
 
             // funky setup here because it needs to send a csv file along with form data
 
@@ -252,32 +285,40 @@ function handleSetupNewsletter(req, res) {
         };
 
         updateProfile = function (newprofile) {
+            console.log('updating profile');
+            console.log(newprofile);
+            // ensure profile matches current user
+            if (req.user == newprofile.key) {
+                delete newprofile.key;
+                db.put(process.env.DB_COMMUNITIES, newprofile.key, newprofile)
+                    .then(function(response){
+                        if (response.body.code !== "items_not_found") {
+                            response.body["key"] = req.user;
+                            res.status(200).send({ token: jwt.sign(req.user, process.env.SC_TOKEN_SECRET), user: response.body });
+
+                        } else {
+                            console.warn('WARNING:  User not found.');
+                            res.status(200).send({ message: 'User not found.' });
+                        }
+                    })
+
+                    .fail(function(err){
+                        console.warn("WARNING: user457", err);
+                        res.status(202).send({ message: "Something went wrong."});
+                    });
+            } else {
+                res.status(400).send({ message: 'You may only update your own user record.'})
+            }
 
             user_service.updateProfile(newprofile)
                 .then(function (response) {
 
-                    self.working = false;
 
-                    if (response.status !== 200) {
-                        sweet.show({
-                            title: "Sorry, something went wrong.",
-                            text: response.data.message,
-                            type: "error"
-                        });
-
-                    } else {
-
-                        sweet.show({
-                            title: "Settings saved!",
-                            type: "success"
-                        }, function () {
-                            //$http.get('/api/2.1/community/' + location.key + '/' + self.community.key);
-                            $uibModalInstance.close();
-                        });
-                    }
 
                 })
         };
     }
 
 }
+
+module.exports = NewsletterApi;
