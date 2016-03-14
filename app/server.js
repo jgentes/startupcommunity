@@ -145,7 +145,8 @@ app.post('/api/2.1/remove', auth.ensureAuthenticated, userApis.removeCommunity);
 app.post('/api/2.2/companies/delete', auth.ensureAuthenticated, companyApis.deleteCompany);
 
 // new for 2.3
-app.post('/api/2.3/newsletter/setup', auth.ensureAuthenticated, newsletterApis.setupNewsletter);
+app.post('/api/2.3/newsletter/pass', auth.ensureAuthenticated, newsletterApis.getPass);
+app.post('/api/2.3/newsletter/members', auth.ensureAuthenticated, newsletterApis.getMembers);
 
 // Auth
 app.post('/auth/linkedin', auth.linkedin);

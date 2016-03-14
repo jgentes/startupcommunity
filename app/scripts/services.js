@@ -18,14 +18,11 @@ angular
                     }
                 })
             },
-            setup: function(settings, communities) {
-                return $http.post('/api/2.3/newsletter/setup', {
-                    settings: settings,
-                    communities: communities
-                });
-                // quick note: using 'params' isn't necessary, it just resolves to req.body.params.settings rather than req.body.settings
+            getPass: function() {
+                // get password for newsletter service for logged in user
+                return $http.post('/api/2.3/newsletter/pass');                    
             },
-            createBrand: function(user, pass, settings) {
+            createBrand: function(email, settings) {
                 return $http({
                     url: 'https://newsletter.startupcommunity.org/includes/app/create.php',
                     method: 'POST',
@@ -42,9 +39,9 @@ angular
                         smtp_ssl: settings.ssl,
                         smtp_username: settings.username,
                         smtp_password: settings.password,
-                        login_email: user.profile.email,
+                        login_email: email,
                         language: "en_US",
-                        pass: pass,
+                        pass: settings.pass,
                         currency: "USD",
                         delivery_fee: "",
                         cost_per_recipient: "",
@@ -57,12 +54,15 @@ angular
                         'Content-Type': 'application/x-www-form-urlencoded'
                     }
                 })
-                    .then(function(response) {
+                    .then(function(response) {                        
                         // pull the brand_id from the url by parsing the html of the frame
                         var el = document.createElement( 'html' );
                         el.innerHTML = response.data.toString();
-                        var url = $("a:contains('" + settings.brand_name + "')", el).attr('href');
+                        var url = $("a", el).filter(function() {
+                            return $(this).text() == settings.brand_name;
+                        }).attr('href');
                         // return brand_id
+
                         return url.split("?")[1].split("=")[1];
                     })
 
@@ -82,13 +82,96 @@ angular
                     }
                 })
                     .then(function(response) {
-                        // pull the list_id from the url by parsing the html of the frame
-                        var el = document.createElement( 'html' );
-                        el.innerHTML = response.data.toString();
-                        var url = $("a[href*='&l=']", el);
-                        // return list_id
-                        return url[0].href.split("&")[1].split("=")[1];
-                    })
+                    // pull the list_id from the url by parsing the html of the frame
+                    var el = document.createElement( 'html' );
+                    el.innerHTML = response.data.toString();
+                    var url = $("a[href*='&l=']", el);
+
+                    // return list_id
+                    return url[0].href.split("&")[1].split("=")[1];
+                })
+            },
+            getMembers: function(location_key, list_name, brand_id, list_id) {
+                return $http.post('/api/2.3/newsletter/members', {
+                    location_key: location_key,
+                    network: list_name,
+                    brand_id: brand_id,
+                    list_id: list_id
+                });
+            },
+            createCustomField: function(field_name, field_type, app_id, list_id) {
+              return $http({
+                  url: 'https://newsletter.startupcommunity.org/includes/list/add-custom-field.php',
+                  method: 'POST',
+                  data: $httpParamSerializer({
+                      c_field: field_name,
+                      c_type: field_type,
+                      id: app_id,
+                      list: list_id
+                  }),
+                  withCredentials: true,
+                  headers: {
+                      'Content-Type': 'application/x-www-form-urlencoded'
+                  }
+              })
+            },
+            addSubscriber: function() {
+                return $http({
+                    url: 'https://newsletter.startupcommunity.org/includes/subscribers/line-update.php',
+                    method: 'POST',
+                    data: $httpParamSerializer({
+                        line: "James Gentes, jgentes@gmail.com",
+                        list_id: '4',
+                        app: self.app_id
+                    }),
+                    withCredentials: true,
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    }
+                })
+            },
+            addSubscriberCSV: function(array_for_csv, app_id, list_id) {
+                // funky setup here because it needs to send a csv file along with form data
+                
+                var fd = new FormData();
+                fd.append("app", app_id);
+                fd.append("list_id", list_id);
+                fd.append("cron", 1);
+
+                var csv = "";
+                array_for_csv.forEach(function(infoArray, index){
+
+                    dataString = infoArray.join(",");
+                    csv += index < array_for_csv.length ? dataString+ "\n" : dataString;
+
+                });
+
+                var oBlob = new Blob([csv], { type: "text/csv"});
+                fd.append("csv_file", oBlob,'import.csv');
+
+                return $http({
+                    url: 'https://newsletter.startupcommunity.org/includes/subscribers/import-update.php',
+                    method: 'POST',
+                    withCredentials: true,
+                    data: fd,
+                    transformRequest: angular.identity,
+                    headers: {'Content-Type': undefined}
+                })
+            },
+            removeSubscriber: function () {
+                return $http({
+                    url: 'https://newsletter.startupcommunity.org/includes/subscribers/line-delete.php',
+                    method: 'POST',
+                    data: $httpParamSerializer({
+                        line: "jgentes@gmail.com",
+                        list_id: '4',
+                        app: self.app_id
+                    }),
+                    withCredentials: true,
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    }
+                })
             }
         }
     })
@@ -180,13 +263,6 @@ angular
                         message: message,
                         location_name: location_name,
                         location_key: location_key
-                    }
-                });
-            },
-            setupNewsletter: function(settings, communities) {
-                return $http.post('/api/2.3/newsletter/setup', {
-                    params: {
-                        settings: settings
                     }
                 });
             },
