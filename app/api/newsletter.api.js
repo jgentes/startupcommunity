@@ -8,8 +8,8 @@ var NewsletterApi = function() {
 
 function handleSetupNewsletter(req, res) {
     var settings = req.param.settings,
-        communities = req.param.communities;
-    var getPass, createBrand, createList, getMembers, createCustomField, addSubscriberCSV, updateProfile, newprofile;
+        communities = req.param.communities,
+        getPass, createBrand, createList, getMembers, createCustomField, addSubscriberCSV, updateProfile, newprofile;
 
     // get user record and assign to newprofile
     db.get(process.env.DB_COMMUNITIES, req.user)
@@ -57,7 +57,7 @@ function handleSetupNewsletter(req, res) {
                 smtp_ssl: settings.ssl,
                 smtp_username: settings.username,
                 smtp_password: settings.password,
-                login_email: user.profile.email,
+                login_email: newprofile.profile.email,
                 language: "en_US",
                 pass: pass,
                 currency: "USD",
@@ -72,6 +72,7 @@ function handleSetupNewsletter(req, res) {
             // pull the brand_id from the url by parsing the html of the frame
             var el = document.createElement( 'html' );
             el.innerHTML = body.toString();
+
             var url = $("a", el).filter(function() {
                 return $(this).text() == settings.brand_name;
             }).attr('href');
@@ -101,37 +102,61 @@ function handleSetupNewsletter(req, res) {
         });
         
     };
-    // todo this is next
+
     createList = function(brand_id, network) {
 
-        newsletter_service.createList(brand_id, network)
-            .then(function(response) {
-                var list_id = response;
+        request.post({
+            url: 'https://newsletter.startupcommunity.org/includes/subscribers/import-add.php',
+            form: {
+                list_name: list_name,
+                app: brand_id
+            }
+        }, function(err, response, body) {
+            console.log(body);
+            // pull the list_id from the url by parsing the html of the frame
+            var el = document.createElement( 'html' );
+            el.innerHTML = body.toString();
+            var url = $("a[href*='&l=']", el);
 
-                // capture the list id and update the user profile
+            // return list_id
+            var list_id = url[0].href.split("&")[1].split("=")[1];
 
-                newprofile.newsletter.lists[network] = list_id;
+            // capture the list id and update the user profile
 
-                // add subscribers
+            newprofile.newsletter.lists[network] = list_id;
 
-                var locations = [network].concat(user.roles.leader[network]);
+            // add subscribers
 
-                getMembers(locations, brand_id, list_id);
+            var locations = [network].concat(user.roles.leader[network]);
 
-            })
+            getMembers(locations, brand_id, list_id);
+
+        });
     };
 
-    getMembers = function(locations, brand_id, list_id, alt) {
+    getMembers = function(locations, brand_id, list_id) {
         var csv_data = [];
 
-        var search = function(locations, alt) {
+        var search = function (startKey) {
 
-            user_service.search(locations, null, null, null, null, alt)
-                .then(function (response) {
+            var searchstring = "";
+            for (l in locations) {
+                searchstring += '"' + locations[l] + '"';
+                if (l < (locations.length - 1)) {
+                    searchstring += ' AND ';
+                }
+            }
+
+            db.newSearchBuilder()
+                .collection(process.env.DB_COMMUNITIES)
+                .limit(100)
+                .offset(startKey)
+                .query('@value.communities: (' + searchstring + ') AND @value.type: "user"')
+                .then(function (data) {
                     var profile;
-                    console.log(response);
-                    for (x in response.data.results) {
-                        profile = response.data.results[x].value.profile;
+                    console.log(data);
+                    for (x in data.body.results) {
+                        profile = data.body.results[x].value.profile;
                         if (profile.email) {
                             csv_data.push([profile.name, profile.email, profile.parents.length ? profile.parents.join(',') : null])
                         }
@@ -139,65 +164,120 @@ function handleSetupNewsletter(req, res) {
 
                     console.log(csv_data);
 
-                    if (response.data.next) {
+                    if (data.body.next) {
                         console.log('Getting next group..');
-                        // remove random sort
-                        var next_url = response.data.next.replace(/([&\?]sort=_random*$|sort=_random&|[?&]sort=_random(?=#))/, '');
-                        search(locations, next_url);
+                        startKey = startKey + 100;
+                        search(startKey);
                     } else {
                         console.log('Job done!');
                         createCustomField(brand_id, list_id, csv_data);
                     }
-                })
+
+                });
+
+            search(0);
+
         };
 
-        search(locations);
+        createCustomField = function (brand_id, list_id, csv_data) {
 
-    };
-
-    createCustomField = function(brand_id, list_id, csv_data) {
-
-        newsletter_service.createCustomField('Industry', 'Text', brand_id, list_id)
-            .then(function(response) {
-
-                addSubscriberCSV(csv_data, brand_id, list_id);
-
-            })
-    };
-
-    addSubscriberCSV = function(csv_data, brand_id, list_id) {
-
-        newsletter_service.addSubscriberCSV(csv_data, brand_id, list_id)
-            .then(function(response) {
-                console.log('List complete!');
-            })
-    };
-
-    updateProfile = function(newprofile) {
-
-        user_service.updateProfile(newprofile)
-            .then(function(response) {
-
-                self.working = false;
-
-                if (response.status !== 200) {
-                    sweet.show({
-                        title: "Sorry, something went wrong.",
-                        text: response.data.message,
-                        type: "error"
-                    });
-
-                } else {
-
-                    sweet.show({
-                        title: "Settings saved!",
-                        type: "success"
-                    }, function(){
-                        //$http.get('/api/2.1/community/' + location.key + '/' + self.community.key);
-                        $uibModalInstance.close();
-                    });
+            request.post({
+                url: 'https://newsletter.startupcommunity.org/includes/list/add-custom-field.php',
+                form: {
+                    c_field: 'Industry',
+                    c_type: 'Text',
+                    id: brand_id,
+                    list: list_id
                 }
 
-            })
-    };
+            }, function (err, response, body) {
+                console.log(body);
+                addSubscriberCSV(csv_data, brand_id, list_id);
+            });
+        };
+
+        addSubscriberCSV = function (csv_data, brand_id, list_id) {
+
+            // funky setup here because it needs to send a csv file along with form data
+
+            var fd = new FormData();
+            fd.append("app", brand_id);
+            fd.append("list_id", list_id);
+            fd.append("cron", 1);
+
+            var csv = "";
+            csv_data.forEach(function (infoArray, index) {
+
+                dataString = infoArray.join(",");
+                csv += index < csv_data.length ? dataString + "\n" : dataString;
+
+            });
+
+            var oBlob = new Blob([csv], {type: "text/csv"});
+            fd.append("csv_file", oBlob, 'import.csv');
+
+            request.post({
+                url: 'https://newsletter.startupcommunity.org/includes/subscribers/import-update.php',
+                form: fd,
+                headers: {'Content-Type': undefined}
+            }, function (err, response, body) {
+                console.log('List complete!');
+            });
+        };
+
+        addSubscriber = function () {
+            http.post({
+                url: 'https://newsletter.startupcommunity.org/includes/subscribers/line-update.php',
+                form: {
+                    line: "James Gentes, jgentes@gmail.com",
+                    list_id: list_id,
+                    app: brand_id
+                }
+            }, function (err, response, body) {
+                console.log('Addition complete!');
+            });
+        };
+
+        removeSubscriber = function () {
+            request.post({
+                url: 'https://newsletter.startupcommunity.org/includes/subscribers/line-delete.php',
+                form: {
+                    line: "jgentes@gmail.com",
+                    list_id: list_id,
+                    app: brand_id
+                }
+            }, function (err, response, body) {
+                console.log('Removal complete!');
+            });
+        };
+
+        updateProfile = function (newprofile) {
+
+            user_service.updateProfile(newprofile)
+                .then(function (response) {
+
+                    self.working = false;
+
+                    if (response.status !== 200) {
+                        sweet.show({
+                            title: "Sorry, something went wrong.",
+                            text: response.data.message,
+                            type: "error"
+                        });
+
+                    } else {
+
+                        sweet.show({
+                            title: "Settings saved!",
+                            type: "success"
+                        }, function () {
+                            //$http.get('/api/2.1/community/' + location.key + '/' + self.community.key);
+                            $uibModalInstance.close();
+                        });
+                    }
+
+                })
+        };
+    }
+
 }
