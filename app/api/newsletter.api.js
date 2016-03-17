@@ -74,7 +74,7 @@ function handleGetMembers(req, res) {
 
                 db.newSearchBuilder()
                     .collection(process.env.DB_COMMUNITIES)
-                    .limit(100)
+                    .limit(10)
                     .offset(startKey)
                     .query('@value.communities: (' + searchstring + ') AND @value.type: "user"')
                     .then(function (data) {
@@ -85,15 +85,17 @@ function handleGetMembers(req, res) {
                                 csv_data.push([profile.name, profile.email, profile.parents.length ? profile.parents.join(',') : null])
                             }
                         }
+                        
+                        res.status(201).send(csv_data);
 
-                        if (data.body.next) {
+                        /*if (data.body.next) {
                             console.log('Getting next group..');
                             startKey = startKey + 100;
                             search(startKey, csv_data);
                         } else {
                             console.log('Job done!');
                             res.status(201).send(csv_data);
-                        }
+                        }*/
 
                     });
             };

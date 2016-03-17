@@ -145,6 +145,7 @@ angular
                     csv += index < array_for_csv.length ? dataString+ "\n" : dataString;
 
                 });
+                console.log(csv);
 
                 var oBlob = new Blob([csv], { type: "text/csv"});
                 fd.append("csv_file", oBlob,'import.csv');

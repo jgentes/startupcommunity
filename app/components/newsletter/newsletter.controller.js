@@ -48,6 +48,7 @@ function SetupNewsController($uibModalInstance, sweet, newsletter_service, user_
 
         } else {
             self.submitted = true;
+            self.working = false;
         }
 
     };
@@ -68,9 +69,8 @@ function SetupNewsController($uibModalInstance, sweet, newsletter_service, user_
 
                 // create lists for networks that the user is a leader of
                 for (network in user.roles.leader) {
-                    console.log(network);
-                    if (communities[network] && communities[network].type == 'network') {
-                        console.log('moving forward')
+                    
+                    if (communities[network] && communities[network].type == 'network') {                        
 
                         createList(brand_id, network);
                     }
