@@ -312,7 +312,7 @@ function handleLinkedin(req, res) {
             },
             "to": invite_code,
             "published": datetime.getTime(),
-            "content": 'What are you currently working on? Do you need any help?',
+            "content": 'What are you working on right now?',
             "replies": []
         };
 

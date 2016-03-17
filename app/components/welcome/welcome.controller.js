@@ -166,7 +166,7 @@ function WelcomeController($auth, $q, $http, $window, $mixpanel, $uibModalInstan
     this.getCompanies = function(val) {
         return $http.get('/api/2.1/angel/startups/search?val=' + val)
         .then(function(response){
-            console.log(response);
+
             if (!response.data.error) {
                 return response.data.slice(0,6).map(function(item){
                     return item;
@@ -180,24 +180,34 @@ function WelcomeController($auth, $q, $http, $window, $mixpanel, $uibModalInstan
         });
     };
 
-    // present user with list of roles they selected previously when creating companies
-    $scope.$watchCollection('welcome.roles', function(newVal, oldVal) {
-        self.selectRoles = [{
-            value: 'none',
-            text: 'not involved'
-        }];
-        for (r in newVal) {
-            if (newVal[r]) { // only true items
-                self.selectRoles.push({
-                    value: r,
-                    text: r[0].toUpperCase() + r.slice(1)
-                })
-            }
-        }
+    // for role selection on companies page
 
-        if (!self.selectedRole) self.selectedRole = 'none';
-
-    });
+    self.selectRoles = [{
+        value: 'not involved',
+        text: 'not involved'
+    }, {
+        value: 'founder',
+        text: 'Founder',
+        description: "You have started or co-founded a business venture."
+    }, {
+        value: 'investor',
+        text: 'Investor',
+        description: "You are an active investor in startup companies."
+    },{
+        value: 'team',
+        text: 'Team Member',
+        description: "You are a current employee or team member of a local company."
+    },{
+        value: 'mentor',
+        text: 'Mentor',
+        description: "You are willing to provide guidance to entrepreneurs without compensation - the 'give before you get' philosophy."
+    },{
+        value: 'provider',
+        text: 'Service Provider',
+        description: "You provide services to community members for a fee."
+    }];
+    
+    if (!self.selectedRole) self.selectedRole = 'not involved';
 
     this.showCurrent = function(profile) {
         self.updateCompany = true;
@@ -272,14 +282,12 @@ function WelcomeController($auth, $q, $http, $window, $mixpanel, $uibModalInstan
             })
     };
 
-    // used in add/edit company view
-    this.showRole = function() {
-        var selected = $filter('filter')(self.selectRoles, {value: self.selectedRole}, true);
-        return selected[0].text;
-    };
-
     this.addCompany = function(e) {
         if (e) e.preventDefault();
+
+        if (self.selectedRole && (self.selectedRole !== 'not involved')) {
+            if (!self.roles[self.selectedRole]) self.roles[self.selectedRole] = true;
+        }
 
         if (self.selectedCompany && self.selectedCompany.parent) {
             // adjust parent industry caps
@@ -291,24 +299,60 @@ function WelcomeController($auth, $q, $http, $window, $mixpanel, $uibModalInstan
             } else {
 
                 self.working = true;
-                var role = self.selectedRole == 'none' ? undefined : self.selectedRole;
+                var role = self.selectedRole == 'not involved' ? undefined : self.selectedRole;
 
                 if (community.type == 'cluster') community_path = location.key; // do not allow companies to be added directly to clusters
                 if (community.type == 'network' && (self.user.roles && self.user.roles.leader && self.user.roles.leader[community.key]) && (self.user.roles.leader[community.key].indexOf(location.key) < 0)) community_path = location.key;
 
-
                     company_service.addCompany(self.selectedCompany, role, location.key, community_path, self.selectedCompany.key)
                         .then(function(response) {
-
+                            
                             self.working = false;
                             if (response.status !== 200) {
                                 self.alert = { type: 'danger', message: String(response.data.message) };
                             } else {
-                                if (self.selectedCompany.key) $http.get('/api/2.1/community/' + self.selectedCompany.key); // refresh outdated cache
+                                var co_key = response.data.key;
+
+                                // update local profile with company data
+
+                                if (!self.user.roles) {
+                                    self.user["roles"] = {};
+                                } else {
+                                    // search for existing role and delete if found
+
+                                    for (r in self.user.roles) {
+                                        for (co in self.user.roles[r]) {
+                                            if (co == co_key) {
+                                                delete self.user.roles[r][co];
+                                            }
+                                        }
+                                    }
+                                }
+
+                                // add new role
+
+                                if (!self.user.roles[role]) {
+                                    self.user.roles[role] = {};
+                                    self.user.roles[role][co_key] = [location.key];
+                                } else if (!self.user.roles[role][co_key]) {
+                                    self.user.roles[role][co_key] = [location.key];
+                                } else if (self.user.roles[role][co_key].indexOf(location.key) < 0) {
+                                    self.user.roles[role][co_key].push(location.key);
+                                } // else the damn thing is already there
+
+                                // add community
+                                if (!self.user.communities) {
+                                    self.user["communities"] = {};
+                                }
+
+                                if (self.user.communities.indexOf(co_key) < 0) {
+                                    self.user.communities.push(co_key);
+                                }
+
                                 self.selectedCompany = undefined;
                                 self.company = undefined;
                                 self.updateCompany = false;
-                                self.selectedRole = 'none';
+                                self.selectedRole = 'not involved';
                                 self.submitted = false;
                                 self.dups = undefined;
                                 self.notlisted = false;
@@ -366,6 +410,10 @@ function WelcomeController($auth, $q, $http, $window, $mixpanel, $uibModalInstan
     };
 
     this.next = function() {
+        if (self.selectedRole && (self.selectedRole !== 'not involved')) {
+            if (!self.roles[self.selectedRole]) self.roles[self.selectedRole] = true;
+        }
+
         if (self.selectedCompany) {
             self.alert = {type: "warning", message: "Warning: " + self.selectedCompany.name + " has been selected but hasn't been added yet. Please add the company or cancel before continuing."};
         } else $state.go('welcome.invite');
@@ -386,17 +434,22 @@ function WelcomeController($auth, $q, $http, $window, $mixpanel, $uibModalInstan
         }
 
         for (role in self.roles) {
-            if (!self.user.roles[role]) {
-                self.user.roles[role] = {};
-                self.user.roles[role][community_path] = [$stateParams.location_path];
-                self.user.roles[role][$stateParams.location_path] = [$stateParams.location_path];
-            } else if (!self.user.roles[role][community_path]) {
-                self.user.roles[role][community_path] = [$stateParams.location_path];
-                self.user.roles[role][$stateParams.location_path] = [$stateParams.location_path];
-            } else if (self.user.roles[role][community_path].indexOf($stateParams.location_path) < 0) {
-                self.user.roles[role][community_path].push($stateParams.location_path);
-                self.user.roles[role][$stateParams.location_path] = [$stateParams.location_path];
-            } // else it's already there
+            // do not allow founder of location
+            if (!((role == 'founder') && (community_path == $stateParams.location_path))) {
+
+                if (!self.user.roles[role]) {
+                    self.user.roles[role] = {};
+                    self.user.roles[role][community_path] = [$stateParams.location_path];
+                    self.user.roles[role][$stateParams.location_path] = [$stateParams.location_path];
+                } else if (!self.user.roles[role][community_path]) {
+                    self.user.roles[role][community_path] = [$stateParams.location_path];
+                    self.user.roles[role][$stateParams.location_path] = [$stateParams.location_path];
+                } else if (self.user.roles[role][community_path].indexOf($stateParams.location_path) < 0) {
+                    self.user.roles[role][community_path].push($stateParams.location_path);
+                    self.user.roles[role][$stateParams.location_path] = [$stateParams.location_path];
+                } // else it's already there
+            }
+
 
         }
 
@@ -423,35 +476,40 @@ function WelcomeController($auth, $q, $http, $window, $mixpanel, $uibModalInstan
                 if (response.status !== 200) {
                     self.alert = { type: 'danger', message: String(response.data.message) };
                 } else {
-                    $http.get('/api/2.1/community/' + self.user.key); // refresh outdated cache
-
-                    if ($stateParams.go) {
-                        $state.go('user.dashboard', {
-                            profile: self.user,
-                            location_path: self.user.key,
-                            query: '*',
-                            tour: false
-                        });
-                    } else {
-                        sweet.show({
-                                title: "Welcome.",
-                                text: "Let's have a look at your community.",
-                                type: "success",
-                                showCancelButton: false,
-                                confirmButtonText: "Let's go!",
-                                closeOnConfirm: true
-                            },
-                            function (isConfirm) {
-                                if (isConfirm) {
-                                    $state.go('community.dashboard', {
-                                        profile: self.user,
-                                        location_path: $stateParams.location_path,
-                                        query: '*',
-                                        tour: true
+                    $http.get('/api/2.1/community/' + self.user.key + '?nocache=true')
+                        .then(function(response) {
+                            if ($stateParams.go) {
+                                $state.go('user.dashboard', {
+                                    communities: response.data,
+                                    profile: self.user,
+                                    location_path: self.user.key,
+                                    query: '*',
+                                    tour: false
+                                });
+                            } else {
+                                sweet.show({
+                                        title: "Welcome.",
+                                        text: "Let's have a look at your community.",
+                                        type: "success",
+                                        showCancelButton: false,
+                                        confirmButtonText: "Let's go!",
+                                        closeOnConfirm: true
+                                    },
+                                    function (isConfirm) {
+                                        if (isConfirm) {
+                                            $state.go('community.dashboard', {
+                                                communities: response.data,
+                                                profile: self.user,
+                                                location_path: $stateParams.location_path,
+                                                query: '*',
+                                                tour: true
+                                            });
+                                        }
                                     });
-                                }
-                            });
-                    }
+                            }
+                        })
+
+
                 }
             })
             .catch(function(error) {

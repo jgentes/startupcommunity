@@ -280,16 +280,18 @@ function handleGetCommunity(req, res) {
     };
 
     if (community) {
+        
+        if (!req.query.nocache) {
+            mc.get(community, function(err, value) {
 
-        mc.get(community, function(err, value) {
-
-            if (value) {
-                res.status(200).send(value);
-                pullCommunity(true);
-            } else {
-                pullCommunity(false);
-            }
-        })
+                if (value) {
+                    res.status(200).send(value);
+                    pullCommunity(true);
+                } else {
+                    pullCommunity(false);
+                }
+            })
+        } else pullCommunity(false);        
 
     } else res.status(404).send({message: 'Please specify a community!'});
 }

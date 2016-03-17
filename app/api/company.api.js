@@ -226,7 +226,7 @@ function handleAddCompany(req, res) {
                 if (response.body.code !== "items_not_found") {
                     var user = response.body;
 
-                    if (!addCompany.location_key) addCompany.location_key == addCompany.community_key;
+                    if (!addCompany.location_key) addCompany.location_key = addCompany.community_key;
 
                     if (user.communities.indexOf(addCompany.location_key) < 0) {
                         res.status(202).send({ message: 'You must be a member of this community to add a company.' });
@@ -372,17 +372,19 @@ var addRole = function(company_key, role, location_key, user_key) {
 
                 if (!response.body.roles) {
                     response.body["roles"] = {};
-                }
+                } else {
+                    // search for existing role and delete if found
 
-                // search for existing role and delete if found
-
-                for (r in response.body.roles) {
-                    for (co in response.body.roles[r]) {
-                        if (co == company_key) {
-                            delete response.body.roles[r][co];
+                    for (r in response.body.roles) {
+                        for (co in response.body.roles[r]) {
+                            if (co == company_key) {
+                                delete response.body.roles[r][co];
+                            }
                         }
                     }
                 }
+
+                
 
                 // add new role
 
@@ -447,6 +449,8 @@ var companyPull = function (company, role, location_key, user, key, callback) {
 
                         result.body.results[0].value["message"] = "Well done! " + company.profile.name + " has been updated.";
 
+                        result.body.results[0].value["key"] = companykey;
+
                         callback({ "status": 200, "data": result.body.results[0].value });
 
                     })
@@ -470,6 +474,8 @@ var companyPull = function (company, role, location_key, user, key, callback) {
                         }
 
                         company["message"] = "Well done! You've added " + company.profile.name + " to the community.";
+
+                        company["key"] = companykey;
 
                         callback({ "status": 200, "data": company });
 
