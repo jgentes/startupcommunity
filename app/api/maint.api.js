@@ -1,4 +1,6 @@
 var db = require('orchestrate')(process.env.DB_KEY),
+    path = require('path'),
+    _ = require(path.join(__dirname, '../scripts/lodash40.js')),
     knowtify = require('knowtify-node');
 
 var MaintApi = function() {
@@ -24,10 +26,16 @@ function handleMaintenance(res) {
             .collection(collection)
             .limit(limit)
             .offset(startKey)
-            .query('@value.profile.parents: * AND @value.type: "company"')
+            .query('@value.roles.founder.redding-ca: "redding-ca"')
             .then(function(data){
-                var emails = [];
-                for (var item in data.body.results) {
+                var item;
+                for (item in data.body.results) {
+
+                    var user = data.body.results[item].value;
+
+                    delete user.roles.founder['bend-or'];
+                    if (_.isEmpty(user.roles.founder)) delete user.roles.founder;
+
                     /*
                     var newdata = {
                         "type": "user",
@@ -44,24 +52,7 @@ function handleMaintenance(res) {
                         }
                     };
 
-                    if (data.body.results[item].value.cities) delete data.body.results[item].value.cities;
 
-                     */
-
-                    if (data.body.results[item].value.profile.parents.length) {
-                        console.log(data.body.results[item].value.profile.name);
-
-                        /*if (data.body.results[item].value.profile.parents.indexOf('consumer%20goods') > -1) {
-                            data.body.results[item].value.profile.parents.push('consumer-goods');
-                            data.body.results[item].value.profile.parents.splice(data.body.results[item].value.profile.parents.indexOf('consumer%20goods'), 1);
-                        }*/
-                        for (p in data.body.results[item].value.profile.parents) {
-                            data.body.results[item].value.profile.parents[p] = data.body.results[item].value.profile.parents[p].toLowerCase();
-
-                        }
-
-                        console.log('parent updated');
-                    }
 
                     //for invites
                    /* if (data.body.results[item].value.invite_communities.indexOf("mentor-connect") > -1) {
@@ -87,13 +78,13 @@ function handleMaintenance(res) {
                     //newdata.roles = { "mentor" : { "edco-stable-of-experts": ["bend-or"], "bend-or": ["bend-or"]}};
                     //newdata.profile["home"] = "bend-or";
 
-                    //console.log('Updating record..');
-                    //console.log(data.body.results[item].path.key);
+                    console.log('Updating record..');
+                    console.log(data.body.results[item].path.key);
                     //console.log(newdata);
 
                     // IMPORTANT! TEST FIRST BY COMMENTING OUT BELOW..
                     // ALSO BE CAREFUL TO NOT PULL FROM -DEV AND PUT INTO PRODUCTION DB!!
-                    //db.put(collection, data.body.results[item].path.key, data.body.results[item].value);
+                    db.put(collection, data.body.results[item].path.key, user);
                 }
 
                 /*console.log('Job done!');

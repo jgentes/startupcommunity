@@ -599,7 +599,6 @@ function EmbedSettingsController($uibModalInstance, sweet, user, community_servi
 function CommunityController($uibModalInstance, $mixpanel, sweet, community_service, community, location, $http, $window, user, $state){
 
     this.location = location;
-    var loc_key = user.roles.leader[community.key][0]; // this will need to be selected by the user if they are a leader of one network in multiple locations
     this.communityForm = {"name":""}; // to avoid 'undefined' for initial url
     var self = this;
     this.update = false;
@@ -620,6 +619,8 @@ function CommunityController($uibModalInstance, $mixpanel, sweet, community_serv
     }
 
     if (community.key) {
+
+        var loc_key = user.roles.leader[community.key][0]; // this will need to be selected by the user if they are a leader of one network in multiple locations
 
         //force pull of community settings every time to avoid stale data
 

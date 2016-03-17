@@ -86,7 +86,7 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                             });
                     }],
                 communities: ['$stateParams', 'community_service', 'user',
-                    function($stateParams, community_service, user) {                        
+                    function($stateParams, community_service, user) {                  
                         // user is injected to prevent communities from loading until user is valid
                         if ($stateParams.communities && ($stateParams.communities.key == $stateParams.location_path)) {
                             return $stateParams.communities;
