@@ -20,7 +20,6 @@
     "memjs": "^0.8.7",
     "method-override": "^2.3.5",
     "morgan": "^1.6.1",
-    "mysql": "^2.10.2",
     "nodalytics": "^1.1.0",
     "orchestrate": "~0.7.0",
     "q": "^1.4.1",

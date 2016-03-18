@@ -1,15 +1,5 @@
 var jwt = require('jsonwebtoken'),
-    db = require('orchestrate')(process.env.DB_KEY),
-    mysql = require('mysql');
-
-var connection = mysql.createConnection({
-    host     : 'localhost',
-    user     : 'me',
-    password : 'secret',
-    database : 'my_db'
-});
-
-connection.connect();
+    db = require('orchestrate')(process.env.DB_KEY);
 
 var NewsletterApi = function() {
     this.getPass = handleGetPass;
