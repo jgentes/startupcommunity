@@ -1,5 +1,15 @@
 var jwt = require('jsonwebtoken'),
-    db = require('orchestrate')(process.env.DB_KEY);
+    db = require('orchestrate')(process.env.DB_KEY),
+    mysql = require('mysql');
+
+var connection = mysql.createConnection({
+    host     : 'localhost',
+    user     : 'me',
+    password : 'secret',
+    database : 'my_db'
+});
+
+connection.connect();
 
 var NewsletterApi = function() {
     this.getPass = handleGetPass;
@@ -70,11 +80,10 @@ function handleGetMembers(req, res) {
                         searchstring += ' OR ';
                     } else searchstring += ')';
                 }
-                console.log(searchstring);
 
                 db.newSearchBuilder()
                     .collection(process.env.DB_COMMUNITIES)
-                    .limit(10)
+                    .limit(100)
                     .offset(startKey)
                     .query('@value.communities: (' + searchstring + ') AND @value.type: "user"')
                     .then(function (data) {
@@ -85,17 +94,15 @@ function handleGetMembers(req, res) {
                                 csv_data.push([profile.name, profile.email, profile.parents.length ? profile.parents.join(',') : null])
                             }
                         }
-                        
-                        res.status(201).send(csv_data);
 
-                        /*if (data.body.next) {
+                        if (data.body.next) {
                             console.log('Getting next group..');
                             startKey = startKey + 100;
                             search(startKey, csv_data);
                         } else {
                             console.log('Job done!');
                             res.status(201).send(csv_data);
-                        }*/
+                        }
 
                     });
             };

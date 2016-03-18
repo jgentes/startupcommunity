@@ -23,28 +23,30 @@ function NewsletterController(newsletter_service, $sce, $state, user) {
 function SetupNewsController($uibModalInstance, sweet, newsletter_service, user_service, user, location, communities) {
     var self = this, createBrand, createList, getMembers, createCustomField, addSubscriberCSV, updateProfile,
         newprofile = user;
-    var pass = newsletter_service.getPass();
     
     this.setup = function() {
         self.working = true;
 
-
         if (self.form.$valid) {
 
-            var settings = {
-                brand_name : self.setupForm.brand_name,
-                from_name : self.setupForm.from_name,
-                from_email : self.setupForm.from_email,
-                reply_email : self.setupForm.reply_email,
-                host : self.setupForm.host,
-                port : self.setupForm.port,
-                ssl : self.setupForm.ssl,
-                pass : pass,
-                username : self.setupForm.username,
-                password : self.setupForm.password
-            };
+            newsletter_service.getPass()
+                .then(function(response) {
 
-            createBrand(settings);
+                    var settings = {
+                        brand_name : self.setupForm.brand_name,
+                        from_name : self.setupForm.from_name,
+                        from_email : self.setupForm.from_email,
+                        reply_email : self.setupForm.reply_email,
+                        host : self.setupForm.host,
+                        port : self.setupForm.port,
+                        ssl : self.setupForm.ssl,
+                        pass : response.data,
+                        username : self.setupForm.username,
+                        password : self.setupForm.password
+                    };
+
+                    createBrand(settings);
+            })
 
         } else {
             self.submitted = true;
@@ -63,7 +65,7 @@ function SetupNewsController($uibModalInstance, sweet, newsletter_service, user_
                 newprofile['newsletter'] = {
                     brand_id: brand_id,
                     username: newprofile.profile.email,
-                    password: pass,
+                    password: settings.pass,
                     lists: {}
                 };
 
@@ -76,7 +78,14 @@ function SetupNewsController($uibModalInstance, sweet, newsletter_service, user_
                     }
                 }
 
-                updateProfile(newprofile);
+                self.working = false;
+
+                sweet.show({
+                    title: "Newsletter settings saved!",
+                    type: "success"
+                }, function(){
+                    $uibModalInstance.close();
+                });
 
             });
     };
@@ -89,6 +98,8 @@ function SetupNewsController($uibModalInstance, sweet, newsletter_service, user_
                 // capture the list id and update the user profile
 
                 newprofile.newsletter.lists[list_name] = list_id;
+
+                updateProfile(newprofile);
 
                 createCustomField(brand_id, list_id, list_name);
 
@@ -118,37 +129,13 @@ function SetupNewsController($uibModalInstance, sweet, newsletter_service, user_
     addSubscriberCSV = function(csv_data, brand_id, list_id) {
 
         newsletter_service.addSubscriberCSV(csv_data, brand_id, list_id)
-            .then(function(response) {
-                console.log('List complete!');
-            })
+
     };
 
     updateProfile = function(newprofile) {
 
         user_service.updateProfile(newprofile)
-            .then(function(response) {
 
-                self.working = false;
-
-                if (response.status !== 200) {
-                    sweet.show({
-                        title: "Sorry, something went wrong.",
-                        text: response.data.message,
-                        type: "error"
-                    });
-
-                } else {
-
-                    sweet.show({
-                        title: "Settings saved!",
-                        type: "success"
-                    }, function(){
-                        //$http.get('/api/2.1/community/' + location.key + '/' + self.community.key);
-                        $uibModalInstance.close();
-                    });
-                }
-
-            })
     };
 
     this.cancel = function () {

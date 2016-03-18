@@ -33,7 +33,7 @@ angular
                         reply_to: settings.reply_email,
                         allowed_attachments: "jpeg,jpg,gif,png,pdf,zip",
                         logo: "",
-                        uid: "1",
+                        uid: 1,
                         smtp_host: settings.host,
                         smtp_port: settings.port,
                         smtp_ssl: settings.ssl,
@@ -47,7 +47,7 @@ angular
                         cost_per_recipient: "",
                         "choose-limit": "unlimited",
                         "monthly-limit": "",
-                        "reset-on-day": "1"
+                        "reset-on-day": 1
                     }),
                     withCredentials: true,
                     headers: {
@@ -144,8 +144,7 @@ angular
                     dataString = infoArray.join(",");
                     csv += index < array_for_csv.length ? dataString+ "\n" : dataString;
 
-                });
-                console.log(csv);
+                });                
 
                 var oBlob = new Blob([csv], { type: "text/csv"});
                 fd.append("csv_file", oBlob,'import.csv');
