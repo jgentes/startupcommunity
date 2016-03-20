@@ -19,7 +19,7 @@ function handleSetupNewsletter(req,res) {
         location_key = req.body.location_key,
         getMembers,
         createCustomField,
-        addSubscriberCSV,
+        addSubscriber,
         login,
         getUser,
         createBrand,
@@ -162,7 +162,7 @@ function handleSetupNewsletter(req,res) {
         })
     };
 
-    getMembers = function(location_key, network, newprofile, callback) {
+    getMembers = function(location_key, network, newprofile, brand_id, list_id) {
         console.log('getting members: ' + location_key + ' / ' + network);
 
         var search;
@@ -174,7 +174,7 @@ function handleSetupNewsletter(req,res) {
             res.status(204).send({ message: 'You are not a leader of ' + network + ' in ' + location_key })
         } else {
 
-            search = function (startKey, csv_data) {
+            search = function (startKey) {
 
                 var searchstring = network + " AND (";
                 for (l in networks) {
@@ -194,27 +194,26 @@ function handleSetupNewsletter(req,res) {
                         for (x in data.body.results) {
                             profile = data.body.results[x].value.profile;
                             if (profile.email) {
-                                csv_data.push([profile.name, profile.email, profile.parents.length ? profile.parents.join(',') : null])
+                                addSubscriber(brand_id, list_id, profile.name + ',' + profile.email)
                             }
                         }
 
                         if (data.body.next) {
                             console.log('Getting next group..');
                             startKey = startKey + 100;
-                            search(startKey, csv_data);
+                            search(startKey);
                         } else {
                             console.log(network + ' done!');
-                            callback(csv_data);
                         }
 
                     });
             };
 
-            search(0, []); // initialize user search
+            search(0, ""); // initialize user search
 
         }
     };
-
+/*
     addSubscriberCSV = function(array_for_csv, app_id, list_id) {
         // funky setup here because it needs to send a csv file along with form data
 
@@ -239,12 +238,32 @@ function handleSetupNewsletter(req,res) {
             form: fd,
             headers: {'Content-Type': undefined}
         }, function (error, response, body) {
+            console.log(body);
+            if (error) {
+                console.log('WARNING: ', error);
+                res.status(204).send({ message: error });
+            }
+        })
+    };*/
+
+    addSubscriber = function(brand_id, list_id, lines) {
+        console.log(lines);
+
+        request.post({
+            url: 'https://newsletter.startupcommunity.org/includes/subscribers/line-update.php',
+            form: {
+                line: lines,
+                list_id: list_id,
+                app: brand_id
+            }
+        }, function (error, response, body) {
             if (error) {
                 console.log('WARNING: ', error);
                 res.status(204).send({ message: error });
             }
         })
     };
+
 
     updateProfile = function(brand_id, lists) {
 
@@ -306,11 +325,7 @@ function handleSetupNewsletter(req,res) {
 
                                     // get subscribers and add them to the list
 
-                                    getMembers(location_key, list_name, newprofile, function(csv) {
-
-                                        addSubscriberCSV(csv, brand_id, list_id);
-
-                                    });
+                                    getMembers(location_key, list_name, newprofile, brand_id, list_id);
                                 });
                             });
                         }

@@ -9,61 +9,34 @@
                 <div class="hpanel">
                     <div class="panel-heading" style="font-size: 20px;">Business Name</div>
                     <input type="text" class="form-control input-lg" placeholder="The name of the business you're sending from" ng-model="news.setupForm.brand_name" style="margin-bottom: 5px;" required>
-                    <div class="m-t-xs" ng-show="!news.setupForm.brand_name && news.submitted">
-                        <span class="text-danger">&nbsp;&nbsp;<i class="fa fa-exclamation-triangle"></i> A name is required.</span>
-                    </div>
                     <br>
                     <div class="panel-heading" style="font-size: 20px;">From Name</div>
                     <input type="text" class="form-control input-lg" placeholder="Name of the person you're sending from" ng-model="news.setupForm.from_name" style="margin-bottom: 5px;" required>
-                    <div class="m-t-xs" ng-show="!news.setupForm.from_name && news.submitted">
-                        <span class="text-danger">&nbsp;&nbsp;<i class="fa fa-exclamation-triangle"></i> This information is required.</span>
-                    </div>
                     <br>
                     <div class="panel-heading" style="font-size: 20px;">From Email</div>
-                    <input type="text" class="form-control input-lg" placeholder="The email of the person you're sending from" ng-model="news.setupForm.from_email" style="margin-bottom: 5px;" required>
-                    <div class="m-t-xs" ng-show="!news.setupForm.from_email && news.submitted">
-                        <span class="text-danger">&nbsp;&nbsp;<i class="fa fa-exclamation-triangle"></i> This information is required.</span>
-                    </div>
+                    <input type="email" class="form-control input-lg" placeholder="The email of the person you're sending from" ng-model="news.setupForm.from_email" style="margin-bottom: 5px;" required>
                     <br>
                     <div class="panel-heading" style="font-size: 20px;">Reply-to Email</div>
-                    <input type="text" class="form-control input-lg" placeholder="Replies will go to this email" ng-model="news.setupForm.reply_email" style="margin-bottom: 5px;" required>
-                    <div class="m-t-xs" ng-show="!news.setupForm.reply_email && news.submitted">
-                        <span class="text-danger">&nbsp;&nbsp;<i class="fa fa-exclamation-triangle"></i> This information is required.</span>
-                    </div>
+                    <input type="email" class="form-control input-lg" placeholder="Replies will go to this email" ng-model="news.setupForm.reply_email" style="margin-bottom: 5px;" required>
                     <br>
                     <hr>
                     <div class="panel-heading" style="font-size: 20px;">Email Provider SMTP Host</div>
                     <input type="text" class="form-control input-lg" placeholder="eg. smtp.gmail.com" ng-model="news.setupForm.host" style="margin-bottom: 5px;" required>
-                    <div class="m-t-xs" ng-show="!news.setupForm.host && news.submitted">
-                        <span class="text-danger">&nbsp;&nbsp;<i class="fa fa-exclamation-triangle"></i> This information is required.</span>
-                    </div>
                     <br>
                     <div class="panel-heading" style="font-size: 20px;">Port Number</div>
-                    <input type="text" class="form-control input-lg" placeholder="eg. 465" ng-model="news.setupForm.port" style="margin-bottom: 5px;" required>
-                    <div class="m-t-xs" ng-show="!news.setupForm.port && news.submitted">
-                        <span class="text-danger">&nbsp;&nbsp;<i class="fa fa-exclamation-triangle"></i> This information is required.</span>
-                    </div>
+                    <input type="number" class="form-control input-lg" placeholder="eg. 465" ng-model="news.setupForm.port" style="margin-bottom: 5px;" required>
                     <br>
                     <div class="panel-heading" style="font-size: 20px;">SSL / TLS</div>
                     <select class="form-control m-b" ng-model="news.setupForm.ssl" style="margin-bottom: 5px;" required>
                         <option>SSL</option>
                         <option>TLS</option>
                     </select>
-                    <div class="m-t-xs" ng-show="!news.setupForm.ssl && news.submitted">
-                        <span class="text-danger">&nbsp;&nbsp;<i class="fa fa-exclamation-triangle"></i> This information is required.</span>
-                    </div>
                     <br><br>
                     <div class="panel-heading" style="font-size: 20px;">Username for Email Provider</div>
                     <input type="text" class="form-control input-lg" placeholder="Username (usually your email)" ng-model="news.setupForm.username" style="margin-bottom: 5px;" required>
-                    <div class="m-t-xs" ng-show="!news.setupForm.username && news.submitted">
-                        <span class="text-danger">&nbsp;&nbsp;<i class="fa fa-exclamation-triangle"></i> This information is required.</span>
-                    </div>
                     <br>
                     <div class="panel-heading" style="font-size: 20px;">Password for Email Provider</div>
                     <input type="text" class="form-control input-lg" placeholder="Your password" ng-model="news.setupForm.password" style="margin-bottom: 5px;" required>
-                    <div class="m-t-xs" ng-show="!news.setupForm.password && news.submitted">
-                        <span class="text-danger">&nbsp;&nbsp;<i class="fa fa-exclamation-triangle"></i> This information is required.</span>
-                    </div>
                     <br>
                 </div>
 
