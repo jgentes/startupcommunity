@@ -48,63 +48,6 @@ function handleSetupNewsletter(req,res) {
         }
     };
 
-    // login with primary account
-
-    login(function() {
-
-        // pull user record
-
-        getUser(function(user_profile) {
-
-            // create brand
-
-            settings['pass'] = jwt.sign(req.user, 'NewsletterSecretPasswordCryptoKey');
-
-            createBrand(settings, function(brand_id) {
-
-                // push settings to user profile
-
-                newprofile = user_profile;
-
-                newprofile['newsletter'] = {
-                    brand_id: brand_id,
-                    username: newprofile.profile.email,
-                    password: settings.pass,
-                    lists: {}
-                };
-
-                // create lists for networks that the user is a leader of
-
-                for (network in newprofile.roles.leader) {
-
-                    if (communities[network] && communities[network].type == 'network') {
-
-                        createList(brand_id, network, function(list_id) {
-
-                            // update the user profile with list id and create custom field
-
-                            newprofile.newsletter.lists[network] = list_id;
-                            console.log(newprofile.newsletter);
-
-                            createCustomField('Industry', 'Text', brand_id, list_id, function() {
-
-                                // get subscribers and add them to the list
-
-                                getMembers(location_key, network, newprofile, function(csv) {
-
-                                    addSubscriberCSV(csv, brand_id, list_id);
-
-                                });
-                            });
-                        });
-                    }
-                }
-                console.log(newprofile);
-                updateProfile(newprofile);
-            });
-        })
-    });
-
     getUser = function(callback) {
 
         db.get(process.env.DB_COMMUNITIES, req.user)
@@ -126,7 +69,7 @@ function handleSetupNewsletter(req,res) {
             });
     };
 
-    createBrand = function(settings, callback) {
+    createBrand = function(settings, newprofile, callback) {
 
         request.post({
             url: 'https://newsletter.startupcommunity.org/includes/app/create.php',
@@ -196,7 +139,7 @@ function handleSetupNewsletter(req,res) {
                         var url = $("a[href*='&l=']");
 
                         // return list_id
-                        callback(url[0].href.split("&")[1].split("=")[1]);
+                        callback(url[0].href.split("&")[1].split("=")[1], list_name);
                     })
             }
         })
@@ -260,7 +203,7 @@ function handleSetupNewsletter(req,res) {
                             startKey = startKey + 100;
                             search(startKey, csv_data);
                         } else {
-                            console.log('Job done!');
+                            console.log(network + ' done!');
                             callback(csv_data);
                         }
 
@@ -288,7 +231,7 @@ function handleSetupNewsletter(req,res) {
 
         });
 
-        var oBlob = new Blob([csv], { type: "text/csv"});
+        var oBlob = new Buffer(new Uint8Array([csv]), { type: "text/csv"});
         fd.append("csv_file", oBlob,'import.csv');
 
         request.post({
@@ -303,17 +246,86 @@ function handleSetupNewsletter(req,res) {
         })
     };
 
-    updateProfile = function(newprofile) {
+    updateProfile = function(brand_id, lists) {
 
-        db.put(process.env.DB_COMMUNITIES, req.user, newprofile)
-            .then(function() {
-                res.status(201);
-            })
-            .fail(function(err){
-                res.status(204).send({ message: err});
-                console.warn("WARNING: ", err);
-            });
+        db.merge(process.env.DB_COMMUNITIES, req.user, {
+            newsletter: {
+                username: newprofile.profile.email,
+                password: settings.pass,
+                brand_id: brand_id,
+                lists: lists
+            }
+        })            
+        .then(function () {
+            console.log('profile updated', lists);
+        })
+        .fail(function (err) {
+            console.log('WARNING: ', err);
+        });
     };
+
+    // login with primary account
+
+    login(function() {
+
+        // pull user record
+
+        getUser(function(user_profile) {
+
+            // create brand
+
+            settings['pass'] = jwt.sign(req.user, 'NewsletterSecretPasswordCryptoKey');
+
+            newprofile = user_profile;
+
+            createBrand(settings, newprofile, function(brand_id) {
+
+                // push settings to user profile
+                
+                updateProfile(brand_id, {});
+
+                // create lists for networks that the user is a leader of
+
+                for (network in newprofile.roles.leader) {
+
+                    if (newprofile.roles.leader.hasOwnProperty(network)) {
+
+                        if (communities[network] && communities[network].type == 'network') {
+
+                            createList(brand_id, network, function(list_id, list_name) {
+
+                                // update the user profile with list id and create custom field
+
+                                var lists = {};
+
+                                lists[list_name] = list_id;
+
+                                updateProfile(brand_id, lists);
+
+                                createCustomField('Industry', 'Text', brand_id, list_id, function() {
+
+                                    // get subscribers and add them to the list
+
+                                    getMembers(location_key, list_name, newprofile, function(csv) {
+
+                                        addSubscriberCSV(csv, brand_id, list_id);
+
+                                    });
+                                });
+                            });
+                        }
+
+                    }
+
+
+                }
+                
+                res.status(201).end();
+                
+            });
+        })
+    });
+
 
 }
 
@@ -333,7 +345,7 @@ function addSubscriber(req,res) {
         if (error) {
             console.log('WARNING: ', error);
             res.status(204).send({ message: error });
-        } else res.status(201);
+        } else res.status(201).end();
     })
 }
 
@@ -353,7 +365,7 @@ function removeSubscriber(req,res) {
         if (error) {
             console.log('WARNING: ', error);
             res.status(204).send({ message: error });
-        } else res.status(201);
+        } else res.status(201).end();
     })
 }
 

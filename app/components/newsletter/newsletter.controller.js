@@ -22,11 +22,11 @@ function NewsletterController(newsletter_service, $sce, user) {
     
 }
 
-function SetupNewsController($uibModalInstance, sweet, newsletter_service, user_service, user, location, communities) {
+function SetupNewsController($uibModalInstance, $state, sweet, newsletter_service, location, communities) {
     var self = this;
     
     this.setup = function() {
-        //self.working = true;
+        self.working = true;
 
         if (self.form.$valid) {
 
@@ -44,16 +44,16 @@ function SetupNewsController($uibModalInstance, sweet, newsletter_service, user_
             
             newsletter_service.setupNewsletter(settings, communities, location.key)
                 .then(function(response) {
-                    console.log(response);
                     self.working = false;
-/*
+
                     sweet.show({
                         title: "Newsletter settings saved!",
                         type: "success"
                     }, function(){
                         $uibModalInstance.close();
+                        $state.go('newsletter');
                     });
-                    */
+                    
                 })
 
         } else {
