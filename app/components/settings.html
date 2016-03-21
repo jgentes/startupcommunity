@@ -20,18 +20,18 @@
                 <hr>
                 <div ng-repeat="(k, v) in nav.user.roles.leader">
                     <div ng-if="nav.communities[k].type == 'network'" style="padding-bottom:10px; font-size: 18px;">{{ nav.communities[k].profile.name }}
-                        <button ng-click="nav.embedSettings(nav.communities[k]);" class="btn btn-xs pull-right">Embed</button>
-                        <button ng-click="nav.editCommunity(nav.communities[k]);" class="btn btn-primary btn-xs pull-right" style="margin-right: 5px;">Edit</button>
+                        <button ng-click="nav.embedSettings(nav.communities[k])" class="btn btn-xs pull-right">Embed</button>
+                        <button ng-click="nav.editCommunity(nav.communities[k])" class="btn btn-primary btn-xs pull-right" style="margin-right: 5px;">Edit</button>
                     </div>
                 </div>
                 <ul class="nav nav-second-level" style="margin-left: -15px;">
                     <li ng-if="nav.user.communities.indexOf(nav.user.profile.home) > -1">
-                        <button class="btn btn-success" ng-click="nav.editCommunity({'type':'network'});" style="margin: 10px 15px;">+&nbsp;&nbsp;Add Network</button>
+                        <button class="btn btn-success" ng-click="nav.editCommunity({'type':'network'})" style="margin: 10px 15px;">+&nbsp;&nbsp;Add Network</button>
                     </li>
                 </ul>
             </div>
 
-            <button ng-if="nav.user.communities.indexOf(nav.user.profile.home) > -1 && !nav.user.newsletter" class="btn btn-warning pull-right" ng-click="nav.setupNewsletter();" style="margin-top:15px; width: 100%;">Setup Email Newsletter</button>
+            <button ng-if="nav.user.communities.indexOf(nav.user.profile.home) > -1 && !nav.user.newsletter" class="btn btn-warning pull-right" ng-click="nav.setupNewsletter()" style="margin-top:15px; width: 100%;">Setup Email Newsletter</button>
 
             <button ng-if="nav.user.communities.indexOf(nav.user.profile.home) > -1 && nav.user.newsletter" class="btn btn-info pull-right" ui-sref="newsletter" style="margin-top:15px; width: 100%;">Create / Edit Email Newsletters</button>
 

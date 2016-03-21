@@ -103,17 +103,25 @@ function handleSetupNewsletter(req,res) {
                 res.status(204).send({ message: error });
             } else {
 
-                jsdom.env(body, ["http://code.jquery.com/jquery.js"],
-                    function(err, window) {
-                        // pull brand_id from html
-                        var $ = window.$;
-                        var url = $("a").filter(function() {
-                            return $(this).text() == settings.brand_name;
-                        }).attr('href');
-                        // return brand_id
+                try {
+                    jsdom.env(body, ["http://code.jquery.com/jquery.js"],
+                        function(err, window) {
+                            // pull brand_id from html
+                            var $ = window.$;
+                            var url = $("a").filter(function() {
+                                return $(this).text() == settings.brand_name;
+                            }).attr('href');
+                            // return brand_id
 
-                        callback(url.split("?")[1].split("=")[1]);
-                    })
+                            callback(url.split("?")[1].split("=")[1]);
+                        })
+                }
+                catch (e) {
+                    console.log('WARNING: ', e);
+                    console.log(body);
+                    res.status(204).send({ message: e })
+                }
+
             }
         })
     };
@@ -132,15 +140,22 @@ function handleSetupNewsletter(req,res) {
                 res.status(204).send({ message: error });
             } else {
 
-                jsdom.env(body, ["http://code.jquery.com/jquery.js"],
-                    function (err, window) {
-                        // pull the list_id from the url by parsing the html
-                        var $ = window.$;
-                        var url = $("a[href*='&l=']");
+                try {
+                    jsdom.env(body, ["http://code.jquery.com/jquery.js"],
+                        function (err, window) {
+                            // pull the list_id from the url by parsing the html
+                            var $ = window.$;
+                            var url = $("a[href*='&l=']");
 
-                        // return list_id
-                        callback(url[0].href.split("&")[1].split("=")[1], list_name);
-                    })
+                            // return list_id
+                            callback(url[0].href.split("&")[1].split("=")[1], list_name);
+                        })
+                }
+                catch (e) {
+                    console.log('WARNING: ', e);
+                    console.log(body);
+                    res.status(204).send({ message: e })
+                }
             }
         })
     };
@@ -186,7 +201,7 @@ function handleSetupNewsletter(req,res) {
 
                 db.newSearchBuilder()
                     .collection(process.env.DB_COMMUNITIES)
-                    .limit(10)
+                    .limit(100)
                     .offset(startKey)
                     .query('@value.communities: (' + searchstring + ') AND @value.type: "user"')
                     .then(function (data) {
@@ -247,7 +262,6 @@ function handleSetupNewsletter(req,res) {
     };*/
 
     addSubscriber = function(brand_id, list_id, lines) {
-        console.log(lines);
 
         request.post({
             url: 'https://newsletter.startupcommunity.org/includes/subscribers/line-update.php',

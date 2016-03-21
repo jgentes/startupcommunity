@@ -22,9 +22,15 @@ function NewsletterController(newsletter_service, $sce, user) {
     
 }
 
-function SetupNewsController($uibModalInstance, $state, sweet, newsletter_service, location, communities) {
+function SetupNewsController($uibModalInstance, user, sweet, newsletter_service, location, communities) {
     var self = this;
-    
+
+    if (user.newsletter) {
+
+        // at some point allow editing current newsletter settings here
+
+    }
+
     this.setup = function() {
         self.working = true;
 
@@ -44,16 +50,25 @@ function SetupNewsController($uibModalInstance, $state, sweet, newsletter_servic
             
             newsletter_service.setupNewsletter(settings, communities, location.key)
                 .then(function(response) {
+
                     self.working = false;
 
-                    sweet.show({
-                        title: "Newsletter settings saved!",
-                        type: "success"
-                    }, function(){
-                        $uibModalInstance.close();
-                        $state.go('newsletter');
-                    });
-                    
+                    if (response.status == 201) {
+
+                        sweet.show({
+                            title: "Newsletter settings saved!",
+                            type: "success"
+                        }, function(){
+                            $uibModalInstance.close();
+                        });
+
+                    } else {
+                        sweet.show({
+                            title: "Sorry, something went wrong.",
+                            text: "Here's what we know: " + response.data.message,
+                            type: "error"
+                        });
+                    }
                 })
 
         } else {
