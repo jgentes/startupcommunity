@@ -7,8 +7,7 @@ request = request.defaults({jar: true, followAllRedirects: true}); // required t
 
 var NewsletterApi = function() {
     this.setupNewsletter = handleSetupNewsletter;
-    this.addSubscriber = addSubscriber;
-    this.removeSubscriber = removeSubscriber;
+    this.syncMembers = handleSyncMembers;
 };
 
 function handleSetupNewsletter(req,res) {
@@ -127,6 +126,7 @@ function handleSetupNewsletter(req,res) {
     };
 
     createList = function(brand_id, list_name, callback) {
+        //todo create different lists prefixed by location
         request.post({
             url: 'https://newsletter.startupcommunity.org/includes/subscribers/import-add.php',
             form: {
@@ -191,13 +191,7 @@ function handleSetupNewsletter(req,res) {
 
             search = function (startKey) {
 
-                var searchstring = network + " AND (";
-                for (l in networks) {
-                    searchstring += '"' + networks[l] + '"';
-                    if (l < (networks.length - 1)) {
-                        searchstring += ' OR ';
-                    } else searchstring += ')';
-                }
+                var searchstring = network + " AND " + location_key;
 
                 db.newSearchBuilder()
                     .collection(process.env.DB_COMMUNITIES)
@@ -343,10 +337,7 @@ function handleSetupNewsletter(req,res) {
                                 });
                             });
                         }
-
                     }
-
-
                 }
                 
                 res.status(201).end();
@@ -354,48 +345,75 @@ function handleSetupNewsletter(req,res) {
             });
         })
     });
-
-
 }
 
-function addSubscriber(req,res) {
-    var line = req.body.line,
-        list_id = req.body.list_id,
-        app_id = req.body.app_id;
-    
-    request.post({
-        url: 'https://newsletter.startupcommunity.org/includes/subscribers/line-update.php',        
-        form: {
-            line: "James Gentes, jgentes@gmail.com",
-            list_id: list_id,
-            app: app_id
-        }
-    }, function (error, response, body) {
-        if (error) {
-            console.log('WARNING: ', error);
-            res.status(204).send({ message: error });
-        } else res.status(201).end();
-    })
-}
+function handleSyncMembers(req,res) {
+    var location_key = req.body.location_key,
+        lists = req.body.lists,
+        app_id = req.body.brand_id;
 
-function removeSubscriber(req,res) {
-    var line = req.body.line,
-        list_id = req.body.list_id,
-        app_id = req.body.app_id;
+    var getMembers = function(list, lists) {
 
-    request.post({
-        url: 'https://newsletter.startupcommunity.org/includes/subscribers/line-delete.php',
-        form: {
-            line: "James Gentes, jgentes@gmail.com",
-            list_id: list_id,
-            app: app_id
-        }
-    }, function (error, response, body) {
-        if (error) {
-            console.log('WARNING: ', error);
-            res.status(204).send({ message: error });
-        } else res.status(201).end();
-    })
+        var network = list,
+            list_id = lists[list],
+            search;
+
+        // get subscribers and add them to the list
+
+        console.log('getting members: ' + location_key + ' / ' + network);
+
+        search = function(startKey) {
+
+            var searchstring = network + " AND " + location_key;
+
+            db.newSearchBuilder()
+                .collection(process.env.DB_COMMUNITIES)
+                .limit(100)
+                .offset(startKey)
+                .query('@value.communities: (' + searchstring + ') AND @value.type: "user"')
+                .then(function (data) {
+                    var profile;
+                    for (x in data.body.results) {
+                        profile = data.body.results[x].value.profile;
+                        if (profile.email) {
+                            console.log('adding ' + profile.email);
+
+                            request.post({
+                                url: 'https://newsletter.startupcommunity.org/includes/subscribers/line-update.php',
+                                form: {
+                                    line: profile.name + ',' + profile.email,
+                                    list_id: list_id,
+                                    app: app_id
+                                }
+                            }, function (error, response, body) {
+                                if (error) {
+                                    console.log('WARNING: ', error);
+                                    res.status(204).send({ message: error });
+                                } else res.status(201).end();
+                            });
+
+                        }
+                    }
+
+                    if (data.body.next) {
+                        console.log('Getting next group..');
+                        startKey = startKey + 100;
+                        search(startKey);
+                    } else {
+                        console.log(network + ' done!');
+                    }
+
+                });
+        };
+
+        search(0, ""); // initialize user search
+    };
+
+    for (var list in lists) {
+
+        getMembers(list, lists);
+
+    }
 }
 
 module.exports = NewsletterApi;

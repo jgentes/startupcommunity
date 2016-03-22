@@ -24,6 +24,13 @@ angular
                     communities: communities,
                     location_key: location_key
                 });
+            },
+            syncMembers: function(lists, brand_id, location_key) {
+                return $http.post('/api/2.3/newsletter/sync', {
+                    lists: lists,
+                    brand_id: brand_id,
+                    location_key: location_key
+                });
             }
         }
     })

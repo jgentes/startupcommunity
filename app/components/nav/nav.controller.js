@@ -2,7 +2,7 @@ angular
     .module('startupcommunity')
     .controller('NavigationController', NavigationController);
 
-function NavigationController($auth, $state, $window, $timeout, $location, $scope, $stateParams, $uibModal, user_service, community_service, user, location, community, communities, nav_communities, top, knowtify, errorLogService, newsletter_service) {
+function NavigationController($auth, $state, $window, $timeout, $location, $scope, $stateParams, $uibModal, user_service, community_service, user, sweet, location, community, communities, nav_communities, top, knowtify, errorLogService, newsletter_service) {
 
     this.createBrand = function() {
         newsletter_service.createBrand()
@@ -165,7 +165,7 @@ function NavigationController($auth, $state, $window, $timeout, $location, $scop
         "services" : {
             "icon": "fa-bell-o"
         }
-    }
+    };
 
     var parents = community_service.parents();
     parents = parents.join('|').toLowerCase().split('|'); // change all to lowercase
@@ -336,6 +336,32 @@ function NavigationController($auth, $state, $window, $timeout, $location, $scop
                     return self.user;
                 }
             }
+        });
+    };
+
+    this.removeUser = function(ruser) {
+        sweet.show({
+            title: "Are you sure?",
+            text: "Removing this user from " + community.profile.name + " does not remove them from the entire community. You can easily add them to the network again in the future.",
+            type: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#DD6B55",
+            confirmButtonText: "Yes, remove " + ruser.value.profile.name,
+            closeOnConfirm: false
+        }, function () {
+            user_service.removeCommunity(ruser.path.key, community)
+                .then(function(response) {
+                    if (response.status !== 201) {
+                        sweet.show({
+                            title: "Sorry, something went wrong.",
+                            text: "Here's what we know: " + response.data.message,
+                            type: "error"
+                        });
+
+                    } else {
+                        sweet.show("Success!", ruser.value.profile.name + " has been removed.", "success");
+                    }
+                })
         });
     };
 

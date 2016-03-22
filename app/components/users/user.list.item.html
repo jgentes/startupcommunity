@@ -4,8 +4,8 @@
             <img ng-src="{{item.value.profile.avatar || item.value.profile.linkedin.pictureUrl || '/public/images/blank_avatar.png'}}" alt="{{::item.value.profile.name}}" class="user-img widget-image img-circle pull-left" onerror="this.src='/public/images/blank_avatar.png'"/>
         </a>
     </div>
-    <div style="position: absolute; margin-left: 6px; margin-top: 60px;">
-        <a ng-if="(nav.community.type == 'network' || nav.location.type == 'network') && nav.user.roles.leader[nav.community.key]" ng-click="users.remove(item)" title="Remove {{item.value.profile.name}} from {{nav.community.profile.name}}" style="color:#bbb;">remove</a>
+    <div style="position: absolute; margin-left: 11px; margin-top: 60px;">
+        <a ng-if="(nav.community.type == 'network' || nav.location.type == 'network') && nav.user.roles.leader[nav.community.key]" ng-click="nav.removeUser(item)" title="Remove {{item.value.profile.name}} from {{nav.community.profile.name}}" style="font-size: 11px; color:#bbb;">remove</a>
     </div>
     <div class="user-row" ng-class="{'user-row-border': $index % 2 == 0}">
         <a ui-sref="user.dashboard({profile: item.value, location_path: item.path.key, location: nav.community, community: item.value, top: nav.top, communities: nav.communities, user: nav.user })" title="View {{::item.value.profile.name | words:0}}'s Profile" style="float: left; "><strong>{{::item.value.profile.name}} </strong></a>
