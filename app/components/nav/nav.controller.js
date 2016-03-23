@@ -395,8 +395,10 @@ function NavigationController($auth, $state, $window, $timeout, $location, $scop
     };
     
     this.syncNewsletter = function() {
+        self.syncworking = true;
         newsletter_service.syncMembers(self.user.newsletter.lists, self.user.newsletter.brand_id, location.key)
             .then(function(response) {
+                self.syncworking = false;
                 if (response.status !== 201) {
                     sweet.show({
                         title: "Sorry, something went wrong.",
