@@ -92,24 +92,28 @@
                     <li ng-if="nav.user" id="knowtify" class="dropdown">
                         <a tooltip-placement="bottom" uib-tooltip="Alerts">
                             <i class="pe-7s-bell"></i>
-                        </a>
-                    </li>
-                    <li ng-if="nav.user" class="dropdown">
-                        <a ui-sref="settings({ user: nav.user })" tooltip-placement="bottom" uib-tooltip="Settings">
-                            <i class="pe-7s-config"></i>
+                            <p style="font-size: 10px; margin-top: -4px; margin-left: -3px;">Alerts</p>
                         </a>
                     </li>
                     <li ng-if="nav.user" class="dropdown">
                         <a ng-click="nav.openChat()" tooltip-placement="bottom" uib-tooltip="Help">
                             <i class="pe-7s-help1"></i>
+                            <p style="font-size: 10px; margin-top: -4px; margin-left: 1px;">Help</p>
                         </a>
                         <a ng-show="nav.chatMessageCount">
                             <span class="helpcrunch_message_count" ng-bind="nav.chatMessageCount"></span>
                         </a>
                     </li>
                     <li ng-if="nav.user" class="dropdown">
+                        <a ui-sref="settings({ user: nav.user })" tooltip-placement="bottom" uib-tooltip="Settings">
+                            <i class="pe-7s-config"></i>
+                            <p style="font-size: 10px; margin-top: -4px; margin-left: -7px;">Settings</p>
+                        </a>
+                    </li>
+                    <li ng-if="nav.user" class="dropdown">
                         <a tooltip-placement="bottom" uib-tooltip="Logout" href="/logout" style="padding-right: 30px;">
                             <i class="pe-7s-upload pe-rotate-90"></i>
+                            <p style="font-size: 10px; margin-top: -4px; margin-left: -11px;">Log Out</p>
                         </a>
                     </li>
                 </ul>
