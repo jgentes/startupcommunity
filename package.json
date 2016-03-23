@@ -11,7 +11,7 @@
     "debug-trace": "~0.2.3",
     "express": "^4.13.3",
     "express-sslify": "^1.0.1",
-    "ghost": "^0.7.5",
+    "ghost": "^0.7.8",
     "ghost-s3-storage": "^0.2.2",
     "grunt": "^0.4.5",
     "http-proxy": "^1.9.0",
