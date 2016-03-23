@@ -393,6 +393,22 @@ function NavigationController($auth, $state, $window, $timeout, $location, $scop
         });
 
     };
+    
+    this.syncNewsletter = function() {
+        newsletter_service.syncMembers(self.user.newsletter.lists, self.user.newsletter.brand_id, location.key)
+            .then(function(response) {
+                if (response.status !== 201) {
+                    sweet.show({
+                        title: "Sorry, something went wrong.",
+                        text: "Here's what we know: " + response.data.message,
+                        type: "error"
+                    });
+
+                } else {
+                    sweet.show("Success!", "Your lists have been synchronized.", "success");
+                }
+            });
+    };
 
     // REQUEST INVITATION
 

@@ -8,7 +8,60 @@ request = request.defaults({jar: true, followAllRedirects: true}); // required t
 var NewsletterApi = function() {
     this.setupNewsletter = handleSetupNewsletter;
     this.syncMembers = handleSyncMembers;
+    this.addSubscriber = addSubscriber;
 };
+
+// this api is used internally and not exposed to client
+function addSubscriber(location_key, network_key, user_profile) {
+
+    console.log('getting leaders: ' + location_key + ' / ' + network_key);
+
+    db.newSearchBuilder()
+        .collection(process.env.DB_COMMUNITIES)
+        .limit(100)
+        .offset(0)
+        .query('@value.roles.leader.' + network_key + ': "' + location_key + '" AND @value.type: "user"')
+        .then(function (data) {
+            var profile;
+            for (x in data.body.results) {
+
+                profile = data.body.results[x].value;
+
+                if (profile.newsletter && profile.newsletter.lists && profile.newsletter.lists[network_key]) {
+
+                    var list_id = profile.newsletter.lists[network_key];
+                    var brand_id = profile.newsletter.brand_id;
+
+                    var add = function(list_id, brand_id, user_profile) {
+                        request.post({
+                            url: 'https://newsletter.startupcommunity.org/includes/subscribers/line-update.php',
+                            form: {
+                                line: (user_profile.name || '') + ',' + user_profile.email,
+                                list_id: list_id,
+                                app: brand_id
+                            }
+                        }, function (error, response, body) {
+                            if (error) {
+                                console.log('WARNING: ', error, user_profile);
+                            }
+                        });
+                    };
+
+                    request.post({
+                        url: 'https://newsletter.startupcommunity.org/includes/login/main.php',
+                        form: {
+                            email: 'james@jgentes.com',
+                            password: 'O+af0b|Su',
+                            redirect: ""
+                        }
+                    }, function (error, response, body) {
+                        add(list_id, brand_id, user_profile);
+                    })
+                }
+            }
+            res.status(201).end();
+        });
+}
 
 function handleSetupNewsletter(req,res) {
     console.log('setup newsletter');
@@ -347,6 +400,7 @@ function handleSetupNewsletter(req,res) {
     });
 }
 
+
 function handleSyncMembers(req,res) {
     var location_key = req.body.location_key,
         lists = req.body.lists,
@@ -389,7 +443,7 @@ function handleSyncMembers(req,res) {
                                 if (error) {
                                     console.log('WARNING: ', error);
                                     res.status(204).send({ message: error });
-                                } else res.status(201).end();
+                                }
                             });
 
                         }
@@ -401,6 +455,7 @@ function handleSyncMembers(req,res) {
                         search(startKey);
                     } else {
                         console.log(network + ' done!');
+                        res.status(201).end();
                     }
 
                 });

@@ -35,6 +35,8 @@
 
             <a ng-if="nav.user.communities.indexOf(nav.user.profile.home) > -1 && nav.user.newsletter" class="btn btn-info pull-right" ui-sref="newsletter" style="margin-top:15px; width: 100%;">Create / Edit Email Newsletters</a>
 
+            <button ng-if="nav.user.communities.indexOf(nav.user.profile.home) > -1 && nav.user.newsletter" class="btn btn-warning pull-right" ng-click="nav.syncNewsletter()" style="margin-top:15px; width: 100%;" title="This will synchronize the members of your networks with your newsletter lists.">Update Newsletter Lists from Networks</button>
+
         </div>
 
 

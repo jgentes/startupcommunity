@@ -15,7 +15,7 @@ function NewsletterController(newsletter_service, $sce, user, location) {
                 self.splash = false;
                 self.frame_content = $sce.trustAsHtml(response.data);
 
-                newsletter_service.syncMembers(user.newsletter.lists, user.newsletter.brand_id, location.key);
+                //newsletter_service.syncMembers(user.newsletter.lists, user.newsletter.brand_id, location.key);
 
             })
 

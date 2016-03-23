@@ -2,6 +2,8 @@ var bcrypt = require('bcryptjs'),
     request = require('request'),
     jwt = require('jsonwebtoken'),
     crypto = require('crypto'),
+    NewsletterApi = require(__dirname + '/newsletter.api.js'),
+    newsletterApis = new NewsletterApi(),
     db = require('orchestrate')(process.env.DB_KEY),
     knowtify = require('knowtify-node');
 
@@ -412,17 +414,21 @@ function handleLinkedin(req, res) {
             function userCheck(invite_profile) {
 
                 // check to see if this linkedin account is already linked to an existing user
+
                 db.newSearchBuilder()
                     .collection(process.env.DB_COMMUNITIES)
                     .limit(1)
                     .query('@value.type: "user" AND @value.profile.linkedin.id: "' + profile.id + '"')
                     .then(function (result) {
                         if (result.body.results.length > 0) {
+
                             // yes, there is an existing user in the system that matched the linkedin id
+
                             console.log("Found existing user: " + profile.firstName + ' ' + profile.lastName);
                             result.body.results[0].value.profile["linkedin"] = profile;
 
                             // get user account and update with latest linkedin data
+
                             if (!result.body.results[0].value.profile.avatar) {
                                 result.body.results[0].value.profile.avatar = profile.pictureUrl;
                             }
@@ -451,19 +457,27 @@ function handleLinkedin(req, res) {
                                 });
 
                             var newresponse = result.body.results[0];
-                            newresponse['token'] = handleCreateToken(req, result.body.results[0])
+                            newresponse['token'] = handleCreateToken(req, result.body.results[0]);
                             res.send(newresponse);
+
                         } else {
+
                             // search by email
+
                             db.newSearchBuilder()
                                 .collection(process.env.DB_COMMUNITIES)
                                 .limit(1)
                                 .query('@value.type: "user" AND @value.profile.email: "' + profile.emailAddress + '"')
                                 .then(function (result) {
                                     if (result.body.results.length > 0) {
+
                                         // yes, an existing user that matched email address of invitee.email
+
                                         console.log("Found user: " + profile.firstName + ' ' + profile.lastName);
-                                        result.body.results[0].value.profile["linkedin"] = profile; // get user account and re-upload with linkedin data
+
+                                        // get user account and re-upload with linkedin data
+
+                                        result.body.results[0].value.profile["linkedin"] = profile;
 
                                         result.body.results[0] = addCommunities(result.body.results[0], invite_profile);
 
@@ -488,9 +502,13 @@ function handleLinkedin(req, res) {
                                         console.log('No existing user found!');
 
                                         if (invite_profile) {
+
                                             // note that we don't validate the invite email matches the linkedin email, so anyone can use the invite once.
+
                                             var new_invite_profile = JSON.parse(JSON.stringify(invite_profile)); // must copy object or variable change will affect original object
+
                                             // update the invite record with user details
+
                                             new_invite_profile.type = "user";
                                             new_invite_profile.profile.linkedin = profile;
                                             new_invite_profile.profile.avatar = profile.pictureUrl;
@@ -573,6 +591,13 @@ function handleInviteUser(req, res) {
 
                     if (user.communities.indexOf(inviteUser.location_key) < 0) {
                         res.status(202).send({ message: 'You must be a member of this community to invite someone.' });
+                    }
+
+                    for (u in inviteUser.networks) {         
+                        
+                        // add subscriber to newsletter lists
+                        
+                        newsletterApis.addSubscriber(inviteUser.location_key, inviteUser.networks[u], inviteUser)
                     }
 
                     // check to see if the email address already exists within the system
@@ -715,7 +740,7 @@ function handleInviteUser(req, res) {
             .fail(function(err){
                 console.warn("WARNING:", err);
             });
-    }
+    };
 
     if (!req.user) {
         db.newSearchBuilder()
