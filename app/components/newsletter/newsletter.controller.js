@@ -3,16 +3,16 @@ angular
     .controller('NewsletterController', NewsletterController)
     .controller('SetupNewsController', SetupNewsController);
 
-function NewsletterController(newsletter_service, $sce, user, location) {
+function NewsletterController(newsletter_service, $sce, user, errorLogService) {
     var self = this;    
 
     if (user.newsletter) {        
 
         newsletter_service.login(user)
             .then(function (response) {
-                                
+                
                 self.frame_content = $sce.trustAsHtml(response.data);
-
+                errorLogService('newsletter login: ', response.data);
                 //newsletter_service.syncMembers(user.newsletter.lists, user.newsletter.brand_id, location.key);
 
             })
