@@ -426,8 +426,7 @@ var addRole = function(company_key, role, location_key, user_key) {
 
 var companyPull = function (company, role, location_key, user, key, callback) {
 
-    console.log('Looking for existing company based on key or AngelList profile.');
-    console.log(key, company)
+    console.log('Looking for existing company based on key or AngelList profile.');    
 
     db.search(process.env.DB_COMMUNITIES, '@path.key:' + key + ' OR @value.profile.angellist.id: ' + company.profile.angellist.id) // no quotes due to number not string
         .then(function (result){

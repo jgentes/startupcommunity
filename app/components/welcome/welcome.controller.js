@@ -217,12 +217,25 @@ function WelcomeController($auth, $q, $http, $window, $mixpanel, $uibModalInstan
         if (!self.selectedCompany) self.selectedCompany = {};
         if (oldco.profile.angellist) self.selectedCompany = oldco.profile.angellist;
         self.selectedCompany['name'] = oldco.profile.name;
+        self.selectedCompany['key'] = oldco.key;
         if (oldco.profile.industries) self.selectedCompany['industries'] = oldco.profile.industries;
-        if (oldco.profile.parents) self.selectedCompany['parent'] = oldco.profile.parents[0];
         if (oldco.profile.stage) self.selectedCompany['stage'] = oldco.profile.stage;
         if (oldco.profile.headline) self.selectedCompany['high_concept'] = oldco.profile.headline;
         if (oldco.profile.summary) self.selectedCompany['product_desc'] = oldco.profile.summary;
         if (oldco.profile.avatar) self.selectedCompany['thumb_url'] = oldco.profile.avatar;
+
+        if (oldco.profile.parents) {
+            switch(oldco.profile.parents[0]) {
+                case 'consumer-goods':
+                    self.selectedCompany['parent'] = 'Consumer Goods';
+                    break;
+                case 'non-profit':
+                    self.selectedCompany['parent'] = 'Non-Profit';
+                    break;
+                default:
+                    self.selectedCompany['parent'] = oldco.profile.parents[0][0].toUpperCase() + oldco.profile.parents[0].slice(1);
+            }
+        }
 
         for (role in self.user.roles) {
             for (co in self.user.roles[role]) {
@@ -311,6 +324,7 @@ function WelcomeController($auth, $q, $http, $window, $mixpanel, $uibModalInstan
                             if (response.status !== 200) {
                                 self.alert = { type: 'danger', message: String(response.data.message) };
                             } else {
+
                                 var co_key = response.data.key;
 
                                 // update local profile with company data
@@ -328,6 +342,8 @@ function WelcomeController($auth, $q, $http, $window, $mixpanel, $uibModalInstan
                                         }
                                     }
                                 }
+
+                                $http.get('/api/2.1/community/' + self.selectedCompany.key + '?nocache=true')
 
                                 // add new role
 
