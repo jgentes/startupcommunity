@@ -547,17 +547,19 @@ function NavigationController($auth, $state, $window, $timeout, $location, $scop
         if (embed) {
             for (u in embed) {
                 if (embed[u].url == domain) {
-                    if ($window.localStorage) {
-                        var domain_embed = {};
-                        domain_embed[domain] = {
-                            "color" : embed[u].color || '#fff',
-                            "full" : embed[u].full || false
-                        };
-                        try {
+                    try {
+                        if ($window.localStorage) {
+                            var domain_embed = {};
+                            domain_embed[domain] = {
+                                "color" : embed[u].color || '#fff',
+                                "full" : embed[u].full || false
+                            };
+                            
                             $window.localStorage.setItem('startupcommunity-embed',JSON.stringify(domain_embed));
-                        } catch (e) {
-                            //errorLogService('Localstorage problem: ', e);
+                            
                         }
+                    } catch (e) {
+                        //errorLogService('Localstorage problem: ', e);
                     }
                     if (embed[u].full) this.embedded = false;
                     break;
