@@ -540,9 +540,20 @@ function NavigationController($auth, $state, $window, $timeout, $location, $scop
             if (storage.full) this.embedded = false;
         }
 
-        if (this.location.type === 'cluster' && this.location.community_profiles[this.location_path] && this.location.community_profiles[this.location_path].embed) {
-            embed = this.location.community_profiles[this.location_path].embed;
-        } else embed = this.location.profile.embed;
+        try {
+            if (this.location.type === 'cluster' && this.location.community_profiles[this.location_path] && this.location.community_profiles[this.location_path].embed) {
+                try {
+                    embed = this.location.community_profiles[this.location_path].embed;
+                }
+                catch (e) {
+                    errorLogService('embed problem: ', e);
+                }
+
+            } else embed = this.location.profile.embed;
+        }
+        catch (e) {
+            errorLogService('embed problem: ', e);
+        }
 
         if (embed) {
             for (u in embed) {
