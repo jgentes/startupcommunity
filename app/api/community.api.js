@@ -192,7 +192,7 @@ function handleGetCommunity(req, res) {
                                 // grab parent
                                 if (m.value.profile.parents && m.value.profile.parents[0]) comm_items.push(m.value.profile.parents[0]);
 
-                                if (m_home) comm_items.push(m_home);
+                                if (m_home && m.value.communities.indexOf(m_home) < 0) comm_items.push(m_home);
 
                                 var search = community;
 

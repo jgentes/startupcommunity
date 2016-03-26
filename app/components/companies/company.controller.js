@@ -2,7 +2,6 @@ angular
     .module('startupcommunity')
     .controller('CompanyController', CompanyController)
     .controller('CompanyProfileController', CompanyProfileController)
-    .controller('AddCompanyController', AddCompanyController);
 
 function CompanyController($stateParams, $location, company_service, result_service, $sce, community, communities) {
 
@@ -216,45 +215,5 @@ function CompanyProfileController($stateParams, $location, $mixpanel, user, comp
             }
         }
     }
-
-}
-
-function AddCompanyController($mixpanel, company_service, community) {
-    var self = this;
-
-    this.addCompany = function() {
-        this.working = true;
-        var role = self.selectedRole == 'none' ? undefined : self.selectedRole;
-
-        if (community.type == 'cluster') community_path = location.key; // do not allow companies to be added directly to clusters
-
-        if (self.selectedCompany.parent) {
-            // adjust parent industry caps
-            self.selectedCompany.parent = self.selectedCompany.parent.toLowerCase();
-        }
-
-        company_service.addCompany(self.selectedCompany, role, location.key, community_path)
-            .then(function(response) {
-
-                self.working = false;
-                if (response.status !== 200) {
-                    self.alert = { type: 'danger', message: String(response.data.message) };
-                } else {
-                    self.selectedCompany = undefined;
-                    self.company = undefined;
-                    self.updateCompany = false;
-                    self.selectedRole = 'none';
-                    self.alert = { type: 'success', message: String(response.data.message) };
-
-                }
-                $mixpanel.track('Added Company');
-            })
-            .catch(function(error) {
-                self.working = false;
-                self.alert = { type: 'danger', message: String(error.data.message) };
-            })
-    };
-
-    self.working = false;
 
 }
