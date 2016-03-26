@@ -4,15 +4,13 @@ angular
     .controller('SetupNewsController', SetupNewsController);
 
 function NewsletterController(newsletter_service, $sce, user, location) {
-    var self = this;
-    self.splash = true;
+    var self = this;    
 
     if (user.newsletter) {        
 
         newsletter_service.login(user)
             .then(function (response) {
-                
-                self.splash = false;
+                                
                 self.frame_content = $sce.trustAsHtml(response.data);
 
                 //newsletter_service.syncMembers(user.newsletter.lists, user.newsletter.brand_id, location.key);
