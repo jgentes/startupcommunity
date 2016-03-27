@@ -23,7 +23,7 @@
                     <div style="padding-right:0;">
                         <div ng-repeat="p in dashboard.top.parents | limitTo: 3" style="padding-left: 0; padding-right: 0; ">
                             <div class="col-xs-3" style="margin-top:-3px; padding-left: 0; padding-right: 0; text-align: right; overflow: hidden; text-overflow: ellipsis;"><a ui-sref="community.dashboard({community_path: p.label, community: nav.communities[p.label], query: '*', location_path: nav.location.key})" style="white-space:nowrap;">{{p.label[0].toUpperCase() + p.label.slice(1);}}</a></div>
-                            <div class="col-xs-9" style="padding-left: 10px; padding-right: 0;"><uib-progressbar value="p.value" max="nav.max" type="success" class="progress-small full"></uib-progressbar></div>
+                            <div class="col-xs-9" style="padding-left: 10px; padding-right: 0;"><uib-progressbar value="p.value" max="dashboard.max" type="success" class="progress-small full"></uib-progressbar></div>
                         </div>
                     </div>
                 </div>
@@ -129,17 +129,16 @@
 
                     <div class="panel-heading" style="border-bottom: 2px solid #34495E;">
                         <h3>Top Industries</h3>
-                        <small class="small-column-title"># Companies</small>
                     </div>
 
                     <div class="panel-body" ng-repeat="item in dashboard.top.parents | limitTo: 5">
                         <div class="row">
                             <div class="col-xs-10 forum-heading">
                                 <a ui-sref="community.dashboard({community_path: item.label, community: nav.communities[item.label], query: '*', location_path: nav.location.key})"><h4 style="font-weight: 200;">{{item.label[0].toUpperCase() + item.label.slice(1);}}</h4></a>
-                                <uib-progressbar value="item.value" max="nav.max" type="success" class="progress-small full" style="margin-top: 7px;"></uib-progressbar>
+                                <uib-progressbar value="item.value" max="dashboard.max" type="success" class="progress-small full" style="margin-top: 7px;"></uib-progressbar>
                             </div>
                             <div class="col-xs-2 forum-info">
-                                <span class="number number-column">{{item.value}}</span>
+                                <span class="number number-column">{{((item.value / dashboard.max)*100).toFixed(0)}}%</span>
                             </div>
                         </div>
                     </div>

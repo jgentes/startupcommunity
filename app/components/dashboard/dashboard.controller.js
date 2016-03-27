@@ -12,7 +12,13 @@ function DashboardController($stateParams, community, $state, community_top) {
     }
 
     var self = this;
+    this.max = 0;
     this.top = community_top;
+    if (this.top) {
+        for (val in this.top.parents) {
+            this.max += this.top.parents[val].value;
+        }
+    }
     this.location_path = $stateParams.location_path;
     this.community_path = community.key == this.location_path ? undefined : community.key;
 

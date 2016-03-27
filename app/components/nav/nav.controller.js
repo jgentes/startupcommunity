@@ -54,13 +54,9 @@ function NavigationController($auth, $state, $window, $timeout, $location, $scop
     }
 
     var self = this;
-    this.max = 0;
 
-    if (top) {
+    if (top) {        
         this.top = top;
-        for (val in this.top.parents) {
-            this.max += this.top.parents[val].value;
-        }
     }
 
     // ANONYMOUS ACCESS OR PROFILE DISPLAY

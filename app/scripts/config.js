@@ -444,7 +444,7 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
         })
         .state('community.dashboard.location',{})
         .state('community.dashboard.cluster',{})
-        .state('community.dashboard.company',{}) // for user profile page when companies are in communities
+        .state('community.dashboard.company',{}); // for user profile page when companies are in communities
 
         // BE CAREFUL NOT TO PUT STATES AFTER COMMUNITY.. COMMUNITY SEEMS TO TRUMP ANYTHING FOLLOWING IT
 
