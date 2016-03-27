@@ -117,8 +117,8 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                             if (jQuery.isEmptyObject($stateParams.profile)) {
                                 // set community based on type, determined by URL
                                 var url = $location.path().replace(/\/$/, "").split('/'),
-                                    lastitem = url.pop(),
-                                    root = url.pop();
+                                    lastitem = encodeURIComponent(url.pop()),
+                                    root = encodeURIComponent(url.pop());
 
                                 if (lastitem == "people" || lastitem == "companies" || lastitem == "search" || lastitem == "invite" || lastitem == "add" || lastitem == "welcome") {
                                     if (lastitem == "invite" || lastitem == "add") {
