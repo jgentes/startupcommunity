@@ -150,6 +150,8 @@ var searchInCommunity = function(communities, clusters, roles, limit, offset, qu
                   }
 
                   result.body.results[i].value["key"] = result.body.results[i].path.key;
+                  
+                  if (result.body.results[i].value.newsletter) delete result.body.results[i].value.newsletter;
               }
           } catch (error) {
               console.warn('WARNING: user144 ', error);
