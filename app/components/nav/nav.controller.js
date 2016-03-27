@@ -489,6 +489,10 @@ function NavigationController($auth, $state, $window, $timeout, $location, $scop
                 }
             }
         });
+
+        modalInstance.closed.then(function () {
+            $state.reload();
+        });
     };
 
     // CHECK FOR IFRAME (redirect, if needed, must happen after routing)

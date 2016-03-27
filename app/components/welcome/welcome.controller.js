@@ -182,7 +182,7 @@ function WelcomeController($auth, $q, $http, $window, $mixpanel, $uibModalInstan
 
     // for role selection on companies page
 
-    self.selectRoles = [{
+    this.selectRoles = [{
         value: 'not involved',
         text: 'not involved'
     }, {
@@ -207,7 +207,7 @@ function WelcomeController($auth, $q, $http, $window, $mixpanel, $uibModalInstan
         description: "You provide services to community members for a fee."
     }];
     
-    if (!self.selectedRole) self.selectedRole = 'not involved';
+    if (!this.selectedRole) this.selectedRole = 'not involved';
 
     this.showCurrent = function(profile) {
         self.updateCompany = true;
@@ -319,62 +319,73 @@ function WelcomeController($auth, $q, $http, $window, $mixpanel, $uibModalInstan
 
                     company_service.addCompany(self.selectedCompany, role, location.key, community_path, self.selectedCompany.key)
                         .then(function(response) {
-                            
                             self.working = false;
+
                             if (response.status !== 200) {
-                                self.alert = { type: 'danger', message: String(response.data.message) };
+                                sweet.show({
+                                    title: "Sorry, something went wrong.",
+                                    text: response.data.message,
+                                    type: "error"
+                                });
+
                             } else {
+                                sweet.show({
+                                    title: "Success!",
+                                    text: response.data.message,
+                                    type: "success"
+                                }, function() {
+                                    if ($uibModalInstance) $uibModalInstance.close();
+                                    var co_key = response.data.key;
 
-                                var co_key = response.data.key;
+                                    // update local profile with company data
 
-                                // update local profile with company data
+                                    if (!self.user.roles) {
+                                        self.user["roles"] = {};
+                                    } else {
+                                        // search for existing role and delete if found
 
-                                if (!self.user.roles) {
-                                    self.user["roles"] = {};
-                                } else {
-                                    // search for existing role and delete if found
-
-                                    for (r in self.user.roles) {
-                                        for (co in self.user.roles[r]) {
-                                            if (co == co_key) {
-                                                delete self.user.roles[r][co];
+                                        for (r in self.user.roles) {
+                                            for (co in self.user.roles[r]) {
+                                                if (co == co_key) {
+                                                    delete self.user.roles[r][co];
+                                                }
                                             }
                                         }
                                     }
-                                }
 
-                                $http.get('/api/2.1/community/' + self.selectedCompany.key + '?nocache=true')
+                                    if (self.selectedCompany && self.selectedCompany.key) $http.get('/api/2.1/community/' + self.selectedCompany.key + '?nocache=true');
 
-                                // add new role
+                                    // add new role
 
-                                if (!self.user.roles[role]) {
-                                    self.user.roles[role] = {};
-                                    self.user.roles[role][co_key] = [location.key];
-                                } else if (!self.user.roles[role][co_key]) {
-                                    self.user.roles[role][co_key] = [location.key];
-                                } else if (self.user.roles[role][co_key].indexOf(location.key) < 0) {
-                                    self.user.roles[role][co_key].push(location.key);
-                                } // else the damn thing is already there
+                                    if (!self.user.roles[role]) {
+                                        self.user.roles[role] = {};
+                                        self.user.roles[role][co_key] = [location.key];
+                                    } else if (!self.user.roles[role][co_key]) {
+                                        self.user.roles[role][co_key] = [location.key];
+                                    } else if (self.user.roles[role][co_key].indexOf(location.key) < 0) {
+                                        self.user.roles[role][co_key].push(location.key);
+                                    } // else the damn thing is already there
 
-                                // add community
-                                if (!self.user.communities) {
-                                    self.user["communities"] = {};
-                                }
+                                    // add community
+                                    if (!self.user.communities) {
+                                        self.user["communities"] = {};
+                                    }
 
-                                if (self.user.communities.indexOf(co_key) < 0) {
-                                    self.user.communities.push(co_key);
-                                }
+                                    if (self.user.communities.indexOf(co_key) < 0) {
+                                        self.user.communities.push(co_key);
+                                    }
 
-                                self.selectedCompany = undefined;
-                                self.company = undefined;
-                                self.updateCompany = false;
-                                self.selectedRole = 'not involved';
-                                self.submitted = false;
-                                self.dups = undefined;
-                                self.notlisted = false;
-                                if (self.update) self.updated = true;
-                                self.alert = { type: 'success', message: String(response.data.message) };
+                                    self.selectedCompany = undefined;
+                                    self.company = undefined;
+                                    self.updateCompany = false;
+                                    self.selectedRole = 'not involved';
+                                    self.submitted = false;
+                                    self.dups = undefined;
+                                    self.notlisted = false;
+                                    if (self.update) self.updated = true;
+                                })
                             }
+                            
                         })
                         .catch(function(error) {
                             self.working = false;

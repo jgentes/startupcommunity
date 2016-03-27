@@ -183,7 +183,7 @@ function CompanyController($stateParams, $location, company_service, result_serv
     };
 }
 
-function CompanyProfileController($stateParams, $location, $mixpanel, user, company_service, community, communities) {
+function CompanyProfileController($mixpanel, communities) {
 
     $mixpanel.track('Viewed Company');
 

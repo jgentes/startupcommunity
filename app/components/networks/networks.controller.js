@@ -16,7 +16,7 @@ function NetworksController($stateParams, location, communities, nav_communities
             id: 'colleges',
             title: 'Colleges',
             color: 'hblue',
-            icon: 'pe-7s-next'
+            icon: 'pe-7s-culture'
         },
         coworking: {
             id: 'coworking',

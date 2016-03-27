@@ -291,7 +291,10 @@ function handleGetCommunity(req, res) {
                     pullCommunity(false);
                 }
             })
-        } else pullCommunity(false);        
+        } else {
+            mc.delete(community);
+            pullCommunity(false);
+        }
 
     } else res.status(404).send({message: 'Please specify a community!'});
 }
