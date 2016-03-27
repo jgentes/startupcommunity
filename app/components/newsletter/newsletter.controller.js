@@ -16,6 +16,9 @@ function NewsletterController(newsletter_service, $sce, user, errorLogService) {
                 //newsletter_service.syncMembers(user.newsletter.lists, user.newsletter.brand_id, location.key);
 
             })
+            .catch(function(error) {
+                errorLogService('newsletter error: ', error);
+            })
 
     } else {
         $state.go('settings');
