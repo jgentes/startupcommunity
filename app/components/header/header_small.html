@@ -12,7 +12,7 @@
                     <li ui-sref="{{'company.list' + nav.nav_url}}" ng-class="{ 'active' : nav.state.current.name == 'company.list' }">
                         <a>COMPANIES</a>
                     </li>
-                    <li ui-sref="{{'resources.list' + nav.nav_url}}" ng-class="{ 'active' : nav.state.current.name == 'resources.list' }" ng-if="nav.community.type !== 'network'">
+                    <li ui-sref="{{'resource.list' + nav.nav_url}}" ng-class="{ 'active' : nav.state.current.name == 'resource.list' }" ng-if="nav.community.type !== 'network'">
                         <a>RESOURCES</a>
                     </li>
                 </ul>
@@ -40,8 +40,8 @@
                     <button class="btn btn-sm btn-info" ng-click="nav.invitePeople()" style="font-size: 12px; color: #fff;">Invite People</button>
                 </div>
             </div>
-            <div class="pull-right" ng-if="nav.user && (nav.state.current.name == 'resource.list')">
-                <button class="btn btn-sm btn-info" ng-click="nav.addResource()" style="font-size: 12px; color: #fff;">Add Resource</button>
+            <div class="pull-right" ng-if="nav.user && (nav.state.current.name == 'resource.list')" style="padding-top: 6px; margin-right: 8px;">
+                <button class="btn btn-sm btn-success" ng-click="nav.addResource()" style="font-size: 12px; color: #fff;">Add Resource</button>
             </div>
         </div>
     </div>

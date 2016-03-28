@@ -293,11 +293,11 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
         })
 
 
-        .state('resources', {
+        .state('resource', {
             parent: 'root',
             abstract: true
         })
-        .state('resources.list', {
+        .state('resource.list', {
             url: "^/:location_path/:community_path/resources",
             params: {
                 community_path: {
