@@ -1,11 +1,11 @@
 angular
     .module('startupcommunity')
-    .controller('NetworksController', NetworksController)
+    .controller('ResourceController', ResourceController)
 
-function NetworksController($stateParams, location, communities, nav_communities, community_service, top, user, $auth) {
+function ResourceController($stateParams, location, communities, nav_communities, community_service, top, user, $auth) {
     var self = this;
 
-    this.networkPresentation = {
+    var resourcePresentation = {
         accelerators: {
             id: 'accelerators',
             title: 'Accelerators',
@@ -51,7 +51,7 @@ function NetworksController($stateParams, location, communities, nav_communities
     };
 
     this.network_parents = community_service.network_parents().map(function(item) {
-        return self.networkPresentation[item.toLowerCase()];
+        return resourcePresentation[item.toLowerCase()];
     });
     this.top = top || {};
     this.networks = this.networks || {};

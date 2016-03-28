@@ -293,26 +293,26 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
         })
 
 
-        .state('networks', {
+        .state('resources', {
             parent: 'root',
             abstract: true
         })
-        .state('networks.list', {
-            url: "^/:location_path/:community_path/networks",
+        .state('resources.list', {
+            url: "^/:location_path/:community_path/resources",
             params: {
                 community_path: {
                     value: null,
                     squash: true
                 },
-                pageTitle: 'Networks'
+                pageTitle: 'Resources'
             },
             views: {
                 'header': {
                     templateUrl: "components/header/header_small.html"
                 },
                 'content': {
-                    templateUrl: '../components/networks/networks.list.html',
-                    controller: "NetworksController as networks"
+                    templateUrl: '../components/resources/resource.list.html',
+                    controller: "ResourceController as resource"
                 }
             }
         })

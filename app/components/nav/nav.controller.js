@@ -495,6 +495,39 @@ function NavigationController($auth, $state, $window, $timeout, $location, $scop
         });
     };
 
+    // ADD RESOURCE
+
+    this.addResource = function(resource) {
+
+        var modalInstance = $uibModal.open({
+            templateUrl: 'components/resources/resource.add.html',
+            controller: ResourceController,
+            controllerAs: 'add',
+            windowClass: "hmodal-info",
+            resolve: {
+                user: function() {
+                    return self.user;
+                },
+                community: function() {
+                    return self.community;
+                },
+                communities: function() {
+                    return self.communities;
+                },
+                location: function() {
+                    return self.location;
+                },
+                resource: function() {
+                    return resource || null;
+                }
+            }
+        });
+
+        modalInstance.closed.then(function () {
+            $state.reload();
+        });
+    };
+
     // CHECK FOR IFRAME (redirect, if needed, must happen after routing)
     var embed;
     this.embedded = false;
