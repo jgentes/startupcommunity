@@ -501,13 +501,10 @@ function NavigationController($auth, $state, $window, $timeout, $location, $scop
 
         var modalInstance = $uibModal.open({
             templateUrl: 'components/resources/resource.add.html',
-            controller: ResourceController,
+            controller: AddResourceController,
             controllerAs: 'add',
             windowClass: "hmodal-info",
             resolve: {
-                user: function() {
-                    return self.user;
-                },
                 community: function() {
                     return self.community;
                 },

@@ -1,7 +1,7 @@
 angular
     .module('startupcommunity')
     .controller('CompanyController', CompanyController)
-    .controller('CompanyProfileController', CompanyProfileController)
+    .controller('CompanyProfileController', CompanyProfileController);
 
 function CompanyController($stateParams, $location, company_service, result_service, $sce, community, communities) {
 
