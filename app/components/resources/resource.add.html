@@ -22,7 +22,7 @@
                 <div class="form-group" ng-show="!add.update">
                     <input type="text" placeholder="Resource name.." ng-model="add.selectedResource.name" class="form-control input-lg">
                 </div>
-                <div style="padding-top: 10px;">
+                <div style="padding-top: 10px;" ng-show="add.selectedResource.name">
                     <h4 style="line-height:1.75;">
                         Your primary role at {{add.selectedResource.name}} is <a href="#" editable-select="add.selectedRole" e-ng-options="r.value as r.text for r in add.selectRoles">{{ add.selectedRole }}</a>.<br/>
                         {{add.selectedResource.name}}'s headline is <a style="color:#4ea5e0;" editable-text="add.selectedResource.headline">{{add.selectedResource.headline || 'empty'}}</a>.

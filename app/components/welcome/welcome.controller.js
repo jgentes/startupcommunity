@@ -182,30 +182,7 @@ function WelcomeController($auth, $q, $http, $window, $mixpanel, $uibModalInstan
 
     // for role selection on companies page
 
-    this.selectRoles = [{
-        value: 'not involved',
-        text: 'not involved'
-    }, {
-        value: 'founder',
-        text: 'Founder',
-        description: "You have started or co-founded a business venture."
-    }, {
-        value: 'investor',
-        text: 'Investor',
-        description: "You are an active investor in startup companies."
-    },{
-        value: 'team',
-        text: 'Team Member',
-        description: "You are a current employee or team member of a local company."
-    },{
-        value: 'mentor',
-        text: 'Mentor',
-        description: "You are willing to provide guidance to entrepreneurs without compensation - the 'give before you get' philosophy."
-    },{
-        value: 'provider',
-        text: 'Service Provider',
-        description: "You provide services to community members for a fee."
-    }];
+    this.selectRoles = user_service.roles;
     
     if (!this.selectedRole) this.selectedRole = 'not involved';
 

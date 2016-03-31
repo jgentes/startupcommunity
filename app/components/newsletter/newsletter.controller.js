@@ -5,6 +5,7 @@ angular
 
 function NewsletterController(newsletter_service, $sce, user, errorLogService) {
     var self = this;    
+    this.user = user;
 
     if (user.newsletter) {        
 

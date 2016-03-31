@@ -497,11 +497,11 @@ function NavigationController($auth, $state, $window, $timeout, $location, $scop
 
     // ADD RESOURCE
 
-    this.addResource = function(resource) {
+    this.addResource = function(company) {
 
         var modalInstance = $uibModal.open({
             templateUrl: 'components/resources/resource.add.html',
-            controller: ResourceController,
+            controller: WelcomeController,
             controllerAs: 'add',
             windowClass: "hmodal-info",
             resolve: {
@@ -517,8 +517,8 @@ function NavigationController($auth, $state, $window, $timeout, $location, $scop
                 location: function() {
                     return self.location;
                 },
-                resource: function() {
-                    return resource || null;
+                company: function() {
+                    return company || null;
                 }
             }
         });
