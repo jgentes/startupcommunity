@@ -182,7 +182,7 @@ function WelcomeController($auth, $q, $http, $window, $mixpanel, $uibModalInstan
 
     // for role selection on companies page
 
-    this.selectRoles = user_service.roles;
+    this.selectRoles = user_service.roles();
     
     if (!this.selectedRole) this.selectedRole = 'not involved';
 
@@ -222,7 +222,7 @@ function WelcomeController($auth, $q, $http, $window, $mixpanel, $uibModalInstan
                 }
             }
         }
-        self.alert = { type: 'warning', message: self.selectedCompany.name + ' is already in the system, but you may update the company record.'};
+        self.alert = { type: 'warning', message: self.selectedCompany.name + ' is already in the system, but you may update it.'};
     };
 
     if (company) {
@@ -272,7 +272,7 @@ function WelcomeController($auth, $q, $http, $window, $mixpanel, $uibModalInstan
             })
     };
 
-    this.addCompany = function(e) {
+    this.addCompany = function(e, resource) {
         if (e) e.preventDefault();
 
         if (self.selectedRole && (self.selectedRole !== 'not involved')) {
@@ -282,6 +282,8 @@ function WelcomeController($auth, $q, $http, $window, $mixpanel, $uibModalInstan
         if (self.selectedCompany && self.selectedCompany.parent) {
             // adjust parent industry caps
             self.selectedCompany.parent = self.selectedCompany.parent.toLowerCase();
+
+            self.selectedCompany.resource = resource || false;
 
             if (angular.element('.summary_form a').hasClass('editable-hide')) {
                 // they've edited the summary but haven't clicked checkmark to accept changes
@@ -293,6 +295,7 @@ function WelcomeController($auth, $q, $http, $window, $mixpanel, $uibModalInstan
 
                 if (community.type == 'cluster') community_path = location.key; // do not allow companies to be added directly to clusters
                 if (community.type == 'network' && (self.user.roles && self.user.roles.leader && self.user.roles.leader[community.key]) && (self.user.roles.leader[community.key].indexOf(location.key) < 0)) community_path = location.key;
+                console.log(self.selectedCompany)
 
                     company_service.addCompany(self.selectedCompany, role, location.key, community_path, self.selectedCompany.key)
                         .then(function(response) {

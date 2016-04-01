@@ -24,6 +24,7 @@ var schema = {
 
         return {
             "type": "company",
+            "resource": profile.resource,
             "profile": {
                 "home": location_key,
                 "name": profile.name,

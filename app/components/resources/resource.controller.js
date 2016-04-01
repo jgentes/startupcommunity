@@ -53,7 +53,7 @@ function ResourceController($stateParams, location, communities, nav_communities
     this.network_parents = community_service.network_parents().map(function(item) {
         return resourcePresentation[item.toLowerCase()];
     });
-    this.top = top || {};
+    this.top = top || {}; // this is passed in to avoid re-pulling top on nav click if possible
     this.networks = this.networks || {};
     this.communities = communities;
     this.user = $auth.isAuthenticated() ? user : {};
@@ -83,57 +83,5 @@ function ResourceController($stateParams, location, communities, nav_communities
                 }
             }
         }
-    }
-}
-
-function addResourceController(user, location, user_service, community, communities, resource) {
-    this.selectRoles = user_service.roles;
-
-    if (!this.selectedRole) this.selectedRole = 'not involved';
-
-    this.showCurrent = function(profile) {
-        self.updateCompany = true;
-        self.notlisted = false;
-        var oldco = profile;
-        self.company = oldco.profile.name;
-        if (!self.selectedCompany) self.selectedCompany = {};
-        if (oldco.profile.angellist) self.selectedCompany = oldco.profile.angellist;
-        self.selectedCompany['name'] = oldco.profile.name;
-        self.selectedCompany['key'] = oldco.key;
-        if (oldco.profile.industries) self.selectedCompany['industries'] = oldco.profile.industries;
-        if (oldco.profile.stage) self.selectedCompany['stage'] = oldco.profile.stage;
-        if (oldco.profile.headline) self.selectedCompany['high_concept'] = oldco.profile.headline;
-        if (oldco.profile.summary) self.selectedCompany['product_desc'] = oldco.profile.summary;
-        if (oldco.profile.avatar) self.selectedCompany['thumb_url'] = oldco.profile.avatar;
-
-        if (oldco.profile.parents) {
-            switch(oldco.profile.parents[0]) {
-                case 'consumer-goods':
-                    self.selectedCompany['parent'] = 'Consumer Goods';
-                    break;
-                case 'non-profit':
-                    self.selectedCompany['parent'] = 'Non-Profit';
-                    break;
-                default:
-                    self.selectedCompany['parent'] = oldco.profile.parents[0][0].toUpperCase() + oldco.profile.parents[0].slice(1);
-            }
-        }
-
-        for (role in self.user.roles) {
-            for (co in self.user.roles[role]) {
-                if (co == oldco.key) {
-                    self.selectedRole = role;
-                    break;
-                }
-            }
-        }
-        self.alert = { type: 'warning', message: self.selectedCompany.name + ' is already in the system, but you may update the company record.'};
-    };
-
-    if (resource) {
-        // if resource is passed in, probably editing existing resource profile
-        this.showCurrent(resource);
-        this.update = true;
-        this.alert = undefined;
     }
 }
