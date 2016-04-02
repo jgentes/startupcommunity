@@ -102,10 +102,9 @@ function EditResourceController(user, community, location, communities, user_ser
         // get the secure S3 url
         company_service.getLogoUrl(file, self.selectedCompany.name)
             .then(function(response) {
-                console.log(response);
-
+                
                 self.selectedCompany.thumb_url = response;
-
+                
             })
 
     };

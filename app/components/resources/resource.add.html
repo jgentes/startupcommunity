@@ -7,7 +7,7 @@
     <div class="modal-body">
         <div class="hpanel">
             <div style="text-align:center;" ng-show="add.selectedCompany.name">
-                <img style="height:75px;" ngf-thumbnail="add.selectedCompany.thumb_url || file || '/public/images/blank_startup.jpg'">
+                <img style="height:75px;" ngf-thumbnail="add.selectedCompany.thumb_url || logo_thumbnail || '/public/images/blank_startup.jpg'">
                 <h4 ng-show="add.update">{{::add.community.profile.name}}</h4>
                 <br/>
                 <label id="uploader_text">

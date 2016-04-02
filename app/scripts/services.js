@@ -300,13 +300,13 @@ angular
                         var signedUrl = response.data.put,
                             fileUrl = response.data.get;
 
+                        var d_completed = $q.defer();
                         var xhr = new XMLHttpRequest();
                         xhr.file = file;
 
                         xhr.onreadystatechange = function(e) {
-                            if ( 4 == this.readyState && fileUrl) {
-                                console.log(fileUrl);
-                                return fileUrl;
+                            if ( 4 == this.readyState ) {
+                                d_completed.resolve(true);
                             }
                         };
                         xhr.open('PUT', signedUrl, true);
