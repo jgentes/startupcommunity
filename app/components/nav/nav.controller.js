@@ -501,7 +501,7 @@ function NavigationController($auth, $state, $window, $timeout, $location, $scop
 
         var modalInstance = $uibModal.open({
             templateUrl: 'components/resources/resource.add.html',
-            controller: WelcomeController,
+            controller: EditResourceController,
             controllerAs: 'add',
             windowClass: "hmodal-info",
             resolve: {

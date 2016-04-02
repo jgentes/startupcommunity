@@ -264,7 +264,7 @@ angular
               }
           };
       })
-    .factory('company_service', function($http) {
+    .factory('company_service', function($http, $q) {
         return {
             search: function(communities, clusters, query, stages, limit, alturl) { //alturl is for next/prev retrieval
                 var urlString = '/api/2.1/companies?' + jQuery.param({
@@ -294,8 +294,25 @@ angular
                     }
                 });
             },
-            getLogoUrl: function(filename, company_name) {
-                return $http.get('/api/2.1/companies/url?filename=' + filename + '&company_name=' + company_name);
+            getLogoUrl: function(file, company_name) {
+                return $http.get('/api/2.1/companies/url?filename=' + file.name + '&company_name=' + company_name)
+                    .then(function(response) {
+                        var signedUrl = response.data.put,
+                            fileUrl = response.data.get;
+
+                        var xhr = new XMLHttpRequest();
+                        xhr.file = file;
+
+                        xhr.onreadystatechange = function(e) {
+                            if ( 4 == this.readyState && fileUrl) {
+                                console.log(fileUrl);
+                                return fileUrl;
+                            }
+                        };
+                        xhr.open('PUT', signedUrl, true);
+                        xhr.setRequestHeader("Content-Type","application/octet-stream");
+                        xhr.send(file);
+                    });
             }
         };
     })

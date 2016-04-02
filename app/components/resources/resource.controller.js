@@ -1,6 +1,7 @@
 angular
     .module('startupcommunity')
-    .controller('ResourceController', ResourceController);
+    .controller('ResourceController', ResourceController)
+    .controller('EditResourceController', EditResourceController);
 
 function ResourceController($stateParams, location, communities, nav_communities, community_service, top, user, $auth) {
     var self = this;
@@ -84,4 +85,28 @@ function ResourceController($stateParams, location, communities, nav_communities
             }
         }
     }
+}
+
+function EditResourceController(user, community, location, communities, user_service, company_service, company) {
+    var self = this;
+    
+    this.working = false; // used for waiting indicator
+    this.updateCompany= false; // used if company already exists
+
+    this.selectRoles = user_service.roles();
+
+    if (!this.selectedRole) this.selectedRole = 'not involved';
+
+    // for startup logo upload to S3
+    this.uploadLogo = function (file) {
+        // get the secure S3 url
+        company_service.getLogoUrl(file, self.selectedCompany.name)
+            .then(function(response) {
+                console.log(response);
+
+                self.selectedCompany.thumb_url = response;
+
+            })
+
+    };
 }
