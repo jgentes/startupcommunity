@@ -497,7 +497,7 @@ function NavigationController($auth, $state, $window, $timeout, $location, $scop
 
     // ADD RESOURCE
 
-    this.addResource = function(company) {
+    this.addResource = function(resource) {
 
         var modalInstance = $uibModal.open({
             templateUrl: 'components/resources/resource.add.html',
@@ -517,8 +517,8 @@ function NavigationController($auth, $state, $window, $timeout, $location, $scop
                 location: function() {
                     return self.location;
                 },
-                company: function() {
-                    return company || null;
+                resource: function() {
+                    return resource || null;
                 }
             }
         });
@@ -701,7 +701,7 @@ function CommunityController($uibModalInstance, $mixpanel, sweet, community_serv
     if (community.type == 'cluster') {
         self.parents = community_service.parents();
     } else if (community.type == 'network') {
-        self.parents = community_service.network_parents();
+        self.parents = community_service.resource_types();
         self.parentTypes = self.parents.map(function(item) {
             return { id: item.toLowerCase(), label: item}
         });

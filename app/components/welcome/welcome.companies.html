@@ -5,7 +5,7 @@
     <div ng-show="welcome.selectedCompany || welcome.company" style="text-align:center;">
         <a href="{{welcome.selectedCompany.angellist_url}}" target="_blank" title="{{welcome.selectedCompany.name}}'s AngelList Profile">
             <img style="height:75px;"
-             ngf-thumbnail="welcome.selectedCompany.thumb_url || file || '/public/images/blank_startup.jpg'">
+             ngf-thumbnail="welcome.selectedCompany.thumb_url || logo_thumbnail || '/public/images/blank_startup.jpg'">
         </a>
         <br/>
         <label id="uploader_text">

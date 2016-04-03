@@ -51,7 +51,7 @@ function ResourceController($stateParams, location, communities, nav_communities
         }
     };
 
-    this.network_parents = community_service.network_parents().map(function(item) {
+    this.network_parents = community_service.resource_types().map(function(item) {
         return resourcePresentation[item.toLowerCase()];
     });
     this.top = top || {}; // this is passed in to avoid re-pulling top on nav click if possible
@@ -87,11 +87,16 @@ function ResourceController($stateParams, location, communities, nav_communities
     }
 }
 
-function EditResourceController(user, community, location, communities, user_service, company_service, company) {
+function EditResourceController(user, sweet, $window, $http, $uibModalInstance, community, location, communities, user_service, company_service, community_service, resource) {
     var self = this;
-    
+
+    this.user = user;
     this.working = false; // used for waiting indicator
     this.updateCompany= false; // used if company already exists
+    this.parents = []; // need a placeholder until next call is resolved
+    this.parents = community_service.parents();
+    this.types = []; // need a placeholder until next call is resolved
+    this.types = community_service.resource_types();
 
     this.selectRoles = user_service.roles();
 
@@ -107,5 +112,144 @@ function EditResourceController(user, community, location, communities, user_ser
                 
             })
 
+    };
+
+    this.addCompany = function(e, resource_if_true) {
+        if (e) e.preventDefault();
+
+        if (self.selectedCompany && self.selectedCompany.parent) {
+            // adjust parent industry caps
+            self.selectedCompany.parent = self.selectedCompany.parent.toLowerCase();
+
+            self.selectedCompany.resource = resource_if_true || false;
+
+            if (angular.element('.summary_form a').hasClass('editable-hide')) {
+                // they've edited the summary but haven't clicked checkmark to accept changes
+                self.alert = { type: 'danger', message: 'You made changes to the summary. Please accept or cancel them before updating.' };
+            } else {
+
+                self.working = true;
+                var role = self.selectedRole == 'not involved' ? undefined : self.selectedRole;
+
+                var community_path = location.key; // resources can only be created in locations (for now)
+
+                company_service.addCompany(self.selectedCompany, role, location.key, community_path, self.selectedCompany.key)
+                    .then(function(response) {
+                        self.working = false;
+
+                        if (response.status !== 200) {
+                            sweet.show({
+                                title: "Sorry, something went wrong.",
+                                text: response.data.message,
+                                type: "error"
+                            });
+
+                        } else {
+                            sweet.show({
+                                title: "Success!",
+                                text: response.data.message,
+                                type: "success"
+                            }, function() {
+
+                                var co_key = response.data.key;
+
+                                // update local profile with company data
+
+                                if (!self.user.roles) {
+                                    self.user["roles"] = {};
+                                } else {
+                                    // search for existing role and delete if found
+
+                                    for (r in self.user.roles) {
+                                        for (co in self.user.roles[r]) {
+                                            if (co == co_key) {
+                                                delete self.user.roles[r][co];
+                                            }
+                                        }
+                                    }
+                                }
+
+                                $http.get('/' + self.location.key + '/resources');
+
+                                // add new role
+
+                                if (!self.user.roles[role]) {
+                                    self.user.roles[role] = {};
+                                    self.user.roles[role][co_key] = [location.key];
+                                } else if (!self.user.roles[role][co_key]) {
+                                    self.user.roles[role][co_key] = [location.key];
+                                } else if (self.user.roles[role][co_key].indexOf(location.key) < 0) {
+                                    self.user.roles[role][co_key].push(location.key);
+                                } // else the damn thing is already there
+
+                                // add community
+                                if (!self.user.communities) {
+                                    self.user["communities"] = {};
+                                }
+
+                                if (self.user.communities.indexOf(co_key) < 0) {
+                                    self.user.communities.push(co_key);
+                                }
+
+                                self.selectedCompany = undefined;
+                                self.company = undefined;
+                                self.updateCompany = false;
+                                self.selectedRole = 'not involved';
+                                self.submitted = false;
+                                self.dups = undefined;
+                                self.notlisted = false;
+                                if (self.update) self.updated = true;
+                                if ($uibModalInstance) $uibModalInstance.close();
+                            })
+                        }
+
+                    })
+                    .catch(function(error) {
+                        self.working = false;
+                        self.alert = { type: 'danger', message: String(error.data.message) };
+                    })
+            }
+
+        } else self.submitted = true;
+
+    };
+
+    this.deleteCompany = function (company_key) {
+        self.working = true;
+
+        sweet.show({
+            title: "Are you sure?",
+            text: "If this resource has founders or team members in the system, only they can delete it.",
+            type: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#DD6B55",
+            confirmButtonText: "Yes, delete " + self.selectedCompany.name + "!",
+            closeOnConfirm: false
+        }, function () {
+
+            company_service.deleteCompany(company_key)
+                .then(function(response) {
+                    self.working = false;
+
+                    if (response.status !== 204) {
+                        sweet.show({
+                            title: "Sorry, something went wrong.",
+                            text: response.data.message,
+                            type: "error"
+                        });
+
+                    } else {
+                        sweet.show({
+                            title: "Deleted!",
+                            text: self.selectedCompany.name + " is gone.",
+                            type: "success"
+                        }, function() {
+                            $http.get('/api/2.1/community/' + self.user.profile.home); // refresh outdated cache
+                            $uibModalInstance.close();
+                            $window.location.href = '/' + self.user.profile.home;
+                        })
+                    }
+                });
+        });
     };
 }

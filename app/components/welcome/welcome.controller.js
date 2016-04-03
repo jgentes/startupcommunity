@@ -131,26 +131,12 @@ function WelcomeController($auth, $q, $http, $window, $mixpanel, $uibModalInstan
     // for startup logo upload to S3
     this.uploadLogo = function (file) {
         // get the secure S3 url
-        company_service.getLogoUrl(file.name, self.selectedCompany.name)
+        company_service.getLogoUrl(file, self.selectedCompany.name)
             .then(function(response) {
-                var signedUrl = response.data.put,
-                    fileUrl = response.data.get;
 
-                var d_completed = $q.defer();
-                var xhr = new XMLHttpRequest();
-                xhr.file = file;
+                self.selectedCompany.thumb_url = response;
 
-                xhr.onreadystatechange = function(e) {
-                    if ( 4 == this.readyState ) {
-                        self.selectedCompany.thumb_url = fileUrl;
-                        d_completed.resolve(true);
-                    }
-                };
-                xhr.open('PUT', signedUrl, true);
-                xhr.setRequestHeader("Content-Type","application/octet-stream");
-                xhr.send(file);
             })
-
     };
 
     this.submitProfile = function() {
@@ -314,7 +300,7 @@ function WelcomeController($auth, $q, $http, $window, $mixpanel, $uibModalInstan
                                     text: response.data.message,
                                     type: "success"
                                 }, function() {
-                                    if ($uibModalInstance) $uibModalInstance.close();
+                                    
                                     var co_key = response.data.key;
 
                                     // update local profile with company data
@@ -363,6 +349,7 @@ function WelcomeController($auth, $q, $http, $window, $mixpanel, $uibModalInstan
                                     self.dups = undefined;
                                     self.notlisted = false;
                                     if (self.update) self.updated = true;
+                                    if ($uibModalInstance) $uibModalInstance.close();
                                 })
                             }
                             

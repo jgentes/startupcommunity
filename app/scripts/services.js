@@ -256,7 +256,7 @@ angular
               parents: function() {
                   return [ 'Agriculture', 'Art', 'Construction', 'Consumer-Goods', 'Corporate', 'Education', 'Finance', 'Government', 'Healthcare', 'Legal', 'Manufacturing', 'Medical', 'Non-Profit', 'Recreation', 'Services', 'Tech', 'Transportation' ];
               },
-              network_parents: function() {
+              resource_types: function() {
                   return [ 'Accelerators', 'Colleges', 'Coworking', 'Incubators', 'Investment', 'Meetups', 'Mentorship'];
               },
               industries: function() {
