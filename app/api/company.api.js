@@ -22,9 +22,10 @@ var schema = {
             [location_key] :
             [location_key, community_key];
 
-        return {
+        var newprofile = {
             "type": "company",
             "resource": profile.resource,
+            "resource_types": profile.resource_types,
             "profile": {
                 "home": location_key,
                 "name": profile.name,
@@ -37,8 +38,13 @@ var schema = {
                 "stage": profile.stage,
                 "industries": profile.industries
             },
+            "community_profiles": {},
             "communities": communities
         };
+
+        newprofile.community_profiles[location_key] = newprofile.profile;
+
+        return newprofile;
     }
 };
 

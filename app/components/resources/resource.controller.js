@@ -8,57 +8,50 @@ function ResourceController($stateParams, location, communities, nav_communities
 
     var resourcePresentation = {
         accelerators: {
-            id: 'accelerators',
             title: 'Accelerators',
             color: 'hnavyblue',
             icon: 'pe-7s-next'
         },
         colleges: {
-            id: 'colleges',
             title: 'Colleges',
             color: 'hblue',
             icon: 'pe-7s-culture'
         },
         coworking: {
-            id: 'coworking',
             title: 'Coworking',
             color: 'hviolet',
             icon: 'pe-7s-plug'
         },
         incubators: {
-            id: 'incubators',
             title: 'Incubators',
             color: 'hnavyblue',
             icon: 'pe-7s-light'
         },
         investment: {
-            id: 'investment',
             title: 'Investment',
             color: 'hgreen',
             icon: 'pe-7s-gleam'
         },
         meetups: {
-            id: 'meetups',
             title: 'Meetups',
             color: 'hviolet',
             icon: 'pe-7s-coffee'
         },
         mentorship: {
-            id: 'mentorship',
             title: 'Mentorship',
             color: 'hblue',
             icon: 'pe-7s-study'
         }
     };
 
-    this.network_parents = community_service.resource_types().map(function(item) {
+    this.resource_types = community_service.resource_types().map(function(item) {
         return resourcePresentation[item.toLowerCase()];
     });
     this.top = top || {}; // this is passed in to avoid re-pulling top on nav click if possible
     this.networks = this.networks || {};
     this.communities = communities;
     this.user = $auth.isAuthenticated() ? user : {};
-    this.nav_communities = nav_communities;
+    this.resources = nav_communities.resources;
 
     this.location = location;
     this.location_key = this.location.key;
@@ -68,10 +61,23 @@ function ResourceController($stateParams, location, communities, nav_communities
         "({community_path: item.key, community: item, query: '*', location_path: networks.location.key, top: networks.top, communities: networks.communities, user: networks.user })" :
         "({community_path: item.key, community: item, query: '*', location_path: networks.user.profile.home, top: networks.top, communities: networks.communities, user: networks.user })";
 
-    for (var item in this.nav_communities) {
-        var currentItem = this.nav_communities[item];
+    for (var item in this.resources) {
+        var currentItem = this.resources[item];
+        if (currentItem.resource) {
+            var community = this.resources[item];
+            if (community.resource_types && community.resource_types.length) {
+                for (type in community.resource_types) {
+                    self.networks[community.resource_types[type]] = self.networks[type] || [];
+                    self.networks[community.resource_types[type]].push(community);
+                }
+            }
+        }
+    }
+    // former network view
+    /*for (var item in this.resources) {
+        var currentItem = this.resources[item];
         if (currentItem.type === 'network') {
-            var community = this.nav_communities[item];
+            var community = this.resources[item];
             if (community.community_profiles) {
                 var communityProfile = community.community_profiles[this.location_key] || false;
 
@@ -84,19 +90,20 @@ function ResourceController($stateParams, location, communities, nav_communities
                 }
             }
         }
-    }
+    }*/
 }
 
 function EditResourceController(user, sweet, $window, $http, $uibModalInstance, community, location, communities, user_service, company_service, community_service, resource) {
     var self = this;
 
+    this.community = community;
     this.user = user;
     this.working = false; // used for waiting indicator
     this.updateCompany= false; // used if company already exists
     this.parents = []; // need a placeholder until next call is resolved
     this.parents = community_service.parents();
-    this.types = []; // need a placeholder until next call is resolved
-    this.types = community_service.resource_types();
+    this.resource_types = [];
+    this.resource_types = community_service.resource_types();
 
     this.selectRoles = user_service.roles();
 
@@ -132,6 +139,7 @@ function EditResourceController(user, sweet, $window, $http, $uibModalInstance, 
                 var role = self.selectedRole == 'not involved' ? undefined : self.selectedRole;
 
                 var community_path = location.key; // resources can only be created in locations (for now)
+                console.log(self.selectedCompany);
 
                 company_service.addCompany(self.selectedCompany, role, location.key, community_path, self.selectedCompany.key)
                     .then(function(response) {
@@ -169,7 +177,7 @@ function EditResourceController(user, sweet, $window, $http, $uibModalInstance, 
                                     }
                                 }
 
-                                $http.get('/' + self.location.key + '/resources');
+                                $http.get('/' + location.key + '/resources');
 
                                 // add new role
 
@@ -191,7 +199,7 @@ function EditResourceController(user, sweet, $window, $http, $uibModalInstance, 
                                     self.user.communities.push(co_key);
                                 }
 
-                                self.selectedCompany = undefined;
+                                //self.selectedCompany = undefined;
                                 self.company = undefined;
                                 self.updateCompany = false;
                                 self.selectedRole = 'not involved';
@@ -208,6 +216,7 @@ function EditResourceController(user, sweet, $window, $http, $uibModalInstance, 
                         self.working = false;
                         self.alert = { type: 'danger', message: String(error.data.message) };
                     })
+
             }
 
         } else self.submitted = true;

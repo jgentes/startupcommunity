@@ -108,11 +108,22 @@ function handleGetCommunity(req, res) {
                 var newresponse = {};
 
                 var finalize = function (results) {
+                    
+                    // finalize iterates through results and formats them nicely
 
                     for (item in results) {
                         if (results[item].value) {
-                            newresponse[results[item].path.key] = results[item].value;
-                            newresponse[results[item].path.key]["key"] = results[item].path.key;
+                            if (results[item].value.resource) {
+                                
+                                // put resources in their own bucket
+                                
+                                if (!newresponse.resources) newresponse["resources"] = {};
+                                newresponse.resources[results[item].path.key] = results[item].value;
+                                newresponse.resources[results[item].path.key]["key"] = results[item].path.key;
+                            } else {
+                                newresponse[results[item].path.key] = results[item].value;
+                                newresponse[results[item].path.key]["key"] = results[item].path.key;
+                            }
                         }
                     }
                     newresponse["key"] = community;
@@ -236,9 +247,12 @@ function handleGetCommunity(req, res) {
                                 ubersearch = '(@path.key: ' + m_home + ')';
                             } else ubersearch = "";
 
-                            if (m.value.type == "location") ubersearch += ' OR @value.primary: true '; // + pull primary industries (clusters)
+                            if (m.value.type == "location") {
+                                ubersearch += ' OR @value.primary: true ';
+                                ubersearch += ' OR (@value.communities: "' + m.path.key + '" AND @value.resource: true)';
+                            } // + pull primary industries (clusters)
 
-                            console.log(ubersearch)
+                            console.log(ubersearch);
 
                             if (ubersearch) {
 

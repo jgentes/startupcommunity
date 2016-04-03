@@ -24,16 +24,27 @@
                 </div>
                 <div style="padding-top: 10px;" ng-show="add.selectedCompany.name">
                     <h4 style="line-height:1.75;">
-                        Your primary role at {{add.selectedCompany.name}} is
-                        <select class="btn btn-default btn-outline" style="padding-left: 5px;margin-left: 3px;margin-top: -4px;" ng-model="add.selectedRole" ng-options="r.value as r.text for r in add.selectRoles"></select>
-                        <br/>
-                        {{add.selectedCompany.name}}'s headline is <a style="color:#4ea5e0;" editable-text="add.selectedCompany.headline">{{add.selectedCompany.headline || 'empty'}}</a>.
+                        <div class="panel-heading" style="font-size: 20px;">What type of resource is this?</div>
+
+                        <ui-select class="industry_select" multiple="multiple" ng-model="add.selectedCompany.resource_types" ng-disabled="disabled" style="margin-bottom: 5px; padding:5px;">
+                            <ui-select-match placeholder="College, Acclerator, etc">{{$item}}</ui-select-match>
+                            <ui-select-choices repeat="p in add.resource_types | filter: $select.search">
+                                <div ng-bind-html="p | highlight: $select.search"></div>
+                            </ui-select-choices>
+                        </ui-select>
                         <br><br>
                         Select a primary industry for {{add.selectedCompany.name}}:
                         <select class="form-control m-b" ng-model="add.selectedCompany.parent" style="margin-bottom: 5px;" required>
                             <option ng-repeat="parent in add.parents">{{ parent }}</option>
                         </select>
                         <br>
+                        <br>
+
+
+                        Your primary role at {{add.selectedCompany.name}} is
+                        <select class="btn btn-default btn-outline" style="padding-left: 5px;margin-left: 3px;margin-top: -4px;" ng-model="add.selectedRole" ng-options="r.value as r.text for r in add.selectRoles"></select>
+                        <br/>
+                        {{add.selectedCompany.name}}'s headline is <a style="color:#4ea5e0;" editable-text="add.selectedCompany.headline">{{add.selectedCompany.headline || 'empty'}}</a>.
                         <br/>
                         Click below to edit {{add.selectedCompany.name}}'s summary:
                     </h4>
