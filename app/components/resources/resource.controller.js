@@ -61,14 +61,13 @@ function ResourceController($stateParams, location, communities, nav_communities
         "({community_path: item.key, community: item, query: '*', location_path: networks.location.key, top: networks.top, communities: networks.communities, user: networks.user })" :
         "({community_path: item.key, community: item, query: '*', location_path: networks.user.profile.home, top: networks.top, communities: networks.communities, user: networks.user })";
 
-    for (var item in this.resources) {
+    for (item in this.resources) {
         var currentItem = this.resources[item];
         if (currentItem.resource) {
-            var community = this.resources[item];
-            if (community.resource_types && community.resource_types.length) {
-                for (type in community.resource_types) {
-                    self.networks[community.resource_types[type]] = self.networks[type] || [];
-                    self.networks[community.resource_types[type]].push(community);
+            if (currentItem.resource_types && currentItem.resource_types.length) {
+                for (type in currentItem.resource_types) {
+                    self.networks[currentItem.resource_types[type]] = self.networks[type] || [];
+                    self.networks[currentItem.resource_types[type]].push(currentItem);
                 }
             }
         }

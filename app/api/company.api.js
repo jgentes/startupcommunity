@@ -16,7 +16,7 @@ var CompanyApi = function() {
 };
 
 var schema = {
-    angellist: function (profile, location_key, community_key) {
+    company: function (profile, location_key, community_key) {
 
         var communities = location_key == community_key ?
             [location_key] :
@@ -30,13 +30,16 @@ var schema = {
                 "home": location_key,
                 "name": profile.name,
                 "parents": [profile.parent.toLowerCase()],
-                "angellist": profile,
                 "headline": profile.high_concept,
                 "summary": profile.product_desc,
                 "avatar": profile.thumb_url || "",
                 "logo": profile.logo_url || "",
                 "stage": profile.stage,
-                "industries": profile.industries
+                "industries": profile.industries,
+                "angellist": {
+                    "id": profile.id,
+                    "angellist_url": profile.angellist_url
+                }
             },
             "community_profiles": {},
             "communities": communities
@@ -242,8 +245,7 @@ function handleAddCompany(req, res) {
                         addCompany.community_key = addCompany.location_key;
                     }
 
-                    var company = schema.angellist(addCompany.al_profile, addCompany.location_key, addCompany.community_key);
-                    if (company.profile.angellist.industries) delete company.profile.angellist.industries;
+                    var company = schema.company(addCompany.al_profile, addCompany.location_key, addCompany.community_key);
 
                     //search for company and add if not there..
                     companyPull(company, addCompany.role, addCompany.location_key, req.user, addCompany.key, function(result) {

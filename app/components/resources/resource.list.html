@@ -17,16 +17,7 @@
                 <ul class="nav nav-second-level" ng-if="resource.networks[parent.title]">
                     <li ng-repeat="item in resource.networks[parent.title] track by $index">
                         <div class="col-md-12">
-                            <a ui-sref="{{'community.dashboard' + resource.nav_jump}}">
-                                <strong>{{item.community_profiles[resource.location.key].name}}</strong></i>
-                                <span loading-bars ng-show="nc_working"></span>
-                            </a>
-
-                            <div>
-                                {{item.community_profiles[resource.location.key].description || item.profile.description}}
-                            </div>
-
-                            <hr>
+                            <div class="row" ng-include="'components/resources/resource.list.item.html'"></div>
                         </div>
                     </li>
                 </ul>

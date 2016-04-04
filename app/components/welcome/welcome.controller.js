@@ -178,7 +178,7 @@ function WelcomeController($auth, $q, $http, $window, $mixpanel, $uibModalInstan
         var oldco = profile;
         self.company = oldco.profile.name;
         if (!self.selectedCompany) self.selectedCompany = {};
-        if (oldco.profile.angellist) self.selectedCompany = oldco.profile.angellist;
+        if (oldco.profile.angellist) self.selectedCompany = oldco.profile;
         self.selectedCompany['name'] = oldco.profile.name;
         self.selectedCompany['key'] = oldco.key;
         if (oldco.profile.industries) self.selectedCompany['industries'] = oldco.profile.industries;
