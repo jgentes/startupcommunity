@@ -131,11 +131,24 @@ function WelcomeController($auth, $q, $http, $window, $mixpanel, $uibModalInstan
     // for startup logo upload to S3
     this.uploadLogo = function (file) {
         // get the secure S3 url
-        company_service.getLogoUrl(file, self.selectedCompany.name)
+        company_service.getLogoUrl(file.name, self.selectedCompany.name)
             .then(function(response) {
+                var signedUrl = response.data.put,
+                    fileUrl = response.data.get;
 
-                self.selectedCompany.thumb_url = response;
+                var d_completed = $q.defer();
+                var xhr = new XMLHttpRequest();
+                xhr.file = file;
 
+                xhr.onreadystatechange = function(e) {
+                    if ( 4 == this.readyState ) {
+                        self.selectedCompany.thumb_url = fileUrl;
+                        d_completed.resolve(true);
+                    }
+                };
+                xhr.open('PUT', signedUrl, true);
+                xhr.setRequestHeader("Content-Type","application/octet-stream");
+                xhr.send(file);
             })
     };
 
@@ -185,7 +198,7 @@ function WelcomeController($auth, $q, $http, $window, $mixpanel, $uibModalInstan
         if (oldco.profile.stage) self.selectedCompany['stage'] = oldco.profile.stage;
         if (oldco.profile.headline) self.selectedCompany['high_concept'] = oldco.profile.headline;
         if (oldco.profile.summary) self.selectedCompany['product_desc'] = oldco.profile.summary;
-        if (oldco.profile.avatar) self.selectedCompany['thumb_url'] = oldco.profile.avatar;
+        if (oldco.profile.avatar) self.selectedCompany['avatar'] = oldco.profile.avatar;
 
         if (oldco.profile.parents) {
             switch(oldco.profile.parents[0]) {

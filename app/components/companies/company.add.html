@@ -9,12 +9,12 @@
             <div ng-show="welcome.selectedCompany" style="text-align:center;">
                 <a href="{{welcome.selectedCompany.angellist_url}}" target="_blank" title="{{welcome.selectedCompany.name}}'s AngelList Profile">
                     <img style="height:75px;"
-                         ngf-thumbnail="welcome.selectedCompany.thumb_url || file || '/public/images/blank_startup.jpg'">
+                         ngf-thumbnail="welcome.selectedCompany.avatar || file || '/public/images/blank_startup.jpg'">
                 </a>
                 <h4 ng-show="welcome.update">{{::welcome.community.profile.name}}</h4>
                 <br/>
                 <label id="uploader_text">
-                    <input type="file" ng-model="logo_thumbnail" name="file" ngf-pattern="'image/*'"
+                    <input type="file" ng-model="welcome.selectedCompany.avatar" name="file" ngf-pattern="'image/*'"
                            accept="image/*" ngf-max-size="2MB" ngf-min-height="50"
                            ngf-resize="{width: 75, height: 75}" ngf-select="welcome.uploadLogo($file)" style="display:none;"/>
                     <h6>Change thumbnail..</h6>

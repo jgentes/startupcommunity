@@ -6,57 +6,60 @@
     </div>
     <div class="modal-body">
         <div class="hpanel">
-            <div style="text-align:center;" ng-show="add.selectedCompany.name">
-                <img style="height:75px;" ngf-thumbnail="add.selectedCompany.thumb_url || logo_thumbnail || '/public/images/blank_startup.jpg'">
-                <h4 ng-show="add.update">{{::add.community.profile.name}}</h4>
-                <br/>
-                <label id="uploader_text">
-                    <input type="file" ng-model="logo_thumbnail" name="file" ngf-pattern="'image/*'"
-                           accept="image/*" ngf-max-size="2MB" ngf-min-height="50"
-                           ngf-resize="{width: 75, height: 75}" ngf-select="add.uploadLogo($file)" style="display:none;"/>
-                    <h6>Change thumbnail (75x75)..</h6>
-                </label>
-            </div>
+
             <div style="padding: 20px;">
 
                 <div class="form-group">
                     <input type="text" placeholder="Type the resource name.." ng-model="add.selectedCompany.name" class="form-control input-lg">
                 </div>
-                <div style="padding-top: 10px;" ng-show="add.selectedCompany.name">
-                    <h4 style="line-height:1.75;">
+                <div ng-if="add.selectedCompany.name">
+                    <div style="text-align:center;">
+                        <img style="height:75px;" ngf-thumbnail="add.selectedCompany.avatar || avatar || '/public/images/blank_startup.jpg'">
+                        <h4 ng-show="add.update">{{::add.community.profile.name}}</h4>
+                        <br/>
+                        <label id="uploader_text">
+                            <input type="file" ng-model="avatar" name="file" ngf-pattern="'image/*'"
+                                   accept="image/*" ngf-max-size="2MB" ngf-min-height="50"
+                                   ngf-resize="{width: 75, height: 75}" ngf-select="add.uploadLogo($file)" style="display:none;"/>
+                            <h6>Change thumbnail (75x75)..</h6>
+                        </label>
+                    </div>
+                    <div style="padding-top: 10px;">
+                        <h4 style="line-height:1.75;">
 
-                        What type of resource is this?
+                            What type of resource is this?
 
-                        <ui-select class="industry_select" multiple="multiple" ng-model="add.selectedCompany.resource_types" ng-disabled="disabled" style="margin-bottom: 5px; padding:5px;">
-                            <ui-select-match placeholder="College, Acclerator, etc">{{$item}}</ui-select-match>
-                            <ui-select-choices repeat="p in add.resource_types | filter: $select.search">
-                                <div ng-bind-html="p | highlight: $select.search"></div>
-                            </ui-select-choices>
-                        </ui-select>
-                        <br>
+                            <ui-select class="industry_select" multiple="multiple" ng-model="add.selectedCompany.resource_types" ng-disabled="disabled" style="margin-bottom: 5px; padding:5px;">
+                                <ui-select-match placeholder="College, Acclerator, etc">{{$item}}</ui-select-match>
+                                <ui-select-choices repeat="p in add.resource_types | filter: $select.search">
+                                    <div ng-bind-html="p | highlight: $select.search"></div>
+                                </ui-select-choices>
+                            </ui-select>
+                            <br>
 
-                        Select a primary industry:
+                            Select a primary industry:
 
-                        <select class="form-control m-b" ng-model="add.selectedCompany.parent" style="margin-bottom: 5px;" required>
-                            <option ng-repeat="parent in add.parents">{{ parent }}</option>
-                        </select>
-                        <br>
+                            <select class="form-control m-b" ng-model="add.selectedCompany.parent" style="margin-bottom: 5px;" required>
+                                <option ng-repeat="parent in add.parents">{{ parent }}</option>
+                            </select>
+                            <br>
 
-                        Your primary role is
+                            Your primary role is
 
-                        <select class="btn btn-default btn-outline" style="padding-left: 5px;margin-left: 3px;margin-top: -4px;" ng-model="add.selectedRole" ng-options="r.value as r.text for r in add.selectRoles"></select>
-                        <br><br>
+                            <select class="btn btn-default btn-outline" style="padding-left: 5px;margin-left: 3px;margin-top: -4px;" ng-model="add.selectedRole" ng-options="r.value as r.text for r in add.selectRoles"></select>
+                            <br><br>
 
-                        {{add.selectedCompany.name}}'s headline is <a style="color:#4ea5e0;" editable-text="add.selectedCompany.headline">{{add.selectedCompany.headline || 'empty'}}</a>.
-                        <br><br>
+                            The headline for {{ add.selectedCompany.name }} is <a style="color:#4ea5e0;" editable-text="add.selectedCompany.headline">{{add.selectedCompany.headline || 'empty'}}</a>.
+                            <br><br>
 
-                        Click below to edit the summary:
+                            Click below to edit the summary:
 
-                    </h4>
-                    <div class="summary_form">
-                        <a editable-textarea="add.selectedCompany.product_desc" e-rows="12" e-cols="60">
-                            <pre style="background: none; font-family: inherit; font-size: 14px; text-align: left;">{{add.selectedCompany.product_desc || 'Nothing here!'}}</pre>
-                        </a>
+                        </h4>
+                        <div class="summary_form">
+                            <a editable-textarea="add.selectedCompany.product_desc" e-rows="12" e-cols="60">
+                                <pre style="background: none; font-family: inherit; font-size: 14px; text-align: left;">{{add.selectedCompany.product_desc || 'Nothing here!'}}</pre>
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>

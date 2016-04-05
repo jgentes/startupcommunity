@@ -296,23 +296,6 @@ angular
             },
             getLogoUrl: function(file, company_name) {
                 return $http.get('/api/2.1/companies/url?filename=' + file.name + '&company_name=' + company_name)
-                    .then(function(response) {
-                        var signedUrl = response.data.put,
-                            fileUrl = response.data.get;
-
-                        var d_completed = $q.defer();
-                        var xhr = new XMLHttpRequest();
-                        xhr.file = file;
-
-                        xhr.onreadystatechange = function(e) {
-                            if ( 4 == this.readyState ) {
-                                d_completed.resolve(true);
-                            }
-                        };
-                        xhr.open('PUT', signedUrl, true);
-                        xhr.setRequestHeader("Content-Type","application/octet-stream");
-                        xhr.send(file);
-                    });
             }
         };
     })

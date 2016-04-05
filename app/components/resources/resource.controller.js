@@ -66,7 +66,7 @@ function ResourceController($stateParams, location, communities, nav_communities
         if (currentItem.resource) {
             if (currentItem.resource_types && currentItem.resource_types.length) {
                 for (type in currentItem.resource_types) {
-                    self.networks[currentItem.resource_types[type]] = self.networks[type] || [];
+                    self.networks[currentItem.resource_types[type]] = self.networks[currentItem.resource_types[type]] || [];
                     self.networks[currentItem.resource_types[type]].push(currentItem);
                 }
             }
@@ -92,7 +92,7 @@ function ResourceController($stateParams, location, communities, nav_communities
     }*/
 }
 
-function EditResourceController(user, sweet, $window, $http, $uibModalInstance, community, location, communities, user_service, company_service, community_service, resource) {
+function EditResourceController(user, sweet, $state, $q, $window, $http, $uibModalInstance, community, location, communities, user_service, company_service, community_service, resource) {
     var self = this;
 
     this.community = community;
@@ -111,21 +111,31 @@ function EditResourceController(user, sweet, $window, $http, $uibModalInstance, 
     // for startup logo upload to S3
     this.uploadLogo = function (file) {
         // get the secure S3 url
-        company_service.getLogoUrl(file, self.selectedCompany.name)
+        company_service.getLogoUrl(file.name, self.selectedCompany.name)
             .then(function(response) {
-                
-                self.selectedCompany.thumb_url = response;
-                
-            })
+                var signedUrl = response.data.put,
+                    fileUrl = response.data.get;
 
+                var d_completed = $q.defer();
+                var xhr = new XMLHttpRequest();
+                xhr.file = file;
+
+                xhr.onreadystatechange = function(e) {
+                    if ( 4 == this.readyState ) {
+                        self.selectedCompany.thumb_url = fileUrl;
+                        d_completed.resolve(true);
+                    }
+                };
+                xhr.open('PUT', signedUrl, true);
+                xhr.setRequestHeader("Content-Type","application/octet-stream");
+                xhr.send(file);
+            })
     };
 
     this.addCompany = function(e, resource_if_true) {
         if (e) e.preventDefault();
 
         if (self.selectedCompany && self.selectedCompany.parent) {
-            // adjust parent industry caps
-            self.selectedCompany.parent = self.selectedCompany.parent.toLowerCase();
 
             self.selectedCompany.resource = resource_if_true || false;
 
@@ -143,6 +153,7 @@ function EditResourceController(user, sweet, $window, $http, $uibModalInstance, 
                 company_service.addCompany(self.selectedCompany, role, location.key, community_path, self.selectedCompany.key)
                     .then(function(response) {
                         self.working = false;
+                        $http.get('/api/2.1/community/' + location.key + '?nocache=true'); // clear cache
 
                         if (response.status !== 200) {
                             sweet.show({
@@ -176,8 +187,6 @@ function EditResourceController(user, sweet, $window, $http, $uibModalInstance, 
                                     }
                                 }
 
-                                $http.get('/' + location.key + '/resources');
-
                                 // add new role
 
                                 if (!self.user.roles[role]) {
@@ -198,7 +207,7 @@ function EditResourceController(user, sweet, $window, $http, $uibModalInstance, 
                                     self.user.communities.push(co_key);
                                 }
 
-                                //self.selectedCompany = undefined;
+                                self.selectedCompany = undefined;
                                 self.company = undefined;
                                 self.updateCompany = false;
                                 self.selectedRole = 'not involved';
@@ -207,6 +216,8 @@ function EditResourceController(user, sweet, $window, $http, $uibModalInstance, 
                                 self.notlisted = false;
                                 if (self.update) self.updated = true;
                                 if ($uibModalInstance) $uibModalInstance.close();
+
+                                $state.reload();
                             })
                         }
 

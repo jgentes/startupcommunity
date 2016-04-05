@@ -3,7 +3,7 @@
         <a ui-sref="company.dashboard({profile: item, location_path: item.key, location: nav.community, community: item, top: nav.top, communities: nav.communities, user: nav.user })" title="View {{::item.profile.name | words:0}}'s Profile"><img
                 ng-src="{{item.profile.avatar || '/public/images/blank_startup.jpg'}}" alt="{{::item.profile.name}}" class="user-img widget-image pull-left" onerror="this.src='images/blank_startup.jpg'"/></a>
     </div>
-    <div class="user-row" ng-class="{'user-row-border': $index % 2 == 0}">
+    <div class="user-row">
         <a ui-sref="company.dashboard({profile: item, location_path: item.key, location: nav.community, community: item, top: nav.top, communities: nav.communities, user: nav.user })" title="View {{::item.profile.name | words:0}}'s Profile" style="float: left; "><strong>{{::item.profile.name}} </strong></a>
         <a ng-show="{{(item.profile.summary).length > 0}}" title="Show Summary" ng-click="showSummary = !showSummary" class="user-summary">&nbsp;&nbsp;<i class="fa fa-chevron-down fa-fw"></i>
         </a>

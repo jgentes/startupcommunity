@@ -33,7 +33,6 @@ var schema = {
                 "headline": profile.high_concept,
                 "summary": profile.product_desc,
                 "avatar": profile.thumb_url || "",
-                "logo": profile.logo_url || "",
                 "stage": profile.stage,
                 "industries": profile.industries,
                 "angellist": {
@@ -476,7 +475,7 @@ var companyPull = function (company, role, location_key, user, key, callback) {
                     .then(function (response) {
 
                         var companykey = response.headers.location.split('/')[3];
-                        console.log("REGISTERED: " + company.profile.name);
+                        console.log("REGISTERED: " + company.profile.name + " as " + companykey);
 
                         if (role) {
                             addRole(companykey, role, location_key, user);
