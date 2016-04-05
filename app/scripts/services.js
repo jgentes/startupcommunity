@@ -295,7 +295,7 @@ angular
                 });
             },
             getLogoUrl: function(file, company_name) {
-                return $http.get('/api/2.1/companies/url?filename=' + file.name + '&company_name=' + company_name)
+                return $http.get('/api/2.1/companies/url?filename=' + file + '&company_name=' + company_name)
             }
         };
     })

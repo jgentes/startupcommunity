@@ -14,11 +14,11 @@
                 </div>
                 <div ng-if="add.selectedCompany.name">
                     <div style="text-align:center;">
-                        <img style="height:75px;" ngf-thumbnail="add.selectedCompany.avatar || file || '/public/images/blank_startup.jpg'">
+                        <img style="height:75px;" ngf-thumbnail="add.selectedCompany.avatar || avatar || '/public/images/blank_startup.jpg'">
                         <h4 ng-show="add.update">{{::add.community.profile.name}}</h4>
                         <br/>
                         <label id="uploader_text">
-                            <input type="file" ng-model="add.selectedCompany.avatar" name="file" ngf-pattern="'image/*'"
+                            <input type="file" ng-model="avatar" name="file" ngf-pattern="'image/*'"
                                    accept="image/*" ngf-max-size="2MB" ngf-min-height="50"
                                    ngf-resize="{width: 75, height: 75}" ngf-select="add.uploadLogo($file)" style="display:none;"/>
                             <h6>Change thumbnail (75x75)..</h6>
