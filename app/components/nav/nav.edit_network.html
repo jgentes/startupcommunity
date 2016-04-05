@@ -7,36 +7,20 @@
     <div class="modal-body">
         <form name="edit.form">
             <div class="hpanel">
-                <div class="panel-heading" style="font-size: 20px;">1. Select one or more network types</div>
-
-                <!-- <dropdown-multiselect list="edit.parents" ng-model="edit.communityForm.parent"></dropdown-multiselect> -->
-                <ui-select class="industry_select" multiple="multiple" ng-model="edit.communityForm.parent" ng-disabled="disabled" style="margin-bottom: 5px; padding:5px;">
-                    <ui-select-match placeholder="College, Acclerator, etc">{{$item.label}}</ui-select-match>
-                    <ui-select-choices repeat="p.id as p in edit.parentTypes | filter: $select.search">
-                        <div ng-bind-html="p.label | highlight: $select.search"></div>
-                    </ui-select-choices>
-                </ui-select>
-
-                <!-- <select class="form-control m-b" ng-model="edit.communityForm.parent" style="margin-bottom: 5px;" required>
-                    <option ng-repeat="parent in edit.parents">{{ parent }}</option>
-                </select> -->
-                <div><em><a href="mailto:james@startupcommunity.org?subject='I have a different type of network'" target="_blank">Type not listed?</a></em></div>
-
-                <div class="m-t-xs" ng-show="!edit.communityForm.parent && edit.submitted">
-                    <span class="text-danger">&nbsp;&nbsp;<i class="fa fa-exclamation-triangle"></i> A type is required.</span>
-                </div>
-                <br><br>
-                <div class="panel-heading" style="font-size: 20px;">2. Give the network a name</div>
-                <input type="text" class="form-control input-lg" placeholder="Techstars" ng-model="edit.communityForm.name" style="margin-bottom: 5px;" required>
-                <div class="m-t-xs" ng-show="!edit.communityForm.name && edit.submitted">
-                    <span class="text-danger">&nbsp;&nbsp;<i class="fa fa-exclamation-triangle"></i> A name is required.</span>
-                </div>
+                <div class="panel-heading" style="font-size: 20px;">Select a resource to associate this network with:</div>
+                <select class="form-control m-b" ng-model="edit.communityForm.resource" style="margin-bottom: 5px;" required>
+                    <option ng-repeat="resource in edit.resources">{{ resource.community_profiles[edit.location.key].name }}</option>
+                </select>
+                <div><em><a ng-click="edit.cancel();$state.go('resource.list');">Click here to create a resource</a></em></div>
                 <br>
-                <div class="panel-heading" style="font-size: 20px;">3. Customize the url path</div>
+                <div class="panel-heading" style="font-size: 20px;">Give the network a name:</div>
+                <input type="text" class="form-control input-lg" placeholder="Techstars" ng-model="edit.communityForm.name" style="margin-bottom: 5px;" required>
+                <br>
+                <div class="panel-heading" style="font-size: 20px;">Customize the url path:</div>
                 <input type="text" class="form-control input-lg" placeholder="{{ edit.encode(edit.communityForm.name) }}" ng-model="edit.communityForm.url" style="margin-bottom: 5px;">
                 <em>Your url will be: https://startupcommunity.org/{{ edit.location.key }}/<strong><span style="text-transform: lowercase;">{{ edit.encode(edit.communityForm.url || edit.communityForm.name) }}</span></strong></em>
                 <br><br>
-                <div class="panel-heading" style="font-size: 20px;">4. And a short description</div>
+                <div class="panel-heading" style="font-size: 20px;">And a short description:</div>
                 <input type="text" class="form-control input-lg" placeholder="An accelerator for early stage SaaS startups.." ng-model="edit.communityForm.headline">
                 <br>
                 <br>

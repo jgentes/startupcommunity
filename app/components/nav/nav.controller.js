@@ -701,10 +701,10 @@ function CommunityController($uibModalInstance, $mixpanel, sweet, community_serv
     if (community.type == 'cluster') {
         self.parents = community_service.parents();
     } else if (community.type == 'network') {
-        self.parents = community_service.resource_types();
-        self.parentTypes = self.parents.map(function(item) {
-            return { id: item.toLowerCase(), label: item}
-        });
+        community_service.getResources(loc_key)
+            .then(function(recs) {
+                self.resources = recs.data;
+            });
     }
 
     if (community.key) {
@@ -779,6 +779,7 @@ function CommunityController($uibModalInstance, $mixpanel, sweet, community_serv
                     headline: self.communityForm.headline,
                     parents: (angular.isArray(self.communityForm.parent)) ? self.communityForm.parent : [self.communityForm.parent.toLowerCase()]
                 },
+                resource: self.communityForm.resource ? self.communityForm.resource.key : "",
                 url: encodedUrl || encodeURI(self.communityForm.name.toLowerCase())
             };
 

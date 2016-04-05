@@ -11,15 +11,16 @@ var memjs = require('memjs'),
 
 var CommunityApi = function () {
     this.getCommunity = handleGetCommunity;
+    this.getResources = handleGetResources;
     this.setCommunity = handleSetCommunity;
     this.editCommunity = handleEditCommunity;
     this.deleteCommunity = handleDeleteCommunity;
     this.getKey = handleGetKey;
     this.getTop = handleGetTop;
-    this.convert_state = convert_state;
+    this.convert_state = handleConvert_state;
 };
 
-var convert_state = function (name, to) {
+var handleConvert_state = function (name, to) {
     name = name.toUpperCase();
     var states = [
         {'name': 'Alabama', 'abbrev': 'AL'}, {'name': 'Alaska', 'abbrev': 'AK'}, {'name': 'Arizona', 'abbrev': 'AZ'}, {'name': 'Arkansas', 'abbrev': 'AR'}, {'name': 'California', 'abbrev': 'CA'},
@@ -313,6 +314,49 @@ function handleGetCommunity(req, res) {
     } else res.status(404).send({message: 'Please specify a community!'});
 }
 
+function handleGetResources(req, res) {
+
+    var location_key = req.query.location_key;
+
+    var searchString = '@value.type:"company" AND @value.resource: true AND @value.communities: "' + location_key + '"';
+
+    if (location_key) {
+        
+        console.log(searchString);
+        
+        db.newSearchBuilder()
+            .collection(process.env.DB_COMMUNITIES)
+            .limit(100)
+            .offset(0)
+            .query(searchString)
+            .then(function (result) {
+
+                var newresponse = {};
+
+                if (result.body.results.length > 0) {
+                    
+                    for (resource in result.body.results) {
+                        var r = result.body.results[resource];
+
+                        newresponse[r.path.key] = r.value;
+                        newresponse[r.path.key]["key"] = r.path.key;
+                        
+                        res.status(200).send(newresponse);
+                    }
+                        
+                } else {
+                    console.log('INFO: No Resources found!');
+                    res.status(404).send({message: 'No resources found!'});
+                }
+            })
+            .fail(function (err) {
+                console.log("WARNING: community236", err);
+                res.status(202).send({message: 'Something went wrong: ' + err});
+            });
+
+    } else res.status(404).send({message: 'Please specify a location!'});
+}
+
 function handleGetTop(req, res) {
 
     //console.log(util.inspect(req)); // used for logging circular request
@@ -355,7 +399,7 @@ function handleGetTop(req, res) {
     }
 
     // determine whether location is a state
-    var state_suffix = convert_state(location_key.replace('-',' '), 'abbrev'); // returns false if no match
+    var state_suffix = handleConvert_state(location_key.replace('-',' '), 'abbrev'); // returns false if no match
     var state = state_suffix ? ' OR "*-' + state_suffix.toLowerCase() + '")' : ')';
 
     // add search based on home suffix (which allows for roll-up to state level)

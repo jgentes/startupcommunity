@@ -168,6 +168,9 @@ angular
               getCommunity: function(community) {
                   return $http.get('/api/2.1/community/' + community);
               },
+              getResources: function(location_key) {
+                  return $http.get('/api/2.3/resources?location_key=' + location_key);
+              },
               getKey: function(key) {
                   return $http.get('/api/2.1/key/' + key);
               },
