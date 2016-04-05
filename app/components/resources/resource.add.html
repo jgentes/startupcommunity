@@ -14,7 +14,7 @@
                 </div>
                 <div ng-if="add.selectedCompany.name">
                     <div style="text-align:center;">
-                        <img style="height:75px;" ngf-thumbnail="add.selectedCompany.avatar || avatar || '/public/images/blank_startup.jpg'">
+                        <img ng-show="!add.loadimg" style="height:75px;" ngf-thumbnail="add.selectedCompany.avatar || avatar || '/public/images/blank_startup.jpg'">
                         <h4 ng-show="add.update">{{::add.community.profile.name}}</h4>
                         <br/>
                         <label id="uploader_text">
@@ -49,17 +49,18 @@
                             <select class="btn btn-default btn-outline" style="padding-left: 5px;margin-left: 3px;margin-top: -4px;" ng-model="add.selectedRole" ng-options="r.value as r.text for r in add.selectRoles"></select>
                             <br><br>
 
-                            The headline for {{ add.selectedCompany.name }} is <a style="color:#4ea5e0;" editable-text="add.selectedCompany.headline">{{add.selectedCompany.headline || 'empty'}}</a>.
+                            The headline for {{ add.selectedCompany.name }} is <a style="color:#4ea5e0;" editable-text="add.selectedCompany.high_concept">{{add.selectedCompany.high_concept || 'empty'}}</a>.
                             <br><br>
 
                             Click below to edit the summary:
 
+                            <div class="summary_form">
+                                <a editable-textarea="add.selectedCompany.product_desc" e-rows="8" e-cols="60">
+                                    <pre style="background: none; font-family: inherit; font-size: 14px; text-align: left;">{{add.selectedCompany.product_desc || 'Nothing here!'}}</pre>
+                                </a>
+                            </div>
+
                         </h4>
-                        <div class="summary_form">
-                            <a editable-textarea="add.selectedCompany.product_desc" e-rows="12" e-cols="60">
-                                <pre style="background: none; font-family: inherit; font-size: 14px; text-align: left;">{{add.selectedCompany.product_desc || 'Nothing here!'}}</pre>
-                            </a>
-                        </div>
                     </div>
                 </div>
             </div>
