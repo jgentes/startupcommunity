@@ -771,13 +771,17 @@ function CommunityController($uibModalInstance, $mixpanel, sweet, community_serv
                     self.submitted = true;
                 }
             }
+            
+            if (self.communityForm.parent) {
+                var parents = angular.isArray(self.communityForm.parent) ? self.communityForm.parent : [self.communityForm.parent.toLowerCase()];
+            } else parents = [];
 
             var newCommunity = {
                 type: community.type,
                 profile: {
                     name: self.communityForm.name,
                     headline: self.communityForm.headline,
-                    parents: (angular.isArray(self.communityForm.parent)) ? self.communityForm.parent : [self.communityForm.parent.toLowerCase()]
+                    parents: parents
                 },
                 resource: self.communityForm.resource ? self.communityForm.resource.key : "",
                 url: encodedUrl || encodeURI(self.communityForm.name.toLowerCase())

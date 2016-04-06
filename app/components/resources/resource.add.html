@@ -69,10 +69,9 @@
     <div alert-box this-alert="add.alert" style="padding-top:10px;"></div>
     <div class="modal-footer">
         <button type="button" class="btn btn-default" ng-click="$close();$state.reload();" style="margin-right: 10px;"><span ng-show="!add.alert">Cancel</span><span ng-show="add.alert">Close</span></button>
-        <button type="button" class="btn btn-danger pull-left" ng-click="add.deleteCompany(add.community.key)" ng-show="add.update && !add.alert">Delete {{::add.community.profile.name || 'Resource'}}</button>
-        <input ng-show="!add.updated" ng-click="add.addCompany($event, true)" type="submit" class="finish btn-success btn pull-right" ng-class="{'disabled' : disabled || add.working || !add.selectedCompany}" value="{{ (add.updateCompany ? 'Update ' : 'Add ') + (add.selectedCompany.name || 'Resource') }}"/>
+        <button ladda="add.working" class="ladda-button btn btn-danger pull-left" data-style="zoom-in" data-spinner-size="25" ng-click="add.deleteCompany(add.community.key)" ng-show="add.update && !add.alert">Delete {{::add.community.profile.name || 'Resource'}}</button>
+        <input ladda="add.working" class="ladda-button finish btn-success btn pull-right" data-style="zoom-in" data-spinner-size="25" ng-show="!add.updated" ng-click="add.addCompany($event, true)" type="submit" ng-class="{'disabled' : disabled || add.working || !add.selectedCompany}" ng-bind-html="{{ (add.updateCompany ? 'Update ' : 'Add ') + (add.selectedCompany.name || 'Resource') }}"/>
         <button type="button" class="btn btn-default pull-right" style="margin-right: 15px;" ng-show="add.selectedCompany && !add.working && !add.update" ng-click="add.selectedCompany = undefined; add.company = undefined; add.alert = undefined; add.updateRole = false; add.selectedRole = 'none'; add.updateCompany = false; add.submitted = false; add.notlisted = false; add.dups = undefined;">Clear Form
-            <div loading-bars ng-show="add.working" style="padding-top: 5px; float: left;"></div>
         </button>
     </div>
 </div>
