@@ -809,20 +809,21 @@ function CommunityController($uibModalInstance, $mixpanel, sweet, community_serv
                         });
 
                     } else {
+                        if (rename) community_service.deleteCommunity(community, loc_key, newCommunity.url);
+
+                        // refresh outdated cache
+                        $http.get('/api/2.1/community/' + user.key);
+                        $http.get('/api/2.1/community/' + loc_key);
+
                         sweet.show({
                             title: community.type[0].toUpperCase() + community.type.slice(1) + (self.update ? " updated!" : " created!"),
-                            type: "success"
-                        }, function(){
-                            // refresh outdated cache
-                            $http.get('/api/2.1/community/' + user.key);
-                            $http.get('/api/2.1/community/' + loc_key);
-                            $http.get('/api/2.1/community/' + loc_key + '/' + newCommunity.url + '/top').then(function() {
-                                $window.location.href = '/'+ loc_key + '/' + newCommunity.url;
-                            });
-
-                            $uibModalInstance.close();
+                            type: "success",
+                            closeOnConfirm: true
                         });
-                        if (rename) community_service.deleteCommunity(community, loc_key, newCommunity.url);
+
+                        $http.get('/api/2.1/community/' + loc_key + '/' + newCommunity.url + '/top').then(function() {
+                            $window.location.href = '/'+ loc_key + '/' + newCommunity.url;
+                        });
                     }
                     $mixpanel.track('Added ' + community.type[0].toUpperCase() + community.type.slice(1));
                 });
@@ -867,11 +868,11 @@ function CommunityController($uibModalInstance, $mixpanel, sweet, community_serv
                         sweet.show({
                             title: "Deleted!",
                             text: "The " + self.community.name + " community is gone.",
-                            type: "success"
-                        }, function() {
-                            $uibModalInstance.close();
-                            $state.reload();
-                        })
+                            type: "success",
+                            closeOnConfirm: true
+                        });
+                        
+                        $state.reload();
                     }
                 });
         });
