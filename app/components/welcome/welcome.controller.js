@@ -332,58 +332,58 @@ function WelcomeController($auth, $q, $http, $window, $mixpanel, $uibModalInstan
                                 sweet.show({
                                     title: "Success!",
                                     text: response.data.message,
-                                    type: "success"
-                                }, function() {
-                                    if ($uibModalInstance) $uibModalInstance.close();
-                                    var co_key = response.data.key;
+                                    type: "success",
+                                    closeOnConfirm: true
+                                });
 
-                                    // update local profile with company data
+                                var co_key = response.data.key;
 
-                                    if (!self.user.roles) {
-                                        self.user["roles"] = {};
-                                    } else {
-                                        // search for existing role and delete if found
+                                // update local profile with company data
 
-                                        for (r in self.user.roles) {
-                                            for (co in self.user.roles[r]) {
-                                                if (co == co_key) {
-                                                    delete self.user.roles[r][co];
-                                                }
+                                if (!self.user.roles) {
+                                    self.user["roles"] = {};
+                                } else {
+                                    // search for existing role and delete if found
+
+                                    for (r in self.user.roles) {
+                                        for (co in self.user.roles[r]) {
+                                            if (co == co_key) {
+                                                delete self.user.roles[r][co];
                                             }
                                         }
                                     }
+                                }
 
-                                    if (self.selectedCompany && self.selectedCompany.key) $http.get('/api/2.1/community/' + self.selectedCompany.key + '?nocache=true');
+                                if (self.selectedCompany && self.selectedCompany.key) $http.get('/api/2.1/community/' + self.selectedCompany.key + '?nocache=true');
 
-                                    // add new role
+                                // add new role
 
-                                    if (!self.user.roles[role]) {
-                                        self.user.roles[role] = {};
-                                        self.user.roles[role][co_key] = [location.key];
-                                    } else if (!self.user.roles[role][co_key]) {
-                                        self.user.roles[role][co_key] = [location.key];
-                                    } else if (self.user.roles[role][co_key].indexOf(location.key) < 0) {
-                                        self.user.roles[role][co_key].push(location.key);
-                                    } // else the damn thing is already there
+                                if (!self.user.roles[role]) {
+                                    self.user.roles[role] = {};
+                                    self.user.roles[role][co_key] = [location.key];
+                                } else if (!self.user.roles[role][co_key]) {
+                                    self.user.roles[role][co_key] = [location.key];
+                                } else if (self.user.roles[role][co_key].indexOf(location.key) < 0) {
+                                    self.user.roles[role][co_key].push(location.key);
+                                } // else the damn thing is already there
 
-                                    // add community
-                                    if (!self.user.communities) {
-                                        self.user["communities"] = {};
-                                    }
+                                // add community
+                                if (!self.user.communities) {
+                                    self.user["communities"] = {};
+                                }
 
-                                    if (self.user.communities.indexOf(co_key) < 0) {
-                                        self.user.communities.push(co_key);
-                                    }
+                                if (self.user.communities.indexOf(co_key) < 0) {
+                                    self.user.communities.push(co_key);
+                                }
 
-                                    self.selectedCompany = undefined;
-                                    self.company = undefined;
-                                    self.updateCompany = false;
-                                    self.selectedRole = 'not involved';
-                                    self.submitted = false;
-                                    self.dups = undefined;
-                                    self.notlisted = false;
-                                    if (self.update) self.updated = true;
-                                })
+                                self.selectedCompany = undefined;
+                                self.company = undefined;
+                                self.updateCompany = false;
+                                self.selectedRole = 'not involved';
+                                self.submitted = false;
+                                self.dups = undefined;
+                                self.notlisted = false;
+                                if (self.update) self.updated = true;
                             }
                             
                         })
@@ -425,12 +425,12 @@ function WelcomeController($auth, $q, $http, $window, $mixpanel, $uibModalInstan
                         sweet.show({
                             title: "Deleted!",
                             text: self.selectedCompany.name + " is gone.",
-                            type: "success"
-                        }, function() {
-                            $http.get('/api/2.1/community/' + self.user.profile.home); // refresh outdated cache
-                            $uibModalInstance.close();
-                            $window.location.href = '/' + self.user.profile.home;
-                        })
+                            type: "success",
+                            closeOnConfirm: true
+                        });
+                        
+                        $http.get('/api/2.1/community/' + self.user.profile.home); // refresh outdated cache
+                        $window.location.href = '/' + self.user.profile.home;
                     }
                 });
         });
