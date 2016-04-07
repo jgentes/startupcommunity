@@ -316,6 +316,25 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                 }
             }
         })
+        .state('resource.add', {
+            url: "^/:location_path/:community_path/resources/add",
+            params: {
+                community_path: {
+                    value: null,
+                    squash: true
+                },
+                pageTitle: 'Add a Resource'
+            },
+            views: {
+                'header': {
+                    templateUrl: "components/header/header_small.html"
+                },
+                'content': {
+                    templateUrl: '../components/resources/resource.add.html',
+                    controller: "EditResourceController as add"
+                }
+            }
+        })
 
 
 

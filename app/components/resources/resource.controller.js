@@ -92,7 +92,7 @@ function ResourceController($stateParams, location, communities, nav_communities
     }*/
 }
 
-function EditResourceController(user, sweet, $state, $q, $window, $http, $uibModalInstance, community, location, communities, user_service, company_service, community_service, resource) {
+function EditResourceController(user, sweet, $state, $q, $window, $http, community, location, communities, user_service, company_service, community_service) {
     var self = this;
 
     this.community = community;
