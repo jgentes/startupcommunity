@@ -32,7 +32,6 @@
         <button ladda="news.working" class="ladda-button btn btn-danger pull-left" data-style="zoom-in" data-spinner-size="25" ng-click="edit.deleteCommunity()" ng-show="edit.update">Delete {{edit.communityForm.name || 'Network'}}</button>
         <button ladda="news.working" class="ladda-button btn btn-primary" data-style="zoom-in" data-spinner-size="25" ng-click="edit.editCommunity()">
             <span ng-show="!edit.update">Create</span><span ng-show="edit.update">Update</span> {{edit.communityForm.name || 'Network'}}
-            <div loading-bars ng-show="edit.working" style="padding-top: 5px; display: inline;"></div>
         </button>
     </div>
 </div>
