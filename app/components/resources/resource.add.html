@@ -1,77 +1,153 @@
-<div class="inmodal">
-    <div class="color-line"></div>
-    <div class="modal-header">
+<div class="hpanel" style="margin-top: 20px;">
+
+    <div class="panel-body">
         <h4 class="modal-title">Add a resource to <span ng-bind-html="::add.community.profile.name"></span></h4>
         <p class="font-bold">Resources include coworking spaces, accelerators, investment funds, networking events, and other organizations that support entrepreneurship.</p>
     </div>
-    <div class="modal-body">
-        <div class="hpanel">
 
-            <div style="padding: 20px;">
+    <div class="panel-body" style="margin-top: 20px;">
 
-                <div class="form-group">
-                    <input type="text" placeholder="Type the resource name.." ng-model="add.selectedCompany.name" ng-model-options="{ debounce: 250, blur: 0 }" class="form-control input-lg">
-                </div>
-                <div ng-if="add.selectedCompany.name">
-                    <div style="text-align:center;">
+        <form>
+
+
+            <div ng-show="add.step == 1"  class="p-m">
+
+                <div class="row">
+                    <div class="col-lg-3 text-center">
                         <img ng-show="!add.loadimg" style="height:75px;" ngf-thumbnail="add.selectedCompany.avatar || avatar || '/public/images/blank_startup.jpg'">
-                        <h4 ng-show="add.update" ng-bind-html="::add.community.profile.name"></h4>
+                        <h4 style="font-weight: 400;" ng-show="add.update" ng-bind-html="::add.community.profile.name"></h4>
                         <br/>
                         <label id="uploader_text">
                             <input type="file" ng-model="avatar" name="file" ngf-pattern="'image/*'"
                                    accept="image/*" ngf-max-size="2MB" ngf-min-height="50"
                                    ngf-resize="{width: 75, height: 75}" ngf-select="add.uploadLogo($file)" style="display:none;"/>
-                            <h6>Change thumbnail (75x75)..</h6>
+                            <h6>Change thumbnail..<br/>(75x75)</h6>
                         </label>
                     </div>
-                    <div style="padding-top: 10px;">
-                        <h4 style="line-height:1.75;">
-
-                            What type of resource is this?
-
-                            <ui-select class="industry_select" multiple="multiple" ng-model="add.selectedCompany.resource_types" ng-disabled="disabled" style="margin-bottom: 5px; padding:5px;">
-                                <ui-select-match placeholder="College, Acclerator, etc">{{$item}}</ui-select-match>
-                                <ui-select-choices repeat="p in add.resource_types | filter: $select.search">
-                                    <div ng-bind-html="p | highlight: $select.search"></div>
-                                </ui-select-choices>
-                            </ui-select>
-                            <br>
-
-                            Select a primary industry:
-
-                            <select class="form-control m-b" ng-model="add.selectedCompany.parent" style="margin-bottom: 5px;" required>
-                                <option ng-repeat="parent in add.parents">{{ ::parent }}</option>
-                            </select>
-                            <br>
-
-                            Your primary role is
-
-                            <select class="btn btn-default btn-outline" style="padding-left: 5px;margin-left: 3px;margin-top: -4px;" ng-model="add.selectedRole" ng-options="r.value as r.text for r in add.selectRoles"></select>
-                            <br><br>
-
-                            The headline for <span ng-bind-html="add.selectedCompany.name"></span> is <a style="color:#4ea5e0;" editable-text="add.selectedCompany.high_concept">{{add.selectedCompany.high_concept || 'empty'}}</a>.
-                            <br><br>
-
-                            Click below to edit the summary:
-
-                            <div class="summary_form">
-                                <a editable-textarea="add.selectedCompany.product_desc" e-rows="8" e-cols="60">
-                                    <pre style="background: none; font-family: inherit; font-size: 14px; text-align: left;">{{add.selectedCompany.product_desc || 'Nothing here!'}}</pre>
-                                </a>
+                    <div class="col-lg-9">
+                        <div class="row">
+                            <div class="form-group col-lg-12">
+                                <h4 style="font-weight: 400;">
+                                    Resource name:
+                                </h4>
+                                <input type="text" placeholder="Type the resource name.." ng-model="add.selectedCompany.name" ng-model-options="{ debounce: 250, blur: 0 }" class="form-control input-lg">
                             </div>
-
-                        </h4>
+                            <div class="form-group col-lg-6">
+                                <h4 style="font-weight: 400;">
+                                    What type of resource is this?
+                                </h4>
+                                <ui-select class="industry_select" multiple="multiple" ng-model="add.selectedCompany.resource_types" ng-disabled="disabled">
+                                    <ui-select-match placeholder="College, Acclerator, etc">{{$item}}</ui-select-match>
+                                    <ui-select-choices repeat="p in add.resource_types | filter: $select.search">
+                                        <div ng-bind-html="p | highlight: $select.search"></div>
+                                    </ui-select-choices>
+                                </ui-select>
+                            </div>
+                            <div class="form-group col-lg-6">
+                                <h4 style="font-weight: 400;">
+                                    Select a primary industry:
+                                </h4>
+                                <select class="form-control m-b" ng-model="add.selectedCompany.parent" style="margin-bottom: 5px;" required>
+                                    <option ng-repeat="parent in add.parents">{{ ::parent }}</option>
+                                </select>
+                            </div>
+                            <div class="form-group col-lg-6">
+                                <h4 style="font-weight: 400;">
+                                    Your role is:
+                                </h4>
+                                <select class="form-control m-b" ng-model="add.selectedRole" ng-options="r.value as r.text for r in add.selectRoles"></select>
+                            </div>
+                            <div class="form-group col-lg-6">
+                                <label>Country</label>
+                                <input type="text" value="" id="" class="form-control" name="" ng-model="user.country" placeholder="UK">
+                            </div>
+                        </div>
                     </div>
+                </div>
+
+            </div>
+
+            <div ng-show="add.step == 2" class="p-m">
+
+                <div class="row">
+                    <div class="col-lg-3 text-center">
+                        <i class="pe-7s-credit fa-5x text-muted"></i>
+                        <p class="small m-t-md">
+                            <strong>It is a long</strong> established fact that a reader will be distracted by the readable
+                            <br/><br/>Many desktop publishing packages and web page editors now use
+                        </p>
+                    </div>
+                    <div class="col-lg-9">
+                        <div class="row">
+                            <div class="form-group col-lg-12">
+                                <label>Name on Card</label>
+                                <input type="" value="" id="" class="form-control" ng-model="user.card_name">
+                            </div>
+                            <div class="form-group col-lg-6">
+                                <label>Card Number</label>
+                                <input type="text" value="" id="" class="form-control" name="" ng-model="user.card_number">
+                            </div>
+                            <div class="form-group col-lg-6">
+                                <label>Billing Address</label>
+                                <input type="text" value="" id="" class="form-control" name="" ng-model="user.billing_address">
+                            </div>
+                            <div class="form-group col-lg-12">
+                                <div class="row">
+                                    <div class="col-xs-4 form-group">
+                                        <label>CVC</label>
+                                        <input class="form-control" placeholder="ex. 381"  type="text" ng-model="user.cvc">
+                                    </div>
+                                    <div class="col-xs-4 form-group">
+                                        <label>Expiration</label>
+                                        <input class="form-control" placeholder="MM" type="text" ng-model="user.expire_month">
+                                    </div>
+                                    <div class="col-xs-4 form-group">
+                                        <label></label>
+                                        <input class="form-control" placeholder="YYYY" type="text" ng-model="user.expire_year">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="text-right m-t-xs">
+                <button ng-click="add.wizard.prev()" ng-disabled="add.step == 1" class="btn btn-default">Previous</button>
+                <button ng-click="add.wizard.next()" ng-disabled="add.step == 2" ng-hide="add.step == 2" class="btn btn-default">Next</button>
+                <button ng-click="add.submit()" ng-show="add.step == 2" class="btn btn-success">Submit</button>
+            </div>
+
+        </form>
+
+        <div style="padding: 20px;">
+
+
+            <div>
+
+                <div style="padding-top: 10px;">
+                    <h4 style="line-height:1.75;">
+
+                        Click below to edit the summary:
+
+                        <div class="summary_form">
+                            <a editable-textarea="add.selectedCompany.product_desc" e-rows="8" e-cols="60">
+                                <pre style="background: none; font-family: inherit; font-size: 14px; text-align: left;">{{add.selectedCompany.product_desc || 'Nothing here!'}}</pre>
+                            </a>
+                        </div>
+
+                    </h4>
                 </div>
             </div>
         </div>
     </div>
+
     <div alert-box this-alert="add.alert" style="padding-top:10px;"></div>
-    <div class="modal-footer">
-        <button type="button" class="btn btn-default" ng-click="$close();$state.reload();" style="margin-right: 10px;"><span ng-show="!add.alert">Cancel</span><span ng-show="add.alert">Close</span></button>
-        <button ladda="add.working" class="ladda-button btn btn-danger pull-left" data-style="zoom-in" data-spinner-size="25" ng-click="add.deleteCompany(add.community.key)" ng-show="add.update && !add.alert">Delete {{::add.community.profile.name || 'Resource'}}</button>
-        <input ladda="add.working" class="ladda-button finish btn-success btn pull-right" data-style="zoom-in" data-spinner-size="25" ng-show="!add.updated" ng-click="add.addCompany($event, true)" type="submit" ng-class="{'disabled' : disabled || add.working || !add.selectedCompany}" value="{{ (add.updateCompany ? 'Update ' : 'Add ') + (add.selectedCompany.name || 'Resource') }}"/>
-        <button type="button" class="btn btn-default pull-right" style="margin-right: 15px;" ng-show="add.selectedCompany && !add.working && !add.update" ng-click="add.selectedCompany = undefined; add.company = undefined; add.alert = undefined; add.updateRole = false; add.selectedRole = 'none'; add.updateCompany = false; add.submitted = false; add.notlisted = false; add.dups = undefined;">Clear Form
-        </button>
-    </div>
+
+    <button ladda="add.working" class="ladda-button btn btn-danger pull-left" data-style="zoom-in" data-spinner-size="25" ng-click="add.deleteCompany(add.community.key)" ng-show="add.update && !add.alert">Delete {{::add.community.profile.name || 'Resource'}}</button>
+    <input ladda="add.working" class="ladda-button finish btn-success btn pull-right" data-style="zoom-in" data-spinner-size="25" ng-show="!add.updated" ng-click="add.addCompany($event, true)" type="submit" ng-class="{'disabled' : disabled || add.working || !add.selectedCompany}" value="{{ (add.updateCompany ? 'Update ' : 'Add ') + (add.selectedCompany.name || 'Resource') }}"/>
+    <button type="button" class="btn btn-default pull-right" style="margin-right: 15px;" ng-show="add.selectedCompany && !add.working && !add.update" ng-click="add.selectedCompany = undefined; add.company = undefined; add.alert = undefined; add.updateRole = false; add.selectedRole = 'none'; add.updateCompany = false; add.submitted = false; add.notlisted = false; add.dups = undefined;">Clear Form
+    </button>
+
 </div>

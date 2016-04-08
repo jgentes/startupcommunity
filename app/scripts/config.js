@@ -326,9 +326,6 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                 pageTitle: 'Add a Resource'
             },
             views: {
-                'header': {
-                    templateUrl: "components/header/header_small.html"
-                },
                 'content': {
                     templateUrl: '../components/resources/resource.add.html',
                     controller: "EditResourceController as add"

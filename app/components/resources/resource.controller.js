@@ -95,6 +95,22 @@ function ResourceController($stateParams, location, communities, nav_communities
 function EditResourceController(user, sweet, $state, $q, $window, $http, community, location, communities, user_service, company_service, community_service) {
     var self = this;
 
+    // Initial step
+    this.step = 1;
+
+    // Wizard functions
+    this.wizard =  {
+        show: function(number) {
+            self.step = number;
+        },
+        next: function() {
+            self.step++ ;
+        },
+        prev: function() {
+            self.step-- ;
+        }
+    };
+    
     this.community = community;
     this.user = user;
     this.working = false; // used for waiting indicator
