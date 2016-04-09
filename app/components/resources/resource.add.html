@@ -58,8 +58,9 @@
                                 <select class="form-control m-b" ng-model="add.selectedRole" ng-options="r.value as r.text for r in add.selectRoles"></select>
                             </div>
                             <div class="form-group col-lg-6">
-                                <label>Country</label>
-                                <input type="text" value="" id="" class="form-control" name="" ng-model="user.country" placeholder="UK">
+                                <h4>Customize the url path:</h4>
+                                <input type="text" class="form-control input-lg" placeholder="{{ add.encode(add.selectedCompany.name) }}" ng-model="add.selectedCompany.url" style="margin-bottom: 5px;">
+                                <em>Your url will be: https://startupcommunity.org/{{ add.location.key }}/<strong><span style="text-transform: lowercase;">{{ add.encode(add.selectedCompany.url || add.selectedCompany.name) }}</span></strong></em>
                             </div>
                         </div>
                     </div>
@@ -70,42 +71,76 @@
             <div ng-show="add.step == 2" class="p-m">
 
                 <div class="row">
-                    <div class="col-lg-3 text-center">
-                        <i class="pe-7s-credit fa-5x text-muted"></i>
-                        <p class="small m-t-md">
-                            <strong>It is a long</strong> established fact that a reader will be distracted by the readable
-                            <br/><br/>Many desktop publishing packages and web page editors now use
-                        </p>
+                    <div class="form-group col-lg-12">
+                        <h4 style="font-weight: 400;">
+                            Street address:
+                        </h4>
+                        <input type="text" placeholder="1 Infinity Way.." ng-model="add.selectedCompany.street" class="form-control input-lg">
                     </div>
-                    <div class="col-lg-9">
+                    <div class="col-lg-6">
+                        <div class="row">
+                            <div class="form-group col-lg-6">
+                                <h4 style="font-weight: 400;">
+                                    City:
+                                </h4>
+                                <input type="text" placeholder="{{ add.location.profile.city }}" ng-model="add.selectedCompany.city" class="form-control input-lg">
+                            </div>
+                            <div class="form-group col-lg-6">
+                                <h4 style="font-weight: 400;">
+                                    State:
+                                </h4>
+                                <input type="text" placeholder="{{ add.location.profile.state }}" ng-model="add.selectedCompany.state" class="form-control input-lg">
+                            </div>
+                            <div class="form-group col-lg-6">
+                                <h4 style="font-weight: 400;">
+                                    Your role is:
+                                </h4>
+                                <select class="form-control m-b" ng-model="add.selectedRole" ng-options="r.value as r.text for r in add.selectRoles"></select>
+                            </div>
+                            <div class="form-group col-lg-6">
+                                <h4>Customize the url path:</h4>
+                                <input type="text" class="form-control input-lg" placeholder="{{ add.encode(add.selectedCompany.name) }}" ng-model="add.selectedCompany.url" style="margin-bottom: 5px;">
+                                <em>Your url will be: https://startupcommunity.org/{{ add.location.key }}/<strong><span style="text-transform: lowercase;">{{ add.encode(add.selectedCompany.url || add.selectedCompany.name) }}</span></strong></em>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
                         <div class="row">
                             <div class="form-group col-lg-12">
-                                <label>Name on Card</label>
-                                <input type="" value="" id="" class="form-control" ng-model="user.card_name">
+                                <h4 style="font-weight: 400;">
+                                    Resource name:
+                                </h4>
+                                <input type="text" placeholder="Type the resource name.." ng-model="add.selectedCompany.name" ng-model-options="{ debounce: 250, blur: 0 }" class="form-control input-lg">
                             </div>
                             <div class="form-group col-lg-6">
-                                <label>Card Number</label>
-                                <input type="text" value="" id="" class="form-control" name="" ng-model="user.card_number">
+                                <h4 style="font-weight: 400;">
+                                    What type of resource is this?
+                                </h4>
+                                <ui-select class="industry_select" multiple="multiple" ng-model="add.selectedCompany.resource_types" ng-disabled="disabled">
+                                    <ui-select-match placeholder="College, Acclerator, etc">{{$item}}</ui-select-match>
+                                    <ui-select-choices repeat="p in add.resource_types | filter: $select.search">
+                                        <div ng-bind-html="p | highlight: $select.search"></div>
+                                    </ui-select-choices>
+                                </ui-select>
                             </div>
                             <div class="form-group col-lg-6">
-                                <label>Billing Address</label>
-                                <input type="text" value="" id="" class="form-control" name="" ng-model="user.billing_address">
+                                <h4 style="font-weight: 400;">
+                                    Select a primary industry:
+                                </h4>
+                                <select class="form-control m-b" ng-model="add.selectedCompany.parent" style="margin-bottom: 5px;" required>
+                                    <option ng-repeat="parent in add.parents">{{ ::parent }}</option>
+                                </select>
                             </div>
-                            <div class="form-group col-lg-12">
-                                <div class="row">
-                                    <div class="col-xs-4 form-group">
-                                        <label>CVC</label>
-                                        <input class="form-control" placeholder="ex. 381"  type="text" ng-model="user.cvc">
-                                    </div>
-                                    <div class="col-xs-4 form-group">
-                                        <label>Expiration</label>
-                                        <input class="form-control" placeholder="MM" type="text" ng-model="user.expire_month">
-                                    </div>
-                                    <div class="col-xs-4 form-group">
-                                        <label></label>
-                                        <input class="form-control" placeholder="YYYY" type="text" ng-model="user.expire_year">
-                                    </div>
-                                </div>
+                            <div class="form-group col-lg-6">
+                                <h4 style="font-weight: 400;">
+                                    Your role is:
+                                </h4>
+                                <select class="form-control m-b" ng-model="add.selectedRole" ng-options="r.value as r.text for r in add.selectRoles"></select>
+                            </div>
+                            <div class="form-group col-lg-6">
+                                <h4>Customize the url path:</h4>
+                                <input type="text" class="form-control input-lg" placeholder="{{ add.encode(add.selectedCompany.name) }}" ng-model="add.selectedCompany.url" style="margin-bottom: 5px;">
+                                <em>Your url will be: https://startupcommunity.org/{{ add.location.key }}/<strong><span style="text-transform: lowercase;">{{ add.encode(add.selectedCompany.url || add.selectedCompany.name) }}</span></strong></em>
                             </div>
                         </div>
                     </div>
