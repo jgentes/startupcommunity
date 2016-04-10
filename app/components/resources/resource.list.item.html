@@ -1,7 +1,7 @@
 <div class="col-md-12 dash-table">
     <div>
         <a ui-sref="company.dashboard({profile: item, location_path: item.key, location: nav.community, community: item, top: nav.top, communities: nav.communities, user: nav.user })" title="View {{::item.profile.name | words:0}}'s Profile"><img
-                ng-src="{{item.profile.avatar || '/public/images/blank_startup.jpg'}}" alt="{{::item.profile.name}}" class="user-img widget-image pull-left" onerror="this.src='images/blank_startup.jpg'"/></a>
+                ng-src="{{item.profile.avatar || '/public/images/browser_icon.jpg'}}" alt="{{::item.profile.name}}" class="user-img widget-image pull-left" onerror="this.src='images/browser_icon.jpg'"/></a>
     </div>
     <div class="user-row">
         <a ui-sref="company.dashboard({profile: item, location_path: item.key, location: nav.community, community: item, top: nav.top, communities: nav.communities, user: nav.user })" title="View {{::item.profile.name | words:0}}'s Profile" style="float: left; "><strong>{{::item.profile.name}} </strong></a>

@@ -115,7 +115,6 @@ function EditResourceController(user, sweet, $state, $q, $window, $http, communi
         return encodeURI(uri);
     };
     
-    this.location = location;
     this.community = community;
     this.user = user;
     this.working = false; // used for waiting indicator
@@ -124,6 +123,10 @@ function EditResourceController(user, sweet, $state, $q, $window, $http, communi
     this.parents = community_service.parents();
     this.resource_types = [];
     this.resource_types = community_service.resource_types();
+    this.selectedCompany = {
+        city: location.profile.city,
+        state: location.profile.state
+    };
 
     this.selectRoles = user_service.roles();
 

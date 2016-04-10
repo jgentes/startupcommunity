@@ -6,7 +6,7 @@
         <img class="img-circle m-b" style="height:75px;"
              ngf-thumbnail="welcome.user.profile.avatar || file || '/public/images/blank_avatar.png'">
         <br/>
-        <label id="uploader_text">
+        <label class="uploader_text">
             <input type="file" ng-model="file" name="file" ngf-pattern="'image/*'"
                    accept="image/*" ngf-max-size="2MB" ngf-min-height="50"
                    ngf-resize="{width: 100, height: 100}" ngf-select="welcome.uploadAvatar($file)" style="display:none;"/>

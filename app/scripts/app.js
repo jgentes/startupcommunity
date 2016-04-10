@@ -15,7 +15,8 @@
         'knowtify',
         'ngFileUpload',
         'bm.bsTour',
-        'angular-ladda'
+        'angular-ladda',
+        'summernote'
     ]);
 })();
 

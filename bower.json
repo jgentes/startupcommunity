@@ -40,16 +40,19 @@
     "angular-bootstrap-tour": "~0.3.3",
     "angular-cookies": "^1.5.0",
     "ladda": "~0.9.8",
-    "angular-ladda": "~0.3.1"
+    "angular-ladda": "~0.3.1",
+    "summernote": "~0.6.0",
+    "angular-summernote": "^0.8.1"
   },
   "resolutions": {
-    "angular": "1.4.10",
+    "angular": "1.4.9",
     "angulartics": "~0.19.0",
     "sweetalert": ">=1.1.0",
     "bootstrap": "~3.3.6",
     "jquery": ">= 1.9.0",
     "bootstrap-tour": "~0.10.2",
     "angular-route": "~1.4.9",
-    "angular-cookies": "^1.5.0"
+    "angular-cookies": "^1.5.0",
+    "summernote": "~0.8.0"
   }
 }
