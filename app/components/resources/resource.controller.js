@@ -115,6 +115,7 @@ function EditResourceController(user, sweet, $state, $q, $window, $http, communi
         return encodeURI(uri);
     };
     
+    this.location = location;
     this.community = community;
     this.user = user;
     this.working = false; // used for waiting indicator

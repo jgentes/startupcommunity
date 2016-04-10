@@ -138,13 +138,14 @@
 
                             </h4>
                             <input type="text" class="form-control input-md" placeholder="{{ add.encode(add.selectedCompany.name || '') }}" ng-model="add.selectedCompany.url" style="margin-bottom: 5px;">
+                            <em style="font-size: 11px;" class="pull-right">Your path will be: /{{ add.location.key }}/<strong><span style="text-transform: lowercase;">{{ add.encode(add.selectedCompany.url || add.selectedCompany.name) }}</span></strong></em>
                         </div>
-                        <div class="col-lg-12">
+                        <div class="col-lg-12" style="margin-top:-10px;">
                             <h4 class="w400">
 
                                 Click below to edit the summary:
                             </h4>
-                            <div summernote class="summernote" ng-model="product_desc" airMode></div>
+                            <div summernote class="summernote" ng-model="add.selectedCompany.product_desc" ng-model-options="{ debounce: 250, blur: 0 }" style="min-height: 34px;"airMode></div>
                         </div>
                     </div>
                 </div>
