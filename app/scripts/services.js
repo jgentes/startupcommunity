@@ -279,10 +279,10 @@ angular
                     });
                 return $http.get(alturl || urlString);
             },
-            addCompany: function(al_profile, role, location_key, community_key, company_key) {
+            addCompany: function(profile, role, location_key, community_key, company_key) {
                 return $http.post('/api/2.1/companies/add', {
                     params: {
-                        al_profile: al_profile,
+                        profile: profile,
                         role: role,
                         location_key: location_key,
                         community_key: community_key,

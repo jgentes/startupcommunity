@@ -228,11 +228,13 @@ function handleGetLogoUrl(req, res) {
 function handleAddCompany(req, res) {
     // always use ensureAuth before this (to acquire req.user)
     var addCompany = req.body.params;
-    if (!addCompany.al_profile) {
+    if (!addCompany.profile) {
         console.warn("No company specified!");
-        res.status(400).send({ message: 'Please select a company first.' });
+        res.status(400).send({ message: 'Some information was missing.' });
     } else {
-        console.log('Adding company ' + addCompany.al_profile.name + ' to ' + addCompany.location_key + ' / ' + addCompany.community_key);
+        console.log('Adding company ' + addCompany.profile.name + ' to ' + addCompany.location_key + ' / ' + addCompany.community_key);
+
+        var pathname = addCompany.profile.url || encodeURI(addCompany.profile.name.toLowerCase());
 
         // validate user is a member in the location/community
         db.get(process.env.DB_COMMUNITIES, req.user)
@@ -250,7 +252,7 @@ function handleAddCompany(req, res) {
                         addCompany.community_key = addCompany.location_key;
                     }
 
-                    var company = schema.company(addCompany.al_profile, addCompany.location_key, addCompany.community_key);
+                    var company = schema.company(addCompany.profile, addCompany.location_key, addCompany.community_key);
 
                     //search for company and add if not there..
                     companyPull(company, addCompany.role, addCompany.location_key, req.user, addCompany.key, function(result) {
