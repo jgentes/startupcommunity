@@ -125,7 +125,19 @@
 
                                     Click below to edit the summary:
                                 </h4>
-                                <div summernote class="summernote" ng-model="add.selectedCompany.product_desc" ng-model-options="{ debounce: 250, blur: 0 }" style="min-height: 34px;"airMode></div>
+                                <div summernote class="summernote" ng-model="add.selectedCompany.product_desc" ng-model-options="{ debounce: 250, blur: 0 }" style="min-height: 34px;" config="{
+                                height: 50,
+    toolbar: [
+            ['edit',['undo','redo']],
+            ['headline', ['style']],
+            ['style', ['bold', 'italic', 'underline', 'clear']],
+            ['textsize', ['fontsize']],
+            ['fontclr', ['color']],
+            ['alignment', ['ul', 'ol', 'paragraph', ]],
+            ['view', ['fullscreen']],
+            ['insert', ['link','hr']]
+        ]
+  }"></div>
                             </div>
                         </div>
                     </div>

@@ -687,7 +687,7 @@ function handleEditCommunity(req, res) {
 
                     db.get(process.env.DB_COMMUNITIES, pathname)
                         .then(function (response) {
-                            // go to .fail if community doesn't exist
+                            // go to .fail if community doesn't exist (on .get rather than .search)
                             // if community already exists and it's the same type as what's being created, we're good to add the community profile here
 
                             if (response.body.type && (response.body.type == "cluster" || response.body.type == "network") && response.body.type == settings.community.type) {

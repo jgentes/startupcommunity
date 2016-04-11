@@ -161,6 +161,7 @@ function EditResourceController(user, sweet, $state, $q, $window, $http, communi
         if (e) e.preventDefault();
 
         self.selectedCompany.resource = resource_if_true || false;
+        self.selectedCompany.url = self.selectedCompany.url || encodeURI(self.selectedCompany.name);
 
         self.working = true;
         var role = self.selectedRole == 'not involved' ? undefined : self.selectedRole;

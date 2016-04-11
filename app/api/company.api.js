@@ -254,8 +254,9 @@ function handleAddCompany(req, res) {
 
                     var company = schema.company(addCompany.profile, addCompany.location_key, addCompany.community_key);
 
-                    //search for company and add if not there..
-                    companyPull(company, addCompany.role, addCompany.location_key, req.user, addCompany.key, function(result) {
+                    // add company
+
+                    companyPost(company, addCompany.role, addCompany.location_key, req.user, addCompany.key, function(result) {
                         res.status(result.status).send(result.data);
                     });
 /*
@@ -440,73 +441,67 @@ var addRole = function(company_key, role, location_key, user_key) {
         });
 };
 
-var companyPull = function (company, role, location_key, user, key, callback) {
+var checkUrl = function(website, key) {
+    console.log('Looking for existing company based on website url: ' + website);
 
-    console.log('Looking for existing company based on key or AngelList profile.');    
+    // cleanup url
 
-    db.search(process.env.DB_COMMUNITIES, '@path.key:' + key + ' OR @value.profile.angellist.id: ' + company.profile.angellist.id) // no quotes due to number not string
-        .then(function (result){
+    website = website.replace(/.*?:\/\//g, "");
+    if(website.match(/^www\./)) website = website.substring(4);
 
-            console.log('Result of db search: ' + result.body.total_count);
+    var search = key ? '@path.key:' + key + ' OR ' : "";
 
-            if (result.body.results.length > 0){
+    return db.search(process.env.DB_COMMUNITIES, search + '(@value.type = "company" AND (@value.profile.website: ' + website + ' OR @value.profile.website: www.' + website + '))');
+};
 
-                console.log("Matched startup to database company: " + company.profile.name);
+var companyPost = function (company, role, location_key, user, key, callback) {
 
-                db.put(process.env.DB_COMMUNITIES, result.body.results[0].path.key, company)
-                    .then(function (response) {
+    if (key) {
 
-                        var companykey = response.headers.location.split('/')[3];
-                        console.log("UPDATED: " + company.profile.name);
+        db.put(process.env.DB_COMMUNITIES, key, company)
+            .then(function (response) {
 
-                        if (role) {
-                            addRole(result.body.results[0].path.key, role, location_key, user);
-                        }
+                console.log("UPDATED: " + company.profile.name);
 
-                        result.body.results[0].value["message"] = "Well done! " + company.profile.name + " has been updated.";
+                if (role) {
+                    addRole(key, role, location_key, user);
+                }
 
-                        result.body.results[0].value["key"] = companykey;
+                company["message"] = "Well done! " + company.profile.name + " has been updated.";
 
-                        callback({ "status": 200, "data": result.body.results[0].value });
+                company["key"] = key;
 
-                    })
-                    .fail(function (err) {
-                        console.error("PUT FAIL:");
-                        console.error(err);
-                    });
+                callback({ "status": 200, "data": company });
 
-            } else {
+            })
+            .fail(function (err) {
+                console.log("WARNING: ", err);
+                res.status(500).send({ message: "Something went wrong."});
+            });
+    } else {
 
-                console.log('No existing company found!');
+        db.put(process.env.DB_COMMUNITIES, company.url, company)
+            .then(function (response) {
 
-                db.post(process.env.DB_COMMUNITIES, company)
-                    .then(function (response) {
+                var companykey = response.headers.location.split('/')[3];
+                console.log("REGISTERED: " + company.profile.name + " as " + companykey);
 
-                        var companykey = response.headers.location.split('/')[3];
-                        console.log("REGISTERED: " + company.profile.name + " as " + companykey);
+                if (role) {
+                    addRole(companykey, role, location_key, user);
+                }
 
-                        if (role) {
-                            addRole(companykey, role, location_key, user);
-                        }
+                company["message"] = "Well done! You've added " + company.profile.name + " to the community.";
 
-                        company["message"] = "Well done! You've added " + company.profile.name + " to the community.";
+                company["key"] = companykey;
 
-                        company["key"] = companykey;
+                callback({ "status": 200, "data": company });
 
-                        callback({ "status": 200, "data": company });
-
-                    })
-                    .fail(function (err) {
-                        console.error("POST FAIL:");
-                        console.error(err);
-                    });
-            }
-        })
-        .fail(function(err){
-            console.log("WARNING: company331", err);
-            res.status(500).send({ message: "Something went wrong."});
-        });
-
+            })
+            .fail(function(err){
+                console.log("WARNING: ", err);
+                res.status(500).send({ message: "Something went wrong."});
+            });
+    }
 };
 
 module.exports = CompanyApi;
