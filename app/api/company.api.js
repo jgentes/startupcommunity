@@ -35,6 +35,12 @@ var schema = {
                 "avatar": profile.thumb_url || "",
                 "stage": profile.stage,
                 "industries": profile.industries,
+                "website": profile.website,
+                "address": {
+                    "street": profile.street,
+                    "city": profile.city,
+                    "state": profile.state
+                },
                 "angellist": {
                     "id": profile.id,
                     "angellist_url": profile.angellist_url

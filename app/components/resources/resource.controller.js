@@ -136,7 +136,7 @@ function EditResourceController(user, sweet, $state, $q, $window, $http, communi
     // for startup logo upload to S3
     this.uploadLogo = function (file) {
         // get the secure S3 url
-        company_service.getLogoUrl(file.name, self.selectedCompany.name)
+        company_service.getLogoUrl(file.name, self.user.key)
             .then(function(response) {
                 var signedUrl = response.data.put,
                     fileUrl = response.data.get;
@@ -160,101 +160,87 @@ function EditResourceController(user, sweet, $state, $q, $window, $http, communi
     this.addCompany = function(e, resource_if_true) {
         if (e) e.preventDefault();
 
-        if (self.selectedCompany && self.selectedCompany.parent) {
+        self.selectedCompany.resource = resource_if_true || false;
 
-            self.selectedCompany.resource = resource_if_true || false;
+        self.working = true;
+        var role = self.selectedRole == 'not involved' ? undefined : self.selectedRole;
 
-            if (angular.element('.summary_form a').hasClass('editable-hide')) {
-                // they've edited the summary but haven't clicked checkmark to accept changes
-                self.alert = { type: 'danger', message: 'You made changes to the summary. Please accept or cancel them before updating.' };
-            } else {
+        var community_path = location.key; // resources can only be created in locations (for now)
+        console.log(self.selectedCompany);
 
-                self.working = true;
-                var role = self.selectedRole == 'not involved' ? undefined : self.selectedRole;
+        company_service.addCompany(self.selectedCompany, role, location.key, community_path, self.selectedCompany.key)
+            .then(function(response) {
+                self.working = false;
+                $http.get('/api/2.1/community/' + location.key + '?nocache=true'); // clear cache
 
-                var community_path = location.key; // resources can only be created in locations (for now)
-                console.log(self.selectedCompany);
+                if (response.status !== 200) {
+                    sweet.show({
+                        title: "Sorry, something went wrong.",
+                        text: response.data.message,
+                        type: "error"
+                    });
 
-                company_service.addCompany(self.selectedCompany, role, location.key, community_path, self.selectedCompany.key)
-                    .then(function(response) {
-                        self.working = false;
-                        $http.get('/api/2.1/community/' + location.key + '?nocache=true'); // clear cache
+                } else {
+                    sweet.show({
+                        title: "Success!",
+                        text: response.data.message,
+                        type: "success"
+                    });
+/*
+                    var co_key = response.data.key;
 
-                        if (response.status !== 200) {
-                            sweet.show({
-                                title: "Sorry, something went wrong.",
-                                text: response.data.message,
-                                type: "error"
-                            });
+                    // update local profile with company data
 
-                        } else {
-                            sweet.show({
-                                title: "Success!",
-                                text: response.data.message,
-                                type: "success"
-                            }, function() {
+                    if (!self.user.roles) {
+                        self.user["roles"] = {};
+                    } else {
+                        // search for existing role and delete if found
 
-                                var co_key = response.data.key;
-
-                                // update local profile with company data
-
-                                if (!self.user.roles) {
-                                    self.user["roles"] = {};
-                                } else {
-                                    // search for existing role and delete if found
-
-                                    for (r in self.user.roles) {
-                                        for (co in self.user.roles[r]) {
-                                            if (co == co_key) {
-                                                delete self.user.roles[r][co];
-                                            }
-                                        }
-                                    }
+                        for (r in self.user.roles) {
+                            for (co in self.user.roles[r]) {
+                                if (co == co_key) {
+                                    delete self.user.roles[r][co];
                                 }
-
-                                // add new role
-
-                                if (!self.user.roles[role]) {
-                                    self.user.roles[role] = {};
-                                    self.user.roles[role][co_key] = [location.key];
-                                } else if (!self.user.roles[role][co_key]) {
-                                    self.user.roles[role][co_key] = [location.key];
-                                } else if (self.user.roles[role][co_key].indexOf(location.key) < 0) {
-                                    self.user.roles[role][co_key].push(location.key);
-                                } // else the damn thing is already there
-
-                                // add community
-                                if (!self.user.communities) {
-                                    self.user["communities"] = {};
-                                }
-
-                                if (self.user.communities.indexOf(co_key) < 0) {
-                                    self.user.communities.push(co_key);
-                                }
-
-                                self.selectedCompany = undefined;
-                                self.company = undefined;
-                                self.updateCompany = false;
-                                self.selectedRole = 'not involved';
-                                self.submitted = false;
-                                self.dups = undefined;
-                                self.notlisted = false;
-                                if (self.update) self.updated = true;
-                                if ($uibModalInstance) $uibModalInstance.close();
-
-                                $state.reload();
-                            })
+                            }
                         }
+                    }
 
-                    })
-                    .catch(function(error) {
-                        self.working = false;
-                        self.alert = { type: 'danger', message: String(error.data.message) };
-                    })
+                    // add new role
 
-            }
+                    if (!self.user.roles[role]) {
+                        self.user.roles[role] = {};
+                        self.user.roles[role][co_key] = [location.key];
+                    } else if (!self.user.roles[role][co_key]) {
+                        self.user.roles[role][co_key] = [location.key];
+                    } else if (self.user.roles[role][co_key].indexOf(location.key) < 0) {
+                        self.user.roles[role][co_key].push(location.key);
+                    } // else the damn thing is already there
 
-        } else self.submitted = true;
+                    // add community
+                    if (!self.user.communities) {
+                        self.user["communities"] = {};
+                    }
+
+                    if (self.user.communities.indexOf(co_key) < 0) {
+                        self.user.communities.push(co_key);
+                    }
+
+                    self.selectedCompany = undefined;
+                    self.company = undefined;
+                    self.updateCompany = false;
+                    self.selectedRole = 'not involved';
+                    self.submitted = false;
+                    self.dups = undefined;
+                    self.notlisted = false;
+                    if (self.update) self.updated = true;
+                    */
+                }
+
+            })
+            .catch(function(error) {
+                self.working = false;
+                self.alert = { type: 'danger', message: String(error.data.message) };
+            })
 
     };
 
