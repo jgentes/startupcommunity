@@ -316,8 +316,8 @@ function randomQuote() {
         "&quot;If I had an hour to solve a problem, I'd spend 55 minutes thinking about the problem and 5 minutes thinking about solutions.&quot; -- Alert Einstein",
         "&quot;The reasonable person adapts themselves to the world. The unreasonable one persists in trying to adapt the world to themselves. Therefore all progress depends on the unreasonable person.&quot; -- George Bernard Shaw",
         "&quot;The truth is, the cost of preventing errors is often far greater than the cost of fixing them.&quot; -- Ed Catmull, President of Pixar",
-        "&quot;Believe in yourself. Under-confidence leads to a self-fulfilling prophecy that you are not good enough for your work.&quot; -- Dr. Roopleen"
-
+        "&quot;Believe in yourself. Under-confidence leads to a self-fulfilling prophecy that you are not good enough for your work.&quot; -- Dr. Roopleen",
+        "&quot;Change is the essence of life. Be willing to surrender what you are for what you could become.&quot; -- Reinhold Niebuhr"
     ];
     var rand = quotes[Math.floor(Math.random() * quotes.length)];
     return {
