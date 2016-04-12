@@ -51,7 +51,7 @@
                             <a>Alerts</a>
                         </li>
                         <li ng-if="nav.user">
-                            <a ui-sref="settings({location_path: nav.user.key, location: nav.nav_communities[nav.user.profile.home], community: nav.nav_communities[nav.user.profile.home], top: nav.top, communities: nav.communities, user: nav.user })">Settings</a>
+                            <a ui-sref="settings({ location_path: nav.location.key, location: nav.location, user: nav.user })">Settings</a>
                         </li>
                         <li ng-if="nav.user">
                             <a ng-click="nav.openChat()">Help</a>
@@ -105,7 +105,7 @@
                         </a>
                     </li>
                     <li ng-if="nav.user" class="dropdown">
-                        <a ui-sref="settings({ user: nav.user })">
+                        <a ui-sref="settings({ location_path: nav.location.key, location: nav.location, user: nav.user })">
                             <i class="pe-7s-config"></i>
                             <p style="font-size: 10px; margin-top: -4px; margin-left: -7px;">Settings</p>
                         </a>
