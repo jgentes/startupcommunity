@@ -164,6 +164,7 @@ function handleSetupNewsletter(req,res) {
                                 return $(this).text() == settings.brand_name;
                             }).attr('href');
                             // return brand_id
+                            console.log(url);
 
                             callback(url.split("?")[1].split("=")[1]);
                         })
@@ -199,7 +200,7 @@ function handleSetupNewsletter(req,res) {
                             // pull the list_id from the url by parsing the html
                             var $ = window.$;
                             var url = $("a[href*='&l=']");
-
+                            console.log(url);
                             // return list_id
                             callback(url[0].href.split("&")[1].split("=")[1], list_name);
                         })
