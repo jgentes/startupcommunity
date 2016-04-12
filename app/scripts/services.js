@@ -12,7 +12,6 @@ angular
                         password: user.newsletter.password,
                         redirect: ""
                     }),
-                    withCredentials: true,
                     headers: {
                         'Content-Type': 'application/x-www-form-urlencoded'
                     }
