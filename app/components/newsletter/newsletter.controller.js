@@ -4,16 +4,18 @@ angular
     .controller('SetupNewsController', SetupNewsController);
 
 function NewsletterController(newsletter_service, $sce, user, errorLogService) {
-    var self = this;    
+    var self = this;
+    
     this.user = user;
+    this.ie = navigator.userAgent.indexOf('Trident') > 0 || navigator.userAgent.indexOf('MSIE') > 0;
 
     if (user.newsletter) {        
-
+        
         newsletter_service.login(user)
             .then(function (response) {
                 
                 self.frame_content = $sce.trustAsHtml(response.data);
-                errorLogService('newsletter login: ', response.data);
+                
                 //newsletter_service.syncMembers(user.newsletter.lists, user.newsletter.brand_id, location.key);
 
             })

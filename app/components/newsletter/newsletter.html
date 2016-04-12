@@ -1,2 +1,5 @@
-<iframe srcdoc="{{news.frame_content}}" name="newsletter_frame" id="framed_newsletter" style="border: none; margin-top: 30px; height: 1500px; width: 100%;"></iframe>
-If this page isn't loading, you may login at <a href="https://newsletter.startupcommunity.org" target="_blank">newsletter.startupcommunity.org</a> with username: {{news.user.newsletter.username}} and password: {{news.user.newsletter.password}}
+<iframe ng-if="!news.ie" srcdoc="{{news.frame_content}}" name="newsletter_frame" id="framed_newsletter" style="border: none; margin-top: 20px; height: 1500px; width: 100%;"></iframe>
+<div ng-if="news.ie">
+    Please login with username: <strong>{{news.user.newsletter.username}}</strong> and password: <strong>{{news.user.newsletter.password}}</strong> (or using a non-IE browser will fix this)
+    <iframe src="https://newsletter.startupcommunity.org" style="border: none; margin-top: 10px; height: 1500px; width: 100%;"></iframe>
+</div>
