@@ -3,50 +3,9 @@ angular
     .controller('ResourceController', ResourceController)
     .controller('EditResourceController', EditResourceController);
 
-function ResourceController($stateParams, location, communities, nav_communities, community_service, top, user, $auth) {
+function ResourceController(location, communities, nav_communities, community_service, top, user, $auth) {
     var self = this;
 
-    var resourcePresentation = {
-        accelerators: {
-            title: 'Accelerators',
-            color: 'hnavyblue',
-            icon: 'pe-7s-next'
-        },
-        colleges: {
-            title: 'Colleges',
-            color: 'hblue',
-            icon: 'pe-7s-culture'
-        },
-        coworking: {
-            title: 'Coworking',
-            color: 'hviolet',
-            icon: 'pe-7s-plug'
-        },
-        incubators: {
-            title: 'Incubators',
-            color: 'hnavyblue',
-            icon: 'pe-7s-light'
-        },
-        investment: {
-            title: 'Investment',
-            color: 'hgreen',
-            icon: 'pe-7s-gleam'
-        },
-        meetups: {
-            title: 'Meetups',
-            color: 'hviolet',
-            icon: 'pe-7s-coffee'
-        },
-        mentorship: {
-            title: 'Mentorship',
-            color: 'hblue',
-            icon: 'pe-7s-study'
-        }
-    };
-
-    this.resource_types = community_service.resource_types().map(function(item) {
-        return resourcePresentation[item.toLowerCase()];
-    });
     this.top = top || {}; // this is passed in to avoid re-pulling top on nav click if possible
     this.networks = this.networks || {};
     this.communities = communities;
@@ -60,6 +19,7 @@ function ResourceController($stateParams, location, communities, nav_communities
         "({community_path: item.key, community: item, query: '*', location_path: networks.location.key, top: networks.top, communities: networks.communities, user: networks.user })" :
         "({community_path: item.key, community: item, query: '*', location_path: networks.user.profile.home, top: networks.top, communities: networks.communities, user: networks.user })";
 
+    this.types = community_service.resource_types();
     var resources = nav_communities;
 
     for (item in resources.resources) {
@@ -71,24 +31,9 @@ function ResourceController($stateParams, location, communities, nav_communities
             }
         }
     }
-    // former network view
-    /*for (var item in this.resources) {
-        var currentItem = this.resources[item];
-        if (currentItem.type === 'network') {
-            var community = this.resources[item];
-            if (community.community_profiles) {
-                var communityProfile = community.community_profiles[this.location_key] || false;
-
-                if (communityProfile &&
-                    communityProfile.parents) {
-                    communityProfile.parents.map(function(network_type) {
-                        self.networks[network_type] = self.networks[network_type] || [];
-                        self.networks[network_type].push(community);
-                    });
-                }
-            }
-        }
-    }*/
+   
+    
+    
 }
 
 function EditResourceController(user, sweet, $state, $q, $window, $http, community, location, communities, user_service, company_service, community_service) {

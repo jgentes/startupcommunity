@@ -64,9 +64,10 @@ function handleCompanySearch(req, res){
             query = req.query.query,
             limit = req.query.limit,
             offset = req.query.offset,
+            get_resources = req.query.get_resources,
             key = req.query.api_key;
 
-        searchInCommunity(communities, clusters, stages, limit, offset, query, key)
+        searchInCommunity(communities, clusters, stages, limit, offset, query, get_resources, key)
             .then(function(companylist){
                     res.send(companylist);
             })
@@ -76,7 +77,7 @@ function handleCompanySearch(req, res){
             });
 }
 
-var searchInCommunity = function(communities, clusters, stages, limit, offset, query, key) {
+var searchInCommunity = function(communities, clusters, stages, limit, offset, query, get_resources, key) {
         var allowed = false;
         var userperms;
 
@@ -128,8 +129,10 @@ var searchInCommunity = function(communities, clusters, stages, limit, offset, q
                 }
             }
         } else searchstring += '*';
-
-        searchstring += ') AND @value.type: "company"' + state;
+    
+        if (get_resources) {
+            searchstring += ') AND @value.resource: true AND @value.type: "company"' + state;
+        } else searchstring += ') AND @value.type: "company"' + state;        
 
         if (clusters && clusters.length > 0 && clusters[0] !== '*') {
             clusters = clusters.splice(',');

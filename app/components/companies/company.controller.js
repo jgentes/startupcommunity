@@ -1,9 +1,9 @@
 angular
     .module('startupcommunity')
     .controller('CompanyController', CompanyController)
-    .controller('CompanyProfileController', CompanyProfileController)
+    .controller('CompanyProfileController', CompanyProfileController);
 
-function CompanyController($stateParams, $location, company_service, result_service, $sce, community, communities) {
+function CompanyController($stateParams, $state, $location, company_service, result_service, $sce, community, communities) {
 
     this.community = community;
     this.communities = communities;
@@ -14,6 +14,7 @@ function CompanyController($stateParams, $location, company_service, result_serv
     var self = this; // for accessing 'this' in child functions
     var query;
     var communityFilter = [$stateParams.location_path];
+    var get_resources = $state.includes('resource.list');
 
     if (this.community.type == 'cluster') {
         if (this.community.community_profiles[$stateParams.location_path]) {
@@ -49,8 +50,10 @@ function CompanyController($stateParams, $location, company_service, result_serv
         } else self.tag = undefined;
 
         var limit = $location.search().limit;
+        
+        
 
-        company_service.search(communityFilter, clusterFilter, query, undefined, limit || self.usercount, alturl)
+        company_service.search(communityFilter, clusterFilter, query, undefined, limit || self.usercount, get_resources, alturl)
             .then(function (response) {
                 self.tag = undefined;
                 self.companies = result_service.setPage(response.data);
@@ -134,7 +137,7 @@ function CompanyController($stateParams, $location, company_service, result_serv
             }
         }
 
-        company_service.search(communityFilter, clusterFilter, '*', self.selectedStage, 20, undefined)
+        company_service.search(communityFilter, clusterFilter, '*', self.selectedStage, 20, get_resources, undefined)
             .then(function(response) {
                 self.loadingStage = false;
                 self.companies = result_service.setPage(response.data);
@@ -152,7 +155,7 @@ function CompanyController($stateParams, $location, company_service, result_serv
             if (self.selectedClusters.length == 0) self.allClusters = true;
         }
 
-        company_service.search(communityFilter, self.selectedClusters, '*', self.selectedStage, 30, undefined)
+        company_service.search(communityFilter, self.selectedClusters, '*', self.selectedStage, 30, get_resources, undefined)
             .then(function(response) {
                 self.loadingCluster = false;
                 self.loadingNetwork = false;
@@ -173,7 +176,7 @@ function CompanyController($stateParams, $location, company_service, result_serv
 
         communityFilter = communityFilter.concat(self.selectedNetworks);
 
-        company_service.search(communityFilter, clusterFilter, '*', self.selectedStage, 20, undefined)
+        company_service.search(communityFilter, clusterFilter, '*', self.selectedStage, 20, get_resources, undefined)
             .then(function(response) {
                 self.loadingCluster = false;
                 self.loadingNetwork = false;
