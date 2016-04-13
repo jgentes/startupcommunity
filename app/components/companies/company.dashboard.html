@@ -3,7 +3,7 @@
         <div style="padding: 20px 15px;">
             <header class="heading content" style="color:#fff">
                 <button ng-if="nav.user" ng-click="nav.addCompany(profile.company)" class="btn btn-warning pull-right" style="margin-left:-100px;">Edit Profile</button>
-                <img class="img-circle m-b" ng-show="profile.company.profile.avatar" style="height:100px;" ng-src="profile.company.profile.avatar" alt="{{::profile.company.profile.name}}" onerror="this.src='/public/images/browser_icon.jpg'">
+                <img class="img-circle m-b" ng-show="profile.company.profile.avatar" style="height:100px;" ng-src="{{profile.company.profile.avatar}}" alt="{{::profile.company.profile.name}}" onerror="this.src='/public/images/browser_icon.jpg'">
                 <div style="margin:-15px 0;">
                     <span ng-if="profile.company.profile.parents[0]" class="btn btn-default btn-xs">
                         <a ui-sref="community.dashboard({location_path: profile.company.profile.home, community_path: profile.company.profile.parents[0], community: profile.communities[profile.company.profile.parents[0]], query: &quot;&#42;&quot;})">{{::profile.company.profile.parents[0][0].toUpperCase() + profile.company.profile.parents[0].slice(1);}}</a>

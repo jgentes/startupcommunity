@@ -51,7 +51,6 @@ function ResourceController($stateParams, location, communities, nav_communities
     this.networks = this.networks || {};
     this.communities = communities;
     this.user = $auth.isAuthenticated() ? user : {};
-    this.resources = nav_communities.resources;
 
     this.location = location;
     this.location_key = this.location.key;
@@ -61,14 +60,14 @@ function ResourceController($stateParams, location, communities, nav_communities
         "({community_path: item.key, community: item, query: '*', location_path: networks.location.key, top: networks.top, communities: networks.communities, user: networks.user })" :
         "({community_path: item.key, community: item, query: '*', location_path: networks.user.profile.home, top: networks.top, communities: networks.communities, user: networks.user })";
 
-    for (item in this.resources) {
-        var currentItem = this.resources[item];
-        if (currentItem.resource) {
-            if (currentItem.resource_types && currentItem.resource_types.length) {
-                for (type in currentItem.resource_types) {
-                    self.networks[currentItem.resource_types[type]] = self.networks[currentItem.resource_types[type]] || [];
-                    self.networks[currentItem.resource_types[type]].push(currentItem);
-                }
+    var resources = nav_communities;
+
+    for (item in resources.resources) {
+        var currentItem = resources.resources[item];
+        if (resources[currentItem].resource_types && resources[currentItem].resource_types.length) {
+            for (type in resources[currentItem].resource_types) {
+                self.networks[resources[currentItem].resource_types[type]] = self.networks[resources[currentItem].resource_types[type]] || [];
+                self.networks[resources[currentItem].resource_types[type]].push(resources[currentItem]);
             }
         }
     }

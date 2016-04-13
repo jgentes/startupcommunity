@@ -24,6 +24,7 @@ var schema = {
 
         var newprofile = {
             "type": "company",
+            "url": profile.url,
             "resource": profile.resource,
             "resource_types": profile.resource_types,
             "profile": {
@@ -271,7 +272,7 @@ function handleAddCompany(req, res) {
             })
 
             .fail(function(err){
-                console.warn("WARNING: company231", err);
+                console.warn("WARNING: ", err);
             });
     }
 }

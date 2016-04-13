@@ -115,16 +115,16 @@ function handleGetCommunity(req, res) {
                     for (item in results) {
                         if (results[item].value) {
                             if (results[item].value.resource) {
-                                
-                                // put resources in their own bucket
-                                
-                                if (!newresponse.resources) newresponse["resources"] = {};
-                                newresponse.resources[results[item].path.key] = results[item].value;
-                                newresponse.resources[results[item].path.key]["key"] = results[item].path.key;
-                            } else {
-                                newresponse[results[item].path.key] = results[item].value;
-                                newresponse[results[item].path.key]["key"] = results[item].path.key;
+
+                                // put resource keys in their own bucket
+
+                                if (!newresponse.resources) newresponse["resources"] = [];
+                                newresponse.resources.push(results[item].path.key);
                             }
+
+                            newresponse[results[item].path.key] = results[item].value;
+                            newresponse[results[item].path.key]["key"] = results[item].path.key;
+                        
                         }
                     }
                     newresponse["key"] = community;
