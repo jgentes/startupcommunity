@@ -3,7 +3,7 @@ angular
     .controller('ResourceController', ResourceController)
     .controller('EditResourceController', EditResourceController);
 
-function ResourceController(location, communities, nav_communities, community_service, top, user, $auth) {
+function ResourceController(location, communities, nav_communities, company_service, top, user, $auth) {
     var self = this;
 
     this.top = top || {}; // this is passed in to avoid re-pulling top on nav click if possible
@@ -19,7 +19,7 @@ function ResourceController(location, communities, nav_communities, community_se
         "({community_path: item.key, community: item, query: '*', location_path: networks.location.key, top: networks.top, communities: networks.communities, user: networks.user })" :
         "({community_path: item.key, community: item, query: '*', location_path: networks.user.profile.home, top: networks.top, communities: networks.communities, user: networks.user })";
 
-    this.types = community_service.resource_types();
+    this.types = company_service.resource_types();
     var resources = nav_communities;
 
     for (item in resources.resources) {

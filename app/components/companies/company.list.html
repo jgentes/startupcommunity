@@ -2,6 +2,31 @@
     <div class="row">
         <div ng-if="!$state.includes('search.*')" class="col-lg-2 col-md-3 col-sm-4">
             <!-- Navigation Block -->
+            <div ng-if="companies.resource_page" class="hpanel hgreen">
+                <div class="panel-footer top" style="font-size: 17px;">
+                    <strong>Resource</strong> Filters
+                    <div loading-bars ng-show="companies.loadingType" style="display: inline;"></div>
+                </div>
+                <div class="panel-body filternav">
+
+                    <ul class="panel-list">
+                        <li ng-class="{'active':companies.selectedType.indexOf('*') >= 0}" ng-click="companies.filterType('*')">
+                            <a>
+                                <i class="fa fa-fw fa-globe themed-color-dark"></i> <strong>All</strong>
+                            </a>
+                        </li>
+                        <li>
+                            <hr style="margin: 10px 0 10px 0;">
+                        </li>
+                        <li ng-repeat="t in companies.resource_types" ng-class="{'active':companies.selectedType.indexOf(t) >= 0}" ng-click="companies.filterType(t)">
+                            <a>
+                                {{t}}
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
             <div class="hpanel hnavyblue">
                 <div class="panel-footer top" style="font-size: 17px;">
                     <strong>Industry</strong> Filters
@@ -23,7 +48,7 @@
                 </div>
             </div>
 
-            <div class="hpanel hgreen">
+            <div ng-if="!companies.resource_page" class="hpanel hgreen">
                 <div class="panel-footer top" style="font-size: 17px;">
                     <strong>Stage</strong> Filters
                     <div loading-bars ng-show="companies.loadingStage" style="display: inline;"></div>

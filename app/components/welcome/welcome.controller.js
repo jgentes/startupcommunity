@@ -240,7 +240,7 @@ function WelcomeController($auth, $q, $http, $window, $mixpanel, $uibModalInstan
                     } else {
                         self.selectedCompany = response.data;
                         // check whether company exists in local db, and if so, fill out fields with existing data
-                        company_service.search(null, null, '@value.profile.angellist.id: ' + newVal, null, 1, false)
+                        company_service.search(null, null, '@value.profile.angellist.id: ' + newVal, null, null, 1, false)
                             .then(function(response) {
                                 if (response.data.count > 0) {
                                     self.showCurrent(response.data.results[0].value);
@@ -256,7 +256,7 @@ function WelcomeController($auth, $q, $http, $window, $mixpanel, $uibModalInstan
 
     this.checkName = function() {
         self.checking = true;
-        company_service.search(null, null, '@value.profile.name: (' + self.company + ') AND @value.type: "company"', null, 10, false)
+        company_service.search(null, null, '@value.profile.name: (' + self.company + ') AND @value.type: "company"', null, null, 10, false)
             .then(function(response) {
                 if (response.data.count > 0) {
                     self.duplist = response.data.results;

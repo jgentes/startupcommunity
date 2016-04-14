@@ -311,8 +311,8 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                     templateUrl: "components/header/header_small.html"
                 },
                 'content': {
-                    templateUrl: '../components/resources/resource.list.html',
-                    controller: "ResourceController as resource"
+                    templateUrl: '../components/companies/company.list.html',
+                    controller: "CompanyController as companies"
                 }
             }
         })

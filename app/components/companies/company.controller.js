@@ -10,11 +10,13 @@ function CompanyController($stateParams, $state, $location, company_service, res
     this.selectedClusters = [];
     this.selectedNetworks = [];
     this.selectedStage = ['*'];
+    this.selectedType = ['*'];
 
     var self = this; // for accessing 'this' in child functions
     var query;
     var communityFilter = [$stateParams.location_path];
-    var get_resources = $state.includes('resource.list');
+    this.resource_page = $state.includes('resource.list');
+    this.resource_types = company_service.resource_types();
 
     if (this.community.type == 'cluster') {
         if (this.community.community_profiles[$stateParams.location_path]) {
@@ -39,7 +41,7 @@ function CompanyController($stateParams, $state, $location, company_service, res
     }
     this.usercount = this.embedded ? 8 : 16;
 
-    this.searchCompanies = function(alturl) {
+    this.searchCompanies = function(resource_page, alturl) {
         self.loadingUser = true;
 
         // remove random sort
@@ -50,10 +52,8 @@ function CompanyController($stateParams, $state, $location, company_service, res
         } else self.tag = undefined;
 
         var limit = $location.search().limit;
-        
-        
 
-        company_service.search(communityFilter, clusterFilter, query, undefined, limit || self.usercount, get_resources, alturl)
+        company_service.search(communityFilter, clusterFilter, query, undefined, undefined, limit || self.usercount, self.resource_page, alturl)
             .then(function (response) {
                 self.tag = undefined;
                 self.companies = result_service.setPage(response.data);
@@ -62,7 +62,7 @@ function CompanyController($stateParams, $state, $location, company_service, res
             });
     };
 
-    this.searchCompanies();
+    this.searchCompanies(this.resource_page);
 
     // Title of list box changes based on context
     var setTitle = function(){
@@ -120,6 +120,31 @@ function CompanyController($stateParams, $state, $location, company_service, res
 
     setTitle();
 
+    this.filterType = function(type) {
+        console.log(type);
+        self.loadingType = true;
+        if (type == '*') {
+            self.selectedType = ['*'];
+        } else {
+            if (self.selectedType.indexOf('*') > -1) {
+                self.selectedType.splice(self.selectedType.indexOf('*'), 1);
+            }
+            if (self.selectedType.indexOf(type) < 0) {
+                self.selectedType.push(type);
+            } else self.selectedType.splice(self.selectedType.indexOf(type), 1);
+            if (self.selectedType.length === 0) {
+                self.selectedType = ['*'];
+            }
+        }
+
+        company_service.search(communityFilter, clusterFilter, '*', null, self.selectedType, 20, self.resource_page, undefined)
+            .then(function(response) {
+                self.loadingType = false;
+                self.companies = result_service.setPage(response.data);
+                setTitle();
+            });
+    };
+
 
     this.filterStage = function(stage) {
         self.loadingStage = true;
@@ -137,7 +162,7 @@ function CompanyController($stateParams, $state, $location, company_service, res
             }
         }
 
-        company_service.search(communityFilter, clusterFilter, '*', self.selectedStage, 20, get_resources, undefined)
+        company_service.search(communityFilter, clusterFilter, '*', self.selectedStage, null, 20, self.resource_page, undefined)
             .then(function(response) {
                 self.loadingStage = false;
                 self.companies = result_service.setPage(response.data);
@@ -155,7 +180,7 @@ function CompanyController($stateParams, $state, $location, company_service, res
             if (self.selectedClusters.length == 0) self.allClusters = true;
         }
 
-        company_service.search(communityFilter, self.selectedClusters, '*', self.selectedStage, 30, get_resources, undefined)
+        company_service.search(communityFilter, self.selectedClusters, '*', self.selectedStage, null, 30, self.resource_page, undefined)
             .then(function(response) {
                 self.loadingCluster = false;
                 self.loadingNetwork = false;
@@ -176,7 +201,7 @@ function CompanyController($stateParams, $state, $location, company_service, res
 
         communityFilter = communityFilter.concat(self.selectedNetworks);
 
-        company_service.search(communityFilter, clusterFilter, '*', self.selectedStage, 20, get_resources, undefined)
+        company_service.search(communityFilter, clusterFilter, '*', self.selectedStage, null, 20, self.resource_page, undefined)
             .then(function(response) {
                 self.loadingCluster = false;
                 self.loadingNetwork = false;
@@ -189,12 +214,6 @@ function CompanyController($stateParams, $state, $location, company_service, res
 function CompanyProfileController($mixpanel, communities) {
 
     $mixpanel.track('Viewed Company');
-
-    /*if (!jQuery.isEmptyObject($stateParams.profile)) {
-        this.company = $stateParams.profile;
-    } else if (community && community.type == "company") {
-        this.company = community;
-    }*/
 
     var self = this;
     this.communities = communities;
