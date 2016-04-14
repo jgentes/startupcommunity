@@ -35,7 +35,7 @@
         <ul class="nav nav-tabs" role="tablist">
             <li id="team_li" class="active"><a href="#team" aria-controls="team" role="tab" data-toggle="tab" aria-expanded="true">Team</a></li>
             <li id="profile_li" ><a href="#profile" aria-controls="profile" role="tab" data-toggle="tab" aria-expanded="false">Profile</a></li>
-            <li id="network_li" ><a href="#network" aria-controls="network" role="tab" data-toggle="tab" aria-expanded="false">Network</a></li>
+            <li id="network_li" ><a href="#network" aria-controls="network" role="tab" data-toggle="tab" aria-expanded="false" ng-click="profile.getNetwork()">Network</a></li>
         </ul>
         <!--/ END Nav tabs -->
 
@@ -58,7 +58,43 @@
 
             <div role="tabpanel" class="tab-pane" id="network">
 
-                <div ng-include="'components/companies/company.dashboard.network.html'"></div>
+                <div class="hpanel">
+                    <div class="panel-footer top" style="height: 45px; border-bottom: 1px solid #eee;">
+                        <div class="pull-right">
+                            <strong>{{profile.users.start}} - {{profile.users.end}}</strong> of <strong>{{profile.users.total_count}}&nbsp;&nbsp;</strong>
+                            <div class="btn-group btn-group-sm" style="margin-top: -2px;">
+                                <span ng-if="profile.users.prev"><a ng-click="profile.searchUsers(profile.users.prev)" class="btn btn-sm btn-default" style="background-color: #fff;"><i class="fa fa-angle-left"></i></a></span>
+                                <span ng-if="profile.users.next"><a ng-click="profile.searchUsers(profile.users.next)" class="btn btn-sm btn-default" style="background-color: #fff;"><i class="fa fa-angle-right"></i></a></span>
+                            </div>
+                        </div>
+                        <span style="font-size: 17px;" ng-bind-html="profile.title"></span>
+                        <span><i ng-show="profile.loadingUser" class="fa fa-refresh fa-spin" style="padding: 4px; color: #aaa; font-size: 17px; margin-left: 5px;"></i></span>
+                    </div>
+
+                    <div class="panel-body content">
+                        <div class="row">
+                            <td style="border-bottom: 1px solid #fff; border-top: none; padding: 0;" colspan="3"></td>
+                        </div>
+                        <div ng-show="profile.users.results.length == 0" style="text-align: center;" ng-cloak><h2><br/>Nothing here!</h2><br/><br/></div>
+                        <div ng-repeat="item in profile.users.results" ng-switch on="$index % 2" style="margin-top: 10px;">
+                            <div class="col-md-6" ng-switch-when="0">
+                                <div class="row"  ng-include="'components/users/user.list.item.html'"></div>
+                            </div>
+                            <div class="col-md-6" ng-switch-when="1">
+                                <div class="row"  ng-include="'components/users/user.list.item.html'"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel-footer" style="height:45px;">
+                        <div class="pull-right">
+                            <strong>{{profile.users.start}} - {{profile.users.end}}</strong> of <strong>{{profile.users.total_count}}&nbsp;&nbsp;</strong>
+                            <div class="btn-group btn-group-sm" style="margin-top: -2px;">
+                                <span ng-if="profile.users.prev"><a ng-click="profile.searchUsers(profile.users.prev)" class="btn btn-sm btn-default" style="background-color: #fff;"><i class="fa fa-angle-left"></i></a></span>
+                                <span ng-if="profile.users.next"><a ng-click="profile.searchUsers(profile.users.next)" class="btn btn-sm btn-default" style="background-color: #fff;"><i class="fa fa-angle-right"></i></a></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
             </div>
 

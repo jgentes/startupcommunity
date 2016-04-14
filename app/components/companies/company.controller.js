@@ -211,7 +211,7 @@ function CompanyController($stateParams, $state, $location, company_service, res
     };
 }
 
-function CompanyProfileController($mixpanel, communities) {
+function CompanyProfileController($mixpanel, communities, user_service, result_service, location, $location) {
 
     $mixpanel.track('Viewed Company');
 
@@ -237,5 +237,20 @@ function CompanyProfileController($mixpanel, communities) {
             }
         }
     }
+
+    this.getNetwork = function(alturl) {
+        self.loadingUser = true;
+
+        // remove random sort
+        if (alturl) alturl = alturl.replace(/([&\?]sort=_random*$|sort=_random&|[?&]sort=_random(?=#))/, '');
+
+        var limit = $location.search().limit;
+
+        user_service.search([location.key, self.community.key], [], '*', undefined, limit, alturl)
+            .then(function (response) {
+                self.users = result_service.setPage(response.data);
+                self.loadingUser = false;                
+            });
+    };
 
 }
