@@ -35,7 +35,7 @@
         <ul class="nav nav-tabs" role="tablist">
             <li id="team_li" class="active"><a href="#team" aria-controls="team" role="tab" data-toggle="tab" aria-expanded="true">Team</a></li>
             <li id="profile_li" ><a href="#profile" aria-controls="profile" role="tab" data-toggle="tab" aria-expanded="false">Profile</a></li>
-            <li id="network_li" ><a href="#network" aria-controls="network" role="tab" data-toggle="tab" aria-expanded="false" ng-click="profile.getNetwork()">Network</a></li>
+            <li id="network_li" ng-if="profile.company.resource" ><a href="#network" aria-controls="network" role="tab" data-toggle="tab" aria-expanded="false" ng-click="profile.getNetwork()">Network</a></li>
         </ul>
         <!--/ END Nav tabs -->
 
