@@ -71,7 +71,7 @@ function CompanyController($stateParams, $state, $location, company_service, res
         self.cluster = '';
 
         if (self.selectedStage[0] == '*') {
-            self.stage = "Companies";
+            self.stage = self.resource_page ? "Resources" : "Companies";
         } else {
             for (item in self.selectedStage) {
                 self.stage += self.selectedStage[item];

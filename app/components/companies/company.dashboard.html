@@ -33,8 +33,9 @@
 
         <!-- BEGIN Nav tabs -->
         <ul class="nav nav-tabs" role="tablist">
-            <li id="team_li" class="active"><a href="#team" aria-controls="team" role="tab" data-toggle="tab" aria-expanded="true"><span class="pe-7s-ball"></span>Team</a></li>
-            <li id="profile_li" ><a href="#profile" aria-controls="profile" role="tab" data-toggle="tab" aria-expanded="false"><span class="pe-7s-note2"></span>Full Profile</a></li>
+            <li id="team_li" class="active"><a href="#team" aria-controls="team" role="tab" data-toggle="tab" aria-expanded="true">Team</a></li>
+            <li id="profile_li" ><a href="#profile" aria-controls="profile" role="tab" data-toggle="tab" aria-expanded="false">Profile</a></li>
+            <li id="network_li" ><a href="#network" aria-controls="network" role="tab" data-toggle="tab" aria-expanded="false">Network</a></li>
         </ul>
         <!--/ END Nav tabs -->
 
@@ -47,13 +48,19 @@
 
                 <div ng-include="'components/companies/company.dashboard.team.html'"></div>
 
-            </div> <!-- First Tab Pane -->
+            </div>
 
             <div role="tabpanel" class="tab-pane" id="profile">
 
                 <div ng-include="'components/companies/company.dashboard.profile.html'"></div>
 
-            </div> <!-- Second Tab Pane -->
+            </div>
+
+            <div role="tabpanel" class="tab-pane" id="network">
+
+                <div ng-include="'components/companies/company.dashboard.network.html'"></div>
+
+            </div>
 
         </div>
         <!--/ END Tab panes -->
