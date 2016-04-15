@@ -5,11 +5,18 @@
     </div>
     <div class="user-row" ng-class="{'user-row-border': $index % 2 == 0}">
         <a ui-sref="company.dashboard({profile: item.value, location_path: item.path.key, location: nav.community, community: item.value, top: nav.top, communities: nav.communities, user: nav.user })" title="View {{::item.value.profile.name | words:0}}'s Profile" style="float: left; "><strong>{{::item.value.profile.name}} </strong></a>
-        <a ng-show="{{(item.value.profile.summary).length > 0}}" title="Show Summary" ng-click="showSummary = !showSummary" class="user-summary">&nbsp;&nbsp;<i class="fa fa-chevron-down fa-fw"></i>
+        <a ng-show="(item.value.profile.summary).length > 0" title="Show Summary" ng-click="showSummary = !showSummary" class="user-summary">&nbsp;&nbsp;<i class="fa fa-chevron-down fa-fw"></i>
         </a>
-        <li ng-repeat="val in item.value.profile.parents" class="role-right">
-            <a ui-sref="search.dashboard({location_path: nav.location.key, community: nav.location, query: val, user: nav.user, communities: nav.communities, top: nav.top})" class="btn btn-xs btn-outline btn-default">{{val[0].toUpperCase() + val.slice(1);}}</a>
-        </li>
+        <span ng-if="!item.value.resource">
+            <li ng-repeat="val in item.value.profile.parents | limitTo:2" class="role-right">
+                <button style="cursor: default;" class="btn btn-xs btn-outline btn-default">{{val[0].toUpperCase() + val.slice(1);}}</button>
+            </li>
+        </span>
+        <span ng-if="item.value.resource">
+            <li ng-repeat="val in item.value.resource_types | limitTo:2" class="role-right">
+                <button style="cursor: default;" class="btn btn-xs btn-outline btn-default">{{val[0].toUpperCase() + val.slice(1);}}</button>
+            </li>
+        </span>
         <br>
         <div class="dash-row">
             <span class="text-muted" ng-bind-html="::item.value.profile.headline | highlight:companies.lastQuery"></span>

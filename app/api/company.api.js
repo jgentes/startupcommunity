@@ -131,7 +131,7 @@ var searchInCommunity = function(communities, clusters, stages, types, limit, of
         }
     } else searchstring += '*';
 
-    if (get_resources) {
+    if (get_resources === "true") {
         searchstring += ') AND @value.resource: true AND @value.type: "company"' + state;
     } else searchstring += ') AND @value.type: "company"' + state;
 
@@ -172,7 +172,7 @@ var searchInCommunity = function(communities, clusters, stages, types, limit, of
 
     if (query) { searchstring += ' AND ' + '(' + query + ')'; }
 
-    console.log('Pulling companies: ' + query);
+    console.log('Pulling Companies: ' + searchstring);
 
     var deferred = Q.defer();
     db.newSearchBuilder()

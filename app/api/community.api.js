@@ -250,7 +250,6 @@ function handleGetCommunity(req, res) {
 
                             if (m.value.type == "location") {
                                 ubersearch += ' OR @value.primary: true ';
-                                ubersearch += ' OR (@value.communities: "' + m.path.key + '" AND @value.resource: true)';
                             } // + pull primary industries (clusters)
 
                             console.log(ubersearch);
