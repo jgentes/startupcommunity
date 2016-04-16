@@ -485,7 +485,7 @@ function handleCheckUrl(req, res) {
     website = website.replace(/.*?:\/\//g, "");
     if(website.match(/^www\./)) website = website.substring(4);
 
-    db.search(process.env.DB_COMMUNITIES, '(@value.type = "company" AND (@value.profile.website: ' + website + ' OR @value.profile.website: www.' + website + '))')
+    db.search(process.env.DB_COMMUNITIES, '(@value.type = "company" AND (@value.profile.website: "' + website + '" OR @value.profile.website: "www.' + website + '"))')
         .then(function(result) {
             if (result.body.results.length > 0) {
                 res.status(202).send({message: result.body.results[0].path.key});

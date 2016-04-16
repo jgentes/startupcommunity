@@ -137,7 +137,7 @@ function EditCompanyController(user, sweet, $state, $q, $window, $http, communit
                         $window.location.href = '/' + response.data.key;
                     });
 
-                    $http.get('/api/2.1/community/' + response.data.key); // this runs before sweet modal is acknowledged
+                    $http.get('/' + response.data.key); // this runs before sweet modal is acknowledged
 
                 }
 
