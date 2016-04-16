@@ -79,6 +79,14 @@
                                     <option ng-repeat="parent in add.parents">{{ ::parent }}</option>
                                 </select>
                             </div>
+                            <div class="form-group col-lg-6" ng-if="!add.is_resource">
+                                <h4 class="w400">
+                                    Investment stage: (optional)
+                                </h4>
+                                <select class="form-control m-b" ng-model="add.selectedCompany.stage" style="margin-bottom: 5px;">
+                                    <option ng-repeat="stage in add.stages">{{ stage }}</option>
+                                </select>
+                            </div>
                         </div>
                         <div ng-show="add.step == 2">
                             <div class="form-group col-lg-6">

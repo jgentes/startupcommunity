@@ -211,7 +211,7 @@ function CompanyController($stateParams, $state, $location, company_service, res
     };
 }
 
-function CompanyProfileController($mixpanel, communities, user_service, result_service, location, $location) {
+function CompanyProfileController($mixpanel, communities, user_service, company_service, result_service, location, $location) {
 
     $mixpanel.track('Viewed Company');
 
@@ -252,5 +252,9 @@ function CompanyProfileController($mixpanel, communities, user_service, result_s
                 self.loadingUser = false;                
             });
     };
+
+    
+
+   
 
 }

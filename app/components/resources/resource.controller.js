@@ -75,6 +75,8 @@ function EditCompanyController(user, sweet, $state, $q, $window, $http, communit
         state: location.profile.state
     };
 
+    this.stages = [ 'Bootstrap', 'Seed', 'Series A', 'Series B', 'Later'];
+
     this.selectRoles = user_service.roles();
 
     if (!this.selectedRole) this.selectedRole = 'not involved';
@@ -162,7 +164,55 @@ function EditCompanyController(user, sweet, $state, $q, $window, $http, communit
                 self.step++;
             })
     };
+/*
 
+    if (company) {
+        // if company is passed in, probably editing existing company profile
+        this.showCurrent(company);
+        this.update = true;
+        this.alert = undefined;
+    }
+
+
+    this.showCurrent = function(profile) {
+        self.updateCompany = true;
+        self.notlisted = false;
+        var oldco = profile;
+        self.company = oldco.profile.name;
+        if (!self.selectedCompany) self.selectedCompany = {};
+        if (oldco.profile.angellist) self.selectedCompany = oldco.profile;
+        self.selectedCompany['name'] = oldco.profile.name;
+        self.selectedCompany['key'] = oldco.key;
+        if (oldco.profile.industries) self.selectedCompany['industries'] = oldco.profile.industries;
+        if (oldco.profile.stage) self.selectedCompany['stage'] = oldco.profile.stage;
+        if (oldco.profile.headline) self.selectedCompany['high_concept'] = oldco.profile.headline;
+        if (oldco.profile.summary) self.selectedCompany['product_desc'] = oldco.profile.summary;
+        if (oldco.profile.avatar) self.selectedCompany['avatar'] = oldco.profile.avatar;
+
+        if (oldco.profile.parents) {
+            switch(oldco.profile.parents[0]) {
+                case 'consumer-goods':
+                    self.selectedCompany['parent'] = 'Consumer Goods';
+                    break;
+                case 'non-profit':
+                    self.selectedCompany['parent'] = 'Non-Profit';
+                    break;
+                default:
+                    self.selectedCompany['parent'] = oldco.profile.parents[0][0].toUpperCase() + oldco.profile.parents[0].slice(1);
+            }
+        }
+
+        for (role in self.user.roles) {
+            for (co in self.user.roles[role]) {
+                if (co == oldco.key) {
+                    self.selectedRole = role;
+                    break;
+                }
+            }
+        }
+        self.alert = { type: 'warning', message: self.selectedCompany.name + ' is already in the system, but you may update it.'};
+    };
+ */
     this.deleteCompany = function (company_key) {
         self.working = true;
 
