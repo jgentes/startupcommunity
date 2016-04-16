@@ -33,7 +33,7 @@
                     <button class="btn btn-sm btn-success" ng-click="nav.requestInvitation()" style="font-size: 12px; color: #fff;">Add Company</button>
                 </div>
                 <div ng-if="nav.user && (nav.community.type == 'cluster' || (nav.community.type == 'network' && nav.user.roles.leader[nav.community.key]) || (nav.community.type == 'location' && nav.user.communities.indexOf(nav.location.key) > -1))" style="padding-top: 6px; margin-right: 8px; float: right;">
-                    <button class="btn btn-sm btn-success" ng-click="nav.addCompany()" style="font-size: 12px; color: #fff;">Add Company</button>
+                    <button class="btn btn-sm btn-success" ui-sref="company.add" style="font-size: 12px; color: #fff;">Add Company</button>
                 </div>
 
                 <div ng-if="nav.user && (nav.community.type == 'cluster' || (nav.community.type == 'network' && nav.user.roles.leader[nav.community.key]) || (nav.community.type == 'location' && nav.user.communities.indexOf(nav.location.key) > -1))" style="padding-top: 6px; margin-right: 8px; float: right;">

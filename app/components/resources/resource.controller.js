@@ -1,7 +1,7 @@
 angular
     .module('startupcommunity')
     .controller('ResourceController', ResourceController)
-    .controller('EditResourceController', EditResourceController);
+    .controller('EditCompanyController', EditCompanyController);
 
 function ResourceController(location, communities, nav_communities, company_service, top, user, $auth) {
     var self = this;
@@ -36,8 +36,10 @@ function ResourceController(location, communities, nav_communities, company_serv
     
 }
 
-function EditResourceController(user, sweet, $state, $q, $window, $http, community, location, communities, user_service, company_service, community_service) {
+function EditCompanyController(user, sweet, $state, $q, $window, $http, community, location, user_service, company_service, community_service) {
     var self = this;
+       
+    this.is_resource = $state.current.name == 'resource.add';
 
     // Initial step
     this.step = 1;
@@ -67,7 +69,7 @@ function EditResourceController(user, sweet, $state, $q, $window, $http, communi
     this.parents = []; // need a placeholder until next call is resolved
     this.parents = community_service.parents();
     this.resource_types = [];
-    this.resource_types = community_service.resource_types();
+    this.resource_types = company_service.resource_types();
     this.selectedCompany = {
         city: location.profile.city,
         state: location.profile.state
@@ -101,22 +103,21 @@ function EditResourceController(user, sweet, $state, $q, $window, $http, communi
             })
     };
 
-    this.addCompany = function(e, resource_if_true) {
+    this.addCompany = function(e) {
         if (e) e.preventDefault();
 
-        self.selectedCompany.resource = resource_if_true || false;
+        self.selectedCompany.resource = self.is_resource;
         self.selectedCompany.url = self.selectedCompany.url || encodeURI(self.selectedCompany.name);
 
         self.working = true;
         var role = self.selectedRole == 'not involved' ? undefined : self.selectedRole;
 
         var community_path = location.key; // resources can only be created in locations (for now)
-        console.log(self.selectedCompany);
 
         company_service.addCompany(self.selectedCompany, role, location.key, community_path, self.selectedCompany.key)
             .then(function(response) {
                 self.working = false;
-                $http.get('/api/2.1/community/' + location.key + '?nocache=true'); // clear cache
+                //$http.get('/api/2.1/community/' + location.key + '?nocache=true'); // clear cache
 
                 if (response.status !== 200) {
                     sweet.show({
@@ -130,55 +131,12 @@ function EditResourceController(user, sweet, $state, $q, $window, $http, communi
                         title: "Success!",
                         text: response.data.message,
                         type: "success"
+                    }, function() {
+                        $window.location.href = '/' + response.data.key;
                     });
-/*
-                    var co_key = response.data.key;
 
-                    // update local profile with company data
+                    $http.get('/api/2.1/community/' + response.data.key); // this runs before sweet modal is acknowledged
 
-                    if (!self.user.roles) {
-                        self.user["roles"] = {};
-                    } else {
-                        // search for existing role and delete if found
-
-                        for (r in self.user.roles) {
-                            for (co in self.user.roles[r]) {
-                                if (co == co_key) {
-                                    delete self.user.roles[r][co];
-                                }
-                            }
-                        }
-                    }
-
-                    // add new role
-
-                    if (!self.user.roles[role]) {
-                        self.user.roles[role] = {};
-                        self.user.roles[role][co_key] = [location.key];
-                    } else if (!self.user.roles[role][co_key]) {
-                        self.user.roles[role][co_key] = [location.key];
-                    } else if (self.user.roles[role][co_key].indexOf(location.key) < 0) {
-                        self.user.roles[role][co_key].push(location.key);
-                    } // else the damn thing is already there
-
-                    // add community
-                    if (!self.user.communities) {
-                        self.user["communities"] = {};
-                    }
-
-                    if (self.user.communities.indexOf(co_key) < 0) {
-                        self.user.communities.push(co_key);
-                    }
-
-                    self.selectedCompany = undefined;
-                    self.company = undefined;
-                    self.updateCompany = false;
-                    self.selectedRole = 'not involved';
-                    self.submitted = false;
-                    self.dups = undefined;
-                    self.notlisted = false;
-                    if (self.update) self.updated = true;
-                    */
                 }
 
             })
@@ -187,6 +145,22 @@ function EditResourceController(user, sweet, $state, $q, $window, $http, communi
                 self.alert = { type: 'danger', message: String(error.data.message) };
             })
 
+    };
+
+    this.checkUrl = function() {
+
+        company_service.checkUrl(self.selectedCompany.website)
+            .then(function(response) {                
+
+                if (response.status == 202) {
+                    self.alert = { type: 'warning', message: 'There is already a company with that website in the system: <a href="/' + String(response.data.message) + '">View Company</a>' };
+                } else self.step++;
+
+            })
+            .catch(function(err) {
+                // 404 no existing company
+                self.step++;
+            })
     };
 
     this.deleteCompany = function (company_key) {

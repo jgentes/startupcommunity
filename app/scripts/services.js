@@ -299,6 +299,13 @@ angular
             getLogoUrl: function(file, company_name) {
                 return $http.get('/api/2.1/companies/url?filename=' + file + '&company_name=' + company_name)
             },
+            checkUrl: function(website) {                
+                return $http.post('/api/2.3/companies/checkurl', {
+                    params: {
+                        website: website
+                    }
+                });
+            },
             resource_types: function() {
                 return [ 'Accelerators', 'Colleges', 'Coworking', 'Incubators', 'Investment', 'Meetups', 'Mentorship'];
             }

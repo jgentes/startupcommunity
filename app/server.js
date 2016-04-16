@@ -148,6 +148,7 @@ app.post('/api/2.2/companies/delete', auth.ensureAuthenticated, companyApis.dele
 app.post('/api/2.3/newsletter/setup', auth.ensureAuthenticated, newsletterApis.setupNewsletter);
 app.post('/api/2.3/newsletter/sync', auth.ensureAuthenticated, newsletterApis.syncMembers);
 app.get('/api/2.3/resources', auth.ensureAuthenticated,communityApis.getResources);
+app.post('/api/2.3/companies/checkurl', companyApis.checkUrl);
 
 // Auth
 app.post('/auth/linkedin', auth.linkedin);

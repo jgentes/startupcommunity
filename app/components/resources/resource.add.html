@@ -1,8 +1,10 @@
 <div class="hpanel" style="margin-top: 20px;">
 
     <div class="panel-body">
-        <h4 class="modal-title">Add a resource to <span ng-bind-html="::add.community.profile.name"></span></h4>
-        <p class="font-bold">Resources include coworking spaces, accelerators, investment funds, networking events, and other organizations that support entrepreneurship.</p>
+        <h4 class="modal-title">Add a {{ add.is_resource ? 'resource' : 'company' }} to <span ng-bind-html="::add.location.profile.name"></span></h4>
+        <p class="font-bold">{{ add.is_resource ?
+            'Resources include coworking spaces, accelerators, investment funds, networking events, and other organizations that support entrepreneurship.' :
+            'Only add companies that are part of your local startup community.' }} </p>
     </div>
 
     <div class="panel-body" style="margin-top: 20px;">
@@ -33,10 +35,10 @@
                             <div class="form-group col-lg-12">
                                 <h4 class="w400">
 
-                                    Name of the resource:
+                                    Name of the {{ add.is_resource ? 'resource' : 'company' }}:
 
                                 </h4>
-                                <input type="text" placeholder="Type the resource name.." ng-model="add.selectedCompany.name" ng-model-options="{ debounce: 250, blur: 0 }" class="form-control input-lg">
+                                <input type="text" placeholder="Type the {{ add.is_resource ? 'resource' : 'company' }} name.." ng-model="add.selectedCompany.name" ng-model-options="{ debounce: 250, blur: 0 }" class="form-control input-lg">
                             </div>
                             <div class="form-group col-lg-6">
                                 <h4 class="w400">
@@ -44,7 +46,7 @@
                                     Short headline:
 
                                 </h4>
-                                <input type="text" placeholder="The best place to meet and work.." ng-model="add.selectedCompany.high_concept" class="form-control input-lg">
+                                <input type="text" placeholder="One line summary.." ng-model="add.selectedCompany.high_concept" class="form-control input-lg">
                             </div>
                             <div class="form-group col-lg-6">
                                 <h4 class="w400">
@@ -52,9 +54,9 @@
                                     Website:
 
                                 </h4>
-                                <input type="text" placeholder="www.meetup.com" ng-model="add.selectedCompany.website" class="form-control input-lg">
+                                <input type="text" placeholder="www.." ng-model="add.selectedCompany.website" class="form-control input-lg">
                             </div>
-                            <div class="form-group col-lg-6">
+                            <div class="form-group col-lg-6" ng-if="add.is_resource">
                                 <h4 class="w400">
 
                                     What type of resource is this?
@@ -118,7 +120,7 @@
 
                                 </h4>
                                 <input type="text" class="form-control input-md" placeholder="{{ add.encode(add.selectedCompany.name || '') }}" ng-model="add.selectedCompany.url" style="margin-bottom: 5px;">
-                                <em style="font-size: 11px;" class="pull-right">The path will be: /{{ add.location.key }}/<strong><span style="text-transform: lowercase;">{{ add.encode(add.selectedCompany.url || add.selectedCompany.name) }}</span></strong></em>
+                                <em style="font-size: 11px;" class="pull-right">The path will be: startupcommunity.org/<strong><span style="text-transform: lowercase;">{{ add.encode(add.selectedCompany.url || add.selectedCompany.name) }}</span></strong></em>
                             </div>
                             <div class="col-lg-12" style="margin-top:-10px;">
                                 <h4 class="w400">
@@ -146,12 +148,12 @@
 
             <div alert-box this-alert="add.alert" style="padding-top:10px;"></div>
 
-            <button ladda="add.working" class="ladda-button btn btn-danger pull-left" data-style="zoom-in" data-spinner-size="25" ng-click="add.deleteCompany(add.community.key)" ng-show="add.update && !add.alert">Delete {{::add.community.profile.name || 'Resource'}}</button>
+            <button ladda="add.working" class="ladda-button btn btn-danger pull-left" data-style="zoom-in" data-spinner-size="25" ng-click="add.deleteCompany(add.community.key)" ng-show="add.update && !add.alert">Delete {{::add.community.profile.name || (add.is_resource ? 'Resource' : 'Company') }}</button>
 
             <div class="text-right m-t-xs">
                 <button ng-click="add.wizard.prev()" ng-disabled="add.step == 1" class="btn btn-default">Previous</button>
-                <button ng-click="add.wizard.next()" ng-disabled="!add.selectedCompany.resource_types.length || !add.selectedCompany.name || !add.selectedCompany.parent" ng-hide="add.step == 2" class="btn btn-success">Next</button>
-                <input ladda="add.working" class="ladda-button finish btn-success btn" data-style="zoom-in" data-spinner-size="25" ng-show="add.step == 2" ng-click="add.addCompany($event, true)" type="submit" value="{{ (add.updateCompany ? 'Update ' : 'Add ') + (add.selectedCompany.name || 'Resource') }}"/>
+                <button ng-click="add.checkUrl()" ng-disabled="!add.selectedCompany.name || !add.selectedCompany.parent" ng-hide="add.step == 2" class="btn btn-success">Next</button>
+                <input ladda="add.working" class="ladda-button finish btn-success btn" data-style="zoom-in" data-spinner-size="25" ng-show="add.step == 2" ng-click="add.addCompany($event)" type="submit" value="{{ (add.updateCompany ? 'Update ' : 'Add ') + (add.selectedCompany.name || (add.is_resource ? 'Resource' : 'Company')) }}"/>
             </div>
 
         </form>

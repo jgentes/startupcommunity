@@ -13,6 +13,7 @@ var CompanyApi = function() {
         this.addCompany = handleAddCompany;
         this.deleteCompany = handleDeleteCompany;
         this.getLogoUrl = handleGetLogoUrl;
+        this.checkUrl = handleCheckUrl;
 };
 
 var schema = {
@@ -183,27 +184,27 @@ var searchInCommunity = function(communities, clusters, stages, types, limit, of
         .query(searchstring)
         .then(function(result){
 
-                var i;
+            var i;
 
-                try {
-                        for (i=0; i < result.body.results.length; i++) {
+            try {
+                    for (i=0; i < result.body.results.length; i++) {
 
-                            result.body.results[i].value["key"] = result.body.results[i].path.key;
-                        }
-                } catch (error) {
-                        console.warn('WARNING: company144 ', error);
-                        console.log(result.body.results);
-                }
+                        result.body.results[i].value["key"] = result.body.results[i].path.key;
+                    }
+            } catch (error) {
+                    console.warn('WARNING: company144 ', error);
+                    console.log(result.body.results);
+            }
 
-                if (result.body.next) {
-                        var getnext = url.parse(result.body.next, true);
-                        result.body.next = '/api/2.1/search' + getnext.search;
-                }
-                if (result.body.prev) {
-                        var getprev = url.parse(result.body.prev, true);
-                        result.body.prev = '/api/2.1/search' + getprev.search;
-                }
-                deferred.resolve(result.body);
+            if (result.body.next) {
+                    var getnext = url.parse(result.body.next, true);
+                    result.body.next = '/api/2.1/search' + getnext.search;
+            }
+            if (result.body.prev) {
+                    var getprev = url.parse(result.body.prev, true);
+                    result.body.prev = '/api/2.1/search' + getprev.search;
+            }
+            deferred.resolve(result.body);
         })
         .fail(function(err){
                 console.log(err.body.message);
@@ -254,13 +255,24 @@ function handleAddCompany(req, res) {
     } else {
         console.log('Adding company ' + addCompany.profile.name + ' to ' + addCompany.location_key + ' / ' + addCompany.community_key);
 
-        var pathname = addCompany.profile.url || encodeURI(addCompany.profile.name.toLowerCase());
+        // if no existing key is provided, validate the company.url doesn't already exist
+        if (!addCompany.key) {
+            db.get(process.env.DB_COMMUNITIES, addCompany.profile.url)
+                .then(function() {
+                    res.status(400).send({ message: 'That url is already in use. Please specify a different url path.'})
+                })
+                .fail(function() {
+                    // url is good
+                    go();
+                })
 
-        // validate user is a member in the location/community
-        db.get(process.env.DB_COMMUNITIES, req.user)
-            .then(function(response){                
+        } else go();
 
-                if (response.body.code !== "items_not_found") {
+        var go = function() {
+            // validate user is a member in the location/community
+            db.get(process.env.DB_COMMUNITIES, req.user)
+                .then(function(response){
+
                     var user = response.body;
 
                     if (!addCompany.location_key) addCompany.location_key = addCompany.community_key;
@@ -279,20 +291,21 @@ function handleAddCompany(req, res) {
                     companyPost(company, addCompany.role, addCompany.location_key, req.user, addCompany.key, function(result) {
                         res.status(result.status).send(result.data);
                     });
-/*
-                    } else {
-                        console.warn("User is not a member of community: " + addCompany.community_key + " and location: " + addCompany.location_key + "!");
-                        res.status(400).send({ message: 'You must be a member of this community and/or a leader of this network to add a company to it.' });
-                    }
-                    */
-                } else {
-                    console.warn('WARNING:  User not found.');
-                }
-            })
+                    /*
+                     } else {
+                     console.warn("User is not a member of community: " + addCompany.community_key + " and location: " + addCompany.location_key + "!");
+                     res.status(400).send({ message: 'You must be a member of this community and/or a leader of this network to add a company to it.' });
+                     }
+                     */
 
-            .fail(function(err){
-                console.warn("WARNING: ", err);
-            });
+                })
+
+                .fail(function(err){
+                    console.warn("WARNING: ", err);
+                    res.status(400).send({ message: 'User not found.' });
+                });
+        }
+
     }
 }
 
@@ -461,7 +474,10 @@ var addRole = function(company_key, role, location_key, user_key) {
         });
 };
 
-var checkUrl = function(website, key) {
+function handleCheckUrl(req, res) {
+
+    var website = req.body.params.website;
+
     console.log('Looking for existing company based on website url: ' + website);
 
     // cleanup url
@@ -469,10 +485,15 @@ var checkUrl = function(website, key) {
     website = website.replace(/.*?:\/\//g, "");
     if(website.match(/^www\./)) website = website.substring(4);
 
-    var search = key ? '@path.key:' + key + ' OR ' : "";
-
-    return db.search(process.env.DB_COMMUNITIES, search + '(@value.type = "company" AND (@value.profile.website: ' + website + ' OR @value.profile.website: www.' + website + '))');
-};
+    db.search(process.env.DB_COMMUNITIES, '(@value.type = "company" AND (@value.profile.website: ' + website + ' OR @value.profile.website: www.' + website + '))')
+        .then(function(result) {
+            if (result.body.results.length > 0) {
+                res.status(202).send({message: result.body.results[0].path.key});
+            } else {
+                res.status(404).send();                
+            }
+        });
+}
 
 var companyPost = function (company, role, location_key, user, key, callback) {
 
@@ -500,7 +521,9 @@ var companyPost = function (company, role, location_key, user, key, callback) {
             });
     } else {
 
-        db.put(process.env.DB_COMMUNITIES, company.url, company)
+        var pathname = encodeURI(company.url.toLowerCase());
+
+        db.put(process.env.DB_COMMUNITIES, pathname, company)
             .then(function (response) {
 
                 var companykey = response.headers.location.split('/')[3];

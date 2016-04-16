@@ -276,17 +276,15 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                     value: null,
                     squash: true
                 },
-                pageTitle: 'Add Company',
-                pageDescription: 'AngelList URL is required to pull the logo, headline, and summary for each company.',
-                icon: 'pe-7s-id'
+                pageTitle: 'Add a Company'
             },
             views: {
                 'header': {
                     templateUrl: "components/header/header_small.html"
                 },
                 'content': {
-                    templateUrl: '../components/companies/company.add.html',
-                    controller: "AddCompanyController as add"
+                    templateUrl: '../components/resources/resource.add.html',
+                    controller: "EditCompanyController as add"
                 }
             }
 
@@ -328,7 +326,7 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
             views: {
                 'content': {
                     templateUrl: '../components/resources/resource.add.html',
-                    controller: "EditResourceController as add"
+                    controller: "EditCompanyController as add"
                 }
             }
         })
