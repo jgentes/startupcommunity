@@ -62,10 +62,10 @@
                                     What type of resource is this?
 
                                 </h4>
-                                <ui-select class="industry_select form-control input-lg" multiple="multiple" ng-model="add.selectedCompany.resource_types" ng-disabled="disabled">
+                                <ui-select class="industry_select" multiple="multiple" ng-model="add.selectedCompany.resource_types" ng-disabled="disabled">
                                     <ui-select-match placeholder="College, Accelerator, etc">{{$item}}</ui-select-match>
                                     <ui-select-choices repeat="p in add.resource_types | filter: $select.search">
-                                        <div ng-bind-html="p | highlight: $select.search"></div>
+                                        <div ng-bind="p | highlight: $select.search"></div>
                                     </ui-select-choices>
                                 </ui-select>
                             </div>
@@ -75,17 +75,23 @@
                                     Select a primary industry:
 
                                 </h4>
-                                <select class="form-control input-md" ng-model="add.selectedCompany.parent" style="margin-bottom: 5px;" required>
-                                    <option ng-repeat="parent in add.parents">{{ ::parent }}</option>
-                                </select>
+                                <ui-select class="industry_select" ng-model="add.selectedCompany.parent" required>
+                                    <ui-select-match placeholder="Tech, Medical, etc" class="industry_select">{{$select.selected}}</ui-select-match>
+                                    <ui-select-choices repeat="parent in add.parents">
+                                        <div ng-bind="parent"></div>
+                                    </ui-select-choices>
+                                </ui-select>
                             </div>
                             <div class="form-group col-lg-6" ng-if="!add.is_resource">
                                 <h4 class="w400">
                                     Investment stage: (optional)
                                 </h4>
-                                <select class="form-control m-b" ng-model="add.selectedCompany.stage" style="margin-bottom: 5px;">
-                                    <option ng-repeat="stage in add.stages">{{ stage }}</option>
-                                </select>
+                                <ui-select class="industry_select" ng-model="add.selectedCompany.stage">
+                                    <ui-select-match placeholder="Bootstrap, Angel, etc">{{$select.selected}}</ui-select-match>
+                                    <ui-select-choices repeat="stage in add.stages">
+                                        <div ng-bind="stage"></div>
+                                    </ui-select-choices>
+                                </ui-select>
                             </div>
                         </div>
                         <div ng-show="add.step == 2">

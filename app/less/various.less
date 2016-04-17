@@ -258,18 +258,28 @@ input.input-md, input.input-md:focus{
   }
 }
 
-.industry_select input.ui-select-search.input-xs {
+// for ui-select boxes
+
+.industry_select input.ui-select-search.input-xs,
+.industry_select span.ui-select-match-text,
+.ui-select-placeholder {
   font-size: 20px;
   font-weight: 200;
 }
 
-.industry_select input.ui-select-search.input-xs::-webkit-input-placeholder { font-size: 18px; line-height: 1.6;}
-.industry_select input.ui-select-search.input-xs::-moz-placeholder  { font-size: 18px; line-height: 1.6;}
-.industry_select input.ui-select-search.input-xs:-ms-input-placeholder { font-size: 18px; line-height: 1.6;}
+.ui-select-placeholder {
+  color: #aaa;
+}
+
+.industry_select input.ui-select-search.input-xs::-webkit-input-placeholder { font-size: 18px; line-height: 1.6; }
+.industry_select input.ui-select-search.input-xs::-moz-placeholder  { font-size: 18px; line-height: 1.6; }
+.industry_select input.ui-select-search.input-xs:-ms-input-placeholder { font-size: 18px; line-height: 1.6; }
 
 .industry_select span.ui-select-match-item.btn.btn-default.btn-xs {
   font-size: 14px;
 }
+
+.industry_select span.ui-select-toggle { height: 46px; }
 
 .ui-select-multiple.ui-select-bootstrap .ui-select-match .close {
   line-height: 1;

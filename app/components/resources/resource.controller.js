@@ -68,7 +68,7 @@ function EditCompanyController(user, sweet, $state, $q, $window, $http, communit
     this.updateCompany= false; // used if company already exists
     this.parents = []; // need a placeholder until next call is resolved
     this.parents = community_service.parents();
-    this.resource_types = [];
+    this.resource_types = []; // need a placeholder until next call is resolved
     this.resource_types = company_service.resource_types();
     this.selectedCompany = {
         city: location.profile.city,
