@@ -64,8 +64,8 @@
                                 </h4>
                                 <ui-select class="industry_select" multiple="multiple" ng-model="add.selectedCompany.resource_types" ng-disabled="disabled">
                                     <ui-select-match placeholder="College, Accelerator, etc">{{$item}}</ui-select-match>
-                                    <ui-select-choices repeat="p in add.resource_types | filter: $select.search">
-                                        <div ng-bind="p | highlight: $select.search"></div>
+                                    <ui-select-choices repeat="p in add.resource_types">
+                                        <div ng-bind="p"></div>
                                     </ui-select-choices>
                                 </ui-select>
                             </div>
@@ -93,7 +93,23 @@
                                     </ui-select-choices>
                                 </ui-select>
                             </div>
+                            <div class="form-group col-lg-12">
+                                <h4 class="w400">
+
+                                    Add up to six specific markets:
+
+                                </h4>
+                                <div class="panel-body industry_select" style="padding:1px; margin-top: 6px; margin-bottom: 6px;">
+                                    <ui-select multiple ng-model="add.selectedCompany.industries" tagging="true" tagging-label="(new)" ng-disabled="disabled" limit="6" alert_title="Sorry, only 6 items here." alert_text="Focus on markets that this organization has leadership in." alert_type="warning" style="border:none;">
+                                        <ui-select-match placeholder="Search for markets..">{{$item}}</ui-select-match>
+                                        <ui-select-choices repeat="industry in add.industries | filter:$select.search | limitTo: 25">
+                                            {{industry}}
+                                        </ui-select-choices>
+                                    </ui-select>
+                                </div>
+                            </div>
                         </div>
+
                         <div ng-show="add.step == 2">
                             <div class="form-group col-lg-6">
                                 <h4 class="w400">
@@ -167,7 +183,7 @@
             <div class="text-right m-t-xs">
                 <button ng-click="add.wizard.prev()" ng-disabled="add.step == 1" class="btn btn-default">Previous</button>
                 <button ng-click="add.checkUrl()" ng-disabled="!add.selectedCompany.name || !add.selectedCompany.parent" ng-hide="add.step == 2" class="btn btn-success">Next</button>
-                <input ladda="add.working" class="ladda-button finish btn-success btn" data-style="zoom-in" data-spinner-size="25" ng-show="add.step == 2" ng-click="add.addCompany($event)" type="submit" value="{{ (add.updateCompany ? 'Update ' : 'Add ') + (add.selectedCompany.name || (add.is_resource ? 'Resource' : 'Company')) }}"/>
+                <button ladda="add.working" class="ladda-button finish btn-success btn" data-style="zoom-in" data-spinner-size="25" ng-show="add.step == 2" ng-click="add.addCompany($event)" type="submit">{{ (add.updateCompany ? 'Update ' : 'Add ') + (add.selectedCompany.name || (add.is_resource ? 'Resource' : 'Company')) }}</button>
             </div>
 
         </form>

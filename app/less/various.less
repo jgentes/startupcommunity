@@ -261,10 +261,22 @@ input.input-md, input.input-md:focus{
 // for ui-select boxes
 
 .industry_select input.ui-select-search.input-xs,
-.industry_select span.ui-select-match-text,
 .ui-select-placeholder {
   font-size: 20px;
   font-weight: 200;
+  height:44px;
+}
+
+.industry_select span.ui-select-match-text {
+  font-size: 18px;
+  font-weight: 200;
+  padding-top: 3px;
+}
+
+.industry_select span.ui-select-match-item {
+  font-size: 20px;
+  font-weight: 200;
+  margin-top: -2px !important;
 }
 
 .ui-select-placeholder {
@@ -279,7 +291,8 @@ input.input-md, input.input-md:focus{
   font-size: 14px;
 }
 
-.industry_select span.ui-select-toggle { height: 46px; }
+.industry_select span.ui-select-toggle
+{ height: 46px; }
 
 .ui-select-multiple.ui-select-bootstrap .ui-select-match .close {
   line-height: 1;

@@ -2,6 +2,7 @@
     <div class="panel-body hero" style="padding: 10px 0;">
         <div style="padding: 20px 15px;">
             <header class="heading content" style="color:#fff">
+                <a href="javascript:window.location.href=window.location.href" style="color: #eee; font-size: 7px; float: left; margin-left: -40px; margin-top: -12px;">random image</a>
                 <button ng-if="nav.location_path == nav.user.key" ui-sref="welcome({location: nav.location, location_path: nav.location.key, go: 'welcome.roles'})" class="btn btn-warning pull-right" style="margin-left:-100px;">Edit Profile</button>
                 <img class="img-circle m-b" style="height:100px;" ng-src="{{profile.user.profile.avatar || profile.user.profile.linkedin.pictureUrl || '/public/images/blank_avatar.png'}}" alt="{{::profile.user.profile.name}}" onerror="this.src='/public/images/blank_avatar.png'">
                 <div style="margin-top: -12px;">
@@ -38,7 +39,7 @@
                 </div>
             </header>
         </div>
-        <span><div id="cover-photo" class="active" ng-style="{'background-image':profile.background_image}"></div><span class="cover-overlay"></span></span>
+        <span><div id="cover-photo" class="active" ng-style="{'background-image':'url(https://source.unsplash.com/category/nature)'}"></div><span class="cover-overlay"></span></span>
     </div>
 </div>
 <div class="hpanel">

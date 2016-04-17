@@ -70,6 +70,8 @@ function EditCompanyController(user, sweet, $state, $q, $window, $http, communit
     this.parents = community_service.parents();
     this.resource_types = []; // need a placeholder until next call is resolved
     this.resource_types = company_service.resource_types();
+    this.industries = []; // need a placeholder until next call is resolved
+    this.industries = community_service.industries();
     this.selectedCompany = {
         city: location.profile.city,
         state: location.profile.state
@@ -155,12 +157,16 @@ function EditCompanyController(user, sweet, $state, $q, $window, $http, communit
             .then(function(response) {                
 
                 if (response.status == 202) {
-                    self.alert = { type: 'warning', message: 'There is already a company with that website in the system: <a href="/' + String(response.data.message) + '">View Company</a>' };
-                } else self.step++;
+                    self.alert = { type: 'warning', message: 'That website is already in use: <a href="/' + String(response.data.message) + '" target="_blank">Click here</a>' };
+                } else {
+                    self.alert = undefined;
+                    self.step++;
+                }
 
             })
             .catch(function(err) {
                 // 404 no existing company
+                self.alert = undefined;
                 self.step++;
             })
     };

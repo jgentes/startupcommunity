@@ -211,7 +211,7 @@ function CompanyController($stateParams, $state, $location, company_service, res
     };
 }
 
-function CompanyProfileController($mixpanel, communities, user_service, company_service, result_service, location, $location) {
+function CompanyProfileController($mixpanel, $scope, communities, user_service, company_service, result_service, location, $location) {
 
     $mixpanel.track('Viewed Company');
 
@@ -221,8 +221,6 @@ function CompanyProfileController($mixpanel, communities, user_service, company_
     this.community = this.company;
     this.team = { "count" : {}};
     
-    this.background_image = 'url(https://source.unsplash.com/category/nature)';
-
     // sort team members
 
     for (member in this.communities[this.company.key].team) {
