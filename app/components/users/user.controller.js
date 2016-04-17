@@ -245,7 +245,7 @@ function UserProfileController($stateParams, $http, $uibModal, $mixpanel, user, 
     this.communities = communities;
     this.location = communities[this.community.profile.home];
     this.reply = {};
-    this.background_image = 'url(https://s3-us-west-2.amazonaws.com/startupcommunity/backgrounds/background' + Math.floor((Math.random() * 54) + 1) + '.jpg)';
+    this.background_image = 'url(https://source.unsplash.com/category/nature)';
 
     this.companies = { "count" : {}};
     

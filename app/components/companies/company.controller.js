@@ -220,8 +220,8 @@ function CompanyProfileController($mixpanel, communities, user_service, company_
     this.company = this.communities[this.communities.key];
     this.community = this.company;
     this.team = { "count" : {}};
-
-    this.background_image = 'url(https://s3-us-west-2.amazonaws.com/startupcommunity/backgrounds/background' + Math.floor((Math.random() * 54) + 1) + '.jpg)';
+    
+    this.background_image = 'url(https://source.unsplash.com/category/nature)';
 
     // sort team members
 

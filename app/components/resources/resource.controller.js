@@ -73,7 +73,7 @@ function EditCompanyController(user, sweet, $state, $q, $window, $http, communit
     this.selectedCompany = {
         city: location.profile.city,
         state: location.profile.state
-    };
+    };    
 
     this.stages = [ 'Bootstrap', 'Seed', 'Series A', 'Series B', 'Later'];
 
