@@ -133,7 +133,7 @@
                         <a ui-sref="community.dashboard({location_path: nav.location.key, community_path: '', community: nav.location, location: nav.location, query: '*', top: nav.top, communities: nav.communities, user: nav.user })" style="padding-left: 6px; font-size: 16px; font-weight: bold; border-bottom: 1px solid #eee; background-color:#F6F8F9; border-left: 2px solid #82BC4B;" ng-click="l_working = true">
                             <span ng-if="nav.location" style="white-space:nowrap;font-size:18px;">
                                 <span loading-bars ng-show="l_working" style="padding-right: 32px;"></span>
-                                &nbsp;{{nav.location.profile.name.split(',').slice(0, (nav.location.profile.name.split(',').length - 1) || 1).join()}}
+                                &nbsp;{{nav.location.profile.name}}
                             </span>
                         </a>
                     </li>
