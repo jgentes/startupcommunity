@@ -19,7 +19,10 @@
                 <h3 style="padding-top: 5px;" style="line-height: 1.5;">
                     {{::profile.company.profile.headline}}
                 </h3>
-                <div style="padding-top:10px; overflow: hidden; height: 50px; margin-bottom: -10px;">
+                <div style="margin-top:-18px;">
+                    <a href="{{'http://' + profile.company.profile.website}}" target="_blank" style="font-size:14px; color: #6DC8EE;">{{::profile.company.profile.website}}</a>
+                </div>
+                <div style="overflow: hidden; height: 40px; margin-bottom: -10px;">
                     <li ng-repeat="industry in profile.company.profile.industries" style="margin-right: 5px;" class="btn btn-outline btn-default btn-xs" ui-sref="search.dashboard({location_path: nav.location.key, community: nav.location, query: industry})">
                         {{::industry}}
                     </li>
