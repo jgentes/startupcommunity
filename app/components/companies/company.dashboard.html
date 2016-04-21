@@ -3,7 +3,7 @@
         <div style="padding: 20px 15px;">
             <header class="heading content" style="color:#fff">
                 <a href="javascript:window.location.href=window.location.href" style="color: #eee; font-size: 7px; float: left; margin-left: -40px; margin-top: -12px;">random image</a>
-                <button ng-if="nav.user" ng-click="nav.addCompany(profile.company)" class="btn btn-warning pull-right" style="margin-left:-100px;">Edit</button>
+                <button ng-if="nav.user" ui-sref="company.add({profile: profile.company})" class="btn btn-warning pull-right" style="margin-left:-100px;">Edit</button>
                 <img class="img-circle m-b" ng-show="profile.company.profile.avatar" style="height:100px;" ng-src="{{profile.company.profile.avatar}}" alt="{{::profile.company.profile.name}}" onerror="this.src='/public/images/browser_icon.jpg'">
                 <div style="margin:-15px 0;">
                     <span ng-if="profile.company.profile.parents[0]" class="btn btn-default btn-xs">

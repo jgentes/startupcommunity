@@ -15,6 +15,7 @@ function WelcomeController($auth, $q, $http, $mixpanel, $stateParams, $state, sw
     this.community = community; // used in add company (not welcome) modal
     this.user = user;
     this.quote = true;
+    this.submitted = false;
 
     var checkProfile = function() {
         if (!self.user.profile["name"]) self.user.profile["name"] = self.user.profile.linkedin.firstName + ' ' + self.user.profile.linkedin.lastName;
@@ -166,6 +167,7 @@ function WelcomeController($auth, $q, $http, $mixpanel, $stateParams, $state, sw
     };
 
     this.submit = function() {
+        self.submitted = true;
 
         // add roles
         if (!self.user.roles) {
@@ -217,6 +219,8 @@ function WelcomeController($auth, $q, $http, $mixpanel, $stateParams, $state, sw
                 } else {
                     $http.get('/api/2.1/community/' + self.user.key + '?nocache=true')
                         .then(function(response) {
+                            self.submitted = false;
+                            
                             if ($stateParams.go) {
                                 $state.go('user.dashboard', {
                                     communities: response.data,
