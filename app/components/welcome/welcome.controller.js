@@ -2,7 +2,7 @@ angular
     .module('startupcommunity')
     .controller('WelcomeController', WelcomeController);
 
-function WelcomeController($auth, $q, $http, $window, $mixpanel, $uibModalInstance, $stateParams, $scope, $state, $filter, sweet, community, location, user_service, company_service, community_service, user, company) {
+function WelcomeController($auth, $q, $http, $mixpanel, $stateParams, $state, sweet, community, location, user_service, community_service, user) {
     var self = this;
     this.location = jQuery.isEmptyObject(location) ? community.profile.name : location.profile.name.split(',')[0];
     this.auth = false;
@@ -15,10 +15,6 @@ function WelcomeController($auth, $q, $http, $window, $mixpanel, $uibModalInstan
     this.community = community; // used in add company (not welcome) modal
     this.user = user;
     this.quote = true;
-
-    this.shouldIadd = function() {
-        self.alert = {type: "warning", message: "Startups find experts based on their work experience. If you work with the company while living in the community, you should add it."}
-    };
 
     var checkProfile = function() {
         if (!self.user.profile["name"]) self.user.profile["name"] = self.user.profile.linkedin.firstName + ' ' + self.user.profile.linkedin.lastName;
@@ -53,6 +49,33 @@ function WelcomeController($auth, $q, $http, $window, $mixpanel, $uibModalInstan
             }
         }
     };
+
+    // for role selection
+
+    this.selectRoles = [{
+        value: 'not involved',
+        text: 'not involved'
+    }, {
+        value: 'founder',
+        text: 'Founder',
+        description: "You have started or co-founded a business venture."
+    }, {
+        value: 'investor',
+        text: 'Investor',
+        description: "You are an active investor in startup companies."
+    },{
+        value: 'team',
+        text: 'Team Member',
+        description: "You are a current employee or team member of a local company."
+    },{
+        value: 'mentor',
+        text: 'Mentor',
+        description: "You are willing to provide guidance to entrepreneurs without compensation - the 'give before you get' philosophy."
+    },{
+        value: 'provider',
+        text: 'Service Provider',
+        description: "You provide services to community members for a fee."
+    }];
 
     this.authenticate = function() {
 

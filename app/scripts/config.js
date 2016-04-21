@@ -362,9 +362,6 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
         .state('welcome.profile', {
             templateUrl: "components/welcome/welcome.profile.html"
         })
-        .state('welcome.companies', {
-            templateUrl: "components/welcome/welcome.companies.html"
-        })
         .state('welcome.invite', {
             templateUrl: "components/welcome/welcome.invite.html",
             controller: "InviteUserController as invite"
