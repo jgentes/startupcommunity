@@ -25,16 +25,15 @@ var schema = {
 
         var newprofile = {
             "type": "company",
-            "url": profile.url,
             "resource": profile.resource,
             "resource_types": profile.resource_types,
             "profile": {
                 "home": location_key,
                 "name": profile.name,
                 "parents": [profile.parent.toLowerCase()],
-                "headline": profile.high_concept,
-                "summary": profile.product_desc,
-                "avatar": profile.thumb_url || "",
+                "headline": profile.headline,
+                "summary": profile.summary,
+                "avatar": profile.avatar || "",
                 "stage": profile.stage,
                 "industries": profile.industries,
                 "website": profile.website,
@@ -82,6 +81,8 @@ function handleCompanySearch(req, res){
 var searchInCommunity = function(communities, clusters, stages, types, limit, offset, query, get_resources, key) {
     var allowed = false;
     var userperms;
+    
+    console.log(key) //concern is that a passed in key is new and overwrites existing key
 
     if (key) { //check api key to determine if restricted profile data is included with results
             try {
@@ -249,6 +250,46 @@ function handleGetLogoUrl(req, res) {
 function handleAddCompany(req, res) {
     // always use ensureAuth before this (to acquire req.user)
     var addCompany = req.body.params;
+
+    var go = function() {
+        // validate user is a member in the location/community
+        db.get(process.env.DB_COMMUNITIES, req.user)
+            .then(function(response){
+                console.log(addCompany);
+
+                var user = response.body;
+
+                if (!addCompany.location_key) addCompany.location_key = addCompany.community_key;
+
+                if (user.communities.indexOf(addCompany.location_key) < 0) {
+                    res.status(202).send({ message: 'You must be a member of this community to add a company.' });
+                } else if (!addCompany.community_key || (user.roles && user.roles.leader && user.roles.leader[addCompany.community_key] && user.roles.leader[addCompany.community_key].indexOf(addCompany.location_key) < 0)) {
+                    console.warn("No community specified, or user is not a leader in community: " + addCompany.community_key + " for location: " + addCompany.location_key + "!");
+                    addCompany.community_key = addCompany.location_key;
+                }
+
+                var company = schema.company(addCompany.profile, addCompany.location_key, addCompany.community_key);
+
+                // add company
+
+                companyPost(company, addCompany.role, addCompany.location_key, req.user, addCompany.key, function(result) {
+                    res.status(result.status).send(result.data);
+                });
+                /*
+                 } else {
+                 console.warn("User is not a member of community: " + addCompany.community_key + " and location: " + addCompany.location_key + "!");
+                 res.status(400).send({ message: 'You must be a member of this community and/or a leader of this network to add a company to it.' });
+                 }
+                 */
+
+            })
+
+            .fail(function(err){
+                console.warn("WARNING: ", err);
+                res.status(400).send({ message: 'User not found.' });
+            });
+    };
+
     if (!addCompany.profile) {
         console.warn("No company specified!");
         res.status(400).send({ message: 'Some information was missing.' });
@@ -267,44 +308,6 @@ function handleAddCompany(req, res) {
                 })
 
         } else go();
-
-        var go = function() {
-            // validate user is a member in the location/community
-            db.get(process.env.DB_COMMUNITIES, req.user)
-                .then(function(response){
-
-                    var user = response.body;
-
-                    if (!addCompany.location_key) addCompany.location_key = addCompany.community_key;
-
-                    if (user.communities.indexOf(addCompany.location_key) < 0) {
-                        res.status(202).send({ message: 'You must be a member of this community to add a company.' });
-                    } else if (!addCompany.community_key || (user.roles && user.roles.leader && user.roles.leader[addCompany.community_key] && user.roles.leader[addCompany.community_key].indexOf(addCompany.location_key) < 0)) {
-                        console.warn("No community specified, or user is not a leader in community: " + addCompany.community_key + " for location: " + addCompany.location_key + "!");
-                        addCompany.community_key = addCompany.location_key;
-                    }
-
-                    var company = schema.company(addCompany.profile, addCompany.location_key, addCompany.community_key);
-
-                    // add company
-
-                    companyPost(company, addCompany.role, addCompany.location_key, req.user, addCompany.key, function(result) {
-                        res.status(result.status).send(result.data);
-                    });
-                    /*
-                     } else {
-                     console.warn("User is not a member of community: " + addCompany.community_key + " and location: " + addCompany.location_key + "!");
-                     res.status(400).send({ message: 'You must be a member of this community and/or a leader of this network to add a company to it.' });
-                     }
-                     */
-
-                })
-
-                .fail(function(err){
-                    console.warn("WARNING: ", err);
-                    res.status(400).send({ message: 'User not found.' });
-                });
-        }
 
     }
 }
@@ -496,8 +499,9 @@ function handleCheckUrl(req, res) {
 }
 
 var companyPost = function (company, role, location_key, user, key, callback) {
+    console.log(company);
 
-    if (key) {
+    if (key && (key !== company.url.toLowerCase())) {
 
         db.put(process.env.DB_COMMUNITIES, key, company)
             .then(function (response) {

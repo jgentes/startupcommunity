@@ -10,7 +10,6 @@ function ResourceController(location, communities, nav_communities, company_serv
     this.networks = this.networks || {};
     this.communities = communities;
     this.user = $auth.isAuthenticated() ? user : {};
-
     this.location = location;
     this.location_key = this.location.key;
     this.nav_jump = (this.location && this.location.type === 'location') ||
@@ -38,34 +37,15 @@ function ResourceController(location, communities, nav_communities, company_serv
 
 function EditCompanyController(user, sweet, $state, $q, $window, $http, community, location, user_service, company_service, community_service) {
     var self = this;
-       
-    this.is_resource = $state.current.name == 'resource.add';
 
-    // Initial step
+    console.log(community);
+
     this.step = 1;
-
-    // Wizard functions
-    this.wizard =  {
-        show: function(number) {
-            self.step = number;
-        },
-        next: function() {
-            self.step++ ;
-        },
-        prev: function() {
-            self.step-- ;
-        }
-    };
-
-    this.encode = function(uri) {
-        return encodeURI(uri);
-    };
-    
     this.location = location;
     this.community = community;
     this.user = user;
+    this.update = false; // used if company already exists
     this.working = false; // used for waiting indicator
-    this.updateCompany= false; // used if company already exists
     this.parents = []; // need a placeholder until next call is resolved
     this.parents = community_service.parents();
     this.resource_types = []; // need a placeholder until next call is resolved
@@ -75,13 +55,65 @@ function EditCompanyController(user, sweet, $state, $q, $window, $http, communit
     this.selectedCompany = {
         city: location.profile.city,
         state: location.profile.state
-    };    
+    };
+
+    this.encode = function(uri) {
+        return encodeURI(uri);
+    };
 
     this.stages = [ 'Bootstrap', 'Seed', 'Series A', 'Series B', 'Later'];
 
     this.selectRoles = user_service.roles();
 
     if (!this.selectedRole) this.selectedRole = 'not involved';
+       
+    this.is_resource = ($state.current.name == 'resource.add') || (self.community.resource == true);
+
+    this.showCurrent = function () {
+
+        self.community['url'] = self.community.key;
+        self.selecteCompany = self.community.profile;
+        self.selectedCompany['resource_types'] = self.community.resource_types;
+        
+        if (self.community.profile && self.community.profile.address) {
+            self.selectedCompany['street'] = self.community.profile.address.street;
+            self.selectedCompany['city'] = self.community.profile.address.city;
+            self.selectedCompany['state'] = self.community.profile.address.state;
+        }
+
+        if (self.selectedCompany.parents) {
+            switch (self.selectedCompany.parents[0]) {
+                case 'consumer-goods':
+                    self.selectedCompany['parent'] = 'Consumer Goods';
+                    break;
+                case 'non-profit':
+                    self.selectedCompany['parent'] = 'Non-Profit';
+                    break;
+                default:
+                    self.selectedCompany['parent'] = self.selectedCompany.parents[0][0].toUpperCase() + self.selectedCompany.parents[0].slice(1);
+            }
+        }
+
+        for (role in user.roles) {
+            for (co in user.roles[role]) {
+                if (co == self.community.key) {
+                    self.selectedRole = role;
+                    break;
+                }
+            }
+        }
+        self.alert = {
+            type: 'warning',
+            message: self.selectedCompany.name + ' is already in the system, but you may update it.'
+        };
+    };
+
+    // check if editing existing record
+    if (this.community && this.community.type == 'company' || this.community.type == 'resource') {
+        this.update = true;
+        this.showCurrent();
+
+    }
 
     // for startup logo upload to S3
     this.uploadLogo = function (file) {
@@ -117,8 +149,9 @@ function EditCompanyController(user, sweet, $state, $q, $window, $http, communit
         var role = self.selectedRole == 'not involved' ? undefined : self.selectedRole;
 
         var community_path = location.key; // resources can only be created in locations (for now)
+        console.log(self.selectedCompany);
 
-        company_service.addCompany(self.selectedCompany, role, location.key, community_path, self.selectedCompany.key)
+        company_service.addCompany(self.selectedCompany, role, location.key, community_path, self.community.key)
             .then(function(response) {
                 self.working = false;
                 //$http.get('/api/2.1/community/' + location.key + '?nocache=true'); // clear cache
@@ -153,72 +186,26 @@ function EditCompanyController(user, sweet, $state, $q, $window, $http, communit
 
     this.checkUrl = function() {
 
-        company_service.checkUrl(self.selectedCompany.website)
-            .then(function(response) {                
+        if (!self.update) {
+            company_service.checkUrl(self.selectedCompany.website)
+                .then(function(response) {
 
-                if (response.status == 202) {
-                    self.alert = { type: 'warning', message: 'That website is already in use: <a href="/' + String(response.data.message) + '" target="_blank">Click here</a>' };
-                } else {
+                    if (response.status == 202) {
+                        self.alert = { type: 'warning', message: 'That website already exists in the system: <a href="/' + String(response.data.message) + '" target="_blank">Click here to view it.</a>' };
+                    } else {
+                        self.alert = undefined;
+                        self.step++;
+                    }
+
+                })
+                .catch(function(err) {
+                    // 404 no existing company
                     self.alert = undefined;
                     self.step++;
-                }
-
-            })
-            .catch(function(err) {
-                // 404 no existing company
-                self.alert = undefined;
-                self.step++;
-            })
+                })
+        } else self.step++;
     };
-/*
 
-    if (company) {
-        // if company is passed in, probably editing existing company profile
-        this.showCurrent(company);
-        this.update = true;
-        this.alert = undefined;
-    }
-
-
-    this.showCurrent = function(profile) {
-        self.updateCompany = true;
-        self.notlisted = false;
-        var oldco = profile;
-        self.company = oldco.profile.name;
-        if (!self.selectedCompany) self.selectedCompany = {};
-        if (oldco.profile.angellist) self.selectedCompany = oldco.profile;
-        self.selectedCompany['name'] = oldco.profile.name;
-        self.selectedCompany['key'] = oldco.key;
-        if (oldco.profile.industries) self.selectedCompany['industries'] = oldco.profile.industries;
-        if (oldco.profile.stage) self.selectedCompany['stage'] = oldco.profile.stage;
-        if (oldco.profile.headline) self.selectedCompany['high_concept'] = oldco.profile.headline;
-        if (oldco.profile.summary) self.selectedCompany['product_desc'] = oldco.profile.summary;
-        if (oldco.profile.avatar) self.selectedCompany['avatar'] = oldco.profile.avatar;
-
-        if (oldco.profile.parents) {
-            switch(oldco.profile.parents[0]) {
-                case 'consumer-goods':
-                    self.selectedCompany['parent'] = 'Consumer Goods';
-                    break;
-                case 'non-profit':
-                    self.selectedCompany['parent'] = 'Non-Profit';
-                    break;
-                default:
-                    self.selectedCompany['parent'] = oldco.profile.parents[0][0].toUpperCase() + oldco.profile.parents[0].slice(1);
-            }
-        }
-
-        for (role in self.user.roles) {
-            for (co in self.user.roles[role]) {
-                if (co == oldco.key) {
-                    self.selectedRole = role;
-                    break;
-                }
-            }
-        }
-        self.alert = { type: 'warning', message: self.selectedCompany.name + ' is already in the system, but you may update it.'};
-    };
- */
     this.deleteCompany = function (company_key) {
         self.working = true;
 

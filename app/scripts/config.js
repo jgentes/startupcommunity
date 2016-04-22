@@ -287,7 +287,26 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                     controller: "EditCompanyController as add"
                 }
             }
-
+        })
+        .state('company.edit', {
+            url: "/:community_path/edit",
+            params: {
+                community: {},
+                community_path: {
+                    value: null,
+                    squash: true
+                },
+                pageTitle: 'Edit a Company'
+            },
+            views: {
+                'header': {
+                    templateUrl: "components/header/header_small.html"
+                },
+                'content': {
+                    templateUrl: '../components/resources/resource.add.html',
+                    controller: "EditCompanyController as add"
+                }
+            }
         })
 
 

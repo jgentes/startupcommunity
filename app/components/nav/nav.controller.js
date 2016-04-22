@@ -462,39 +462,6 @@ function NavigationController($auth, $state, $window, $timeout, $location, $scop
         });
     };
 
-    // ADD COMPANY
-
-    this.addCompany = function(company) {
-
-        var modalInstance = $uibModal.open({
-            templateUrl: 'components/companies/company.add.html',
-            controller: WelcomeController,
-            controllerAs: 'welcome',
-            windowClass: "hmodal-info",
-            resolve: {
-                user: function() {
-                    return self.user;
-                },
-                community: function() {
-                    return self.community;
-                },
-                communities: function() {
-                    return self.communities;
-                },
-                location: function() {
-                    return self.location;
-                },
-                company: function() {
-                    return company || null;
-                }
-            }
-        });
-
-        modalInstance.closed.then(function () {
-            $state.reload();
-        });
-    };
-
     // CHECK FOR IFRAME (redirect, if needed, must happen after routing)
     var embed;
     this.embedded = false;

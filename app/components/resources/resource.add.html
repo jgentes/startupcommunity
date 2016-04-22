@@ -1,10 +1,14 @@
 <div class="hpanel" style="margin-top: 20px;">
 
-    <div class="panel-body">
+    <div class="panel-body" ng-if="!add.update">
         <h4 class="modal-title">Add a {{ add.is_resource ? 'resource' : 'company' }} to <span ng-bind-html="::add.location.profile.name"></span></h4>
         <p class="font-bold">{{ add.is_resource ?
             'Resources include coworking spaces, accelerators, investment funds, networking events, and other organizations that support entrepreneurship.' :
             'Only add companies that are part of your local startup community.' }} </p>
+    </div>
+    <div class="panel-body" ng-if="add.update">
+        <h4 class="modal-title">Edit {{ add.selectedCompany.name }}</h4>
+        <p class="font-bold">Edit this record if you believe you can improve the accuracy of the information</p>
     </div>
 
     <div class="panel-body" style="margin-top: 20px;">
@@ -15,8 +19,7 @@
 
                 <div class="row">
                     <div class="col-lg-3 text-center">
-                        <img ng-show="!add.loadimg" style="height:150px;" ngf-thumbnail="add.selectedCompany.avatar || avatar || '/public/images/browser_icon.jpg'">
-                        <h4 class="w400" ng-show="add.update" ng-bind-html="::add.community.profile.name"></h4>
+                        <img style="max-height:150px; max-width: 150px; padding-bottom: 10px;" ngf-thumbnail="avatar || add.selectedCompany.avatar || '/public/images/browser_icon.jpg'">
                         <br/>
                         <label class="uploader_text">
                             <input type="file" ng-model="avatar" name="file" ngf-pattern="'image/*'"
@@ -46,7 +49,7 @@
                                     Short headline:
 
                                 </h4>
-                                <input type="text" placeholder="One line summary.." ng-model="add.selectedCompany.high_concept" class="form-control input-lg">
+                                <input type="text" placeholder="One line summary.." ng-model="add.selectedCompany.headline" class="form-control input-lg">
                             </div>
                             <div class="form-group col-lg-6">
                                 <h4 class="w400">
@@ -149,7 +152,7 @@
                                     Customize the url path:
 
                                 </h4>
-                                <input type="text" class="form-control input-md" placeholder="{{ add.encode(add.selectedCompany.name || '') }}" ng-model="add.selectedCompany.url" style="margin-bottom: 5px;">
+                                <input type="text" class="form-control input-md" placeholder="{{ add.selectCompany.url || add.encode(add.selectedCompany.name || '') }}" ng-model="add.selectedCompany.url" style="margin-bottom: 5px;">
                                 <em style="font-size: 11px;" class="pull-right">The path will be: startupcommunity.org/<strong><span style="text-transform: lowercase;">{{ add.encode(add.selectedCompany.url || add.selectedCompany.name) }}</span></strong></em>
                             </div>
                             <div class="col-lg-12" style="margin-top:-10px;">
@@ -157,7 +160,7 @@
 
                                     Click below to edit the summary:
                                 </h4>
-                                <div summernote class="summernote" ng-model="add.selectedCompany.product_desc" ng-model-options="{ debounce: 250, blur: 0 }" style="min-height: 34px;" config="{
+                                <div summernote class="summernote" ng-model="add.selectedCompany.summary" ng-model-options="{ debounce: 250, blur: 0 }" style="min-height: 34px;" config="{
                                 height: 50,
     toolbar: [
             ['edit',['undo','redo']],
@@ -176,14 +179,14 @@
                 </div>
             </div>
 
-            <div alert-box this-alert="add.alert" style="padding-top:10px;"></div>
+            <div alert-box this-alert="add.alert" style="margin-top: -20px; margin-bottom: 20px;"></div>
 
             <button ladda="add.working" class="ladda-button btn btn-danger pull-left" data-style="zoom-in" data-spinner-size="25" ng-click="add.deleteCompany(add.community.key)" ng-show="add.update && !add.alert">Delete {{::add.community.profile.name || (add.is_resource ? 'Resource' : 'Company') }}</button>
 
             <div class="text-right m-t-xs">
-                <button ng-click="add.wizard.prev()" ng-disabled="add.step == 1" class="btn btn-default">Previous</button>
+                <button ng-click="add.step = 1" ng-disabled="add.step == 1" class="btn btn-default">Previous</button>
                 <button ng-click="add.checkUrl()" ng-disabled="!add.selectedCompany.name || !add.selectedCompany.parent" ng-hide="add.step == 2" class="btn btn-success">Next</button>
-                <button ladda="add.working" class="ladda-button finish btn-success btn" data-style="zoom-in" data-spinner-size="25" ng-show="add.step == 2" ng-click="add.addCompany($event)" type="submit">{{ (add.updateCompany ? 'Update ' : 'Add ') + (add.selectedCompany.name || (add.is_resource ? 'Resource' : 'Company')) }}</button>
+                <button ladda="add.working" class="ladda-button finish btn-success btn" data-style="zoom-in" data-spinner-size="25" ng-show="add.step == 2" ng-click="add.addCompany($event)" type="submit">{{ (add.update ? 'Update ' : 'Add ') + (add.selectedCompany.name || (add.is_resource ? 'Resource' : 'Company')) }}</button>
             </div>
 
         </form>
