@@ -72,7 +72,7 @@ function EditCompanyController(user, sweet, $state, $q, $window, $http, communit
     this.showCurrent = function () {
 
         self.community['url'] = self.community.key;
-        self.selecteCompany = self.community.profile;
+        self.selectedCompany = self.community.profile;
         self.selectedCompany['resource_types'] = self.community.resource_types;
         
         if (self.community.profile && self.community.profile.address) {
@@ -102,10 +102,7 @@ function EditCompanyController(user, sweet, $state, $q, $window, $http, communit
                 }
             }
         }
-        self.alert = {
-            type: 'warning',
-            message: self.selectedCompany.name + ' is already in the system, but you may update it.'
-        };
+
     };
 
     // check if editing existing record
@@ -129,7 +126,7 @@ function EditCompanyController(user, sweet, $state, $q, $window, $http, communit
 
                 xhr.onreadystatechange = function(e) {
                     if ( 4 == this.readyState ) {
-                        self.selectedCompany.thumb_url = fileUrl;
+                        self.selectedCompany.avatar = fileUrl;
                         d_completed.resolve(true);
                     }
                 };
@@ -154,7 +151,7 @@ function EditCompanyController(user, sweet, $state, $q, $window, $http, communit
         company_service.addCompany(self.selectedCompany, role, location.key, community_path, self.community.key)
             .then(function(response) {
                 self.working = false;
-                //$http.get('/api/2.1/community/' + location.key + '?nocache=true'); // clear cache
+                $http.get('/api/2.1/community/' + response.data.key + '?nocache=true'); //clear cache
 
                 if (response.status !== 200) {
                     sweet.show({
@@ -171,9 +168,6 @@ function EditCompanyController(user, sweet, $state, $q, $window, $http, communit
                     }, function() {
                         $window.location.href = '/' + response.data.key;
                     });
-
-                    $http.get('/' + response.data.key); // this runs before sweet modal is acknowledged
-
                 }
 
             })

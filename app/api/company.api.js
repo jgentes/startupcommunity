@@ -82,7 +82,7 @@ var searchInCommunity = function(communities, clusters, stages, types, limit, of
     var allowed = false;
     var userperms;
     
-    console.log(key) //concern is that a passed in key is new and overwrites existing key
+    console.log(key); //concern is that a passed in key is new and overwrites existing key
 
     if (key) { //check api key to determine if restricted profile data is included with results
             try {
@@ -257,7 +257,8 @@ function handleAddCompany(req, res) {
             .then(function(response){
                 console.log(addCompany);
 
-                var user = response.body;
+                var user = response.body,
+                    update = false;
 
                 if (!addCompany.location_key) addCompany.location_key = addCompany.community_key;
 
@@ -272,9 +273,16 @@ function handleAddCompany(req, res) {
 
                 // add company
 
-                companyPost(company, addCompany.role, addCompany.location_key, req.user, addCompany.key, function(result) {
+                if (!addCompany.key) {
+                    addCompany.key = addCompany.profile.url.toLowerCase();
+                } else if (addCompany.key && (addCompany.key !== addCompany.profile.url.toLowerCase())) {
+                    res.status(202).send({ message: 'Sorry, a url path cannot be changed.'})
+                } else update = true;
+
+                companyPost(company, addCompany.role, addCompany.location_key, req.user, addCompany.key, update, function(result) {
                     res.status(result.status).send(result.data);
                 });
+
                 /*
                  } else {
                  console.warn("User is not a member of community: " + addCompany.community_key + " and location: " + addCompany.location_key + "!");
@@ -286,7 +294,7 @@ function handleAddCompany(req, res) {
 
             .fail(function(err){
                 console.warn("WARNING: ", err);
-                res.status(400).send({ message: 'User not found.' });
+                res.status(400).send({ message: "Something went wrong. We have been alerted and will take a look and get back to you." });
             });
     };
 
@@ -498,57 +506,39 @@ function handleCheckUrl(req, res) {
         });
 }
 
-var companyPost = function (company, role, location_key, user, key, callback) {
+var companyPost = function (company, role, location_key, user, key, update, callback) {
     console.log(company);
 
-    if (key && (key !== company.url.toLowerCase())) {
+    db.put(process.env.DB_COMMUNITIES, key, company)
+        .then(function (response) {
 
-        db.put(process.env.DB_COMMUNITIES, key, company)
-            .then(function (response) {
+            var companykey = response.headers.location.split('/')[3];
+
+            if (role) {
+                addRole(companykey, role, location_key, user);
+            }
+
+            if (update) {
 
                 console.log("UPDATED: " + company.profile.name);
-
-                if (role) {
-                    addRole(key, role, location_key, user);
-                }
-
                 company["message"] = "Well done! " + company.profile.name + " has been updated.";
 
-                company["key"] = key;
+            } else {
 
-                callback({ "status": 200, "data": company });
-
-            })
-            .fail(function (err) {
-                console.log("WARNING: ", err);
-                res.status(500).send({ message: "Something went wrong."});
-            });
-    } else {
-
-        var pathname = encodeURI(company.url.toLowerCase());
-
-        db.put(process.env.DB_COMMUNITIES, pathname, company)
-            .then(function (response) {
-
-                var companykey = response.headers.location.split('/')[3];
                 console.log("REGISTERED: " + company.profile.name + " as " + companykey);
-
-                if (role) {
-                    addRole(companykey, role, location_key, user);
-                }
-
                 company["message"] = "Well done! You've added " + company.profile.name + " to the community.";
 
-                company["key"] = companykey;
+            }
 
-                callback({ "status": 200, "data": company });
+            company["key"] = companykey;
+            callback({"status": 200, "data": company});
 
-            })
-            .fail(function(err){
-                console.log("WARNING: ", err);
-                res.status(500).send({ message: "Something went wrong."});
-            });
-    }
+        })
+        .fail(function (err) {
+            console.log("WARNING: ", err);
+            res.status(500).send({ message: "Something went wrong."});
+        });
+    
 };
 
 module.exports = CompanyApi;
