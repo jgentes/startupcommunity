@@ -1,3 +1,4 @@
+<!--
 <div small-header class="normalheader" style="padding: 0 0 25px 0;">
     <div class="row" style="margin-top:-10px;">
         <div class="col-md-6" style="padding-top:10px;">
@@ -49,7 +50,7 @@
         </div>
     </div>
 </div>
-
+-->
 <div>
     <div id="dash-tour" tour-step order="0" title="The {{nav.community.profile.name.split(',')[0] }} Startup Community" content="Your community includes people and companies, organized by industry and skillset." placement="top">
         <div class="row">
@@ -72,11 +73,11 @@
                         </div>
                     </div>
                     <div class="panel-footer" style="background: #fff;">
-                        <div ng-repeat="item in dashboard.top.people.entries | limitTo: 3">
+                        <div ng-repeat="item in dashboard.top.people.entries | limitTo: 5">
                             <div style="margin-right: -2px; margin-bottom:-5px;">
-                                <div ng-if="$first" style="padding-top:5px;"></div>
+                                <div ng-if="$first" style="margin-top:-3px;"></div>
                                 <div class="row" ng-include="'components/users/user.list.item.html'"></div>
-                                <div ng-if="$last" style="margin-bottom:-32px;"></div>
+                                <div ng-if="$last" style="margin-bottom:-25px;"></div>
                             </div>
                         </div>
                     </div>
@@ -101,11 +102,11 @@
                         </div>
                     </div>
                     <div class="panel-footer" style="background: #fff;">
-                        <div ng-repeat="item in dashboard.top.companies.entries | limitTo: 3">
+                        <div ng-repeat="item in dashboard.top.companies.entries | limitTo: 5">
                             <div style="margin-right: -2px; margin-bottom:-5px;">
-                                <div ng-if="$first" style="padding-top:5px;"></div>
+                                <div ng-if="$first" style="margin-top:-3px;"></div>
                                 <div class="row" ng-include="'components/companies/company.list.item.html'"></div>
-                                <div ng-if="$last" style="margin-bottom:-32px;"></div>
+                                <div ng-if="$last" style="margin-bottom:-25px;"></div>
                             </div>
                         </div>
                     </div>
@@ -130,11 +131,11 @@
                         </div>
                     </div>
                     <div class="panel-footer" style="background: #fff;">
-                        <div ng-repeat="item in dashboard.top.resources.entries | limitTo: 3">
+                        <div ng-repeat="item in dashboard.top.resources.entries | limitTo: 5">
                             <div style="margin-right: -2px; margin-bottom:-5px;">
-                                <div ng-if="$first" style="padding-top:5px;"></div>
+                                <div ng-if="$first" style="margin-top:-3px;"></div>
                                 <div class="row" ng-include="'components/companies/company.list.item.html'"></div>
-                                <div ng-if="$last" style="margin-bottom:-32px;"></div>
+                                <div ng-if="$last" style="margin-bottom:-25px;"></div>
                             </div>
                         </div>
                     </div>

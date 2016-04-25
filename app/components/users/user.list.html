@@ -123,7 +123,7 @@
                 </div>
                 <div ng-show="users.tag" style="text-align: center;" ng-cloak><h2><br/>Searching for {{users.tag}}..</h2><br/><br/></div>
                 <div ng-show="users.users.results.length == 0" style="text-align: center;" ng-cloak><h2><br/>Nothing here!</h2><br/><br/></div>
-                <div ng-repeat="item in users.users.results" ng-switch on="$index % 2" style="margin-top: 10px;">
+                <div ng-repeat="item in users.users.results" ng-switch on="$index % 2">
                     <div class="col-md-6" ng-switch-when="0">
                         <div class="row"  ng-include="'components/users/user.list.item.html'"></div>
                     </div>

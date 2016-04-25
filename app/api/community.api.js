@@ -496,80 +496,67 @@ function handleGetTop(req, res) {
                                     entries: addkeys(result.body.results).slice(0,5)
                                 };
 
+                                // BEGIN PARENTS (this is mostly to avoid another api call that includes both companies and users)
 
-                                // get leaders
-                                db.newSearchBuilder()
-                                    .collection(process.env.DB_COMMUNITIES)
-                                    .sortRandom()
-                                    .query('@value.roles.leader.' + (cluster_key ? cluster_key : community_key) + ': "' + location_key + '" AND @value.type: "user"')
-                                    .then(function (result) {
+                                var c_labels = [],
+                                    c_numbers = [],
+                                    p_labels = [],
+                                    p_numbers = [];
 
-                                        top_results.leaders = addkeys(result.body.results).slice(0,5);
+                                for (c in top_results.company_parents.entries) {
+                                    if (top_results.company_parents.entries[c].value) {
+                                        c_labels.push(top_results.company_parents.entries[c].value);
+                                        c_numbers.push(top_results.company_parents.entries[c].count);
+                                    }
+                                }
 
-                                        // BEGIN PARENTS (this is mostly to avoid another api call that includes both companies and users)
+                                for (p in top_results.people_parents.entries) {
+                                    if (top_results.people_parents.entries[p].value) {
+                                        p_labels.push(top_results.people_parents.entries[p].value);
+                                        p_numbers.push(top_results.people_parents.entries[p].count);
+                                    }
+                                }
 
-                                        var c_labels = [],
-                                            c_numbers = [],
-                                            p_labels = [],
-                                            p_numbers = [];
+                                top_results['parents'] = {
+                                    labels: _.union(c_labels, p_labels),
+                                    values: []
+                                };
 
-                                        for (c in top_results.company_parents.entries) {
-                                            if (top_results.company_parents.entries[c].value) {
-                                                c_labels.push(top_results.company_parents.entries[c].value);
-                                                c_numbers.push(top_results.company_parents.entries[c].count);
-                                            }
-                                        }
-
-                                        for (p in top_results.people_parents.entries) {
-                                            if (top_results.people_parents.entries[p].value) {
-                                                p_labels.push(top_results.people_parents.entries[p].value);
-                                                p_numbers.push(top_results.people_parents.entries[p].count);
-                                            }
-                                        }
-
-                                        top_results['parents'] = {
-                                            labels: _.union(c_labels, p_labels),
-                                            values: []
-                                        };
-
-                                        for (l in top_results.parents.labels) {
-                                            var r = 0;
-                                            if (c_numbers[c_labels.indexOf(top_results.parents.labels[l])]) {
-                                                r += c_numbers[c_labels.indexOf(top_results.parents.labels[l])];
-                                            }
-                                            if (p_numbers[p_labels.indexOf(top_results.parents.labels[l])]) {
-                                                r += p_numbers[p_labels.indexOf(top_results.parents.labels[l])];
-                                            }
-                                            top_results.parents.values.push(r);
-                                        }
-                                        var temp = [];
-                                        for (a in top_results.parents.labels) {
-                                            temp.push({
-                                                label: top_results.parents.labels[a],
-                                                value: top_results.parents.values[a]
-                                            });
-                                        }
-
-                                        if (!_.isEmpty(temp)) {
-                                            top_results.parents = _.orderBy(temp, 'value', 'desc');
-                                        } else delete top_results.parents;
-
-                                        delete top_results.people_parents;
-                                        delete top_results.company_parents;
-
-                                        // END PARENTS
-
-                                        if (!cache) res.status(200).send(top_results);
-
-                                        mc.set(industrysearch, JSON.stringify(top_results), function(err, val) {
-                                            if (err) console.warn('WARNING: Memcache error: ', err)
-                                        });
-
-                                    })
-                                    .fail(function (err) {
-                                        console.log("WARNING: ", err);
-                                        res.status(202).send({message: 'Something went wrong: ' + err});
+                                for (l in top_results.parents.labels) {
+                                    var r = 0;
+                                    if (c_numbers[c_labels.indexOf(top_results.parents.labels[l])]) {
+                                        r += c_numbers[c_labels.indexOf(top_results.parents.labels[l])];
+                                    }
+                                    if (p_numbers[p_labels.indexOf(top_results.parents.labels[l])]) {
+                                        r += p_numbers[p_labels.indexOf(top_results.parents.labels[l])];
+                                    }
+                                    top_results.parents.values.push(r);
+                                }
+                                var temp = [];
+                                for (a in top_results.parents.labels) {
+                                    temp.push({
+                                        label: top_results.parents.labels[a],
+                                        value: top_results.parents.values[a]
                                     });
+                                }
+
+                                if (!_.isEmpty(temp)) {
+                                    top_results.parents = _.orderBy(temp, 'value', 'desc');
+                                } else delete top_results.parents;
+
+                                delete top_results.people_parents;
+                                delete top_results.company_parents;
+
+                                // END PARENTS
+
+                                if (!cache) res.status(200).send(top_results);
+
+                                mc.set(industrysearch, JSON.stringify(top_results), function(err, val) {
+                                    if (err) console.warn('WARNING: Memcache error: ', err)
+                                });
+
+
+                               
                             })
                             .fail(function (err) {
                                 console.log("WARNING: ", err);
