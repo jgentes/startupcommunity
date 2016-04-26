@@ -224,8 +224,7 @@ function EditCompanyController(user, sweet, $state, $q, $window, $http, communit
                             text: self.selectedCompany.name + " is gone.",
                             type: "success"
                         }, function() {
-                            $http.get('/api/2.1/community/' + self.user.profile.home); // refresh outdated cache
-                            $uibModalInstance.close();
+                            $http.get('/api/2.1/community/' + self.user.profile.home); // refresh outdated cache                            
                             $window.location.href = '/' + self.user.profile.home;
                         })
                     }

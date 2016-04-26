@@ -355,8 +355,10 @@ function handleDeleteCompany(req, res) {
                                     for (r in flush.body.results) {
                                         for (i in flush.body.results[r].value.roles) {
                                             for (c in flush.body.results[r].value.roles[i]) {
-                                                if (c == params.company_key) delete flush.body.results[r].value.roles[i][c];
-                                                console.log('Deleted ' + i + ' from ' + flush.body.results[r].path.key);
+                                                if (c == params.company_key) {
+                                                    delete flush.body.results[r].value.roles[i][c];
+                                                    console.log('Deleted ' + i + ' from ' + flush.body.results[r].path.key);
+                                                }
                                             }
                                         }
                                     }
