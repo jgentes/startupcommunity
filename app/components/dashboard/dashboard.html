@@ -72,13 +72,14 @@
                             </div>
                         </div>
                     </div>
-                    <div class="panel-footer" style="background: #fff;">
-                        <div ng-repeat="item in dashboard.top.people.entries | limitTo: 5">
+                    <div class="panel-footer" style="background: #fff; text-align: center;">
+                        <div ng-repeat="item in dashboard.top.people.entries | limitTo: 4" style="text-align: left;">
                             <div style="margin-right: -2px; margin-bottom:-5px;">
                                 <div class="row" ng-include="'components/users/user.list.item.html'"></div>
-                                <div ng-if="$last" style="margin-bottom:-29px;"></div>
+                                <div ng-if="$last" style="margin-bottom:-12px;"></div>
                             </div>
                         </div>
+                        <button class="btn btn-xs btn-default" style="margin-top: 6px;" ui-sref="{{'user.list' + nav.nav_url}}">view more</button>
                     </div>
                 </div>
             </div>
@@ -100,13 +101,14 @@
                             </div>
                         </div>
                     </div>
-                    <div class="panel-footer" style="background: #fff;">
-                        <div ng-repeat="item in dashboard.top.companies.entries | limitTo: 5">
+                    <div class="panel-footer" style="background: #fff; text-align: center;">
+                        <div ng-repeat="item in dashboard.top.companies.entries | limitTo: 4" style="text-align: left;">
                             <div style="margin-right: -2px; margin-bottom:-5px;">
                                 <div class="row" ng-include="'components/companies/company.list.item.html'"></div>
-                                <div ng-if="$last" style="margin-bottom:-29px;"></div>
+                                <div ng-if="$last" style="margin-bottom:-12px;"></div>
                             </div>
                         </div>
+                        <button class="btn btn-xs btn-default" style="margin-top: 6px;" ui-sref="{{'company.list' + nav.nav_url}}">view more</button>
                     </div>
                 </div>
             </div>
@@ -128,13 +130,14 @@
                             </div>
                         </div>
                     </div>
-                    <div class="panel-footer" style="background: #fff;">
-                        <div ng-repeat="item in dashboard.top.resources.entries | limitTo: 5">
+                    <div class="panel-footer" style="background: #fff; text-align: center;">
+                        <div ng-repeat="item in dashboard.top.resources.entries | limitTo: 4" style="text-align: left;">
                             <div style="margin-right: -2px; margin-bottom:-5px;">
                                 <div class="row" ng-include="'components/companies/company.list.item.html'"></div>
-                                <div ng-if="$last" style="margin-bottom:-29px;"></div>
+                                <div ng-if="$last" style="margin-bottom:-12px;"></div>
                             </div>
                         </div>
+                        <button class="btn btn-xs btn-default" style="margin-top: 6px;" ui-sref="{{'resource.list' + nav.nav_url}}">view more</button>
                     </div>
                 </div>
             </div>
