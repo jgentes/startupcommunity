@@ -307,7 +307,7 @@ angular
                 });
             },
             resource_types: function() {
-                return [ 'Accelerators', 'Colleges', 'Coworking', 'Incubators', 'Investment', 'Meetups', 'Mentorship'];
+                return [ 'Accelerator','Angel Fund','Association','Conference','Coworking','Education','Event','Foundation','Finance','Government','Incubator','Industry','Maker Space','Media','Meetup','Network','Resource','Support Org','Talent','VC Fund'];
             }
         };
     })
