@@ -539,17 +539,6 @@ angular
 
     // for Angular client exception logging to server
 
-
-    .factory(
-        "stacktraceService",
-        function() {
-            // "printStackTrace" is a global object.
-            return({
-                print: printStackTrace
-            });
-        }
-    )
-
     .provider(
         "$exceptionHandler",
         {
@@ -562,7 +551,7 @@ angular
     // this factory pushes the exceptions to the server
     .factory(
         "errorLogService",
-        function( $log, $window, stacktraceService) {
+        function( $log, $window) {
 
             function log( exception, cause ) {
 
@@ -570,7 +559,6 @@ angular
 
                 try {
                     var errorMessage = exception.toString();
-                    var stackTrace = stacktraceService.print({ e: exception });
 
                     $.ajax({
                         type: "POST",
@@ -579,10 +567,11 @@ angular
                         data: angular.toJson({
                             errorMessage: errorMessage,
                             errorUrl: $window.location.href,
-                            //stackTrace: stackTrace,
+                            //stackTrace: result,
                             cause: ( cause || "" )
                         })
                     });
+
                 } catch ( loggingError ) {
                     $log.warn( "Error logging failed" );
                     $log.log( loggingError );
