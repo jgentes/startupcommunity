@@ -271,17 +271,23 @@ function handleAddCompany(req, res) {
 
                 var company = schema.company(addCompany.profile, addCompany.location_key, addCompany.community_key);
 
+                var post = function() {
+                    companyPost(company, addCompany.role, addCompany.location_key, req.user, addCompany.key, update, function(result) {
+                        res.status(result.status).send(result.data);
+                    });
+                };
+
                 // add company
 
                 if (!addCompany.key) {
                     addCompany.key = addCompany.profile.url.toLowerCase();
+                    post();
                 } else if (addCompany.key && (addCompany.key !== addCompany.profile.url.toLowerCase())) {
                     res.status(202).send({ message: 'Sorry, a url path cannot be changed.'})
-                } else update = true;
-
-                companyPost(company, addCompany.role, addCompany.location_key, req.user, addCompany.key, update, function(result) {
-                    res.status(result.status).send(result.data);
-                });
+                } else {
+                    update = true;
+                    post();
+                }
 
                 /*
                  } else {
@@ -536,7 +542,7 @@ var companyPost = function (company, role, location_key, user, key, update, call
         })
         .fail(function (err) {
             console.log("WARNING: ", err);
-            res.status(500).send({ message: "Something went wrong."});
+            callback({"status": 500, "data" : {"message": "Something went wrong."}});
         });
     
 };

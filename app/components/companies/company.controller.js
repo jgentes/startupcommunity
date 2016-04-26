@@ -221,6 +221,34 @@ function CompanyProfileController($mixpanel, $scope, communities, user_service, 
     this.community = this.company;
     this.team = { "count" : {}};
     
+    this.team_panels = {
+        "Founders" : {
+            name: "founder",
+            icon: "pe-7s-paper-plane",
+            color: "hnavyblue"
+        },
+        "Investors" : {
+            name: "investor",
+            icon: "pe-7s-gleam",
+            color: "hgreen"
+        },
+        "Team Members" : {
+            name: "team",
+            icon: "pe-7s-ball",
+            color: "hviolet"
+        },
+        "Mentors" : {
+            name: "mentor",
+            icon: "pe-7s-study",
+            color: "hblue"
+        },
+        "Service Providers" : {
+            name: "provider",
+            icon: "pe-7s-portfolio",
+            color: "hyellow"
+        }
+    };
+    
     // sort team members
 
     for (member in this.communities[this.company.key].team) {

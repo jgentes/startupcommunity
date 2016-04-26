@@ -71,8 +71,8 @@ function EditCompanyController(user, sweet, $state, $q, $window, $http, communit
 
     this.showCurrent = function () {
 
-        self.community['url'] = self.community.key;
         self.selectedCompany = self.community.profile;
+        self.selectedCompany['url'] = self.community.key;
         self.selectedCompany['resource_types'] = self.community.resource_types;
         
         if (self.community.profile && self.community.profile.address) {
