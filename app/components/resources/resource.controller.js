@@ -37,9 +37,7 @@ function ResourceController(location, communities, nav_communities, company_serv
 
 function EditCompanyController(user, sweet, $state, $q, $window, $http, community, location, user_service, company_service, community_service) {
     var self = this;
-
-    console.log(community);
-
+    console.log(location);
     this.step = 1;
     this.location = location;
     this.community = community;
@@ -55,10 +53,6 @@ function EditCompanyController(user, sweet, $state, $q, $window, $http, communit
     this.selectedCompany = {
         city: location.profile.city,
         state: location.profile.state
-    };
-
-    this.encode = function(uri) {
-        return encodeURI(uri);
     };
 
     this.stages = [ 'Bootstrap', 'Seed', 'Series A', 'Series B', 'Later'];
@@ -106,10 +100,9 @@ function EditCompanyController(user, sweet, $state, $q, $window, $http, communit
     };
 
     // check if editing existing record
-    if (this.community && this.community.type == 'company' || this.community.type == 'resource') {
+    if (this.community && (this.community.type == 'company' || this.community.type == 'resource')) {
         this.update = true;
         this.showCurrent();
-
     }
 
     // for startup logo upload to S3
@@ -140,7 +133,6 @@ function EditCompanyController(user, sweet, $state, $q, $window, $http, communit
         if (e) e.preventDefault();
 
         self.selectedCompany.resource = self.is_resource;
-        self.selectedCompany.url = self.selectedCompany.url || encodeURI(self.selectedCompany.name);
 
         self.working = true;
         var role = self.selectedRole == 'not involved' ? undefined : self.selectedRole;
@@ -148,7 +140,7 @@ function EditCompanyController(user, sweet, $state, $q, $window, $http, communit
         var community_path = location.key; // resources can only be created in locations (for now)
         console.log(self.selectedCompany);
 
-        company_service.addCompany(self.selectedCompany, role, location.key, community_path, self.community.key)
+        company_service.addCompany(self.selectedCompany, role, location.key, community_path, self.update ? self.community.key : undefined)
             .then(function(response) {
                 self.working = false;
                 $http.get('/api/2.1/community/' + response.data.key + '?nocache=true'); //clear cache
@@ -179,6 +171,8 @@ function EditCompanyController(user, sweet, $state, $q, $window, $http, communit
     };
 
     this.checkUrl = function() {
+
+        self.selectedCompany.url = self.selectedCompany.url || encodeURI(self.selectedCompany.name);
 
         if (!self.update) {
             company_service.checkUrl(self.selectedCompany.website)

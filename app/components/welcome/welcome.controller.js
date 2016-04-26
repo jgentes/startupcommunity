@@ -7,7 +7,7 @@ function WelcomeController($auth, $q, $http, $mixpanel, $stateParams, $state, sw
     this.location = jQuery.isEmptyObject(location) ? community.profile.name : location.profile.name.split(',')[0];
     this.auth = false;
     this.working = false; // used for waiting indicator
-    var community_path = $stateParams.community_path ? $stateParams.community_path : $stateParams.location_path;
+    var community_path = $stateParams.community_path ? $stateParams.community_path : encodeURI($stateParams.location_path);
     this.industries = []; // need a placeholder until next call is resolved
     this.industries = community_service.industries();
     this.parents = []; // need a placeholder until next call is resolved
@@ -176,18 +176,18 @@ function WelcomeController($auth, $q, $http, $mixpanel, $stateParams, $state, sw
 
         for (role in self.roles) {
             // do not allow founder of location
-            if (!((role == 'founder') && (community_path == $stateParams.location_path))) {
+            if (!((role == 'founder') && (community_path == encodeURI($stateParams.location_path)))) {
 
                 if (!self.user.roles[role]) {
                     self.user.roles[role] = {};
-                    self.user.roles[role][community_path] = [$stateParams.location_path];
-                    self.user.roles[role][$stateParams.location_path] = [$stateParams.location_path];
+                    self.user.roles[role][community_path] = [encodeURI($stateParams.location_path)];
+                    self.user.roles[role][encodeURI($stateParams.location_path)] = [encodeURI($stateParams.location_path)];
                 } else if (!self.user.roles[role][community_path]) {
-                    self.user.roles[role][community_path] = [$stateParams.location_path];
-                    self.user.roles[role][$stateParams.location_path] = [$stateParams.location_path];
-                } else if (self.user.roles[role][community_path].indexOf($stateParams.location_path) < 0) {
-                    self.user.roles[role][community_path].push($stateParams.location_path);
-                    self.user.roles[role][$stateParams.location_path] = [$stateParams.location_path];
+                    self.user.roles[role][community_path] = [encodeURI($stateParams.location_path)];
+                    self.user.roles[role][encodeURI($stateParams.location_path)] = [encodeURI($stateParams.location_path)];
+                } else if (self.user.roles[role][community_path].indexOf(encodeURI($stateParams.location_path)) < 0) {
+                    self.user.roles[role][community_path].push(encodeURI($stateParams.location_path));
+                    self.user.roles[role][encodeURI($stateParams.location_path)] = [encodeURI($stateParams.location_path)];
                 } // else it's already there
             }
 
@@ -200,7 +200,7 @@ function WelcomeController($auth, $q, $http, $mixpanel, $stateParams, $state, sw
         for (dRole in rolelist) {
             if (self.roles && !self.roles[rolelist[dRole]]) {
                 if (self.user.roles[rolelist[dRole]] && self.user.roles[rolelist[dRole]][community_path]) delete self.user.roles[rolelist[dRole]][community_path];
-                if (self.user.roles[rolelist[dRole]] && self.user.roles[rolelist[dRole]][$stateParams.location_path]) delete self.user.roles[rolelist[dRole]][$stateParams.location_path];
+                if (self.user.roles[rolelist[dRole]] && self.user.roles[rolelist[dRole]][encodeURI($stateParams.location_path)]) delete self.user.roles[rolelist[dRole]][encodeURI($stateParams.location_path)];
                 if (jQuery.isEmptyObject(self.user.roles[rolelist[dRole]])) delete self.user.roles[rolelist[dRole]];
             }
         }
@@ -243,7 +243,7 @@ function WelcomeController($auth, $q, $http, $mixpanel, $stateParams, $state, sw
                                             $state.go('community.dashboard', {
                                                 communities: response.data,
                                                 profile: self.user,
-                                                location_path: $stateParams.location_path,
+                                                location_path: encodeURI($stateParams.location_path),
                                                 query: '*',
                                                 tour: true
                                             });

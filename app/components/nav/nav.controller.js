@@ -3,6 +3,8 @@ angular
     .controller('NavigationController', NavigationController);
 
 function NavigationController($auth, $state, $window, $timeout, $location, $scope, $stateParams, $uibModal, user_service, community_service, user, sweet, location, community, communities, nav_communities, top, knowtify, errorLogService, newsletter_service) {
+    console.log(communities);
+    console.log(community);
 
     this.createBrand = function() {
         newsletter_service.createBrand()
@@ -29,7 +31,7 @@ function NavigationController($auth, $state, $window, $timeout, $location, $scop
                 this.location) :
             $stateParams.community;
 
-        this.location_path = $stateParams.location_path || $stateParams.location.key || this.community.key;
+        this.location_path = encodeURI($stateParams.location_path) || $stateParams.location.key || this.community.key;
     }
     catch(err) {
         errorLogService('NavController Catch27: ' + err);
@@ -283,7 +285,7 @@ function NavigationController($auth, $state, $window, $timeout, $location, $scop
                     return self.community.key;
                 },
                 location_key: function() {
-                    return $stateParams.location_path;;
+                    return encodeURI($stateParams.location_path);;
                 }
             }
         });

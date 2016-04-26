@@ -88,9 +88,9 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                 communities: ['$stateParams', 'community_service', 'user',
                     function($stateParams, community_service, user) {                  
                         // user is injected to prevent communities from loading until user is valid
-                        if ($stateParams.communities && ($stateParams.communities.key == $stateParams.location_path)) {
+                        if ($stateParams.communities && ($stateParams.communities.key == encodeURI($stateParams.location_path))) {
                             return $stateParams.communities;
-                        } else return community_service.getCommunity($stateParams.location_path)
+                        } else return community_service.getCommunity(encodeURI($stateParams.location_path))
                             .then(function(response) {
                                 return response.data;
                             })
@@ -102,12 +102,12 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                 community: ['$stateParams', '$location', 'communities', 'community_service',
                     function($stateParams, $location, communities, community_service) {
                         if (jQuery.isEmptyObject($stateParams.community)) { // if community is passed in via ui-sref, just use that
-
+                            console.log($stateParams);
                             var pullCommunity = function () {
-                                if (communities[$stateParams.location_path]) { // if location_path has already been pulled, use that
-                                    return communities[$stateParams.location_path]; // this should also avoid re-pull for /people and /companies
+                                if (communities[encodeURI($stateParams.location_path)]) { // if location_path has already been pulled, use that
+                                    return communities[encodeURI($stateParams.location_path)]; // this should also avoid re-pull for /people and /companies
                                 } else {
-                                    return community_service.getCommunity($stateParams.location_path)
+                                    return community_service.getCommunity(encodeURI($stateParams.location_path))
                                         .then(function(response) {
                                             return response.data;
                                         })
@@ -136,8 +136,8 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                         if (community.type == 'user' || community.type == 'company') {
                             return communities[community.profile.home];
                         } else if(jQuery.isEmptyObject($stateParams.location) || $stateParams.location.type !== 'location') {
-                            if (communities[$stateParams.location_path]) {
-                                return communities[$stateParams.location_path];
+                            if (communities[encodeURI($stateParams.location_path)]) {
+                                return communities[encodeURI($stateParams.location_path)];
                             } else return {};
                         } else if ($stateParams.location.type == 'location') {
                             return $stateParams.location;

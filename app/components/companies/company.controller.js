@@ -14,22 +14,22 @@ function CompanyController($stateParams, $state, $location, company_service, res
 
     var self = this; // for accessing 'this' in child functions
     var query;
-    var communityFilter = [$stateParams.location_path];
+    var communityFilter = [encodeURI($stateParams.location_path)];
     this.resource_page = $state.includes('resource.list');
     this.resource_types = company_service.resource_types();
 
     if (this.community.type == 'cluster') {
-        if (this.community.community_profiles[$stateParams.location_path]) {
-            var clusterFilter = this.community.community_profiles[$stateParams.location_path].industries;
+        if (this.community.community_profiles[encodeURI($stateParams.location_path)]) {
+            var clusterFilter = this.community.community_profiles[encodeURI($stateParams.location_path)].industries;
         } else clusterFilter = this.community.profile.industries;
     } else {
         clusterFilter = [];
-        if ($stateParams.community_path && $stateParams.community_path !== $stateParams.location_path) communityFilter.push($stateParams.community_path);
+        if ($stateParams.community_path && $stateParams.community_path !== encodeURI($stateParams.location_path)) communityFilter.push($stateParams.community_path);
     }
 
     $stateParams.query ? query = $stateParams.query : query = '*';
 
-    this.url = $stateParams.community_path && $stateParams.location_path ?
+    this.url = $stateParams.community_path && encodeURI($stateParams.location_path) ?
         "({community_path: val, community: companies.communities[val], query: '*'})" :
         "({location_path: val, community: companies.communities[val], query: '*'})";
 
@@ -86,8 +86,8 @@ function CompanyController($stateParams, $state, $location, company_service, res
         }
 
         if (self.selectedClusters.length == 0 && self.selectedNetworks.length == 0) {
-            if (self.community.community_profiles && self.community.community_profiles[$stateParams.location_path]) {
-                self.selection = self.community.community_profiles[$stateParams.location_path].name;
+            if (self.community.community_profiles && self.community.community_profiles[encodeURI($stateParams.location_path)]) {
+                self.selection = self.community.community_profiles[encodeURI($stateParams.location_path)].name;
             } else self.selection = self.community.profile.name;
         } else {
             self.selection = "";
@@ -107,11 +107,11 @@ function CompanyController($stateParams, $state, $location, company_service, res
         } else {
             self.title = 'Companies matching <strong>"' + query + '"</strong> ';
             self.title += 'in <strong>';
-            if ($stateParams.community_path && $stateParams.location_path) {
-                if (self.community.community_profiles && self.community.community_profiles[$stateParams.location_path]) {
-                    self.title += self.community.community_profiles[$stateParams.location_path].name +'</strong>';
+            if ($stateParams.community_path && encodeURI($stateParams.location_path)) {
+                if (self.community.community_profiles && self.community.community_profiles[encodeURI($stateParams.location_path)]) {
+                    self.title += self.community.community_profiles[encodeURI($stateParams.location_path)].name +'</strong>';
                 } else self.title += self.community.profile.name +'</strong>';
-            } else self.title += self.communities[$stateParams.location_path].profile.name + '</strong>';
+            } else self.title += self.communities[encodeURI($stateParams.location_path)].profile.name + '</strong>';
         }
 
         var pageTitle = '<br><small>' + self.community.profile.name + '</small>';
