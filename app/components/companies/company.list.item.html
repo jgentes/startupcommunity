@@ -19,7 +19,7 @@
         </span>
         <br>
         <div class="dash-row">
-            <span class="text-muted" ng-bind-html="::item.value.profile.headline | highlight:companies.lastQuery"></span>
+            <span class="text-muted" ng-bind-html="::item.value.profile.headline | highlight:companies.lastQuery" title="{{::item.value.profile.headline}}"></span>
         </div>
         <div ng-show="(showSummary || $state.includes('search.*')) && item.value.profile.summary">
             <div style="padding-bottom: 10px;">
