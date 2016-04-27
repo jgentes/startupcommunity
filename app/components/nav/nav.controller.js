@@ -3,8 +3,6 @@ angular
     .controller('NavigationController', NavigationController);
 
 function NavigationController($auth, $state, $window, $timeout, $location, $scope, $stateParams, $uibModal, user_service, community_service, user, sweet, location, community, communities, nav_communities, top, knowtify, errorLogService, newsletter_service) {
-    console.log(communities);
-    console.log(community);
 
     this.createBrand = function() {
         newsletter_service.createBrand()

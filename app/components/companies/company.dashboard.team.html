@@ -13,17 +13,17 @@
                     </div>
                 </div>
                 <div class="col-xs-4">
-                    <h3 class="text-info pull-right">{{profile.team.count[val.name]}}</h3>
+                    <h3 class="text-info pull-right">{{::profile.team.count[val.name]}}</h3>
                 </div>
             </div>
-            <div class="panel-footer" style="background: #fff;">
-                <div ng-repeat="item in profile.team[val.name]">
+            <div class="panel-footer" style="background: #fff; text-align: center;">
+                <div ng-repeat="item in profile.team[val.name]" style="text-align: left;">
                     <div style="margin-right: -2px; margin-bottom:-5px;">
-                        <div ng-if="$first" style="padding-top:5px;"></div>
                         <div class="row" ng-include="'components/users/user.list.item.html'" style="margin-right: -14px; margin-bottom: 1px;"></div>
-                        <div ng-if="$last" style="margin-bottom:-32px;"></div>
                     </div>
                 </div>
+                <button ng-if="!nav.user.roles[val.name][profile.company.key]" class="btn btn-xs btn-default" style="margin-top: -2px;" ui-sref="{{'company.list' + nav.nav_url}}">Add Yourself as a {{::type.slice(0,-1)}}</button>
+                <div ng-if="nav.user.roles[val.name][profile.company.key]" style="margin-top:-32px;"></div>
             </div>
         </div>
     </div>

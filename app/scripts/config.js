@@ -102,7 +102,7 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                 community: ['$stateParams', '$location', 'communities', 'community_service',
                     function($stateParams, $location, communities, community_service) {
                         if (jQuery.isEmptyObject($stateParams.community)) { // if community is passed in via ui-sref, just use that
-                            console.log($stateParams);
+                            
                             var pullCommunity = function () {
                                 if (communities[encodeURI($stateParams.location_path)]) { // if location_path has already been pulled, use that
                                     return communities[encodeURI($stateParams.location_path)]; // this should also avoid re-pull for /people and /companies
