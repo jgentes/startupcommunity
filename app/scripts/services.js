@@ -159,6 +159,35 @@ angular
                     text: 'Service Provider',
                     description: "You provide services to community members for a fee."
                 }];
+            },
+            team_panels: function() {
+                return {
+                    "Founders" : {
+                        name: "founder",
+                        icon: "pe-7s-paper-plane",
+                        color: "hnavyblue"
+                    },
+                    "Investors" : {
+                        name: "investor",
+                        icon: "pe-7s-gleam",
+                        color: "hgreen"
+                    },
+                    "Team Members" : {
+                        name: "team",
+                        icon: "pe-7s-ball",
+                        color: "hviolet"
+                    },
+                    "Mentors" : {
+                        name: "mentor",
+                        icon: "pe-7s-study",
+                        color: "hblue"
+                    },
+                    "Service Providers" : {
+                        name: "provider",
+                        icon: "pe-7s-portfolio",
+                        color: "hyellow"
+                    }
+                };
             }
         };
     })

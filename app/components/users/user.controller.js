@@ -247,6 +247,8 @@ function UserProfileController($stateParams, $http, $uibModal, $mixpanel, user, 
     this.reply = {};
 
     this.companies = { "count" : {}};
+
+    this.team_panels = user_service.team_panels();        
     
     for (role in this.user.roles) {
         for (comm in this.user.roles[role]) {

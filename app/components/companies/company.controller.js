@@ -211,7 +211,7 @@ function CompanyController($stateParams, $state, $location, company_service, res
     };
 }
 
-function CompanyProfileController($mixpanel, $scope, communities, user_service, company_service, result_service, location, $location) {
+function CompanyProfileController($mixpanel, communities, user_service, result_service, location, $location) {
 
     $mixpanel.track('Viewed Company');
 
@@ -221,33 +221,7 @@ function CompanyProfileController($mixpanel, $scope, communities, user_service, 
     this.community = this.company;
     this.team = { "count" : {}};
     
-    this.team_panels = {
-        "Founders" : {
-            name: "founder",
-            icon: "pe-7s-paper-plane",
-            color: "hnavyblue"
-        },
-        "Investors" : {
-            name: "investor",
-            icon: "pe-7s-gleam",
-            color: "hgreen"
-        },
-        "Team Members" : {
-            name: "team",
-            icon: "pe-7s-ball",
-            color: "hviolet"
-        },
-        "Mentors" : {
-            name: "mentor",
-            icon: "pe-7s-study",
-            color: "hblue"
-        },
-        "Service Providers" : {
-            name: "provider",
-            icon: "pe-7s-portfolio",
-            color: "hyellow"
-        }
-    };
+    this.team_panels = user_service.team_panels();
     
     // sort team members
 
