@@ -18,6 +18,7 @@ var UserApi = function() {
     this.getProfileUrl = handleGetProfileUrl;
     this.updateProfile = handleUpdateProfile;
     this.removeCommunity = handleRemoveCommunity;
+    this.removeRole = handleRemoveRole;
     this.feedback = handleFeedback;
 };
 
@@ -505,6 +506,53 @@ function handleRemoveCommunity(req, res) {
             res.status(202).send({ message: "Something went wrong."});
         });
 }
+
+function handleRemoveRole(req, res) {
+    // req data is guaranteed by ensureauth
+    var userid = req.user,
+        role = req.body.params.role,
+        community_key = req.body.params.community_key,
+        del = false;    
+
+    console.log("Removing " + role + " for community " + community_key + " for user " + userid);
+
+    // confirm user has role and remove it
+    db.get(process.env.DB_COMMUNITIES, userid)
+        .then(function(response) {
+            if (response.body.roles[role] && response.body.roles[role][community_key]) {
+                delete response.body.roles[role][community_key];
+                
+                for (r in response.body.roles) {
+                    if (response.body.roles[r][community_key]) var del = true;
+                }
+                
+                if (del) {
+                    if (response.body.communities.indexOf(community_key) > -1) {
+                        response.body.communities.splice(response.body.communities.indexOf(community_key), 1);
+                    }
+                }
+                
+                db.put(process.env.DB_COMMUNITIES, userid, response.body)
+                    .then(function(response) {
+                        console.log('Successfully removed role from user profile.');
+                        res.status(201).send({ message: 'Role removed.'});
+                    })
+                    .fail(function(err){
+                        console.warn("WARNING: ", err);
+                        res.status(202).send({ message: "Something went wrong."});
+                    });
+
+            } else {
+                console.warn('WARNING:  User does not have the ' + role + ' role for record ' + community_key + '.');
+                res.status(202).send({ message: 'You do not have the ' + role + ' role for record ' + community_key + '.' });
+            }
+        })
+        .fail(function(err){
+            console.warn("WARNING: ", err);
+            res.status(202).send({ message: "Something went wrong."});
+        });
+}
+
 
 function handleFeedback(req, res) {
     var userkey = req.user,

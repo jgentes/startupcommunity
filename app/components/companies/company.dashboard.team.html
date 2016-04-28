@@ -22,9 +22,12 @@
                         <div class="row" ng-include="'components/users/user.list.item.html'" style="margin-right: -14px; margin-bottom: 1px;"></div>
                     </div>
                 </div>
-                <button ng-if="!nav.user.roles[val.name][profile.company.key]" class="btn btn-xs btn-default" style="margin-top: -2px;" ui-sref="{{'company.list' + nav.nav_url}}">Add Yourself as a {{::type.slice(0,-1)}}</button>
-                <div ng-if="nav.user.roles[val.name][profile.company.key]" style="margin-top:-32px;"></div>
+                <div ng-if="!profile.team[val.name]">No {{::type.toLowerCase()}} yet..</div>
+                <div ng-if="nav.user.roles[val.name][profile.company.key]" class="btn btn-xs btn-default" style="margin-top: -2px;" ng-click="profile.remove(val.name)">Remove yourself as a {{::type.slice(0,-1)}}</div>
             </div>
         </div>
     </div>
+</div>
+<div class="row" style="text-align: center;">
+    <button class="btn btn-xs btn-default" ui-sref="company.add">Add yourself to this team</button>
 </div>

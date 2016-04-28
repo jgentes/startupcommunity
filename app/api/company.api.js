@@ -357,7 +357,13 @@ function handleDeleteCompany(req, res) {
                                             for (c in flush.body.results[r].value.roles[i]) {
                                                 if (c == params.company_key) {
                                                     delete flush.body.results[r].value.roles[i][c];
-                                                    console.log('Deleted ' + i + ' from ' + flush.body.results[r].path.key);
+                                                    var flush_key = flush.body.results[r].path.key,
+                                                        flush_value = flush.body.results[r].value;
+
+                                                    db.put(process.env.DB_COMMUNITIES, flush_key, flush_value)
+                                                        .then(function(response) {
+                                                            console.log('Deleted ' + i + ' from ' + flush_key);        
+                                                        })
                                                 }
                                             }
                                         }

@@ -37,7 +37,7 @@ function ResourceController(location, communities, nav_communities, company_serv
 
 function EditCompanyController(user, sweet, $state, $q, $window, $http, community, location, user_service, company_service, community_service) {
     var self = this;
-    console.log(location);
+
     this.step = 1;
     this.location = location;
     this.community = community;

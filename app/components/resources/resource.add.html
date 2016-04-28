@@ -7,8 +7,18 @@
             'Only add companies that are part of your local startup community.' }} </p>
     </div>
     <div class="panel-body" ng-if="add.update">
-        <h4 class="modal-title">Edit {{ add.selectedCompany.name }}</h4>
-        <p class="font-bold">Edit this record to improve the accuracy of the information</p>
+        <div class="col-lg-8">
+            <h4 class="modal-title">Edit {{ add.selectedCompany.name }}</h4>
+            <p class="font-bold">Edit this record to improve the accuracy of the information</p>
+        </div>
+        <div class="col-lg-4" style="margin-top:20px;">
+            <select class="form-control input-md btn-info pull-right" style="width: 150px; margin-left: 12px; margin-top: 2px;" ng-model="add.selectedRole" ng-options="r.value as r.text for r in add.selectRoles"></select>
+            <h4 class="w400 pull-right">
+
+                Your role is:
+
+            </h4>
+        </div>
     </div>
 
     <div class="panel-body" style="margin-top: 20px;">
@@ -114,7 +124,7 @@
                         </div>
 
                         <div ng-show="add.step == 2">
-                            <div class="form-group col-lg-6">
+                            <div class="form-group col-lg-12">
                                 <h4 class="w400">
 
                                     Street:
@@ -141,18 +151,10 @@
                             <div class="form-group col-lg-6">
                                 <h4 class="w400">
 
-                                    Your role is:
-
-                                </h4>
-                                <select class="form-control input-md" ng-model="add.selectedRole" ng-options="r.value as r.text for r in add.selectRoles"></select>
-                            </div>
-                            <div class="form-group col-lg-6">
-                                <h4 class="w400">
-
                                     Customize the url path:
 
                                 </h4>
-                                <input type="text" class="form-control input-md" placeholder="{{ add.selectCompany.url }}" ng-model="add.selectedCompany.url" style="margin-bottom: 5px;" ng-disabled="add.update">
+                                <input type="text" class="form-control input-lg" placeholder="{{ add.selectCompany.url }}" ng-model="add.selectedCompany.url" style="margin-bottom: 5px;" ng-disabled="add.update">
                                 <em style="font-size: 11px;" class="pull-right">The path will be: startupcommunity.org/<strong><span style="text-transform: lowercase;">{{ add.selectedCompany.url }}</span></strong></em>
                             </div>
                             <div class="col-lg-12" style="margin-top:-10px;">

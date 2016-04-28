@@ -115,6 +115,14 @@ angular
                     }
                 })
             },
+            removeRole: function(role, community_key) {
+                return $http.post('/api/2.3/profile/removerole', {
+                    params: {
+                        role: role,
+                        community_key: community_key
+                    }
+                })
+            },
             join: function(email, message, location_name, location_key) {
                 return $http.post('/api/2.1/join', {
                     params: {

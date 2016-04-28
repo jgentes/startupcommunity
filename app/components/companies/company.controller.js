@@ -211,7 +211,7 @@ function CompanyController($stateParams, $state, $location, company_service, res
     };
 }
 
-function CompanyProfileController($mixpanel, communities, user_service, result_service, location, $location) {
+function CompanyProfileController($mixpanel, communities, user_service, result_service, location, $location, sweet, $window, $http) {
 
     $mixpanel.track('Viewed Company');
 
@@ -237,6 +237,31 @@ function CompanyProfileController($mixpanel, communities, user_service, result_s
             }
         }
     }
+
+    this.remove = function(role) {
+        
+        user_service.removeRole(role, self.community.key)
+            .then(function(response) {
+                $http.get('/api/2.1/community/' + self.community.key + '?nocache=true'); //clear cache
+
+                if (response.status !== 201) {
+                    sweet.show({
+                        title: "Sorry, something went wrong.",
+                        text: response.data.message,
+                        type: "error"
+                    });
+
+                } else {
+                    sweet.show({
+                        title: "Success!",
+                        text: response.data.message,
+                        type: "success"
+                    }, function () {
+                        $window.location.href = '/' + response.data.key;
+                    });
+                }
+            })
+    };
 
     this.getNetwork = function(alturl) {
         self.loadingUser = true;
