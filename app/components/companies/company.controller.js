@@ -257,7 +257,7 @@ function CompanyProfileController($mixpanel, communities, user_service, result_s
                         text: response.data.message,
                         type: "success"
                     }, function () {
-                        $window.location.href = '/' + response.data.key;
+                        $window.location.href = '/' + self.community.key;
                     });
                 }
             })

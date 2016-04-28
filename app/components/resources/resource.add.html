@@ -7,11 +7,10 @@
             'Only add companies that are part of your local startup community.' }} </p>
     </div>
     <div class="panel-body" ng-if="add.update">
-        <div class="col-lg-8">
-            <h4 class="modal-title">Edit {{ add.selectedCompany.name }}</h4>
-            <p class="font-bold">Edit this record to improve the accuracy of the information</p>
+        <div class="col-lg-6">
+            <h4 class="modal-title">Edit {{ ::add.selectedCompany.name }}</h4>
         </div>
-        <div class="col-lg-4" style="margin-top:20px;">
+        <div class="col-lg-6" style="margin-top:2px;">
             <select class="form-control input-md btn-info pull-right" style="width: 150px; margin-left: 12px; margin-top: 2px;" ng-model="add.selectedRole" ng-options="r.value as r.text for r in add.selectRoles"></select>
             <h4 class="w400 pull-right">
 

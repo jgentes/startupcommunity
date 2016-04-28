@@ -23,7 +23,7 @@
                             &nbsp;&nbsp;{{ nav.location.profile.name.toUpperCase() }}&nbsp;&nbsp;</a>/
                     </li>
                     <li ng-if="nav.community.type == 'user' || nav.community.type == 'company'" style="margin-left:-17px;">
-                        <a style="color:#bbb;">&nbsp;&nbsp;{{ nav.community.profile.name.toUpperCase() }}</a>
+                        <a ui-sref="community.dashboard({location_path: nav.community.key, community: nav.community})" style="color:#bbb;">&nbsp;&nbsp;{{ nav.community.profile.name.toUpperCase() }}</a>
                     </li>
                 </ul>
             </div>
