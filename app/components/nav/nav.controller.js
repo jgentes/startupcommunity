@@ -1,6 +1,8 @@
 angular
     .module('startupcommunity')
-    .controller('NavigationController', NavigationController);
+    .controller('NavigationController', NavigationController)
+    .controller('SettingsController', SettingsController)
+    .controller('EmbedSettingsController', EmbedSettingsController);
 
 function NavigationController($auth, $state, $window, $timeout, $location, $scope, $stateParams, $uibModal, user_service, community_service, user, sweet, location, community, communities, nav_communities, top, knowtify, errorLogService, newsletter_service) {
 
@@ -167,7 +169,7 @@ function NavigationController($auth, $state, $window, $timeout, $location, $scop
     parents = parents.join('|').toLowerCase().split('|'); // change all to lowercase
 
     // sort communities for use in nav and child dashboard pages
-    this.networks = [];
+    this.resources = [];
 
     for (item in this.nav_communities) { // need to determine what item is here, esp if user or company
         if (this.nav_communities[item]) {
@@ -189,10 +191,10 @@ function NavigationController($auth, $state, $window, $timeout, $location, $scop
                 case "company":
                     if (this.nav_communities[item].resource) {
                         if (this.nav_communities[item].community_profiles && this.nav_communities[item].community_profiles[this.location.key] && this.nav_communities[item].community_profiles[this.location.key].parents && this.nav_communities[item].community_profiles[this.location.key].parents[0]) {
-                            var network_type = this.nav_communities[item].community_profiles[this.location.key].parents[0];
-                            //if (!this.networks[network_type]) this.networks[network_type] = {};
-                            //this.networks[network_type][item] =  this.nav_communities[item];
-                            this.networks.push(this.nav_communities[item]);
+                            var resource_type = this.nav_communities[item].community_profiles[this.location.key].parents[0];
+                            //if (!this.resources[resource_type]) this.resources[resource_type] = {};
+                            //this.resources[resource_type][item] =  this.nav_communities[item];
+                            this.resources.push(this.nav_communities[item]);
                         }
                     }
 
@@ -204,7 +206,7 @@ function NavigationController($auth, $state, $window, $timeout, $location, $scop
     }
 
     var location_key = this.location.key;
-    this.networks = this.networks.sort(function(a, b) {
+    this.resources = this.resources.sort(function(a, b) {
         var x = a.community_profiles[location_key].name;
         var y = b.community_profiles[location_key].name;
         return ((x < y) ? -1 : ((x > y) ? 1 : 0));
@@ -314,7 +316,7 @@ function NavigationController($auth, $state, $window, $timeout, $location, $scop
         });
     };
 
-    // ADD OR MODIFY CLUSTER, NETWORK, OR LOCATION
+    // ADD OR MODIFY CLUSTER, RESOURCE, OR LOCATION
 
     this.editCommunity = function(community) {
 
@@ -340,7 +342,7 @@ function NavigationController($auth, $state, $window, $timeout, $location, $scop
     this.removeUser = function(ruser) {
         sweet.show({
             title: "Are you sure?",
-            text: "Removing this user from " + community.profile.name + " does not remove them from the entire community. You can easily add them to the network again in the future.",
+            text: "Removing this user from " + community.profile.name + " does not remove them from the entire community. You can easily add them to the resource again in the future.",
             type: "warning",
             showCancelButton: true,
             confirmButtonColor: "#DD6B55",
@@ -552,6 +554,19 @@ function NavigationController($auth, $state, $window, $timeout, $location, $scop
 
 }
 
+function SettingsController(user, community_service) {
+    var self = this;
+    
+    var leader = [];
+    
+    for (l in user.roles.leader) leader.push(l);
+
+    community_service.getResources(undefined, leader)
+        .then(function(response) {
+            self.resources = response.data;
+        })    
+}
+
 function EmbedSettingsController($uibModalInstance, sweet, user, community_service, community, location){
 
     this.user = user;
@@ -645,7 +660,7 @@ function CommunityController($uibModalInstance, $mixpanel, sweet, community_serv
 
     if (community.key) {
 
-        loc_key = user.roles.leader[community.key][0]; // this will need to be selected by the user if they are a leader of one network in multiple locations
+        loc_key = user.roles.leader[community.key][0]; // this will need to be selected by the user if they are a leader of one resource in multiple locations
 
         //force pull of community settings every time to avoid stale data
 
@@ -673,7 +688,7 @@ function CommunityController($uibModalInstance, $mixpanel, sweet, community_serv
                                 break;
                             default:
                                 if (community.resource) {
-                                    // allow multiply types only for networks
+                                    // allow multiply types only for resources
                                     var _parents = self.community.parents || [];
                                     self.communityForm['parent'] = _parents.filter(function(item) {
                                         return item !== null;
@@ -776,7 +791,7 @@ function CommunityController($uibModalInstance, $mixpanel, sweet, community_serv
         if (community.type == 'cluster') {
             var text = "You can recreate this cluster at any time.";
         } else if (community.resource) {
-            text = "Members will be removed from the network, but they will remain in the community."
+            text = "Members will be removed from the resource, but they will remain in the community."
         } else text = "";
 
         sweet.show({

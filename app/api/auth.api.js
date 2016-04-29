@@ -27,12 +27,12 @@ var AuthApi = function() {
  */
 
 var schema = {
-    invite: function(email, invitor_email, location_key, networks) {
+    invite: function(email, invitor_email, location_key, resources) {
 
         var communities = [location_key];
 
-        for (n in networks) {
-            communities.push(networks[n]);
+        for (n in resources) {
+            communities.push(resources[n]);
         }
 
         return {
@@ -578,7 +578,7 @@ function handleInviteUser(req, res) {
     var inviteUser = req.body.params;
     console.log(inviteUser);
 
-    console.log('Inviting ' + inviteUser.email + ' to ' + inviteUser.location_key + ' / ' + inviteUser.networks);
+    console.log('Inviting ' + inviteUser.email + ' to ' + inviteUser.location_key + ' / ' + inviteUser.resources);
 
     var goInvite = function() {
         // validate user has leader role within the location/community, or let them through if they are a member of the location
@@ -593,11 +593,11 @@ function handleInviteUser(req, res) {
                         res.status(202).send({ message: 'You must be a member of this community to invite someone.' });
                     }
 
-                    for (u in inviteUser.networks) {         
+                    for (u in inviteUser.resources) {         
                         
                         // add subscriber to newsletter lists
                         
-                        newsletterApis.addSubscriber(inviteUser.location_key, inviteUser.networks[u], inviteUser)
+                        newsletterApis.addSubscriber(inviteUser.location_key, inviteUser.resources[u], inviteUser)
                     }
 
                     // check to see if the email address already exists within the system
@@ -613,9 +613,9 @@ function handleInviteUser(req, res) {
 
                                 if (!existing.communities) existing.communities = [];
 
-                                for (n in inviteUser.networks) {
-                                    if (existing.communities.indexOf(inviteUser.networks[n]) == -1) {
-                                        existing.communities.push(inviteUser.networks[n]);
+                                for (n in inviteUser.resources) {
+                                    if (existing.communities.indexOf(inviteUser.resources[n]) == -1) {
+                                        existing.communities.push(inviteUser.resources[n]);
                                     }
                                 }
 
@@ -681,7 +681,7 @@ function handleInviteUser(req, res) {
 
                                         } else {
                                             // create user record with email address and community data
-                                            var newUser = schema.invite(inviteUser.email, user.profile.email, inviteUser.location_key, inviteUser.networks);
+                                            var newUser = schema.invite(inviteUser.email, user.profile.email, inviteUser.location_key, inviteUser.resources);
                                             console.log('creating user');
 
                                             db.post(process.env.DB_COMMUNITIES, newUser)

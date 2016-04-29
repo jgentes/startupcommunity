@@ -96,14 +96,14 @@ angular
             getProfileUrl: function(filename) {
                 return $http.get('/api/2.1/profile/url?filename=' + filename);
             },
-            inviteUser: function(email, message, location_name, location_key, networks) {
+            inviteUser: function(email, message, location_name, location_key, resources) {
                 return $http.post('/api/2.1/invite', {
                     params: {
                         email: email,
                         message: message,
                         location_name: location_name,
                         location_key: location_key,
-                        networks: networks
+                        resources: resources
                     }
                 });
             },
@@ -216,8 +216,11 @@ angular
               getCommunity: function(community) {
                   return $http.get('/api/2.1/community/' + community);
               },
-              getResources: function(location_key) {
-                  return $http.get('/api/2.3/resources?location_key=' + location_key);
+              getResources: function(location_key, resources) {
+                  return $http.post('/api/2.3/resources', {
+                      location_key: location_key,
+                      resources: resources
+                  })
               },
               getKey: function(key) {
                   return $http.get('/api/2.1/key/' + key);

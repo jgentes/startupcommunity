@@ -124,7 +124,7 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                                     if (lastitem == "invite" || lastitem == "add") {
                                         return communities[url.pop()];
                                     } else return communities[root]; // return preceding url path as community, such as tech for 'bend-or/tech/people'
-                                } else if (communities[lastitem] && (communities[lastitem].type == "cluster" || communities[lastitem].type == "network")) {
+                                } else if (communities[lastitem] && (communities[lastitem].type == "cluster" || communities[lastitem].resource)) {
                                     return communities[lastitem]; // return tech in 'bend-or/tech'
                                 } else return pullCommunity();
                             } else return pullCommunity();
@@ -164,7 +164,7 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                     function (community_service, location, $stateParams) {
                         if ($stateParams.top) {
                             return $stateParams.top;
-                        } else if (location && location.key && ((location.type == 'location') || (location.type == 'network') || (location.type == 'cluster'))) {
+                        } else if (location && location.key && ((location.type == 'location') || (location.resource) || (location.type == 'cluster'))) {
                             return community_service.getTop(location.key)
                                 .then(function(response) {
                                     return response.data;
@@ -174,7 +174,7 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                 community_top: ['community_service', 'community', 'location', 'top',
                     function (community_service, community, location, top) {
                         if (community && community.key && location && location.key) {
-                            if (community.key !== location.key && ((community.type == 'location') || (community.type == 'network') || (community.type == 'cluster'))) {
+                            if (community.key !== location.key && ((community.type == 'location') || (community.resource) || (community.type == 'cluster'))) {
                                 return community_service.getTop(location.key, community.key, community)
                                     .then(function(response) {
                                         return response.data;
@@ -394,7 +394,8 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
             },
             views: {
                 'content': {
-                    templateUrl: "components/settings.html"
+                    templateUrl: "components/settings.html",
+                    controller: "SettingsController as settings"
                 }
             }
         })

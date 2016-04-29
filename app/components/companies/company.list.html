@@ -95,17 +95,17 @@
 
            <!-- <div class="hpanel hblue">
                 <div class="panel-footer top" style="font-size: 17px;">
-                    <strong>Network</strong> Filters
-                    <div loading-bars ng-show="companies.loadingNetwork" style="display: inline;"></div>
+                    <strong>Resource</strong> Filters
+                    <div loading-bars ng-show="companies.loadingResource" style="display: inline;"></div>
                 </div>
                 <div class="panel-body filternav">
                     <ul class="panel-list">
-                        <li ng-init="companies.allNetworks=true" ng-class="{'active':companies.allNetworks}" ng-click="companies.loadingNetwork=true; companies.allNetworks=true; companies.filterNetworks();">
+                        <li ng-init="companies.allResources=true" ng-class="{'active':companies.allResources}" ng-click="companies.loadingResource=true; companies.allResources=true; companies.filterResources();">
                             <a><i class="fa fa-fw fa-globe themed-color-dark icon-push"></i> All</a>
                         </li>
                         <hr style="margin: 10px 0 10px 0;">
-                        <li ng-repeat="network in nav.networks" ng-class="{'active':companies.selectedNetworks.indexOf(network.key) >= 0}" ng-click="companies.allNetworks=false; companies.filterNetworks(network.key);">
-                            <a>{{network.profile.name}}</a>
+                        <li ng-repeat="resource in nav.resources" ng-class="{'active':companies.selectedResources.indexOf(resource.key) >= 0}" ng-click="companies.allResources=false; companies.filterResources(resource.key);">
+                            <a>{{resource.profile.name}}</a>
                         </li>
                     </ul>
                 </div>
@@ -129,13 +129,13 @@
                     <span><i ng-show="companies.loadingCompanies" class="fa fa-refresh fa-spin" style="padding: 4px; color: #aaa; font-size: 17px; margin-left: 5px;"></i></span>
                 </div>
 
-                <div class="panel-body content">
+                <div class="panel-body content" style="padding-top: 0;">
                     <div class="row">
                         <td style="border-bottom: 1px solid #fff; border-top: none; padding: 0;" colspan="3"></td>
                     </div>
                     <div ng-show="companies.tag" style="text-align: center" ng-cloak><h2><br/>Searching for {{companies.tag}}..</h2><br/><br/></div>
                     <div ng-show="companies.companies.results.length == 0" style="text-align: center" ng-cloak><h2><br/>Nothing here!</h2><br/><br/></div>
-                    <div ng-repeat="item in companies.companies.results" ng-switch on="$index % 2" style="margin-top: 10px;">
+                    <div ng-repeat="item in companies.companies.results" ng-switch on="$index % 2">
                         <div class="col-md-6" ng-switch-when="0">
                             <div class="row"  ng-include="'components/companies/company.list.item.html'"></div>
                         </div>

@@ -18,7 +18,7 @@
                     <table class="form-group" style="font-size: 20px; font-weight:300;">
                         <tr ng-repeat="(k, v) in invite.user.roles.leader" ng-if="invite.communities[k].resource">
                             <td style="width:20px;">
-                                <input type="checkbox" class="form-control checkbox" ng-model="invite.form.networks[k]">
+                                <input type="checkbox" class="form-control checkbox" ng-model="invite.form.resources[k]">
                             </td>
                             <td style="padding-left:5px; padding-top:5px;">
                                 Add them to {{ invite.communities[k].community_profiles[invite.location.key].name }}

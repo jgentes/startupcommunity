@@ -10,7 +10,7 @@ function UserController($stateParams, $location, user_service, result_service, $
     this.community = community;
     this.communities = communities;
     this.selectedClusters = [];
-    this.selectedNetworks = [];
+    this.selectedResources = [];
     this.selectedRole = ['*'];
 
     var self = this; // for accessing 'this' in child functions
@@ -82,13 +82,13 @@ function UserController($stateParams, $location, user_service, result_service, $
             }
         }
 
-        if (self.selectedClusters.length == 0 && self.selectedNetworks.length == 0) {
+        if (self.selectedClusters.length == 0 && self.selectedResources.length == 0) {
             if (self.community.community_profiles && self.community.community_profiles[encodeURI($stateParams.location_path)]) {
                 self.selection = self.community.community_profiles[encodeURI($stateParams.location_path)].name;
             } else self.selection = self.community.profile.name;
         } else {
             self.selection = "";
-            var selectedCommunities = self.selectedClusters.concat(self.selectedNetworks);
+            var selectedCommunities = self.selectedClusters.concat(self.selectedResources);
             for (item in selectedCommunities) {
                 self.selection += self.communities[selectedCommunities[item]].profile.name;
                 if (item < selectedCommunities.length - 1) {
@@ -154,28 +154,28 @@ function UserController($stateParams, $location, user_service, result_service, $
         user_service.search(communityFilter, self.selectedClusters, '*', self.selectedRole, 30, undefined)
             .then(function(response) {
                 self.loadingCluster = false;
-                self.loadingNetwork = false;
+                self.loadingResource = false;
                 self.users = result_service.setPage(response.data);
                 setTitle();
             });
     };
 
-    this.filterNetworks = function(selection) {
+    this.filterResources = function(selection) {
         if (selection == undefined) {
-            self.selectedNetworks = [];
+            self.selectedResources = [];
         } else {
-            if (self.selectedNetworks.indexOf(selection) < 0) {
-                self.selectedNetworks.push(selection);
-            } else self.selectedNetworks.splice(self.selectedNetworks.indexOf(selection), 1);
-            if (self.selectedNetworks.length == 0) self.allNetworks = true;
+            if (self.selectedResources.indexOf(selection) < 0) {
+                self.selectedResources.push(selection);
+            } else self.selectedResources.splice(self.selectedResources.indexOf(selection), 1);
+            if (self.selectedResources.length == 0) self.allResources = true;
         }
 
-        communityFilter = communityFilter.concat(self.selectedNetworks);
+        communityFilter = communityFilter.concat(self.selectedResources);
 
         user_service.search(communityFilter, clusterFilter, '*', self.selectedRole, 20, undefined)
             .then(function(response) {
                 self.loadingCluster = false;
-                self.loadingNetwork = false;
+                self.loadingResource = false;
                 self.users = result_service.setPage(response.data);
                 setTitle();
             });
@@ -382,7 +382,7 @@ function InviteUserController($mixpanel, user, user_service, community, communit
 
             var emails = self.form.email_value.split(/\s*,\s*/),
                 message = self.form.message_value || "",
-                networks = self.form.networks ? Object.keys(self.form.networks) : undefined,
+                resources = self.form.resources ? Object.keys(self.form.resources) : undefined,
                 formdata;
 
 
@@ -396,19 +396,19 @@ function InviteUserController($mixpanel, user, user_service, community, communit
                     formdata = {
                         "email" : emails[e],
                         "message" : message,
-                        "networks" : networks
+                        "resources" : resources
                     };
 
                     if (user) {
 
-                        user_service.inviteUser(formdata.email, formdata.message, location.profile.name, location.key, formdata.networks)
+                        user_service.inviteUser(formdata.email, formdata.message, location.profile.name, location.key, formdata.resources)
                             .then(function(response) {
                                 self.working = false;
                                 self.form = {
                                     submitted: false,
                                     email_value: "",
                                     message_value: "",
-                                    networks: {}
+                                    resources: {}
                                 };
 
                                 if (response.status !== 200) {

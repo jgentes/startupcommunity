@@ -8,7 +8,7 @@ function CompanyController($stateParams, $state, $location, company_service, res
     this.community = community;
     this.communities = communities;
     this.selectedClusters = [];
-    this.selectedNetworks = [];
+    this.selectedResources = [];
     this.selectedStage = ['*'];
     this.selectedType = ['*'];
 
@@ -85,13 +85,13 @@ function CompanyController($stateParams, $state, $location, company_service, res
             self.stage += " Companies";
         }
 
-        if (self.selectedClusters.length == 0 && self.selectedNetworks.length == 0) {
+        if (self.selectedClusters.length == 0 && self.selectedResources.length == 0) {
             if (self.community.community_profiles && self.community.community_profiles[encodeURI($stateParams.location_path)]) {
                 self.selection = self.community.community_profiles[encodeURI($stateParams.location_path)].name;
             } else self.selection = self.community.profile.name;
         } else {
             self.selection = "";
-            var selectedCommunities = self.selectedClusters.concat(self.selectedNetworks);
+            var selectedCommunities = self.selectedClusters.concat(self.selectedResources);
             for (item in selectedCommunities) {
                 self.selection += self.communities[selectedCommunities[item]].profile.name;
                 if (item < selectedCommunities.length - 1) {
@@ -183,28 +183,28 @@ function CompanyController($stateParams, $state, $location, company_service, res
         company_service.search(communityFilter, self.selectedClusters, '*', self.selectedStage, null, 30, self.resource_page, undefined)
             .then(function(response) {
                 self.loadingCluster = false;
-                self.loadingNetwork = false;
+                self.loadingResource = false;
                 self.companies = result_service.setPage(response.data);
                 setTitle();
             });
     };
 
-    this.filterNetworks = function(selection) {
+    this.filterResources = function(selection) {
         if (selection == undefined) {
-            self.selectedNetworks = [];
+            self.selectedResources = [];
         } else {
-            if (self.selectedNetworks.indexOf(selection) < 0) {
-                self.selectedNetworks.push(selection);
-            } else self.selectedNetworks.splice(self.selectedNetworks.indexOf(selection), 1);
-            if (self.selectedNetworks.length == 0) self.allNetworks = true;
+            if (self.selectedResources.indexOf(selection) < 0) {
+                self.selectedResources.push(selection);
+            } else self.selectedResources.splice(self.selectedResources.indexOf(selection), 1);
+            if (self.selectedResources.length == 0) self.allResources = true;
         }
 
-        communityFilter = communityFilter.concat(self.selectedNetworks);
+        communityFilter = communityFilter.concat(self.selectedResources);
 
         company_service.search(communityFilter, clusterFilter, '*', self.selectedStage, null, 20, self.resource_page, undefined)
             .then(function(response) {
                 self.loadingCluster = false;
-                self.loadingNetwork = false;
+                self.loadingResource = false;
                 self.companies = result_service.setPage(response.data);
                 setTitle();
             });
@@ -263,7 +263,7 @@ function CompanyProfileController($mixpanel, communities, user_service, result_s
             })
     };
 
-    this.getNetwork = function(alturl) {
+    this.getResource = function(alturl) {
         self.loadingUser = true;
 
         // remove random sort

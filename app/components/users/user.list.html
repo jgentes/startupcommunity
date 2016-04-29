@@ -72,17 +72,17 @@
 
             <!--<div class="hpanel hblue">
                 <div class="panel-footer top" style="font-size: 17px;">
-                    <strong>Network</strong> Filters
-                    <div loading-bars ng-show="users.loadingNetwork" style="display: inline;"></div>
+                    <strong>Resource</strong> Filters
+                    <div loading-bars ng-show="users.loadingResource" style="display: inline;"></div>
                 </div>
                 <div class="panel-body filternav">
                     <ul class="panel-list">
-                        <li ng-init="users.allNetworks=true" ng-class="{'active':users.allNetworks}" ng-click="users.loadingNetwork=true; users.allNetworks=true; users.filterNetworks();">
+                        <li ng-init="users.allResources=true" ng-class="{'active':users.allResources}" ng-click="users.loadingResource=true; users.allResources=true; users.filterResources();">
                             <a><i class="fa fa-fw fa-globe themed-color-dark icon-push"></i> All</a>
                         </li>
                         <hr style="margin: 10px 0 10px 0;">
-                        <li ng-repeat="network in nav.networks" ng-class="{'active':users.selectedNetworks.indexOf(network.key) >= 0}" ng-click="users.allNetworks=false; users.filterNetworks(network.key);">
-                            <a>{{network.profile.name}}</a>
+                        <li ng-repeat="resource in nav.resources" ng-class="{'active':users.selectedResources.indexOf(resource.key) >= 0}" ng-click="users.allResources=false; users.filterResources(resource.key);">
+                            <a>{{resource.profile.name}}</a>
                         </li>
                     </ul>
                 </div>
@@ -117,7 +117,7 @@
                 <span><i ng-show="users.loadingUser" class="fa fa-refresh fa-spin" style="padding: 4px; color: #aaa; font-size: 17px; margin-left: 5px;"></i></span>
             </div>
 
-            <div class="panel-body content">
+            <div class="panel-body content" style="padding-top: 0;">
                 <div class="row">
                     <td style="border-bottom: 1px solid #fff; border-top: none; padding: 0;" colspan="3"></td>
                 </div>

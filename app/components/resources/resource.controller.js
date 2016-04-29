@@ -7,7 +7,7 @@ function ResourceController(location, communities, nav_communities, company_serv
     var self = this;
 
     this.top = top || {}; // this is passed in to avoid re-pulling top on nav click if possible
-    this.networks = this.networks || {};
+    this.resources = this.resources || {};
     this.communities = communities;
     this.user = $auth.isAuthenticated() ? user : {};
     this.location = location;
@@ -15,8 +15,8 @@ function ResourceController(location, communities, nav_communities, company_serv
     this.nav_jump = (this.location && this.location.type === 'location') ||
                     ((this.community.type === 'user' || this.community.type === 'company') &&
                     (this.location && this.location.type === 'location')) ?
-        "({community_path: item.key, community: item, query: '*', location_path: networks.location.key, top: networks.top, communities: networks.communities, user: networks.user })" :
-        "({community_path: item.key, community: item, query: '*', location_path: networks.user.profile.home, top: networks.top, communities: networks.communities, user: networks.user })";
+        "({community_path: item.key, community: item, query: '*', location_path: resources.location.key, top: resources.top, communities: resources.communities, user: resources.user })" :
+        "({community_path: item.key, community: item, query: '*', location_path: resources.user.profile.home, top: resources.top, communities: resources.communities, user: resources.user })";
 
     this.types = company_service.resource_types();
     var resources = nav_communities;
@@ -25,8 +25,8 @@ function ResourceController(location, communities, nav_communities, company_serv
         var currentItem = resources.resources[item];
         if (resources[currentItem].resource_types && resources[currentItem].resource_types.length) {
             for (type in resources[currentItem].resource_types) {
-                self.networks[resources[currentItem].resource_types[type]] = self.networks[resources[currentItem].resource_types[type]] || [];
-                self.networks[resources[currentItem].resource_types[type]].push(resources[currentItem]);
+                self.resources[resources[currentItem].resource_types[type]] = self.resources[resources[currentItem].resource_types[type]] || [];
+                self.resources[resources[currentItem].resource_types[type]].push(resources[currentItem]);
             }
         }
     }

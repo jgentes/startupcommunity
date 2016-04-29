@@ -315,19 +315,28 @@ function handleGetCommunity(req, res) {
 
 function handleGetResources(req, res) {
 
-    var location_key = req.query.location_key;
+    var location_key = req.body.location_key,
+        resources = req.body.resources,
+        searchstring;
 
-    var searchString = '@value.type:"company" AND @value.resource: true AND @value.communities: "' + location_key + '"';
+    if (resources) {
+        searchstring = '@path.key: (';
+        for (r in resources) {
+            searchstring += resources[r];
+            if (r < resources.length - 1) searchstring += ' OR ';
+        }
+        searchstring += ')'
+    } else searchstring = '@value.type:"company" AND @value.resource: true AND @value.communities: "' + location_key + '"';
 
-    if (location_key) {
+    if (searchstring) {
         
-        console.log(searchString);
+        console.log(searchstring);
         
         db.newSearchBuilder()
             .collection(process.env.DB_COMMUNITIES)
             .limit(100)
             .offset(0)
-            .query(searchString)
+            .query(searchstring)
             .then(function (result) {
 
                 var newresponse = {};
@@ -339,17 +348,17 @@ function handleGetResources(req, res) {
 
                         newresponse[r.path.key] = r.value;
                         newresponse[r.path.key]["key"] = r.path.key;
-                        
-                        res.status(200).send(newresponse);
                     }
+
+                    res.status(200).send(newresponse);
                         
                 } else {
                     console.log('INFO: No Resources found!');
-                    res.status(404).send({message: 'No resources found!'});
+                    res.status(400).send({message: 'No resources found!'});
                 }
             })
             .fail(function (err) {
-                console.log("WARNING: community236", err);
+                console.log("WARNING: ", err);
                 res.status(202).send({message: 'Something went wrong: ' + err});
             });
 
@@ -703,7 +712,7 @@ function handleEditCommunity(req, res) {
                                 if (response.body.community_profiles[settings.location_key] === undefined) {
 
                                     // create this location
-                                    console.log('creating location profile')
+                                    console.log('creating location profile');
 
                                     response.body.community_profiles[settings.location_key] = {
                                         "name": settings.community.profile.name,

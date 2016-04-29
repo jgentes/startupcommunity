@@ -12,24 +12,24 @@ var NewsletterApi = function() {
 };
 
 // this api is used internally and not exposed to client
-function addSubscriber(location_key, network_key, user_profile) {
+function addSubscriber(location_key, resource_key, user_profile) {
 
-    console.log('getting leaders: ' + location_key + ' / ' + network_key);
+    console.log('getting leaders: ' + location_key + ' / ' + resource_key);
 
     db.newSearchBuilder()
         .collection(process.env.DB_COMMUNITIES)
         .limit(100)
         .offset(0)
-        .query('@value.roles.leader.' + network_key + ': "' + location_key + '" AND @value.type: "user"')
+        .query('@value.roles.leader.' + resource_key + ': "' + location_key + '" AND @value.type: "user"')
         .then(function (data) {
             var profile;
             for (x in data.body.results) {
 
                 profile = data.body.results[x].value;
 
-                if (profile.newsletter && profile.newsletter.lists && profile.newsletter.lists[network_key]) {
+                if (profile.newsletter && profile.newsletter.lists && profile.newsletter.lists[resource_key]) {
 
-                    var list_id = profile.newsletter.lists[network_key];
+                    var list_id = profile.newsletter.lists[resource_key];
                     var brand_id = profile.newsletter.brand_id;
 
                     var add = function(list_id, brand_id, user_profile) {
@@ -231,21 +231,21 @@ function handleSetupNewsletter(req,res) {
         })
     };
 
-    getMembers = function(location_key, network, newprofile, brand_id, list_id) {
-        console.log('getting members: ' + location_key + ' / ' + network);
+    getMembers = function(location_key, resource, newprofile, brand_id, list_id) {
+        console.log('getting members: ' + location_key + ' / ' + resource);
 
         var search;
 
-        // verify user is a member of this network in this location
-        var networks = newprofile.roles.leader[network];
+        // verify user is a member of this resource in this location
+        var resources = newprofile.roles.leader[resource];
 
-        if (!networks || (networks.indexOf(location_key) < 0)) {
-            res.status(204).send({ message: 'You are not a leader of ' + network + ' in ' + location_key })
+        if (!resources || (resources.indexOf(location_key) < 0)) {
+            res.status(204).send({ message: 'You are not a leader of ' + resource + ' in ' + location_key })
         } else {
 
             search = function (startKey) {
 
-                var searchstring = network + " AND " + location_key;
+                var searchstring = resource + " AND " + location_key;
 
                 db.newSearchBuilder()
                     .collection(process.env.DB_COMMUNITIES)
@@ -266,7 +266,7 @@ function handleSetupNewsletter(req,res) {
                             startKey = startKey + 100;
                             search(startKey);
                         } else {
-                            console.log(network + ' done!');
+                            console.log(resource + ' done!');
                         }
 
                     });
@@ -365,15 +365,15 @@ function handleSetupNewsletter(req,res) {
                 
                 updateProfile(brand_id, {});
 
-                // create lists for networks that the user is a leader of
+                // create lists for resources that the user is a leader of
 
-                for (network in newprofile.roles.leader) {
+                for (resource in newprofile.roles.leader) {
 
-                    if (newprofile.roles.leader.hasOwnProperty(network)) {
+                    if (newprofile.roles.leader.hasOwnProperty(resource)) {
 
-                        if (communities[network] && communities[network].resource) {
+                        if (communities[resource] && communities[resource].resource) {
 
-                            createList(brand_id, network, function(list_id, list_name) {
+                            createList(brand_id, resource, function(list_id, list_name) {
 
                                 // update the user profile with list id and create custom field
 
@@ -409,17 +409,17 @@ function handleSyncMembers(req,res) {
 
     var getMembers = function(list, lists) {
 
-        var network = list,
+        var resource = list,
             list_id = lists[list],
             search;
 
         // get subscribers and add them to the list
 
-        console.log('getting members: ' + location_key + ' / ' + network);
+        console.log('getting members: ' + location_key + ' / ' + resource);
 
         search = function(startKey) {
 
-            var searchstring = network + " AND " + location_key;
+            var searchstring = resource + " AND " + location_key;
 
             db.newSearchBuilder()
                 .collection(process.env.DB_COMMUNITIES)
@@ -455,7 +455,7 @@ function handleSyncMembers(req,res) {
                         startKey = startKey + 100;
                         search(startKey);
                     } else {
-                        console.log(network + ' done!');
+                        console.log(resource + ' done!');
                         res.status(201).end();
                     }
 
