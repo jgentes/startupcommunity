@@ -1,5 +1,6 @@
 <div class="row">
-    <div ng-repeat="(type, val) in profile.team_panels" class="col-xs-12 col-sm-6 col-md-4">
+    <div ng-repeat="(type, val) in profile.team_panels" ng-switch on="$index % 2">
+    <div class="col-xs-12 col-sm-6 col-md-4">
         <div class="hpanel" ng-class="val.color">
             <div class="panel-body" style="padding: 10px 5px;">
                 <div class="col-xs-8">

@@ -169,33 +169,44 @@ angular
                 }];
             },
             team_panels: function() {
-                return {
-                    "Founders" : {
+                return [
+                    {
+                        title: "Leaders",
+                        name: "leader",
+                        icon: "pe-7s-flag",
+                        color: "hred"
+                    },
+                    {
+                        title: "Founders",
                         name: "founder",
                         icon: "pe-7s-paper-plane",
                         color: "hnavyblue"
                     },
-                    "Investors" : {
+                    {
+                        title: "Investors",
                         name: "investor",
                         icon: "pe-7s-gleam",
                         color: "hgreen"
                     },
-                    "Team Members" : {
+                    {
+                        title: "Team Members",
                         name: "team",
                         icon: "pe-7s-ball",
                         color: "hviolet"
                     },
-                    "Mentors" : {
+                    {
+                        title: "Mentors",
                         name: "mentor",
                         icon: "pe-7s-study",
                         color: "hblue"
                     },
-                    "Service Providers" : {
+                    {
+                        title: "Service Providers",
                         name: "provider",
                         icon: "pe-7s-portfolio",
                         color: "hyellow"
                     }
-                };
+                ];
             }
         };
     })

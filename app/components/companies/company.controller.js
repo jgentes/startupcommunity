@@ -219,7 +219,7 @@ function CompanyProfileController($mixpanel, communities, user_service, result_s
     this.communities = communities;
     this.company = this.communities[this.communities.key];
     this.community = this.company;
-    this.team = { "count" : {}};
+    this.team = { "count" : []};
     
     this.team_panels = user_service.team_panels();
     
@@ -229,9 +229,9 @@ function CompanyProfileController($mixpanel, communities, user_service, result_s
         for (role in this.communities[this.company.key].team[member].value.roles) {
             for (item in this.communities[this.company.key].team[member].value.roles[role]) {
                 if (item == this.company.key) {
-                    if (!this.team[role]) this.team[role] = {};
+                    if (!this.team[role]) this.team[role] = [];
                     if (!this.team.count[role]) this.team.count[role] = 0;
-                    this.team[role][member] = this.communities[this.company.key].team[member];
+                    this.team[role].push(this.communities[this.company.key].team[member]);
                     ++ this.team.count[role];
                 }
             }

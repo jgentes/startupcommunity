@@ -1,14 +1,19 @@
 <div class="hpanel" style="margin-top: 20px;">
 
-    <div class="panel-body" ng-if="!add.update">
-        <h4 class="modal-title">Add a {{ add.is_resource ? 'resource' : 'company' }} to <span ng-bind-html="::add.location.profile.name"></span></h4>
-        <p class="font-bold">{{ add.is_resource ?
-            'Resources include coworking spaces, accelerators, investment funds, networking events, and other organizations that support entrepreneurship.' :
-            'Only add companies that are part of your local startup community.' }} </p>
-    </div>
-    <div class="panel-body" ng-if="add.update">
-        <div class="col-lg-6">
-            <h4 class="modal-title">Edit {{ ::add.selectedCompany.name }}</h4>
+    <div class="panel-body">
+
+        <div ng-if="!add.update">
+            <div class="col-sm-6">
+                <h4 class="modal-title">Add a {{ add.is_resource ? 'resource' : 'company' }} to <span ng-bind-html="::add.location.profile.name"></span></h4>
+                <p class="font-bold">{{ add.is_resource ?
+                    'Resources include coworking spaces, accelerators, investment funds, networking events, and other organizations that support entrepreneurship.' :
+                    'Only add companies that are part of your local startup community.' }} </p>
+            </div>
+        </div>
+        <div ng-if="add.update">
+            <div class="col-sm-6">
+                <h4 class="modal-title">Edit {{ ::add.selectedCompany.name }}</h4>
+            </div>
         </div>
         <div class="col-lg-6" style="margin-top:2px;">
             <select class="form-control input-md btn-info pull-right" style="width: 150px; margin-left: 12px; margin-top: 2px;" ng-model="add.selectedRole" ng-options="r.value as r.text for r in add.selectRoles"></select>
@@ -18,7 +23,9 @@
 
             </h4>
         </div>
+
     </div>
+
 
     <div class="panel-body" style="margin-top: 20px;">
 

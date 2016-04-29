@@ -12,5 +12,7 @@ For Local:
  Run C:\Dev\memcached\memcache.bat prior to launch, which includes:
  
  taskkill /FI "WINDOWTITLE EQ memcache" /f /t
+
  timeout /t 2
+
  start "memcache" /min memcached.exe -vv
