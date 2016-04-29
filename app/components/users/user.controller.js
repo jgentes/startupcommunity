@@ -374,7 +374,7 @@ function InviteUserController($mixpanel, user, user_service, community, communit
     this.communities = communities;
     this.location = location;
 
-    if (this.community.type == 'cluster' || this.community.type == 'network' && location) this.community = location;
+    if (this.community.type == 'cluster' || this.community.resource && location) this.community = location;
 
     this.inviteUser = function() {
 

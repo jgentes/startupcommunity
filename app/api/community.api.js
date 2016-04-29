@@ -196,7 +196,7 @@ function handleGetCommunity(req, res) {
                             // grab home
                             if (m.value.profile.home) var m_home = m.value.profile.home;
 
-                            if (m.value.type !== "network" || m.value.type !== "location") {
+                            if (!m.value.resource || m.value.type !== "location") {
 
                                 // pull communities within record
                                 var comm_items = m.value.communities;
@@ -694,7 +694,7 @@ function handleEditCommunity(req, res) {
                             // go to .fail if community doesn't exist (on .get rather than .search)
                             // if community already exists and it's the same type as what's being created, we're good to add the community profile here
 
-                            if (response.body.type && (response.body.type == "cluster" || response.body.type == "network") && response.body.type == settings.community.type) {
+                            if (response.body.type && (response.body.type == "cluster" || response.body.resource) && response.body.type == settings.community.type) {
 
                                 // create community_profiles (leadership not required if this is a new community)
 
@@ -846,7 +846,7 @@ function handleDeleteCommunity(req, res) {
 
                             // remove the location profile
 
-                            if (response.body.type && (response.body.type == "cluster" || response.body.type == "network") && response.body.type == settings.community.type) {
+                            if (response.body.type && (response.body.type == "cluster" || response.body.resource) && response.body.type == settings.community.type) {
 
                                 // community already exists, we're good to remove the community profile here
 

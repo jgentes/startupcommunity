@@ -16,7 +16,7 @@
                         <input type="text" placeholder="Optional message.." class="form-control input-lg" name="message" ng-model="invite.form.message_value">
                     </div>
                     <table class="form-group" style="font-size: 20px; font-weight:300;">
-                        <tr ng-repeat="(k, v) in invite.user.roles.leader" ng-if="invite.communities[k].type == 'network'">
+                        <tr ng-repeat="(k, v) in invite.user.roles.leader" ng-if="invite.communities[k].resource">
                             <td style="width:20px;">
                                 <input type="checkbox" class="form-control checkbox" ng-model="invite.form.networks[k]">
                             </td>

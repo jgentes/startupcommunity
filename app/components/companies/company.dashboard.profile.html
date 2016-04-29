@@ -63,7 +63,7 @@
         <ul class="profile-ul">
             <p style="font-size: 14px; padding: 2px 5px 0 20px; float: left;">Communities:</p>
             <li ng-repeat="community in profile.company.communities" class="profile-roles">
-                <a ui-sref="community.dashboard({location_path: community, community: profile.communities[community], query: &quot;&#42;&quot;})" class="btn btn-xs btn-outline" ng-class="{'btn-danger' : profile.communities[community].type == 'company', 'btn-info' : profile.communities[community].type == 'network', 'btn-primary' : profile.communities[community].type == 'cluster', 'btn-success' : profile.communities[community].type == 'location'}"><i class="fa {{profile.communities[community].profile.icon}}"></i> {{profile.communities[community].profile.name}}</a>
+                <a ui-sref="community.dashboard({location_path: community, community: profile.communities[community], query: &quot;&#42;&quot;})" class="btn btn-xs btn-outline" ng-class="{'btn-danger' : profile.communities[community].type == 'company', 'btn-info' : profile.communities[community].resource, 'btn-primary' : profile.communities[community].type == 'cluster', 'btn-success' : profile.communities[community].type == 'location'}"><i class="fa {{profile.communities[community].profile.icon}}"></i> {{profile.communities[community].profile.name}}</a>
             </li>
         </ul>
     </div>

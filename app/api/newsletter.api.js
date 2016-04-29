@@ -371,7 +371,7 @@ function handleSetupNewsletter(req,res) {
 
                     if (newprofile.roles.leader.hasOwnProperty(network)) {
 
-                        if (communities[network] && communities[network].type == 'network') {
+                        if (communities[network] && communities[network].resource) {
 
                             createList(brand_id, network, function(list_id, list_name) {
 

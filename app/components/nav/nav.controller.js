@@ -186,12 +186,14 @@ function NavigationController($auth, $state, $window, $timeout, $location, $scop
                         this.clusters[cluster_type][item] = this.nav_communities[item];
                     }
                     break;
-                case "network":
-                    if (this.nav_communities[item].community_profiles && this.nav_communities[item].community_profiles[this.location.key] && this.nav_communities[item].community_profiles[this.location.key].parents && this.nav_communities[item].community_profiles[this.location.key].parents[0]) {
-                        var network_type = this.nav_communities[item].community_profiles[this.location.key].parents[0];
-                        //if (!this.networks[network_type]) this.networks[network_type] = {};
-                        //this.networks[network_type][item] =  this.nav_communities[item];
-                        this.networks.push(this.nav_communities[item]);
+                case "company":
+                    if (this.nav_communities[item].resource) {
+                        if (this.nav_communities[item].community_profiles && this.nav_communities[item].community_profiles[this.location.key] && this.nav_communities[item].community_profiles[this.location.key].parents && this.nav_communities[item].community_profiles[this.location.key].parents[0]) {
+                            var network_type = this.nav_communities[item].community_profiles[this.location.key].parents[0];
+                            //if (!this.networks[network_type]) this.networks[network_type] = {};
+                            //this.networks[network_type][item] =  this.nav_communities[item];
+                            this.networks.push(this.nav_communities[item]);
+                        }
                     }
 
                     break;
@@ -245,7 +247,7 @@ function NavigationController($auth, $state, $window, $timeout, $location, $scop
 
     if ($stateParams.query) this.search.query = $stateParams.query;
 
-    if (this.community.type == "cluster" || this.community.type == "network") {
+    if (this.community.type == "cluster" || this.community.resource) {
         if (this.community.community_profiles && this.community.community_profiles[this.location_path]) {
             this.searchname = this.community.community_profiles[this.location_path].name;
         } else this.searchname = this.community.profile.name;
@@ -255,7 +257,7 @@ function NavigationController($auth, $state, $window, $timeout, $location, $scop
 
         if (!query) query = "*";
 
-        if (self.community.type == "cluster" || self.community.type == "network") {
+        if (self.community.type == "cluster" || self.community.resource) {
             self.location_path == self.community.key ?
                 $state.go('search.dashboard', {location_path: self.location_path, community: self.community, query: query}) :
                 $state.go('search.dashboard', {location_path: self.location_path, community_path: self.community.key, community: self.community, query: query});
@@ -428,7 +430,7 @@ function NavigationController($auth, $state, $window, $timeout, $location, $scop
                     return self.communities;
                 },
                 location: function() {
-                    if (self.location.type == 'network' || self.location.type == 'cluster') {
+                    if (self.location.resource || self.location.type == 'cluster') {
                         return self.communities[self.location.profile.home];
                     } else return self.location;
                 }
@@ -634,7 +636,7 @@ function CommunityController($uibModalInstance, $mixpanel, sweet, community_serv
 
     if (community.type == 'cluster') {
         self.parents = community_service.parents();
-    } else if (community.type == 'network') {
+    } else if (community.resource) {
         community_service.getResources(loc_key)
             .then(function(recs) {
                 self.resources = recs.data;
@@ -670,7 +672,7 @@ function CommunityController($uibModalInstance, $mixpanel, sweet, community_serv
                                 self.communityForm['parent'] = 'Non-Profit';
                                 break;
                             default:
-                                if (community.type == 'network') {
+                                if (community.resource) {
                                     // allow multiply types only for networks
                                     var _parents = self.community.parents || [];
                                     self.communityForm['parent'] = _parents.filter(function(item) {
@@ -773,7 +775,7 @@ function CommunityController($uibModalInstance, $mixpanel, sweet, community_serv
 
         if (community.type == 'cluster') {
             var text = "You can recreate this cluster at any time.";
-        } else if (community.type == 'network') {
+        } else if (community.resource) {
             text = "Members will be removed from the network, but they will remain in the community."
         } else text = "";
 

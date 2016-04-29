@@ -14,7 +14,7 @@ var MaintApi = function() {
  */
 
 
-function handleMaintenance(res) {
+function handleMaintenance(res, req) {
     var enabled = false,
         startKey = 0,
         limit = 50,
@@ -26,15 +26,79 @@ function handleMaintenance(res) {
             .collection(collection)
             .limit(limit)
             .offset(startKey)
-            .query('@value.roles.founder.redding-ca: "redding-ca"')
+            .query('@value.resource:true')
             .then(function(data){
                 var item;
                 for (item in data.body.results) {
 
-                    var user = data.body.results[item].value;
+                    // convert networks to resources
 
-                    delete user.roles.founder['bend-or'];
-                    if (_.isEmpty(user.roles.founder)) delete user.roles.founder;
+                    var network = data.body.results[item].value;
+
+                    //network['resource'] = true;
+                    //network['resource_types'] = [];
+                    //network.type = 'company';
+
+                    if (network.parents) {
+                        network.profile['parents'] = network.parents;
+                        delete network.parents;
+                    } else network.profile['parents'] = network.profile.parents || [];
+
+                    if (network.profile.description) {
+                        network.profile['headline'] = network.profile.description;
+                        delete network.profile.description;
+                    } else network.profile['headline'] = network.profile.headline || "";
+
+                    if (network.profile.logo) {
+                        network.profile['avatar'] = network.profile.logo;
+                        delete network.profile.logo;
+                    } else network.profile['avatar'] = network.profile.avatar || "";
+
+                    if (!network.profile.summary) network.profile['summary'] = "";
+
+                    if (!network.profile.website) network.profile['website'] = "";
+
+                    if (!network.profile.address) network.profile['address'] = {
+                        street: "",
+                        city: "",
+                        state: ""
+                    };
+
+                    if (network.community_profiles) {
+                        for (c in network.community_profiles) {
+                            network.community_profiles[c]['parents'] = network.profile.parents || [];
+
+                            if (network.community_profiles[c].description) {
+                                network.community_profiles[c]['headline'] = network.community_profiles[c].description;
+                                delete network.community_profiles[c].description;
+                            } else network.community_profiles[c]['headline'] = network.community_profiles[c].headline || "";
+
+                            if (network.community_profiles[c].logo) {
+                                network.community_profiles[c]['avatar'] = network.community_profiles[c].logo;
+                                delete network.community_profiles[c].logo;
+                            } else network.community_profiles[c]['avatar'] = network.community_profiles[c].avatar || "";
+
+                            if (!network.community_profiles[c].summary) network.community_profiles[c]['summary'] = "";
+
+                            if (!network.community_profiles[c].website) network.community_profiles[c]['website'] = "";
+
+                            if (!network.community_profiles[c].address) network.community_profiles[c]['address'] = {
+                                street: "",
+                                city: "",
+                                state: ""
+                            };
+
+                        }
+                    }
+
+                    // END network conversion
+
+
+
+
+
+                    //delete user.roles.founder['bend-or'];
+                    //if (_.isEmpty(user.roles.founder)) delete user.roles.founder;
 
                     /*
                     var newdata = {
@@ -84,7 +148,7 @@ function handleMaintenance(res) {
 
                     // IMPORTANT! TEST FIRST BY COMMENTING OUT BELOW..
                     // ALSO BE CAREFUL TO NOT PULL FROM -DEV AND PUT INTO PRODUCTION DB!!
-                    db.put(collection, data.body.results[item].path.key, user);
+                    db.put(collection, data.body.results[item].path.key, network);
                 }
 
                 /*console.log('Job done!');
@@ -96,7 +160,7 @@ function handleMaintenance(res) {
                     getList(startKey, userlist, limit);
                 } else {
                     console.log('Job done!');
-                    res.end();
+                    res.status(200).end();
 
 
                     /*
