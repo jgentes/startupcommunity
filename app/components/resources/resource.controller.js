@@ -35,11 +35,14 @@ function ResourceController(location, communities, nav_communities, company_serv
     
 }
 
-function EditCompanyController(user, sweet, $state, $q, $window, $http, community, location, user_service, company_service, community_service) {
+function EditCompanyController(user, sweet, $state, $stateParams, $q, $window, $http, community, location, user_service, company_service, community_service) {
     var self = this;
-
+    console.log($stateParams);
+    console.log(location);
+    console.log(community);
+    
     this.step = 1;
-    this.location = location;
+    this.location = location || $stateParams.location;
     this.community = community;
     this.user = user;
     this.update = false; // used if company already exists
@@ -51,8 +54,8 @@ function EditCompanyController(user, sweet, $state, $q, $window, $http, communit
     this.industries = []; // need a placeholder until next call is resolved
     this.industries = community_service.industries();
     this.selectedCompany = {
-        city: location.profile.city,
-        state: location.profile.state
+        city: self.location.profile.city,
+        state: self.location.profile.state
     };
 
     this.stages = [ 'Bootstrap', 'Seed', 'Series A', 'Series B', 'Later'];
@@ -75,7 +78,7 @@ function EditCompanyController(user, sweet, $state, $q, $window, $http, communit
             self.selectedCompany['state'] = self.community.profile.address.state;
         }
 
-        if (self.selectedCompany.parents) {
+        if (self.selectedCompany.parents && self.selectedCompany.parents.length) {
             switch (self.selectedCompany.parents[0]) {
                 case 'consumer-goods':
                     self.selectedCompany['parent'] = 'Consumer Goods';

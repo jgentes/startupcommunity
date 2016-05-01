@@ -556,7 +556,6 @@ function NavigationController($auth, $state, $window, $timeout, $location, $scop
 
 function SettingsController(user, community_service) {
     var self = this;
-    
     var leader = [];
     
     for (l in user.roles.leader) leader.push(l);
