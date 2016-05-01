@@ -153,7 +153,6 @@ app.post('/api/2.3/profile/removerole', auth.ensureAuthenticated, userApis.remov
 
 // Auth
 app.post('/auth/linkedin', auth.linkedin);
-app.get('/auth/helpToken', auth.ensureAuthenticated, auth.helpToken);
 //app.post('/auth/signup', auth.signup); //not currently used?
 //app.post('/auth/login', auth.login); //not currently used?
 

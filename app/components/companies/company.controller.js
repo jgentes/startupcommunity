@@ -218,31 +218,13 @@ function CompanyProfileController($mixpanel, communities, user_service, result_s
     var self = this;
     this.communities = communities;
     this.company = this.communities[this.communities.key];
-    this.community = this.company;
-    this.team = { "count" : []};
-    
     this.team_panels = user_service.team_panels();
-    
-    // sort team members
-
-    for (member in this.communities[this.company.key].team) {
-        for (role in this.communities[this.company.key].team[member].value.roles) {
-            for (item in this.communities[this.company.key].team[member].value.roles[role]) {
-                if (item == this.company.key) {
-                    if (!this.team[role]) this.team[role] = [];
-                    if (!this.team.count[role]) this.team.count[role] = 0;
-                    this.team[role].push(this.communities[this.company.key].team[member]);
-                    ++ this.team.count[role];
-                }
-            }
-        }
-    }
 
     this.remove = function(role) {
         
-        user_service.removeRole(role, self.community.key)
+        user_service.removeRole(role, self.company.key)
             .then(function(response) {
-                $http.get('/api/2.1/community/' + self.community.key + '?nocache=true'); //clear cache
+                $http.get('/api/2.1/community/' + self.company.key + '?nocache=true'); //clear cache
 
                 if (response.status !== 201) {
                     sweet.show({
@@ -257,7 +239,7 @@ function CompanyProfileController($mixpanel, communities, user_service, result_s
                         text: response.data.message,
                         type: "success"
                     }, function () {
-                        $window.location.href = '/' + self.community.key;
+                        $window.location.href = '/' + self.company.key;
                     });
                 }
             })
@@ -271,7 +253,7 @@ function CompanyProfileController($mixpanel, communities, user_service, result_s
 
         var limit = $location.search().limit;
 
-        user_service.search([location.key, self.community.key], [], '*', undefined, limit, alturl)
+        user_service.search([location.key, self.company.key], [], '*', undefined, limit, alturl)
             .then(function (response) {
                 self.users = result_service.setPage(response.data);
                 self.loadingUser = false;                

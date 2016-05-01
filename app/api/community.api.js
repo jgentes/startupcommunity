@@ -158,28 +158,65 @@ function handleGetCommunity(req, res) {
 
                     } else if (newresponse[community].type == 'company') {
                         // get team
-                        db.newSearchBuilder()
-                            .collection(process.env.DB_COMMUNITIES)
-                            .limit(100)
-                            .offset(0)
-                            .sortRandom()
-                            .query('@value.type:"user" AND @value.roles.*.' + newresponse[community].key + ':*')
-                            .then(function (team) {
 
-                                newresponse[community]['team'] = {};
+                        var startkey = 0,
+                            teamlist = [],
+                            thiskey = newresponse[community].key;
 
-                                for (t in team.body.results) {
-                                    team.body.results[t].value["key"] = team.body.results[t].path.key;
-                                    newresponse[community].team[team.body.results[t].path.key] = team.body.results[t];
-                                }
+                        var getTeam = function(startkey, teamlist) {
+                            db.newSearchBuilder()
+                                .collection(process.env.DB_COMMUNITIES)
+                                .limit(100)
+                                .offset(startkey)
+                                .query('@value.type:"user" AND @value.roles.*.' + thiskey + ':*')
+                                .then(function (team) {
 
-                                checkcache(cache, community, newresponse);
+                                    teamlist.push.apply(teamlist, team.body.results);
 
-                            })
-                            .fail(function (err) {
-                                console.log("WARNING: ", err);
-                                res.status(200).send(newresponse);
-                            });
+                                    if (team.body.next) {
+
+                                        startkey += 100;
+                                        console.log('getting more team members.. >' + startkey);
+                                        getTeam(startkey, teamlist);
+
+                                    } else {
+
+                                        var teamresponse = {},
+                                            count = {};
+
+                                        for (member in teamlist) {
+                                            m = teamlist[member];
+                                            for (role in m.value.roles) {
+                                                for (item in m.value.roles[role]) {
+                                                    if (item == thiskey) {
+                                                        if (!teamresponse[role]) teamresponse[role] = [];
+                                                        if (!count[role]) count[role] = 0;
+                                                        teamresponse[role].push(m);
+                                                        ++ count[role];
+                                                    }
+                                                }
+                                            }
+                                        }
+
+                                        newresponse[community]['team'] = {
+                                            count: count
+                                        };
+
+                                        for (r in teamresponse) {
+                                            newresponse[community].team[r] = teamresponse[r].slice(0,4); // cut the array down
+                                        }
+
+                                        checkcache(cache, community, newresponse);
+                                    }
+
+                                })
+                                .fail(function (err) {
+                                    console.log("WARNING: ", err);
+                                    res.status(200).send(newresponse);
+                                });
+                        };
+
+                        getTeam(startkey, teamlist)
 
                     } else checkcache(cache, community, newresponse);
                 };
@@ -434,6 +471,7 @@ function handleGetTop(req, res) {
 
         db.newSearchBuilder()
             .collection(process.env.DB_COMMUNITIES)
+            .limit(4)
             .aggregate('top_values', 'value.profile.industries')
             .aggregate('top_values', 'value.profile.parents')
             .sortRandom()
@@ -444,7 +482,7 @@ function handleGetTop(req, res) {
                     if (result.body.aggregates[a].field_name == 'value.profile.industries') {
                         top_results.industries = {
                             count: result.body.aggregates[a].value_count,
-                            entries: result.body.aggregates[a].entries
+                            entries: result.body.aggregates[a].entries.slice(0,5)
                         };
                     }
                     if (result.body.aggregates[a].field_name == 'value.profile.parents') {
@@ -457,20 +495,21 @@ function handleGetTop(req, res) {
 
                 top_results.companies = {
                     count: result.body.total_count,
-                    entries: addkeys(result.body.results).slice(0,5)
+                    entries: addkeys(result.body.results)
                 };
 
                 // get resources
 
                 db.newSearchBuilder()
                     .collection(process.env.DB_COMMUNITIES)
+                    .limit(4)
                     .sortRandom()
                     .query(industrysearch + ' AND @value.resource: true')
                     .then(function (result) {
 
                         top_results.resources = {
                             count: result.body.total_count,
-                            entries: addkeys(result.body.results).slice(0,5)
+                            entries: addkeys(result.body.results)
                         };
 
                         // get people & skills
@@ -479,6 +518,7 @@ function handleGetTop(req, res) {
 
                         db.newSearchBuilder()
                             .collection(process.env.DB_COMMUNITIES)
+                            .limit(4)
                             .aggregate('top_values', 'value.profile.skills')
                             .aggregate('top_values', 'value.profile.parents')
                             .sortRandom()
@@ -489,7 +529,7 @@ function handleGetTop(req, res) {
                                     if (result.body.aggregates[b].field_name == 'value.profile.skills') {
                                         top_results.skills = {
                                             count: result.body.aggregates[b].value_count,
-                                            entries: result.body.aggregates[b].entries
+                                            entries: result.body.aggregates[b].entries.slice(0,5)
                                         };
                                     }
                                     if (result.body.aggregates[b].field_name == 'value.profile.parents') {
@@ -502,7 +542,7 @@ function handleGetTop(req, res) {
 
                                 top_results.people = {
                                     count: result.body.total_count,
-                                    entries: addkeys(result.body.results).slice(0,5)
+                                    entries: addkeys(result.body.results)
                                 };
 
                                 // BEGIN PARENTS (this is mostly to avoid another api call that includes both companies and users)

@@ -10,16 +10,16 @@
         </div>
     </div>
     <div class="col-xs-4">
-        <h3 class="text-info pull-right">{{::profile.team.count[type.name]}}</h3>
+        <h3 class="text-info pull-right">{{::profile.company.team.count[type.name]}}</h3>
     </div>
 </div>
 <div class="panel-footer" style="background: #fff; text-align: center; padding-bottom:32px;">
-    <div ng-repeat="item in profile.team[type.name] | limitTo: 3" style="text-align: left;">
+    <div ng-repeat="item in ::profile.company.team[type.name]" style="text-align: left;">
         <div>
             <div class="row" ng-include="'components/users/user.list.item.html'"></div>
         </div>
     </div>
-    <div ng-if="!profile.team[type.name]">No {{::type.title.toLowerCase()}} yet..</div>
-    <div class="btn btn-xs btn-default" style="margin-top: 6px; float:right;" ui-sref="{{'user.list' + nav.nav_url}}">view all</div>
-    <div ng-if="nav.user.roles[type.name][profile.company.key]" class="btn btn-xs btn-default" style="margin-top: 6px; float:left;" ng-click="profile.remove(type.name)">Remove yourself as a {{::type.name}}</div>
+    <div ng-if="!profile.company.team[type.name]" style="padding-top: 10px; margin-bottom: -22px;">No {{::type.title.toLowerCase()}} yet..</div>
+    <div ng-if="profile.company.team[type.name]" class="btn btn-xs btn-default" style="margin-top: 6px; float:right;" ui-sref="{{'user.list' + nav.nav_url}}">view all</div>
+    <div ng-if="nav.user.roles[type.name][profile.company.key]" class="btn btn-xs btn-default" style="margin-top: 6px; float:left;" ng-click="profile.remove(type.name)">Remove yourself as a {{::type.title.toLowerCase().substring(0, type.title.length-1)}}</div>
 </div>

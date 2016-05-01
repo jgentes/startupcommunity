@@ -17,7 +17,6 @@ var AuthApi = function() {
     this.linkedin = handleLinkedin;
     this.signup = handleSignup;
     this.login = handleLogin;
-    this.helpToken = handleHelpToken;
 };
 
 /*

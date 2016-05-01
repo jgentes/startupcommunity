@@ -1,11 +1,10 @@
 <div class="row">
     <div class="col-xs-12 col-md-6">
-        <div class="hpanel" ng-class="type.color" ng-repeat="type in profile.team_panels" ng-if="!($index % 2)" ng-include="'components/companies/company.dashboard.network.panel.html'">
-
+        <div class="hpanel" ng-class="type.color" ng-repeat="type in ::profile.team_panels" ng-if="!($index % 2)" ng-include="'components/companies/company.dashboard.network.panel.html'">
         </div>
     </div>
     <div class="col-xs-12 col-md-6">
-        <div class="hpanel" ng-class="type.color" ng-repeat="type in profile.team_panels" ng-if="$index % 2" ng-include="'components/companies/company.dashboard.network.panel.html'">
+        <div class="hpanel" ng-class="type.color" ng-repeat="type in ::profile.team_panels" ng-if="$index % 2" ng-include="'components/companies/company.dashboard.network.panel.html'">
         </div>
     </div>
 </div>

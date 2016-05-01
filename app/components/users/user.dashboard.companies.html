@@ -1,31 +1,10 @@
 <div class="row">
-    <div ng-repeat="(type, val) in profile.team_panels" ng-switch on="$index % 2">
-    <div class="col-xs-12 col-sm-6 col-md-4">
-        <div class="hpanel" ng-class="val.color">
-            <div class="panel-body" style="padding: 10px 5px; margin-bottom: -12px;">
-                <div class="col-xs-8">
-                    <div class="stats-title pull-left" style="white-space: nowrap;">
-                        <div class="stats-icon pull-left" style="margin-top: 11px; margin-right: 8px;">
-                            <i ng-class="val.icon" class="fa-2x"></i>
-                        </div>
-                        <a ui-sref="{{'user.list' + nav.nav_url}}">
-                            <h3 ng-bind="type.slice(0, -1);" style="padding-left: 5px;"></h3>
-                            <!--<small class="text-info" ng-click="nav.addCompany();">+ Add Company</small>-->
-                        </a>
-                    </div>
-                </div>
-                <div class="col-xs-4">
-                    <h3 class="text-info pull-right">{{profile.companies.count[val.name]}}</h3>
-                </div>
-            </div>
-            <div class="panel-footer" style="background: #fff;">
-                <div ng-repeat="item in profile.companies[val.name]">
-                    <div style="margin-right: -2px; margin-bottom:-5px;">
-                        <div class="row" ng-include="'components/companies/company.list.item.html'" style="margin-right: -14px; margin-bottom: 1px;"></div>
-                        <div ng-if="$last" style="margin-bottom:-32px;"></div>
-                    </div>
-                </div>
-            </div>
+    <div class="col-xs-12 col-md-6">
+        <div class="hpanel" ng-class="type.color" ng-repeat="type in ::profile.team_panels" ng-if="!($index % 2)" ng-include="'components/users/user.dashboard.companies.panel.html'">
+        </div>
+    </div>
+    <div class="col-xs-12 col-md-6">
+        <div class="hpanel" ng-class="type.color" ng-repeat="type in ::profile.team_panels" ng-if="$index % 2" ng-include="'components/users/user.dashboard.companies.panel.html'">
         </div>
     </div>
 </div>

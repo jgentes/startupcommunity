@@ -1,0 +1,25 @@
+<div class="panel-body" style="padding: 10px 5px; margin-bottom: -12px;">
+    <div class="col-xs-8">
+        <div class="stats-title pull-left" style="white-space: nowrap;">
+            <div class="stats-icon pull-left" style="margin-top: 11px; margin-right: 8px;">
+                <i ng-class="type.icon" class="fa-2x"></i>
+            </div>
+            <a ui-sref="{{'company.list' + nav.nav_url}}">
+                <h3 ng-bind="type.title.slice(0, -1);" style="padding-left: 5px;"></h3>
+                <!--<small class="text-info" ng-click="nav.addCompany();">+ Add Company</small>-->
+            </a>
+        </div>
+    </div>
+    <div class="col-xs-4">
+        <h3 class="text-info pull-right">{{::profile.companies.count[type.name]}}</h3>
+    </div>
+</div>
+<div class="panel-footer" style="background: #fff; text-align: center;">
+    <div ng-repeat="item in ::profile.companies[type.name]" style="text-align: left;">
+        <div>
+            <div class="row" ng-include="'components/companies/company.list.item.html'"></div>
+            <div ng-if="$last" style="margin-bottom:-11px;"></div>
+        </div>
+    </div>
+    <div ng-if="!profile.companies[type.name]" style="padding-top: 10px;">None yet..</div>
+</div>

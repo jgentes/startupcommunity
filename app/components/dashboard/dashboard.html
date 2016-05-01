@@ -74,7 +74,7 @@
                         </div>
                     </div>
                     <div class="panel-footer" style="background: #fff; text-align: center; padding-bottom:9px;">
-                        <div ng-repeat="item in dashboard.top.people.entries | limitTo: 4" style="text-align: left;">
+                        <div ng-repeat="item in dashboard.top.people.entries" style="text-align: left;">
                             <div style="margin-right: -2px; margin-bottom:-5px;">
                                 <div class="row" ng-include="'components/users/user.list.item.html'"></div>
                                 <div ng-if="$last" style="margin-bottom:-12px;"></div>
@@ -103,7 +103,7 @@
                         </div>
                     </div>
                     <div class="panel-footer" style="background: #fff; text-align: center; padding-bottom:9px;">
-                        <div ng-repeat="item in dashboard.top.companies.entries | limitTo: 4" style="text-align: left;">
+                        <div ng-repeat="item in dashboard.top.companies.entries" style="text-align: left;">
                             <div style="margin-right: -2px; margin-bottom:-5px;">
                                 <div class="row" ng-include="'components/companies/company.list.item.html'"></div>
                                 <div ng-if="$last" style="margin-bottom:-12px;"></div>
@@ -132,7 +132,7 @@
                         </div>
                     </div>
                     <div class="panel-footer" style="background: #fff; text-align: center; padding-bottom:9px;">
-                        <div ng-repeat="item in dashboard.top.resources.entries | limitTo: 4" style="text-align: left;">
+                        <div ng-repeat="item in dashboard.top.resources.entries" style="text-align: left;">
                             <div style="margin-right: -2px; margin-bottom:-5px;">
                                 <div class="row" ng-include="'components/companies/company.list.item.html'"></div>
                                 <div ng-if="$last" style="margin-bottom:-12px;"></div>
@@ -152,7 +152,7 @@
                         <small class="small-column-title"># People</small>
                     </div>
 
-                    <div class="panel-body" ng-repeat="item in dashboard.top.skills.entries | limitTo: 5">
+                    <div class="panel-body" ng-repeat="item in dashboard.top.skills.entries">
                         <div class="row">
                             <div class="col-xs-10 forum-heading">
                                 <a ui-sref="search.dashboard({location_path: dashboard.location_path, community_path: dashboard.community_path, query: item.value})"><h4 style="font-weight: 200;">{{item.value}}</h4></a>
@@ -174,7 +174,7 @@
                         <small class="small-column-title"># Companies</small>
                     </div>
 
-                    <div class="panel-body" ng-repeat="item in dashboard.top.industries.entries | limitTo: 5">
+                    <div class="panel-body" ng-repeat="item in dashboard.top.industries.entries">
                         <div class="row">
                             <div class="col-xs-10 forum-heading">
                                 <a ui-sref="search.dashboard({location_path: dashboard.location_path, community_path: dashboard.community_path, query: item.value})"><h4 style="font-weight: 200;">{{item.value}}</h4></a>
