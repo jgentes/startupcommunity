@@ -30,7 +30,6 @@
     "mixpanel": "~2.5.1",
     "moment": "~2.8.3",
     "satellizer": "~0.13.0",
-    "sparkline": "http://omnipotent.net/jquery.sparkline/2.1.2/jquery.sparkline.js",
     "sweetalert": "https://github.com/t4t5/sweetalert.git#~1.0.1",
     "ng-file-upload": "~8.0.1",
     "ng-file-upload-shim": "~8.0.1",
