@@ -53,11 +53,8 @@
                         <li ng-if="nav.user">
                             <a ui-sref="settings({ location_path: nav.location.key, location: nav.location, user: nav.user })">Settings</a>
                         </li>
-                        <li ng-if="nav.user">
-                            <a ng-click="nav.openChat()">Help</a>
-                        <span ng-show="nav.chatMessageCount">
-                            <span class="helpcrunch_message_count" ng-bind="nav.chatMessageCount"></span>
-                        </span>
+                        <li>
+                            <a href="mailto:james@startupcommunity.org?subject=Help&20please.." target="_blank">Help</a>
                         </li>
                         <li ng-if="nav.user">
                             <a href="/logout">Logout</a>
@@ -95,13 +92,10 @@
                             <p style="font-size: 10px; margin-top: -4px; margin-left: -3px;">Alerts</p>
                         </a>
                     </li>
-                    <li ng-if="nav.user" class="dropdown">
-                        <a ng-click="nav.openChat()">
+                    <li class="dropdown">
+                        <a href="mailto:james@startupcommunity.org?subject=Help&20please.." target="_blank">
                             <i class="pe-7s-help1"></i>
                             <p style="font-size: 10px; margin-top: -4px; margin-left: 1px;">Help</p>
-                        </a>
-                        <a ng-show="nav.chatMessageCount">
-                            <span class="helpcrunch_message_count" ng-bind="nav.chatMessageCount"></span>
                         </a>
                     </li>
                     <li ng-if="nav.user" class="dropdown">

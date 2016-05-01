@@ -69,36 +69,7 @@ function NavigationController($auth, $state, $window, $timeout, $location, $scop
 
         knowtify.push(['load_inbox', 'knowtify', {email: this.user.profile.email}]);
 
-        $window.HelpCrunch('onReady', function() {
-            newMessage();
-        });
-
-        var newMessage = function() {
-            $window.HelpCrunch('onNewUnreadMessages', function(event) {
-                event.setMaxListeners(1); // to avoid (node) warning: possible EventEmitter memory leak detected. 11 listeners added. Use emitter.setMaxListeners() to increase limit.
-                self.chatMessageCount = event.unreadMessages;
-                $timeout(function() {
-                    $scope.$apply();
-                });
-            });
-        };
-
     }
-
-    this.openChat = function() {
-        user_service.getHelpToken()
-            .then(function(response) {
-                $('.helpcrunch-chat-header>span').replaceWith('<span>StartupCommunity.org Live Chat</span>');
-                $('.helpcrunch-logo').replaceWith('<img class="helpcrunch-logo" src="/public/images/plant_only.jpg" style="height:32px;">');
-                $window.HelpCrunch('updateUser', {
-                    name: self.user.profile.name,
-                    email: self.user.profile.email,
-                    user_id: self.user.key,
-                    signature: response.data
-                });
-                $window.HelpCrunch('openChat');
-            });
-    };
 
     // PRIMARY LEFT-NAV ITEM LIST
 

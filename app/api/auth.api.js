@@ -116,18 +116,6 @@ function handleCreateToken(req, user) {
     return jwt.sign(user.path.key, process.env.SC_TOKEN_SECRET);
 }
 
-function handleHelpToken(req, res) {
-    // this is for HelpCrunch live chat support to send over user data
-
-    var hmac = crypto.createHmac('sha256', process.env.HELPCRUNCH);
-    hmac.setEncoding('hex');
-    hmac.write(req.user);
-    hmac.end();
-    response = hmac.read();
-
-    res.status(201).send(response);
-}
-
 function handleCreateAPIToken(req, res) {
     // todo needs to be redone if jwt-simple is no longer used
     /*var payload = {
