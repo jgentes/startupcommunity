@@ -9,8 +9,6 @@
     </div>
     <div class="user-row list-hr">
         <a ui-sref="user.dashboard({profile: item.value, location_path: item.path.key, location: nav.community, community: item.value, top: nav.top, communities: nav.communities, user: nav.user })" title="View {{::item.value.profile.name | words:0}}'s Profile" style="float: left; "><strong>{{::item.value.profile.name}} </strong></a>
-        <a ng-if="nav.community.resource || nav.location.resource" ng-click="nav.contact(item)" title="Contact {{item.value.profile.name}}" class="pull-left" style="margin-left: 6px; margin-top: -4px; padding: 0 8px 0 5px; line-height: 0;">
-            <i class="pe-7s-mail" style="font-size: 20px; opacity: .45;"></i></a>
         <a ng-show="item.value.profile.summary.length > 0" title="Show Summary" ng-click="showSummary = !showSummary" class="user-summary" style="margin-top:-2px;">&nbsp;<i class="fa fa-chevron-down fa-fw"></i></a>
         <li ng-repeat="(item, val) in item.value.roles" class="user-role role-right" ><i ng-attr-title="{{item[0].toUpperCase() + item.slice(1);}}" style="font-weight: bold;" ng-class="{'text-primary pe-7s-paper-plane' : item == 'founder', 'text-danger pe-7s-flag' : item == 'leader', 'text-info pe-7s-study' : item == 'mentor', 'text-success pe-7s-gleam' : item == 'investor', 'text-default pe-7s-ball' : item == 'team', 'text-warning pe-7s-portfolio' : item == 'provider'}"></i></li>
         <br>
