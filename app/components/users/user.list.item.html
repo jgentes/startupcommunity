@@ -1,6 +1,6 @@
 <div class="col-md-12 dash-table">
     <div>
-        <a ui-sref="user.dashboard({profile: item.value, location_path: item.path.key, location: nav.community, community: item.value, top: nav.top, communities: nav.communities, user: nav.user })" title="View {{::item.value.profile.name | words:0}}'s Profile">
+        <a ui-sref="user.dashboard({profile: item.value, location_path: item.path.key, location: nav.community, community: item.value, top: nav.top, communities: nav.communities, user: nav.user })" ng-click="item[item.value.profile.name] = true" title="View {{::item.value.profile.name | words:0}}'s Profile">
             <img ng-src="{{item.value.profile.avatar || '/public/images/blank_avatar.png'}}" alt="{{::item.value.profile.name}}" class="user-img widget-image img-circle pull-left" onerror="this.src='/public/images/blank_avatar.png'"/>
         </a>
     </div>
