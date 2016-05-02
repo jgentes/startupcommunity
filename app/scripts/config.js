@@ -88,6 +88,9 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                 communities: ['$stateParams', 'community_service', 'user',
                     function($stateParams, community_service, user) {                  
                         // user is injected to prevent communities from loading until user is valid
+
+                        if ($stateParams.location_path) $stateParams.location_path = $stateParams.location_path.replace(/\s+/g, '-');
+
                         if ($stateParams.communities && ($stateParams.communities.key == $stateParams.location_path)) {
                             return $stateParams.communities;
                         } else return community_service.getCommunity($stateParams.location_path)
@@ -101,6 +104,9 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                     }],
                 community: ['$stateParams', '$location', 'communities', 'community_service',
                     function($stateParams, $location, communities, community_service) {
+                        
+                        if ($stateParams.location_path) $stateParams.location_path = $stateParams.location_path.replace(/\s+/g, '-');
+
                         if (jQuery.isEmptyObject($stateParams.community)) { // if community is passed in via ui-sref, just use that
                             
                             var pullCommunity = function () {

@@ -88,7 +88,7 @@ function handleGetCommunity(req, res) {
         });
     };
 
-    var community = req.params.community;
+    var community = req.params.community.replace(/\s+/g, '-');
 
     var searchString = '@path.key: ' + community; // grab the primary community object, don't use parens here
     searchString += ' OR ((@value.communities: "' + community + '"'; // + grab anything associated with this community in this location
