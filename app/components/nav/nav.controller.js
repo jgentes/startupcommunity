@@ -543,15 +543,6 @@ function EmbedSettingsController($uibModalInstance, sweet, user, community_servi
     var self = this;
     this.location = location; // used in view
 
-    var leader = [];
-
-    for (l in user.roles.leader) leader.push(l);
-
-    community_service.getResources(undefined, leader)
-        .then(function(response) {
-            self.resources = response.data;
-        })
-
     //force pull of community settings every time to avoid stale data
     community_service.getKey(community.key)
         .then(function(response) {

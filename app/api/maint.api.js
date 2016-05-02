@@ -26,18 +26,19 @@ function handleMaintenance(res, req) {
             .collection(collection)
             .limit(limit)
             .offset(startKey)
-            .query('@value.resource:true')
+            .query('@value.type: "network"')
             .then(function(data){
                 var item;
                 for (item in data.body.results) {
 
-                    // convert networks to resources
+
+                    // convert networks to resources '@value.resource:true'
 
                     var network = data.body.results[item].value;
 
-                    //network['resource'] = true;
-                    //network['resource_types'] = [];
-                    //network.type = 'company';
+                    network['resource'] = true;
+                    network['resource_types'] = [];
+                    network.type = 'company';
 
                     if (network.parents) {
                         network.profile['parents'] = network.parents;
@@ -93,10 +94,6 @@ function handleMaintenance(res, req) {
 
                     // END network conversion
 
-
-
-
-
                     //delete user.roles.founder['bend-or'];
                     //if (_.isEmpty(user.roles.founder)) delete user.roles.founder;
 
@@ -142,13 +139,17 @@ function handleMaintenance(res, req) {
                     //newdata.roles = { "mentor" : { "edco-stable-of-experts": ["bend-or"], "bend-or": ["bend-or"]}};
                     //newdata.profile["home"] = "bend-or";
 
-                    console.log('Updating record..');
-                    console.log(data.body.results[item].path.key);
-                    //console.log(newdata);
 
-                    // IMPORTANT! TEST FIRST BY COMMENTING OUT BELOW..
-                    // ALSO BE CAREFUL TO NOT PULL FROM -DEV AND PUT INTO PRODUCTION DB!!
-                    db.put(collection, data.body.results[item].path.key, network);
+
+                        console.log('Updating record..');
+                        console.log(data.body.results[item].path.key);
+                        //console.log(newdata);
+
+                        // IMPORTANT! TEST FIRST BY COMMENTING OUT BELOW..
+                        // ALSO BE CAREFUL TO NOT PULL FROM -DEV AND PUT INTO PRODUCTION DB!!
+                        db.put(collection, data.body.results[item].path.key, network);
+
+
                 }
 
                 /*console.log('Job done!');

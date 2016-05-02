@@ -367,12 +367,21 @@ function UserProfileController($stateParams, $http, $uibModal, $mixpanel, user, 
     }
 }
 
-function InviteUserController($mixpanel, user, user_service, community, communities, location) {
+function InviteUserController($mixpanel, user, user_service, community_service, community, communities, location) {
     var self = this;
     this.user = user;
     this.community = community;
     this.communities = communities;
     this.location = location;
+
+    var leader = [];
+
+    for (l in user.roles.leader) leader.push(l);
+
+    community_service.getResources(undefined, leader)
+        .then(function(response) {
+            self.resources = response.data;
+        })
 
     if (this.community.type == 'cluster' || this.community.resource && location) this.community = location;
 
