@@ -12,7 +12,7 @@
     </div>
 
     <div class="row">
-        <div class="hpanel hblue col-xs-12 col-sm-6 col-md-4" >
+        <div class="hpanel hblue col-xs-12 col-sm-6" >
             <div class="panel-body">
                 <div class="stats-title">
                     <h3>Resources</h3>
@@ -35,12 +35,12 @@
 
             <a ng-if="nav.user.communities.indexOf(nav.user.profile.home) > -1 && nav.user.newsletter" class="btn btn-info pull-right" ui-sref="newsletter" style="margin-top:15px; width: 100%;">Create / Edit Email Newsletters</a>
 
-            <button ng-if="nav.user.communities.indexOf(nav.user.profile.home) > -1 && nav.user.newsletter" ladda="nav.syncworking" class="ladda-button btn btn-warning pull-right" data-style="zoom-in" data-spinner-size="25" ng-click="nav.syncNewsletter()" style="margin-top:15px; width: 100%;" title="This will synchronize your resource networks with your newsletter lists. This is only needed if names are missing from your lists.">Update Newsletter Lists from Resources</button>
+            <button ng-if="nav.user.communities.indexOf(nav.user.profile.home) > -1 && nav.user.newsletter" ladda="nav.syncworking" class="ladda-button btn btn-warning pull-right" data-style="zoom-in" data-spinner-size="25" ng-click="nav.syncNewsletter()" style="margin-top:15px; width: 100%;" title="This will synchronize your resource networks with your newsletter lists. This is only needed if names are missing from your lists.">Sync Newsletter Lists</button>
 
         </div>
 
 
-        <div class="hpanel hnavyblue col-xs-12 col-sm-6 col-md-4" >
+        <div class="hpanel hnavyblue col-xs-12 col-sm-6" >
             <div class="panel-body">
                 <div class="stats-title">
                     <h3>Industries</h3>
@@ -60,7 +60,7 @@
             </div>
         </div>
 
-        <div class="hpanel hgreen col-xs-12 col-sm-6 col-md-4" >
+        <div class="hpanel hgreen col-xs-12 col-sm-6" >
             <div class="panel-body">
                 <div class="stats-title">
                     <h3>Locations</h3>

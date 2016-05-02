@@ -4,7 +4,7 @@
 
         <div ng-if="!add.update">
             <div class="col-sm-6">
-                <h4 class="modal-title">Add a {{ add.is_resource ? 'resource' : 'company' }} to <span ng-bind-html="::add.location.profile.name"></span></h4>
+                <h4 class="modal-title">Add a {{ add.is_resource ? 'resource' : 'company' }} to {{add.location.profile.name.split(',').slice(0, (add.location.profile.name.split(',').length - 1) || 1).join()}}</h4>
                 <p class="font-bold">{{ add.is_resource ?
                     'Resources include coworking spaces, accelerators, investment funds, networking events, and other organizations that support entrepreneurship.' :
                     'Only add companies that are part of your local startup community.' }} </p>

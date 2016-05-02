@@ -30,16 +30,11 @@ function ResourceController(location, communities, nav_communities, company_serv
             }
         }
     }
-   
-    
     
 }
 
 function EditCompanyController(user, sweet, $state, $stateParams, $q, $window, $http, community, location, user_service, company_service, community_service) {
     var self = this;
-    console.log($stateParams);
-    console.log(location);
-    console.log(community);
     
     this.step = 1;
     this.location = location || $stateParams.location;
@@ -140,10 +135,9 @@ function EditCompanyController(user, sweet, $state, $stateParams, $q, $window, $
         self.working = true;
         var role = self.selectedRole == 'not involved' ? undefined : self.selectedRole;
 
-        var community_path = location.key; // resources can only be created in locations (for now)
-        console.log(self.selectedCompany);
+        var community_path = self.location.key; // resources can only be created in locations (for now)
 
-        company_service.addCompany(self.selectedCompany, role, location.key, community_path, self.update ? self.community.key : undefined)
+        company_service.addCompany(self.selectedCompany, role, self.location.key, community_path, self.update ? self.community.key : undefined)
             .then(function(response) {
                 self.working = false;
                 $http.get('/api/2.1/community/' + response.data.key + '?nocache=true'); //clear cache
