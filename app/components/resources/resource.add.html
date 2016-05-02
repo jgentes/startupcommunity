@@ -189,7 +189,7 @@
 
             <div alert-box this-alert="add.alert" style="margin-top: -20px; margin-bottom: 20px;"></div>
 
-            <button ladda="add.working" class="ladda-button btn btn-danger pull-left" data-style="zoom-in" data-spinner-size="25" ng-click="add.deleteCompany(add.community.key)" ng-show="add.update && !add.alert">Delete {{::add.community.profile.name || (add.is_resource ? 'Resource' : 'Company') }}</button>
+            <button ladda="add.del_working" class="ladda-button btn btn-danger pull-left" data-style="zoom-in" data-spinner-size="25" ng-click="add.deleteCompany(add.community.key)" ng-show="add.update && !add.alert">Delete {{::add.community.profile.name || (add.is_resource ? 'Resource' : 'Company') }}</button>
 
             <div class="text-right m-t-xs">
                 <button ng-click="add.step = 1" ng-disabled="add.step == 1" class="btn btn-default">Previous</button>

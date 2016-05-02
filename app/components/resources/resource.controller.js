@@ -192,7 +192,7 @@ function EditCompanyController(user, sweet, $state, $stateParams, $q, $window, $
     };
 
     this.deleteCompany = function (company_key) {
-        self.working = true;
+        self.del_working = true;
 
         sweet.show({
             title: "Are you sure?",
@@ -206,7 +206,7 @@ function EditCompanyController(user, sweet, $state, $stateParams, $q, $window, $
 
             company_service.deleteCompany(company_key)
                 .then(function(response) {
-                    self.working = false;
+                    self.del_working = false;
 
                     if (response.status !== 204) {
                         sweet.show({
