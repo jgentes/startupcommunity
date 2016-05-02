@@ -137,6 +137,8 @@ function EditCompanyController(user, sweet, $state, $stateParams, $q, $window, $
 
         var community_path = self.location.key; // resources can only be created in locations (for now)
 
+        self.selectedCompany.url = self.selectedCompany.url || self.selectedCompany.name.toLowerCase().replace(/\s+/g, '-'); // in case they changed it
+
         company_service.addCompany(self.selectedCompany, role, self.location.key, community_path, self.update ? self.community.key : undefined)
             .then(function(response) {
                 self.working = false;
@@ -177,7 +179,7 @@ function EditCompanyController(user, sweet, $state, $stateParams, $q, $window, $
 
     this.checkUrl = function() {
 
-        self.selectedCompany.url = self.selectedCompany.url || encodeURI(self.selectedCompany.name);
+        self.selectedCompany.url = self.selectedCompany.url || self.selectedCompany.name.toLowerCase().replace(/\s+/g, '-');
 
         if (!self.update) {
             company_service.checkUrl(self.selectedCompany.website)

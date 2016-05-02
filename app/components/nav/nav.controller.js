@@ -31,7 +31,7 @@ function NavigationController($auth, $state, $window, $timeout, $location, $scop
                 this.location) :
             $stateParams.community;
 
-        this.location_path = encodeURI($stateParams.location_path) || $stateParams.location.key || this.community.key;
+        this.location_path = $stateParams.location_path || $stateParams.location.key || this.community.key;
     }
     catch(err) {
         errorLogService('NavController Catch27: ' + err);
@@ -258,7 +258,7 @@ function NavigationController($auth, $state, $window, $timeout, $location, $scop
                     return self.community.key;
                 },
                 location_key: function() {
-                    return encodeURI($stateParams.location_path);;
+                    return $stateParams.location_path;
                 }
             }
         });
@@ -616,7 +616,7 @@ function CommunityController($uibModalInstance, $mixpanel, sweet, community_serv
     this.industryList = community_service.industries();
 
     this.encode = function(uri) {
-        return encodeURI(uri);
+        return encodeURI(uri.toLowerCase().replace(/\s+/g, '-'));
     };
 
     if (community.type == 'cluster') {
@@ -682,7 +682,7 @@ function CommunityController($uibModalInstance, $mixpanel, sweet, community_serv
 
             if (self.communityForm.url) {
                 try {
-                    var encodedUrl = encodeURI(self.communityForm.url);
+                    var encodedUrl = self.communityForm.url.toLowerCase().replace(/\s+/g, '-');
                 }
                 catch (e) {
                     sweet.show({
@@ -705,7 +705,7 @@ function CommunityController($uibModalInstance, $mixpanel, sweet, community_serv
                     parents: parents
                 },
                 resource: self.communityForm.resource ? self.communityForm.resource.key : "",
-                url: encodedUrl || encodeURI(self.communityForm.name.toLowerCase())
+                url: encodedUrl || self.communityForm.name.toLowerCase().replace(/\s+/g, '-')
             };
 
             if (community.type == 'cluster') {

@@ -88,7 +88,7 @@ function handleGetCommunity(req, res) {
         });
     };
 
-    var community = encodeURI(req.params.community);
+    var community = req.params.community;
 
     var searchString = '@path.key: ' + community; // grab the primary community object, don't use parens here
     searchString += ' OR ((@value.communities: "' + community + '"'; // + grab anything associated with this community in this location
@@ -405,8 +405,8 @@ function handleGetResources(req, res) {
 function handleGetTop(req, res) {
 
     //console.log(util.inspect(req)); // used for logging circular request
-    var community_key = encodeURI(req.params.community_key),
-        location_key = encodeURI(req.params.location_key),
+    var community_key = req.params.community_key,
+        location_key = req.params.location_key,
         cluster_key = req.query.cluster_key,
         industry_keys = req.query.industry_keys,
         has_location = true,
@@ -727,7 +727,7 @@ function handleEditCommunity(req, res) {
 
                 if (user.communities.indexOf(settings.location_key) > -1) {
 
-                    var pathname = settings.community.url || encodeURI(settings.community.profile.name.toLowerCase());
+                    var pathname = settings.community.url || settings.community.profile.name.toLowerCase().replace(/\s+/g, '-');
 
                     // check to see if user is a leader of the community
 
@@ -1057,7 +1057,7 @@ var rename_community = function(old_community_key, location_key, new_community_k
             .collection(process.env.DB_COMMUNITIES)
             .limit(50)
             .offset(startKey)
-            .query('@value.communities: "' + encodeURI(old_community_key) + '" OR @value.roles.*.' + encodeURI(old_community_key) + ': "' + encodeURI(location_key) + '" OR @value.invite_communities: "' + encodeURI(old_community_key) + '"')
+            .query('@value.communities: "' + old_community_key + '" OR @value.roles.*.' + old_community_key + ': "' + location_key + '" OR @value.invite_communities: "' + old_community_key + '"')
             .then(function (data) {
                 var item;
 
@@ -1132,10 +1132,10 @@ function handleGetKey(req, res) {
     console.log('Pulling key: ' + req.params.key);
 
     function pullKey() {
-        db.get(process.env.DB_COMMUNITIES, encodeURI(req.params.key))
+        db.get(process.env.DB_COMMUNITIES, req.params.key)
             .then(function (result) {
                 if (result.statusCode == 200) {
-                    result.body["key"] = encodeURI(req.params.key);
+                    result.body["key"] = req.params.key;
                     res.status(200).send(result.body);
                 } else {
                     console.warn('WARNING: Key not found!');

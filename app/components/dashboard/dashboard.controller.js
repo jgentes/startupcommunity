@@ -19,7 +19,7 @@ function DashboardController($stateParams, community, $state, community_top) {
             this.max += this.top.parents[val].value;
         }
     }
-    this.location_path = encodeURI($stateParams.location_path);
+    this.location_path = $stateParams.location_path;
     this.community_path = community.key == this.location_path ? undefined : community.key;
 
     angular.element(document).ready(function () {

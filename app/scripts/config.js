@@ -88,9 +88,9 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                 communities: ['$stateParams', 'community_service', 'user',
                     function($stateParams, community_service, user) {                  
                         // user is injected to prevent communities from loading until user is valid
-                        if ($stateParams.communities && ($stateParams.communities.key == encodeURI($stateParams.location_path))) {
+                        if ($stateParams.communities && ($stateParams.communities.key == $stateParams.location_path)) {
                             return $stateParams.communities;
-                        } else return community_service.getCommunity(encodeURI($stateParams.location_path))
+                        } else return community_service.getCommunity($stateParams.location_path)
                             .then(function(response) {
                                 return response.data;
                             })
@@ -104,10 +104,10 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                         if (jQuery.isEmptyObject($stateParams.community)) { // if community is passed in via ui-sref, just use that
                             
                             var pullCommunity = function () {
-                                if (communities[encodeURI($stateParams.location_path)]) { // if location_path has already been pulled, use that
-                                    return communities[encodeURI($stateParams.location_path)]; // this should also avoid re-pull for /people and /companies
+                                if (communities[$stateParams.location_path]) { // if location_path has already been pulled, use that
+                                    return communities[$stateParams.location_path]; // this should also avoid re-pull for /people and /companies
                                 } else {
-                                    return community_service.getCommunity(encodeURI($stateParams.location_path))
+                                    return community_service.getCommunity($stateParams.location_path)
                                         .then(function(response) {
                                             return response.data;
                                         })
@@ -117,8 +117,8 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                             if (jQuery.isEmptyObject($stateParams.profile)) {
                                 // set community based on type, determined by URL
                                 var url = $location.path().replace(/\/$/, "").split('/'),
-                                    lastitem = encodeURIComponent(url.pop()),
-                                    root = encodeURIComponent(url.pop());
+                                    lastitem = url.pop(),
+                                    root = url.pop();
 
                                 if (lastitem == "people" || lastitem == "companies" || lastitem == "search" || lastitem == "invite" || lastitem == "add" || lastitem == "welcome") {
                                     if (lastitem == "invite" || lastitem == "add") {
@@ -136,8 +136,8 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                         if (community.type == 'user' || community.type == 'company') {
                             return communities[community.profile.home];
                         } else if(jQuery.isEmptyObject($stateParams.location) || $stateParams.location.type !== 'location') {
-                            if (communities[encodeURI($stateParams.location_path)]) {
-                                return communities[encodeURI($stateParams.location_path)];
+                            if (communities[$stateParams.location_path]) {
+                                return communities[$stateParams.location_path];
                             } else return {};
                         } else if ($stateParams.location.type == 'location') {
                             return $stateParams.location;
