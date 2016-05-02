@@ -177,28 +177,28 @@ angular
                         color: "hred"
                     },
                     {
-                        title: "Founders",
-                        name: "founder",
-                        icon: "pe-7s-paper-plane",
-                        color: "hnavyblue"
-                    },
-                    {
                         title: "Investors",
                         name: "investor",
                         icon: "pe-7s-gleam",
                         color: "hgreen"
                     },
                     {
-                        title: "Team Members",
-                        name: "team",
-                        icon: "pe-7s-ball",
-                        color: "hviolet"
+                        title: "Founders",
+                        name: "founder",
+                        icon: "pe-7s-paper-plane",
+                        color: "hnavyblue"
                     },
                     {
                         title: "Mentors",
                         name: "mentor",
                         icon: "pe-7s-study",
                         color: "hblue"
+                    },
+                    {
+                        title: "Team Members",
+                        name: "team",
+                        icon: "pe-7s-ball",
+                        color: "hviolet"
                     },
                     {
                         title: "Service Providers",
