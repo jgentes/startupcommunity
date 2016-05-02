@@ -451,11 +451,13 @@ var addRole = function(company_key, role, location_key, user_key) {
                     // search for existing role and delete if found
 
                     for (r in response.body.roles) {
-                        for (co in response.body.roles[r]) {
-                            if (co == company_key) {
-                                delete response.body.roles[r][co];
+                        if (r !== 'leader') {
+                            for (co in response.body.roles[r]) {
+                                if (co == company_key) {
+                                    delete response.body.roles[r][co];
+                                }
                             }
-                        }
+                        }                        
                     }
                 }
 
@@ -483,10 +485,10 @@ var addRole = function(company_key, role, location_key, user_key) {
 
                 db.put(process.env.DB_COMMUNITIES, user_key, response.body)
                     .then(function(result) {
-                        console.log('User ' + user_key + ' updated with company role.');
+                        console.log('User ' + user_key + ' updated with ' + role + ' role.');
                     })
                     .fail(function(err){
-                        console.warn("WARNING: company259", err);
+                        console.warn("WARNING: ", err);
                     });
 
             } else {
@@ -495,7 +497,7 @@ var addRole = function(company_key, role, location_key, user_key) {
         })
 
         .fail(function(err){
-            console.warn("WARNING: company268", err);
+            console.warn("WARNING: ", err);
         });
 };
 
@@ -538,6 +540,10 @@ var companyPost = function (company, role, location_key, user, key, update, call
                 company["message"] = "Well done! " + company.profile.name + " has been updated.";
 
             } else {
+
+                // if resource, add creator as leader
+
+                if (company.resource) addRole(companykey, 'leader', location_key, user);
 
                 console.log("REGISTERED: " + company.profile.name + " as " + companykey);
                 company["message"] = "Well done! You've added " + company.profile.name + " to the community.";

@@ -140,24 +140,32 @@ function EditCompanyController(user, sweet, $state, $stateParams, $q, $window, $
         company_service.addCompany(self.selectedCompany, role, self.location.key, community_path, self.update ? self.community.key : undefined)
             .then(function(response) {
                 self.working = false;
-                $http.get('/api/2.1/community/' + response.data.key + '?nocache=true'); //clear cache
 
-                if (response.status !== 200) {
-                    sweet.show({
-                        title: "Sorry, something went wrong.",
-                        text: response.data.message,
-                        type: "error"
-                    });
+                var wrap = function() {
+                    if (response.status !== 200) {
+                        sweet.show({
+                            title: "Sorry, something went wrong.",
+                            text: response.data.message,
+                            type: "error"
+                        });
 
-                } else {
-                    sweet.show({
-                        title: "Success!",
-                        text: response.data.message,
-                        type: "success"
+                    } else {
+                        sweet.show({
+                            title: "Success!",
+                            text: response.data.message,
+                            type: "success"
+                        }, function() {
+                            $window.location.href = '/' + response.data.key;
+                        });
+                    }
+                };
+
+                $http.get('/api/2.1/community/' + response.data.key + '?nocache=true')
+                    .then(function() {
+                        wrap();
                     }, function() {
-                        $window.location.href = '/' + response.data.key;
-                    });
-                }
+                        wrap();
+                    }); //clear cache
 
             })
             .catch(function(error) {
