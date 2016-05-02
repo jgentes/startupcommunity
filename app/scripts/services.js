@@ -25,6 +25,13 @@ angular
                     location_key: location_key
                 });
             },
+            updateNewsletter: function(settings, email, app_id) {
+                return $http.post('api/2.3/newsletter/update', {
+                    settings: settings,
+                    email: email,
+                    app_id: app_id
+                })
+            },
             syncMembers: function(lists, brand_id, location_key) {
                 return $http.post('/api/2.3/newsletter/sync', {
                     lists: lists,

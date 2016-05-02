@@ -32,12 +32,6 @@ function NewsletterController(newsletter_service, $sce, user, errorLogService) {
 function SetupNewsController($uibModalInstance, user, sweet, newsletter_service, location, communities) {
     var self = this;
 
-    if (user.newsletter) {
-
-        // at some point allow editing current newsletter settings here
-
-    }
-
     this.setup = function() {
         self.working = true;
 
@@ -54,29 +48,59 @@ function SetupNewsController($uibModalInstance, user, sweet, newsletter_service,
                 username : self.setupForm.username,
                 password : self.setupForm.password
             };
-            
-            newsletter_service.setupNewsletter(settings, communities, location.key)
-                .then(function(response) {
 
-                    self.working = false;
+            if (user.newsletter && user.newsletter.brand_id) {
+                /// update existing newsletter
 
-                    if (response.status == 201) {
+                newsletter_service.updateNewsletter(settings, user.profile.email, user.newsletter.brand_id)
+                    .then(function(response) {
 
-                        sweet.show({
-                            title: "Newsletter settings saved!",
-                            type: "success"
-                        }, function(){
-                            $uibModalInstance.close();
-                        });
+                        self.working = false;
 
-                    } else {
-                        sweet.show({
-                            title: "Sorry, something went wrong.",
-                            text: "Here's what we know: " + response.data.message,
-                            type: "error"
-                        });
-                    }
-                })
+                        if (response.status == 201) {
+
+                            sweet.show({
+                                title: "Newsletter settings saved!",
+                                type: "success"
+                            }, function(){
+                                $uibModalInstance.close();
+                            });
+
+                        } else {
+                            sweet.show({
+                                title: "Sorry, something went wrong.",
+                                text: "Here's what we know: " + response.data.message,
+                                type: "error"
+                            });
+                        }
+                    })
+
+            } else {
+
+                newsletter_service.setupNewsletter(settings, communities, location.key)
+                    .then(function(response) {
+
+                        self.working = false;
+
+                        if (response.status == 201) {
+
+                            sweet.show({
+                                title: "Newsletter settings saved!",
+                                type: "success"
+                            }, function(){
+                                $uibModalInstance.close();
+                            });
+
+                        } else {
+                            sweet.show({
+                                title: "Sorry, something went wrong.",
+                                text: "Here's what we know: " + response.data.message,
+                                type: "error"
+                            });
+                        }
+                    })
+
+            }
 
         } else {
             self.submitted = true;

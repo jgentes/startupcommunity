@@ -7,6 +7,7 @@ request = request.defaults({jar: true, followAllRedirects: true}); // required t
 
 var NewsletterApi = function() {
     this.setupNewsletter = handleSetupNewsletter;
+    this.updateNewsletter = handleUpdateNewsletter;
     this.syncMembers = handleSyncMembers;
     this.addSubscriber = addSubscriber;
 };
@@ -401,6 +402,68 @@ function handleSetupNewsletter(req,res) {
     });
 }
 
+function handleUpdateNewsletter(req,res) {
+    var brand_id = req.body.app_id,
+        email = req.body.email,
+        settings = req.body.settings;
+
+    var update = function() {
+        request.post({
+            url: 'https://newsletter.startupcommunity.org/includes/app/edit.php',
+            form: {
+                app_name: settings.brand_name,
+                from_name: settings.from_name,
+                from_email: settings.from_email,
+                reply_to: settings.reply_email,
+                allowed_attachments: "jpeg,jpg,gif,png,pdf,zip",
+                logo: "",
+                id: brand_id,
+                smtp_host: settings.host,
+                smtp_port: settings.port,
+                smtp_ssl: settings.ssl.toLowerCase(),
+                smtp_username: settings.username,
+                smtp_password: settings.password,
+                login_email: email,
+                language: "en_US",
+                pass: jwt.sign(req.user, 'NewsletterSecretPasswordCryptoKey'),
+                currency: "USD",
+                delivery_fee: "",
+                cost_per_recipient: "",
+                "choose-limit": "unlimited",
+                "monthly-limit": "",
+                "reset-on-day": 1,
+                "current-limit": "unlimited"
+            }
+        }, function (error, response, body) {git 
+
+            if (error) {
+                console.log('WARNING: ', error);
+                res.status(204).send({ message: error });
+            } else {
+                res.status(201).end();
+            }
+        })
+    }
+
+    console.log('logging in with primary account');
+
+    try {
+        request.post({
+            url: 'https://newsletter.startupcommunity.org/includes/login/main.php',
+            form: {
+                email: 'james@jgentes.com',
+                password: 'O+af0b|Su',
+                redirect: ""
+            }
+        }, function (error, response, body) {
+            update();
+        })
+    }
+    catch (e) {
+        console.log('WARNING: ', e);
+        res.status(204).send({ message: 'Something went wrong.'})
+    }
+}
 
 function handleSyncMembers(req,res) {
     var location_key = req.body.location_key,

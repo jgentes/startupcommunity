@@ -4,9 +4,8 @@ angular
     .controller('SettingsController', SettingsController)
     .controller('EmbedSettingsController', EmbedSettingsController);
 
-function NavigationController($auth, $state, $window, $timeout, $location, $scope, $stateParams, $uibModal, user_service, community_service, user, sweet, location, community, communities, nav_communities, top, knowtify, errorLogService, newsletter_service) {
-    
-    console.log($stateParams);
+function NavigationController($auth, $state, $window, $location, $stateParams, $uibModal, user_service, community_service, user, sweet, location, community, communities, nav_communities, top, knowtify, errorLogService, newsletter_service) {
+
     this.createBrand = function() {
         newsletter_service.createBrand()
             .then(function(response) {
