@@ -443,7 +443,7 @@ function handleUpdateNewsletter(req,res) {
                 res.status(201).end();
             }
         })
-    }
+    };
 
     console.log('logging in with primary account');
 
