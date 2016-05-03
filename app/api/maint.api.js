@@ -15,11 +15,11 @@ var MaintApi = function() {
 
 
 function handleMaintenance(res, req) {
-    var enabled = false,
+    var enabled = true,
         startkey = 0,
         limit = 50,
         userlist = [],
-        collection = 'communities';
+        collection = 'communities-dev';
 
     function getList(startkey, userlist, limit) {
         db.newSearchBuilder()
@@ -36,7 +36,7 @@ function handleMaintenance(res, req) {
 
                     if (user.communities) {
                         for (c in user.communities) {
-                            user.communities[c] = user.communities[c].replace('%20', '-');
+                            user.communities[c] = user.communities[c].replace(/%20/g, '-');
                             change = true;
                         }
                     }
@@ -44,9 +44,11 @@ function handleMaintenance(res, req) {
                     if (user.roles) {
                         for (r in user.roles) {
                             for (h in user.roles[r]) {
-                                user.roles[r][h.replace('%20', '-')] = user.roles[r][h];
-                                delete user.roles[r][h];
-                                change = true;
+                                if (h.indexOf('%20') > -1) {
+                                    user.roles[r][h.replace(/%20/g, '-')] = user.roles[r][h];
+                                    delete user.roles[r][h];
+                                    change = true;
+                                }
                             }
                         }
                     }
