@@ -6,13 +6,6 @@ angular
 
 function NavigationController($auth, $state, $window, $location, $stateParams, $uibModal, user_service, community_service, user, sweet, location, community, communities, nav_communities, top, knowtify, errorLogService, newsletter_service) {
 
-    this.createBrand = function() {
-        newsletter_service.createBrand()
-            .then(function(response) {
-                console.log(response);
-            })
-    };
-
     if (user && user.token) $auth.setToken(user.token); // update local storage with latest user profile
 
     // SENSITIVE VARIABLES THAT AFFECT NAVIGATION AND ALL CHILD TEMPLATES
@@ -61,6 +54,10 @@ function NavigationController($auth, $state, $window, $location, $stateParams, $
         this.top = top;
     }
 
+    // load 3rd party script parameters
+
+    if ($location.host() !== 'startupcommunity.org') $window.Bugsnag.releaseStage = "development";
+
     // ANONYMOUS ACCESS OR PROFILE DISPLAY
 
     if ($auth.isAuthenticated() && user) {
@@ -68,6 +65,14 @@ function NavigationController($auth, $state, $window, $location, $stateParams, $
         this.user = user; // reference 'this' by using 'nav' from 'NavigationController as nav' - * nav is also usable in child views *
 
         knowtify.push(['load_inbox', 'knowtify', {email: this.user.profile.email}]);
+
+        $window.Bugsnag.user = {
+            key: this.user.key,
+            name: this.user.profile.name,
+            email: this.user.profile.email
+        };
+
+        $window.JacoRecorder.identify(this.user.profile.email);
 
     }
 
