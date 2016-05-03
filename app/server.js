@@ -9,6 +9,7 @@ var express = require('express'),
     bodyParser = require('body-parser'),
     methodOverride = require('method-override'),
     logger = require('morgan'),
+    bugsnag = require('bugsnag'),
     nodalytics = require('nodalytics'),
     ghost = require('ghost'),
     parentApp = express();
@@ -16,6 +17,8 @@ var express = require('express'),
 var app = express();
 
 // Some things must come before Body Parser
+
+bugsnag.register("a46f2b2ce2b4bcd599be18c86f2fe8ce");
 
 // Restrict access to dev.startupcommunity.org
 if (process.env.NODE_ENV === "development") {
@@ -52,6 +55,7 @@ var root = __dirname.substring(0, __dirname.lastIndexOf('/')) || __dirname.subst
 
 // Order really matters here..!
 app.disable('x-powered-by');
+app.use(bugsnag.requestHandler);
 app.use(logger('dev'));
 app.use(methodOverride());
 app.use(bodyParser.json());
@@ -67,9 +71,12 @@ if (process.env.NODE_ENV === "production") {
     app.use(enforce.HTTPS({ trustProtoHeader: true }));
     app.use(nodalytics('UA-58555092-2'));
 } else {
+
     app.use("/bower_components", express.static(root + "/bower_components"));
     app.use("/build", express.static(root + "/build"));
 }
+
+app.use(bugsnag.errorHandler);
 
 // API ROUTE METHODS
 
