@@ -434,7 +434,7 @@ function handleUpdateNewsletter(req,res) {
                 "reset-on-day": 1,
                 "current-limit": "unlimited"
             }
-        }, function (error, response, body) {git 
+        }, function (error, response, body) {
 
             if (error) {
                 console.log('WARNING: ', error);
