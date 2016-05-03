@@ -109,11 +109,11 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
 
                         if (jQuery.isEmptyObject($stateParams.community)) { // if community is passed in via ui-sref, just use that
                             
-                            var pullCommunity = function () {
-                                if (communities[$stateParams.location_path]) { // if location_path has already been pulled, use that
-                                    return communities[$stateParams.location_path]; // this should also avoid re-pull for /people and /companies
+                            var pullCommunity = function (community_path) {
+                                if (communities[community_path]) { // if location_path has already been pulled, use that
+                                    return communities[community_path]; // this should also avoid re-pull for /people and /companies
                                 } else {
-                                    return community_service.getCommunity($stateParams.location_path)
+                                    return community_service.getKey(community_path)
                                         .then(function(response) {
                                             return response.data;
                                         })
@@ -129,11 +129,14 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                                 if (lastitem == "people" || lastitem == "companies" || lastitem == "search" || lastitem == "invite" || lastitem == "add" || lastitem == "welcome") {
                                     if (lastitem == "invite" || lastitem == "add") {
                                         return communities[url.pop()];
-                                    } else return communities[root]; // return preceding url path as community, such as tech for 'bend-or/tech/people'
+                                        // return preceding url path as community, such as tech for 'bend-or/tech/people'
+                                    } else if (communities[root]) {
+                                        return communities[root];
+                                    } else return pullCommunity(root);
                                 } else if (communities[lastitem] && (communities[lastitem].type == "cluster" || communities[lastitem].resource)) {
                                     return communities[lastitem]; // return tech in 'bend-or/tech'
-                                } else return pullCommunity();
-                            } else return pullCommunity();
+                                } else return pullCommunity($stateParams.location_path);
+                            } else return pullCommunity($stateParams.location_path);
 
                         } else return $stateParams.community;
                     }],

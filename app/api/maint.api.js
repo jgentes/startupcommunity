@@ -15,7 +15,7 @@ var MaintApi = function() {
 
 
 function handleMaintenance(res, req) {
-    var enabled = true,
+    var enabled = false,
         startkey = 0,
         limit = 50,
         userlist = [],
@@ -26,42 +26,25 @@ function handleMaintenance(res, req) {
             .collection(collection)
             .limit(limit)
             .offset(startkey)
-            .query('(@value.roles.*.*%20*: *) OR (@value.communities: *%20*)')
+            .query('@path.key: *%20*')
             .then(function(data){
                 var item;
                 for (item in data.body.results) {
+                    var change = false;
 
-                    var user = data.body.results[item].value,
-                        change = false;
+                    var network = data.body.results[item].value;
 
-                    if (user.communities) {
-                        for (c in user.communities) {
-                            user.communities[c] = user.communities[c].replace(/%20/g, '-');
-                            change = true;
-                        }
-                    }
 
-                    if (user.roles) {
-                        for (r in user.roles) {
-                            for (h in user.roles[r]) {
-                                if (h.indexOf('%20') > -1) {
-                                    user.roles[r][h.replace(/%20/g, '-')] = user.roles[r][h];
-                                    delete user.roles[r][h];
-                                    change = true;
-                                }
-                            }
-                        }
-                    }
-
-                    if (change) {
-                        console.log('Updating record..');
+                    if (data.body.results[item].path.key.indexOf('%20') > -1) {
                         console.log(data.body.results[item].path.key);
-                        //console.log(newdata);
+                        var key = data.body.results[item].path.key.replace(/%20/g, '-');
+                        console.log('Updating record..');
 
-                        // IMPORTANT! TEST FIRST BY COMMENTING OUT BELOW..
-                        // ALSO BE CAREFUL TO NOT PULL FROM -DEV AND PUT INTO PRODUCTION DB!!
-                        db.put(collection, data.body.results[item].path.key, user);
+                        change = true;
                     }
+                    //db.put(collection, key, network);
+                    // IMPORTANT! TEST FIRST BY COMMENTING OUT BELOW..
+                    // ALSO BE CAREFUL TO NOT PULL FROM -DEV AND PUT INTO PRODUCTION DB!!
 
 
 
