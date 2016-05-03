@@ -651,10 +651,11 @@ angular
                 }
             };
 
-            return function(exception) {
+            return function(exception, cause) {
                 getSourceMappedStackTrace(exception).then(function(final) {
                     errorLogService(final);
                 });
+                Bugsnag.notifyException(exception, {diagnostics:{cause: cause}});
             };
         });
 
