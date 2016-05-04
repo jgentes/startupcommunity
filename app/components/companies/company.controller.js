@@ -39,7 +39,7 @@ function CompanyController($stateParams, $state, $location, company_service, res
     } catch (e) {
         this.embedded = true;
     }
-    this.usercount = this.embedded ? 8 : 16;
+    this.usercount = 16;
 
     this.searchCompanies = function(resource_page, alturl) {
         self.loadingUser = true;

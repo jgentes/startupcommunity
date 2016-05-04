@@ -38,7 +38,7 @@ function UserController($stateParams, $location, user_service, result_service, $
     } catch (e) {
         this.embedded = true;
     }
-    this.usercount = this.embedded ? 8 : 16;
+    this.usercount = 16;
 
     this.searchUsers = function(alturl) {
         self.loadingUser = true;
