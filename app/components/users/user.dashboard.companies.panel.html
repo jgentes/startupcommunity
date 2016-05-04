@@ -4,14 +4,12 @@
             <div class="stats-icon pull-left" style="margin-top: 11px; margin-right: 8px;">
                 <i ng-class="type.icon" class="fa-2x"></i>
             </div>
-            <a ui-sref="{{'company.list' + nav.nav_url}}">
-                <h3 ng-bind="type.title.slice(0, -1);" style="padding-left: 5px;"></h3>
-                <!--<small class="text-info" ng-click="nav.addCompany();">+ Add Company</small>-->
-            </a>
+            <h3 ng-bind="type.title.slice(0, -1);" style="padding-left: 5px; cursor: default;"></h3>
+            <!--<small class="text-info" ng-click="nav.addCompany();">+ Add Company</small>-->
         </div>
     </div>
     <div class="col-xs-4">
-        <h3 class="text-info pull-right">{{::profile.companies.count[type.name]}}</h3>
+        <h3 class="text-info pull-right" style="cursor: default;">{{::profile.companies.count[type.name]}}</h3>
     </div>
 </div>
 <div class="panel-footer" style="background: #fff; text-align: center;">
