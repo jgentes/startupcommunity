@@ -535,15 +535,15 @@ angular
             }, 500);
         });
 
-       /* $rootScope.$on('$stateChangeStart',
+        $rootScope.$on('$stateChangeStart',
             function(event, toState, toParams, fromState, fromParams){
+                console.log('from: ' + fromState.name);
+                //console.log(fromState);
+                console.log('to:' + toState.name);
+                //console.log(toState);
                 console.log(event);
-                console.log('from: ');
-                console.log(fromState);
-                console.log('to:');
-                console.log(toState);
             })
-*/
+
     })
 
 
