@@ -80,6 +80,7 @@ function NavigationController($auth, $state, $window, $location, $stateParams, $
 
     this.communities = communities; // used in company list views
     this.nav_communities = nav_communities;
+    this.loaders = {};
 
     if (!this.community) this.community = this.communities[this.location_path];
     if (!this.community) {
