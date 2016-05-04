@@ -417,7 +417,15 @@ function handleLinkedin(req, res) {
                             // get user account and update with latest linkedin data
 
                             if (!result.body.results[0].value.profile.avatar) {
-                                result.body.results[0].value.profile.avatar = profile.pictureUrl;
+                                result.body.results[0].value.profile['avatar'] = profile.pictureUrl;
+                            }
+
+                            if (!result.body.results[0].value.profile.summary) {
+                                result.body.results[0].value.profile['summary'] = profile.summary;
+                            }
+
+                            if (!result.body.results[0].value.profile.headline) {
+                                result.body.results[0].value.profile['headline'] = profile.headline;
                             }
 
                             if (!result.body.results[0].value.profile.name) {
@@ -500,6 +508,8 @@ function handleLinkedin(req, res) {
                                             new_invite_profile.profile.linkedin = profile;
                                             new_invite_profile.profile.avatar = profile.pictureUrl;
                                             new_invite_profile.profile.name = profile.firstName + ' ' + profile.lastName;
+                                            new_invite_profile.profile.summary = profile.summary;
+                                            new_invite_profile.profile.headline = profile.headline;
                                             new_invite_profile.profile.email = profile.emailAddress;
                                             new_invite_profile["communities"] = invite_profile.invite_communities;
                                             delete new_invite_profile.invite_communities;

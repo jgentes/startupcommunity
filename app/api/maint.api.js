@@ -26,25 +26,38 @@ function handleMaintenance(res, req) {
             .collection(collection)
             .limit(limit)
             .offset(startkey)
-            .query('@path.key: *%20*')
+            .query('@value.type: "user"')
             .then(function(data){
                 var item;
                 for (item in data.body.results) {
                     var change = false;
 
-                    var network = data.body.results[item].value;
+                    var user = data.body.results[item].value;
 
 
-                    if (data.body.results[item].path.key.indexOf('%20') > -1) {
-                        console.log(data.body.results[item].path.key);
-                        var key = data.body.results[item].path.key.replace(/%20/g, '-');
-                        console.log('Updating record..');
+                    if (user.profile.linkedin) {
+                        if (user.profile.linkedin.summary && !user.profile.summary) {
+                            user.profile['summary'] = user.profile.linkedin.summary;
+                            change = true;
+                        }
+                        if (user.profile.linkedin.headline && !user.profile.headline) {
+                            user.profile['headline'] = user.profile.linkedin.headline;
+                            change = true;
+                        }
+                        if (user.profile.linkedin.pictureUrl && !user.profile.avatar) {
+                            user.profile['avatar'] = user.profile.linkedin.pictureUrl;
+                            change = true;
+                        }
 
-                        change = true;
                     }
-                    //db.put(collection, key, network);
+                    
                     // IMPORTANT! TEST FIRST BY COMMENTING OUT BELOW..
                     // ALSO BE CAREFUL TO NOT PULL FROM -DEV AND PUT INTO PRODUCTION DB!!
+                    if (change) {                        
+                        console.log('Updating record..');
+                        console.log(data.body.results[item].path.key);
+                        //db.put(collection, data.body.results[item].path.key, user);
+                    }
 
 
 
@@ -54,7 +67,7 @@ function handleMaintenance(res, req) {
                 res.end();*/
 
                 if (data.body.next) {
-                    startKey = startkey + limit;
+                    startkey = startkey + limit;
                     console.log('Getting next group..' + startkey);
                     getList(startkey, userlist, limit);
                 } else {
