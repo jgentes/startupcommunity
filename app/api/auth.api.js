@@ -674,9 +674,8 @@ function handleInviteUser(req, res) {
                                                     console.log('WARNING:', error);
                                                 });
 
-
-
                                         } else {
+                                            
                                             // create user record with email address and community data
                                             var newUser = schema.invite(inviteUser.email, user.profile.email, inviteUser.location_key, inviteUser.resources);
                                             console.log('creating user');

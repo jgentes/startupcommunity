@@ -376,12 +376,12 @@ function InviteUserController($mixpanel, user, user_service, community_service, 
 
     var leader = [];
 
-    for (l in user.roles.leader) leader.push(l);
+    if (user && user.roles && !jQuery.isEmptyObject(user.roles.leader)) for (l in user.roles.leader) leader.push(l);
 
     community_service.getResources(undefined, leader)
         .then(function(response) {
             self.resources = response.data;
-        })
+        });
 
     if (this.community.type == 'cluster' || this.community.resource && location) this.community = location;
 
