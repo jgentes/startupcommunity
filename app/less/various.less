@@ -466,7 +466,7 @@ input:-moz-placeholder {
   display: inline;
   float: right;
   padding-left: 10px;
-  margin-top: -1px;
+  margin-top: -2px;
 }
 
 .dash-row {
@@ -474,6 +474,30 @@ input:-moz-placeholder {
   overflow: hidden;
   margin-bottom: -10px;
   font-size: 12px;
+  margin-top: 2px;
+}
+
+.dash-row > span {
+  float: left;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+  display: inline-block;
+  max-width: 93%;
+}
+
+.dash-row-summary {
+  display: inline-block;
+  margin-top: -3px;
+}
+
+.dash-row-text {
+  float: left;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+  display: inline-block;
+  max-width: 65%;
 }
 
 .dash-table {
