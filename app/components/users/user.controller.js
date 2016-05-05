@@ -265,6 +265,8 @@ function UserProfileController($stateParams, $http, $uibModal, $mixpanel, user, 
             }
         }
     }
+    
+    
 
     $mixpanel.track('Viewed Profile');
 

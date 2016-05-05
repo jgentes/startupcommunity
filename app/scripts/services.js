@@ -18,6 +18,13 @@ angular
                     }
                 })
             },
+            logout: function() {
+                return $http({
+                    url: 'https://newsletter.startupcommunity.org/logout',
+                    method: 'GET',
+                    withCredentials: true
+                })
+            },
             setupNewsletter: function(settings, communities, location_key) {
                 return $http.post('/api/2.3/newsletter/setup', {
                     settings: settings,

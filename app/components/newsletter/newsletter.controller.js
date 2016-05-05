@@ -26,6 +26,14 @@ function NewsletterController(newsletter_service, $sce, user, errorLogService) {
     } else {
         $state.go('settings');
     }
+
+    // logout is not used, just for reference
+    this.logout = function() {
+        newsletter_service.logout()
+            .then(function (response) {
+                self.frame_content = $sce.trustAsHtml(response.data);
+            })
+    }
     
 }
 
