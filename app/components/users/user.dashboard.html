@@ -23,17 +23,17 @@
                     </span>
                 </div>
                 <h1 style="overflow:hidden; line-height: 1.25;">
-                    {{profile.user.profile.headline || profile.user.profile.linkedin.headline}}
+                    {{::profile.user.profile.headline}}
                 </h1>
                 <h3 style="padding-top: 5px;" style="line-height: 1.5;">
                     My name is <span class="name">{{::profile.user.profile.name | words:0}} {{::profile.user.profile.name |
-                    words:1}}</span>, <span ng-bind-html="(profile.user.profile.summary || profile.user.profile.linkedin.headline) | sentence | linky:'_blank'"></span>
+                    words:1}}</span>, <span ng-bind-html="(profile.user.profile.summary) | sentence | linky:'_blank'"></span>
                 </h3>
                 <a ng-click="profile.ask()" class="btn btn-success btn-sm">Ask me a question</a>
                 <a ng-click="profile.contact(nav.location.key)" title="Contact {{item.value.profile.name}}" class="btn btn-sm btn-info" style="margin-left: 5px;">Contact me
                 </a>
                 <div style="padding-top:10px; overflow: hidden; height: 50px; margin-bottom: -10px;">
-                    <li ng-repeat="skill in profile.user.profile.skills" style="margin-right: 5px;" class="btn btn-outline btn-default btn-xs" ui-sref="search.dashboard({location_path: nav.location.key, community: nav.location, query: skill})">
+                    <li ng-repeat="skill in ::profile.user.profile.skills" style="margin-right: 5px;" class="btn btn-outline btn-default btn-xs" ui-sref="search.dashboard({location_path: nav.location.key, community: nav.location, query: skill})">
                         {{::skill}}
                     </li>
                 </div>
