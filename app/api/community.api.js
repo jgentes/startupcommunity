@@ -186,6 +186,20 @@ function handleGetCommunity(req, res) {
 
                                         for (member in teamlist) {
                                             m = teamlist[member];
+                                            
+                                            // delete sensitive data
+                                            if (m.path.collection) delete m.path.collection;
+                                            if (m.path.ref) delete m.path.ref;
+                                            if (m.value.profile.password) delete m.value.profile.password;
+                                            if (m.value.profile.email) delete m.value.profile.email;
+                                            if (m.value.newsletter) delete m.value.newsletter;
+                                            if (m.value.profile.linkedin) {
+                                                if (m.value.profile.linkedin.emailAddress) delete m.value.profile.linkedin.emailAddress;
+                                                if (m.value.profile.linkedin.access_token) delete m.value.profile.linkedin.access_token;
+                                            }
+                                            m.value["key"] = m.path.key;                                            
+                                            
+                                            // sort roles
                                             for (role in m.value.roles) {
                                                 for (item in m.value.roles[role]) {
                                                     if (item == thiskey) {
@@ -460,6 +474,16 @@ function handleGetTop(req, res) {
 
     var addkeys = function(data) {
         for (i in data) {
+            // delete sensitive data
+            if (data[i].path.collection) delete data[i].path.collection;
+            if (data[i].path.ref) delete data[i].path.ref;
+            if (data[i].value.profile.password) delete data[i].value.profile.password;
+            if (data[i].value.profile.email) delete data[i].value.profile.email;
+            if (data[i].value.newsletter) delete data[i].value.newsletter;
+            if (data[i].value.profile.linkedin) {
+                if (data[i].value.profile.linkedin.emailAddress) delete data[i].value.profile.linkedin.emailAddress;
+                if (data[i].value.profile.linkedin.access_token) delete data[i].value.profile.linkedin.access_token;
+            }
             data[i].value["key"] = data[i].path.key;
         }
         return data;
