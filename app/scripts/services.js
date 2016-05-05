@@ -25,10 +25,10 @@ angular
                     withCredentials: true
                 })
             },
-            setupNewsletter: function(settings, communities, location_key) {
+            setupNewsletter: function(settings, resource_list, location_key) {
                 return $http.post('/api/2.3/newsletter/setup', {
                     settings: settings,
-                    communities: communities,
+                    resource_list: resource_list,
                     location_key: location_key
                 });
             },

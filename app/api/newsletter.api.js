@@ -68,7 +68,7 @@ function handleSetupNewsletter(req,res) {
     console.log('setup newsletter');
 
     var settings = req.body.settings,
-        communities = req.body.communities,
+        resource_list = req.body.resource_list,
         location_key = req.body.location_key,
         getMembers,
         createCustomField,
@@ -372,7 +372,7 @@ function handleSetupNewsletter(req,res) {
 
                     if (newprofile.roles.leader.hasOwnProperty(resource)) {
 
-                        if (communities[resource] && communities[resource].resource) {
+                        if (resource_list[resource] && resource_list[resource].resource) {
 
                             createList(brand_id, resource, function(list_id, list_name) {
 

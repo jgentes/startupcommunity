@@ -37,7 +37,7 @@ function NewsletterController(newsletter_service, $sce, user, errorLogService) {
     
 }
 
-function SetupNewsController($uibModalInstance, user, sweet, newsletter_service, location, communities) {
+function SetupNewsController($uibModalInstance, user, sweet, community_service, newsletter_service, location) {
     var self = this;
 
     this.setup = function() {
@@ -85,27 +85,36 @@ function SetupNewsController($uibModalInstance, user, sweet, newsletter_service,
 
             } else {
 
-                newsletter_service.setupNewsletter(settings, communities, location.key)
+                var leader = [];
+
+                for (l in user.roles.leader) leader.push(l);
+
+                community_service.getResources(undefined, leader)
                     .then(function(response) {
+                        var resource_list = response.data;
 
-                        self.working = false;
+                        newsletter_service.setupNewsletter(settings, resource_list, location.key)
+                            .then(function(response) {
 
-                        if (response.status == 201) {
+                                self.working = false;
 
-                            sweet.show({
-                                title: "Newsletter settings saved!",
-                                type: "success"
-                            }, function(){
-                                $uibModalInstance.close();
-                            });
+                                if (response.status == 201) {
 
-                        } else {
-                            sweet.show({
-                                title: "Sorry, something went wrong.",
-                                text: "Here's what we know: " + response.data.message,
-                                type: "error"
-                            });
-                        }
+                                    sweet.show({
+                                        title: "Newsletter settings saved!",
+                                        type: "success"
+                                    }, function(){
+                                        $uibModalInstance.close();
+                                    });
+
+                                } else {
+                                    sweet.show({
+                                        title: "Sorry, something went wrong.",
+                                        text: "Here's what we know: " + response.data.message,
+                                        type: "error"
+                                    });
+                                }
+                            })
                     })
 
             }
