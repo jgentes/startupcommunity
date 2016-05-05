@@ -43,7 +43,7 @@ function CompanyController($stateParams, $state, $location, company_service, res
 
     this.searchCompanies = function(resource_page, alturl) {
         self.loadingUser = true;
-
+        
         // remove random sort
         if (alturl) alturl = alturl.replace(/([&\?]sort=_random*$|sort=_random&|[?&]sort=_random(?=#))/, '');
 
