@@ -5,14 +5,14 @@
         </div>
         <div id="logo" class="light-version" style="transition: all 0.4s ease 0s;">
             <a ui-sref="community.dashboard({location_path: nav.location.key, community: nav.location, query: '*', top: nav.top, communities: nav.communities, user: nav.user})">
-                <img ng-if="nav.community.profile && nav.community.profile.sc_logo" ng-src="{{nav.community.profile.sc_logo}}"/>
-                <img ng-if="!(nav.community.profile && nav.community.profile.sc_logo) && (nav.location.profile && nav.location.profile.sc_logo)" ng-src="{{nav.location.profile.sc_logo}}"/>
-                <img ng-if="!(nav.community.profile && nav.community.profile.sc_logo) && !(nav.location.profile && nav.location.profile.sc_logo)" src="/public/images/sc_logo.png" style="padding: 9px 20px 6px 18px;"/>
+                <img ng-if="::nav.community.profile && nav.community.profile.sc_logo" ng-src="{{::nav.community.profile.sc_logo}}"/>
+                <img ng-if="::!(nav.community.profile && nav.community.profile.sc_logo) && (nav.location.profile && nav.location.profile.sc_logo)" ng-src="{{::nav.location.profile.sc_logo}}"/>
+                <img ng-if="::!(nav.community.profile && nav.community.profile.sc_logo) && !(nav.location.profile && nav.location.profile.sc_logo)" src="/public/images/sc_logo.png" style="padding: 9px 20px 6px 18px;"/>
 
             </a>
         </div>
         <nav role="navigation">
-            <minimaliza-menu ng-if="!nav.embedded"></minimaliza-menu>
+            <minimaliza-menu ng-if="::!nav.embedded"></minimaliza-menu>
             <div class="navbar-left">
                 <div class="nav navbar-nav no-borders" style="white-space: nowrap;">
                     <li style="float: left; padding-top: 7px;">
@@ -21,7 +21,7 @@
                         </a>
                     </li>
                     <form id="searchform" ng-submit="nav.search(nav.search.query)" role="search" class="navbar-form-custom" method="post">
-                        <input ng-model="nav.search.query" type="text" placeholder="Search {{nav.searchname}}.." class="form-control" name="search">
+                        <input ng-model="nav.search.query" type="text" placeholder="Search {{::nav.searchname}}.." class="form-control" name="search">
                     </form>
                 </div>
             </div>
@@ -63,17 +63,18 @@
                 </div>
             </div>
 
-            <div ng-if="!nav.embedded" class="navbar-right">
+            <div ng-if="::!nav.embedded" class="navbar-right">
                 <ul class="nav navbar-nav no-borders">
                     <li ng-if="nav.user" class="dropdown" style="padding-top: 10px; padding-left: 10px;" tour-step order="4" title="Your Profile" content="People can ask you questions on your profile page. Click 'End tour' to take a look." placement="bottom">
                         <div class="pull-left" style="padding-top: 1px; white-space: nowrap;     text-align: right; padding-right: 20px;">
-                            <a ui-sref="user.dashboard({profile: nav.user, location_path: nav.user.key, community: {}, communities: nav.communities, user: nav.user })">{{nav.user.profile.name}}</a>
+                            <span loading-bars ng-if="p_working" style="padding-right:40px;"></span>
+                            <a ui-sref="user.dashboard({profile: nav.user, location_path: nav.user.key, community: {}, communities: nav.communities, user: nav.user })" ng-click="p_working = true">{{::nav.user.profile.name}}</a>
                             <div style="margin-left: -10px; padding-top: 1px;">
-                                <span ng-repeat="(item, val) in nav.user.roles" class="user-role" ><i ng-attr-title="{{item[0].toUpperCase() + item.slice(1);}}" style="font-weight: bold;" ng-class="{'text-primary pe-7s-paper-plane' : item == 'founder', 'text-danger pe-7s-flag' : item == 'leader', 'text-info pe-7s-study' : item == 'mentor', 'text-success pe-7s-gleam' : item == 'investor', 'text-default pe-7s-ball' : item == 'team', 'text-warning pe-7s-portfolio' : item == 'provider'}"></i></span>
+                                <span ng-repeat="(item, val) in ::nav.user.roles" class="user-role" ><i ng-attr-title="{{::item[0].toUpperCase() + item.slice(1);}}" style="font-weight: bold;" ng-class="{'text-primary pe-7s-paper-plane' : item == 'founder', 'text-danger pe-7s-flag' : item == 'leader', 'text-info pe-7s-study' : item == 'mentor', 'text-success pe-7s-gleam' : item == 'investor', 'text-default pe-7s-ball' : item == 'team', 'text-warning pe-7s-portfolio' : item == 'provider'}"></i></span>
                             </div>
                         </div>
                         <div class="pull-right" style="padding-right: 10px;">
-                            <a ui-sref="user.dashboard({profile: nav.user, location_path: nav.user.key, community: {}, communities: nav.communities, user: nav.user })"><img title="Your Profile" class="img-circle m-b" ng-src="{{nav.user.profile.avatar || nav.user.profile.linkedin.pictureUrl || '/public/images/blank_avatar.png'}}" alt="{{nav.user.profile.name}}" style="height: 40px; width: 40px; " onerror="this.src='/public/images/blank_avatar.png'"/></a>
+                            <a ui-sref="user.dashboard({profile: nav.user, location_path: nav.user.key, community: {}, communities: nav.communities, user: nav.user })" ng-click="p_working = true"><img title="Your Profile" class="img-circle m-b" ng-src="{{::nav.user.profile.avatar || '/public/images/blank_avatar.png'}}" alt="{{::nav.user.profile.name}}" style="height: 40px; width: 40px; " onerror="this.src='/public/images/blank_avatar.png'"/></a>
                         </div>
                     </li>
                     <li ng-if="!nav.user" class="dropdown">
@@ -125,8 +126,8 @@
                 <ul class="nav nav-second-level">
                     <li>
                         <a ui-sref="community.dashboard({location_path: nav.location.key, community_path: '', community: nav.location, location: nav.location, query: '*', top: nav.top, communities: nav.communities, user: nav.user })" style="padding-left: 6px; font-size: 16px; font-weight: bold; border-bottom: 1px solid #eee; background-color:#F6F8F9; border-left: 2px solid #82BC4B;" ng-click="l_working = true">
-                            <span ng-if="nav.location" style="white-space:nowrap;font-size:18px;">
-                                &nbsp;{{nav.location.profile.name}}
+                            <span ng-if="::nav.location" style="white-space:nowrap;font-size:18px;">
+                                &nbsp;{{::nav.location.profile.name}}
                             </span>
                             <span loading-bars ng-if="l_working"></span>
                         </a>
@@ -134,7 +135,7 @@
                 </ul>
             </li>
 
-            <li class="active" ng-show="nav.locations">
+            <li class="active" ng-show="::nav.locations">
                 <a style="cursor:default;"><span>
 
                     Locations
@@ -142,10 +143,10 @@
                 </span>
                 </a>
                 <ul class="nav nav-second-level">
-                    <li ng-if="!nav.locations || nav.locations === {}">
+                    <li ng-if="::!nav.locations || nav.locations === {}">
                         <a>No locations yet</a>
                     </li>
-                    <li ng-repeat="item in nav.locations">
+                    <li ng-repeat="item in ::nav.locations">
                         <a ui-sref="community.dashboard({location_path: item.key, community_path: '', community: item, location: item, query: '*', top: nav.top, communities: nav.communities, user: nav.user})" ng-class="{active: nav.path.includes('/' + item.key)}" ng-click="li_working = true"><i class="fa fa-globe"></i>
                             {{::item.profile.name}}
                             <span loading-bars ng-show="li_working"></span>
@@ -154,7 +155,7 @@
                 </ul>
             </li>
 
-            <li class="active" ng-show="nav.top.parents" tour-step order="3" title="Industry Clusters" content="A cluster is an entrepreneurial ecosystem in support of a specific industry.<br><br>Clusters are made up of mentors, investors, companies, accelerators, coworking spaces, and events that connect people and foster creation of new startups." placement="right">
+            <li class="active" ng-show="::nav.top.parents" tour-step order="3" title="Industry Clusters" content="A cluster is an entrepreneurial ecosystem in support of a specific industry.<br><br>Clusters are made up of mentors, investors, companies, accelerators, coworking spaces, and events that connect people and foster creation of new startups." placement="right">
                 <a style="cursor:default; margin-left: -7px;"><span>
 
                     Industries
@@ -162,13 +163,13 @@
                 </span>
                 </a>
                 <ul class="nav nav-second-level">
-                    <li ng-repeat="item in nav.top.parents | orderBy: 'item.value' : reverse">
+                    <li ng-repeat="item in ::nav.top.parents | orderBy: 'item.value' : reverse">
                         <a ui-sref="community.dashboard({community_path: item.label, community: nav.nav_communities[item.label], query: '*', location_path: (nav.location.key || nav.user.profile.home), top: nav.top, communities: nav.communities, user: nav.user})" ng-class="{active: nav.path.includes('/' + item.label)}" ng-click="cl_working = true">
                             <span>
                                 <i ng-class="'fa ' + nav.industry_icons[item.label].icon"></i>
                                 {{::item.label[0].toUpperCase() + item.label.slice(1)}}
                                 <span loading-bars ng-show="cl_working"></span>
-                                <a ng-repeat="c in nav.clusters[item.label]" ui-sref="community.dashboard({community_path: c.key, community: nav.nav_communities[c.key], query: '*', location_path: (nav.location.key || nav.user.profile.home), top: nav.top, communities: nav.communities, user: nav.user })" ng-class="{active: nav.path.includes('/' + c.key)}" ng-click="clc_working = true" style="padding-left:30px;">
+                                <a ng-repeat="c in ::nav.clusters[item.label]" ui-sref="community.dashboard({community_path: c.key, community: nav.nav_communities[c.key], query: '*', location_path: (nav.location.key || nav.user.profile.home), top: nav.top, communities: nav.communities, user: nav.user })" ng-class="{active: nav.path.includes('/' + c.key)}" ng-click="clc_working = true" style="padding-left:30px;">
                                     <i ng-class="'fa ' + nav.industry_icons[item.label].icon"></i>
                                     {{::c.community_profiles[nav.location.key].name[0].toUpperCase() + c.community_profiles[nav.location.key].name.slice(1);}}
                                     <span loading-bars ng-show="clc_working"></span>

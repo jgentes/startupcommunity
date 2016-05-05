@@ -3,15 +3,15 @@
         <div style="padding: 20px 15px;">
             <header class="heading content" style="color:#fff">
                 <a href="javascript:window.location.href=window.location.href" style="color: #eee; font-size: 7px; float: left; margin-left: -40px; margin-top: -12px;">random image</a>
-                <button ng-if="nav.user" ui-sref="company.edit" class="btn btn-warning pull-right" style="margin-left:-100px;">Edit</button>
-                <img class="img-circle m-b" ng-show="profile.company.profile.avatar" style="max-height:100px; max-width:100px;" ng-src="{{profile.company.profile.avatar}}" alt="{{::profile.company.profile.name}}" onerror="this.src='/public/images/browser_icon.jpg'">
+                <button ng-if="::nav.user" ui-sref="company.edit" class="btn btn-warning pull-right" style="margin-left:-100px;">Edit</button>
+                <img class="img-circle m-b" ng-show="::profile.company.profile.avatar" style="max-height:100px; max-width:100px;" ng-src="{{::profile.company.profile.avatar}}" alt="{{::profile.company.profile.name}}" onerror="this.src='/public/images/browser_icon.jpg'">
                 <div style="margin:-15px 0;">
-                    <span ng-if="profile.company.profile.parents[0]" class="btn btn-default btn-xs">
-                        <a ui-sref="community.dashboard({location_path: profile.company.profile.home, community_path: profile.company.profile.parents[0], community: profile.communities[profile.company.profile.parents[0]], query: &quot;&#42;&quot;})">{{::profile.company.profile.parents[0][0].toUpperCase() + profile.company.profile.parents[0].slice(1);}}</a>
-                    </span>
-                    <span ng-if="profile.company.profile.stage" class="btn btn-success btn-xs">
+                    <button ng-if="::profile.company.profile.parents[0]" ladda="btnworking" ng-click="btnworking = true" class="ladda-btn btn btn-default btn-xs" ui-sref="community.dashboard({location_path: profile.company.profile.home, community_path: profile.company.profile.parents[0], community: profile.communities[profile.company.profile.parents[0]], query: &quot;&#42;&quot;})">
+                        {{::profile.company.profile.parents[0][0].toUpperCase() + profile.company.profile.parents[0].slice(1);}}
+                    </button>
+                    <button ng-if="::profile.company.profile.stage" ladda="btnworking" ng-click="btnworking = true" class="ladda-btn btn btn-success btn-xs">
                         {{::profile.company.profile.stage}}
-                    </span>
+                    </button>
                 </div>
                 <h1 style="overflow:hidden; line-height: 1.25;">
                     {{::profile.company.profile.name}}
@@ -20,12 +20,12 @@
                     {{::profile.company.profile.headline}}
                 </h3>
                 <div style="margin-top:-18px; margin-bottom: -8px;">
-                    <a href="{{'http://' + profile.company.profile.website}}" target="_blank" style="font-size:14px; color: #6DC8EE;">{{::profile.company.profile.website}}</a>
+                    <a href="{{::'http://' + profile.company.profile.website}}" target="_blank" style="font-size:14px; color: #6DC8EE;">{{::profile.company.profile.website}}</a>
                 </div>
                 <div style="overflow: hidden; height: 40px; margin-bottom: -10px;">
-                    <li ng-repeat="industry in profile.company.profile.industries" style="margin-right: 5px;" class="btn btn-outline btn-default btn-xs" ui-sref="search.dashboard({location_path: nav.location.key, community: nav.location, query: industry})">
+                    <button ng-repeat="industry in ::profile.company.profile.industries" style="margin-right: 5px;" ladda="btnworking" ng-click="btnworking = true" class="ladda-btn btn btn-outline btn-default btn-xs" ui-sref="search.dashboard({location_path: nav.location.key, community: nav.location, query: industry})">
                         {{::industry}}
-                    </li>
+                    </button>
                 </div>
             </header>
         </div>
