@@ -3,29 +3,33 @@ angular
     .controller('NewsletterController', NewsletterController)
     .controller('SetupNewsController', SetupNewsController);
 
-function NewsletterController(newsletter_service, $sce, user, errorLogService) {
+function NewsletterController(newsletter_service, user_service, $sce, errorLogService) {
     var self = this;
-    
-    this.user = user;
+
     this.ie = navigator.userAgent.indexOf('Trident') > 0 || navigator.userAgent.indexOf('MSIE') > 0;
 
-    if (user.newsletter) {        
-        
-        newsletter_service.login(user)
-            .then(function (response) {
-                
-                self.frame_content = $sce.trustAsHtml(response.data);
-                
-                //newsletter_service.syncMembers(user.newsletter.lists, user.newsletter.brand_id, location.key);
+    user_service.getProfile()
+        .then(function(response) {
+            self.user = response.data;
 
-            })
-            .catch(function(error) {
-                errorLogService('newsletter error: ', error);
-            })
+            if (self.user.newsletter) {
 
-    } else {
-        $state.go('settings');
-    }
+                newsletter_service.login(self.user)
+                    .then(function (response) {
+
+                        self.frame_content = $sce.trustAsHtml(response.data);
+
+                        //newsletter_service.syncMembers(user.newsletter.lists, user.newsletter.brand_id, location.key);
+
+                    })
+                    .catch(function(error) {
+                        errorLogService('newsletter error: ', error);
+                    })
+
+            } else {
+                $state.go('settings');
+            }
+        });
 
     // logout is not used, just for reference
     this.logout = function() {
@@ -37,7 +41,7 @@ function NewsletterController(newsletter_service, $sce, user, errorLogService) {
     
 }
 
-function SetupNewsController($uibModalInstance, user, sweet, community_service, newsletter_service, location) {
+function SetupNewsController($uibModalInstance, user, sweet, community_service, newsletter_service, $state, location) {
     var self = this;
 
     this.setup = function() {
@@ -81,6 +85,8 @@ function SetupNewsController($uibModalInstance, user, sweet, community_service, 
                                 type: "error"
                             });
                         }
+
+                        newsletter_service.logout();
                     })
 
             } else {
@@ -106,6 +112,8 @@ function SetupNewsController($uibModalInstance, user, sweet, community_service, 
                                     }, function(){
                                         $uibModalInstance.close();
                                     });
+
+
 
                                 } else {
                                     sweet.show({

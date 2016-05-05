@@ -78,7 +78,8 @@ function handleSetupNewsletter(req,res) {
         createBrand,
         createList,
         newprofile,
-        updateProfile;
+        updateProfile,
+        stop = false;
 
     login = function(callback) {
         console.log('logging in with primary account');
@@ -182,6 +183,9 @@ function handleSetupNewsletter(req,res) {
 
     createList = function(brand_id, list_name, callback) {
         //todo create different lists prefixed by location
+        
+        console.log('creating list: ' + list_name);
+        
         request.post({
             url: 'https://newsletter.startupcommunity.org/includes/subscribers/import-add.php',
             form: {
@@ -201,7 +205,6 @@ function handleSetupNewsletter(req,res) {
                             // pull the list_id from the url by parsing the html
                             var $ = window.$;
                             var url = $("a[href*='&l=']");
-                            console.log(url);
                             // return list_id
                             callback(url[0].href.split("&")[1].split("=")[1], list_name);
                         })
@@ -234,14 +237,14 @@ function handleSetupNewsletter(req,res) {
 
     getMembers = function(location_key, resource, newprofile, brand_id, list_id) {
         console.log('getting members: ' + location_key + ' / ' + resource);
-
         var search;
 
         // verify user is a member of this resource in this location
         var resources = newprofile.roles.leader[resource];
 
         if (!resources || (resources.indexOf(location_key) < 0)) {
-            res.status(204).send({ message: 'You are not a leader of ' + resource + ' in ' + location_key })
+            console.log('WARNING: User is not a leader of ' + resource + ' in ' + location_key);
+            console.log(resource + ' done!');
         } else {
 
             search = function (startKey) {
@@ -387,15 +390,21 @@ function handleSetupNewsletter(req,res) {
                                 createCustomField('Industry', 'Text', brand_id, list_id, function() {
 
                                     // get subscribers and add them to the list
+                                    try {
+                                        getMembers(location_key, list_name, newprofile, brand_id, list_id);
 
-                                    getMembers(location_key, list_name, newprofile, brand_id, list_id);
+                                }
+                                catch(e) {
+                                    console.log('WARNING: Failure occured, res was probably sent already.')
+                                    stop = true;
+                                }
                                 });
                             });
                         }
                     }
                 }
                 
-                res.status(201).end();
+                if (!stop) res.status(201).end();
                 
             });
         })
