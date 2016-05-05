@@ -535,12 +535,16 @@ function SettingsController(user, community_service) {
     var self = this;
     var leader = [];
     
-    for (l in user.roles.leader) leader.push(l);
+    if (user.roles && user.roles.leader) {
+        
+        for (l in user.roles.leader) leader.push(l);
 
-    community_service.getResources(undefined, leader)
-        .then(function(response) {
-            self.resources = response.data;
-        })    
+        community_service.getResources(undefined, leader)
+            .then(function(response) {
+                self.resources = response.data;
+            })
+    } else self.resources = {};
+    
 }
 
 function EmbedSettingsController($uibModalInstance, sweet, user, community_service, community, location){
