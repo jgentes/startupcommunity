@@ -4,7 +4,7 @@ angular
     .controller('SettingsController', SettingsController)
     .controller('EmbedSettingsController', EmbedSettingsController);
 
-function NavigationController($auth, $state, $window, $location, $stateParams, $uibModal, user_service, community_service, user, sweet, location, community, communities, nav_communities, top, knowtify, errorLogService, newsletter_service) {
+function NavigationController($rootScope, $auth, $state, $window, $location, $stateParams, $uibModal, user_service, community_service, user, sweet, location, community, communities, nav_communities, top, knowtify, errorLogService, newsletter_service) {
 
     if (user && user.token) $auth.setToken(user.token); // update local storage with latest user profile
 
@@ -14,17 +14,17 @@ function NavigationController($auth, $state, $window, $location, $stateParams, $
 
         if (jQuery.isEmptyObject(location)) {
             if (community.type !== 'location' && community.profile && community.profile.home) {
-                this.location = communities[community.profile.home];
-            } else this.location = community;
-        } else this.location = location;
+                $rootScope.global.location = communities[community.profile.home];
+            } else $rootScope.global.location = community;
+        } else $rootScope.global.location = location;
 
-        this.community = jQuery.isEmptyObject($stateParams.community) ?
-            (community.key !== this.location.key ?
+        $rootScope.global.community = jQuery.isEmptyObject($stateParams.community) ?
+            (community.key !== $rootScope.global.location.key ?
                 community :
-                this.location) :
+                $rootScope.global.location) :
             $stateParams.community;
 
-        this.location_path = $stateParams.location_path || $stateParams.location.key || this.community.key;
+        $rootScope.global.location_path = $stateParams.location_path || $stateParams.location.key || $rootScope.global.community.key;
     }
     catch(err) {
         errorLogService('NavController Catch27: ' + err);
@@ -36,7 +36,7 @@ function NavigationController($auth, $state, $window, $location, $stateParams, $
     this.path = $location.path().replace(/\/$/, ""); //used for routing and used in view
 
     if (this.path.split('/').length < 3) {
-        switch (this.community.type) {
+        switch ($rootScope.global.community.type) {
             case 'user':
                 $state.go('user.dashboard');
                 break;
@@ -82,8 +82,8 @@ function NavigationController($auth, $state, $window, $location, $stateParams, $
     this.nav_communities = nav_communities;
     this.loaders = {};
 
-    if (!this.community) this.community = this.communities[this.location_path];
-    if (!this.community) {
+    if (!$rootScope.global.community) $rootScope.global.community = this.communities[$rootScope.global.location_path];
+    if (!$rootScope.global.community) {
         // if still no community, there's a problem, reload the app
         $window.location.reload();
     }
@@ -152,23 +152,23 @@ function NavigationController($auth, $state, $window, $location, $stateParams, $
         if (this.nav_communities[item]) {
             switch (this.nav_communities[item].type) {
                 case "location":
-                    if (item !== this.location.key) {
+                    if (item !== $rootScope.global.location.key) {
                         if (!this.locations) this.locations = {};
                         this.locations[item] = this.nav_communities[item];
                     }
                     break;
                 case "cluster":
                     if (!this.clusters) this.clusters = {};
-                    if (this.nav_communities[item].community_profiles && this.nav_communities[item].community_profiles[this.location.key] && this.nav_communities[item].community_profiles[this.location.key].parents && this.nav_communities[item].community_profiles[this.location.key].parents[0]) {
-                        var cluster_type = this.nav_communities[item].community_profiles[this.location.key].parents[0];
+                    if (this.nav_communities[item].community_profiles && this.nav_communities[item].community_profiles[$rootScope.global.location.key] && this.nav_communities[item].community_profiles[$rootScope.global.location.key].parents && this.nav_communities[item].community_profiles[$rootScope.global.location.key].parents[0]) {
+                        var cluster_type = this.nav_communities[item].community_profiles[$rootScope.global.location.key].parents[0];
                         if (!this.clusters[cluster_type]) this.clusters[cluster_type] = {};
                         this.clusters[cluster_type][item] = this.nav_communities[item];
                     }
                     break;
                 case "company":
                     if (this.nav_communities[item].resource) {
-                        if (this.nav_communities[item].community_profiles && this.nav_communities[item].community_profiles[this.location.key] && this.nav_communities[item].community_profiles[this.location.key].parents && this.nav_communities[item].community_profiles[this.location.key].parents[0]) {
-                            var resource_type = this.nav_communities[item].community_profiles[this.location.key].parents[0];
+                        if (this.nav_communities[item].community_profiles && this.nav_communities[item].community_profiles[$rootScope.global.location.key] && this.nav_communities[item].community_profiles[$rootScope.global.location.key].parents && this.nav_communities[item].community_profiles[$rootScope.global.location.key].parents[0]) {
+                            var resource_type = this.nav_communities[item].community_profiles[$rootScope.global.location.key].parents[0];
                             //if (!this.resources[resource_type]) this.resources[resource_type] = {};
                             //this.resources[resource_type][item] =  this.nav_communities[item];
                             this.resources.push(this.nav_communities[item]);
@@ -182,7 +182,7 @@ function NavigationController($auth, $state, $window, $location, $stateParams, $
         }
     }
 
-    var location_key = this.location.key;
+    var location_key = $rootScope.global.location.key;
     this.resources = this.resources.sort(function(a, b) {
         var x = a.community_profiles[location_key].name;
         var y = b.community_profiles[location_key].name;
@@ -205,43 +205,43 @@ function NavigationController($auth, $state, $window, $location, $stateParams, $
     };
 
     // BREADCRUMBS
-    if (this.community.type == "user") {
+    if ($rootScope.global.community.type == "user") {
         // note this changes location for nav items below
-        if (this.location.key == this.community.key) this.location = this.communities[this.community.profile.home];
+        if ($rootScope.global.location.key == $rootScope.global.community.key) $rootScope.global.location = this.communities[$rootScope.global.community.profile.home];
     }
 
     // to avoid duplicate location_path / community_path when navigating to people & companies
-    this.nav_url = this.location_path == this.community.key ?
-        "({location_path: nav.location_path, community: nav.community, query: '*', top: nav.top, communities: nav.communities, user: nav.user })" :
-        "({location_path: nav.location_path, community: nav.community, query: '*', community_path: nav.community.key, top: nav.top, communities: nav.communities, user: nav.user })";
+    this.nav_url = $rootScope.global.location_path == $rootScope.global.community.key ?
+        "({location_path: global.location_path, community: global.community, query: '*', top: nav.top, communities: global.communities, user: nav.user })" :
+        "({location_path: global.location_path, community: global.community, query: '*', community_path: global.community.key, top: nav.top, communities: global.communities, user: nav.user })";
 
     // to set correct root path when navigating from user or company page
 
-    this.nav_jump = (this.location && this.location.type == 'location') || ((this.community.type == "user" || this.community.type == "company") &&
-        (this.location && this.location.type == 'location')) ?
-        "({community_path: item.key, community: item, query: '*', location_path: nav.location.key, top: nav.top, communities: nav.communities, user: nav.user })" :
-        "({community_path: item.key, community: item, query: '*', location_path: nav.user.profile.home, top: nav.top, communities: nav.communities, user: nav.user })";
+    this.nav_jump = ($rootScope.global.location && $rootScope.global.location.type == 'location') || (($rootScope.global.community.type == "user" || $rootScope.global.community.type == "company") &&
+        ($rootScope.global.location && $rootScope.global.location.type == 'location')) ?
+        "({community_path: item.key, community: item, query: '*', location_path: global.location.key, top: nav.top, communities: global.communities, user: nav.user })" :
+        "({community_path: item.key, community: item, query: '*', location_path: nav.user.profile.home, top: nav.top, communities: global.communities, user: nav.user })";
 
     // SEARCH
 
     if ($stateParams.query) this.search.query = $stateParams.query;
 
-    if (this.community.type == "cluster" || this.community.resource) {
-        if (this.community.community_profiles && this.community.community_profiles[this.location_path]) {
-            this.searchname = this.community.community_profiles[this.location_path].name;
-        } else this.searchname = this.community.profile.name;
-    } else this.searchname = this.location ? this.location.profile.name : "";
+    if ($rootScope.global.community.type == "cluster" || $rootScope.global.community.resource) {
+        if ($rootScope.global.community.community_profiles && $rootScope.global.community.community_profiles[$rootScope.global.location_path]) {
+            this.searchname = $rootScope.global.community.community_profiles[$rootScope.global.location_path].name;
+        } else this.searchname = $rootScope.global.community.profile.name;
+    } else this.searchname = $rootScope.global.location ? $rootScope.global.location.profile.name : "";
 
     this.search = function(query) {
 
         if (!query) query = "*";
 
-        if (self.community.type == "cluster" || self.community.resource) {
-            self.location_path == self.community.key ?
-                $state.go('search.dashboard', {location_path: self.location_path, community: self.community, query: query}) :
-                $state.go('search.dashboard', {location_path: self.location_path, community_path: self.community.key, community: self.community, query: query});
-        } else if (self.community.type == "user" || self.community.type == "company") {
-            $state.go('search.dashboard', {location_path: self.community.profile.home, query: query});
+        if ($rootScope.global.community.type == "cluster" || $rootScope.global.community.resource) {
+            $rootScope.global.location_path == $rootScope.global.community.key ?
+                $state.go('search.dashboard', {location_path: $rootScope.global.location_path, community: $rootScope.global.community, query: query}) :
+                $state.go('search.dashboard', {location_path: $rootScope.global.location_path, community_path: $rootScope.global.community.key, community: $rootScope.global.community, query: query});
+        } else if ($rootScope.global.community.type == "user" || $rootScope.global.community.type == "company") {
+            $state.go('search.dashboard', {location_path: $rootScope.global.community.profile.home, query: query});
         } else $state.go('search.dashboard', {query: query});
 
     };
@@ -261,7 +261,7 @@ function NavigationController($auth, $state, $window, $location, $stateParams, $
                     return user.value;
                 },
                 community_key: function() {
-                    return self.community.key;
+                    return $rootScope.global.community.key;
                 },
                 location_key: function() {
                     return $stateParams.location_path;
@@ -281,10 +281,10 @@ function NavigationController($auth, $state, $window, $location, $stateParams, $
             windowClass: "hmodal-success",
             resolve: {
                 community: function() {
-                    return community || self.community;
+                    return community || $rootScope.global.community;
                 },
                 location: function() {
-                    return self.location;
+                    return $rootScope.global.location;
                 },
                 user: function() {
                     return self.user;
@@ -304,7 +304,7 @@ function NavigationController($auth, $state, $window, $location, $stateParams, $
             windowClass: "hmodal-success",
             resolve: {
                 location: function() {
-                    return self.location;
+                    return $rootScope.global.location;
                 },
                 community: function() {
                     return community;
@@ -354,7 +354,7 @@ function NavigationController($auth, $state, $window, $location, $stateParams, $
                     return self.user;
                 },
                 location: function() {
-                    return self.location;
+                    return $rootScope.global.location;
                 },
                 communities: function() {
                     return self.communities;
@@ -403,15 +403,15 @@ function NavigationController($auth, $state, $window, $location, $stateParams, $
                     return null;
                 },
                 community: function() {
-                    return self.location;
+                    return $rootScope.global.location;
                 },
                 communities: function() {
                     return self.communities;
                 },
                 location: function() {
-                    if (self.location.resource || self.location.type == 'cluster') {
-                        return self.communities[self.location.profile.home];
-                    } else return self.location;
+                    if ($rootScope.global.location.resource || $rootScope.global.location.type == 'cluster') {
+                        return self.communities[$rootScope.global.location.profile.home];
+                    } else return $rootScope.global.location;
                 }
             }
         });
@@ -431,13 +431,13 @@ function NavigationController($auth, $state, $window, $location, $stateParams, $
                     return self.user;
                 },
                 community: function() {
-                    return self.community;
+                    return $rootScope.global.community;
                 },
                 communities: function() {
                     return self.communities;
                 },
                 location: function() {
-                    return self.location;
+                    return $rootScope.global.location;
                 }
             }
         });
@@ -489,15 +489,15 @@ function NavigationController($auth, $state, $window, $location, $stateParams, $
         }
 
         try {
-            if (this.location.type === 'cluster' && this.location.community_profiles[this.location_path] && this.location.community_profiles[this.location_path].embed) {
+            if ($rootScope.global.location.type === 'cluster' && $rootScope.global.location.community_profiles[$rootScope.global.location_path] && $rootScope.global.location.community_profiles[$rootScope.global.location_path].embed) {
                 try {
-                    embed = this.location.community_profiles[this.location_path].embed;
+                    embed = $rootScope.global.location.community_profiles[$rootScope.global.location_path].embed;
                 }
                 catch (e) {
                     errorLogService('embed problem: ', e);
                 }
 
-            } else embed = this.location.profile.embed;
+            } else embed = $rootScope.global.location.profile.embed;
         }
         catch (e) {
             errorLogService('embed problem: ', e);
@@ -551,17 +551,17 @@ function EmbedSettingsController($uibModalInstance, sweet, user, community_servi
 
     this.user = user;
     var self = this;
-    this.location = location; // used in view
+    $rootScope.global.location = location; // used in view
 
     //force pull of community settings every time to avoid stale data
     community_service.getKey(community.key)
         .then(function(response) {
-            self.community = response.data;
+            $rootScope.global.community = response.data;
 
             // load existing embed settings
-            if (self.community.community_profiles && self.community.community_profiles[location.key] && self.community.community_profiles[location.key].embed) {
-                self.embed = self.community.community_profiles[location.key].embed;
-            } else if (self.community.profile && self.community.profile.embed) self.embed = self.community.profile.embed; // for locations
+            if ($rootScope.global.community.community_profiles && $rootScope.global.community.community_profiles[location.key] && $rootScope.global.community.community_profiles[location.key].embed) {
+                self.embed = $rootScope.global.community.community_profiles[location.key].embed;
+            } else if ($rootScope.global.community.profile && $rootScope.global.community.profile.embed) self.embed = $rootScope.global.community.profile.embed; // for locations
         });
 
     this.addEmbed = function() {
@@ -588,7 +588,7 @@ function EmbedSettingsController($uibModalInstance, sweet, user, community_servi
 
     this.save = function () {
 
-        community_service.setSettings(self.embed, location.key, self.community.key)
+        community_service.setSettings(self.embed, location.key, $rootScope.global.community.key)
             .then(function(response) {
 
                 if (response.status !== 201) {
@@ -603,7 +603,7 @@ function EmbedSettingsController($uibModalInstance, sweet, user, community_servi
                         title: "Settings saved!",
                         type: "success"
                     }, function(){
-                        //$http.get('/api/2.1/community/' + location.key + '/' + self.community.key);
+                        //$http.get('/api/2.1/community/' + location.key + '/' + $rootScope.global.community.key);
                         $uibModalInstance.close();
                     });
                 }
@@ -617,7 +617,7 @@ function EmbedSettingsController($uibModalInstance, sweet, user, community_servi
 
 function CommunityController($uibModalInstance, $mixpanel, sweet, community_service, community, location, $http, $window, user, $state){
 
-    this.location = location;
+    $rootScope.global.location = location;
     var loc_key = location.key;
     this.communityForm = {"name":""}; // to avoid 'undefined' for initial url
     var self = this;
@@ -650,16 +650,16 @@ function CommunityController($uibModalInstance, $mixpanel, sweet, community_serv
 
                 if (community && community.community_profiles && community.community_profiles[loc_key]) {
                     self.update = true;
-                    self.community = community.community_profiles[loc_key];
+                    $rootScope.global.community = community.community_profiles[loc_key];
                     self.communityForm = {
-                        "name": self.community.name,
-                        "headline": self.community.headline,
-                        "industries": self.community.industries,
+                        "name": $rootScope.global.community.name,
+                        "headline": $rootScope.global.community.headline,
+                        "industries": $rootScope.global.community.industries,
                         "url": decodeURI(community.key)
                     };
 
-                    if (self.community.parents) {
-                        switch (self.community.parents[0]) {
+                    if ($rootScope.global.community.parents) {
+                        switch ($rootScope.global.community.parents[0]) {
                             case 'consumer-goods':
                                 self.communityForm['parent'] = 'Consumer Goods';
                                 break;
@@ -669,13 +669,13 @@ function CommunityController($uibModalInstance, $mixpanel, sweet, community_serv
                             default:
                                 if (community.resource) {
                                     // allow multiply types only for resources
-                                    var _parents = self.community.parents || [];
+                                    var _parents = $rootScope.global.community.parents || [];
                                     self.communityForm['parent'] = _parents.filter(function(item) {
                                         return item !== null;
                                     });
                                 }
                                 else {
-                                    self.communityForm['parent'] = self.community.parents[0][0].toUpperCase() + self.community.parents[0].slice(1);
+                                    self.communityForm['parent'] = $rootScope.global.community.parents[0][0].toUpperCase() + $rootScope.global.community.parents[0].slice(1);
                                 }
                         }
                     }
@@ -780,7 +780,7 @@ function CommunityController($uibModalInstance, $mixpanel, sweet, community_serv
             type: "warning",
             showCancelButton: true,
             confirmButtonColor: "#DD6B55",
-            confirmButtonText: "Yes, delete " + self.community.name + "!",
+            confirmButtonText: "Yes, delete " + $rootScope.global.community.name + "!",
             closeOnConfirm: false
         }, function () {
 
@@ -798,7 +798,7 @@ function CommunityController($uibModalInstance, $mixpanel, sweet, community_serv
                     } else {
                         sweet.show({
                             title: "Deleted!",
-                            text: "The " + self.community.name + " community is gone.",
+                            text: "The " + $rootScope.global.community.name + " community is gone.",
                             type: "success",
                             closeOnConfirm: true
                         });

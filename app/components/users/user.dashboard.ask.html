@@ -7,7 +7,7 @@
     </div>
 </form>
 <span style="text-align: center;" ng-if="!nav.user">
-    <h1>Join the startup community in {{ (nav.communities[nav.location.profile.home].profile.name | words : 0).slice(0,-1) }} to ask questions.</h1><br>
+    <h1>Join the startup community in {{ (global.communities[global.location.profile.home].profile.name | words : 0).slice(0,-1) }} to ask questions.</h1><br>
     <h2><a class="btn btn-lg btn-info" ng-click="nav.requestInvitation()">Click here to join</a></h2>
 </span>
 <br>

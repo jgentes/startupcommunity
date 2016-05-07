@@ -5,9 +5,9 @@
             <div class="hpanel">
                 <div class="panel-body" style="height: 85px;">
                     <div class="pull-left" style="padding-left:0;">
-                        <a ui-sref="community.dashboard({community_path: nav.community.key, community: nav.community})" style="white-space:nowrap;">
-                            <h2 ng-if="nav.community.community_profiles[nav.location_path]" class="font-light m-b-xs">{{ nav.community.community_profiles[nav.location_path].name }}</h2>
-                            <h2 ng-if="!nav.community.community_profiles[nav.location_path]" class="font-light m-b-xs">{{ nav.community.profile.name }}</h2>
+                        <a ui-sref="community.dashboard({community_path: global.community.key, community: global.community})" style="white-space:nowrap;">
+                            <h2 ng-if="global.community.community_profiles[global.location_path]" class="font-light m-b-xs">{{ global.community.community_profiles[global.location_path].name }}</h2>
+                            <h2 ng-if="!global.community.community_profiles[global.location_path]" class="font-light m-b-xs">{{ global.community.profile.name }}</h2>
                         </a>
                         <div style="float:left;">
                             <small>
@@ -53,7 +53,7 @@
 -->
 
 <div>
-    <div id="dash-tour" tour-step order="0" title="The {{nav.community.profile.name.split(',')[0] }} Startup Community" content="Your community includes people and companies, organized by industry and skillset." placement="top">
+    <div id="dash-tour" tour-step order="0" title="The {{global.community.profile.name.split(',')[0] }} Startup Community" content="Your community includes people and companies, organized by industry and skillset." placement="top">
         <div class="row">
             <div class="col-xs-12 col-sm-4">
                 <div class="hpanel hblue" >
@@ -204,12 +204,12 @@
                     <div class="panel-body" ng-repeat="item in dashboard.top.parents | limitTo: 5">
                         <div class="row">
                             <div class="col-xs-10 forum-heading">
-                                <a ui-sref="community.dashboard({community_path: item.label, community: nav.communities[item.label], query: '*', location_path: nav.location.key})"><h4 style="font-weight: 200;">{{item.label[0].toUpperCase() + item.label.slice(1);}}</h4>
+                                <a ui-sref="community.dashboard({community_path: item.label, community: global.communities[item.label], query: '*', location_path: global.location.key})"><h4 style="font-weight: 200;">{{item.label[0].toUpperCase() + item.label.slice(1);}}</h4>
                                     <uib-progressbar value="item.value" max="dashboard.max" type="success" class="progress-small full" style="margin-top: 7px;"></uib-progressbar>
                                 </a>
                             </div>
                             <div class="col-xs-2 forum-info">
-                                <a ui-sref="community.dashboard({community_path: item.label, community: nav.communities[item.label], query: '*', location_path: nav.location.key})">
+                                <a ui-sref="community.dashboard({community_path: item.label, community: global.communities[item.label], query: '*', location_path: global.location.key})">
                                     <span class="number number-column">{{((item.value / dashboard.max)*100).toFixed(0)}}%</span>
                                 </a>
                             </div>

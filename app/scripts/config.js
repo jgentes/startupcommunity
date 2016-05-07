@@ -516,6 +516,8 @@ angular
         editableOptions.theme = 'bs3';
     })
     .run(function($rootScope, $state, $timeout, $auth) {
+        $rootScope.global = {}; // initialize my global object
+
         $rootScope.$state = $state; // allows use if $state within views
         window.$state = $state; // allows use of $state within console
         $rootScope.$on('$stateChangeError', function (evt, toState, toParams, fromState, fromParams, error) {
