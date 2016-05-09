@@ -28,8 +28,8 @@ function UserController($rootScope, $stateParams, $location, user_service, resul
     $stateParams.query ? query = $stateParams.query : query = '*';
 
     this.url = $stateParams.community_path && $stateParams.location_path ?
-        "({community_path: val, community: users.communities[val], query: '*'})" :
-        "({location_path: val, community: users.communities[val], query: '*'})";
+        "({community_path: val, community: global.communities[val], query: '*'})" :
+        "({location_path: val, community: global.communities[val], query: '*'})";
 
     // THIS IS A DUPLICATE OF NAV.EMBEDDED, SHOULD MOVE TO A SERVICE AND INJECT IN NAV AND USER CONTROLLERS
     try {

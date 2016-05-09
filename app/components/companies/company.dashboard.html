@@ -6,7 +6,7 @@
                 <button ng-if="::nav.user" ui-sref="company.edit" class="btn btn-warning pull-right" style="margin-left:-100px;">Edit</button>
                 <img class="img-circle m-b" ng-show="::profile.company.profile.avatar" style="max-height:100px; max-width:100px;" ng-src="{{::profile.company.profile.avatar}}" alt="{{::profile.company.profile.name}}" onerror="this.src='/public/images/browser_icon.jpg'">
                 <div style="margin:-15px 0;">
-                    <button ng-if="::profile.company.profile.parents[0]" ladda="btnworking" ng-click="btnworking = true" class="ladda-btn btn btn-default btn-xs" ui-sref="community.dashboard({location_path: profile.company.profile.home, community_path: profile.company.profile.parents[0], community: profile.communities[profile.company.profile.parents[0]], query: &quot;&#42;&quot;})">
+                    <button ng-if="::profile.company.profile.parents[0]" ladda="btnworking" ng-click="btnworking = true" class="ladda-btn btn btn-default btn-xs" ui-sref="community.dashboard({location_path: profile.company.profile.home, community_path: profile.company.profile.parents[0], community: global.communities[profile.company.profile.parents[0]], query: &quot;&#42;&quot;})">
                         {{::profile.company.profile.parents[0][0].toUpperCase() + profile.company.profile.parents[0].slice(1);}}
                     </button>
                     <button ng-if="::profile.company.profile.stage" ladda="btnworking" ng-click="btnworking = true" class="ladda-btn btn btn-success btn-xs">

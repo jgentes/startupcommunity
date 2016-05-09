@@ -50,10 +50,7 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
             controller: "NavigationController as nav",
             params: {
                 profile: {},
-                community: {},
-                location: {},
                 top: null,
-                communities: null,
                 user: null,
                 tour: false
             },

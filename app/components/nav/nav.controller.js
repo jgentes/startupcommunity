@@ -7,12 +7,8 @@ angular
 function NavigationController($rootScope, $auth, $state, $window, $location, $stateParams, $uibModal, user_service, community_service, user, sweet, knowtify, errorLogService, newsletter_service) {
 
     if (user && user.token) $auth.setToken(user.token); // update local storage with latest user profile
-    
-    // SENSITIVE VARIABLES THAT AFFECT NAVIGATION AND ALL CHILD TEMPLATES
-    // When used in ui-sref links: location_path affects the url, location affects header and content, community affects header and second url parameter
 
-    var getDeps = function() {
-        console.log('getdeps')
+    var getCommunities = function() {
         if ($stateParams.location_path) $stateParams.location_path = $stateParams.location_path.replace(/\s+/g, '-');
 
         if ($stateParams.communities && ($stateParams.communities.key == $stateParams.location_path)) {
@@ -26,7 +22,6 @@ function NavigationController($rootScope, $auth, $state, $window, $location, $st
     };
 
     var getCommunity = function() {
-        console.log('getcom')
         if (jQuery.isEmptyObject($stateParams.community)) { // if community is passed in via ui-sref, just use that
 
             var pullCommunity = function (community_path) {
@@ -70,29 +65,32 @@ function NavigationController($rootScope, $auth, $state, $window, $location, $st
     };
 
     var getLocation = function() {
-        console.log('getloc')
         if ($rootScope.global.community.type == 'user' || $rootScope.global.community.type == 'company') {
             $rootScope.global.location = $rootScope.global.communities[$rootScope.global.community.profile.home];
             getNavCommunities();
+            getTop();
         } else if(jQuery.isEmptyObject($stateParams.location) || $stateParams.location.type !== 'location') {
             if ($rootScope.global.communities[$stateParams.location_path]) {
                 $rootScope.global.location = $rootScope.global.communities[$stateParams.location_path];
                 getNavCommunities();
+                getTop();
             } else {
                 $rootScope.global.location = {};
                 getNavCommunities();
+                getTop();
             }
         } else if ($stateParams.location.type == 'location') {
             $rootScope.global.location = $stateParams.location;
             getNavCommunities();
+            getTop();
         } else {
             $rootScope.global.location = {};
             getNavCommunities();
+            getTop();
         }
     };
 
     var getNavCommunities = function() {
-        console.log('getnavcom')
         // this logic is mostly to avoid pulling community from db if it can be passed from previous state
         if ($rootScope.global.communities && $rootScope.global.communities.key && $rootScope.global.location && $rootScope.global.location.key) {
             if ($rootScope.global.location.key == $rootScope.global.communities.key) {
@@ -105,7 +103,6 @@ function NavigationController($rootScope, $auth, $state, $window, $location, $st
                 community_service.getCommunity($rootScope.global.location.key)
                     .then(function(response) {
                         $rootScope.global.nav_communities = response.data;
-                        getTop();
                     })
                     .catch(function(response) {
                         console.log(response);
@@ -114,12 +111,10 @@ function NavigationController($rootScope, $auth, $state, $window, $location, $st
 
         } else {
             $rootScope.global.nav_communities = $rootScope.global.communities;
-            getTop();
         }
     };
 
     var getTop = function() {
-        console.log('gettop')
         if ($stateParams.top) {
             $rootScope.global.top = $stateParams.top;
             getCommunityTop();
@@ -136,18 +131,12 @@ function NavigationController($rootScope, $auth, $state, $window, $location, $st
     };
 
     var getCommunityTop = function() {
-        console.log('getcomtop')
-        if ($rootScope.global.community && $rootScope.global.community.key && $rootScope.global.location && $rootScope.global.location.key) {
-            if ($rootScope.global.community.key !== $rootScope.global.location.key && (($rootScope.global.community.type == 'location') || ($rootScope.global.community.resource) || ($rootScope.global.community.type == 'cluster'))) {
-                community_service.getTop($rootScope.global.location.key, $rootScope.global.community.key, $rootScope.global.community)
-                    .then(function(response) {
-                        $rootScope.global.community_top = response.data;
-                        loadNav();
-                    })
-            } else {
-                $rootScope.global.community_top = $rootScope.global.top;
-                loadNav();
-            }
+        if ($rootScope.global.community && $rootScope.global.community.key && $rootScope.global.location && $rootScope.global.location.key && ($rootScope.global.community.key !== $rootScope.global.location.key && (($rootScope.global.community.type == 'location') || ($rootScope.global.community.resource) || ($rootScope.global.community.type == 'cluster')))) {
+            community_service.getTop($rootScope.global.location.key, $rootScope.global.community.key, $rootScope.global.community)
+                .then(function(response) {
+                    $rootScope.global.community_top = response.data;
+                    loadNav();
+                })
         } else {
             $rootScope.global.community_top = $rootScope.global.top;
             loadNav();
@@ -175,7 +164,6 @@ function NavigationController($rootScope, $auth, $state, $window, $location, $st
     var self = this;
 
     var loadNav = function() {
-        console.log('loadnav')
   /*      
         $rootScope.global.community = $stateParams.community && $stateParams.community.key && ($stateParams.community.key !== $stateParams.community_path) && ($stateParams.community.key !== $stateParams.location_path) ?
             $rootScope.global.location :
@@ -184,13 +172,9 @@ function NavigationController($rootScope, $auth, $state, $window, $location, $st
         */
         $rootScope.global.location_path = $stateParams.location_path;
 
-/*
-
-        if (top) {
-            $rootScope.global.nav_top = $rootScope.global.nav_top || top;
+        if ($rootScope.global.top) {
+            $rootScope.global.nav_top = $rootScope.global.nav_top || $rootScope.global.top;
         }
-
-*/
 
         console.log('StateParams Location: ', $stateParams.location ? $stateParams.location.key : null);
         console.log('StateParams Location_Path: ', $stateParams.location_path ? $stateParams.location_path : null);
@@ -378,8 +362,8 @@ function NavigationController($rootScope, $auth, $state, $window, $location, $st
 
         // to avoid duplicate location_path / community_path when navigating to people & companies
         self.nav_url = $stateParams.location_path == $rootScope.global.community.key ?
-            "({location_path: nav.location_path, community: global.community, query: '*', top: global.top, communities: global.communities, user: nav.user })" :
-            "({location_path: nav.location_path, community: global.community, query: '*', community_path: global.community.key, top: global.top, communities: global.communities, user: nav.user })";
+            "({location_path: global.location_path, community: global.community, query: '*', top: global.top, communities: global.communities, user: nav.user })" :
+            "({location_path: global.location_path, community: global.community, query: '*', community_path: global.community.key, top: global.top, communities: global.communities, user: nav.user })";
 
         // to set correct root path when navigating from user or company page
 
@@ -697,7 +681,7 @@ function NavigationController($rootScope, $auth, $state, $window, $location, $st
 
     };
 
-    getDeps();
+    getCommunities();
 
 }
 

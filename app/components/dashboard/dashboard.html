@@ -6,8 +6,8 @@
                 <div class="panel-body" style="height: 85px;">
                     <div class="pull-left" style="padding-left:0;">
                         <a ui-sref="community.dashboard({community_path: global.community.key, community: global.community})" style="white-space:nowrap;">
-                            <h2 ng-if="global.community.community_profiles[nav.location_path]" class="font-light m-b-xs">{{ global.community.community_profiles[nav.location_path].name }}</h2>
-                            <h2 ng-if="!global.community.community_profiles[nav.location_path]" class="font-light m-b-xs">{{ global.community.profile.name }}</h2>
+                            <h2 ng-if="global.community.community_profiles[global.location_path]" class="font-light m-b-xs">{{ global.community.community_profiles[global.location_path].name }}</h2>
+                            <h2 ng-if="!global.community.community_profiles[global.location_path]" class="font-light m-b-xs">{{ global.community.profile.name }}</h2>
                         </a>
                         <div style="float:left;">
                             <small>

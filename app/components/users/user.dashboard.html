@@ -3,23 +3,23 @@
         <div style="padding: 20px 15px;">
             <header class="heading content" style="color:#fff">
                 <a href="javascript:window.location.href=window.location.href" style="color: #eee; font-size: 7px; float: left; margin-left: -40px; margin-top: -12px;">random image</a>
-                <button ng-if="::nav.location_path == nav.user.key" ui-sref="welcome({location: global.location, location_path: global.location.key, go: 'welcome.roles'})" class="btn btn-warning pull-right" style="margin-left:-100px;">Edit Profile</button>
+                <button ng-if="::global.location_path == nav.user.key" ui-sref="welcome({location: global.location, location_path: global.location.key, go: 'welcome.roles'})" class="btn btn-warning pull-right" style="margin-left:-100px;">Edit Profile</button>
                 <img class="img-circle m-b" style="max-height:100px; max-width: 100px;" ng-src="{{::profile.user.profile.avatar || profile.user.profile.linkedin.pictureUrl || '/public/images/blank_avatar.png'}}" alt="{{::profile.user.profile.name}}" onerror="this.src='/public/images/blank_avatar.png'">
                 <div style="margin-top: -12px;">
                     <span ng-repeat="(item, val) in ::profile.user.roles" class="user-role" style="font-size: 24px;"><i ng-attr-title="{{item[0].toUpperCase() + item.slice(1);}}" ng-class="{'pe-7s-paper-plane' : item == 'founder', 'pe-7s-flag' : item == 'leader', 'pe-7s-study' : item == 'mentor', 'pe-7s-gleam' : item == 'investor', 'pe-7s-ball' : item == 'team', 'pe-7s-portfolio' : item == 'provider'}"></i></span>
                 </div>
                 <div style="margin:-15px 0;">
-                    <button ng-if="::profile.user.profile.parents[0]" ladda="btnworking" ng-click="btnworking = true" class="ladda-btn btn btn-default btn-xs" ui-sref="community.dashboard({location_path: profile.user.profile.home, community_path: profile.user.profile.parents[0], community: profile.communities[profile.user.profile.parents[0]], query: &quot;&#42;&quot;})">
+                    <button ng-if="::profile.user.profile.parents[0]" ladda="btnworking" ng-click="btnworking = true" class="ladda-btn btn btn-default btn-xs" ui-sref="community.dashboard({location_path: profile.user.profile.home, community_path: profile.user.profile.parents[0], community: global.communities[profile.user.profile.parents[0]], query: &quot;&#42;&quot;})">
                         {{::profile.user.profile.parents[0][0].toUpperCase() + profile.user.profile.parents[0].slice(1);}}
                     </button>
-                    <button ng-if="::profile.user.profile.home" ladda="btnworking" ng-click="btnworking = true" class="ladda-btn btn btn-success btn-xs" ui-sref="community.dashboard({location_path: profile.user.profile.home, community: profile.communities[profile.user.profile.home], query: &quot;&#42;&quot;})" style="color: #fff;">
-                        {{::profile.communities[profile.user.profile.home].profile.name}}
+                    <button ng-if="::profile.user.profile.home" ladda="btnworking" ng-click="btnworking = true" class="ladda-btn btn btn-success btn-xs" ui-sref="community.dashboard({location_path: profile.user.profile.home, community: global.communities[profile.user.profile.home], query: &quot;&#42;&quot;})" style="color: #fff;">
+                        {{::global.communities[profile.user.profile.home].profile.name}}
                     </button>
-                    <button ng-repeat="(key, val) in ::profile.user.roles.founder" ui-sref="community.dashboard({location_path: key, community: profile.communities[key], query: &quot;&#42;&quot;})" ladda="btnworking" ng-click="btnworking = true" class="ladda-btn btn btn-xs" ng-class="{'btn-danger' : profile.communities[key].type == 'company', 'btn-info' : profile.communities[key].resource, 'btn-primary' : profile.communities[key].type == 'cluster', 'btn-success' : profile.communities[key].type == 'location'}">
-                        <i class="fa {{::profile.communities[key].profile.icon}}"></i> {{::profile.communities[key].profile.name}}
+                    <button ng-repeat="(key, val) in ::profile.user.roles.founder" ui-sref="community.dashboard({location_path: key, community: global.communities[key], query: &quot;&#42;&quot;})" ladda="btnworking" ng-click="btnworking = true" class="ladda-btn btn btn-xs" ng-class="{'btn-danger' : global.communities[key].type == 'company', 'btn-info' : global.communities[key].resource, 'btn-primary' : global.communities[key].type == 'cluster', 'btn-success' : global.communities[key].type == 'location'}">
+                        <i class="fa {{::global.communities[key].profile.icon}}"></i> {{::global.communities[key].profile.name}}
                     </button>
-                    <button ng-repeat="(key, val) in ::profile.user.roles.leader" ng-if="key !== profile.user.profile.home && key !== profile.user.profile.parents[0]" ui-sref="community.dashboard({location_path: key, community: profile.communities[key], query: &quot;&#42;&quot;})" ladda="btnworking" ng-click="btnworking = true" class="ladda-btn btn btn-xs" ng-class="{'btn-danger' : profile.communities[key].type == 'company', 'btn-info' : profile.communities[key].resource, 'btn-primary' : profile.communities[key].type == 'cluster', 'btn-success' : profile.communities[key].type == 'location'}">
-                        <i class="fa {{::profile.communities[key].profile.icon}}"></i> {{::profile.communities[key].profile.name}}
+                    <button ng-repeat="(key, val) in ::profile.user.roles.leader" ng-if="key !== profile.user.profile.home && key !== profile.user.profile.parents[0]" ui-sref="community.dashboard({location_path: key, community: global.communities[key], query: &quot;&#42;&quot;})" ladda="btnworking" ng-click="btnworking = true" class="ladda-btn btn btn-xs" ng-class="{'btn-danger' : global.communities[key].type == 'company', 'btn-info' : global.communities[key].resource, 'btn-primary' : global.communities[key].type == 'cluster', 'btn-success' : global.communities[key].type == 'location'}">
+                        <i class="fa {{::global.communities[key].profile.icon}}"></i> {{::global.communities[key].profile.name}}
                     </button>
                 </div>
                 <h1 style="overflow:hidden; line-height: 1.25;">

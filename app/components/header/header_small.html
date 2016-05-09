@@ -18,7 +18,7 @@
                 </ul>
 
                 <ul ng-if="global.community.type == 'user' || global.community.type == 'company'" class="header-nav" style="margin-left:-40px;" >
-                    <li ng-if="nav.location_path && (global.location.key !== global.community.key)">
+                    <li ng-if="global.location.key !== global.community.key">
                         <a ui-sref="community.dashboard({location_path: global.location.key, community: global.location})">
                             &nbsp;&nbsp;{{ global.location.profile.name.toUpperCase() }}&nbsp;&nbsp;</a>/
                     </li>

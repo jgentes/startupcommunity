@@ -12,11 +12,11 @@
 </span>
 <br>
 <div loading-bars ng-show="profile.working" style="text-align:center; margin-left: -50px; margin-bottom: 15px;"></div>
-<div ng-show="profile.communities.newmessages" class="row" ng-repeat="question in profile.communities.newmessages">
+<div ng-show="global.communities.newmessages" class="row" ng-repeat="question in global.communities.newmessages">
     <div class="col-lg-12" ng-include="'components/users/user.dashboard.ask.questions.html'">
     </div>
 </div>
-<div class="row" ng-repeat="question in profile.communities.messages">
+<div class="row" ng-repeat="question in global.communities.messages">
     <div class="col-lg-12" ng-include="'components/users/user.dashboard.ask.questions.html'">
     </div>
 </div>
