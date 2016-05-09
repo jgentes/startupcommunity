@@ -3,10 +3,8 @@ angular
     .controller('CompanyController', CompanyController)
     .controller('CompanyProfileController', CompanyProfileController);
 
-function CompanyController($stateParams, $state, $location, company_service, result_service, $sce, community, communities) {
+function CompanyController($rootScope, $stateParams, $state, $location, company_service, result_service, $sce) {
 
-    this.community = community;
-    this.communities = communities;
     this.selectedClusters = [];
     this.selectedResources = [];
     this.selectedStage = ['*'];
@@ -18,10 +16,10 @@ function CompanyController($stateParams, $state, $location, company_service, res
     this.resource_page = $state.includes('resource.list');
     this.resource_types = company_service.resource_types();
 
-    if (this.community.type == 'cluster') {
-        if (this.community.community_profiles[$stateParams.location_path]) {
-            var clusterFilter = this.community.community_profiles[$stateParams.location_path].industries;
-        } else clusterFilter = this.community.profile.industries;
+    if ($rootScope.global.community.type == 'cluster') {
+        if ($rootScope.global.community.community_profiles[$stateParams.location_path]) {
+            var clusterFilter = $rootScope.global.community.community_profiles[$stateParams.location_path].industries;
+        } else clusterFilter = $rootScope.global.community.profile.industries;
     } else {
         clusterFilter = [];
         if ($stateParams.community_path && $stateParams.community_path !== $stateParams.location_path) communityFilter.push($stateParams.community_path);
@@ -86,14 +84,14 @@ function CompanyController($stateParams, $state, $location, company_service, res
         }
 
         if (self.selectedClusters.length == 0 && self.selectedResources.length == 0) {
-            if (self.community.community_profiles && self.community.community_profiles[$stateParams.location_path]) {
-                self.selection = self.community.community_profiles[$stateParams.location_path].name;
-            } else self.selection = self.community.profile.name;
+            if ($rootScope.global.community.community_profiles && $rootScope.global.community.community_profiles[$stateParams.location_path]) {
+                self.selection = $rootScope.global.community.community_profiles[$stateParams.location_path].name;
+            } else self.selection = $rootScope.global.community.profile.name;
         } else {
             self.selection = "";
             var selectedCommunities = self.selectedClusters.concat(self.selectedResources);
             for (item in selectedCommunities) {
-                self.selection += self.communities[selectedCommunities[item]].profile.name;
+                self.selection += $rootScope.global.communities[selectedCommunities[item]].profile.name;
                 if (item < selectedCommunities.length - 1) {
                     if (item < selectedCommunities.length - 2 ) {
                         self.selection += ', ';
@@ -108,13 +106,13 @@ function CompanyController($stateParams, $state, $location, company_service, res
             self.title = 'Companies matching <strong>"' + query + '"</strong> ';
             self.title += 'in <strong>';
             if ($stateParams.community_path && $stateParams.location_path) {
-                if (self.community.community_profiles && self.community.community_profiles[$stateParams.location_path]) {
-                    self.title += self.community.community_profiles[$stateParams.location_path].name +'</strong>';
-                } else self.title += self.community.profile.name +'</strong>';
-            } else self.title += self.communities[$stateParams.location_path].profile.name + '</strong>';
+                if ($rootScope.global.community.community_profiles && $rootScope.global.community.community_profiles[$stateParams.location_path]) {
+                    self.title += $rootScope.global.community.community_profiles[$stateParams.location_path].name +'</strong>';
+                } else self.title += $rootScope.global.community.profile.name +'</strong>';
+            } else self.title += $rootScope.global.communities[$stateParams.location_path].profile.name + '</strong>';
         }
 
-        var pageTitle = '<br><small>' + self.community.profile.name + '</small>';
+        var pageTitle = '<br><small>' + $rootScope.global.community.profile.name + '</small>';
         self.pageTitle = $sce.trustAsHtml(pageTitle);
     };
 
@@ -211,13 +209,12 @@ function CompanyController($stateParams, $state, $location, company_service, res
     };
 }
 
-function CompanyProfileController($mixpanel, communities, user_service, result_service, location, $location, sweet, $window, $http) {
+function CompanyProfileController($rootScope, $mixpanel, user_service, result_service, location, $location, sweet, $window, $http) {
 
     $mixpanel.track('Viewed Company');
 
     var self = this;
-    this.communities = communities;
-    this.company = this.communities[this.communities.key];
+    this.company = $rootScope.global.communities[$rootScope.global.communities.key];
     this.team_panels = user_service.team_panels();
 
     this.remove = function(role) {

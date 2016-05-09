@@ -2,9 +2,9 @@ angular
     .module('startupcommunity')
     .controller('WelcomeController', WelcomeController);
 
-function WelcomeController($auth, $q, $http, $mixpanel, $stateParams, $state, sweet, community, location, user_service, community_service, user) {
+function WelcomeController($rootScope, $auth, $q, $http, $mixpanel, $stateParams, $state, sweet, user_service, community_service, user) {
     var self = this;
-    this.location = jQuery.isEmptyObject(location) ? community.profile.name : location.profile.name.split(',')[0];
+    $rootScope.global.location = jQuery.isEmptyObject($rootScope.global.location) ? $rootScope.global.community.profile.name : $rootScope.global.location.profile.name.split(',')[0];
     this.auth = false;
     this.working = false; // used for waiting indicator
     var community_path = $stateParams.community_path ? $stateParams.community_path : $stateParams.location_path;
@@ -12,7 +12,6 @@ function WelcomeController($auth, $q, $http, $mixpanel, $stateParams, $state, sw
     this.industries = community_service.industries();
     this.parents = []; // need a placeholder until next call is resolved
     this.parents = community_service.parents();
-    this.community = community; // used in add company (not welcome) modal
     this.user = user;
     this.quote = true;
     this.submitted = false;

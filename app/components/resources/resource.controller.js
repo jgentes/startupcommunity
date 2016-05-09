@@ -3,20 +3,18 @@ angular
     .controller('ResourceController', ResourceController)
     .controller('EditCompanyController', EditCompanyController);
 
-function ResourceController(location, communities, nav_communities, company_service, top, user, $auth) {
+function ResourceController($rootScope, nav_communities, company_service, top, user, $auth) {
     var self = this;
 
     this.top = top || {}; // this is passed in to avoid re-pulling top on nav click if possible
     this.resources = this.resources || {};
-    this.communities = communities;
     this.user = $auth.isAuthenticated() ? user : {};
-    this.location = location;
-    this.location_key = this.location.key;
-    this.nav_jump = (this.location && this.location.type === 'location') ||
-                    ((this.community.type === 'user' || this.community.type === 'company') &&
-                    (this.location && this.location.type === 'location')) ?
-        "({community_path: item.key, community: item, query: '*', location_path: resources.location.key, top: resources.top, communities: resources.communities, user: resources.user })" :
-        "({community_path: item.key, community: item, query: '*', location_path: resources.user.profile.home, top: resources.top, communities: resources.communities, user: resources.user })";
+    $rootScope.global.location_key = $rootScope.global.location.key;
+    this.nav_jump = ($rootScope.global.location && $rootScope.global.location.type === 'location') ||
+                    (($rootScope.global.community.type === 'user' || $rootScope.global.community.type === 'company') &&
+                    ($rootScope.global.location && $rootScope.global.location.type === 'location')) ?
+        "({community_path: item.key, community: item, query: '*', location_path: resources.location.key, top: resources.top, communities: global.communities, user: resources.user })" :
+        "({community_path: item.key, community: item, query: '*', location_path: resources.user.profile.home, top: resources.top, communities: global.communities, user: resources.user })";
 
     this.types = company_service.resource_types();
     var resources = nav_communities;
@@ -33,12 +31,10 @@ function ResourceController(location, communities, nav_communities, company_serv
     
 }
 
-function EditCompanyController(user, sweet, $state, $stateParams, $q, $window, $http, community, location, user_service, company_service, community_service) {
+function EditCompanyController($rootScope, user, sweet, $state, $q, $window, $http, user_service, company_service, community_service) {
     var self = this;
     
     this.step = 1;
-    this.location = location || $stateParams.location;
-    this.community = community;
     this.user = user;
     this.update = false; // used if company already exists
     this.working = false; // used for waiting indicator
@@ -49,8 +45,8 @@ function EditCompanyController(user, sweet, $state, $stateParams, $q, $window, $
     this.industries = []; // need a placeholder until next call is resolved
     this.industries = community_service.industries();
     this.selectedCompany = {
-        city: self.location.profile.city,
-        state: self.location.profile.state
+        city: $rootScope.global.location.profile.city,
+        state: $rootScope.global.location.profile.state
     };
 
     this.stages = [ 'Bootstrap', 'Seed', 'Series A', 'Series B', 'Later'];
@@ -59,18 +55,18 @@ function EditCompanyController(user, sweet, $state, $stateParams, $q, $window, $
 
     if (!this.selectedRole) this.selectedRole = 'not involved';
        
-    this.is_resource = ($state.current.name == 'resource.add') || (self.community.resource == true);
+    this.is_resource = ($state.current.name == 'resource.add') || ($rootScope.global.community && $rootScope.global.community.resource);
 
     this.showCurrent = function () {
 
-        self.selectedCompany = self.community.profile;
-        self.selectedCompany['url'] = self.community.key;
-        self.selectedCompany['resource_types'] = self.community.resource_types;
+        self.selectedCompany = $rootScope.global.community.profile;
+        self.selectedCompany['url'] = $rootScope.global.community.key;
+        self.selectedCompany['resource_types'] = $rootScope.global.community.resource_types;
         
-        if (self.community.profile && self.community.profile.address) {
-            self.selectedCompany['street'] = self.community.profile.address.street;
-            self.selectedCompany['city'] = self.community.profile.address.city;
-            self.selectedCompany['state'] = self.community.profile.address.state;
+        if ($rootScope.global.community.profile && $rootScope.global.community.profile.address) {
+            self.selectedCompany['street'] = $rootScope.global.community.profile.address.street;
+            self.selectedCompany['city'] = $rootScope.global.community.profile.address.city;
+            self.selectedCompany['state'] = $rootScope.global.community.profile.address.state;
         }
 
         if (self.selectedCompany.parents && self.selectedCompany.parents.length) {
@@ -88,7 +84,7 @@ function EditCompanyController(user, sweet, $state, $stateParams, $q, $window, $
 
         for (role in user.roles) {
             for (co in user.roles[role]) {
-                if (co == self.community.key) {
+                if (co == $rootScope.global.community.key) {
                     self.selectedRole = role;
                     break;
                 }
@@ -98,7 +94,7 @@ function EditCompanyController(user, sweet, $state, $stateParams, $q, $window, $
     };
 
     // check if editing existing record
-    if (this.community && (this.community.type == 'company' || this.community.type == 'resource')) {
+    if ($rootScope.global.community && ($rootScope.global.community.type == 'company' || $rootScope.global.community.resource)) {
         this.update = true;
         this.showCurrent();
     }
@@ -135,11 +131,11 @@ function EditCompanyController(user, sweet, $state, $stateParams, $q, $window, $
         self.working = true;
         var role = self.selectedRole == 'not involved' ? undefined : self.selectedRole;
 
-        var community_path = self.location.key; // resources can only be created in locations (for now)
+        var community_path = $rootScope.global.location.key; // resources can only be created in locations (for now)
 
         self.selectedCompany.url = self.selectedCompany.url || self.selectedCompany.name.toLowerCase().replace(/\s+/g, '-'); // in case they changed it
 
-        company_service.addCompany(self.selectedCompany, role, self.location.key, community_path, self.update ? self.community.key : undefined)
+        company_service.addCompany(self.selectedCompany, role, $rootScope.global.location.key, community_path, self.update ? $rootScope.global.community.key : undefined)
             .then(function(response) {
                 self.working = false;
 

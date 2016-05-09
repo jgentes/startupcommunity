@@ -536,7 +536,7 @@ angular
                 $('#minorsplash').css('display', 'none');
             }, 500);
         });
-/*
+
 
         $rootScope.$on('$stateChangeStart',
             function(event, toState, toParams, fromState, fromParams){
@@ -544,9 +544,9 @@ angular
                 //console.log(fromState);
                 console.log('to:' + toState.name);
                 //console.log(toState);
-                console.log(event);
+                //console.log(event);
             })
-*/
+
 
     })
 

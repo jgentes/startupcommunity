@@ -5,10 +5,9 @@ angular
     .controller('InviteUserController', InviteUserController)
     .controller('ContactUserController', ContactUserController);
 
-function UserController($stateParams, $location, user_service, result_service, $sce, community, communities) {
+function UserController($rootScope, $stateParams, $location, user_service, result_service, $sce) {
     //todo usercontroller and company controller are dups, need to be consolidated
-    this.community = community;
-    this.communities = communities;
+
     this.selectedClusters = [];
     this.selectedResources = [];
     this.selectedRole = ['*'];
@@ -17,10 +16,10 @@ function UserController($stateParams, $location, user_service, result_service, $
     var query;
     var communityFilter = [$stateParams.location_path];
 
-    if (this.community.type == 'cluster') {
-        if (this.community.community_profiles[$stateParams.location_path]) {
-            var clusterFilter = this.community.community_profiles[$stateParams.location_path].industries;
-        } else clusterFilter = this.community.profile.industries;
+    if ($rootScope.global.community.type == 'cluster') {
+        if ($rootScope.global.community.community_profiles[$stateParams.location_path]) {
+            var clusterFilter = $rootScope.global.community.community_profiles[$stateParams.location_path].industries;
+        } else clusterFilter = $rootScope.global.community.profile.industries;
     } else {
         clusterFilter = [];
         if ($stateParams.community_path && $stateParams.community_path !== $stateParams.location_path) communityFilter.push($stateParams.community_path);
@@ -83,14 +82,14 @@ function UserController($stateParams, $location, user_service, result_service, $
         }
 
         if (self.selectedClusters.length == 0 && self.selectedResources.length == 0) {
-            if (self.community.community_profiles && self.community.community_profiles[$stateParams.location_path]) {
-                self.selection = self.community.community_profiles[$stateParams.location_path].name;
-            } else self.selection = self.community.profile.name;
+            if ($rootScope.global.community.community_profiles && $rootScope.global.community.community_profiles[$stateParams.location_path]) {
+                self.selection = $rootScope.global.community.community_profiles[$stateParams.location_path].name;
+            } else self.selection = $rootScope.global.community.profile.name;
         } else {
             self.selection = "";
             var selectedCommunities = self.selectedClusters.concat(self.selectedResources);
             for (item in selectedCommunities) {
-                self.selection += self.communities[selectedCommunities[item]].profile.name;
+                self.selection += $rootScope.global.communities[selectedCommunities[item]].profile.name;
                 if (item < selectedCommunities.length - 1) {
                     if (item < selectedCommunities.length - 2 ) {
                         self.selection += ', ';
@@ -105,13 +104,13 @@ function UserController($stateParams, $location, user_service, result_service, $
             self.title = 'People matching <strong>"' + query + '"</strong> ';
             self.title += 'in <strong>';
             if ($stateParams.community_path && $stateParams.location_path) {
-                if (self.community.community_profiles && self.community.community_profiles[$stateParams.location_path]) {
-                    self.title += self.community.community_profiles[$stateParams.location_path].name +'</strong>';
-                } else self.title += self.community.profile.name +'</strong>';
-            } else self.title += self.communities[$stateParams.location_path].profile.name + '</strong>';
+                if ($rootScope.global.community.community_profiles && $rootScope.global.community.community_profiles[$stateParams.location_path]) {
+                    self.title += $rootScope.global.community.community_profiles[$stateParams.location_path].name +'</strong>';
+                } else self.title += $rootScope.global.community.profile.name +'</strong>';
+            } else self.title += $rootScope.global.communities[$stateParams.location_path].profile.name + '</strong>';
         }
 
-        var pageTitle = '<br><small>' + self.community.profile.name + '</small>';
+        var pageTitle = '<br><small>' + $rootScope.global.community.profile.name + '</small>';
         self.pageTitle = $sce.trustAsHtml(pageTitle);
     };
 
@@ -230,20 +229,18 @@ function ContactUserController($uibModalInstance, notify_service, sweet, communi
     };
 }
 
-function UserProfileController($stateParams, $http, $uibModal, $mixpanel, user, user_service, message_service, community, communities) {
+function UserProfileController($rootScope, $stateParams, $http, $uibModal, $mixpanel, user, user_service, message_service) {
 
     if (!jQuery.isEmptyObject($stateParams.profile)) {
         this.user = $stateParams.profile;
-    } else if (community && community.type == "user") {
-        this.user = community;
+    } else if ($rootScope.global.community && $rootScope.global.community.type == "user") {
+        this.user = $rootScope.global.community;
     } else this.user = user;
 
     this.loggedin = !!user;
 
     var self = this;
-    this.community = community;
-    this.communities = communities;
-    this.location = communities[this.community.profile.home];
+    $rootScope.global.location = $rootScope.global.communities[$rootScope.global.community.profile.home];
     this.reply = {};
 
     this.companies = { "count" : {}};
@@ -252,14 +249,14 @@ function UserProfileController($stateParams, $http, $uibModal, $mixpanel, user, 
     
     for (role in this.user.roles) {
         for (comm in this.user.roles[role]) {
-            if (this.communities[comm] && this.communities[comm].type == 'company') {
+            if ($rootScope.global.communities[comm] && $rootScope.global.communities[comm].type == 'company') {
                 if (!this.companies[role]) this.companies[role] = {};
                 if (!this.companies.count[role]) this.companies.count[role] = 0;
                 this.companies[role][comm] = {
                     "path": {
                         "key": comm
                     },
-                    "value" : this.communities[comm]
+                    "value" : $rootScope.global.communities[comm]
                 };
                 ++ this.companies.count[role];
             }
@@ -285,7 +282,7 @@ function UserProfileController($stateParams, $http, $uibModal, $mixpanel, user, 
                     return community_key;
                 },
                 location_key: function() {
-                    return self.location.key;
+                    return $rootScope.global.location.key;
                 }
             }
         });
@@ -315,8 +312,8 @@ function UserProfileController($stateParams, $http, $uibModal, $mixpanel, user, 
                         self.alert = {type: 'danger', message: String(response.data.message)};
                     } else {
                         self.working = false;
-                        if (!self.communities.newmessages) self.communities.newmessages = {};
-                        self.communities.newmessages[response.data.key] = response.data;
+                        if (!$rootScope.global.communities.newmessages) $rootScope.global.communities.newmessages = {};
+                        $rootScope.global.communities.newmessages[response.data.key] = response.data;
                         $http.get('/api/2.1/community/' + self.user.key); // refresh outdated cache
                     }
 
@@ -353,9 +350,9 @@ function UserProfileController($stateParams, $http, $uibModal, $mixpanel, user, 
                         self.alert = {type: 'danger', message: String(response.data.message)};
                     } else {
                         self.working[parent.key] = false;
-                        if (self.communities.messages[parent.key]) {
-                            self.communities.messages[parent.key].replies.push(response.data);
-                        } else self.communities.newmessages[parent.key].replies.push(response.data);
+                        if ($rootScope.global.communities.messages[parent.key]) {
+                            $rootScope.global.communities.messages[parent.key].replies.push(response.data);
+                        } else $rootScope.global.communities.newmessages[parent.key].replies.push(response.data);
                         $http.get('/api/2.1/community/' + self.user.key); // refresh outdated cache
                     }
 
@@ -369,12 +366,9 @@ function UserProfileController($stateParams, $http, $uibModal, $mixpanel, user, 
     }
 }
 
-function InviteUserController($mixpanel, user, user_service, community_service, community, communities, location) {
+function InviteUserController($rootScope, $mixpanel, user, user_service, community_service) {
     var self = this;
     this.user = user;
-    this.community = community;
-    this.communities = communities;
-    this.location = location;
 
     var leader = [];
 
@@ -388,7 +382,7 @@ function InviteUserController($mixpanel, user, user_service, community_service, 
             });
     } else self.resources = {};
 
-    if (this.community.type == 'cluster' || this.community.resource && location) this.community = location;
+    if ($rootScope.global.community.type == 'cluster' || $rootScope.global.community.resource && $rootScope.global.location) $rootScope.global.community = $rootScope.global.location;
 
     this.inviteUser = function() {
 
@@ -415,7 +409,7 @@ function InviteUserController($mixpanel, user, user_service, community_service, 
 
                     if (user) {
 
-                        user_service.inviteUser(formdata.email, formdata.message, location.profile.name, location.key, formdata.resources)
+                        user_service.inviteUser(formdata.email, formdata.message, $rootScope.global.location.profile.name, $rootScope.global.location.key, formdata.resources)
                             .then(function(response) {
                                 self.working = false;
                                 self.form = {
@@ -439,7 +433,7 @@ function InviteUserController($mixpanel, user, user_service, community_service, 
                                 self.alert = { type: 'danger', message: String(error.data.message) };
                             })
                     } else {
-                        user_service.join(formdata.email, formdata.message, location.profile.name, location.key)
+                        user_service.join(formdata.email, formdata.message, $rootScope.global.location.profile.name, $rootScope.global.location.key)
                             .then(function(response) {
                                 self.working = false;
                                 self.form = {

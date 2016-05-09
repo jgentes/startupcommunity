@@ -7,7 +7,7 @@ angular
 function NavigationController($rootScope, $auth, $state, $window, $location, $stateParams, $uibModal, user_service, community_service, user, sweet, location, community, communities, nav_communities, top, knowtify, errorLogService, newsletter_service) {
 
     if (user && user.token) $auth.setToken(user.token); // update local storage with latest user profile
-
+    
     // SENSITIVE VARIABLES THAT AFFECT NAVIGATION AND ALL CHILD TEMPLATES
     // When used in ui-sref links: location_path affects the url, location affects header and content, community affects header and second url parameter
     try { // catch any initial db connectivity problems
@@ -22,6 +22,8 @@ function NavigationController($rootScope, $auth, $state, $window, $location, $st
             (community.key !== $rootScope.global.location.key ?
                 community :
                 $rootScope.global.location) :
+        $rootScope.global.community.key && ($rootScope.global.community.key !== $rootScope.global.community_path) && ($rootScope.global.community.key !== $rootScope.global.community_path) ?
+            $rootScope.global.location :
             $stateParams.community;
 
         $rootScope.global.location_path = $stateParams.location_path || $stateParams.location.key || $rootScope.global.community.key;
@@ -30,6 +32,16 @@ function NavigationController($rootScope, $auth, $state, $window, $location, $st
         errorLogService('NavController Catch27: ' + err);
         $state.go('404');
     }
+
+    console.log('StateParams Location: ', $stateParams.location ? $stateParams.location.key : null);
+    console.log('StateParams Location_Path: ', $stateParams.location_path ? $stateParams.location_path : null);
+    console.log('StateParams Community: ', $stateParams.community ? $stateParams.community.key : null);
+    console.log('StateParams Community_Path: ', $stateParams.community_path ? $stateParams.community_path : null);
+
+    console.log('Nav RootScope Location: ', $rootScope.global.location ? $rootScope.global.location.key : null);
+    console.log('Nav RootScope Location_Path: ', $rootScope.global.location_path ? $rootScope.global.location_path : null);
+    console.log('Nav RootScope Community: ', $rootScope.global.community ? $rootScope.global.community.key : null);
+    console.log('Nav RootScope Community_Path: ', $rootScope.global.community_path ? $rootScope.global.community_path : null);
 
     // *** ROUTING OF ROOT PATHS ***
     this.state = $state; // used in view because path doesn't always update properly.. esp. for /people
@@ -78,11 +90,11 @@ function NavigationController($rootScope, $auth, $state, $window, $location, $st
 
     // PRIMARY LEFT-NAV ITEM LIST
 
-    this.communities = communities; // used in company list views
+    $rootScope.global.communities = communities; // used in company list views
     this.nav_communities = nav_communities;
     this.loaders = {};
 
-    if (!$rootScope.global.community) $rootScope.global.community = this.communities[$rootScope.global.location_path];
+    if (!$rootScope.global.community) $rootScope.global.community = $rootScope.global.communities[$rootScope.global.location_path];
     if (!$rootScope.global.community) {
         // if still no community, there's a problem, reload the app
         $window.location.reload();
@@ -153,8 +165,8 @@ function NavigationController($rootScope, $auth, $state, $window, $location, $st
             switch (this.nav_communities[item].type) {
                 case "location":
                     if (item !== $rootScope.global.location.key) {
-                        if (!this.locations) this.locations = {};
-                        this.locations[item] = this.nav_communities[item];
+                        if (!$rootScope.global.locations) $rootScope.global.locations = {};
+                        $rootScope.global.locations[item] = this.nav_communities[item];
                     }
                     break;
                 case "cluster":
@@ -207,7 +219,7 @@ function NavigationController($rootScope, $auth, $state, $window, $location, $st
     // BREADCRUMBS
     if ($rootScope.global.community.type == "user") {
         // note this changes location for nav items below
-        if ($rootScope.global.location.key == $rootScope.global.community.key) $rootScope.global.location = this.communities[$rootScope.global.community.profile.home];
+        if ($rootScope.global.location.key == $rootScope.global.community.key) $rootScope.global.location = $rootScope.global.communities[$rootScope.global.community.profile.home];
     }
 
     // to avoid duplicate location_path / community_path when navigating to people & companies
@@ -357,7 +369,7 @@ function NavigationController($rootScope, $auth, $state, $window, $location, $st
                     return $rootScope.global.location;
                 },
                 communities: function() {
-                    return self.communities;
+                    return $rootScope.global.communities;
                 }
             }
         });
@@ -406,11 +418,11 @@ function NavigationController($rootScope, $auth, $state, $window, $location, $st
                     return $rootScope.global.location;
                 },
                 communities: function() {
-                    return self.communities;
+                    return $rootScope.global.communities;
                 },
                 location: function() {
                     if ($rootScope.global.location.resource || $rootScope.global.location.type == 'cluster') {
-                        return self.communities[$rootScope.global.location.profile.home];
+                        return $rootScope.global.communities[$rootScope.global.location.profile.home];
                     } else return $rootScope.global.location;
                 }
             }
@@ -434,7 +446,7 @@ function NavigationController($rootScope, $auth, $state, $window, $location, $st
                     return $rootScope.global.community;
                 },
                 communities: function() {
-                    return self.communities;
+                    return $rootScope.global.communities;
                 },
                 location: function() {
                     return $rootScope.global.location;
@@ -619,7 +631,7 @@ function CommunityController($uibModalInstance, $mixpanel, sweet, community_serv
 
     $rootScope.global.location = location;
     var loc_key = location.key;
-    this.communityForm = {"name":""}; // to avoid 'undefined' for initial url
+    $rootScope.global.communityForm = {"name":""}; // to avoid 'undefined' for initial url
     var self = this;
     this.update = false;
 
@@ -651,7 +663,7 @@ function CommunityController($uibModalInstance, $mixpanel, sweet, community_serv
                 if (community && community.community_profiles && community.community_profiles[loc_key]) {
                     self.update = true;
                     $rootScope.global.community = community.community_profiles[loc_key];
-                    self.communityForm = {
+                    $rootScope.global.communityForm = {
                         "name": $rootScope.global.community.name,
                         "headline": $rootScope.global.community.headline,
                         "industries": $rootScope.global.community.industries,
@@ -661,21 +673,21 @@ function CommunityController($uibModalInstance, $mixpanel, sweet, community_serv
                     if ($rootScope.global.community.parents) {
                         switch ($rootScope.global.community.parents[0]) {
                             case 'consumer-goods':
-                                self.communityForm['parent'] = 'Consumer Goods';
+                                $rootScope.global.communityForm['parent'] = 'Consumer Goods';
                                 break;
                             case 'non-profit':
-                                self.communityForm['parent'] = 'Non-Profit';
+                                $rootScope.global.communityForm['parent'] = 'Non-Profit';
                                 break;
                             default:
                                 if (community.resource) {
                                     // allow multiply types only for resources
                                     var _parents = $rootScope.global.community.parents || [];
-                                    self.communityForm['parent'] = _parents.filter(function(item) {
+                                    $rootScope.global.communityForm['parent'] = _parents.filter(function(item) {
                                         return item !== null;
                                     });
                                 }
                                 else {
-                                    self.communityForm['parent'] = $rootScope.global.community.parents[0][0].toUpperCase() + $rootScope.global.community.parents[0].slice(1);
+                                    $rootScope.global.communityForm['parent'] = $rootScope.global.community.parents[0][0].toUpperCase() + $rootScope.global.community.parents[0].slice(1);
                                 }
                         }
                     }
@@ -690,9 +702,9 @@ function CommunityController($uibModalInstance, $mixpanel, sweet, community_serv
 
         if (self.form.$valid) {
 
-            if (self.communityForm.url) {
+            if ($rootScope.global.communityForm.url) {
                 try {
-                    var encodedUrl = self.communityForm.url.toLowerCase().replace(/\s+/g, '-');
+                    var encodedUrl = $rootScope.global.communityForm.url.toLowerCase().replace(/\s+/g, '-');
                 }
                 catch (e) {
                     sweet.show({
@@ -703,23 +715,23 @@ function CommunityController($uibModalInstance, $mixpanel, sweet, community_serv
                 }
             }
             
-            if (self.communityForm.parent) {
-                var parents = angular.isArray(self.communityForm.parent) ? self.communityForm.parent : [self.communityForm.parent.toLowerCase()];
+            if ($rootScope.global.communityForm.parent) {
+                var parents = angular.isArray($rootScope.global.communityForm.parent) ? $rootScope.global.communityForm.parent : [$rootScope.global.communityForm.parent.toLowerCase()];
             } else parents = [];
 
             var newCommunity = {
                 type: community.type,
                 profile: {
-                    name: self.communityForm.name,
-                    headline: self.communityForm.headline,
+                    name: $rootScope.global.communityForm.name,
+                    headline: $rootScope.global.communityForm.headline,
                     parents: parents
                 },
-                resource: self.communityForm.resource ? self.communityForm.resource.key : "",
-                url: encodedUrl || self.communityForm.name.toLowerCase().replace(/\s+/g, '-')
+                resource: $rootScope.global.communityForm.resource ? $rootScope.global.communityForm.resource.key : "",
+                url: encodedUrl || $rootScope.global.communityForm.name.toLowerCase().replace(/\s+/g, '-')
             };
 
             if (community.type == 'cluster') {
-                newCommunity.profile['industries'] = self.communityForm.industries;
+                newCommunity.profile['industries'] = $rootScope.global.communityForm.industries;
             }
 
             if (community.community_profiles && community.community_profiles[loc_key] && community.community_profiles[loc_key].embed) {
