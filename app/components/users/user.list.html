@@ -62,7 +62,7 @@
                             <a><i class="fa fa-fw fa-globe themed-color-dark icon-push"></i> {{users.community.profile.name}}</a>
                         </li>
                         <hr style="margin: 10px 0 10px 0;">
-                        <li ng-if="users.community.type !== 'cluster'" ng-repeat="cluster in nav.top.parents" ng-class="{'active':users.selectedClusters.indexOf(cluster.label) >= 0}" ng-click="users.loadingCluster=true;  users.allClusters=false; users.filterClusters(cluster.label);">
+                        <li ng-if="users.community.type !== 'cluster'" ng-repeat="cluster in global.top.parents" ng-class="{'active':users.selectedClusters.indexOf(cluster.label) >= 0}" ng-click="users.loadingCluster=true;  users.allClusters=false; users.filterClusters(cluster.label);">
                             <a>{{cluster.label[0].toUpperCase() + cluster.label.slice(1)}}</a>
                         </li>
 

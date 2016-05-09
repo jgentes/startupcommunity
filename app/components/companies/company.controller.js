@@ -10,6 +10,12 @@ function CompanyController($rootScope, $stateParams, $state, $location, company_
     this.selectedStage = ['*'];
     this.selectedType = ['*'];
 
+    $rootScope.global.community = $stateParams.community && $stateParams.community.key && ($stateParams.community.key !== $stateParams.community_path) && ($stateParams.community.key !== $stateParams.location_path) ?
+        $rootScope.global.location :
+        $rootScope.global.community;
+
+    $rootScope.global.path = $location.path().replace(/\/$/, "");
+
     var self = this; // for accessing 'this' in child functions
     var query;
     var communityFilter = [$stateParams.location_path];

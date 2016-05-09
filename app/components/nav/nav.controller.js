@@ -4,352 +4,544 @@ angular
     .controller('SettingsController', SettingsController)
     .controller('EmbedSettingsController', EmbedSettingsController);
 
-function NavigationController($rootScope, $auth, $state, $window, $location, $stateParams, $uibModal, user_service, community_service, user, sweet, location, community, communities, nav_communities, top, knowtify, errorLogService, newsletter_service) {
+function NavigationController($rootScope, $auth, $state, $window, $location, $stateParams, $uibModal, user_service, community_service, user, sweet, knowtify, errorLogService, newsletter_service) {
 
     if (user && user.token) $auth.setToken(user.token); // update local storage with latest user profile
     
     // SENSITIVE VARIABLES THAT AFFECT NAVIGATION AND ALL CHILD TEMPLATES
     // When used in ui-sref links: location_path affects the url, location affects header and content, community affects header and second url parameter
-    try { // catch any initial db connectivity problems
-/*
-        if (jQuery.isEmptyObject(location)) {
-            if (community.type !== 'location' && community.profile && community.profile.home) {
-                $rootScope.global.location = communities[community.profile.home];
-            } else $rootScope.global.location = community;
-        } else $rootScope.global.location = location;
 
-        $rootScope.global.community = jQuery.isEmptyObject($stateParams.community) ?
-            (community.key !== $rootScope.global.location.key ?
-                community :
-                $rootScope.global.location) :
-        $rootScope.global.community.key && ($rootScope.global.community.key !== $stateParams.community_path) ?
-            $rootScope.global.location :
-            $stateParams.community;
+    var getDeps = function() {
+        console.log('getdeps')
+        if ($stateParams.location_path) $stateParams.location_path = $stateParams.location_path.replace(/\s+/g, '-');
 
-        $stateParams.location_path = $stateParams.location_path || $stateParams.location.key || $rootScope.global.community.key;
-        */
+        if ($stateParams.communities && ($stateParams.communities.key == $stateParams.location_path)) {
+            $rootScope.global.communities = $stateParams.communities;
+            getCommunity();
+        } else community_service.getCommunity($stateParams.location_path)
+            .then(function(response) {
+                $rootScope.global.communities = response.data;
+                getCommunity();
+            });
+    };
 
-        $rootScope.global.location = location;
+    var getCommunity = function() {
+        console.log('getcom')
+        if (jQuery.isEmptyObject($stateParams.community)) { // if community is passed in via ui-sref, just use that
+
+            var pullCommunity = function (community_path) {
+                if ($rootScope.global.communities[community_path]) { // if location_path has already been pulled, use that
+                    $rootScope.global.community = $rootScope.global.communities[community_path]; // this should also avoid re-pull for /people and /companies
+                    getLocation();
+                } else {
+                    community_service.getKey(community_path)
+                        .then(function(response) {
+                            $rootScope.global.community = response.data;
+                            getLocation();
+                        })
+                }
+            };
+
+            if (jQuery.isEmptyObject($stateParams.profile)) {
+                // set community based on type, determined by URL
+                var url = $location.path().replace(/\/$/, "").split('/'),
+                    lastitem = url.pop(),
+                    root = url.pop();
+
+                if (lastitem == "people" || lastitem == "companies" || lastitem == "search" || lastitem == "invite" || lastitem == "add" || lastitem == "welcome") {
+                    if (lastitem == "invite" || lastitem == "add") {
+                        $rootScope.global.community = $rootScope.global.communities[url.pop()];
+                        getLocation();
+                        // return preceding url path as community, such as tech for 'bend-or/tech/people'
+                    } else if ($rootScope.global.communities[root]) {
+                        $rootScope.global.community = $rootScope.global.communities[root];
+                        getLocation();
+                    } else pullCommunity(root);
+                } else if ($rootScope.global.communities[lastitem] && ($rootScope.global.communities[lastitem].type == "cluster" || $rootScope.global.communities[lastitem].resource)) {
+                    $rootScope.global.community = $rootScope.global.communities[lastitem]; // return tech in 'bend-or/tech'
+                    getLocation();
+                } else pullCommunity($stateParams.location_path);
+            } else pullCommunity($stateParams.location_path);
+
+        } else {
+            $rootScope.global.community = $stateParams.community;
+            getLocation();
+        }
+    };
+
+    var getLocation = function() {
+        console.log('getloc')
+        if ($rootScope.global.community.type == 'user' || $rootScope.global.community.type == 'company') {
+            $rootScope.global.location = $rootScope.global.communities[$rootScope.global.community.profile.home];
+            getNavCommunities();
+        } else if(jQuery.isEmptyObject($stateParams.location) || $stateParams.location.type !== 'location') {
+            if ($rootScope.global.communities[$stateParams.location_path]) {
+                $rootScope.global.location = $rootScope.global.communities[$stateParams.location_path];
+                getNavCommunities();
+            } else {
+                $rootScope.global.location = {};
+                getNavCommunities();
+            }
+        } else if ($stateParams.location.type == 'location') {
+            $rootScope.global.location = $stateParams.location;
+            getNavCommunities();
+        } else {
+            $rootScope.global.location = {};
+            getNavCommunities();
+        }
+    };
+
+    var getNavCommunities = function() {
+        console.log('getnavcom')
+        // this logic is mostly to avoid pulling community from db if it can be passed from previous state
+        if ($rootScope.global.communities && $rootScope.global.communities.key && $rootScope.global.location && $rootScope.global.location.key) {
+            if ($rootScope.global.location.key == $rootScope.global.communities.key) {
+                $rootScope.global.nav_communities = $rootScope.global.communities;
+                getTop();
+            } else if ($stateParams.communities && $stateParams.communities.key == $rootScope.global.location.key) {
+                $rootScope.global.nav_communities = $stateParams.communities;
+                getTop();
+            } else {
+                community_service.getCommunity($rootScope.global.location.key)
+                    .then(function(response) {
+                        $rootScope.global.nav_communities = response.data;
+                        getTop();
+                    })
+                    .catch(function(response) {
+                        console.log(response);
+                    });
+            }
+
+        } else {
+            $rootScope.global.nav_communities = $rootScope.global.communities;
+            getTop();
+        }
+    };
+
+    var getTop = function() {
+        console.log('gettop')
+        if ($stateParams.top) {
+            $rootScope.global.top = $stateParams.top;
+            getCommunityTop();
+        } else if ($rootScope.global.location && $rootScope.global.location.key && (($rootScope.global.location.type == 'location') || ($rootScope.global.location.resource) || ($rootScope.global.location.type == 'cluster'))) {
+            community_service.getTop($rootScope.global.location.key)
+                .then(function(response) {
+                    $rootScope.global.top = response.data;
+                    getCommunityTop();
+                })
+        } else {
+            $rootScope.global.top = undefined;
+            getCommunityTop();
+        }
+    };
+
+    var getCommunityTop = function() {
+        console.log('getcomtop')
+        if ($rootScope.global.community && $rootScope.global.community.key && $rootScope.global.location && $rootScope.global.location.key) {
+            if ($rootScope.global.community.key !== $rootScope.global.location.key && (($rootScope.global.community.type == 'location') || ($rootScope.global.community.resource) || ($rootScope.global.community.type == 'cluster'))) {
+                community_service.getTop($rootScope.global.location.key, $rootScope.global.community.key, $rootScope.global.community)
+                    .then(function(response) {
+                        $rootScope.global.community_top = response.data;
+                        loadNav();
+                    })
+            } else {
+                $rootScope.global.community_top = $rootScope.global.top;
+                loadNav();
+            }
+        } else {
+            $rootScope.global.community_top = $rootScope.global.top;
+            loadNav();
+        }
+    };
+
+    /*
+            if (jQuery.isEmptyObject(location)) {
+                if (community.type !== 'location' && community.profile && community.profile.home) {
+                    $rootScope.global.location = communities[community.profile.home];
+                } else $rootScope.global.location = community;
+            } else $rootScope.global.location = location;
+
+            $rootScope.global.community = jQuery.isEmptyObject($stateParams.community) ?
+                (community.key !== $rootScope.global.location.key ?
+                    community :
+                    $rootScope.global.location) :
+            $rootScope.global.community.key && ($rootScope.global.community.key !== $stateParams.community_path) ?
+                $rootScope.global.location :
+                $stateParams.community;
+
+            $stateParams.location_path = $stateParams.location_path || $stateParams.location.key || $rootScope.global.community.key;
+            */
+
+    var self = this;
+
+    var loadNav = function() {
+        console.log('loadnav')
+  /*      
         $rootScope.global.community = $stateParams.community && $stateParams.community.key && ($stateParams.community.key !== $stateParams.community_path) && ($stateParams.community.key !== $stateParams.location_path) ?
             $rootScope.global.location :
             community;
         $rootScope.global.communities = communities;
-        this.location_path = $stateParams.location_path;
+        */
+        $rootScope.global.location_path = $stateParams.location_path;
 
+/*
 
         if (top) {
-            $rootScope.global.nav_top = top;
+            $rootScope.global.nav_top = $rootScope.global.nav_top || top;
         }
-        
-        
 
-    }
-    catch(err) {
-        errorLogService('NavController Catch27: ' + err);
-        $state.go('404');
-    }
+*/
 
-    console.log('StateParams Location: ', $stateParams.location ? $stateParams.location.key : null);
-    console.log('StateParams Location_Path: ', $stateParams.location_path ? $stateParams.location_path : null);
-    console.log('StateParams Community: ', $stateParams.community ? $stateParams.community.key : null);
-    console.log('StateParams Community_Path: ', $stateParams.community_path ? $stateParams.community_path : null);
+        console.log('StateParams Location: ', $stateParams.location ? $stateParams.location.key : null);
+        console.log('StateParams Location_Path: ', $stateParams.location_path ? $stateParams.location_path : null);
+        console.log('StateParams Community: ', $stateParams.community ? $stateParams.community.key : null);
+        console.log('StateParams Community_Path: ', $stateParams.community_path ? $stateParams.community_path : null);
 
-    console.log('Nav RootScope Location: ', $rootScope.global.location ? $rootScope.global.location.key : null);
-    console.log('Nav RootScope Community: ', $rootScope.global.community ? $rootScope.global.community.key : null);
+        console.log('Nav RootScope Location: ', $rootScope.global.location ? $rootScope.global.location.key : null);
+        console.log('Nav RootScope Community: ', $rootScope.global.community ? $rootScope.global.community.key : null);
 
-    // *** ROUTING OF ROOT PATHS ***
-    this.state = $state; // used in view because path doesn't always update properly.. esp. for /people
-    $rootScope.global.path = $location.path().replace(/\/$/, ""); //used for routing and used in view
+        // *** ROUTING OF ROOT PATHS ***
+        self.state = $state; // used in view because path doesn't always update properly.. esp. for /people
+        $rootScope.global.path = $location.path().replace(/\/$/, ""); //used for routing and used in view
 
-    if ($rootScope.global.path.split('/').length < 3) {
-        switch ($rootScope.global.community.type) {
-            case 'user':
-                $state.go('user.dashboard');
-                break;
-            case 'company':
-                $state.go('company.dashboard');
-                break;
-            default:
-                $state.go('community.dashboard');
-        }
-    }
-
-    var self = this;
-
-    // load 3rd party script parameters
-
-    if ($location.host() !== 'startupcommunity.org') $window.Bugsnag.releaseStage = "development";
-
-    // ANONYMOUS ACCESS OR PROFILE DISPLAY
-
-    if ($auth.isAuthenticated() && user) {
-
-        this.user = user; // reference 'this' by using 'nav' from 'NavigationController as nav' - * nav is also usable in child views *
-
-        knowtify.push(['load_inbox', 'knowtify', {email: this.user.profile.email}]);
-
-        $window.Bugsnag.user = {
-            key: this.user.key,
-            name: this.user.profile.name,
-            email: this.user.profile.email
-        };
-
-        $window.JacoRecorder.identify(this.user.profile.email);
-
-    }
-
-    // PRIMARY LEFT-NAV ITEM LIST
-
-    $rootScope.global.communities = communities; // used in company list views
-    this.nav_communities = nav_communities;
-    this.loaders = {};
-
-    if (!$rootScope.global.community) $rootScope.global.community = $rootScope.global.communities[$stateParams.location_path];
-    if (!$rootScope.global.community) {
-        // if still no community, there's a problem, reload the app
-        $window.location.reload();
-    }
-    // the industry_icons save me a db call on every controller reload :) because top doesn't include item values.. maybe combine this with 'parents' service?
-    this.industry_icons = {
-        "construction" : {
-            "icon" : "fa-wrench"
-        },
-        "legal" : {
-            "icon" : "fa-gavel"
-        },
-        "tech" : {
-            "icon" : "fa-code"
-        },
-        "medical" : {
-            "icon" : "fa-stethoscope"
-        },
-        "healthcare" : {
-            "icon" : "fa-ambulance"
-        },
-        "recreation" : {
-            "icon" : "fa-sun-o"
-        },
-        "art" : {
-            "icon" : "fa-picture-o"
-        },
-        "transportation" : {
-            "icon" : "fa-road"
-        },
-        "consumer-goods" : {
-            "icon" : "fa-barcode"
-        },
-        "non-profit" : {
-            "icon" : "fa-heart-o"
-        },
-        "corporate" : {
-            "icon" : "fa-building-o"
-        },
-        "government" : {
-            "icon" : "fa-university"
-        },
-        "finance" : {
-            "icon" : "fa-pie-chart"
-        },
-        "education" : {
-            "icon": "fa-graduation-cap"
-        },
-        "manufacturing": {
-            "icon" : "fa-cube"
-        },
-        "agriculture" : {
-            "icon": "fa-pagelines"
-        },
-        "services" : {
-            "icon": "fa-bell-o"
-        }
-    };
-
-    var parents = community_service.parents();
-    parents = parents.join('|').toLowerCase().split('|'); // change all to lowercase
-
-    // sort communities for use in nav and child dashboard pages
-    this.resources = [];
-
-    for (item in this.nav_communities) { // need to determine what item is here, esp if user or company
-        if (this.nav_communities[item]) {
-            switch (this.nav_communities[item].type) {
-                case "location":
-                    if (item !== $rootScope.global.location.key) {
-                        if (!$rootScope.global.locations) $rootScope.global.locations = {};
-                        $rootScope.global.locations[item] = this.nav_communities[item];
-                    }
+        if ($rootScope.global.path.split('/').length < 3) {
+            switch ($rootScope.global.community.type) {
+                case 'user':
+                    $state.go('user.dashboard');
                     break;
-                case "cluster":
-                    if (!this.clusters) this.clusters = {};
-                    if (this.nav_communities[item].community_profiles && this.nav_communities[item].community_profiles[$rootScope.global.location.key] && this.nav_communities[item].community_profiles[$rootScope.global.location.key].parents && this.nav_communities[item].community_profiles[$rootScope.global.location.key].parents[0]) {
-                        var cluster_type = this.nav_communities[item].community_profiles[$rootScope.global.location.key].parents[0];
-                        if (!this.clusters[cluster_type]) this.clusters[cluster_type] = {};
-                        this.clusters[cluster_type][item] = this.nav_communities[item];
-                    }
-                    break;
-                case "company":
-                    if (this.nav_communities[item].resource) {
-                        if (this.nav_communities[item].community_profiles && this.nav_communities[item].community_profiles[$rootScope.global.location.key] && this.nav_communities[item].community_profiles[$rootScope.global.location.key].parents && this.nav_communities[item].community_profiles[$rootScope.global.location.key].parents[0]) {
-                            var resource_type = this.nav_communities[item].community_profiles[$rootScope.global.location.key].parents[0];
-                            //if (!this.resources[resource_type]) this.resources[resource_type] = {};
-                            //this.resources[resource_type][item] =  this.nav_communities[item];
-                            this.resources.push(this.nav_communities[item]);
-                        }
-                    }
-
+                case 'company':
+                    $state.go('company.dashboard');
                     break;
                 default:
-                    break;
+                    $state.go('community.dashboard');
             }
         }
-    }
 
-    var location_key = $rootScope.global.location.key;
-    this.resources = this.resources.sort(function(a, b) {
-        var x = a.community_profiles[location_key].name;
-        var y = b.community_profiles[location_key].name;
-        return ((x < y) ? -1 : ((x > y) ? 1 : 0));
-    });
+        
 
-    if (angular.equals({}, this.clusters)) this.clusters = undefined; // had a hard time checking for empty object in the html
+        // load 3rd party script parameters
 
-    // For tour
-    if ($stateParams.tour) {
-        angular.element(document).ready(function () {
-            setTimeout(function() {
-                jQuery('#tourstart').trigger('click');
-            }, 3000);
+        if ($location.host() !== 'startupcommunity.org') $window.Bugsnag.releaseStage = "development";
+
+        // ANONYMOUS ACCESS OR PROFILE DISPLAY
+
+        if ($auth.isAuthenticated() && user) {
+
+            self.user = user; // reference 'this' by using 'nav' from 'NavigationController as nav' - * nav is also usable in child views *
+
+            knowtify.push(['load_inbox', 'knowtify', {email: self.user.profile.email}]);
+
+            $window.Bugsnag.user = {
+                key: self.user.key,
+                name: self.user.profile.name,
+                email: self.user.profile.email
+            };
+
+            $window.JacoRecorder.identify(self.user.profile.email);
+
+        }
+
+        // PRIMARY LEFT-NAV ITEM LIST
+/*
+        $rootScope.global.communities = communities; // used in company list views
+        $rootScope.global.nav_communities = nav_communities;
+        */
+        self.loaders = {};
+
+        if (!$rootScope.global.community) $rootScope.global.community = $rootScope.global.communities[$stateParams.location_path];
+        if (!$rootScope.global.community) {
+            // if still no community, there's a problem, reload the app
+            $window.location.reload();
+        }
+        // the industry_icons save me a db call on every controller reload :) because top doesn't include item values.. maybe combine this with 'parents' service?
+        self.industry_icons = {
+            "construction" : {
+                "icon" : "fa-wrench"
+            },
+            "legal" : {
+                "icon" : "fa-gavel"
+            },
+            "tech" : {
+                "icon" : "fa-code"
+            },
+            "medical" : {
+                "icon" : "fa-stethoscope"
+            },
+            "healthcare" : {
+                "icon" : "fa-ambulance"
+            },
+            "recreation" : {
+                "icon" : "fa-sun-o"
+            },
+            "art" : {
+                "icon" : "fa-picture-o"
+            },
+            "transportation" : {
+                "icon" : "fa-road"
+            },
+            "consumer-goods" : {
+                "icon" : "fa-barcode"
+            },
+            "non-profit" : {
+                "icon" : "fa-heart-o"
+            },
+            "corporate" : {
+                "icon" : "fa-building-o"
+            },
+            "government" : {
+                "icon" : "fa-university"
+            },
+            "finance" : {
+                "icon" : "fa-pie-chart"
+            },
+            "education" : {
+                "icon": "fa-graduation-cap"
+            },
+            "manufacturing": {
+                "icon" : "fa-cube"
+            },
+            "agriculture" : {
+                "icon": "fa-pagelines"
+            },
+            "services" : {
+                "icon": "fa-bell-o"
+            }
+        };
+
+        var parents = community_service.parents();
+        parents = parents.join('|').toLowerCase().split('|'); // change all to lowercase
+
+        // sort communities for use in nav and child dashboard pages
+        self.resources = [];
+
+        for (item in $rootScope.global.nav_communities) { // need to determine what item is here, esp if user or company
+            if ($rootScope.global.nav_communities[item]) {
+                switch ($rootScope.global.nav_communities[item].type) {
+                    case "location":
+                        if (item !== $rootScope.global.location.key) {
+                            if (!$rootScope.global.locations) $rootScope.global.locations = {};
+                            $rootScope.global.locations[item] = $rootScope.global.nav_communities[item];
+                        }
+                        break;
+                    case "cluster":
+                        if (!self.clusters) self.clusters = {};
+                        if ($rootScope.global.nav_communities[item].community_profiles && $rootScope.global.nav_communities[item].community_profiles[$rootScope.global.location.key] && $rootScope.global.nav_communities[item].community_profiles[$rootScope.global.location.key].parents && $rootScope.global.nav_communities[item].community_profiles[$rootScope.global.location.key].parents[0]) {
+                            var cluster_type = $rootScope.global.nav_communities[item].community_profiles[$rootScope.global.location.key].parents[0];
+                            if (!self.clusters[cluster_type]) self.clusters[cluster_type] = {};
+                            self.clusters[cluster_type][item] = $rootScope.global.nav_communities[item];
+                        }
+                        break;
+                    case "company":
+                        if ($rootScope.global.nav_communities[item].resource) {
+                            if ($rootScope.global.nav_communities[item].community_profiles && $rootScope.global.nav_communities[item].community_profiles[$rootScope.global.location.key] && $rootScope.global.nav_communities[item].community_profiles[$rootScope.global.location.key].parents && $rootScope.global.nav_communities[item].community_profiles[$rootScope.global.location.key].parents[0]) {
+                                var resource_type = $rootScope.global.nav_communities[item].community_profiles[$rootScope.global.location.key].parents[0];
+                                //if (!self.resources[resource_type]) self.resources[resource_type] = {};
+                                //self.resources[resource_type][item] =  self.nav_communities[item];
+                                self.resources.push($rootScope.global.nav_communities[item]);
+                            }
+                        }
+
+                        break;
+                    default:
+                        break;
+                }
+            }
+        }
+
+        var location_key = $rootScope.global.location.key;
+        self.resources = self.resources.sort(function(a, b) {
+            var x = a.community_profiles[location_key].name;
+            var y = b.community_profiles[location_key].name;
+            return ((x < y) ? -1 : ((x > y) ? 1 : 0));
         });
-    }
 
-    this.end = function() {
-        $state.go('user.dashboard', {profile: self.user, location_path: self.user.key, community: self.user, tour: false});
-    };
+        if (angular.equals({}, self.clusters)) self.clusters = undefined; // had a hard time checking for empty object in the html
 
-    // BREADCRUMBS
-    if ($rootScope.global.community.type == "user") {
-        // note this changes location for nav items below
-        if ($rootScope.global.location.key == $rootScope.global.community.key) $rootScope.global.location = $rootScope.global.communities[$rootScope.global.community.profile.home];
-    }
+        // For tour
+        if ($stateParams.tour) {
+            angular.element(document).ready(function () {
+                setTimeout(function() {
+                    jQuery('#tourstart').trigger('click');
+                }, 3000);
+            });
+        }
 
-    // to avoid duplicate location_path / community_path when navigating to people & companies
-    this.nav_url = $stateParams.location_path == $rootScope.global.community.key ?
-        "({location_path: nav.location_path, community: global.community, query: '*', top: nav.top, communities: global.communities, user: nav.user })" :
-        "({location_path: nav.location_path, community: global.community, query: '*', community_path: global.community.key, top: nav.top, communities: global.communities, user: nav.user })";
+        self.end = function() {
+            $state.go('user.dashboard', {profile: self.user, location_path: self.user.key, community: self.user, tour: false});
+        };
 
-    // to set correct root path when navigating from user or company page
+        // BREADCRUMBS
+        if ($rootScope.global.community.type == "user") {
+            // note this changes location for nav items below
+            if ($rootScope.global.location.key == $rootScope.global.community.key) $rootScope.global.location = $rootScope.global.communities[$rootScope.global.community.profile.home];
+        }
 
-    this.nav_jump = ($rootScope.global.location && $rootScope.global.location.type == 'location') || (($rootScope.global.community.type == "user" || $rootScope.global.community.type == "company") &&
+        // to avoid duplicate location_path / community_path when navigating to people & companies
+        self.nav_url = $stateParams.location_path == $rootScope.global.community.key ?
+            "({location_path: nav.location_path, community: global.community, query: '*', top: global.top, communities: global.communities, user: nav.user })" :
+            "({location_path: nav.location_path, community: global.community, query: '*', community_path: global.community.key, top: global.top, communities: global.communities, user: nav.user })";
+
+        // to set correct root path when navigating from user or company page
+
+        self.nav_jump = ($rootScope.global.location && $rootScope.global.location.type == 'location') || (($rootScope.global.community.type == "user" || $rootScope.global.community.type == "company") &&
         ($rootScope.global.location && $rootScope.global.location.type == 'location')) ?
-        "({community_path: item.key, community: item, query: '*', location_path: global.location.key, top: nav.top, communities: global.communities, user: nav.user })" :
-        "({community_path: item.key, community: item, query: '*', location_path: nav.user.profile.home, top: nav.top, communities: global.communities, user: nav.user })";
+            "({community_path: item.key, community: item, query: '*', location_path: global.location.key, top: global.top, communities: global.communities, user: nav.user })" :
+            "({community_path: item.key, community: item, query: '*', location_path: nav.user.profile.home, top: global.top, communities: global.communities, user: nav.user })";
 
-    // SEARCH
+        // SEARCH
 
-    if ($stateParams.query) this.search.query = $stateParams.query;
-
-    if ($rootScope.global.community.type == "cluster" || $rootScope.global.community.resource) {
-        if ($rootScope.global.community.community_profiles && $rootScope.global.community.community_profiles[$stateParams.location_path]) {
-            this.searchname = $rootScope.global.community.community_profiles[$stateParams.location_path].name;
-        } else this.searchname = $rootScope.global.community.profile.name;
-    } else this.searchname = $rootScope.global.location ? $rootScope.global.location.profile.name : "";
-
-    this.search = function(query) {
-
-        if (!query) query = "*";
+        if ($stateParams.query) self.search.query = $stateParams.query;
 
         if ($rootScope.global.community.type == "cluster" || $rootScope.global.community.resource) {
-            $stateParams.location_path == $rootScope.global.community.key ?
-                $state.go('search.dashboard', {location_path: $stateParams.location_path, community: $rootScope.global.community, query: query}) :
-                $state.go('search.dashboard', {location_path: $stateParams.location_path, community_path: $rootScope.global.community.key, community: $rootScope.global.community, query: query});
-        } else if ($rootScope.global.community.type == "user" || $rootScope.global.community.type == "company") {
-            $state.go('search.dashboard', {location_path: $rootScope.global.community.profile.home, query: query});
-        } else $state.go('search.dashboard', {query: query});
+            if ($rootScope.global.community.community_profiles && $rootScope.global.community.community_profiles[$stateParams.location_path]) {
+                self.searchname = $rootScope.global.community.community_profiles[$stateParams.location_path].name;
+            } else self.searchname = $rootScope.global.community.profile.name;
+        } else self.searchname = $rootScope.global.location ? $rootScope.global.location.profile.name : "";
 
-    };
+        self.search = function(query) {
 
-    // CONTACT USER
+            if (!query) query = "*";
 
-    this.contact = function(user) {
+            if ($rootScope.global.community.type == "cluster" || $rootScope.global.community.resource) {
+                $stateParams.location_path == $rootScope.global.community.key ?
+                    $state.go('search.dashboard', {location_path: $stateParams.location_path, community: $rootScope.global.community, query: query}) :
+                    $state.go('search.dashboard', {location_path: $stateParams.location_path, community_path: $rootScope.global.community.key, community: $rootScope.global.community, query: query});
+            } else if ($rootScope.global.community.type == "user" || $rootScope.global.community.type == "company") {
+                $state.go('search.dashboard', {location_path: $rootScope.global.community.profile.home, query: query});
+            } else $state.go('search.dashboard', {query: query});
 
-        var modalInstance = $uibModal.open({
-            templateUrl: 'components/users/user.contact.html',
-            controller: ContactUserController,
-            controllerAs: 'contact',
-            windowClass: "hmodal-warning",
-            resolve: {
-                user: function() {
-                    user.value["key"] = user.path.key;
-                    return user.value;
-                },
-                community_key: function() {
-                    return $rootScope.global.community.key;
-                },
-                location_key: function() {
-                    return $stateParams.location_path;
+        };
+
+        // CONTACT USER
+
+        self.contact = function(user) {
+
+            var modalInstance = $uibModal.open({
+                templateUrl: 'components/users/user.contact.html',
+                controller: ContactUserController,
+                controllerAs: 'contact',
+                windowClass: "hmodal-warning",
+                resolve: {
+                    user: function() {
+                        user.value["key"] = user.path.key;
+                        return user.value;
+                    },
+                    community_key: function() {
+                        return $rootScope.global.community.key;
+                    },
+                    location_key: function() {
+                        return $stateParams.location_path;
+                    }
                 }
-            }
-        });
-    };
+            });
+        };
 
-    // COMMUNITY SETTINGS
+        // COMMUNITY SETTINGS
 
-    this.embedSettings = function(community) {
+        self.embedSettings = function(community) {
 
-        var modalInstance = $uibModal.open({
-            templateUrl: 'components/nav/nav.embed_settings.html',
-            controller: EmbedSettingsController,
-            controllerAs: 'settings',
-            windowClass: "hmodal-success",
-            resolve: {
-                community: function() {
-                    return community || $rootScope.global.community;
-                },
-                location: function() {
-                    return $rootScope.global.location;
-                },
-                user: function() {
-                    return self.user;
+            var modalInstance = $uibModal.open({
+                templateUrl: 'components/nav/nav.embed_settings.html',
+                controller: EmbedSettingsController,
+                controllerAs: 'settings',
+                windowClass: "hmodal-success",
+                resolve: {
+                    community: function() {
+                        return community || $rootScope.global.community;
+                    },
+                    location: function() {
+                        return $rootScope.global.location;
+                    },
+                    user: function() {
+                        return self.user;
+                    }
                 }
-            }
-        });
-    };
+            });
+        };
 
-    // ADD OR MODIFY CLUSTER, RESOURCE, OR LOCATION
+        // ADD OR MODIFY CLUSTER, RESOURCE, OR LOCATION
 
-    this.editCommunity = function(community) {
+        self.editCommunity = function(community) {
 
-        var modalInstance = $uibModal.open({
-            templateUrl: 'components/nav/nav.edit_' + community.type + '.html',
-            controller: CommunityController,
-            controllerAs: 'edit',
-            windowClass: "hmodal-success",
-            resolve: {
-                location: function() {
-                    return $rootScope.global.location;
-                },
-                community: function() {
-                    return community;
-                },
-                user: function() {
-                    return self.user;
+            var modalInstance = $uibModal.open({
+                templateUrl: 'components/nav/nav.edit_' + community.type + '.html',
+                controller: CommunityController,
+                controllerAs: 'edit',
+                windowClass: "hmodal-success",
+                resolve: {
+                    location: function() {
+                        return $rootScope.global.location;
+                    },
+                    community: function() {
+                        return community;
+                    },
+                    user: function() {
+                        return self.user;
+                    }
                 }
-            }
-        });
-    };
+            });
+        };
 
-    this.removeUser = function(ruser) {
-        sweet.show({
-            title: "Are you sure?",
-            text: "Removing this user from " + community.profile.name + " does not remove them from the entire community. You can easily add them to the resource again in the future.",
-            type: "warning",
-            showCancelButton: true,
-            confirmButtonColor: "#DD6B55",
-            confirmButtonText: "Yes, remove " + ruser.value.profile.name,
-            closeOnConfirm: false
-        }, function () {
-            user_service.removeCommunity(ruser.path.key, community)
+        self.removeUser = function(ruser) {
+            sweet.show({
+                title: "Are you sure?",
+                text: "Removing this user from " + community.profile.name + " does not remove them from the entire community. You can easily add them to the resource again in the future.",
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#DD6B55",
+                confirmButtonText: "Yes, remove " + ruser.value.profile.name,
+                closeOnConfirm: false
+            }, function () {
+                user_service.removeCommunity(ruser.path.key, community)
+                    .then(function(response) {
+                        if (response.status !== 201) {
+                            sweet.show({
+                                title: "Sorry, something went wrong.",
+                                text: "Here's what we know: " + response.data.message,
+                                type: "error"
+                            });
+
+                        } else {
+                            sweet.show("Success!", ruser.value.profile.name + " has been removed.", "success");
+                        }
+                    })
+            });
+        };
+
+        self.setupNewsletter = function() {
+
+            var modalInstance = $uibModal.open({
+                templateUrl: 'components/newsletter/setup_newsletter.html',
+                controller: SetupNewsController,
+                controllerAs: 'news',
+                windowClass: "hmodal-warning",
+                resolve: {
+                    user: function() {
+                        return self.user;
+                    },
+                    location: function() {
+                        return $rootScope.global.location;
+                    },
+                    communities: function() {
+                        return $rootScope.global.communities;
+                    }
+                }
+            });
+
+            modalInstance.closed.then(function () {
+                user_service.getProfile()
+                    .then(function(response) {
+                        self.user = response.data;
+                    })
+            });
+
+        };
+
+        self.syncNewsletter = function() {
+            self.syncworking = true;
+            newsletter_service.syncMembers(self.user.newsletter.lists, self.user.newsletter.brand_id, location.key)
                 .then(function(response) {
+                    self.syncworking = false;
                     if (response.status !== 201) {
                         sweet.show({
                             title: "Sorry, something went wrong.",
@@ -358,198 +550,154 @@ function NavigationController($rootScope, $auth, $state, $window, $location, $st
                         });
 
                     } else {
-                        sweet.show("Success!", ruser.value.profile.name + " has been removed.", "success");
+                        sweet.show("Success!", "Your lists have been synchronized.", "success");
                     }
-                })
-        });
-    };
+                });
+        };
 
-    this.setupNewsletter = function() {
+        // REQUEST INVITATION
 
-        var modalInstance = $uibModal.open({
-            templateUrl: 'components/newsletter/setup_newsletter.html',
-            controller: SetupNewsController,
-            controllerAs: 'news',
-            windowClass: "hmodal-warning",
-            resolve: {
-                user: function() {
-                    return self.user;
-                },
-                location: function() {
-                    return $rootScope.global.location;
-                },
-                communities: function() {
-                    return $rootScope.global.communities;
-                }
-            }
-        });
+        self.requestInvitation = function() {
 
-        modalInstance.closed.then(function () {
-            user_service.getProfile()
-                .then(function(response) {
-                    self.user = response.data;
-                })
-        });
-
-    };
-    
-    this.syncNewsletter = function() {
-        self.syncworking = true;
-        newsletter_service.syncMembers(self.user.newsletter.lists, self.user.newsletter.brand_id, location.key)
-            .then(function(response) {
-                self.syncworking = false;
-                if (response.status !== 201) {
-                    sweet.show({
-                        title: "Sorry, something went wrong.",
-                        text: "Here's what we know: " + response.data.message,
-                        type: "error"
-                    });
-
-                } else {
-                    sweet.show("Success!", "Your lists have been synchronized.", "success");
+            var modalInstance = $uibModal.open({
+                templateUrl: 'components/users/user.request_invite.html',
+                controller: InviteUserController,
+                controllerAs: 'invite',
+                windowClass: "hmodal-info",
+                resolve: {
+                    user: function() {
+                        return null;
+                    },
+                    community: function() {
+                        return $rootScope.global.location;
+                    },
+                    communities: function() {
+                        return $rootScope.global.communities;
+                    },
+                    location: function() {
+                        if ($rootScope.global.location.resource || $rootScope.global.location.type == 'cluster') {
+                            return $rootScope.global.communities[$rootScope.global.location.profile.home];
+                        } else return $rootScope.global.location;
+                    }
                 }
             });
-    };
+        };
 
-    // REQUEST INVITATION
+        // INVITE PEOPLE
 
-    this.requestInvitation = function() {
+        self.invitePeople = function() {
 
-        var modalInstance = $uibModal.open({
-            templateUrl: 'components/users/user.request_invite.html',
-            controller: InviteUserController,
-            controllerAs: 'invite',
-            windowClass: "hmodal-info",
-            resolve: {
-                user: function() {
-                    return null;
-                },
-                community: function() {
-                    return $rootScope.global.location;
-                },
-                communities: function() {
-                    return $rootScope.global.communities;
-                },
-                location: function() {
-                    if ($rootScope.global.location.resource || $rootScope.global.location.type == 'cluster') {
-                        return $rootScope.global.communities[$rootScope.global.location.profile.home];
-                    } else return $rootScope.global.location;
-                }
-            }
-        });
-    };
-
-    // INVITE PEOPLE
-
-    this.invitePeople = function() {
-
-        var modalInstance = $uibModal.open({
-            templateUrl: 'components/users/user.invite.html',
-            controller: InviteUserController,
-            controllerAs: 'invite',
-            windowClass: "hmodal-info",
-            resolve: {
-                user: function() {
-                    return self.user;
-                },
-                community: function() {
-                    return $rootScope.global.community;
-                },
-                communities: function() {
-                    return $rootScope.global.communities;
-                },
-                location: function() {
-                    return $rootScope.global.location;
-                }
-            }
-        });
-    };
-
-    // CHECK FOR IFRAME (redirect, if needed, must happen after routing)
-    var embed;
-    this.embedded = false;
-
-    try {
-        this.embedded = window.self !== window.top;
-    } catch (e) {
-        this.embedded = true;
-    }
-
-    if (this.embedded) {
-        var expired = true,
-            domain;
-
-        angular.element(document).ready(function () {
-            setTimeout(function() {
-                $("body").toggleClass("hide-sidebar");
-            }, 1000);
-        });
-
-        //find & remove protocol (http, ftp, etc.) and get domain
-        if (document.referrer.indexOf("://") > -1) {
-            domain = document.referrer.split('/')[2];
-        }
-        else {
-            domain = document.referrer.split('/')[0];
-        }
-
-        //find & remove port number
-        domain = domain.split(':')[0];
-
-        // use localStorage to persist 'allowed to embed' across communities if the initial referral domain is verified
-        try {
-            if ($window.localStorage && $window.localStorage.getItem('startupcommunity-embed')) {
-                var storage = JSON.parse($window.localStorage.getItem('startupcommunity-embed'))[domain];
-            }
-        } catch (e) {
-            //errorLogService('Localstorage problem: ', e);
-        }
-
-        if (storage) {
-            this.color = storage.color;
-            if (storage.full) this.embedded = false;
-        }
-
-        try {
-            if ($rootScope.global.location.type === 'cluster' && $rootScope.global.location.community_profiles[$stateParams.location_path] && $rootScope.global.location.community_profiles[$stateParams.location_path].embed) {
-                try {
-                    embed = $rootScope.global.location.community_profiles[$stateParams.location_path].embed;
-                }
-                catch (e) {
-                    errorLogService('embed problem: ', e);
-                }
-
-            } else embed = $rootScope.global.location.profile.embed;
-        }
-        catch (e) {
-            errorLogService('embed problem: ', e);
-        }
-
-        if (embed) {
-            for (u in embed) {
-                if (embed[u].url == domain) {
-                    try {
-                        if ($window.localStorage) {
-                            var domain_embed = {};
-                            domain_embed[domain] = {
-                                "color" : embed[u].color || '#fff',
-                                "full" : embed[u].full || false
-                            };
-                            
-                            $window.localStorage.setItem('startupcommunity-embed',JSON.stringify(domain_embed));
-                            
-                        }
-                    } catch (e) {
-                        //errorLogService('Localstorage problem: ', e);
+            var modalInstance = $uibModal.open({
+                templateUrl: 'components/users/user.invite.html',
+                controller: InviteUserController,
+                controllerAs: 'invite',
+                windowClass: "hmodal-info",
+                resolve: {
+                    user: function() {
+                        return self.user;
+                    },
+                    community: function() {
+                        return $rootScope.global.community;
+                    },
+                    communities: function() {
+                        return $rootScope.global.communities;
+                    },
+                    location: function() {
+                        return $rootScope.global.location;
                     }
-                    if (embed[u].full) this.embedded = false;
-                    break;
+                }
+            });
+        };
+
+        // CHECK FOR IFRAME (redirect, if needed, must happen after routing)
+        var embed;
+        self.embedded = false;
+
+        try {
+            self.embedded = window.self !== window.top;
+        } catch (e) {
+            self.embedded = true;
+        }
+
+        if (self.embedded) {
+            var expired = true,
+                domain;
+
+            angular.element(document).ready(function () {
+                setTimeout(function() {
+                    $("body").toggleClass("hide-sidebar");
+                }, 1000);
+            });
+
+            //find & remove protocol (http, ftp, etc.) and get domain
+            if (document.referrer.indexOf("://") > -1) {
+                domain = document.referrer.split('/')[2];
+            }
+            else {
+                domain = document.referrer.split('/')[0];
+            }
+
+            //find & remove port number
+            domain = domain.split(':')[0];
+
+            // use localStorage to persist 'allowed to embed' across communities if the initial referral domain is verified
+            try {
+                if ($window.localStorage && $window.localStorage.getItem('startupcommunity-embed')) {
+                    var storage = JSON.parse($window.localStorage.getItem('startupcommunity-embed'))[domain];
+                }
+            } catch (e) {
+                //errorLogService('Localstorage problem: ', e);
+            }
+
+            if (storage) {
+                self.color = storage.color;
+                if (storage.full) self.embedded = false;
+            }
+
+            try {
+                if ($rootScope.global.location.type === 'cluster' && $rootScope.global.location.community_profiles[$stateParams.location_path] && $rootScope.global.location.community_profiles[$stateParams.location_path].embed) {
+                    try {
+                        embed = $rootScope.global.location.community_profiles[$stateParams.location_path].embed;
+                    }
+                    catch (e) {
+                        errorLogService('embed problem: ', e);
+                    }
+
+                } else embed = $rootScope.global.location.profile.embed;
+            }
+            catch (e) {
+                errorLogService('embed problem: ', e);
+            }
+
+            if (embed) {
+                for (u in embed) {
+                    if (embed[u].url == domain) {
+                        try {
+                            if ($window.localStorage) {
+                                var domain_embed = {};
+                                domain_embed[domain] = {
+                                    "color" : embed[u].color || '#fff',
+                                    "full" : embed[u].full || false
+                                };
+
+                                $window.localStorage.setItem('startupcommunity-embed',JSON.stringify(domain_embed));
+
+                            }
+                        } catch (e) {
+                            //errorLogService('Localstorage problem: ', e);
+                        }
+                        if (embed[u].full) self.embedded = false;
+                        break;
+                    }
                 }
             }
         }
-    }
 
-    //this.embedded = true; // for testing
+        //self.embedded = true; // for testing
+
+    };
+
+    getDeps();
 
 }
 

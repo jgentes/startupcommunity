@@ -1,12 +1,12 @@
 <div class="col-md-12 dash-table">
     <div>
-        <a ui-sref="user.dashboard({profile: item.value, location_path: item.path.key, location: global.community, community: item.value, top: nav.top, communities: global.communities, user: nav.user })" ng-click="nav.loaders[item.value.profile.name] = true" title="View {{::item.value.profile.name | words:0}}'s Profile">
+        <a ui-sref="user.dashboard({profile: item.value, location_path: item.path.key, location: global.community, community: item.value, top: global.top, communities: global.communities, user: nav.user })" ng-click="nav.loaders[item.value.profile.name] = true" title="View {{::item.value.profile.name | words:0}}'s Profile">
             <img ng-src="{{item.value.profile.avatar || '/public/images/blank_avatar.png'}}" alt="{{::item.value.profile.name}}" class="user-img widget-image img-circle pull-left" onerror="this.src='/public/images/blank_avatar.png'"/>
         </a>
     </div>
     <div class="user-row list-hr">
         <a ng-show="(global.community.resource || global.location.resource) && nav.user.roles.leader[global.community.key]" ng-click="nav.removeUser(item)" title="Remove {{::item.value.profile.name}} from {{::global.community.profile.name}}" style="font-size: 11px; color:#bbb; padding-left:4px;">remove</a>
-        <a ui-sref="user.dashboard({profile: item.value, location_path: item.path.key, location: global.community, community: item.value, top: nav.top, communities: global.communities, user: nav.user })" title="View {{::item.value.profile.name | words:0}}'s Profile" ng-click="nav.loaders[item.value.profile.name] = true" class="dash-row-div"><strong>{{::item.value.profile.name}} </strong></a>
+        <a ui-sref="user.dashboard({profile: item.value, location_path: item.path.key, location: global.community, community: item.value, top: global.top, communities: global.communities, user: nav.user })" title="View {{::item.value.profile.name | words:0}}'s Profile" ng-click="nav.loaders[item.value.profile.name] = true" class="dash-row-div"><strong>{{::item.value.profile.name}} </strong></a>
         <div class="dash-row-summary" ng-show="item.value.profile.summary.length > 0">
             <a title="Show Summary" ng-click="showSummary = !showSummary" class="user-summary">&nbsp;<i style="font-size: 8px;" class="fa fa-chevron-down"></i></a>
         </div>
@@ -22,7 +22,7 @@
                 <span class="text-muted" style="white-space:pre-wrap;" ng-bind-html="::item.value.profile.summary | linky:'_blank' | highlight:users.lastQuery | safe_html"></span>
                 <div id="skills" ng-if="(showSummary || users.lastQuery) && item.value.profile.summary" class="skills-top">
                     <li ng-repeat="skill in item.value.profile.skills" class="label btn-default skills">
-                        <a><span ui-sref="search.dashboard({location_path: global.location.key, community: global.location, query: skill, user: nav.user, communities: global.communities, top: nav.top})" ng-bind-html="::skill | highlight:users.lastQuery"></span></a>
+                        <a><span ui-sref="search.dashboard({location_path: global.location.key, community: global.location, query: skill, user: nav.user, communities: global.communities, top: global.top})" ng-bind-html="::skill | highlight:users.lastQuery"></span></a>
                     </li>
                 </div>
             </div>

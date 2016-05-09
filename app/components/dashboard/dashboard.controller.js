@@ -2,7 +2,7 @@ angular
     .module('startupcommunity')
     .controller('DashboardController', DashboardController);
 
-function DashboardController($rootScope, $stateParams, $state, $location, community_top) {
+function DashboardController($rootScope, $stateParams, $state, $location) {
 
     $rootScope.global.community = $stateParams.community && $stateParams.community.key && ($stateParams.community.key !== $stateParams.community_path) && ($stateParams.community.key !== $stateParams.location_path) ?
         $rootScope.global.location :
@@ -19,9 +19,7 @@ function DashboardController($rootScope, $stateParams, $state, $location, commun
 
     var self = this;
     this.max = 0;
-    $rootScope.global.top = $stateParams.community && $stateParams.community.key && ($stateParams.community.key !== $stateParams.community_path) && ($stateParams.community.key !== $stateParams.location_path) ?
-        $stateParams.top :
-        community_top;
+    //$rootScope.global.top = community_top;
 
     if ($rootScope.global.top) {
         for (val in $rootScope.global.top.parents) {
