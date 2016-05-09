@@ -11,7 +11,7 @@ function NavigationController($rootScope, $auth, $state, $window, $location, $st
     // SENSITIVE VARIABLES THAT AFFECT NAVIGATION AND ALL CHILD TEMPLATES
     // When used in ui-sref links: location_path affects the url, location affects header and content, community affects header and second url parameter
     try { // catch any initial db connectivity problems
-
+/*
         if (jQuery.isEmptyObject(location)) {
             if (community.type !== 'location' && community.profile && community.profile.home) {
                 $rootScope.global.location = communities[community.profile.home];
@@ -22,11 +22,27 @@ function NavigationController($rootScope, $auth, $state, $window, $location, $st
             (community.key !== $rootScope.global.location.key ?
                 community :
                 $rootScope.global.location) :
-        $rootScope.global.community.key && ($rootScope.global.community.key !== $rootScope.global.community_path) && ($rootScope.global.community.key !== $rootScope.global.community_path) ?
+        $rootScope.global.community.key && ($rootScope.global.community.key !== $stateParams.community_path) ?
             $rootScope.global.location :
             $stateParams.community;
 
-        $rootScope.global.location_path = $stateParams.location_path || $stateParams.location.key || $rootScope.global.community.key;
+        $stateParams.location_path = $stateParams.location_path || $stateParams.location.key || $rootScope.global.community.key;
+        */
+
+        $rootScope.global.location = location;
+        $rootScope.global.community = $stateParams.community && $stateParams.community.key && ($stateParams.community.key !== $stateParams.community_path) && ($stateParams.community.key !== $stateParams.location_path) ?
+            $rootScope.global.location :
+            community;
+        $rootScope.global.communities = communities;
+        this.location_path = $stateParams.location_path;
+
+
+        if (top) {
+            $rootScope.global.nav_top = top;
+        }
+        
+        
+
     }
     catch(err) {
         errorLogService('NavController Catch27: ' + err);
@@ -39,15 +55,13 @@ function NavigationController($rootScope, $auth, $state, $window, $location, $st
     console.log('StateParams Community_Path: ', $stateParams.community_path ? $stateParams.community_path : null);
 
     console.log('Nav RootScope Location: ', $rootScope.global.location ? $rootScope.global.location.key : null);
-    console.log('Nav RootScope Location_Path: ', $rootScope.global.location_path ? $rootScope.global.location_path : null);
     console.log('Nav RootScope Community: ', $rootScope.global.community ? $rootScope.global.community.key : null);
-    console.log('Nav RootScope Community_Path: ', $rootScope.global.community_path ? $rootScope.global.community_path : null);
 
     // *** ROUTING OF ROOT PATHS ***
     this.state = $state; // used in view because path doesn't always update properly.. esp. for /people
-    this.path = $location.path().replace(/\/$/, ""); //used for routing and used in view
+    $rootScope.global.path = $location.path().replace(/\/$/, ""); //used for routing and used in view
 
-    if (this.path.split('/').length < 3) {
+    if ($rootScope.global.path.split('/').length < 3) {
         switch ($rootScope.global.community.type) {
             case 'user':
                 $state.go('user.dashboard');
@@ -61,10 +75,6 @@ function NavigationController($rootScope, $auth, $state, $window, $location, $st
     }
 
     var self = this;
-
-    if (top) {        
-        this.top = top;
-    }
 
     // load 3rd party script parameters
 
@@ -94,7 +104,7 @@ function NavigationController($rootScope, $auth, $state, $window, $location, $st
     this.nav_communities = nav_communities;
     this.loaders = {};
 
-    if (!$rootScope.global.community) $rootScope.global.community = $rootScope.global.communities[$rootScope.global.location_path];
+    if (!$rootScope.global.community) $rootScope.global.community = $rootScope.global.communities[$stateParams.location_path];
     if (!$rootScope.global.community) {
         // if still no community, there's a problem, reload the app
         $window.location.reload();
@@ -223,9 +233,9 @@ function NavigationController($rootScope, $auth, $state, $window, $location, $st
     }
 
     // to avoid duplicate location_path / community_path when navigating to people & companies
-    this.nav_url = $rootScope.global.location_path == $rootScope.global.community.key ?
-        "({location_path: global.location_path, community: global.community, query: '*', top: nav.top, communities: global.communities, user: nav.user })" :
-        "({location_path: global.location_path, community: global.community, query: '*', community_path: global.community.key, top: nav.top, communities: global.communities, user: nav.user })";
+    this.nav_url = $stateParams.location_path == $rootScope.global.community.key ?
+        "({location_path: nav.location_path, community: global.community, query: '*', top: nav.top, communities: global.communities, user: nav.user })" :
+        "({location_path: nav.location_path, community: global.community, query: '*', community_path: global.community.key, top: nav.top, communities: global.communities, user: nav.user })";
 
     // to set correct root path when navigating from user or company page
 
@@ -239,8 +249,8 @@ function NavigationController($rootScope, $auth, $state, $window, $location, $st
     if ($stateParams.query) this.search.query = $stateParams.query;
 
     if ($rootScope.global.community.type == "cluster" || $rootScope.global.community.resource) {
-        if ($rootScope.global.community.community_profiles && $rootScope.global.community.community_profiles[$rootScope.global.location_path]) {
-            this.searchname = $rootScope.global.community.community_profiles[$rootScope.global.location_path].name;
+        if ($rootScope.global.community.community_profiles && $rootScope.global.community.community_profiles[$stateParams.location_path]) {
+            this.searchname = $rootScope.global.community.community_profiles[$stateParams.location_path].name;
         } else this.searchname = $rootScope.global.community.profile.name;
     } else this.searchname = $rootScope.global.location ? $rootScope.global.location.profile.name : "";
 
@@ -249,9 +259,9 @@ function NavigationController($rootScope, $auth, $state, $window, $location, $st
         if (!query) query = "*";
 
         if ($rootScope.global.community.type == "cluster" || $rootScope.global.community.resource) {
-            $rootScope.global.location_path == $rootScope.global.community.key ?
-                $state.go('search.dashboard', {location_path: $rootScope.global.location_path, community: $rootScope.global.community, query: query}) :
-                $state.go('search.dashboard', {location_path: $rootScope.global.location_path, community_path: $rootScope.global.community.key, community: $rootScope.global.community, query: query});
+            $stateParams.location_path == $rootScope.global.community.key ?
+                $state.go('search.dashboard', {location_path: $stateParams.location_path, community: $rootScope.global.community, query: query}) :
+                $state.go('search.dashboard', {location_path: $stateParams.location_path, community_path: $rootScope.global.community.key, community: $rootScope.global.community, query: query});
         } else if ($rootScope.global.community.type == "user" || $rootScope.global.community.type == "company") {
             $state.go('search.dashboard', {location_path: $rootScope.global.community.profile.home, query: query});
         } else $state.go('search.dashboard', {query: query});
@@ -501,9 +511,9 @@ function NavigationController($rootScope, $auth, $state, $window, $location, $st
         }
 
         try {
-            if ($rootScope.global.location.type === 'cluster' && $rootScope.global.location.community_profiles[$rootScope.global.location_path] && $rootScope.global.location.community_profiles[$rootScope.global.location_path].embed) {
+            if ($rootScope.global.location.type === 'cluster' && $rootScope.global.location.community_profiles[$stateParams.location_path] && $rootScope.global.location.community_profiles[$stateParams.location_path].embed) {
                 try {
-                    embed = $rootScope.global.location.community_profiles[$rootScope.global.location_path].embed;
+                    embed = $rootScope.global.location.community_profiles[$stateParams.location_path].embed;
                 }
                 catch (e) {
                     errorLogService('embed problem: ', e);

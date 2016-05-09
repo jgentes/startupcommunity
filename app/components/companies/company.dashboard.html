@@ -23,7 +23,7 @@
                     <a href="{{::'http://' + profile.company.profile.website}}" target="_blank" style="font-size:14px; color: #6DC8EE;">{{::profile.company.profile.website}}</a>
                 </div>
                 <div style="overflow: hidden; height: 40px; margin-bottom: -10px;">
-                    <button ng-repeat="industry in ::profile.company.profile.industries" style="margin-right: 5px;" ladda="btnworking" ng-click="btnworking = true" class="ladda-btn btn btn-outline btn-default btn-xs" ui-sref="search.dashboard({location_path: $rootScope.global.location.key, community: $rootScope.global.location, query: industry})">
+                    <button ng-repeat="industry in ::profile.company.profile.industries" style="margin-right: 5px;" ladda="btnworking" ng-click="btnworking = true" class="ladda-btn btn btn-outline btn-default btn-xs" ui-sref="search.dashboard({location_path: global.location.key, community: global.location, query: industry})">
                         {{::industry}}
                     </button>
                 </div>

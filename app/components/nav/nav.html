@@ -4,7 +4,7 @@
         <div class="grey-line">
         </div>
         <div id="logo" class="light-version" style="transition: all 0.4s ease 0s;">
-            <a ui-sref="community.dashboard({location_path: global.location.key, community: global.location, query: '*', top: nav.top, communities: global.communities, user: nav.user})">
+            <a ui-sref="community.dashboard({location_path: global.location.key, community: global.location, query: '*', top: global.nav_top, communities: global.communities, user: nav.user})">
                 <img ng-if="::global.community.profile && global.community.profile.sc_logo" ng-src="{{::global.community.profile.sc_logo}}"/>
                 <img ng-if="::!(global.community.profile && global.community.profile.sc_logo) && (global.location.profile && global.location.profile.sc_logo)" ng-src="{{::global.location.profile.sc_logo}}"/>
                 <img ng-if="::!(global.community.profile && global.community.profile.sc_logo) && !(global.location.profile && global.location.profile.sc_logo)" src="/public/images/sc_logo.png" style="padding: 9px 20px 6px 18px;"/>
@@ -125,7 +125,7 @@
             <li class="active">
                 <ul class="nav nav-second-level">
                     <li>
-                        <a ui-sref="community.dashboard({location_path: global.location.key, community_path: '', community: global.location, location: global.location, query: '*', top: nav.top, communities: global.communities, user: nav.user })" style="padding-left: 6px; font-size: 16px; font-weight: bold; border-bottom: 1px solid #eee; background-color:#F6F8F9; border-left: 2px solid #82BC4B;" ng-click="l_working = true">
+                        <a ui-sref="community.dashboard({location_path: global.location.key, community_path: '', community: global.location, location: global.location, query: '*', top: global.nav_top, communities: global.communities, user: nav.user })" style="padding-left: 6px; font-size: 16px; font-weight: bold; border-bottom: 1px solid #eee; background-color:#F6F8F9; border-left: 2px solid #82BC4B;" ng-click="l_working = true">
                             <span ng-if="::global.location" style="white-space:nowrap;font-size:18px;">
                                 &nbsp;{{::global.location.profile.name}}
                             </span>
@@ -147,7 +147,7 @@
                         <a>No locations yet</a>
                     </li>
                     <li ng-repeat="item in ::global.locations">
-                        <a ui-sref="community.dashboard({location_path: item.key, community_path: '', community: item, location: item, query: '*', top: nav.top, communities: global.communities, user: nav.user})" ng-class="{active: nav.path.includes('/' + item.key)}" ng-click="li_working = true"><i class="fa fa-globe"></i>
+                        <a ui-sref="community.dashboard({location_path: item.key, community_path: '', community: item, location: item, query: '*', top: global.nav_top, communities: global.communities, user: nav.user})" ng-class="{active: global.path.includes('/' + item.key)}" ng-click="li_working = true"><i class="fa fa-globe"></i>
                             {{::item.profile.name}}
                             <span loading-bars ng-show="li_working"></span>
                         </a>
@@ -155,7 +155,7 @@
                 </ul>
             </li>
 
-            <li class="active" ng-show="::nav.top.parents" tour-step order="3" title="Industry Clusters" content="A cluster is an entrepreneurial ecosystem in support of a specific industry.<br><br>Clusters are made up of mentors, investors, companies, accelerators, coworking spaces, and events that connect people and foster creation of new startups." placement="right">
+            <li class="active" ng-show="::global.nav_top.parents" tour-step order="3" title="Industry Clusters" content="A cluster is an entrepreneurial ecosystem in support of a specific industry.<br><br>Clusters are made up of mentors, investors, companies, accelerators, coworking spaces, and events that connect people and foster creation of new startups." placement="right">
                 <a style="cursor:default; margin-left: -7px;"><span>
 
                     Industries
@@ -163,13 +163,13 @@
                 </span>
                 </a>
                 <ul class="nav nav-second-level">
-                    <li ng-repeat="item in ::nav.top.parents | orderBy: 'item.value' : reverse">
-                        <a ui-sref="community.dashboard({community_path: item.label, community: nav.nav_communities[item.label], query: '*', location_path: (global.location.key || nav.user.profile.home), top: nav.top, communities: global.communities, user: nav.user})" ng-class="{active: nav.path.includes('/' + item.label)}" ng-click="cl_working = true">
+                    <li ng-repeat="item in ::global.nav_top.parents | orderBy: 'item.value' : reverse">
+                        <a ui-sref="community.dashboard({community_path: item.label, community: nav.nav_communities[item.label], query: '*', location_path: (global.location.key || nav.user.profile.home), top: global.nav_top, communities: global.communities, user: nav.user})" ng-class="{active: global.path.includes('/' + item.label)}" ng-click="cl_working = true">
                             <span>
                                 <i ng-class="'fa ' + nav.industry_icons[item.label].icon"></i>
                                 {{::item.label[0].toUpperCase() + item.label.slice(1)}}
                                 <span loading-bars ng-show="cl_working"></span>
-                                <a ng-repeat="c in ::nav.clusters[item.label]" ui-sref="community.dashboard({community_path: c.key, community: nav.nav_communities[c.key], query: '*', location_path: (global.location.key || nav.user.profile.home), top: nav.top, communities: global.communities, user: nav.user })" ng-class="{active: nav.path.includes('/' + c.key)}" ng-click="clc_working = true" style="padding-left:30px;">
+                                <a ng-repeat="c in ::nav.clusters[item.label]" ui-sref="community.dashboard({community_path: c.key, community: nav.nav_communities[c.key], query: '*', location_path: (global.location.key || nav.user.profile.home), top: global.nav_top, communities: global.communities, user: nav.user })" ng-class="{active: global.path.includes('/' + c.key)}" ng-click="clc_working = true" style="padding-left:30px;">
                                     <i ng-class="'fa ' + nav.industry_icons[item.label].icon"></i>
                                     {{::c.community_profiles[global.location.key].name[0].toUpperCase() + c.community_profiles[global.location.key].name.slice(1);}}
                                     <span loading-bars ng-show="clc_working"></span>

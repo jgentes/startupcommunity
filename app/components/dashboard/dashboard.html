@@ -6,8 +6,8 @@
                 <div class="panel-body" style="height: 85px;">
                     <div class="pull-left" style="padding-left:0;">
                         <a ui-sref="community.dashboard({community_path: global.community.key, community: global.community})" style="white-space:nowrap;">
-                            <h2 ng-if="global.community.community_profiles[global.location_path]" class="font-light m-b-xs">{{ global.community.community_profiles[global.location_path].name }}</h2>
-                            <h2 ng-if="!global.community.community_profiles[global.location_path]" class="font-light m-b-xs">{{ global.community.profile.name }}</h2>
+                            <h2 ng-if="global.community.community_profiles[nav.location_path]" class="font-light m-b-xs">{{ global.community.community_profiles[nav.location_path].name }}</h2>
+                            <h2 ng-if="!global.community.community_profiles[nav.location_path]" class="font-light m-b-xs">{{ global.community.profile.name }}</h2>
                         </a>
                         <div style="float:left;">
                             <small>
@@ -25,14 +25,14 @@
                     <div class="col-xs-8">
                         <div class="pull-left">
                             <h2 class="font-light m-b-xs">Leaders</h2>
-                            <div ng-repeat="lead in dashboard.top.leaders | limitTo: 3" style="white-space: nowrap;" ng-class="{'pull-left': $first}">
+                            <div ng-repeat="lead in global.top.leaders | limitTo: 3" style="white-space: nowrap;" ng-class="{'pull-left': $first}">
                                 <a class="text-info" ui-sref="user.dashboard({profile: lead.value, location_path: lead.path.key, community: {}})">
                                     <small>
                                         <span ng-if="$last && $index !== 0">
                                             &nbsp;and
                                         </span>
                                         &nbsp;{{lead.value.profile.name}}
-                                        <span ng-if="!$last && dashboard.top.leaders.length > 2">
+                                        <span ng-if="!$last && global.top.leaders.length > 2">
                                             ,
                                         </span>
                                     </small>
@@ -68,13 +68,13 @@
                         <div class="col-xs-4">
                             <div class="stats-icon pull-right">
                                 <a ui-sref="{{'user.list' + nav.nav_url}}">
-                                    <h3 class="text-info">{{dashboard.top.people.count}}</h3>
+                                    <h3 class="text-info">{{global.top.people.count}}</h3>
                                 </a>
                             </div>
                         </div>
                     </div>
                     <div class="panel-footer" style="background: #fff; text-align: center; padding-bottom:9px;">
-                        <div ng-repeat="item in dashboard.top.people.entries" style="text-align: left;">
+                        <div ng-repeat="item in global.top.people.entries" style="text-align: left;">
                             <div style="margin-right: -2px; margin-bottom:-5px;">
                                 <div class="row" ng-include="'components/users/user.list.item.html'"></div>
                                 <div ng-if="$last" style="margin-bottom:-12px;"></div>
@@ -97,13 +97,13 @@
                         <div class="col-xs-4">
                             <div class="stats-icon pull-right">
                                 <a ui-sref="{{'company.list' + nav.nav_url}}">
-                                    <h3 style="color:#34495E;">{{dashboard.top.companies.count}}</h3>
+                                    <h3 style="color:#34495E;">{{global.top.companies.count}}</h3>
                                 </a>
                             </div>
                         </div>
                     </div>
                     <div class="panel-footer" style="background: #fff; text-align: center; padding-bottom:9px;">
-                        <div ng-repeat="item in dashboard.top.companies.entries" style="text-align: left;">
+                        <div ng-repeat="item in global.top.companies.entries" style="text-align: left;">
                             <div style="margin-right: -2px; margin-bottom:-5px;">
                                 <div class="row" ng-include="'components/companies/company.list.item.html'"></div>
                                 <div ng-if="$last" style="margin-bottom:-12px;"></div>
@@ -126,13 +126,13 @@
                         <div class="col-xs-4">
                             <div class="stats-icon pull-right">
                                 <a ui-sref="{{'resource.list' + nav.nav_url}}">
-                                    <h3 style="color:#34495E;">{{dashboard.top.resources.count}}</h3>
+                                    <h3 style="color:#34495E;">{{global.top.resources.count}}</h3>
                                 </a>
                             </div>
                         </div>
                     </div>
                     <div class="panel-footer" style="background: #fff; text-align: center; padding-bottom:9px;">
-                        <div ng-repeat="item in dashboard.top.resources.entries" style="text-align: left;">
+                        <div ng-repeat="item in global.top.resources.entries" style="text-align: left;">
                             <div style="margin-right: -2px; margin-bottom:-5px;">
                                 <div class="row" ng-include="'components/companies/company.list.item.html'"></div>
                                 <div ng-if="$last" style="margin-bottom:-12px;"></div>
@@ -152,11 +152,11 @@
                         <small class="small-column-title"># People</small>
                     </div>
 
-                    <div class="panel-body" ng-repeat="item in dashboard.top.skills.entries">
+                    <div class="panel-body" ng-repeat="item in global.top.skills.entries">
                         <div class="row">
                             <div class="col-xs-10 forum-heading">
                                 <a ui-sref="search.dashboard({location_path: dashboard.location_path, community_path: dashboard.community_path, query: item.value})"><h4 style="font-weight: 200;">{{item.value}}</h4>
-                                    <uib-progressbar ng-attr-value="(item.count/dashboard.top.skills.entries[0].count)*100" type="info" class="progress-small full" style="margin-top: 7px;"></uib-progressbar>
+                                    <uib-progressbar ng-attr-value="(item.count/global.top.skills.entries[0].count)*100" type="info" class="progress-small full" style="margin-top: 7px;"></uib-progressbar>
                                 </a>
                             </div>
                             <div class="col-xs-2 forum-info">
@@ -177,11 +177,11 @@
                         <small class="small-column-title"># Companies</small>
                     </div>
 
-                    <div class="panel-body" ng-repeat="item in dashboard.top.industries.entries">
+                    <div class="panel-body" ng-repeat="item in global.top.industries.entries">
                         <div class="row">
                             <div class="col-xs-10 forum-heading">
                                 <a ui-sref="search.dashboard({location_path: dashboard.location_path, community_path: dashboard.community_path, query: item.value})"><h4 style="font-weight: 200;">{{item.value}}</h4>
-                                    <uib-progressbar ng-attr-value="(item.count/dashboard.top.industries.entries[0].count)*100" type="default" class="progress-small full" style="margin-top: 7px;"></uib-progressbar>
+                                    <uib-progressbar ng-attr-value="(item.count/global.top.industries.entries[0].count)*100" type="default" class="progress-small full" style="margin-top: 7px;"></uib-progressbar>
                                 </a>
                             </div>
                             <div class="col-xs-2 forum-info">
@@ -201,7 +201,7 @@
                         <h3>Top Industries</h3>
                     </div>
 
-                    <div class="panel-body" ng-repeat="item in dashboard.top.parents | limitTo: 5">
+                    <div class="panel-body" ng-repeat="item in global.top.parents | limitTo: 5">
                         <div class="row">
                             <div class="col-xs-10 forum-heading">
                                 <a ui-sref="community.dashboard({community_path: item.label, community: global.communities[item.label], query: '*', location_path: global.location.key})"><h4 style="font-weight: 200;">{{item.label[0].toUpperCase() + item.label.slice(1);}}</h4>

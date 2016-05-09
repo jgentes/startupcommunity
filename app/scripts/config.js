@@ -470,8 +470,6 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
         .state('community.dashboard', {
             url: "/:community_path",
             params: {
-                location_path: null,
-                community_path: null,
                 tour: false,
                 pageTitle: 'Overview'
             },
