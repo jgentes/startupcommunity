@@ -54,10 +54,6 @@ function NavigationController($auth, $state, $window, $location, $stateParams, $
         this.top = top;
     }
 
-    // load 3rd party script parameters
-
-    if ($window.Bugsnag && $location.host() !== 'startupcommunity.org') $window.Bugsnag.releaseStage = "development";
-
     // ANONYMOUS ACCESS OR PROFILE DISPLAY
 
     if ($auth.isAuthenticated() && user) {
@@ -66,12 +62,18 @@ function NavigationController($auth, $state, $window, $location, $stateParams, $
 
         knowtify.push(['load_inbox', 'knowtify', {email: this.user.profile.email}]);
 
-        if ($window.Bugsnag) {
-            $window.Bugsnag.user = {
-                key: this.user.key,
-                name: this.user.profile.name,
-                email: this.user.profile.email
-            };
+        if ($window.Rollbar) {
+            $window.Rollbar.info("Post published", {postId: 123});
+            $window.Rollbar.configure({
+                payload: {
+                    person: {
+                        id: this.user.key,
+                        username: this.user.profile.name,
+                        email: this.user.profile.email
+                    },
+                    environment: $location.host() !== 'startupcommunity.org' ? "development" : "production"
+                }
+            });
         }
 
         if ($window.JacoRecorder) {
