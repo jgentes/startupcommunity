@@ -127,26 +127,28 @@ function WelcomeController($auth, $q, $http, $mixpanel, $stateParams, $state, sw
     // for profile pic upload to S3
     this.uploadAvatar = function (file) {
 
-        // get the secure S3 url
-        user_service.getProfileUrl(file.name)
-            .then(function(response) {
-                var signedUrl = response.data.put,
-                    fileUrl = response.data.get;
+        if (file) {
+            // get the secure S3 url
+            user_service.getProfileUrl(file.name)
+                .then(function(response) {
+                    var signedUrl = response.data.put,
+                        fileUrl = response.data.get;
 
-                var d_completed = $q.defer();
-                var xhr = new XMLHttpRequest();
-                xhr.file = file;
+                    var d_completed = $q.defer();
+                    var xhr = new XMLHttpRequest();
+                    xhr.file = file;
 
-                xhr.onreadystatechange = function(e) {
-                    if ( 4 == this.readyState ) {
-                        self.user.profile["avatar"] = fileUrl;
-                        d_completed.resolve(true);
-                    }
-                };
-                xhr.open('PUT', signedUrl, true);
-                xhr.setRequestHeader("Content-Type","application/octet-stream");
-                xhr.send(file);
-            })
+                    xhr.onreadystatechange = function(e) {
+                        if ( 4 == this.readyState ) {
+                            self.user.profile["avatar"] = fileUrl;
+                            d_completed.resolve(true);
+                        }
+                    };
+                    xhr.open('PUT', signedUrl, true);
+                    xhr.setRequestHeader("Content-Type","application/octet-stream");
+                    xhr.send(file);
+                })
+        } else self.alert = { type: 'danger', message: 'Please select a file!' };
 
     };
     
