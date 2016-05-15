@@ -56,7 +56,7 @@ function NavigationController($auth, $state, $window, $location, $stateParams, $
 
     // load 3rd party script parameters
 
-    if ($location.host() !== 'startupcommunity.org') $window.Bugsnag.releaseStage = "development";
+    if ($window.Bugsnag && $location.host() !== 'startupcommunity.org') $window.Bugsnag.releaseStage = "development";
 
     // ANONYMOUS ACCESS OR PROFILE DISPLAY
 
@@ -66,13 +66,17 @@ function NavigationController($auth, $state, $window, $location, $stateParams, $
 
         knowtify.push(['load_inbox', 'knowtify', {email: this.user.profile.email}]);
 
-        $window.Bugsnag.user = {
-            key: this.user.key,
-            name: this.user.profile.name,
-            email: this.user.profile.email
-        };
+        if ($window.Bugsnag) {
+            $window.Bugsnag2.user = {
+                key: this.user.key,
+                name: this.user.profile.name,
+                email: this.user.profile.email
+            };
+        }
 
-        $window.JacoRecorder.identify(this.user.profile.email);
+        if ($window.JacoRecorder) {
+            $window.JacoRecorder.identify(this.user.profile.email);
+        }
 
     }
 
