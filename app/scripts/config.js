@@ -512,9 +512,6 @@ angular
             }
         });
     })
-    .run(function(editableOptions) {
-        editableOptions.theme = 'bs3';
-    })
     .run(function($rootScope, $state, $timeout, $auth) {
         $rootScope.$state = $state; // allows use if $state within views
         window.$state = $state; // allows use of $state within console

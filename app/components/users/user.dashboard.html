@@ -3,7 +3,7 @@
         <div style="padding: 20px 15px;">
             <header class="heading content" style="color:#fff">
                 <a href="javascript:window.location.href=window.location.href" style="color: #eee; font-size: 7px; float: left; margin-left: -40px; margin-top: -12px;">random image</a>
-                <button ng-if="::nav.location_path == nav.user.key" ui-sref="welcome({location: nav.location, location_path: nav.location.key, go: 'welcome.roles'})" class="btn btn-warning pull-right" style="margin-left:-100px;">Edit Profile</button>
+                <button ng-if="::nav.location_path == nav.user.key" ui-sref="welcome({location: nav.location, location_path: nav.location.key, go: 'welcome.roles'})" ladda="editprofile" ng-click="editprofile = true" class="ladda-btn btn btn-warning pull-right" style="margin-left:-100px;">Edit Profile</button>
                 <img class="img-circle m-b" style="max-height:100px; max-width: 100px;" ng-src="{{::profile.user.profile.avatar || profile.user.profile.linkedin.pictureUrl || '/public/images/blank_avatar.png'}}" alt="{{::profile.user.profile.name}}" onerror="this.src='/public/images/blank_avatar.png'">
                 <div style="margin-top: -12px;">
                     <span ng-repeat="(item, val) in ::profile.user.roles" class="user-role" style="font-size: 24px;"><i ng-attr-title="{{item[0].toUpperCase() + item.slice(1);}}" ng-class="{'pe-7s-paper-plane' : item == 'founder', 'pe-7s-flag' : item == 'leader', 'pe-7s-study' : item == 'mentor', 'pe-7s-gleam' : item == 'investor', 'pe-7s-ball' : item == 'team', 'pe-7s-portfolio' : item == 'provider'}"></i></span>

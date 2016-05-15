@@ -4,7 +4,6 @@
         'ui.bootstrap',
         'ui.highlight',
         'ui.select',
-        'xeditable',
         'ngSanitize',
         'hSweetAlert',
         'analytics.mixpanel',

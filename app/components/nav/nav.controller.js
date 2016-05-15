@@ -426,7 +426,7 @@ function NavigationController($auth, $state, $window, $location, $stateParams, $
     // INVITE PEOPLE
 
     this.invitePeople = function() {
-
+            console.log('invite')
         var modalInstance = $uibModal.open({
             templateUrl: 'components/users/user.invite.html',
             controller: InviteUserController,

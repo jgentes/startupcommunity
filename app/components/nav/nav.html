@@ -39,12 +39,12 @@
                         </li>
                         <li ng-if="!nav.user">
                             <div style="margin: 20px 0 0 20px;">
-                                <button class="btn btn-info" ng-click="nav.requestInvitation()" style="font-size: 16px; color: #fff;">Request Invite</button>
+                                <button ladda="invitebtn" class="ladda-btn btn btn-info" ng-click="invitebtn = true; nav.requestInvitation();" style="font-size: 16px; color: #fff;">Request Invite</button>
                             </div>
                         </li>
                         <li ng-if="!nav.user">
                             <div style="margin-left: 20px;" ng-controller="LoginController as login">
-                                <button class="btn btn-success" ng-click="login.authenticate('linkedin')" style="font-size: 16px; color: #fff;">Log In</button>
+                                <button ladda="loginbtn" class="ladda-btn btn btn-success" ng-click="loginbtn = true; login.authenticate('linkedin');" style="font-size: 16px; color: #fff;">Log In</button>
                             </div>
                         </li>
                         <li ng-if="nav.user" id="knowtify">
@@ -79,12 +79,12 @@
                     </li>
                     <li ng-if="!nav.user" class="dropdown">
                         <div style="padding-top: 12px; margin-right: 8px;">
-                            <button class="btn btn-info" ng-click="nav.requestInvitation()" style="font-size: 16px; color: #fff;">Request Invite</button>
+                            <button ladda="invitebtn" class="ladda-btn btn btn-info" ng-click="invitebtn = true; nav.requestInvitation();" style="font-size: 16px; color: #fff;">Request Invite</button>
                         </div>
                     </li>
                     <li ng-if="!nav.user" class="dropdown">
                         <div style="padding-top: 12px; margin-right: 26px;" ng-controller="LoginController as login">
-                            <button class="btn btn-success" ng-click="login.authenticate('linkedin')" style="font-size: 16px; color: #fff;">Log In</button>
+                            <button ladda="loginbtn" class="ladda-btn btn btn-success" ng-click="loginbtn = true; login.authenticate('linkedin');" style="font-size: 16px; color: #fff;">Log In</button>
                         </div>
                     </li>
                     <li ng-if="nav.user" id="knowtify" class="dropdown">

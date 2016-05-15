@@ -16,6 +16,7 @@
             <div class="panel-body">
                 <div class="stats-title">
                     <h3>Resources</h3>
+                    <small>Resources are coworking spaces, accelerators, investment funds, networking events, and other organizations that support entrepreneurship.</small>
                 </div>
                 <hr>
                 <div ng-repeat="k in settings.resources">
@@ -44,6 +45,7 @@
             <div class="panel-body">
                 <div class="stats-title">
                     <h3>Industries</h3>
+                    <small>An industry cluster is an entrepreneurial ecosystem in support of a market vertical.</small>
                 </div>
                 <hr>
                 <div ng-repeat="(k, v) in nav.user.roles.leader">
@@ -64,6 +66,7 @@
             <div class="panel-body">
                 <div class="stats-title">
                     <h3>Locations</h3>
+                    <small>Locations are cities, counties, regions, or states.</small>
                 </div>
                 <hr>
                 <div ng-if="nav.communities[nav.user.profile.home]" style="padding-bottom:10px; font-size: 18px;">{{ nav.communities[nav.user.profile.home].profile.name }}
