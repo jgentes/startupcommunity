@@ -73,7 +73,7 @@ if (process.env.NODE_ENV === "production") {
     app.use("/build", express.static(root + "/build"));
 }
 
-app.use(rollbar.errorHandler("ba5f8d28fd944ac0802b58a932f321ee"));
+app.use(rollbar.errorHandler("ba5f8d28fd944ac0802b58a932f321ee", {environment: process.env.NODE_ENV}));
 
 // API ROUTE METHODS
 
