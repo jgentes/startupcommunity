@@ -67,7 +67,7 @@ function NavigationController($auth, $state, $window, $location, $stateParams, $
         knowtify.push(['load_inbox', 'knowtify', {email: this.user.profile.email}]);
 
         if ($window.Bugsnag) {
-            $window.Bugsnag2.user = {
+            $window.Bugsnag.user = {
                 key: this.user.key,
                 name: this.user.profile.name,
                 email: this.user.profile.email
