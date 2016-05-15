@@ -656,7 +656,7 @@ angular
             return function(exception, cause) {
                 getSourceMappedStackTrace(exception).then(function(final) {
                     errorLogService(final);
-                    $window.Rollbar.error(final);
+                    if ($window.Rollbar) $window.Rollbar.error(final);
                 });
             };
         });
