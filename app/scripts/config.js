@@ -659,7 +659,7 @@ angular
         });
 
 angular
-    .module('analytics.mixpanel')
+    .module('startupcommunity')
     .config(['$mixpanelProvider', function($mixpanelProvider) {
         $mixpanelProvider.apiKey("0f110baeb6150d7e3b8968e32d7a5595");
     }]);
