@@ -390,8 +390,8 @@ function handleGetProfile(req, res) {
             }
         })
         .fail(function(err){
-            console.warn("WARNING: user390", err.body);
-            res.status(400).send({ message: "Problem pulling user, sending 400 response."});
+            console.warn("Problem pulling user, sending 400 response. ", err.body);
+            res.status(400).send({ message: "Please try logging in again."});
         });
 
 }
