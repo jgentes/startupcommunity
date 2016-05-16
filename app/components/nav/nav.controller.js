@@ -4,7 +4,7 @@ angular
     .controller('SettingsController', SettingsController)
     .controller('EmbedSettingsController', EmbedSettingsController);
 
-function NavigationController($auth, $state, $window, $location, $stateParams, $uibModal, user_service, community_service, user, sweet, location, community, communities, nav_communities, top, knowtify, errorLogService, newsletter_service) {
+function NavigationController($auth, $state, $scope, $window, $location, $stateParams, $uibModal, user_service, community_service, user, sweet, location, community, communities, nav_communities, top, knowtify, errorLogService, newsletter_service) {
 
     if (user && user.token) $auth.setToken(user.token); // update local storage with latest user profile
 
@@ -48,38 +48,54 @@ function NavigationController($auth, $state, $window, $location, $stateParams, $
         }
     }
 
-    var self = this;
+    var self = this,
+        rollbar_payload = {
+            "payload": {
+                "environment": $location.host() !== 'startupcommunity.org' ? "development" : "production"
+            }
+        };
 
-    if (top) {        
+    var go_rollbar = function() {
+        if ($window.Rollbar)
+            $window.Rollbar.configure(rollbar_payload);
+        if (rollbar_payload.payload.jayco)
+            jaco(); // this removes the watcher for the session id;
+    };
+
+    if (top)
         this.top = top;
-    }
 
-    // ANONYMOUS ACCESS OR PROFILE DISPLAY
+    // ANONYMOUS OR LOGGED IN ?
 
     if ($auth.isAuthenticated() && user) {
 
         this.user = user; // reference 'this' by using 'nav' from 'NavigationController as nav' - * nav is also usable in child views *
 
+        // LOAD 3RD PARTY SERVICES
+
         knowtify.push(['load_inbox', 'knowtify', {email: this.user.profile.email}]);
 
-        if ($window.Rollbar) {
-            $window.Rollbar.info("Post published", {postId: 123});
-            $window.Rollbar.configure({
-                payload: {
-                    person: {
-                        id: this.user.key,
-                        username: this.user.profile.name,
-                        email: this.user.profile.email
-                    },
-                    environment: $location.host() !== 'startupcommunity.org' ? "development" : "production"
-                }
-            });
-        }
-
-        if ($window.JacoRecorder) {
+        if ($window.JacoRecorder)
             $window.JacoRecorder.identify(this.user.profile.email);
-        }
 
+        rollbar_payload.payload['person'] = {
+            "id": this.user.key,
+            "name": this.user.profile.name,
+            "email": this.user.profile.email
+        };
+
+    } else go_rollbar();
+
+    if ($window.JacoRecorder) {
+
+        var jaco = $scope.$watch(function () {
+            if ($window.JacoRecorder.state && $window.JacoRecorder.state.session && $window.JacoRecorder.state.session.id) {
+                rollbar_payload.payload['custom'] = {
+                    "jaco_url": "https://bo.getjaco.com/backoffice/sessions/%24%7" + $window.JacoRecorder.state.session.id + "%7D"
+                };
+                go_rollbar();
+            }
+        });
     }
 
     // PRIMARY LEFT-NAV ITEM LIST
