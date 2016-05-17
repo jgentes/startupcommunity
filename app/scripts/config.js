@@ -397,9 +397,6 @@ angular
             }
         });
     })
-    .run(function(editableOptions) {
-        editableOptions.theme = 'bs3';
-    })
     .run(function($rootScope, $state, $timeout, $auth) {
         $rootScope.global = {}; // initialize my global object
 
@@ -486,7 +483,7 @@ angular
             var getSourceMappedStackTrace = function(exception) {
                 var $q = $injector.get('$q'),
                     $http = $injector.get('$http'),
-                    SMConsumer = window.sourceMap.SourceMapConsumer,
+                    SMConsumer = $window.sourceMap.SourceMapConsumer,
                     cache = {};
 
                 // Retrieve a SourceMap object for a minified script URL
@@ -543,13 +540,13 @@ angular
             return function(exception, cause) {
                 getSourceMappedStackTrace(exception).then(function(final) {
                     errorLogService(final);
+                    if ($window.Rollbar) $window.Rollbar.error(final);
                 });
-                Bugsnag.notifyException(exception, {diagnostics:{cause: cause}});
             };
         });
 
 angular
-    .module('analytics.mixpanel')
+    .module('startupcommunity')
     .config(['$mixpanelProvider', function($mixpanelProvider) {
         $mixpanelProvider.apiKey("0f110baeb6150d7e3b8968e32d7a5595");
     }]);

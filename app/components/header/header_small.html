@@ -30,18 +30,18 @@
 
             <div class="pull-right" ng-if="(nav.state.current.name !== 'resource.list')">
                 <div ng-if="!nav.user && (nav.state.current.name == 'company.list')" style="padding-top: 6px; margin-right: 8px; float: right;">
-                    <button class="btn btn-sm btn-success" ng-click="nav.requestInvitation()" style="font-size: 12px; color: #fff;">Add Company</button>
+                    <button ladda="addco" class="ladda-btn btn btn-sm btn-success" ng-click="addco = true; nav.requestInvitation();" style="font-size: 12px; color: #fff;">Add Company</button>
                 </div>
-                <div ng-if="nav.user && (global.community.type == 'cluster' || (global.community.resource && nav.user.roles.leader[global.community.key]) || (global.community.type == 'location' && nav.user.communities.indexOf(global.location.key) > -1))" style="padding-top: 6px; margin-right: 8px; float: right;">
-                    <button class="btn btn-sm btn-success" ui-sref="company.add" style="font-size: 12px; color: #fff;">Add Company</button>
+                <div ng-if="nav.user && (global.community.type == 'cluster' || (global.community.resource && nav.user.roles.leader[global.community.key]) || (global.community.type == 'location' && nav.user.communities.indexOf(nav.location.key) > -1))" style="padding-top: 6px; margin-right: 8px; float: right;">
+                    <button ladda="addco" ng-click="addco = true" class="ladda-btn btn btn-sm btn-success" ui-sref="company.add" style="font-size: 12px; color: #fff;">Add Company</button>
                 </div>
 
                 <div ng-if="nav.user && (global.community.type == 'cluster' || (global.community.resource && nav.user.roles.leader[global.community.key]) || (global.community.type == 'location' && nav.user.communities.indexOf(global.location.key) > -1))" style="padding-top: 6px; margin-right: 8px; float: right;">
-                    <button class="btn btn-sm btn-info" ng-click="nav.invitePeople()" style="font-size: 12px; color: #fff;">Invite People</button>
+                    <button ladda="invitepeople" class="ladda-btn btn btn-sm btn-info" ng-click="invitepeople = true; nav.invitePeople();" style="font-size: 12px; color: #fff;">Invite People</button>
                 </div>
             </div>
             <div class="pull-right" ng-if="nav.user && (nav.state.current.name == 'resource.list')" style="padding-top: 6px; margin-right: 8px;">
-                <button class="btn btn-sm btn-success" ui-sref="resource.add" style="font-size: 12px; color: #fff;">Add Resource</button>
+                <button ladda="addres" ng-click="addres = true" class="ladda-btn btn btn-sm btn-success" ui-sref="resource.add" style="font-size: 12px; color: #fff;">Add Resource</button>
             </div>
         </div>
     </div>

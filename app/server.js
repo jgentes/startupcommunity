@@ -9,6 +9,7 @@ var express = require('express'),
     bodyParser = require('body-parser'),
     methodOverride = require('method-override'),
     logger = require('morgan'),
+    rollbar = require('rollbar'),
     nodalytics = require('nodalytics'),
     ghost = require('ghost'),
     parentApp = express();
@@ -71,6 +72,8 @@ if (process.env.NODE_ENV === "production") {
     app.use("/bower_components", express.static(root + "/bower_components"));
     app.use("/build", express.static(root + "/build"));
 }
+
+app.use(rollbar.errorHandler("ba5f8d28fd944ac0802b58a932f321ee", {environment: process.env.NODE_ENV}));
 
 // API ROUTE METHODS
 

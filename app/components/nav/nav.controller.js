@@ -4,7 +4,7 @@ angular
     .controller('SettingsController', SettingsController)
     .controller('EmbedSettingsController', EmbedSettingsController);
 
-function NavigationController($rootScope, $auth, $state, $window, $location, $stateParams, $uibModal, user_service, community_service, user, sweet, knowtify, errorLogService, newsletter_service) {
+function NavigationController($rootScope, $scope, $auth, $state, $window, $location, $stateParams, $uibModal, user_service, community_service, user, sweet, knowtify, errorLogService, newsletter_service) {
 
     if (user && user.token) $auth.setToken(user.token); // update local storage with latest user profile
 
@@ -115,23 +115,55 @@ function NavigationController($rootScope, $auth, $state, $window, $location, $st
             }
         }
 
-        
+    var self = this,
+        rollbar_payload = {
+            "payload": {
+                "environment": $location.host() !== 'startupcommunity.org' ? "development" : "production"
+            }
+        };
 
-        // load 3rd party script parameters
+    var go_rollbar = function() {
+        if ($window.Rollbar)
+            $window.Rollbar.configure(rollbar_payload);
+        if (rollbar_payload.payload.jayco)
+            jaco(); // this removes the watcher for the session id;
+    };
 
-        if ($location.host() !== 'startupcommunity.org') $window.Bugsnag.releaseStage = "development";
+    if (top)
+        this.top = top;
 
-        // ANONYMOUS ACCESS OR PROFILE DISPLAY
+    // ANONYMOUS OR LOGGED IN ?
 
         if ($auth.isAuthenticated() && user) {
 
             self.user = user; // reference 'this' by using 'nav' from 'NavigationController as nav' - * nav is also usable in child views *
 
-            knowtify.push(['load_inbox', 'knowtify', {email: self.user.profile.email}]);
+        // LOAD 3RD PARTY SERVICES
 
-            $window.JacoRecorder.identify(self.user.profile.email);
+        knowtify.push(['load_inbox', 'knowtify', {email: this.user.profile.email}]);
 
-        }
+        if ($window.JacoRecorder)
+            $window.JacoRecorder.identify(this.user.profile.email);
+
+        rollbar_payload.payload['person'] = {
+            "id": this.user.key,
+            "name": this.user.profile.name,
+            "email": this.user.profile.email
+        };
+
+    } else go_rollbar();
+
+    if ($window.JacoRecorder) {
+
+        var jaco = $scope.$watch(function () {
+            if ($window.JacoRecorder.state && $window.JacoRecorder.state.session && $window.JacoRecorder.state.session.id) {
+                rollbar_payload.payload['custom'] = {
+                    "jaco_url": "https://bo.getjaco.com/backoffice/sessions/%24%7" + $window.JacoRecorder.state.session.id + "%7D"
+                };
+                go_rollbar();
+            }
+        });
+    }
 
         // PRIMARY LEFT-NAV ITEM LIST
 /*
@@ -476,30 +508,30 @@ function NavigationController($rootScope, $auth, $state, $window, $location, $st
         };
 
         // INVITE PEOPLE
-
-        self.invitePeople = function() {
-
-            var modalInstance = $uibModal.open({
-                templateUrl: 'components/users/user.invite.html',
-                controller: InviteUserController,
-                controllerAs: 'invite',
-                windowClass: "hmodal-info",
-                resolve: {
-                    user: function() {
-                        return self.user;
-                    },
-                    community: function() {
-                        return $rootScope.global.community;
-                    },
-                    communities: function() {
-                        return $rootScope.global.communities;
-                    },
-                    location: function() {
-                        return $rootScope.global.location;
-                    }
+    
+    this.invitePeople = function() {
+        
+        var modalInstance = $uibModal.open({
+            templateUrl: 'components/users/user.invite.html',
+            controller: InviteUserController,
+            controllerAs: 'invite',
+            windowClass: "hmodal-info",
+            resolve: {
+                user: function() {
+                    return self.user;
+                },
+                community: function() {
+                    return self.community;
+                },
+                communities: function() {
+                    return self.communities;
+                },
+                location: function() {
+                    return self.location;
                 }
-            });
-        };
+            }
+        });
+    };
 
         // CHECK FOR IFRAME (redirect, if needed, must happen after routing)
         var embed;
