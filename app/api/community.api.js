@@ -621,6 +621,8 @@ function handleGetTop(req, res) {
                                 delete top_results.company_parents;
 
                                 // END PARENTS
+                                
+                                top.results['key'] = community_key;
 
                                 if (!cache) res.status(200).send(top_results);
 

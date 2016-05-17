@@ -8,126 +8,62 @@ function NavigationController($rootScope, $auth, $state, $window, $location, $st
 
     if (user && user.token) $auth.setToken(user.token); // update local storage with latest user profile
 
-    var getCommunities = function() {
-        if ($stateParams.location_path) $stateParams.location_path = $stateParams.location_path.replace(/\s+/g, '-');
+    var getNavTop = function() {
 
-        if ($stateParams.communities && ($stateParams.communities.key == $stateParams.location_path)) {
-            $rootScope.global.communities = $stateParams.communities;
+        if ($stateParams.location_path)
+            $stateParams.location_path = $stateParams.location_path.replace(/\s+/g, '-');
+
+        if ($rootScope.global && $rootScope.global.nav_top && $rootScope.global.nav_top.key == $stateParams.location_path)
             getCommunity();
-        } else community_service.getCommunity($stateParams.location_path)
-            .then(function(response) {
-                $rootScope.global.communities = response.data;
-                getCommunity();
-            });
+        else
+            community_service.getTop($stateParams.location_path)
+                .then(function(response) {
+                    $rootScope.global.nav_top = response.data;
+                    getCommunity();
+                })
     };
 
     var getCommunity = function() {
-        if (jQuery.isEmptyObject($stateParams.community)) { // if community is passed in via ui-sref, just use that
 
-            var pullCommunity = function (community_path) {
-                if ($rootScope.global.communities[community_path]) { // if location_path has already been pulled, use that
-                    $rootScope.global.community = $rootScope.global.communities[community_path]; // this should also avoid re-pull for /people and /companies
+        if ($stateParams.community_path)
+            $stateParams.community_path = $stateParams.community_path.replace(/\s+/g, '-');
+
+        var pullCommunity = function(comm_path) {
+            community_service.getKey(comm_path)
+                .then(function(response) {
+                    $rootScope.global.community = response.data;
                     getLocation();
-                } else {
-                    community_service.getKey(community_path)
-                        .then(function(response) {
-                            $rootScope.global.community = response.data;
-                            getLocation();
-                        })
-                }
-            };
+                })
+        };
 
-            if (jQuery.isEmptyObject($stateParams.profile)) {
-                // set community based on type, determined by URL
-                var url = $location.path().replace(/\/$/, "").split('/'),
-                    lastitem = url.pop(),
-                    root = url.pop();
-
-                if (lastitem == "people" || lastitem == "companies" || lastitem == "search" || lastitem == "invite" || lastitem == "add" || lastitem == "welcome") {
-                    if (lastitem == "invite" || lastitem == "add") {
-                        $rootScope.global.community = $rootScope.global.communities[url.pop()];
-                        getLocation();
-                        // return preceding url path as community, such as tech for 'bend-or/tech/people'
-                    } else if ($rootScope.global.communities[root]) {
-                        $rootScope.global.community = $rootScope.global.communities[root];
-                        getLocation();
-                    } else pullCommunity(root);
-                } else if ($rootScope.global.communities[lastitem] && ($rootScope.global.communities[lastitem].type == "cluster" || $rootScope.global.communities[lastitem].resource)) {
-                    $rootScope.global.community = $rootScope.global.communities[lastitem]; // return tech in 'bend-or/tech'
-                    getLocation();
-                } else pullCommunity($stateParams.location_path);
-            } else pullCommunity($stateParams.location_path);
-
-        } else {
-            $rootScope.global.community = $stateParams.community;
+        if ($rootScope.global && $rootScope.global.community && $rootScope.global.community.key == $stateParams.community_path.replace(/\s+/g, '-'))
             getLocation();
+        else {
+
+            var url = $location.path().replace(/\/$/, "").split('/'),
+                lastitem = url.pop(),
+                root = url.pop();
+
+            if (lastitem == "people" || lastitem == "companies" || lastitem == "search" || lastitem == "invite" || lastitem == "add" || lastitem == "welcome") {
+                if (lastitem == "invite" || lastitem == "add") {
+                    pullCommunity(url.pop());
+                    // return preceding url path as community, such as tech for 'bend-or/tech/people'
+                } else pullCommunity(root);
+            } else pullCommunity($stateParams.location_path);
         }
+
     };
 
     var getLocation = function() {
-        if ($rootScope.global.community.type == 'user' || $rootScope.global.community.type == 'company') {
-            $rootScope.global.location = $rootScope.global.communities[$rootScope.global.community.profile.home];
-            getNavCommunities();
-            getTop();
-        } else if(jQuery.isEmptyObject($stateParams.location) || $stateParams.location.type !== 'location') {
-            if ($rootScope.global.communities[$stateParams.location_path]) {
-                $rootScope.global.location = $rootScope.global.communities[$stateParams.location_path];
-                getNavCommunities();
-                getTop();
-            } else {
-                $rootScope.global.location = {};
-                getNavCommunities();
-                getTop();
-            }
-        } else if ($stateParams.location.type == 'location') {
-            $rootScope.global.location = $stateParams.location;
-            getNavCommunities();
-            getTop();
-        } else {
-            $rootScope.global.location = {};
-            getNavCommunities();
-            getTop();
-        }
-    };
 
-    var getNavCommunities = function() {
-        // this logic is mostly to avoid pulling community from db if it can be passed from previous state
-        if ($rootScope.global.communities && $rootScope.global.communities.key && $rootScope.global.location && $rootScope.global.location.key) {
-            if ($rootScope.global.location.key == $rootScope.global.communities.key) {
-                $rootScope.global.nav_communities = $rootScope.global.communities;
-                getTop();
-            } else if ($stateParams.communities && $stateParams.communities.key == $rootScope.global.location.key) {
-                $rootScope.global.nav_communities = $stateParams.communities;
-                getTop();
-            } else {
-                community_service.getCommunity($rootScope.global.location.key)
-                    .then(function(response) {
-                        $rootScope.global.nav_communities = response.data;
-                    })
-                    .catch(function(response) {
-                        console.log(response);
-                    });
-            }
-
-        } else {
-            $rootScope.global.nav_communities = $rootScope.global.communities;
-        }
-    };
-
-    var getTop = function() {
-        if ($stateParams.top) {
-            $rootScope.global.top = $stateParams.top;
+        if ($rootScope.global && $rootScope.global.location && $rootScope.global.location.key == $stateParams.location_path)
             getCommunityTop();
-        } else if ($rootScope.global.location && $rootScope.global.location.key && (($rootScope.global.location.type == 'location') || ($rootScope.global.location.resource) || ($rootScope.global.location.type == 'cluster'))) {
-            community_service.getTop($rootScope.global.location.key)
+        else
+            community_service.getTop($stateParams.location_path)
                 .then(function(response) {
-                    $rootScope.global.top = response.data;
+                    $rootScope.global.location = response.data;
                     getCommunityTop();
                 })
-        } else {
-            $rootScope.global.top = undefined;
-            getCommunityTop();
-        }
     };
 
     var getCommunityTop = function() {
@@ -138,28 +74,10 @@ function NavigationController($rootScope, $auth, $state, $window, $location, $st
                     loadNav();
                 })
         } else {
-            $rootScope.global.community_top = $rootScope.global.top;
+            $rootScope.global.community_top = $rootScope.global.nav_top;
             loadNav();
         }
     };
-
-    /*
-            if (jQuery.isEmptyObject(location)) {
-                if (community.type !== 'location' && community.profile && community.profile.home) {
-                    $rootScope.global.location = communities[community.profile.home];
-                } else $rootScope.global.location = community;
-            } else $rootScope.global.location = location;
-
-            $rootScope.global.community = jQuery.isEmptyObject($stateParams.community) ?
-                (community.key !== $rootScope.global.location.key ?
-                    community :
-                    $rootScope.global.location) :
-            $rootScope.global.community.key && ($rootScope.global.community.key !== $stateParams.community_path) ?
-                $rootScope.global.location :
-                $stateParams.community;
-
-            $stateParams.location_path = $stateParams.location_path || $stateParams.location.key || $rootScope.global.community.key;
-            */
 
     var self = this;
 
@@ -171,10 +89,6 @@ function NavigationController($rootScope, $auth, $state, $window, $location, $st
         $rootScope.global.communities = communities;
         */
         $rootScope.global.location_path = $stateParams.location_path;
-
-        if ($rootScope.global.top) {
-            $rootScope.global.nav_top = $rootScope.global.nav_top || $rootScope.global.top;
-        }
 
         console.log('StateParams Location: ', $stateParams.location ? $stateParams.location.key : null);
         console.log('StateParams Location_Path: ', $stateParams.location_path ? $stateParams.location_path : null);
@@ -214,12 +128,6 @@ function NavigationController($rootScope, $auth, $state, $window, $location, $st
             self.user = user; // reference 'this' by using 'nav' from 'NavigationController as nav' - * nav is also usable in child views *
 
             knowtify.push(['load_inbox', 'knowtify', {email: self.user.profile.email}]);
-
-            $window.Bugsnag.user = {
-                key: self.user.key,
-                name: self.user.profile.name,
-                email: self.user.profile.email
-            };
 
             $window.JacoRecorder.identify(self.user.profile.email);
 
@@ -362,15 +270,15 @@ function NavigationController($rootScope, $auth, $state, $window, $location, $st
 
         // to avoid duplicate location_path / community_path when navigating to people & companies
         self.nav_url = $stateParams.location_path == $rootScope.global.community.key ?
-            "({location_path: global.location_path, community: global.community, query: '*', top: global.top, communities: global.communities, user: nav.user })" :
-            "({location_path: global.location_path, community: global.community, query: '*', community_path: global.community.key, top: global.top, communities: global.communities, user: nav.user })";
+            "({location_path: global.location_path, community: global.community, query: '*', communities: global.communities, user: nav.user })" :
+            "({location_path: global.location_path, community: global.community, query: '*', community_path: global.community.key, communities: global.communities, user: nav.user })";
 
         // to set correct root path when navigating from user or company page
 
         self.nav_jump = ($rootScope.global.location && $rootScope.global.location.type == 'location') || (($rootScope.global.community.type == "user" || $rootScope.global.community.type == "company") &&
         ($rootScope.global.location && $rootScope.global.location.type == 'location')) ?
-            "({community_path: item.key, community: item, query: '*', location_path: global.location.key, top: global.top, communities: global.communities, user: nav.user })" :
-            "({community_path: item.key, community: item, query: '*', location_path: nav.user.profile.home, top: global.top, communities: global.communities, user: nav.user })";
+            "({community_path: item.key, community: item, query: '*', location_path: global.location.key, communities: global.communities, user: nav.user })" :
+            "({community_path: item.key, community: item, query: '*', location_path: nav.user.profile.home, communities: global.communities, user: nav.user })";
 
         // SEARCH
 
@@ -681,7 +589,7 @@ function NavigationController($rootScope, $auth, $state, $window, $location, $st
 
     };
 
-    getCommunities();
+    getNavTop();
 
 }
 
