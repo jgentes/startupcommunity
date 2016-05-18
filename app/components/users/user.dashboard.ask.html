@@ -7,16 +7,16 @@
     </div>
 </form>
 <span style="text-align: center;" ng-if="!nav.user">
-    <h1>Join the startup community in {{ (global.communities[global.location.profile.home].profile.name | words : 0).slice(0,-1) }} to ask questions.</h1><br>
+    <h1>Join the startup community in {{ (global.community[global.location.profile.home].profile.name | words : 0).slice(0,-1) }} to ask questions.</h1><br>
     <h2><a class="btn btn-lg btn-info" ng-click="nav.requestInvitation()">Click here to join</a></h2>
 </span>
 <br>
 <div loading-bars ng-show="profile.working" style="text-align:center; margin-left: -50px; margin-bottom: 15px;"></div>
-<div ng-show="global.communities.newmessages" class="row" ng-repeat="question in global.communities.newmessages">
+<div ng-show="global.community.newmessages" class="row" ng-repeat="question in global.community.newmessages">
     <div class="col-lg-12" ng-include="'components/users/user.dashboard.ask.questions.html'">
     </div>
 </div>
-<div class="row" ng-repeat="question in global.communities.messages">
+<div class="row" ng-repeat="question in global.community.messages">
     <div class="col-lg-12" ng-include="'components/users/user.dashboard.ask.questions.html'">
     </div>
 </div>

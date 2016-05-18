@@ -45,10 +45,13 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
 
         // the root state with core dependencies for injection in child states
         .state('root', {
-            url: "/:location_path",
+            url: "^/:location_path/:community_path",
             templateUrl: "components/nav/nav.html",
             controller: "NavigationController as nav",
             params: {
+                community_path: {
+                    squash: true
+                },
                 profile: {},
                 top: null,
                 user: null,
@@ -105,14 +108,6 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
             }
         })
         .state('user.list', {
-            url: "^/:location_path/:community_path/people",
-            params: {
-                community_path: {
-                    value: null,
-                    squash: true
-                },
-                pageTitle: 'People'
-            },
             views: {
                 'header': {
                     templateUrl: "components/header/header_small.html"
@@ -131,9 +126,7 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
         })
         .state('company.dashboard', {
             params: {
-                profile: {},
-                location: {},
-                pageTitle: 'Company Profile'
+                profile: {}
             },
             views: {
                 'header': {
@@ -146,14 +139,6 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
             }
         })
         .state('company.list', {
-            url: "^/:location_path/:community_path/companies",
-            params: {
-                community_path: {
-                    value: null,
-                    squash: true
-                },
-                pageTitle: 'Companies'
-            },
             views: {
                 'header': {
                     templateUrl: "components/header/header_small.html"
@@ -165,13 +150,9 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
             }
         })
         .state('company.add', {
-            url: "/:community_path/companies/add",
+            url: "/companies/add",
             params: {
                 community: {},
-                community_path: {
-                    value: null,
-                    squash: true
-                },
                 pageTitle: 'Add a Company'
             },
             views: {
@@ -185,13 +166,9 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
             }
         })
         .state('company.edit', {
-            url: "/:community_path/edit",
+            url: "/edit",
             params: {
                 community: {},
-                community_path: {
-                    value: null,
-                    squash: true
-                },
                 pageTitle: 'Edit a Company'
             },
             views: {
@@ -211,14 +188,6 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
             abstract: true
         })
         .state('resource.list', {
-            url: "^/:location_path/:community_path/resources",
-            params: {
-                community_path: {
-                    value: null,
-                    squash: true
-                },
-                pageTitle: 'Resources'
-            },
             views: {
                 'header': {
                     templateUrl: "components/header/header_small.html"
@@ -355,7 +324,6 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
             }
         })
         .state('community.dashboard', {
-            url: "/:community_path",
             params: {
                 tour: false,
                 pageTitle: 'Overview'
@@ -401,7 +369,7 @@ angular
         $rootScope.global = {}; // initialize my global object
 
         $rootScope.$state = $state; // allows use if $state within views
-        window.$state = $state; // allows use of $state within console
+        //window.$state = $state; // allows use of $state within console
         $rootScope.$on('$stateChangeError', function (evt, toState, toParams, fromState, fromParams, error) {
             //todo add exception logging here
             $auth.removeToken();

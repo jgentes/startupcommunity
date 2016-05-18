@@ -106,14 +106,12 @@ function handleGetCommunity(req, res) {
             .query(searchString)
             .then(function (result) {
 
-                var newresponse = {};
-
                 var finalize = function (results) {
                     
                     // finalize iterates through results and formats them nicely
 
                     for (item in results) {
-                        if (results[item].value) {
+                        if (results[item].value && results[item].path.key !== community) {
                             if (results[item].value.resource) {
 
                                 // put resource keys in their own bucket
@@ -127,10 +125,9 @@ function handleGetCommunity(req, res) {
                         
                         }
                     }
-                    newresponse["key"] = community;
-
+                    
                     // get messages for users
-                    if (newresponse[community].type == 'user') {
+                    if (newresponse.type == 'user') {
                         db.newSearchBuilder()
                             .collection(process.env.DB_MESSAGES)
                             .limit(100)
@@ -156,12 +153,12 @@ function handleGetCommunity(req, res) {
                                 res.status(200).send(newresponse);
                             });
 
-                    } else if (newresponse[community].type == 'company') {
+                    } else if (newresponse.type == 'company') {
                         // get team
 
                         var startkey = 0,
                             teamlist = [],
-                            thiskey = newresponse[community].key;
+                            thiskey = newresponse.key;
 
                         var getTeam = function(startkey, teamlist) {
                             db.newSearchBuilder()
@@ -212,12 +209,12 @@ function handleGetCommunity(req, res) {
                                             }
                                         }
 
-                                        newresponse[community]['team'] = {
+                                        newresponse['team'] = {
                                             count: count
                                         };
 
                                         for (r in teamresponse) {
-                                            newresponse[community].team[r] = teamresponse[r].slice(0,4); // cut the array down
+                                            newresponse.team[r] = teamresponse[r].slice(0,4); // cut the array down
                                         }
 
                                         checkcache(cache, community, newresponse);
@@ -242,6 +239,9 @@ function handleGetCommunity(req, res) {
                         if (m.path.key == community) {
                             found = true;
 
+                            var newresponse = m.value;
+                            newresponse["key"] = community;
+
                             console.log('Pulling community for ' + m.value.profile.name);
 
                             // grab home
@@ -259,7 +259,7 @@ function handleGetCommunity(req, res) {
 
                                 var search = community;
 
-                                if (comm_items) {
+                                if (comm_items && comm_items.length) {
                                     search += " OR ";
                                     for (i in comm_items) {
                                         if (i > 0) {
@@ -620,9 +620,18 @@ function handleGetTop(req, res) {
                                 delete top_results.people_parents;
                                 delete top_results.company_parents;
 
+                                // this is for dashboard view
+
+                                top_results.max = 0;
+                                if (top_results.parents) {
+                                    for (val in top_results.parents) {
+                                        top_results.max += top_results.parents[val].value;
+                                    }
+                                }
+
                                 // END PARENTS
                                 
-                                top.results['key'] = community_key;
+                                top_results['key'] = community_key;
 
                                 if (!cache) res.status(200).send(top_results);
 

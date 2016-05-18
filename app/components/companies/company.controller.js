@@ -28,7 +28,7 @@ function CompanyController($rootScope, $stateParams, $state, $location, company_
         } else clusterFilter = $rootScope.global.community.profile.industries;
     } else {
         clusterFilter = [];
-        if ($stateParams.community_path && $stateParams.community_path !== $stateParams.location_path) communityFilter.push($stateParams.community_path);
+        if ($rootScope.global.community.key && $rootScope.global.community.key !== $rootScope.global.community.key) communityFilter.push($rootScope.global.community.key);
     }
 
     $stateParams.query ? query = $stateParams.query : query = '*';
@@ -97,7 +97,7 @@ function CompanyController($rootScope, $stateParams, $state, $location, company_
             self.selection = "";
             var selectedCommunities = self.selectedClusters.concat(self.selectedResources);
             for (item in selectedCommunities) {
-                self.selection += $rootScope.global.communities[selectedCommunities[item]].profile.name;
+                self.selection += $rootScope.global.community[selectedCommunities[item]].profile.name;
                 if (item < selectedCommunities.length - 1) {
                     if (item < selectedCommunities.length - 2 ) {
                         self.selection += ', ';
@@ -115,7 +115,7 @@ function CompanyController($rootScope, $stateParams, $state, $location, company_
                 if ($rootScope.global.community.community_profiles && $rootScope.global.community.community_profiles[$stateParams.location_path]) {
                     self.title += $rootScope.global.community.community_profiles[$stateParams.location_path].name +'</strong>';
                 } else self.title += $rootScope.global.community.profile.name +'</strong>';
-            } else self.title += $rootScope.global.communities[$stateParams.location_path].profile.name + '</strong>';
+            } else self.title += $rootScope.global.community[$stateParams.location_path].profile.name + '</strong>';
         }
 
         var pageTitle = '<br><small>' + $rootScope.global.community.profile.name + '</small>';
@@ -215,12 +215,12 @@ function CompanyController($rootScope, $stateParams, $state, $location, company_
     };
 }
 
-function CompanyProfileController($rootScope, $mixpanel, user_service, result_service, location, $location, sweet, $window, $http) {
+function CompanyProfileController($rootScope, $mixpanel, user_service, result_service, $location, sweet, $window, $http) {
 
     $mixpanel.track('Viewed Company');
 
     var self = this;
-    this.company = $rootScope.global.communities[$rootScope.global.communities.key];
+    this.company = $rootScope.global.community;
     this.team_panels = user_service.team_panels();
 
     this.remove = function(role) {
@@ -256,7 +256,7 @@ function CompanyProfileController($rootScope, $mixpanel, user_service, result_se
 
         var limit = $location.search().limit;
 
-        user_service.search([location.key, self.company.key], [], '*', undefined, limit, alturl)
+        user_service.search([$rootScope.global.location.key, self.company.key], [], '*', undefined, limit, alturl)
             .then(function (response) {
                 self.users = result_service.setPage(response.data);
                 self.loadingUser = false;                

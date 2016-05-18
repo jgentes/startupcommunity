@@ -267,7 +267,7 @@ angular
 
                       var cluster_key = community.key;
                   }
-
+                  /*
                   var top = function() {
                       $http.get('/api/2.1/community/' + location_key + '/' + (community_key ? community_key + '/top' : 'top'), {
                           params: {
@@ -277,7 +277,7 @@ angular
                       });
                   };
 
-                  /*if (community.community_profiles && community.community_profiles[location_key] && community.community_profiles[location_key].top) {
+                  if (community.community_profiles && community.community_profiles[location_key] && community.community_profiles[location_key].top) {
                       top();
                       return { data: community.community_profiles[location_key].top };
                   } else if (community.profile && community.profile.top) {

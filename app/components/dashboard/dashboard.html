@@ -1,57 +1,3 @@
-<!--
-<div small-header class="normalheader" style="padding: 0 0 25px 0;">
-    <div class="row" style="margin-top:-10px;">
-        <div class="col-md-6" style="padding-top:10px;">
-            <div class="hpanel">
-                <div class="panel-body" style="height: 85px;">
-                    <div class="pull-left" style="padding-left:0;">
-                        <a ui-sref="community.dashboard({community_path: global.community.key, community: global.community})" style="white-space:nowrap;">
-                            <h2 ng-if="global.community.community_profiles[global.location_path]" class="font-light m-b-xs">{{ global.community.community_profiles[global.location_path].name }}</h2>
-                            <h2 ng-if="!global.community.community_profiles[global.location_path]" class="font-light m-b-xs">{{ global.community.profile.name }}</h2>
-                        </a>
-                        <div style="float:left;">
-                            <small>
-                                {{nav.state.current.params.pageTitle}}
-                            </small>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-md-6" style="padding-top:10px;">
-            <div class="hpanel">
-                <div class="panel-body" style="padding: 10px 5px; height: 85px;">
-                    <div class="col-xs-8">
-                        <div class="pull-left">
-                            <h2 class="font-light m-b-xs">Leaders</h2>
-                            <div ng-repeat="lead in global.top.leaders | limitTo: 3" style="white-space: nowrap;" ng-class="{'pull-left': $first}">
-                                <a class="text-info" ui-sref="user.dashboard({profile: lead.value, location_path: lead.path.key, community: {}})">
-                                    <small>
-                                        <span ng-if="$last && $index !== 0">
-                                            &nbsp;and
-                                        </span>
-                                        &nbsp;{{lead.value.profile.name}}
-                                        <span ng-if="!$last && global.top.leaders.length > 2">
-                                            ,
-                                        </span>
-                                    </small>
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-xs-4">
-                        <div class="stats-icon pull-right">
-                            <i class="pe-7s-flag fa-3x"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
--->
-
 <div>
     <div id="dash-tour" tour-step order="0" title="The {{global.community.profile.name.split(',')[0] }} Startup Community" content="Your community includes people and companies, organized by industry and skillset." placement="top">
         <div class="row">
@@ -204,13 +150,13 @@
                     <div class="panel-body" ng-repeat="item in global.top.parents | limitTo: 5">
                         <div class="row">
                             <div class="col-xs-10 forum-heading">
-                                <a ui-sref="community.dashboard({community_path: item.label, community: global.communities[item.label], query: '*', location_path: global.location.key})"><h4 style="font-weight: 200;">{{item.label[0].toUpperCase() + item.label.slice(1);}}</h4>
-                                    <uib-progressbar value="item.value" max="dashboard.max" type="success" class="progress-small full" style="margin-top: 7px;"></uib-progressbar>
+                                <a ui-sref="community.dashboard({community_path: item.label, community: global.community[item.label], query: '*', location_path: global.location.key})"><h4 style="font-weight: 200;">{{item.label[0].toUpperCase() + item.label.slice(1);}}</h4>
+                                    <uib-progressbar value="item.value" max="global.top.max" type="success" class="progress-small full" style="margin-top: 7px;"></uib-progressbar>
                                 </a>
                             </div>
                             <div class="col-xs-2 forum-info">
-                                <a ui-sref="community.dashboard({community_path: item.label, community: global.communities[item.label], query: '*', location_path: global.location.key})">
-                                    <span class="number number-column">{{((item.value / dashboard.max)*100).toFixed(0)}}%</span>
+                                <a ui-sref="community.dashboard({community_path: item.label, community: global.community[item.label], query: '*', location_path: global.location.key})">
+                                    <span class="number number-column">{{((item.value / global.top.max)*100).toFixed(0)}}%</span>
                                 </a>
                             </div>
                         </div>

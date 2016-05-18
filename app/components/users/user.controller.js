@@ -22,14 +22,14 @@ function UserController($rootScope, $stateParams, $location, user_service, resul
         } else clusterFilter = $rootScope.global.community.profile.industries;
     } else {
         clusterFilter = [];
-        if ($stateParams.community_path && $stateParams.community_path !== $stateParams.location_path) communityFilter.push($stateParams.community_path);
+        if ($rootScope.global.community.key && $rootScope.global.community.key !== $rootScope.global.location.key) communityFilter.push($rootScope.global.community.key);
     }
 
     $stateParams.query ? query = $stateParams.query : query = '*';
 
     this.url = $stateParams.community_path && $stateParams.location_path ?
-        "({community_path: val, community: global.communities[val], query: '*'})" :
-        "({location_path: val, community: global.communities[val], query: '*'})";
+        "({community_path: val, query: '*'})" :
+        "({location_path: val, query: '*'})";
 
     // THIS IS A DUPLICATE OF NAV.EMBEDDED, SHOULD MOVE TO A SERVICE AND INJECT IN NAV AND USER CONTROLLERS
     try {
@@ -89,7 +89,7 @@ function UserController($rootScope, $stateParams, $location, user_service, resul
             self.selection = "";
             var selectedCommunities = self.selectedClusters.concat(self.selectedResources);
             for (item in selectedCommunities) {
-                self.selection += $rootScope.global.communities[selectedCommunities[item]].profile.name;
+                self.selection += $rootScope.global.community[selectedCommunities[item]].profile.name;
                 if (item < selectedCommunities.length - 1) {
                     if (item < selectedCommunities.length - 2 ) {
                         self.selection += ', ';
@@ -107,7 +107,7 @@ function UserController($rootScope, $stateParams, $location, user_service, resul
                 if ($rootScope.global.community.community_profiles && $rootScope.global.community.community_profiles[$stateParams.location_path]) {
                     self.title += $rootScope.global.community.community_profiles[$stateParams.location_path].name +'</strong>';
                 } else self.title += $rootScope.global.community.profile.name +'</strong>';
-            } else self.title += $rootScope.global.communities[$stateParams.location_path].profile.name + '</strong>';
+            } else self.title += $rootScope.global.community[$stateParams.location_path].profile.name + '</strong>';
         }
 
         var pageTitle = '<br><small>' + $rootScope.global.community.profile.name + '</small>';
@@ -236,11 +236,10 @@ function UserProfileController($rootScope, $stateParams, $http, $uibModal, $mixp
     } else if ($rootScope.global.community && $rootScope.global.community.type == "user") {
         this.user = $rootScope.global.community;
     } else this.user = user;
-
+    
     this.loggedin = !!user;
 
     var self = this;
-    $rootScope.global.location = $rootScope.global.communities[$rootScope.global.community.profile.home];
     this.reply = {};
 
     this.companies = { "count" : {}};
@@ -249,21 +248,19 @@ function UserProfileController($rootScope, $stateParams, $http, $uibModal, $mixp
     
     for (role in this.user.roles) {
         for (comm in this.user.roles[role]) {
-            if ($rootScope.global.communities[comm] && $rootScope.global.communities[comm].type == 'company') {
+            if ($rootScope.global.community[comm] && $rootScope.global.community[comm].type == 'company') {
                 if (!this.companies[role]) this.companies[role] = {};
                 if (!this.companies.count[role]) this.companies.count[role] = 0;
                 this.companies[role][comm] = {
                     "path": {
                         "key": comm
                     },
-                    "value" : $rootScope.global.communities[comm]
+                    "value" : $rootScope.global.community[comm]
                 };
                 ++ this.companies.count[role];
             }
         }
     }
-    
-    
 
     $mixpanel.track('Viewed Profile');
 
@@ -312,8 +309,8 @@ function UserProfileController($rootScope, $stateParams, $http, $uibModal, $mixp
                         self.alert = {type: 'danger', message: String(response.data.message)};
                     } else {
                         self.working = false;
-                        if (!$rootScope.global.communities.newmessages) $rootScope.global.communities.newmessages = {};
-                        $rootScope.global.communities.newmessages[response.data.key] = response.data;
+                        if (!$rootScope.global.community.newmessages) $rootScope.global.community.newmessages = {};
+                        $rootScope.global.community.newmessages[response.data.key] = response.data;
                         $http.get('/api/2.1/community/' + self.user.key); // refresh outdated cache
                     }
 
@@ -350,9 +347,9 @@ function UserProfileController($rootScope, $stateParams, $http, $uibModal, $mixp
                         self.alert = {type: 'danger', message: String(response.data.message)};
                     } else {
                         self.working[parent.key] = false;
-                        if ($rootScope.global.communities.messages[parent.key]) {
-                            $rootScope.global.communities.messages[parent.key].replies.push(response.data);
-                        } else $rootScope.global.communities.newmessages[parent.key].replies.push(response.data);
+                        if ($rootScope.global.community.messages[parent.key]) {
+                            $rootScope.global.community.messages[parent.key].replies.push(response.data);
+                        } else $rootScope.global.community.newmessages[parent.key].replies.push(response.data);
                         $http.get('/api/2.1/community/' + self.user.key); // refresh outdated cache
                     }
 
