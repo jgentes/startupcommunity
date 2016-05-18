@@ -1,4 +1,4 @@
-<form ng-if="nav.user" role="form" ng-submit="profile.askQuestion()">
+<form ng-if="global.user" role="form" ng-submit="profile.askQuestion()">
     <div id="questionbox" class="input-group">
         <input type="text" class="form-control input-lg" placeholder="Write a public question for {{profile.user.profile.name | words : 0}} here.." ng-model="profile.question" required>
                         <span class="input-group-btn">
@@ -6,7 +6,7 @@
                         </span>
     </div>
 </form>
-<span style="text-align: center;" ng-if="!nav.user">
+<span style="text-align: center;" ng-if="!global.user">
     <h1>Join the startup community in {{ (global.community[global.location.profile.home].profile.name | words : 0).slice(0,-1) }} to ask questions.</h1><br>
     <h2><a class="btn btn-lg btn-info" ng-click="nav.requestInvitation()">Click here to join</a></h2>
 </span>

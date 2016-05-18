@@ -1,10 +1,10 @@
 <div class="col-md-12 dash-table">
     <div>
-        <a ui-sref="company.dashboard({profile: item.value, location_path: item.path.key, user: nav.user })" ng-click="nav.loaders[item.value.profile.name] = true" title="View {{::item.value.profile.name | words:0}}'s Profile"><img
+        <a ui-sref="company.dashboard({profile: item.value, location_path: item.path.key, user: global.user })" ng-click="nav.loaders[item.value.profile.name] = true" title="View {{::item.value.profile.name | words:0}}'s Profile"><img
                 ng-src="{{item.value.profile.avatar || '/public/images/browser_icon.jpg'}}" alt="{{::item.value.profile.name}}" class="user-img widget-image pull-left" onerror="this.src='images/browser_icon.jpg'"/></a>
     </div>
     <div class="user-row list-hr">
-        <a ui-sref="company.dashboard({profile: item.value, location_path: item.path.key, user: nav.user })" title="View {{::item.value.profile.name | words:0}}'s Profile" ng-click="nav.loaders[item.value.profile.name] = true" class="dash-row-div"><strong>{{::item.value.profile.name}} </strong></a>
+        <a ui-sref="company.dashboard({profile: item.value, location_path: item.path.key, user: global.user })" title="View {{::item.value.profile.name | words:0}}'s Profile" ng-click="nav.loaders[item.value.profile.name] = true" class="dash-row-div"><strong>{{::item.value.profile.name}} </strong></a>
         <div class="dash-row-summary" ng-show="(item.value.profile.summary).length > 0" style="margin-left: -5px;">
             <a title="Show Summary" ng-click="showSummary = !showSummary" class="user-summary">&nbsp;&nbsp;<i style="font-size: 8px;" class="fa fa-chevron-down"></i></a>
         </div>

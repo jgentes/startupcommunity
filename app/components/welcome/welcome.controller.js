@@ -2,7 +2,7 @@ angular
     .module('startupcommunity')
     .controller('WelcomeController', WelcomeController);
 
-function WelcomeController($rootScope, $auth, $q, $http, $mixpanel, $stateParams, $state, sweet, user_service, community_service, user) {
+function WelcomeController($rootScope, $auth, $q, $http, $mixpanel, $stateParams, $state, sweet, user_service, community_service) {
     var self = this;
     $rootScope.global.location = jQuery.isEmptyObject($rootScope.global.location) ? $rootScope.global.community.profile.name : $rootScope.global.location.profile.name.split(',')[0];
     this.auth = false;
@@ -12,7 +12,7 @@ function WelcomeController($rootScope, $auth, $q, $http, $mixpanel, $stateParams
     this.industries = community_service.industries();
     this.parents = []; // need a placeholder until next call is resolved
     this.parents = community_service.parents();
-    this.user = user;
+    this.user = $rootScope.global.user;
     this.quote = true;
     this.submitted = false;
 

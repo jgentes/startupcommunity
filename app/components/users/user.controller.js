@@ -181,9 +181,9 @@ function UserController($rootScope, $stateParams, $location, user_service, resul
     };
 }
 
-function ContactUserController($uibModalInstance, notify_service, sweet, community_key, location_key, user){
+function ContactUserController($uibModalInstance, notify_service, sweet, community_key, location_key){
 
-    this.user = user; //used in view
+    this.user = $rootScope.global.user; //used in view
     var self = this;
 
     this.send = function () {
@@ -196,7 +196,7 @@ function ContactUserController($uibModalInstance, notify_service, sweet, communi
                 "reason" : self.form.reason_value
             };
 
-            notify_service.contact(user.key, formdata, community_key, location_key)
+            notify_service.contact($rootScope.global.user.key, formdata, community_key, location_key)
                 .then(function(response) {
 
                     $uibModalInstance.close();
@@ -229,39 +229,53 @@ function ContactUserController($uibModalInstance, notify_service, sweet, communi
     };
 }
 
-function UserProfileController($rootScope, $stateParams, $http, $uibModal, $mixpanel, user, user_service, message_service) {
-
-    if (!jQuery.isEmptyObject($stateParams.profile)) {
-        this.user = $stateParams.profile;
-    } else if ($rootScope.global.community && $rootScope.global.community.type == "user") {
-        this.user = $rootScope.global.community;
-    } else this.user = user;
-    
-    this.loggedin = !!user;
+function UserProfileController($rootScope, $stateParams, $http, $uibModal, $mixpanel, user_service, community_service, message_service) {
 
     var self = this;
-    this.reply = {};
 
-    this.companies = { "count" : {}};
+    if ($stateParams.profile) this.user = $stateParams.profile; // set basic profile details while pulling the rest
 
-    this.team_panels = user_service.team_panels();        
-    
-    for (role in this.user.roles) {
-        for (comm in this.user.roles[role]) {
-            if ($rootScope.global.community[comm] && $rootScope.global.community[comm].type == 'company') {
-                if (!this.companies[role]) this.companies[role] = {};
-                if (!this.companies.count[role]) this.companies.count[role] = 0;
-                this.companies[role][comm] = {
-                    "path": {
-                        "key": comm
-                    },
-                    "value" : $rootScope.global.community[comm]
-                };
-                ++ this.companies.count[role];
+    var loadCompanies = function () {
+
+        for (role in self.user.roles) {
+            for (comm in self.user.roles[role]) {
+                if (self.user[comm] && self.user[comm].type == 'company') {
+                    if (!self.companies[role]) self.companies[role] = {};
+                    if (!self.companies.count[role]) self.companies.count[role] = 0;
+                    self.companies[role][comm] = {
+                        "path": {
+                            "key": comm
+                        },
+                        "value" : self.user[comm]
+                    };
+                    ++ self.companies.count[role];
+                }
             }
         }
-    }
+    };
 
+    if ($rootScope.global.community && $rootScope.global.community.type == "user" && $rootScope.global.community.companies) {
+        // if directly accessed via url
+        this.user = $rootScope.global.community;
+        loadCompanies();
+    } else
+        var userkey = (this.user && this.user.key) ?
+            this.user.key :
+            $stateParams.community_path ?
+                $stateParams.community_path :
+                $stateParams.location_path;
+
+        community_service.getCommunity(userkey)
+        .then(function(response) {
+            self.user = response.data;
+            loadCompanies();
+        });
+
+    this.loggedin = !!$rootScope.global.user;
+    this.reply = {};
+    this.companies = { "count" : {}};
+    this.team_panels = user_service.team_panels();
+    this.working = false;
     $mixpanel.track('Viewed Profile');
 
     this.contact = function(community_key) {
@@ -286,7 +300,7 @@ function UserProfileController($rootScope, $stateParams, $http, $uibModal, $mixp
     };
 
     this.getKey = function() {
-        if (!user.profile.api_key) {
+        if (!$rootScope.global.user.profile.api_key) {
             user_service.getKey()
                 .then(function(response) {
                     var api_key = response.data;
@@ -298,10 +312,10 @@ function UserProfileController($rootScope, $stateParams, $http, $uibModal, $mixp
     this.askQuestion = function() {
         self.working = true;
 
-        if (self.question && user) {
+        if (self.question && $rootScope.global.user) {
             // update user profile
 
-            message_service.addMessage('question', user, self.user, self.question)
+            message_service.addMessage('question', $rootScope.global.user, self.user, self.question)
                 .then(function (response) {
                     self.question = undefined;
 
@@ -322,8 +336,6 @@ function UserProfileController($rootScope, $stateParams, $http, $uibModal, $mixp
                 });
         } else self.alert = {type: 'danger', message: 'Please login before posting a question'};
     };
-
-    this.working = false;
 
     this.ask = function() {
         $('#ask').addClass('active');
@@ -363,15 +375,15 @@ function UserProfileController($rootScope, $stateParams, $http, $uibModal, $mixp
     }
 }
 
-function InviteUserController($rootScope, $mixpanel, user, user_service, community_service) {
+function InviteUserController($rootScope, $mixpanel, user_service, community_service) {
     var self = this;
-    this.user = user;
+    this.user = $rootScope.global.user;
 
     var leader = [];
 
-    if (user && user.roles && !jQuery.isEmptyObject(user.roles.leader)) {
+    if (this.user && this.user.roles && !jQuery.isEmptyObject(this.user.roles.leader)) {
 
-        for (l in user.roles.leader) leader.push(l);
+        for (l in this.user.roles.leader) leader.push(l);
 
         community_service.getResources(undefined, leader)
             .then(function(response) {
@@ -404,7 +416,7 @@ function InviteUserController($rootScope, $mixpanel, user, user_service, communi
                         "resources" : resources
                     };
 
-                    if (user) {
+                    if (self.user) {
 
                         user_service.inviteUser(formdata.email, formdata.message, $rootScope.global.location.profile.name, $rootScope.global.location.key, formdata.resources)
                             .then(function(response) {

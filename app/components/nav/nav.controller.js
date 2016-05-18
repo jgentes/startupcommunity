@@ -4,21 +4,53 @@ angular
     .controller('SettingsController', SettingsController)
     .controller('EmbedSettingsController', EmbedSettingsController);
 
-function NavigationController($rootScope, $scope, $auth, $state, $window, $location, $stateParams, $uibModal, user_service, community_service, user, sweet, knowtify, errorLogService, newsletter_service) {
+function NavigationController($rootScope, $scope, $auth, $state, $window, $location, $stateParams, $uibModal, $mixpanel, user_service, community_service, sweet, knowtify, errorLogService, newsletter_service) {
 
     var self = this;
-
-    if (user && user.token) $auth.setToken(user.token); // update local storage with latest user profile
+    
     $rootScope.global.path = $location.path().replace(/\/$/, ""); //used for routing and used in view
     $rootScope.global.location_path = $stateParams.location_path;
     this.state = $state; // used in view because path doesn't always update properly.. esp. for /people
 
     var nav_community;
 
+    var getProfile = function() {
+        
+        if (!$rootScope.global.user) {
+            user_service.getProfile()
+                .then(function(response) {
+
+                    if (response.message) {
+                        $location.url('/logout');
+                    }
+
+                    if (response.key) {
+                        $mixpanel.people.set({
+                            "$name": response.profile.name,
+                            "$email": response.profile.email
+                        });
+                    }
+
+                    $rootScope.global.user = response.data;
+                    
+                    if ($rootScope.global.user.token) $auth.setToken($rootScope.global.user.token); // update local storage with latest user profile
+                    
+                    getCommunity();
+
+                })
+                .catch(function(response) {
+                    //todo add exception logging here
+                    $location.url('/logout');
+                });
+        } else getCommunity();
+        
+    };
+    
+
     var getCommunity = function () {
 
         var pullCommunity = function (comm_path) {
-            $rootScope.global.community = undefined;
+
             community_service.getCommunity(comm_path)
                 .then(function (response) {
                     $rootScope.global.community = response.data;
@@ -76,7 +108,7 @@ function NavigationController($rootScope, $scope, $auth, $state, $window, $locat
             if ($rootScope.global && $rootScope.global.location && $rootScope.global.location.key == nav_community.profile.home) {
                 getNavTop();
             } else
-                $rootScope.global.location = undefined;
+
                 community_service.getKey(nav_community.profile.home)
                     .then(function(response) {
                         $rootScope.global.location = response.data;
@@ -88,7 +120,7 @@ function NavigationController($rootScope, $scope, $auth, $state, $window, $locat
             getNavTop();
         } else
             if ($stateParams.location_path !== nav_community.key) {
-                $rootScope.global.location = undefined;
+
                 community_service.getKey($stateParams.location_path)
                     .then(function(response) {
                         $rootScope.global.location = response.data;
@@ -113,7 +145,6 @@ function NavigationController($rootScope, $scope, $auth, $state, $window, $locat
                 nav_community.profile.home :
                 $rootScope.global.location.key;
 
-            $rootScope.global.nav_top = undefined;
             community_service.getTop(true_loc)
                 .then(function(response) {
                     $rootScope.global.nav_top = response.data;
@@ -126,7 +157,6 @@ function NavigationController($rootScope, $scope, $auth, $state, $window, $locat
     var getCommunityTop = function() {
         if (nav_community && nav_community.key && $rootScope.global.location && $rootScope.global.location.key && (nav_community.key !== $rootScope.global.location.key && ((nav_community.type == 'location') || (nav_community.resource) || (nav_community.type == 'cluster')))) {
 
-            $rootScope.global.top = undefined;
             community_service.getTop($rootScope.global.location.key, nav_community.key, nav_community)
                 .then(function(response) {
                     $rootScope.global.top = response.data;
@@ -142,10 +172,11 @@ function NavigationController($rootScope, $scope, $auth, $state, $window, $locat
 
     var loadNav = function() {
 
-       /* // *** ROUTING OF ROOT PATHS ***
+        // *** ROUTING OF ROOT PATHS ***
+
         switch ($location.path().replace(/\/$/, "").split('/').pop()) {
             case 'people':
-                $state.go('user.list');
+                $state.go('user.list', {}, { location: false });
                 break;
             case 'companies':
                 $state.go('company.list');
@@ -156,6 +187,7 @@ function NavigationController($rootScope, $scope, $auth, $state, $window, $locat
             default:
                 switch (nav_community.type) {
                     case 'user':
+                        console.log('switch user')
                         $state.go('user.dashboard');
                         break;
                     case 'company':
@@ -164,19 +196,6 @@ function NavigationController($rootScope, $scope, $auth, $state, $window, $locat
                     default:
                         $state.go('community.dashboard');
                 }
-        }
-*/
-        if ($stateParams.community_path !== "people" && $stateParams.community_path !== "companies" && $stateParams.community_path !== "search" && $stateParams.community_path !== "invite" && $stateParams.community_path !== "add" && $stateParams.community_path !== "welcome") {
-            switch (nav_community.type) {
-                case 'user':
-                    $state.go('user.dashboard');
-                    break;
-                case 'company':
-                    $state.go('company.dashboard');
-                    break;
-                default:
-                    $state.go('community.dashboard');
-            }
         }
 
         console.log('StateParams Location: ', $stateParams.location ? $stateParams.location.key : null);
@@ -187,51 +206,51 @@ function NavigationController($rootScope, $scope, $auth, $state, $window, $locat
         console.log('Nav RootScope Location: ', $rootScope.global.location ? $rootScope.global.location.key : null);
         console.log('Nav RootScope Community: ', $rootScope.global.community ? $rootScope.global.community.key : null);
 
-    var rollbar_payload = {
-            "payload": {
-                "environment": $location.host() !== 'startupcommunity.org' ? "development" : "production"
-            }
+        var rollbar_payload = {
+                "payload": {
+                    "environment": $location.host() !== 'startupcommunity.org' ? "development" : "production"
+                }
+            };
+
+        var go_rollbar = function() {
+            if ($window.Rollbar)
+                $window.Rollbar.configure(rollbar_payload);
+            if (rollbar_payload.payload.jayco)
+                jaco(); // this removes the watcher for the session id;
         };
 
-    var go_rollbar = function() {
-        if ($window.Rollbar)
-            $window.Rollbar.configure(rollbar_payload);
-        if (rollbar_payload.payload.jayco)
-            jaco(); // this removes the watcher for the session id;
-    };
+        // ANONYMOUS OR LOGGED IN ?
 
-    // ANONYMOUS OR LOGGED IN ?
+        if ($auth.isAuthenticated() && $rootScope.global.user) {
 
-        if ($auth.isAuthenticated() && user) {
+            self.user = $rootScope.global.user; // reference 'this' by using 'nav' from 'NavigationController as nav' - * nav is also usable in child views *
 
-            self.user = user; // reference 'this' by using 'nav' from 'NavigationController as nav' - * nav is also usable in child views *
+            // LOAD 3RD PARTY SERVICES
 
-        // LOAD 3RD PARTY SERVICES
+            knowtify.push(['load_inbox', 'knowtify', {email: self.user.profile.email}]);
 
-        knowtify.push(['load_inbox', 'knowtify', {email: self.user.profile.email}]);
+            if ($window.JacoRecorder)
+                $window.JacoRecorder.identify(self.user.profile.email);
 
-        if ($window.JacoRecorder)
-            $window.JacoRecorder.identify(self.user.profile.email);
+            rollbar_payload.payload['person'] = {
+                "id": self.user.key,
+                "name": self.user.profile.name,
+                "email": self.user.profile.email
+            };
 
-        rollbar_payload.payload['person'] = {
-            "id": self.user.key,
-            "name": self.user.profile.name,
-            "email": self.user.profile.email
-        };
+        } else go_rollbar();
 
-    } else go_rollbar();
+        if ($window.JacoRecorder) {
 
-    if ($window.JacoRecorder) {
-
-        var jaco = $scope.$watch(function () {
-            if ($window.JacoRecorder.state && $window.JacoRecorder.state.session && $window.JacoRecorder.state.session.id) {
-                rollbar_payload.payload['custom'] = {
-                    "jaco_url": "https://bo.getjaco.com/backoffice/sessions/%24%7" + $window.JacoRecorder.state.session.id + "%7D"
-                };
-                go_rollbar();
-            }
-        });
-    }
+            var jaco = $scope.$watch(function () {
+                if ($window.JacoRecorder.state && $window.JacoRecorder.state.session && $window.JacoRecorder.state.session.id) {
+                    rollbar_payload.payload['custom'] = {
+                        "jaco_url": "https://bo.getjaco.com/backoffice/sessions/%24%7" + $window.JacoRecorder.state.session.id + "%7D"
+                    };
+                    go_rollbar();
+                }
+            });
+        }
 
         // PRIMARY LEFT-NAV ITEM LIST
 /*
@@ -367,15 +386,15 @@ function NavigationController($rootScope, $scope, $auth, $state, $window, $locat
 
         // to avoid duplicate location_path / community_path when navigating to people & companies
         self.nav_url = $stateParams.location_path == $rootScope.global.community.key ?
-            "({query: '*', user: nav.user })" :
-            "({query: '*', user: nav.user })";
+            "({query: '*', user: global.user })" :
+            "({query: '*', user: global.user })";
 
         // to set correct root path when navigating from user or company page
 
         self.nav_jump = ($rootScope.global.location && $rootScope.global.location.type == 'location') || (($rootScope.global.community.type == "user" || $rootScope.global.community.type == "company") &&
         ($rootScope.global.location && $rootScope.global.location.type == 'location')) ?
-            "({community_path: item.key, community: item, query: '*', location_path: global.location.key, communities: global.community, user: nav.user })" :
-            "({community_path: item.key, community: item, query: '*', location_path: nav.user.profile.home, communities: global.community, user: nav.user })";
+            "({community_path: item.key, community: item, query: '*', location_path: global.location.key, communities: global.community, user: global.user })" :
+            "({community_path: item.key, community: item, query: '*', location_path: global.user.profile.home, communities: global.community, user: global.user })";
 
         // SEARCH
 
@@ -693,17 +712,17 @@ function NavigationController($rootScope, $scope, $auth, $state, $window, $locat
 
     };
 
-    getCommunity();
+    getProfile();
 
 }
 
-function SettingsController(user, community_service) {
+function SettingsController($rootScope, community_service) {
     var self = this;
     var leader = [];
     
-    if (user.roles && user.roles.leader) {
+    if ($rootScope.global.user.roles && $rootScope.global.user.roles.leader) {
         
-        for (l in user.roles.leader) leader.push(l);
+        for (l in $rootScope.global.user.roles.leader) leader.push(l);
 
         community_service.getResources(undefined, leader)
             .then(function(response) {
@@ -713,9 +732,9 @@ function SettingsController(user, community_service) {
     
 }
 
-function EmbedSettingsController($uibModalInstance, sweet, user, community_service, community, location){
+function EmbedSettingsController($uibModalInstance, sweet, community_service, community, location){
 
-    this.user = user;
+    this.user = $rootScope.global.user;
     var self = this;
     $rootScope.global.location = location; // used in view
 

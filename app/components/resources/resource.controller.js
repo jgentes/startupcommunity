@@ -3,12 +3,12 @@ angular
     .controller('ResourceController', ResourceController)
     .controller('EditCompanyController', EditCompanyController);
 
-function ResourceController($rootScope, nav_communities, company_service, top, user, $auth) {
+function ResourceController($rootScope, nav_communities, company_service, top, $auth) {
     var self = this;
 
     this.top = top || {}; // this is passed in to avoid re-pulling top on nav click if possible
     this.resources = this.resources || {};
-    this.user = $auth.isAuthenticated() ? user : {};
+    this.user = $auth.isAuthenticated() ? $rootScope.global.user : {};
     $rootScope.global.location_key = $rootScope.global.location.key;
     this.nav_jump = ($rootScope.global.location && $rootScope.global.location.type === 'location') ||
                     (($rootScope.global.community.type === 'user' || $rootScope.global.community.type === 'company') &&
@@ -31,11 +31,11 @@ function ResourceController($rootScope, nav_communities, company_service, top, u
     
 }
 
-function EditCompanyController($rootScope, user, sweet, $state, $q, $window, $http, user_service, company_service, community_service) {
+function EditCompanyController($rootScope, sweet, $state, $q, $window, $http, user_service, company_service, community_service) {
     var self = this;
     
     this.step = 1;
-    this.user = user;
+    this.user = $rootScope.global.user;
     this.update = false; // used if company already exists
     this.working = false; // used for waiting indicator
     this.parents = []; // need a placeholder until next call is resolved

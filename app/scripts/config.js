@@ -44,49 +44,23 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
         })
 
         // the root state with core dependencies for injection in child states
+        // note: if you set a param in root, and use/change that param in a ui-sref link, it will reload root
         .state('root', {
-            url: "^/:location_path/:community_path",
+            url: "/:location_path/:community_path",
             templateUrl: "components/nav/nav.html",
             controller: "NavigationController as nav",
             params: {
+                location_path: {
+                    squash: true
+                },
                 community_path: {
                     squash: true
                 },
-                profile: {},
                 top: null,
-                user: null,
                 tour: false
-            },
-            resolve: {
-                user: ['user_service', '$state', '$mixpanel', '$location', '$stateParams',
-                    function(user_service, $state, $mixpanel, $location, $stateParams) {
-
-                        if ($stateParams.user) {
-                            return $stateParams.user;
-                        } else return user_service.getProfile()
-                            .then(function(response) {
-
-                                if (response.message) {
-                                    $location.url('/logout');
-                                }
-
-                                if (response.key) {
-                                    $mixpanel.people.set({
-                                        "$name": response.profile.name,
-                                        "$email": response.profile.email
-                                    });
-                                }
-
-                                return response.data;
-
-                            })
-                            .catch(function(response) {
-                                //todo add exception logging here
-                                $location.url('/logout');
-                            });
-                    }]
             }
         })
+
 
         // User views
         .state('user', {
@@ -94,9 +68,6 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
             abstract: true
         })
         .state('user.dashboard', {
-            params: {
-                pageTitle: 'User Profile'
-            },
             views: {
                 'header': {
                     templateUrl: "components/header/header_small.html"
@@ -109,12 +80,6 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
         })
         .state('user.list', {
             url: "/people",
-            location_path: {
-                squash: true
-            },
-            community_path: {
-                squash: true
-            },
             views: {
                 'header': {
                     templateUrl: "components/header/header_small.html"
@@ -221,8 +186,6 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                 }
             }
         })
-
-
 
         .state('welcome', {
             parent: "root",

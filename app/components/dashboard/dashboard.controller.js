@@ -2,7 +2,9 @@ angular
     .module('startupcommunity')
     .controller('DashboardController', DashboardController);
 
-function DashboardController() {
+function DashboardController($stateParams) {
+    
+    this.path = $stateParams.community_path || $stateParams.location_path;
     
     angular.element(document).ready(function () {
         setTimeout(function() {
