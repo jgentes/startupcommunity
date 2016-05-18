@@ -68,8 +68,6 @@ function NavigationController($rootScope, $scope, $auth, $state, $window, $locat
 
     var getLocation = function() {
 
-        // *** ROUTING OF ROOT PATHS ***
-
         nav_community = $rootScope.global.community;
 
         // if community is a user, pull their home and use that for location [used when refreshing page on user profile]
@@ -127,6 +125,7 @@ function NavigationController($rootScope, $scope, $auth, $state, $window, $locat
 
     var getCommunityTop = function() {
         if (nav_community && nav_community.key && $rootScope.global.location && $rootScope.global.location.key && (nav_community.key !== $rootScope.global.location.key && ((nav_community.type == 'location') || (nav_community.resource) || (nav_community.type == 'cluster')))) {
+
             $rootScope.global.top = undefined;
             community_service.getTop($rootScope.global.location.key, nav_community.key, nav_community)
                 .then(function(response) {
@@ -142,7 +141,8 @@ function NavigationController($rootScope, $scope, $auth, $state, $window, $locat
     /* -------------- DEPENDENCIES HAVE BEEN RESOLVED --------------------- */
 
     var loadNav = function() {
-        
+
+       /* // *** ROUTING OF ROOT PATHS ***
         switch ($location.path().replace(/\/$/, "").split('/').pop()) {
             case 'people':
                 $state.go('user.list');
@@ -164,6 +164,19 @@ function NavigationController($rootScope, $scope, $auth, $state, $window, $locat
                     default:
                         $state.go('community.dashboard');
                 }
+        }
+*/
+        if ($stateParams.community_path !== "people" && $stateParams.community_path !== "companies" && $stateParams.community_path !== "search" && $stateParams.community_path !== "invite" && $stateParams.community_path !== "add" && $stateParams.community_path !== "welcome") {
+            switch (nav_community.type) {
+                case 'user':
+                    $state.go('user.dashboard');
+                    break;
+                case 'company':
+                    $state.go('company.dashboard');
+                    break;
+                default:
+                    $state.go('community.dashboard');
+            }
         }
 
         console.log('StateParams Location: ', $stateParams.location ? $stateParams.location.key : null);
@@ -187,9 +200,6 @@ function NavigationController($rootScope, $scope, $auth, $state, $window, $locat
             jaco(); // this removes the watcher for the session id;
     };
 
-    if (top)
-        this.top = top;
-
     // ANONYMOUS OR LOGGED IN ?
 
         if ($auth.isAuthenticated() && user) {
@@ -198,15 +208,15 @@ function NavigationController($rootScope, $scope, $auth, $state, $window, $locat
 
         // LOAD 3RD PARTY SERVICES
 
-        knowtify.push(['load_inbox', 'knowtify', {email: this.user.profile.email}]);
+        knowtify.push(['load_inbox', 'knowtify', {email: self.user.profile.email}]);
 
         if ($window.JacoRecorder)
-            $window.JacoRecorder.identify(this.user.profile.email);
+            $window.JacoRecorder.identify(self.user.profile.email);
 
         rollbar_payload.payload['person'] = {
-            "id": this.user.key,
-            "name": this.user.profile.name,
-            "email": this.user.profile.email
+            "id": self.user.key,
+            "name": self.user.profile.name,
+            "email": self.user.profile.email
         };
 
     } else go_rollbar();
@@ -322,9 +332,6 @@ function NavigationController($rootScope, $scope, $auth, $state, $window, $locat
                                 self.resources.push($rootScope.global.nav_communities[item]);
                             }
                         }
-
-                        break;
-                    default:
                         break;
                 }
             }
@@ -360,8 +367,8 @@ function NavigationController($rootScope, $scope, $auth, $state, $window, $locat
 
         // to avoid duplicate location_path / community_path when navigating to people & companies
         self.nav_url = $stateParams.location_path == $rootScope.global.community.key ?
-            "({location_path: global.location_path, community: global.community, query: '*', communities: global.community, user: nav.user })" :
-            "({location_path: global.location_path, community: global.community, query: '*', community_path: global.community.key, communities: global.community, user: nav.user })";
+            "({query: '*', user: nav.user })" :
+            "({query: '*', user: nav.user })";
 
         // to set correct root path when navigating from user or company page
 

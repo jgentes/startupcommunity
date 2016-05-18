@@ -108,6 +108,13 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
             }
         })
         .state('user.list', {
+            url: "/people",
+            location_path: {
+                squash: true
+            },
+            community_path: {
+                squash: true
+            },
             views: {
                 'header': {
                     templateUrl: "components/header/header_small.html"
