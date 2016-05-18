@@ -222,12 +222,12 @@ function WelcomeController($rootScope, $auth, $q, $http, $mixpanel, $stateParams
                         .then(function(response) {
                             self.submitted = false;
                             
+                            $rootScope.global.user = response.data;
+                            
                             if ($stateParams.go) {
                                 $state.go('user.dashboard', {
-                                    communities: response.data,
                                     profile: self.user,
                                     location_path: self.user.key,
-                                    query: '*',
                                     tour: false
                                 });
                             } else {
@@ -242,10 +242,8 @@ function WelcomeController($rootScope, $auth, $q, $http, $mixpanel, $stateParams
                                     function (isConfirm) {
                                         if (isConfirm) {
                                             $state.go('community.dashboard', {
-                                                communities: response.data,
                                                 profile: self.user,
                                                 location_path: $stateParams.location_path,
-                                                query: '*',
                                                 tour: true
                                             });
                                         }

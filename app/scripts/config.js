@@ -56,7 +56,6 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                 community_path: {
                     squash: true
                 },
-                top: null,
                 tour: false
             }
         })
@@ -68,6 +67,9 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
             abstract: true
         })
         .state('user.dashboard', {
+            params: {
+                profile: {}
+            },
             views: {
                 'header': {
                     templateUrl: "components/header/header_small.html"
@@ -111,6 +113,7 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
             }
         })
         .state('company.list', {
+            url: "/companies",
             views: {
                 'header': {
                     templateUrl: "components/header/header_small.html"
@@ -160,6 +163,7 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
             abstract: true
         })
         .state('resource.list', {
+            url: "/resources",
             views: {
                 'header': {
                     templateUrl: "components/header/header_small.html"
@@ -360,6 +364,7 @@ angular
 
         $rootScope.$on('$stateChangeStart',
             function(event, toState, toParams, fromState, fromParams){
+                $('#minorsplash').css('display', 'block');
                 console.log('from: ' + fromState.name);
                 //console.log(fromState);
                 console.log('to:' + toState.name);

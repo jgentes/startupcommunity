@@ -6,14 +6,14 @@
                     <div class="panel-body" style="padding: 10px 5px; margin-bottom: -12px;">
                         <div class="col-xs-8">
                             <div class="stats-title pull-left">
-                                <a ui-sref="{{'user.list' + nav.nav_url}}">
+                                <a ui-sref="user.list">
                                     <h3>People</h3>
                                 </a>
                             </div>
                         </div>
                         <div class="col-xs-4">
                             <div class="stats-icon pull-right">
-                                <a ui-sref="{{'user.list' + nav.nav_url}}">
+                                <a ui-sref="user.list">
                                     <h3 class="text-info">{{global.top.people.count}}</h3>
                                 </a>
                             </div>
@@ -26,7 +26,7 @@
                                 <div ng-if="$last" style="margin-bottom:-12px;"></div>
                             </div>
                         </div>
-                        <button class="btn btn-xs btn-default" style="margin-top: 20px;" ui-sref="{{'user.list' + nav.nav_url}}">view all</button>
+                        <button class="btn btn-xs btn-default" style="margin-top: 20px;" ui-sref="user.list">view all</button>
                     </div>
                 </div>
             </div>
@@ -35,14 +35,14 @@
                     <div class="panel-body" style="padding: 10px 5px; margin-bottom: -12px;">
                         <div class="col-xs-8">
                             <div class="stats-title pull-left">
-                                <a ui-sref="{{'company.list' + nav.nav_url}}">
+                                <a ui-sref="company.list">
                                     <h3>Companies</h3>
                                 </a>
                             </div>
                         </div>
                         <div class="col-xs-4">
                             <div class="stats-icon pull-right">
-                                <a ui-sref="{{'company.list' + nav.nav_url}}">
+                                <a ui-sref="company.list">
                                     <h3 style="color:#34495E;">{{global.top.companies.count}}</h3>
                                 </a>
                             </div>
@@ -55,7 +55,7 @@
                                 <div ng-if="$last" style="margin-bottom:-12px;"></div>
                             </div>
                         </div>
-                        <button class="btn btn-xs btn-default" style="margin-top: 20px;" ui-sref="{{'company.list' + nav.nav_url}}">view all</button>
+                        <button class="btn btn-xs btn-default" style="margin-top: 20px;" ui-sref="company.list">view all</button>
                     </div>
                 </div>
             </div>
@@ -64,14 +64,14 @@
                     <div class="panel-body" style="padding: 10px 5px; margin-bottom: -12px;">
                         <div class="col-xs-8">
                             <div class="stats-title pull-left">
-                                <a ui-sref="{{'resource.list' + nav.nav_url}}">
+                                <a ui-sref="resource.list">
                                     <h3>Resources</h3>
                                 </a>
                             </div>
                         </div>
                         <div class="col-xs-4">
                             <div class="stats-icon pull-right">
-                                <a ui-sref="{{'resource.list' + nav.nav_url}}">
+                                <a ui-sref="resource.list">
                                     <h3 style="color:#34495E;">{{global.top.resources.count}}</h3>
                                 </a>
                             </div>
@@ -84,7 +84,7 @@
                                 <div ng-if="$last" style="margin-bottom:-12px;"></div>
                             </div>
                         </div>
-                        <button class="btn btn-xs btn-default" style="margin-top: 20px;" ui-sref="{{'resource.list' + nav.nav_url}}">view all</button>
+                        <button class="btn btn-xs btn-default" style="margin-top: 20px;" ui-sref="resource.list">view all</button>
                     </div>
                 </div>
             </div>
@@ -150,12 +150,12 @@
                     <div class="panel-body" ng-repeat="item in global.top.parents | limitTo: 5">
                         <div class="row">
                             <div class="col-xs-10 forum-heading">
-                                <a ui-sref="community.dashboard({community_path: item.label, community: global.community[item.label], query: '*', location_path: global.location.key})"><h4 style="font-weight: 200;">{{item.label[0].toUpperCase() + item.label.slice(1);}}</h4>
+                                <a ui-sref="community.dashboard({community_path: item.label, location_path: global.location.key})"><h4 style="font-weight: 200;">{{item.label[0].toUpperCase() + item.label.slice(1);}}</h4>
                                     <uib-progressbar value="item.value" max="global.top.max" type="success" class="progress-small full" style="margin-top: 7px;"></uib-progressbar>
                                 </a>
                             </div>
                             <div class="col-xs-2 forum-info">
-                                <a ui-sref="community.dashboard({community_path: item.label, community: global.community[item.label], query: '*', location_path: global.location.key})">
+                                <a ui-sref="community.dashboard({community_path: item.label, location_path: global.location.key})">
                                     <span class="number number-column">{{((item.value / global.top.max)*100).toFixed(0)}}%</span>
                                 </a>
                             </div>

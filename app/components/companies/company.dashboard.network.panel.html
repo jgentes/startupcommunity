@@ -4,7 +4,7 @@
             <div class="stats-icon pull-left" style="margin-top: 11px; margin-right: 8px;">
                 <i ng-class="type.icon" class="fa-2x"></i>
             </div>
-            <a ui-sref="{{'user.list' + nav.nav_url}}">
+            <a ui-sref="user.list">
                 <h3 ng-bind="type.title" style="padding-left: 5px;"></h3>
             </a>
         </div>
@@ -20,6 +20,6 @@
         </div>
     </div>
     <div ng-if="!profile.company.team[type.name]" style="padding-top: 10px; margin-bottom: -22px;">No {{::type.title.toLowerCase()}} yet..</div>
-    <div ladda="profile[type.name]" ng-if="profile.company.team[type.name]" class="ladda-button btn btn-xs btn-default" style="margin-top: 6px; float:right;" ng-click="profile[type.name] = true" ui-sref="{{'user.list' + nav.nav_url}}">view all</div>
+    <div ladda="profile[type.name]" ng-if="profile.company.team[type.name]" class="ladda-button btn btn-xs btn-default" style="margin-top: 6px; float:right;" ng-click="profile[type.name] = true" ui-sref="user.list">view all</div>
     <div ng-if="global.user.roles[type.name][profile.company.key]" class="btn btn-xs btn-default" style="margin-top: 6px; float:left;" ng-click="profile.remove(type.name)">Remove yourself as a {{::type.title.toLowerCase().substring(0, type.title.length-1)}}</div>
 </div>

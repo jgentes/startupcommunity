@@ -102,8 +102,8 @@ function NavigationController($rootScope, $scope, $auth, $state, $window, $locat
 
         nav_community = $rootScope.global.community;
 
-        // if community is a user, pull their home and use that for location [used when refreshing page on user profile]
-        if (nav_community && nav_community.type == 'user') {
+        // if community is a user or company, pull their home and use that for location [used when refreshing page on user profile]
+        if (nav_community && (nav_community.type == 'user' || nav_community.type == 'company')) {
 
             if ($rootScope.global && $rootScope.global.location && $rootScope.global.location.key == nav_community.profile.home) {
                 getNavTop();
@@ -179,15 +179,14 @@ function NavigationController($rootScope, $scope, $auth, $state, $window, $locat
                 $state.go('user.list', {}, { location: false });
                 break;
             case 'companies':
-                $state.go('company.list');
+                $state.go('company.list', {}, { location: false });
                 break;
             case 'resources':
-                $state.go('resource.list');
+                $state.go('resource.list', {}, { location: false });
                 break;
             default:
                 switch (nav_community.type) {
                     case 'user':
-                        console.log('switch user')
                         $state.go('user.dashboard');
                         break;
                     case 'company':
@@ -322,46 +321,7 @@ function NavigationController($rootScope, $scope, $auth, $state, $window, $locat
         var parents = community_service.parents();
         parents = parents.join('|').toLowerCase().split('|'); // change all to lowercase
 
-        // sort communities for use in nav and child dashboard pages
-        self.resources = [];
-
-        for (item in $rootScope.global.nav_communities) { // need to determine what item is here, esp if user or company
-            if ($rootScope.global.nav_communities[item]) {
-                switch ($rootScope.global.nav_communities[item].type) {
-                    case "location":
-                        if (item !== $rootScope.global.location.key) {
-                            if (!$rootScope.global.locations) $rootScope.global.locations = {};
-                            $rootScope.global.locations[item] = $rootScope.global.nav_communities[item];
-                        }
-                        break;
-                    case "cluster":
-                        if (!self.clusters) self.clusters = {};
-                        if ($rootScope.global.nav_communities[item].community_profiles && $rootScope.global.nav_communities[item].community_profiles[$rootScope.global.location.key] && $rootScope.global.nav_communities[item].community_profiles[$rootScope.global.location.key].parents && $rootScope.global.nav_communities[item].community_profiles[$rootScope.global.location.key].parents[0]) {
-                            var cluster_type = $rootScope.global.nav_communities[item].community_profiles[$rootScope.global.location.key].parents[0];
-                            if (!self.clusters[cluster_type]) self.clusters[cluster_type] = {};
-                            self.clusters[cluster_type][item] = $rootScope.global.nav_communities[item];
-                        }
-                        break;
-                    case "company":
-                        if ($rootScope.global.nav_communities[item].resource) {
-                            if ($rootScope.global.nav_communities[item].community_profiles && $rootScope.global.nav_communities[item].community_profiles[$rootScope.global.location.key] && $rootScope.global.nav_communities[item].community_profiles[$rootScope.global.location.key].parents && $rootScope.global.nav_communities[item].community_profiles[$rootScope.global.location.key].parents[0]) {
-                                var resource_type = $rootScope.global.nav_communities[item].community_profiles[$rootScope.global.location.key].parents[0];
-                                //if (!self.resources[resource_type]) self.resources[resource_type] = {};
-                                //self.resources[resource_type][item] =  self.nav_communities[item];
-                                self.resources.push($rootScope.global.nav_communities[item]);
-                            }
-                        }
-                        break;
-                }
-            }
-        }
-
         var location_key = $rootScope.global.location.key;
-        self.resources = self.resources.sort(function(a, b) {
-            var x = a.community_profiles[location_key].name;
-            var y = b.community_profiles[location_key].name;
-            return ((x < y) ? -1 : ((x > y) ? 1 : 0));
-        });
 
         if (angular.equals({}, self.clusters)) self.clusters = undefined; // had a hard time checking for empty object in the html
 
@@ -375,26 +335,26 @@ function NavigationController($rootScope, $scope, $auth, $state, $window, $locat
         }
 
         self.end = function() {
-            $state.go('user.dashboard', {profile: self.user, location_path: self.user.key, community: self.user, tour: false});
+            $state.go('user.dashboard', {profile: self.user, location_path: self.user.key, tour: false});
         };
-
-        // BREADCRUMBS
-        if ($rootScope.global.community.type == "user") {
-            // note this changes location for nav items below
-            if ($rootScope.global.location.key == $rootScope.global.community.key) $rootScope.global.location = $rootScope.global.community[$rootScope.global.community.profile.home];
-        }
-
-        // to avoid duplicate location_path / community_path when navigating to people & companies
-        self.nav_url = $stateParams.location_path == $rootScope.global.community.key ?
-            "({query: '*', user: global.user })" :
-            "({query: '*', user: global.user })";
 
         // to set correct root path when navigating from user or company page
 
+        if ($rootScope.global.location.key == $rootScope.global.community.key) {
+            self.nav_url = "({community_path: ''})";
+            self.notify = "{notify: false}";
+        } else {
+            self.nav_url = "({community_path: global.community.key})";
+            self.notify = "{notify: true}";
+        }
+
+
+
+
         self.nav_jump = ($rootScope.global.location && $rootScope.global.location.type == 'location') || (($rootScope.global.community.type == "user" || $rootScope.global.community.type == "company") &&
         ($rootScope.global.location && $rootScope.global.location.type == 'location')) ?
-            "({community_path: item.key, community: item, query: '*', location_path: global.location.key, communities: global.community, user: global.user })" :
-            "({community_path: item.key, community: item, query: '*', location_path: global.user.profile.home, communities: global.community, user: global.user })";
+            "({community_path: item.key, location_path: global.location.key })" :
+            "({community_path: item.key, location_path: global.user.profile.home })";
 
         // SEARCH
 
@@ -412,19 +372,12 @@ function NavigationController($rootScope, $scope, $auth, $state, $window, $locat
 
             if ($rootScope.global.community.type == "cluster" || $rootScope.global.community.resource) {
                 $stateParams.location_path == $rootScope.global.community.key ?
-                    $state.go('search.dashboard', {location_path: $stateParams.location_path, community: $rootScope.global.community, query: query}) :
-                    $state.go('search.dashboard', {location_path: $stateParams.location_path, community_path: $rootScope.global.community.key, community: $rootScope.global.community, query: query});
+                    $state.go('search.dashboard', {location_path: $stateParams.location_path}) :
+                    $state.go('search.dashboard', {location_path: $stateParams.location_path, community_path: $rootScope.global.community.key});
             } else if ($rootScope.global.community.type == "user" || $rootScope.global.community.type == "company") {
                 $state.go('search.dashboard', {location_path: $rootScope.global.community.profile.home, query: query});
             } else $state.go('search.dashboard', {query: query});
 
-        };
-
-        // CLICK FUNCTIONS
-        
-        self.goUser = function(profile) {
-            $rootScope.global.community = profile.value;
-            $state.go('user.dashboard',{location_path: profile.path.key, community_path: '' });
         };
 
         // CONTACT USER

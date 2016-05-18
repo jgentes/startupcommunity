@@ -2,11 +2,11 @@
     <div class="panel-heading hbuilt">
         <div class="media social-profile clearfix">
             <a class="pull-left">
-                <img class="img-circle m-b" style="height: 65px;" ng-src="{{question.from.avatar || '/public/images/blank_avatar.png'}}" alt="{{question.from.name}}" ui-sref="user.dashboard({location_path: question.from.key, community: {}, profile: {}})">
+                <img class="img-circle m-b" style="height: 65px;" ng-src="{{question.from.avatar || '/public/images/blank_avatar.png'}}" alt="{{question.from.name}}" ui-sref="user.dashboard({location_path: question.from.key, profile: {}})">
             </a>
             <div class="media-body">
-                <a class="pull-right" style="font-size: 13px; margin-top: 3px; padding-right: 10px;" ui-sref="user.dashboard({location_path: question.from.key, community: {}, profile: {}})">{{question.from.headline}}</a>
-                <p><a style="font-weight:bold; padding-left: 4px;" ui-sref="user.dashboard({location_path: question.from.key, community: {}, profile: {}})">{{question.from.name}}</a> asked:</p>
+                <a class="pull-right" style="font-size: 13px; margin-top: 3px; padding-right: 10px;" ui-sref="user.dashboard({location_path: question.from.key, profile: {}})">{{question.from.headline}}</a>
+                <p><a style="font-weight:bold; padding-left: 4px;" ui-sref="user.dashboard({location_path: question.from.key, profile: {}})">{{question.from.name}}</a> asked:</p>
                 <div class="question-content">
                     {{ question.content }}
                 </div>

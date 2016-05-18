@@ -6,7 +6,7 @@
                 <button ng-if="::global.user" ui-sref="company.edit" class="btn btn-warning pull-right" style="margin-left:-100px;">Edit</button>
                 <img class="img-circle m-b" ng-show="::profile.company.profile.avatar" style="max-height:100px; max-width:100px;" ng-src="{{::profile.company.profile.avatar}}" alt="{{::profile.company.profile.name}}" onerror="this.src='/public/images/browser_icon.jpg'">
                 <div style="margin:-15px 0;">
-                    <button ng-if="::profile.company.profile.parents[0]" ladda="btnworking" ng-click="btnworking = true" class="ladda-btn btn btn-default btn-xs" ui-sref="community.dashboard({location_path: profile.company.profile.home, community_path: profile.company.profile.parents[0], community: global.community[profile.company.profile.parents[0]], query: &quot;&#42;&quot;})">
+                    <button ng-if="::profile.company.profile.parents[0]" ladda="btnworking" ng-click="btnworking = true" class="ladda-btn btn btn-default btn-xs" ui-sref="community.dashboard({location_path: profile.company.profile.home, community_path: profile.company.profile.parents[0]})">
                         {{::profile.company.profile.parents[0][0].toUpperCase() + profile.company.profile.parents[0].slice(1);}}
                     </button>
                     <button ng-if="::profile.company.profile.stage" ladda="btnworking" ng-click="btnworking = true" class="ladda-btn btn btn-success btn-xs">
@@ -23,7 +23,7 @@
                     <a href="{{::'http://' + profile.company.profile.website}}" target="_blank" style="font-size:14px; color: #6DC8EE;">{{::profile.company.profile.website}}</a>
                 </div>
                 <div style="overflow: hidden; height: 40px; margin-bottom: -10px;">
-                    <button ng-repeat="industry in ::profile.company.profile.industries" style="margin-right: 5px;" ladda="btnworking" ng-click="btnworking = true" class="ladda-btn btn btn-outline btn-default btn-xs" ui-sref="search.dashboard({location_path: global.location.key, community: global.location, query: industry})">
+                    <button ng-repeat="industry in ::profile.company.profile.industries" style="margin-right: 5px;" ladda="btnworking" ng-click="btnworking = true" class="ladda-btn btn btn-outline btn-default btn-xs" ui-sref="search.dashboard({location_path: global.location.key})">
                         {{::industry}}
                     </button>
                 </div>

@@ -23,7 +23,7 @@
         <ul class="profile-ul">
             <p style="font-size: 14px; padding: 2px 5px 0 20px; float: left;">Founders:</p>
             <li ng-repeat="key in profile.team.founder" class="profile-roles">
-                <a ui-sref="user.dashboard({profile: key.value, location_path: key.path.key, location: global.community, community: key.value })">{{key.value.profile.name}} </a>
+                <a ui-sref="user.dashboard({profile: key.value, location_path: key.path.key})">{{key.value.profile.name}} </a>
             </li>
         </ul>
     </div>
@@ -31,7 +31,7 @@
         <ul class="profile-ul">
             <p style="font-size: 14px; padding: 2px 5px 0 20px; float: left;">Investors:</p>
             <li ng-repeat="key in profile.team.investor" class="profile-roles">
-                <a ui-sref="user.dashboard({profile: key.value, location_path: key.path.key, location: global.community, community: key.value })">{{key.value.profile.name}} </a>
+                <a ui-sref="user.dashboard({profile: key.value, location_path: key.path.key})">{{key.value.profile.name}} </a>
             </li>
         </ul>
     </div>
@@ -39,7 +39,7 @@
         <ul class="profile-ul">
             <p style="font-size: 14px; padding: 2px 5px 0 20px; float: left;">Team Members:</p>
             <li ng-repeat="key in profile.team.team" class="profile-roles">
-                <a ui-sref="user.dashboard({profile: key.value, location_path: key.path.key, location: global.community, community: key.value })">{{key.value.profile.name}} </a>
+                <a ui-sref="user.dashboard({profile: key.value, location_path: key.path.key})">{{key.value.profile.name}} </a>
             </li>
         </ul>
     </div>
@@ -47,7 +47,7 @@
         <ul class="profile-ul">
             <p style="font-size: 14px; padding: 2px 5px 0 20px; float: left;">Mentors:</p>
             <li ng-repeat="key in profile.team.mentor" class="profile-roles">
-                <a ui-sref="user.dashboard({profile: key.value, location_path: key.path.key, location: global.community, community: key.value })">{{key.value.profile.name}} </a>
+                <a ui-sref="user.dashboard({profile: key.value, location_path: key.path.key})">{{key.value.profile.name}} </a>
             </li>
         </ul>
     </div>
@@ -55,7 +55,7 @@
         <ul class="profile-ul">
             <p style="font-size: 14px; padding: 2px 5px 0 20px; float: left;">Service Providers:</p>
             <li ng-repeat="key in profile.team.provider" class="profile-roles">
-                <a ui-sref="user.dashboard({profile: key.value, location_path: key.path.key, location: global.community, community: key.value })">{{key.value.profile.name}} </a>
+                <a ui-sref="user.dashboard({profile: key.value, location_path: key.path.key})">{{key.value.profile.name}} </a>
             </li>
         </ul>
     </div>
@@ -63,7 +63,7 @@
         <ul class="profile-ul">
             <p style="font-size: 14px; padding: 2px 5px 0 20px; float: left;">Communities:</p>
             <li ng-repeat="community in profile.company.communities" class="profile-roles">
-                <a ui-sref="community.dashboard({location_path: community, community: global.community[community], query: &quot;&#42;&quot;})" class="btn btn-xs btn-outline" ng-class="{'btn-danger' : global.community[community].type == 'company', 'btn-info' : global.community[community].resource, 'btn-primary' : global.community[community].type == 'cluster', 'btn-success' : global.community[community].type == 'location'}"><i class="fa {{global.community[community].profile.icon}}"></i> {{global.community[community].profile.name}}</a>
+                <a ui-sref="community.dashboard({location_path: community})" class="btn btn-xs btn-outline" ng-class="{'btn-danger' : global.community[community].type == 'company', 'btn-info' : global.community[community].resource, 'btn-primary' : global.community[community].type == 'cluster', 'btn-success' : global.community[community].type == 'location'}"><i class="fa {{global.community[community].profile.icon}}"></i> {{global.community[community].profile.name}}</a>
             </li>
         </ul>
     </div>
@@ -74,5 +74,5 @@
     <p style="white-space:pre-wrap;" ng-bind-html="::profile.company.profile.summary | linky:'_blank'"></p>
     <hr>
     <h3 ng-show="profile.company.profile.industries">Markets</h3>
-    <li ng-repeat="industry in profile.company.profile.industries" class="label btn-default skills"><a href="#" ui-sref="search.dashboard({location_path: global.location.key, community: global.location, query: industry})">{{::industry}}</a></li>
+    <li ng-repeat="industry in profile.company.profile.industries" class="label btn-default skills"><a href="#" ui-sref="search.dashboard({location_path: global.location.key})">{{::industry}}</a></li>
 </div>

@@ -10,12 +10,6 @@ function CompanyController($rootScope, $stateParams, $state, $location, company_
     this.selectedStage = ['*'];
     this.selectedType = ['*'];
 
-    $rootScope.global.community = $stateParams.community && $stateParams.community.key && ($stateParams.community.key !== $stateParams.community_path) && ($stateParams.community.key !== $stateParams.location_path) ?
-        $rootScope.global.location :
-        $rootScope.global.community;
-
-    $rootScope.global.path = $location.path().replace(/\/$/, "");
-
     var self = this; // for accessing 'this' in child functions
     var query;
     var communityFilter = [$stateParams.location_path];
@@ -34,8 +28,8 @@ function CompanyController($rootScope, $stateParams, $state, $location, company_
     $stateParams.query ? query = $stateParams.query : query = '*';
 
     this.url = $stateParams.community_path && $stateParams.location_path ?
-        "({community_path: val, community: companies.communities[val], query: '*'})" :
-        "({location_path: val, community: companies.communities[val], query: '*'})";
+        "({community_path: val})" :
+        "({location_path: val})";
 
     // THIS IS A DUPLICATE OF NAV.EMBEDDED, SHOULD MOVE TO A SERVICE AND INJECT IN NAV AND USER CONTROLLERS
     try {
@@ -215,13 +209,29 @@ function CompanyController($rootScope, $stateParams, $state, $location, company_
     };
 }
 
-function CompanyProfileController($rootScope, $mixpanel, user_service, result_service, $location, sweet, $window, $http) {
+function CompanyProfileController($rootScope, $stateParams, $mixpanel, user_service, community_service, result_service, $location, sweet, $window, $http) {
 
     $mixpanel.track('Viewed Company');
 
+    if (!jQuery.isEmptyObject($stateParams.profile)) this.company = $stateParams.profile; // set basic profile details while pulling the rest
+
     var self = this;
-    this.company = $rootScope.global.community;
     this.team_panels = user_service.team_panels();
+
+    if ($rootScope.global.community && $rootScope.global.community.type == "company" && $rootScope.global.community.team) {
+        // if directly accessed via url
+        this.company = $rootScope.global.community;
+    } else
+        var companykey = (this.company && this.company.key) ?
+            this.company.key :
+            $stateParams.community_path ?
+                $stateParams.community_path :
+                $stateParams.location_path;
+
+    community_service.getCommunity(companykey)
+        .then(function(response) {
+            self.company = response.data;
+        });
 
     this.remove = function(role) {
         
@@ -262,9 +272,5 @@ function CompanyProfileController($rootScope, $mixpanel, user_service, result_se
                 self.loadingUser = false;                
             });
     };
-
-    
-
-   
 
 }

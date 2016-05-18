@@ -112,16 +112,43 @@ function handleGetCommunity(req, res) {
 
                     for (item in results) {
                         if (results[item].value && results[item].path.key !== community) {
-                            if (results[item].value.resource) {
+                            console.log(results[item].path.key);
+                            results[item].value['key'] = results[item].path.key;
 
-                                // put resource keys in their own bucket
-
-                                if (!newresponse.resources) newresponse["resources"] = [];
-                                newresponse.resources.push(results[item].path.key);
+                            // sort communities for use in nav and child dashboard pages
+                                
+                            switch (results[item].value.type) {
+                                case "location":
+                                    if (!newresponse.locations) newresponse['locations'] = {};
+                                    newresponse.locations[item] = results[item].value;
+                                    break;
+                                case "cluster":
+                                    if (!newresponse.clusters) newresponse['clusters'] = {};
+                                    if (results[item].value.community_profiles && results[item].value.community_profiles[community] && results[item].value.community_profiles[community].parents && results[item].value.community_profiles[community].parents[0]) {
+                                        var cluster_type = results[item].value.community_profiles[community].parents[0];
+                                        if (!newresponse.clusters[cluster_type]) newresponse.clusters[cluster_type] = {};
+                                        newresponse.clusters[cluster_type][item] = results[item].value;
+                                    }
+                                    break;
+                                case "company":
+                                    if (results[item].value.resource) {
+                                        if (!newresponse.resources) newresponse["resources"] = [];
+                                        if (results[item].value.community_profiles && results[item].value.community_profiles[community] && results[item].value.community_profiles[community].parents && results[item].value.community_profiles[community].parents[0]) {
+                                            newresponse.resources.push(results[item].value);
+                                        }
+                                    }
+                                    break;
                             }
 
-                            newresponse[results[item].path.key] = results[item].value;
-                            newresponse[results[item].path.key]["key"] = results[item].path.key;
+                            if (newresponse.resources && newresponse.resources.length) {
+                                newresponse.resources = newresponse.resources.sort(function(a, b) {
+                                    var x = a.community_profiles[community].name;
+                                    var y = b.community_profiles[community].name;
+                                    return ((x < y) ? -1 : ((x > y) ? 1 : 0));
+                                });
+                            }
+
+                            //newresponse[results[item].path.key] = results[item].value;
                         
                         }
                     }
@@ -298,10 +325,12 @@ function handleGetCommunity(req, res) {
                             } else if (m_home) {
                                 ubersearch = '(@path.key: ' + m_home + ')';
                             } else ubersearch = "";
+/*
 
                             if (m.value.type == "location") {
                                 ubersearch += ' OR @value.primary: true ';
                             } // + pull primary industries (clusters)
+*/
 
                             console.log(ubersearch);
 

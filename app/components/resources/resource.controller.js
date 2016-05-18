@@ -10,11 +10,6 @@ function ResourceController($rootScope, nav_communities, company_service, top, $
     this.resources = this.resources || {};
     this.user = $auth.isAuthenticated() ? $rootScope.global.user : {};
     $rootScope.global.location_key = $rootScope.global.location.key;
-    this.nav_jump = ($rootScope.global.location && $rootScope.global.location.type === 'location') ||
-                    (($rootScope.global.community.type === 'user' || $rootScope.global.community.type === 'company') &&
-                    ($rootScope.global.location && $rootScope.global.location.type === 'location')) ?
-        "({community_path: item.key, community: item, query: '*', location_path: resources.location.key, top: resources.top, communities: global.community, user: resources.user })" :
-        "({community_path: item.key, community: item, query: '*', location_path: resources.user.profile.home, top: resources.top, communities: global.community, user: resources.user })";
 
     this.types = company_service.resource_types();
     var resources = nav_communities;

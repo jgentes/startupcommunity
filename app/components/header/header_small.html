@@ -3,27 +3,27 @@
         <div class="panel-body" style="width: 100%;" ng-class="{'header-embedded' : nav.embedded, 'no-sides' : !nav.embedded}">
             <div class="pull-left" tour-step order="1" title="People and Companies" content="To view people by role or industry, or sort companies by investment, visit the People and Company pages." placement="bottom">
                 <ul ng-if="global.community.type !== 'user' && global.community.type !== 'company'" class="header-nav">
-                    <li ui-sref="{{'community.dashboard' + nav.nav_url}}" ng-class="{ 'active' : nav.state.current.name == 'community.dashboard' }">
+                    <li ui-sref="community.dashboard" ng-class="{ 'active' : nav.state.current.name == 'community.dashboard' }">
                         <a>OVERVIEW</a>
                     </li>
-                    <li ui-sref="user.list" ng-class="{ 'active' : nav.state.current.name == 'user.list' }">
+                    <li ui-sref="{{'user.list' + nav.nav_url}}" ui-sref-opts="{{nav.notify}}" ng-class="{ 'active' : nav.state.current.name == 'user.list' }">
                         <a>PEOPLE</a>
                     </li>
-                    <li ui-sref="{{'company.list' + nav.nav_url}}" ng-class="{ 'active' : nav.state.current.name == 'company.list' }">
+                    <li ui-sref="{{'company.list' + nav.nav_url}}" ui-sref-opts="{{nav.notify}}" ng-class="{ 'active' : nav.state.current.name == 'company.list' }">
                         <a>COMPANIES</a>
                     </li>
-                    <li ui-sref="{{'resource.list' + nav.nav_url}}" ng-class="{ 'active' : nav.state.current.name == 'resource.list' }" ng-if="!global.community.resource">
+                    <li ui-sref="{{'resource.list' + nav.nav_url}}" ui-sref-opts="{{nav.notify}}" ng-class="{ 'active' : nav.state.current.name == 'resource.list' }" ng-if="!global.community.resource">
                         <a>RESOURCES</a>
                     </li>
                 </ul>
 
                 <ul ng-if="global.community.type == 'user' || global.community.type == 'company'" class="header-nav" style="margin-left:-40px;" >
                     <li ng-if="global.location.key !== global.community.key">
-                        <a ui-sref="community.dashboard({location_path: global.location.key, community: global.location})">
-                            &nbsp;&nbsp;{{ global.location.profile.name.toUpperCase() }}&nbsp;&nbsp;</a>/
+                        <a ui-sref="community.dashboard({location_path: global.location.key})">
+                            &nbsp;&nbsp;{{ global.location.profile.name.toUpperCase(); }}&nbsp;&nbsp;</a>/
                     </li>
                     <li ng-if="global.community.type == 'user' || global.community.type == 'company'" style="margin-left:-17px;">
-                        <a ui-sref="community.dashboard({location_path: global.community.key, community: global.community})" style="color:#bbb;">&nbsp;&nbsp;{{ global.community.profile.name.toUpperCase() }}</a>
+                        <a ui-sref="community.dashboard({location_path: global.community.key})" style="color:#bbb;">&nbsp;&nbsp;{{ global.community.profile.name.toUpperCase() }}</a>
                     </li>
                 </ul>
             </div>

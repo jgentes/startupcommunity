@@ -15,7 +15,7 @@ function UserController($rootScope, $stateParams, $location, user_service, resul
     var self = this; // for accessing 'this' in child functions
     var query;
     var communityFilter = [$stateParams.location_path];
-
+    
     if ($rootScope.global.community.type == 'cluster') {
         if ($rootScope.global.community.community_profiles[$stateParams.location_path]) {
             var clusterFilter = $rootScope.global.community.community_profiles[$stateParams.location_path].industries;
@@ -28,8 +28,8 @@ function UserController($rootScope, $stateParams, $location, user_service, resul
     $stateParams.query ? query = $stateParams.query : query = '*';
 
     this.url = $stateParams.community_path && $stateParams.location_path ?
-        "({community_path: val, query: '*'})" :
-        "({location_path: val, query: '*'})";
+        "({community_path: val})" :
+        "({location_path: val})";
 
     // THIS IS A DUPLICATE OF NAV.EMBEDDED, SHOULD MOVE TO A SERVICE AND INJECT IN NAV AND USER CONTROLLERS
     try {
@@ -233,7 +233,7 @@ function UserProfileController($rootScope, $stateParams, $http, $uibModal, $mixp
 
     var self = this;
 
-    if ($stateParams.profile) this.user = $stateParams.profile; // set basic profile details while pulling the rest
+    if (!jQuery.isEmptyObject($stateParams.profile)) this.user = $stateParams.profile; // set basic profile details while pulling the rest
 
     var loadCompanies = function () {
 
@@ -254,6 +254,13 @@ function UserProfileController($rootScope, $stateParams, $http, $uibModal, $mixp
         }
     };
 
+    this.loggedin = !!$rootScope.global.user;
+    this.reply = {};
+    this.companies = { "count" : {}};
+    this.team_panels = user_service.team_panels();
+    this.working = false;
+    $mixpanel.track('Viewed Profile');
+
     if ($rootScope.global.community && $rootScope.global.community.type == "user" && $rootScope.global.community.companies) {
         // if directly accessed via url
         this.user = $rootScope.global.community;
@@ -265,18 +272,11 @@ function UserProfileController($rootScope, $stateParams, $http, $uibModal, $mixp
                 $stateParams.community_path :
                 $stateParams.location_path;
 
-        community_service.getCommunity(userkey)
+    community_service.getCommunity(userkey)
         .then(function(response) {
             self.user = response.data;
             loadCompanies();
         });
-
-    this.loggedin = !!$rootScope.global.user;
-    this.reply = {};
-    this.companies = { "count" : {}};
-    this.team_panels = user_service.team_panels();
-    this.working = false;
-    $mixpanel.track('Viewed Profile');
 
     this.contact = function(community_key) {
 
