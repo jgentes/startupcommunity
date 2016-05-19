@@ -62,9 +62,10 @@ function NavigationController($scope, $auth, $state, $window, $location, $stateP
 
             var url = $location.path().replace(/\/$/, "").split('/'),
                 lastitem = url.pop(),
-                root = url.pop();
+                root = url.pop(),
+                lastitems = ["people", "companies", "resources", "search", "invite", "add", "welcome"];
 
-            if (lastitem == "people" || lastitem == "companies" || lastitem == "search" || lastitem == "invite" || lastitem == "add" || lastitem == "welcome") {
+            if (lastitems.indexOf(lastitem) > -1) {
                 if (lastitem == "invite" || lastitem == "add") {
                     pullCommunity(url.pop());
                     // return preceding url path as community, such as tech for 'bend-or/tech/people'
