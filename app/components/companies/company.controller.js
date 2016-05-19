@@ -3,7 +3,7 @@ angular
     .controller('CompanyController', CompanyController)
     .controller('CompanyProfileController', CompanyProfileController);
 
-function CompanyController($rootScope, $stateParams, $state, $location, company_service, result_service, $sce) {
+function CompanyController($rootScope, $scope, $stateParams, $state, $location, company_service, result_service, $sce) {
 
     this.selectedClusters = [];
     this.selectedResources = [];
@@ -16,51 +16,13 @@ function CompanyController($rootScope, $stateParams, $state, $location, company_
     this.resource_page = $state.includes('resource.list');
     this.resource_types = company_service.resource_types();
 
-    if ($rootScope.global.community.type == 'cluster') {
-        if ($rootScope.global.community.community_profiles[$stateParams.location_path]) {
-            var clusterFilter = $rootScope.global.community.community_profiles[$stateParams.location_path].industries;
-        } else clusterFilter = $rootScope.global.community.profile.industries;
-    } else {
-        clusterFilter = [];
-        if ($rootScope.global.community.key && $rootScope.global.community.key !== $rootScope.global.community.key) communityFilter.push($rootScope.global.community.key);
-    }
-
     $stateParams.query ? query = $stateParams.query : query = '*';
 
     this.url = $stateParams.community_path && $stateParams.location_path ?
         "({community_path: val})" :
         "({location_path: val})";
-
-    // THIS IS A DUPLICATE OF NAV.EMBEDDED, SHOULD MOVE TO A SERVICE AND INJECT IN NAV AND USER CONTROLLERS
-    try {
-        this.embedded = window.self !== window.top;
-    } catch (e) {
-        this.embedded = true;
-    }
+    
     this.usercount = 16;
-
-    this.searchCompanies = function(resource_page, alturl) {
-        self.loadingUser = true;
-        
-        // remove random sort
-        if (alturl) alturl = alturl.replace(/([&\?]sort=_random*$|sort=_random&|[?&]sort=_random(?=#))/, '');
-
-        if (query !== '*') {
-            self.tag = query;
-        } else self.tag = undefined;
-
-        var limit = $location.search().limit;
-
-        company_service.search(communityFilter, clusterFilter, query, undefined, undefined, limit || self.usercount, self.resource_page, alturl)
-            .then(function (response) {
-                self.tag = undefined;
-                self.companies = result_service.setPage(response.data);
-                self.loadingUser = false;
-                self.lastQuery = query;
-            });
-    };
-
-    this.searchCompanies(this.resource_page);
 
     // Title of list box changes based on context
     var setTitle = function(){
@@ -116,8 +78,6 @@ function CompanyController($rootScope, $stateParams, $state, $location, company_
         self.pageTitle = $sce.trustAsHtml(pageTitle);
     };
 
-    setTitle();
-
     this.filterType = function(type) {
         console.log(type);
         self.loadingType = true;
@@ -142,7 +102,6 @@ function CompanyController($rootScope, $stateParams, $state, $location, company_
                 setTitle();
             });
     };
-
 
     this.filterStage = function(stage) {
         self.loadingStage = true;
@@ -207,6 +166,50 @@ function CompanyController($rootScope, $stateParams, $state, $location, company_
                 setTitle();
             });
     };
+
+    var loadCompanies = function() {
+
+        self.searchCompanies = function (resource_page, alturl) {
+            self.loadingUser = true;
+
+            // remove random sort
+            if (alturl) alturl = alturl.replace(/([&\?]sort=_random*$|sort=_random&|[?&]sort=_random(?=#))/, '');
+
+            if (query !== '*') {
+                self.tag = query;
+            } else self.tag = undefined;
+
+            var limit = $location.search().limit;
+
+            setTitle();
+
+            company_service.search(communityFilter, clusterFilter, query, undefined, undefined, limit || self.usercount, self.resource_page, alturl)
+                .then(function (response) {
+                    self.tag = undefined;
+                    self.companies = result_service.setPage(response.data);
+                    self.loadingUser = false;
+                    self.lastQuery = query;
+                });
+        };
+
+        if ($rootScope.global.community.type == 'cluster') {
+            if ($rootScope.global.community.community_profiles[$stateParams.location_path]) {
+                var clusterFilter = $rootScope.global.community.community_profiles[$stateParams.location_path].industries;
+            } else clusterFilter = $rootScope.global.community.profile.industries;
+        } else {
+            clusterFilter = [];
+            if ($rootScope.global.community.key && $rootScope.global.community.key !== $rootScope.global.community.key) communityFilter.push($rootScope.global.community.key);
+        }
+
+        onLoad(); //de-register the watcher
+        self.searchCompanies(self.resource_page);
+    };
+
+    var onLoad = $scope.$watch(function () {
+        if ($rootScope.global.community && $rootScope.global.community.type) {
+            loadCompanies();
+        }
+    });
 }
 
 function CompanyProfileController($rootScope, $stateParams, $mixpanel, user_service, community_service, result_service, $location, sweet, $window, $http) {

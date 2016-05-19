@@ -9,7 +9,7 @@
             </a>
         </div>
         <nav role="navigation">
-            <minimaliza-menu ng-if="::!nav.embedded"></minimaliza-menu>
+            <minimaliza-menu ng-if="::!global.embedded"></minimaliza-menu>
             <div class="navbar-left">
                 <div class="nav navbar-nav no-borders" style="white-space: nowrap;">
                     <li style="float: left; padding-top: 7px;">
@@ -60,7 +60,7 @@
                 </div>
             </div>
 
-            <div ng-if="::!nav.embedded" class="navbar-right">
+            <div ng-if="::!global.embedded" class="navbar-right">
                 <ul class="nav navbar-nav no-borders">
                     <li ng-if="global.user" class="dropdown" style="padding-top: 10px; padding-left: 10px;" tour-step order="4" title="Your Profile" content="People can ask you questions on your profile page. Click 'End tour' to take a look." placement="bottom">
                         <div class="pull-left" style="padding-top: 1px; white-space: nowrap;     text-align: right; padding-right: 20px;">
@@ -115,7 +115,7 @@
     </div>
 
     <!-- Navigation -->
-    <aside id="menu" ng-if="!nav.embedded">
+    <aside id="menu" ng-if="!global.embedded">
 
         <ul side-navigation class="nav" id="side-menu" style="border-top: 1px solid #e4e5e7; margin-bottom: 50px;">
 
@@ -187,10 +187,10 @@
 
     <!-- Main Content -->
     <div ui-view >
-        <div ng-style="{'background-color': nav.color}" ng-class="{'wrapper' : !nav.embedded}">
+        <div ng-style="{'background-color': nav.color}" ng-class="{'wrapper' : !global.embedded}">
             <div class="splash" id="minorsplash" style="z-index: 2100;"><div class="splash-title"><a href="/"><img src="/public/images/sc_logo.png" style="width: 75%;" alt="StartupCommunity.org Logo"/></a><img src="/public/images/loading-bars.svg" width="64" height="64" /> </div></div>
             <div ng-style="{'background-color': nav.color}" ui-view="header"></div>
-            <div ng-class="{'content' : !nav.embedded}" ng-style="{'background-color': nav.color}">
+            <div ng-class="{'content' : !global.embedded}" ng-style="{'background-color': nav.color}">
                 <div ui-view="content"></div>
             </div>
         </div>

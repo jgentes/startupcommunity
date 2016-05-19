@@ -1,6 +1,6 @@
 <div>
     <div class="row">
-        <div ng-if="!$state.includes('search.*') && !nav.embedded" class="col-lg-2 col-md-3 col-sm-4">
+        <div ng-if="!$state.includes('search.*') && !global.embedded" class="col-lg-2 col-md-3 col-sm-4">
         <!-- Navigation Block -->
             <div class="hpanel hgreen">
                 <div class="panel-footer top" style="font-size: 17px;">
@@ -55,14 +55,14 @@
                 </div>
                 <div class="panel-body filternav">
                     <ul class="panel-list">
-                        <li ng-if="users.community.type !== 'cluster'" ng-init="users.allClusters=true" ng-class="{'active':users.allClusters}" ng-click="users.loadingCluster=true; users.allClusters=true; users.filterClusters();">
+                        <li ng-if="global.community.type !== 'cluster'" ng-init="users.allClusters=true" ng-class="{'active':users.allClusters}" ng-click="users.loadingCluster=true; users.allClusters=true; users.filterClusters();">
                             <a><i class="fa fa-fw fa-globe themed-color-dark icon-push"></i> All</a>
                         </li>
-                        <li ng-if="users.community.type == 'cluster'" class="active">
-                            <a><i class="fa fa-fw fa-globe themed-color-dark icon-push"></i> {{users.community.profile.name}}</a>
+                        <li ng-if="global.community.type == 'cluster'" class="active">
+                            <a><i class="fa fa-fw fa-globe themed-color-dark icon-push"></i> {{global.community.profile.name}}</a>
                         </li>
                         <hr style="margin: 10px 0 10px 0;">
-                        <li ng-if="users.community.type !== 'cluster'" ng-repeat="cluster in global.top.parents" ng-class="{'active':users.selectedClusters.indexOf(cluster.label) >= 0}" ng-click="users.loadingCluster=true;  users.allClusters=false; users.filterClusters(cluster.label);">
+                        <li ng-if="global.community.type !== 'cluster'" ng-repeat="cluster in global.top.parents" ng-class="{'active':users.selectedClusters.indexOf(cluster.label) >= 0}" ng-click="users.loadingCluster=true;  users.allClusters=false; users.filterClusters(cluster.label);">
                             <a>{{cluster.label[0].toUpperCase() + cluster.label.slice(1)}}</a>
                         </li>
 
@@ -92,7 +92,7 @@
 
 
 
-    <div ng-class="{'col-lg-10 col-md-9 col-sm-8' : !$state.includes('search.*') && !nav.embedded}" style="padding-left: 15px; padding-right: 15px;">
+    <div ng-class="{'col-lg-10 col-md-9 col-sm-8' : !$state.includes('search.*') && !global.embedded}" style="padding-left: 15px; padding-right: 15px;">
 
         <div class="hpanel">
             <div class="panel-footer top">

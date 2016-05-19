@@ -82,12 +82,6 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
         })
         .state('user.list', {
             url: "/people",
-            resolve: {
-                user: ['$rootScope', function($rootScope) {
-                    console.log($rootScope.global);
-                    return undefined;
-                }]
-            },
             views: {
                 'header': {
                     templateUrl: "components/header/header_small.html"

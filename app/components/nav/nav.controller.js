@@ -231,20 +231,6 @@ function NavigationController($rootScope, $scope, $auth, $state, $window, $locat
         switch ($location.path().replace(/\/$/, "").split('/').pop()) {
 
             case 'people':
-
-                // dependencies for people view
-
-                $rootScope.global['communityFilter'] = [$stateParams.location_path];
-
-                if ($rootScope.global.community.type == 'cluster') {
-                    if ($rootScope.global.community.community_profiles[$stateParams.location_path]) {
-                        $rootScope.global['clusterFilter'] = $rootScope.global.community.community_profiles[$stateParams.location_path].industries;
-                    } else $rootScope.global['clusterFilter'] = $rootScope.global.community.profile.industries;
-                } else {
-                    $rootScope.global['clusterFilter'] = [];
-                    if ($rootScope.global.community.key && $rootScope.global.community.key !== $rootScope.global.location.key) $rootScope.global.communityFilter.push($rootScope.global.community.key);
-                }
-
                 $state.go('user.list', {}, { location: false });
                 break;
 
@@ -273,7 +259,7 @@ function NavigationController($rootScope, $scope, $auth, $state, $window, $locat
                 }
         }
 
-        self.loaders = {};
+        self.loaders = {}; // for various loading indicators in navigation
 
         if (!$rootScope.global.community) $rootScope.global.community = $rootScope.global.community[$stateParams.location_path];
         if (!$rootScope.global.community) {
@@ -543,16 +529,16 @@ function NavigationController($rootScope, $scope, $auth, $state, $window, $locat
     };
 
         // CHECK FOR IFRAME (redirect, if needed, must happen after routing)
-        var embed;
-        self.embedded = false;
+        
+        $rootScope.global.embedded = false;
 
         try {
-            self.embedded = window.self !== window.top;
+            $rootScope.global.embedded = window.self !== window.top;
         } catch (e) {
-            self.embedded = true;
+            $rootScope.global.embedded = true;
         }
 
-        if (self.embedded) {
+        if ($rootScope.global.embedded) {
             var expired = true,
                 domain;
 
@@ -584,7 +570,7 @@ function NavigationController($rootScope, $scope, $auth, $state, $window, $locat
 
             if (storage) {
                 self.color = storage.color;
-                if (storage.full) self.embedded = false;
+                if (storage.full) $rootScope.global.embedded = false;
             }
 
             try {
@@ -619,14 +605,14 @@ function NavigationController($rootScope, $scope, $auth, $state, $window, $locat
                         } catch (e) {
                             //errorLogService('Localstorage problem: ', e);
                         }
-                        if (embed[u].full) self.embedded = false;
+                        if (embed[u].full) $rootScope.global.embedded = false;
                         break;
                     }
                 }
             }
         }
 
-        //self.embedded = true; // for testing
+        //$rootScope.global.embedded = true; // for testing
 
     };
 

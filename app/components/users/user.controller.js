@@ -5,7 +5,7 @@ angular
     .controller('InviteUserController', InviteUserController)
     .controller('ContactUserController', ContactUserController);
 
-function UserController($rootScope, $stateParams, $location, user_service, result_service, $sce) {
+function UserController($rootScope, $scope, $stateParams, $location, user_service, result_service, $sce) {
     //todo usercontroller and company controller are dups, need to be consolidated
 
     this.selectedClusters = [];
@@ -14,6 +14,7 @@ function UserController($rootScope, $stateParams, $location, user_service, resul
 
     var self = this; // for accessing 'this' in child functions
     var query;
+    var communityFilter = [$stateParams.location_path];
 
     $stateParams.query ? query = $stateParams.query : query = '*';
 
@@ -21,36 +22,7 @@ function UserController($rootScope, $stateParams, $location, user_service, resul
         "({community_path: val})" :
         "({location_path: val})";
 
-    // THIS IS A DUPLICATE OF NAV.EMBEDDED, SHOULD MOVE TO A SERVICE AND INJECT IN NAV AND USER CONTROLLERS
-    try {
-        this.embedded = window.self !== window.top;
-    } catch (e) {
-        this.embedded = true;
-    }
     this.usercount = 16;
-
-    this.searchUsers = function(alturl) {
-        self.loadingUser = true;
-
-        // remove random sort
-        if (alturl) alturl = alturl.replace(/([&\?]sort=_random*$|sort=_random&|[?&]sort=_random(?=#))/, '');
-
-        if (query !== '*') {
-            self.tag = query;
-        } else self.tag = undefined;
-
-        var limit = $location.search().limit;
-
-        user_service.search(communityFilter, clusterFilter, query, undefined, limit || self.usercount, alturl)
-            .then(function (response) {
-                self.tag = undefined;
-                self.users = result_service.setPage(response.data);
-                self.loadingUser = false;
-                self.lastQuery = query;
-            });
-    };
-
-    this.searchUsers();
 
     // Title of list box changes based on context
     var setTitle = function(){
@@ -103,8 +75,6 @@ function UserController($rootScope, $stateParams, $location, user_service, resul
         var pageTitle = '<br><small>' + $rootScope.global.community.profile.name + '</small>';
         self.pageTitle = $sce.trustAsHtml(pageTitle);
     };
-
-    setTitle();
 
     this.filterRole = function(role) {
         self.loadingRole = true;
@@ -169,6 +139,51 @@ function UserController($rootScope, $stateParams, $location, user_service, resul
                 setTitle();
             });
     };
+
+    var loadUsers = function() {
+
+        self.searchUsers = function(alturl) {
+            self.loadingUser = true;
+
+            // remove random sort
+            if (alturl) alturl = alturl.replace(/([&\?]sort=_random*$|sort=_random&|[?&]sort=_random(?=#))/, '');
+
+            if (query !== '*') {
+                self.tag = query;
+            } else self.tag = undefined;
+
+            var limit = $location.search().limit;
+
+            setTitle();
+
+            user_service.search(communityFilter, clusterFilter, query, undefined, limit || self.usercount, alturl)
+                .then(function (response) {
+                    self.tag = undefined;
+                    self.users = result_service.setPage(response.data);
+                    self.loadingUser = false;
+                    self.lastQuery = query;
+                });
+        };
+
+        if ($rootScope.global.community.type == 'cluster') {
+            if ($rootScope.global.community.community_profiles[$stateParams.location_path]) {
+                var clusterFilter = $rootScope.global.community.community_profiles[$stateParams.location_path].industries;
+            } else clusterFilter = $rootScope.global.community.profile.industries;
+        } else {
+            clusterFilter = [];
+            if ($rootScope.global.community.key && $rootScope.global.community.key !== $rootScope.global.location.key) communityFilter.push($rootScope.global.community.key);
+        }
+
+        onLoad(); // de-register the watcher
+        self.searchUsers();
+
+    };
+
+    var onLoad = $scope.$watch(function () {
+        if ($rootScope.global.community && $rootScope.global.community.type) {
+            loadUsers();
+        }
+    });
 }
 
 function ContactUserController($uibModalInstance, notify_service, sweet, community_key, location_key){
