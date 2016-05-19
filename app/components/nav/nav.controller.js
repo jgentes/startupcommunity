@@ -172,31 +172,6 @@ function NavigationController($rootScope, $scope, $auth, $state, $window, $locat
 
     var loadNav = function() {
 
-        // *** ROUTING OF ROOT PATHS ***
-
-        switch ($location.path().replace(/\/$/, "").split('/').pop()) {
-            case 'people':
-                $state.go('user.list', {}, { location: false });
-                break;
-            case 'companies':
-                $state.go('company.list', {}, { location: false });
-                break;
-            case 'resources':
-                $state.go('resource.list', {}, { location: false });
-                break;
-            default:
-                switch (nav_community.type) {
-                    case 'user':
-                        $state.go('user.dashboard');
-                        break;
-                    case 'company':
-                        $state.go('company.dashboard');
-                        break;
-                    default:
-                        $state.go('community.dashboard');
-                }
-        }
-
         console.log('StateParams Location: ', $stateParams.location ? $stateParams.location.key : null);
         console.log('StateParams Location_Path: ', $stateParams.location_path ? $stateParams.location_path : null);
         console.log('StateParams Community: ', $stateParams.community ? $stateParams.community.key : null);
@@ -251,11 +226,53 @@ function NavigationController($rootScope, $scope, $auth, $state, $window, $locat
             });
         }
 
-        // PRIMARY LEFT-NAV ITEM LIST
-/*
-        $rootScope.global.community = communities; // used in company list views
-        $rootScope.global.nav_communities = nav_communities;
-        */
+        // *** ROUTING OF ROOT PATHS ***
+
+        switch ($location.path().replace(/\/$/, "").split('/').pop()) {
+
+            case 'people':
+
+                // dependencies for people view
+
+                $rootScope.global['communityFilter'] = [$stateParams.location_path];
+
+                if ($rootScope.global.community.type == 'cluster') {
+                    if ($rootScope.global.community.community_profiles[$stateParams.location_path]) {
+                        $rootScope.global['clusterFilter'] = $rootScope.global.community.community_profiles[$stateParams.location_path].industries;
+                    } else $rootScope.global['clusterFilter'] = $rootScope.global.community.profile.industries;
+                } else {
+                    $rootScope.global['clusterFilter'] = [];
+                    if ($rootScope.global.community.key && $rootScope.global.community.key !== $rootScope.global.location.key) $rootScope.global.communityFilter.push($rootScope.global.community.key);
+                }
+
+                $state.go('user.list', {}, { location: false });
+                break;
+
+            case 'companies':
+                $state.go('company.list', {}, { location: false });
+                break;
+
+            case 'resources':
+                $state.go('resource.list', {}, { location: false });
+                break;
+
+            default:
+
+                switch (nav_community.type) {
+
+                    case 'user':
+                        $state.go('user.dashboard');
+                        break;
+
+                    case 'company':
+                        $state.go('company.dashboard');
+                        break;
+
+                    default:
+                        $state.go('community.dashboard');
+                }
+        }
+
         self.loaders = {};
 
         if (!$rootScope.global.community) $rootScope.global.community = $rootScope.global.community[$stateParams.location_path];
@@ -264,59 +281,7 @@ function NavigationController($rootScope, $scope, $auth, $state, $window, $locat
             $window.location.reload();
         }
         // the industry_icons save me a db call on every controller reload :) because top doesn't include item values.. maybe combine this with 'parents' service?
-        self.industry_icons = {
-            "construction" : {
-                "icon" : "fa-wrench"
-            },
-            "legal" : {
-                "icon" : "fa-gavel"
-            },
-            "tech" : {
-                "icon" : "fa-code"
-            },
-            "medical" : {
-                "icon" : "fa-stethoscope"
-            },
-            "healthcare" : {
-                "icon" : "fa-ambulance"
-            },
-            "recreation" : {
-                "icon" : "fa-sun-o"
-            },
-            "art" : {
-                "icon" : "fa-picture-o"
-            },
-            "transportation" : {
-                "icon" : "fa-road"
-            },
-            "consumer-goods" : {
-                "icon" : "fa-barcode"
-            },
-            "non-profit" : {
-                "icon" : "fa-heart-o"
-            },
-            "corporate" : {
-                "icon" : "fa-building-o"
-            },
-            "government" : {
-                "icon" : "fa-university"
-            },
-            "finance" : {
-                "icon" : "fa-pie-chart"
-            },
-            "education" : {
-                "icon": "fa-graduation-cap"
-            },
-            "manufacturing": {
-                "icon" : "fa-cube"
-            },
-            "agriculture" : {
-                "icon": "fa-pagelines"
-            },
-            "services" : {
-                "icon": "fa-bell-o"
-            }
-        };
+        self.industry_icons = { "construction": {"icon": "fa-wrench"}, "legal": {"icon": "fa-gavel"}, "tech": {"icon": "fa-code"}, "medical": {"icon": "fa-stethoscope"}, "healthcare": {"icon": "fa-ambulance"}, "recreation": {"icon": "fa-sun-o"}, "art": {"icon": "fa-picture-o"}, "transportation": {"icon": "fa-road"}, "consumer-goods": {"icon": "fa-barcode"}, "non-profit": {"icon": "fa-heart-o"}, "corporate": {"icon": "fa-building-o"}, "government": {"icon": "fa-university"}, "finance": {"icon": "fa-pie-chart"}, "education": {"icon": "fa-graduation-cap"}, "manufacturing": {"icon": "fa-cube"}, "agriculture": {"icon": "fa-pagelines"}, "services": {"icon": "fa-bell-o"}};
 
         var parents = community_service.parents();
         parents = parents.join('|').toLowerCase().split('|'); // change all to lowercase

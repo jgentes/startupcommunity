@@ -14,16 +14,6 @@ function UserController($rootScope, $stateParams, $location, user_service, resul
 
     var self = this; // for accessing 'this' in child functions
     var query;
-    var communityFilter = [$stateParams.location_path];
-    
-    if ($rootScope.global.community.type == 'cluster') {
-        if ($rootScope.global.community.community_profiles[$stateParams.location_path]) {
-            var clusterFilter = $rootScope.global.community.community_profiles[$stateParams.location_path].industries;
-        } else clusterFilter = $rootScope.global.community.profile.industries;
-    } else {
-        clusterFilter = [];
-        if ($rootScope.global.community.key && $rootScope.global.community.key !== $rootScope.global.location.key) communityFilter.push($rootScope.global.community.key);
-    }
 
     $stateParams.query ? query = $stateParams.query : query = '*';
 
