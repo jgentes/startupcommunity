@@ -19,7 +19,7 @@
         </div>
         <div class="social-form">
             <form ng-submit="profile.postReply(question)">
-                <input class="form-control input-md" ng-disabled="!profile.loggedin" placeholder="Write a reply.." ng-model="profile.reply[question.key]" required>
+                <input class="form-control input-md" ng-disabled="!global.user" placeholder="Write a reply.." ng-model="profile.reply[question.key]" required>
             </form>
             <div loading-bars ng-show="profile.working[question.key]" style="text-align:center; margin-left: -50px; margin-top: 10px;"></div>
         </div>

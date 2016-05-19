@@ -299,9 +299,6 @@ function NavigationController($rootScope, $scope, $auth, $state, $window, $locat
             self.notify = "{notify: true}";
         }
 
-
-
-
         self.nav_jump = ($rootScope.global.location && $rootScope.global.location.type == 'location') || (($rootScope.global.community.type == "user" || $rootScope.global.community.type == "company") &&
         ($rootScope.global.location && $rootScope.global.location.type == 'location')) ?
             "({community_path: item.key, location_path: global.location.key })" :

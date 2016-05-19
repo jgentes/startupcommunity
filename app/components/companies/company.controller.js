@@ -168,7 +168,7 @@ function CompanyController($rootScope, $scope, $stateParams, $state, $location, 
             });
     };
 
-    var loadCompanies = function() {
+    var loadCtrl = function() {
 
         self.searchCompanies = function (resource_page, alturl) {
             self.loadingUser = true;
@@ -208,12 +208,12 @@ function CompanyController($rootScope, $scope, $stateParams, $state, $location, 
 
     var onLoad = $scope.$watch(function () {
         if ($rootScope.global.community && $rootScope.global.community.type) {
-            loadCompanies();
+            loadCtrl();
         }
     });
 }
 
-function CompanyProfileController($rootScope, $stateParams, $mixpanel, user_service, community_service, result_service, $location, sweet, $window, $http) {
+function CompanyProfileController($rootScope, $scope, $stateParams, $mixpanel, user_service, community_service, result_service, $location, sweet, $window, $http) {
 
     $mixpanel.track('Viewed Company');
 
@@ -222,20 +222,32 @@ function CompanyProfileController($rootScope, $stateParams, $mixpanel, user_serv
     var self = this;
     this.team_panels = user_service.team_panels();
 
-    if ($rootScope.global.community && $rootScope.global.community.type == "company" && $rootScope.global.community.team) {
-        // if directly accessed via url
-        this.company = $rootScope.global.community;
-    } else
-        var companykey = (this.company && this.company.key) ?
-            this.company.key :
-            $stateParams.community_path ?
-                $stateParams.community_path :
-                $stateParams.location_path;
+    var loadCtrl = function() {
+        if ($rootScope.global.community && $rootScope.global.community.type == "company" && $rootScope.global.community.team) {
+            // if directly accessed via url
+            self.company = $rootScope.global.community;
+        } else {
+            var companykey = (self.company && self.company.key) ?
+                self.company.key :
+                $stateParams.community_path ?
+                    $stateParams.community_path :
+                    $stateParams.location_path;
 
-    community_service.getCommunity(companykey)
-        .then(function(response) {
-            self.company = response.data;
-        });
+            community_service.getCommunity(companykey)
+                .then(function (response) {
+                    self.company = response.data;
+                });
+        }
+        
+        onLoad(); // de-register the watcher
+        
+    };
+
+    var onLoad = $scope.$watch(function () {
+        if ($rootScope.global.community && $rootScope.global.community.type) {
+            loadCtrl();
+        }
+    });
 
     this.remove = function(role) {
         

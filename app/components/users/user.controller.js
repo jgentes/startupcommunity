@@ -76,7 +76,7 @@ function UserController($rootScope, $scope, $stateParams, $location, user_servic
         self.pageTitle = $sce.trustAsHtml(pageTitle);
     };
 
-    var loadUsers = function() {
+    var loadCtrl = function() {
 
         self.searchUsers = function(alturl) {
             self.loadingUser = true;
@@ -117,7 +117,7 @@ function UserController($rootScope, $scope, $stateParams, $location, user_servic
 
     var onLoad = $scope.$watch(function () {
         if ($rootScope.global.community && $rootScope.global.community.type) {
-            loadUsers();
+            loadCtrl();
         }
     });
 
@@ -234,54 +234,44 @@ function ContactUserController($uibModalInstance, notify_service, sweet, communi
     };
 }
 
-function UserProfileController($rootScope, $stateParams, $http, $uibModal, $mixpanel, user_service, community_service, message_service) {
+function UserProfileController($rootScope, $scope, $stateParams, $http, $uibModal, $mixpanel, user_service, community_service, message_service) {
 
     var self = this;
 
     if (!jQuery.isEmptyObject($stateParams.profile)) this.user = $stateParams.profile; // set basic profile details while pulling the rest
 
-    var loadCompanies = function () {
-
-        for (role in self.user.roles) {
-            for (comm in self.user.roles[role]) {
-                if (self.user[comm] && self.user[comm].type == 'company') {
-                    if (!self.companies[role]) self.companies[role] = {};
-                    if (!self.companies.count[role]) self.companies.count[role] = 0;
-                    self.companies[role][comm] = {
-                        "path": {
-                            "key": comm
-                        },
-                        "value" : self.user[comm]
-                    };
-                    ++ self.companies.count[role];
-                }
-            }
-        }
-    };
-
-    this.loggedin = !!$rootScope.global.user;
     this.reply = {};
-    this.companies = { "count" : {}};
     this.team_panels = user_service.team_panels();
     this.working = false;
     $mixpanel.track('Viewed Profile');
 
-    if ($rootScope.global.community && $rootScope.global.community.type == "user" && $rootScope.global.community.companies) {
-        // if directly accessed via url
-        this.user = $rootScope.global.community;
-        loadCompanies();
-    } else
-        var userkey = (this.user && this.user.key) ?
-            this.user.key :
-            $stateParams.community_path ?
-                $stateParams.community_path :
-                $stateParams.location_path;
+    var loadCtrl = function() {
 
-    community_service.getCommunity(userkey)
-        .then(function(response) {
-            self.user = response.data;
-            loadCompanies();
-        });
+        if ($rootScope.global.community && $rootScope.global.community.type == "user" && $rootScope.global.community.companies) {
+            // if directly accessed via url
+            self.user = $rootScope.global.community;
+        } else {
+            var userkey = (self.user && self.user.key) ?
+                self.user.key :
+                $stateParams.community_path ?
+                    $stateParams.community_path :
+                    $stateParams.location_path;
+
+            community_service.getCommunity(userkey)
+                .then(function (response) {
+                    self.user = response.data;
+                });
+        }
+
+        onLoad(); // de-register the watcher
+
+    };
+
+    var onLoad = $scope.$watch(function () {
+        if ($rootScope.global.community && $rootScope.global.community.type) {
+            loadCtrl();
+        }
+    });
 
     this.contact = function(community_key) {
 

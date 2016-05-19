@@ -111,8 +111,9 @@ function handleGetCommunity(req, res) {
                     // finalize iterates through results and formats them nicely
 
                     for (item in results) {
+
                         if (results[item].value && results[item].path.key !== community) {
-                            console.log(results[item].path.key);
+
                             results[item].value['key'] = results[item].path.key;
 
                             // sort communities for use in nav and child dashboard pages
@@ -120,11 +121,12 @@ function handleGetCommunity(req, res) {
                             switch (results[item].value.type) {
                                 case "location":
                                     if (!newresponse.locations) newresponse['locations'] = {};
-                                    newresponse.locations[item] = results[item].value;
+                                    newresponse.locations[results[item].path.key] = results[item].value;
                                     break;
                                 case "cluster":
                                     if (!newresponse.clusters) newresponse['clusters'] = {};
                                     if (results[item].value.community_profiles && results[item].value.community_profiles[community] && results[item].value.community_profiles[community].parents && results[item].value.community_profiles[community].parents[0]) {
+                                        // i believe this is for navigation
                                         var cluster_type = results[item].value.community_profiles[community].parents[0];
                                         if (!newresponse.clusters[cluster_type]) newresponse.clusters[cluster_type] = {};
                                         newresponse.clusters[cluster_type][item] = results[item].value;
@@ -133,8 +135,19 @@ function handleGetCommunity(req, res) {
                                 case "company":
                                     if (results[item].value.resource) {
                                         if (!newresponse.resources) newresponse["resources"] = [];
-                                        if (results[item].value.community_profiles && results[item].value.community_profiles[community] && results[item].value.community_profiles[community].parents && results[item].value.community_profiles[community].parents[0]) {
-                                            newresponse.resources.push(results[item].value);
+                                        newresponse.resources.push(results[item].value);
+                                    }
+
+                                    if (newresponse.type == 'user') {
+                                        for (role in newresponse.roles) {
+                                            if (newresponse.roles[role][results[item].path.key]) {
+
+                                                if (!newresponse.companies) newresponse['companies'] = { "count" : {}};
+                                                if (!newresponse.companies[role]) newresponse.companies[role] = {};
+                                                if (!newresponse.companies[role][results[item].path.key]) newresponse.companies[role][results[item].path.key] = results[item];
+                                                if (!newresponse.companies.count[role]) newresponse.companies.count[role] = 0;
+                                                ++ newresponse.companies.count[role];
+                                            }
                                         }
                                     }
                                     break;
@@ -142,8 +155,8 @@ function handleGetCommunity(req, res) {
 
                             if (newresponse.resources && newresponse.resources.length) {
                                 newresponse.resources = newresponse.resources.sort(function(a, b) {
-                                    var x = a.community_profiles[community].name;
-                                    var y = b.community_profiles[community].name;
+                                    var x = a.key;
+                                    var y = b.key;
                                     return ((x < y) ? -1 : ((x > y) ? 1 : 0));
                                 });
                             }
@@ -296,41 +309,11 @@ function handleGetCommunity(req, res) {
                                     }
                                 }
 
-                                /*
-
-                                 // also grab clusters
-
-                                 if (!m.value.profile.parents) m.value.profile.parents = [];
-                                 if (!m.value.profile.industries) m.value.profile.industries = [];
-                                 if (!m.value.profile.skills) m.value.profile.skills = [];
-
-                                 var cluster_items = m.value.profile.parents.concat(m.value.profile.industries, m.value.profile.skills);
-                                 var clusters = '"';
-
-                                 if (cluster_items.length) {
-                                 for (c in cluster_items) {
-                                 if (c > 0 && c < cluster_items.length) {
-                                 clusters += '" OR "';
-                                 }
-                                 clusters += cluster_items[c];
-                                 }
-                                 clusters += '"';
-                                 }
-
-                                 var ubersearch = '(@path.key: (' + search + ')) OR (@value.type: "cluster" AND @value.communities: "' + m.value.profile.home + '" AND (@value.profile.industries: (' + clusters + ') OR @value.community_profiles.' + m.value.profile.home + '.industries: (' + clusters + ')))';
-                                 */
-
                                 var ubersearch = '(@path.key: (' + search + '))';
 
                             } else if (m_home) {
                                 ubersearch = '(@path.key: ' + m_home + ')';
                             } else ubersearch = "";
-/*
-
-                            if (m.value.type == "location") {
-                                ubersearch += ' OR @value.primary: true ';
-                            } // + pull primary industries (clusters)
-*/
 
                             console.log(ubersearch);
 
@@ -349,11 +332,10 @@ function handleGetCommunity(req, res) {
                                         } else finalize(uber_result.body.results);
                                     })
                                     .fail(function (err) {
-                                        console.log("WARNING: community219", err);
+                                        console.log("WARNING: ", err);
                                         finalize(result.body.results);
                                     });
                             }
-
 
                             break;
                         }

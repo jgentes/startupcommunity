@@ -9,15 +9,15 @@
         </div>
     </div>
     <div class="col-xs-4">
-        <h3 class="text-info pull-right" style="cursor: default;">{{::profile.companies.count[type.name]}}</h3>
+        <h3 class="text-info pull-right" style="cursor: default;">{{profile.user.companies.count[type.name]}}</h3>
     </div>
 </div>
 <div class="panel-footer" style="background: #fff; text-align: center;">
-    <div ng-repeat="item in ::profile.companies[type.name]" style="text-align: left;">
+    <div ng-repeat="item in profile.user.companies[type.name]" style="text-align: left;">
         <div>
             <div class="row" ng-include="'components/companies/company.list.item.html'"></div>
             <div ng-if="$last" style="margin-bottom:-11px;"></div>
         </div>
     </div>
-    <div ng-if="!profile.companies[type.name]" style="padding-top: 10px;">None yet..&nbsp;<a ng-if="profile.user.key == global.user.key" style="font-size:12px;" ng-href="{{$rootScope.global.location.key + '/companies/add'}}">&nbsp; add one?</a></div>
+    <div ng-if="!profile.user.companies[type.name]" style="padding-top: 10px;">None yet..&nbsp;<a ng-if="profile.user.key == global.user.key" style="font-size:12px;" ng-href="{{$rootScope.global.location.key + '/companies/add'}}">&nbsp; add one?</a></div>
 </div>
