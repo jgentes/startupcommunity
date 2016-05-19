@@ -122,7 +122,7 @@
             <li class="active">
                 <ul class="nav nav-second-level">
                     <li>
-                        <a ui-sref="community.dashboard({location_path: global.location.key, community_path: ''})" style="padding-left: 6px; font-size: 16px; font-weight: bold; border-bottom: 1px solid #eee; background-color:#F6F8F9; border-left: 2px solid #82BC4B;" ng-click="l_working = true">
+                        <a ui-sref="community.dashboard({location_path: global.location.key, community_path: '', tail_path: ''})" style="padding-left: 6px; font-size: 16px; font-weight: bold; border-bottom: 1px solid #eee; background-color:#F6F8F9; border-left: 2px solid #82BC4B;" ng-click="l_working = true">
                             <span style="white-space:nowrap;font-size:18px;">
                                 &nbsp;{{global.location.profile.name}}
                             </span>
@@ -144,7 +144,7 @@
                         <a>No locations yet</a>
                     </li>
                     <li ng-repeat="item in global.locations">
-                        <a ui-sref="community.dashboard({location_path: item.key, community_path: ''})" ng-class="{active: global.path.includes('/' + item.key)}" ng-click="li_working = true"><i class="fa fa-globe"></i>
+                        <a ui-sref="community.dashboard({location_path: item.key, community_path: '', tail_path: ''})" ng-class="{active: global.path.includes('/' + item.key)}" ng-click="li_working = true"><i class="fa fa-globe"></i>
                             {{::item.profile.name}}
                             <span loading-bars ng-show="li_working"></span>
                         </a>
@@ -161,12 +161,12 @@
                 </a>
                 <ul class="nav nav-second-level">
                     <li ng-repeat="item in global.nav_top.parents | orderBy: 'item.value' : reverse">
-                        <a ui-sref="community.dashboard({community_path: item.label, location_path: (global.location.key || global.user.profile.home)})" ng-class="{active: global.path.includes('/' + item.label)}" ng-click="cl_working = true">
+                        <a ui-sref="community.dashboard({location_path: (global.location.key || global.user.profile.home), community_path: item.label, tail_path: ''})" ng-class="{active: global.path.includes('/' + item.label)}" ng-click="cl_working = true">
                             <span>
                                 <i ng-class="'fa ' + nav.industry_icons[item.label].icon"></i>
                                 {{::item.label[0].toUpperCase() + item.label.slice(1)}}
                                 <span loading-bars ng-show="cl_working"></span>
-                                <a ng-repeat="c in ::nav.clusters[item.label]" ui-sref="community.dashboard({community_path: c.key, location_path: (global.location.key || global.user.profile.home)})" ng-class="{active: global.path.includes('/' + c.key)}" ng-click="clc_working = true" style="padding-left:30px;">
+                                <a ng-repeat="c in ::nav.clusters[item.label]" ui-sref="community.dashboard({location_path: (global.location.key || global.user.profile.home), community_path: c.key, tail_path: ''})" ng-class="{active: global.path.includes('/' + c.key)}" ng-click="clc_working = true" style="padding-left:30px;">
                                     <i ng-class="'fa ' + nav.industry_icons[item.label].icon"></i>
                                     {{::c.community_profiles[global.location.key].name[0].toUpperCase() + c.community_profiles[global.location.key].name.slice(1);}}
                                     <span loading-bars ng-show="clc_working"></span>

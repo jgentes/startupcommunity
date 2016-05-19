@@ -3,5 +3,5 @@
     <p style="white-space:pre-wrap;" ng-bind-html="::profile.user.profile.linkedin.summary | linky:'_blank'"></p>
     <hr>
     <h3 ng-show="profile.user.profile.skills">Skills & Industries</h3>
-    <li ng-repeat="skill in profile.user.profile.skills" class="label btn-default skills"><a href="#" ui-sref="search.dashboard({location_path: $rootScope.global.location.key})">{{::skill}}</a></li>
+    <li ng-repeat="skill in profile.user.profile.skills" class="label btn-default skills"><a href="#" ui-sref="search.dashboard({location_path: global.location.key})">{{::skill}}</a></li>
 </div>

@@ -4,19 +4,19 @@ angular
     .controller('SettingsController', SettingsController)
     .controller('EmbedSettingsController', EmbedSettingsController);
 
-function NavigationController($rootScope, $scope, $auth, $state, $window, $location, $stateParams, $uibModal, $mixpanel, user_service, community_service, sweet, knowtify, errorLogService, newsletter_service) {
+function NavigationController($scope, $auth, $state, $window, $location, $stateParams, $uibModal, $mixpanel, user_service, community_service, sweet, knowtify, errorLogService, newsletter_service) {
 
     var self = this;
     
-    $rootScope.global.path = $location.path().replace(/\/$/, ""); //used for routing and used in view
-    $rootScope.global.location_path = $stateParams.location_path;
+    $scope.global.path = $location.path().replace(/\/$/, ""); //used for routing and used in view
+    $scope.global.location_path = $stateParams.location_path;
     this.state = $state; // used in view because path doesn't always update properly.. esp. for /people
 
     var nav_community;
 
     var getProfile = function() {
         
-        if (!$rootScope.global.user) {
+        if (!$scope.global.user) {
             user_service.getProfile()
                 .then(function(response) {
 
@@ -31,9 +31,9 @@ function NavigationController($rootScope, $scope, $auth, $state, $window, $locat
                         });
                     }
 
-                    $rootScope.global.user = response.data;
+                    $scope.global.user = response.data;
                     
-                    if ($rootScope.global.user.token) $auth.setToken($rootScope.global.user.token); // update local storage with latest user profile
+                    if ($scope.global.user.token) $auth.setToken($scope.global.user.token); // update local storage with latest user profile
                     
                     getCommunity();
 
@@ -53,7 +53,7 @@ function NavigationController($rootScope, $scope, $auth, $state, $window, $locat
 
             community_service.getCommunity(comm_path)
                 .then(function (response) {
-                    $rootScope.global.community = response.data;
+                    $scope.global.community = response.data;
                     getLocation();
                 })
         };
@@ -78,20 +78,20 @@ function NavigationController($rootScope, $scope, $auth, $state, $window, $locat
         if ($stateParams.community_path) $stateParams.community_path = $stateParams.community_path.replace(/\s+/g, '-');
         if ($stateParams.location_path) $stateParams.location_path = $stateParams.location_path.replace(/\s+/g, '-');
 
-        // check if community is already in $rootScope.global
+        // check if community is already in $scope.global
 
         if ($stateParams.community_path) {
-            if ($rootScope.global.community && $rootScope.global.community.key == $stateParams.community_path)
+            if ($scope.global.community && $scope.global.community.key == $stateParams.community_path)
                 getLocation();
-            else if ($rootScope.global.location && $rootScope.global.location.key == $stateParams.community_path) {
-                $rootScope.global.community = $rootScope.global.location;
+            else if ($scope.global.location && $scope.global.location.key == $stateParams.community_path) {
+                $scope.global.community = $scope.global.location;
                 getLocation();
             } else next();
         } else if ($stateParams.location_path) {
-            if ($rootScope.global.community && $rootScope.global.community.key == $stateParams.location_path)
+            if ($scope.global.community && $scope.global.community.key == $stateParams.location_path)
                 getLocation();
-            else if ($rootScope.global.location && $rootScope.global.location.key == $stateParams.location_path) {
-                $rootScope.global.community = $rootScope.global.location;
+            else if ($scope.global.location && $scope.global.location.key == $stateParams.location_path) {
+                $scope.global.community = $scope.global.location;
                 getLocation();
             } else next();
         }
@@ -100,34 +100,34 @@ function NavigationController($rootScope, $scope, $auth, $state, $window, $locat
 
     var getLocation = function() {
 
-        nav_community = $rootScope.global.community;
+        nav_community = $scope.global.community;
 
         // if community is a user or company, pull their home and use that for location [used when refreshing page on user profile]
         if (nav_community && (nav_community.type == 'user' || nav_community.type == 'company')) {
 
-            if ($rootScope.global && $rootScope.global.location && $rootScope.global.location.key == nav_community.profile.home) {
+            if ($scope.global && $scope.global.location && $scope.global.location.key == nav_community.profile.home) {
                 getNavTop();
             } else
 
                 community_service.getKey(nav_community.profile.home)
                     .then(function(response) {
-                        $rootScope.global.location = response.data;
+                        $scope.global.location = response.data;
                         getNavTop();
                     })
 
-        } else if ($rootScope.global && $rootScope.global.location && $rootScope.global.location.key == $stateParams.location_path) {
-            // check if location is already in $rootScope.global
+        } else if ($scope.global && $scope.global.location && $scope.global.location.key == $stateParams.location_path) {
+            // check if location is already in $scope.global
             getNavTop();
         } else
             if ($stateParams.location_path !== nav_community.key) {
 
                 community_service.getKey($stateParams.location_path)
                     .then(function(response) {
-                        $rootScope.global.location = response.data;
+                        $scope.global.location = response.data;
                         getNavTop();
                     });
             } else {
-                $rootScope.global.location = nav_community;
+                $scope.global.location = nav_community;
                 getNavTop();
             }
 
@@ -136,18 +136,18 @@ function NavigationController($rootScope, $scope, $auth, $state, $window, $locat
     var getNavTop = function() {
 
         // check if we already have correct navigation
-        if ($rootScope.global && $rootScope.global.nav_top && $rootScope.global.nav_top.key == $stateParams.location_path)
+        if ($scope.global && $scope.global.nav_top && $scope.global.nav_top.key == $stateParams.location_path)
             getCommunityTop();
 
         else {
             // if it's a user, pull home
             var true_loc = nav_community && nav_community.type == 'user' ?
                 nav_community.profile.home :
-                $rootScope.global.location.key;
+                $scope.global.location.key;
 
             community_service.getTop(true_loc)
                 .then(function(response) {
-                    $rootScope.global.nav_top = response.data;
+                    $scope.global.nav_top = response.data;
                     getCommunityTop();
                 })
         }
@@ -155,15 +155,15 @@ function NavigationController($rootScope, $scope, $auth, $state, $window, $locat
     };
 
     var getCommunityTop = function() {
-        if (nav_community && nav_community.key && $rootScope.global.location && $rootScope.global.location.key && (nav_community.key !== $rootScope.global.location.key && ((nav_community.type == 'location') || (nav_community.resource) || (nav_community.type == 'cluster')))) {
+        if (nav_community && nav_community.key && $scope.global.location && $scope.global.location.key && (nav_community.key !== $scope.global.location.key && ((nav_community.type == 'location') || (nav_community.resource) || (nav_community.type == 'cluster')))) {
 
-            community_service.getTop($rootScope.global.location.key, nav_community.key, nav_community)
+            community_service.getTop($scope.global.location.key, nav_community.key, nav_community)
                 .then(function(response) {
-                    $rootScope.global.top = response.data;
+                    $scope.global.top = response.data;
                     loadNav();
                 })
         } else {
-            $rootScope.global.top = $rootScope.global.nav_top;
+            $scope.global.top = $scope.global.nav_top;
             loadNav();
         }
     };
@@ -177,8 +177,8 @@ function NavigationController($rootScope, $scope, $auth, $state, $window, $locat
         console.log('StateParams Community: ', $stateParams.community ? $stateParams.community.key : null);
         console.log('StateParams Community_Path: ', $stateParams.community_path ? $stateParams.community_path : null);
 
-        console.log('Nav RootScope Location: ', $rootScope.global.location ? $rootScope.global.location.key : null);
-        console.log('Nav RootScope Community: ', $rootScope.global.community ? $rootScope.global.community.key : null);
+        console.log('Nav RootScope Location: ', $scope.global.location ? $scope.global.location.key : null);
+        console.log('Nav RootScope Community: ', $scope.global.community ? $scope.global.community.key : null);
 
         var rollbar_payload = {
                 "payload": {
@@ -195,9 +195,9 @@ function NavigationController($rootScope, $scope, $auth, $state, $window, $locat
 
         // ANONYMOUS OR LOGGED IN ?
 
-        if ($auth.isAuthenticated() && $rootScope.global.user) {
+        if ($auth.isAuthenticated() && $scope.global.user) {
 
-            self.user = $rootScope.global.user; // reference 'this' by using 'nav' from 'NavigationController as nav' - * nav is also usable in child views *
+            self.user = $scope.global.user; // reference 'this' by using 'nav' from 'NavigationController as nav' - * nav is also usable in child views *
 
             // LOAD 3RD PARTY SERVICES
 
@@ -261,8 +261,8 @@ function NavigationController($rootScope, $scope, $auth, $state, $window, $locat
 
         self.loaders = {}; // for various loading indicators in navigation
 
-        if (!$rootScope.global.community) $rootScope.global.community = $rootScope.global.community[$stateParams.location_path];
-        if (!$rootScope.global.community) {
+        if (!$scope.global.community) $scope.global.community = $scope.global.community[$stateParams.location_path];
+        if (!$scope.global.community) {
             // if still no community, there's a problem, reload the app
             $window.location.reload();
         }
@@ -272,7 +272,7 @@ function NavigationController($rootScope, $scope, $auth, $state, $window, $locat
         var parents = community_service.parents();
         parents = parents.join('|').toLowerCase().split('|'); // change all to lowercase
 
-        var location_key = $rootScope.global.location.key;
+        var location_key = $scope.global.location.key;
 
         if (angular.equals({}, self.clusters)) self.clusters = undefined; // had a hard time checking for empty object in the html
 
@@ -291,7 +291,7 @@ function NavigationController($rootScope, $scope, $auth, $state, $window, $locat
 
         // to set correct root path when navigating from user or company page
 
-        if ($rootScope.global.location.key == $rootScope.global.community.key) {
+        if ($scope.global.location.key == $scope.global.community.key) {
             self.nav_url = "({community_path: ''})";
             self.notify = "{notify: false}";
         } else {
@@ -299,8 +299,8 @@ function NavigationController($rootScope, $scope, $auth, $state, $window, $locat
             self.notify = "{notify: true}";
         }
 
-        self.nav_jump = ($rootScope.global.location && $rootScope.global.location.type == 'location') || (($rootScope.global.community.type == "user" || $rootScope.global.community.type == "company") &&
-        ($rootScope.global.location && $rootScope.global.location.type == 'location')) ?
+        self.nav_jump = ($scope.global.location && $scope.global.location.type == 'location') || (($scope.global.community.type == "user" || $scope.global.community.type == "company") &&
+        ($scope.global.location && $scope.global.location.type == 'location')) ?
             "({community_path: item.key, location_path: global.location.key })" :
             "({community_path: item.key, location_path: global.user.profile.home })";
 
@@ -308,22 +308,22 @@ function NavigationController($rootScope, $scope, $auth, $state, $window, $locat
 
         if ($stateParams.query) self.search.query = $stateParams.query;
 
-        if ($rootScope.global.community.type == "cluster" || $rootScope.global.community.resource) {
-            if ($rootScope.global.community.community_profiles && $rootScope.global.community.community_profiles[$stateParams.location_path]) {
-                self.searchname = $rootScope.global.community.community_profiles[$stateParams.location_path].name;
-            } else self.searchname = $rootScope.global.community.profile.name;
-        } else self.searchname = $rootScope.global.location && $rootScope.global.location.profile ? $rootScope.global.location.profile.name : "";
+        if ($scope.global.community.type == "cluster" || $scope.global.community.resource) {
+            if ($scope.global.community.community_profiles && $scope.global.community.community_profiles[$stateParams.location_path]) {
+                self.searchname = $scope.global.community.community_profiles[$stateParams.location_path].name;
+            } else self.searchname = $scope.global.community.profile.name;
+        } else self.searchname = $scope.global.location && $scope.global.location.profile ? $scope.global.location.profile.name : "";
 
         self.search = function(query) {
 
             if (!query) query = "*";
 
-            if ($rootScope.global.community.type == "cluster" || $rootScope.global.community.resource) {
-                $stateParams.location_path == $rootScope.global.community.key ?
+            if ($scope.global.community.type == "cluster" || $scope.global.community.resource) {
+                $stateParams.location_path == $scope.global.community.key ?
                     $state.go('search.dashboard', {location_path: $stateParams.location_path}) :
-                    $state.go('search.dashboard', {location_path: $stateParams.location_path, community_path: $rootScope.global.community.key});
-            } else if ($rootScope.global.community.type == "user" || $rootScope.global.community.type == "company") {
-                $state.go('search.dashboard', {location_path: $rootScope.global.community.profile.home, query: query});
+                    $state.go('search.dashboard', {location_path: $stateParams.location_path, community_path: $scope.global.community.key});
+            } else if ($scope.global.community.type == "user" || $scope.global.community.type == "company") {
+                $state.go('search.dashboard', {location_path: $scope.global.community.profile.home, query: query});
             } else $state.go('search.dashboard', {query: query});
 
         };
@@ -343,7 +343,7 @@ function NavigationController($rootScope, $scope, $auth, $state, $window, $locat
                         return user.value;
                     },
                     community_key: function() {
-                        return $rootScope.global.community.key;
+                        return $scope.global.community.key;
                     },
                     location_key: function() {
                         return $stateParams.location_path;
@@ -363,10 +363,10 @@ function NavigationController($rootScope, $scope, $auth, $state, $window, $locat
                 windowClass: "hmodal-success",
                 resolve: {
                     community: function() {
-                        return community || $rootScope.global.community;
+                        return community || $scope.global.community;
                     },
                     location: function() {
-                        return $rootScope.global.location;
+                        return $scope.global.location;
                     },
                     user: function() {
                         return self.user;
@@ -386,7 +386,7 @@ function NavigationController($rootScope, $scope, $auth, $state, $window, $locat
                 windowClass: "hmodal-success",
                 resolve: {
                     location: function() {
-                        return $rootScope.global.location;
+                        return $scope.global.location;
                     },
                     community: function() {
                         return community;
@@ -436,10 +436,10 @@ function NavigationController($rootScope, $scope, $auth, $state, $window, $locat
                         return self.user;
                     },
                     location: function() {
-                        return $rootScope.global.location;
+                        return $scope.global.location;
                     },
                     communities: function() {
-                        return $rootScope.global.community;
+                        return $scope.global.community;
                     }
                 }
             });
@@ -485,15 +485,15 @@ function NavigationController($rootScope, $scope, $auth, $state, $window, $locat
                         return null;
                     },
                     community: function() {
-                        return $rootScope.global.location;
+                        return $scope.global.location;
                     },
                     communities: function() {
-                        return $rootScope.global.community;
+                        return $scope.global.community;
                     },
                     location: function() {
-                        if ($rootScope.global.location.resource || $rootScope.global.location.type == 'cluster') {
-                            return $rootScope.global.community[$rootScope.global.location.profile.home];
-                        } else return $rootScope.global.location;
+                        if ($scope.global.location.resource || $scope.global.location.type == 'cluster') {
+                            return $scope.global.community[$scope.global.location.profile.home];
+                        } else return $scope.global.location;
                     }
                 }
             });
@@ -527,15 +527,15 @@ function NavigationController($rootScope, $scope, $auth, $state, $window, $locat
 
         // CHECK FOR IFRAME (redirect, if needed, must happen after routing)
         
-        $rootScope.global.embedded = false;
+        $scope.global.embedded = false;
 
         try {
-            $rootScope.global.embedded = window.self !== window.top;
+            $scope.global.embedded = window.self !== window.top;
         } catch (e) {
-            $rootScope.global.embedded = true;
+            $scope.global.embedded = true;
         }
 
-        if ($rootScope.global.embedded) {
+        if ($scope.global.embedded) {
             var expired = true,
                 domain;
 
@@ -567,19 +567,19 @@ function NavigationController($rootScope, $scope, $auth, $state, $window, $locat
 
             if (storage) {
                 self.color = storage.color;
-                if (storage.full) $rootScope.global.embedded = false;
+                if (storage.full) $scope.global.embedded = false;
             }
 
             try {
-                if ($rootScope.global.location.type === 'cluster' && $rootScope.global.location.community_profiles[$stateParams.location_path] && $rootScope.global.location.community_profiles[$stateParams.location_path].embed) {
+                if ($scope.global.location.type === 'cluster' && $scope.global.location.community_profiles[$stateParams.location_path] && $scope.global.location.community_profiles[$stateParams.location_path].embed) {
                     try {
-                        embed = $rootScope.global.location.community_profiles[$stateParams.location_path].embed;
+                        embed = $scope.global.location.community_profiles[$stateParams.location_path].embed;
                     }
                     catch (e) {
                         errorLogService('embed problem: ', e);
                     }
 
-                } else embed = $rootScope.global.location.profile.embed;
+                } else embed = $scope.global.location.profile.embed;
             }
             catch (e) {
                 errorLogService('embed problem: ', e);
@@ -602,14 +602,14 @@ function NavigationController($rootScope, $scope, $auth, $state, $window, $locat
                         } catch (e) {
                             //errorLogService('Localstorage problem: ', e);
                         }
-                        if (embed[u].full) $rootScope.global.embedded = false;
+                        if (embed[u].full) $scope.global.embedded = false;
                         break;
                     }
                 }
             }
         }
 
-        //$rootScope.global.embedded = true; // for testing
+        //$scope.global.embedded = true; // for testing
 
     };
 
@@ -617,13 +617,13 @@ function NavigationController($rootScope, $scope, $auth, $state, $window, $locat
 
 }
 
-function SettingsController($rootScope, community_service) {
+function SettingsController($scope, community_service) {
     var self = this;
     var leader = [];
     
-    if ($rootScope.global.user.roles && $rootScope.global.user.roles.leader) {
+    if ($scope.global.user.roles && $scope.global.user.roles.leader) {
         
-        for (l in $rootScope.global.user.roles.leader) leader.push(l);
+        for (l in $scope.global.user.roles.leader) leader.push(l);
 
         community_service.getResources(undefined, leader)
             .then(function(response) {
@@ -635,19 +635,19 @@ function SettingsController($rootScope, community_service) {
 
 function EmbedSettingsController($uibModalInstance, sweet, community_service, community, location){
 
-    this.user = $rootScope.global.user;
+    this.user = $scope.global.user;
     var self = this;
-    $rootScope.global.location = location; // used in view
+    $scope.global.location = location; // used in view
 
     //force pull of community settings every time to avoid stale data
     community_service.getKey(community.key)
         .then(function(response) {
-            $rootScope.global.community = response.data;
+            $scope.global.community = response.data;
 
             // load existing embed settings
-            if ($rootScope.global.community.community_profiles && $rootScope.global.community.community_profiles[location.key] && $rootScope.global.community.community_profiles[location.key].embed) {
-                self.embed = $rootScope.global.community.community_profiles[location.key].embed;
-            } else if ($rootScope.global.community.profile && $rootScope.global.community.profile.embed) self.embed = $rootScope.global.community.profile.embed; // for locations
+            if ($scope.global.community.community_profiles && $scope.global.community.community_profiles[location.key] && $scope.global.community.community_profiles[location.key].embed) {
+                self.embed = $scope.global.community.community_profiles[location.key].embed;
+            } else if ($scope.global.community.profile && $scope.global.community.profile.embed) self.embed = $scope.global.community.profile.embed; // for locations
         });
 
     this.addEmbed = function() {
@@ -674,7 +674,7 @@ function EmbedSettingsController($uibModalInstance, sweet, community_service, co
 
     this.save = function () {
 
-        community_service.setSettings(self.embed, location.key, $rootScope.global.community.key)
+        community_service.setSettings(self.embed, location.key, $scope.global.community.key)
             .then(function(response) {
 
                 if (response.status !== 201) {
@@ -689,7 +689,7 @@ function EmbedSettingsController($uibModalInstance, sweet, community_service, co
                         title: "Settings saved!",
                         type: "success"
                     }, function(){
-                        //$http.get('/api/2.1/community/' + location.key + '/' + $rootScope.global.community.key);
+                        //$http.get('/api/2.1/community/' + location.key + '/' + $scope.global.community.key);
                         $uibModalInstance.close();
                     });
                 }
@@ -703,9 +703,9 @@ function EmbedSettingsController($uibModalInstance, sweet, community_service, co
 
 function CommunityController($uibModalInstance, $mixpanel, sweet, community_service, community, location, $http, $window, user, $state){
 
-    $rootScope.global.location = location;
+    $scope.global.location = location;
     var loc_key = location.key;
-    $rootScope.global.communityForm = {"name":""}; // to avoid 'undefined' for initial url
+    $scope.global.communityForm = {"name":""}; // to avoid 'undefined' for initial url
     var self = this;
     this.update = false;
 
@@ -736,32 +736,32 @@ function CommunityController($uibModalInstance, $mixpanel, sweet, community_serv
 
                 if (community && community.community_profiles && community.community_profiles[loc_key]) {
                     self.update = true;
-                    $rootScope.global.community = community.community_profiles[loc_key];
-                    $rootScope.global.communityForm = {
-                        "name": $rootScope.global.community.name,
-                        "headline": $rootScope.global.community.headline,
-                        "industries": $rootScope.global.community.industries,
+                    $scope.global.community = community.community_profiles[loc_key];
+                    $scope.global.communityForm = {
+                        "name": $scope.global.community.name,
+                        "headline": $scope.global.community.headline,
+                        "industries": $scope.global.community.industries,
                         "url": decodeURI(community.key)
                     };
 
-                    if ($rootScope.global.community.parents) {
-                        switch ($rootScope.global.community.parents[0]) {
+                    if ($scope.global.community.parents) {
+                        switch ($scope.global.community.parents[0]) {
                             case 'consumer-goods':
-                                $rootScope.global.communityForm['parent'] = 'Consumer Goods';
+                                $scope.global.communityForm['parent'] = 'Consumer Goods';
                                 break;
                             case 'non-profit':
-                                $rootScope.global.communityForm['parent'] = 'Non-Profit';
+                                $scope.global.communityForm['parent'] = 'Non-Profit';
                                 break;
                             default:
                                 if (community.resource) {
                                     // allow multiply types only for resources
-                                    var _parents = $rootScope.global.community.parents || [];
-                                    $rootScope.global.communityForm['parent'] = _parents.filter(function(item) {
+                                    var _parents = $scope.global.community.parents || [];
+                                    $scope.global.communityForm['parent'] = _parents.filter(function(item) {
                                         return item !== null;
                                     });
                                 }
                                 else {
-                                    $rootScope.global.communityForm['parent'] = $rootScope.global.community.parents[0][0].toUpperCase() + $rootScope.global.community.parents[0].slice(1);
+                                    $scope.global.communityForm['parent'] = $scope.global.community.parents[0][0].toUpperCase() + $scope.global.community.parents[0].slice(1);
                                 }
                         }
                     }
@@ -776,9 +776,9 @@ function CommunityController($uibModalInstance, $mixpanel, sweet, community_serv
 
         if (self.form.$valid) {
 
-            if ($rootScope.global.communityForm.url) {
+            if ($scope.global.communityForm.url) {
                 try {
-                    var encodedUrl = $rootScope.global.communityForm.url.toLowerCase().replace(/\s+/g, '-');
+                    var encodedUrl = $scope.global.communityForm.url.toLowerCase().replace(/\s+/g, '-');
                 }
                 catch (e) {
                     sweet.show({
@@ -789,23 +789,23 @@ function CommunityController($uibModalInstance, $mixpanel, sweet, community_serv
                 }
             }
             
-            if ($rootScope.global.communityForm.parent) {
-                var parents = angular.isArray($rootScope.global.communityForm.parent) ? $rootScope.global.communityForm.parent : [$rootScope.global.communityForm.parent.toLowerCase()];
+            if ($scope.global.communityForm.parent) {
+                var parents = angular.isArray($scope.global.communityForm.parent) ? $scope.global.communityForm.parent : [$scope.global.communityForm.parent.toLowerCase()];
             } else parents = [];
 
             var newCommunity = {
                 type: community.type,
                 profile: {
-                    name: $rootScope.global.communityForm.name,
-                    headline: $rootScope.global.communityForm.headline,
+                    name: $scope.global.communityForm.name,
+                    headline: $scope.global.communityForm.headline,
                     parents: parents
                 },
-                resource: $rootScope.global.communityForm.resource ? $rootScope.global.communityForm.resource.key : "",
-                url: encodedUrl || $rootScope.global.communityForm.name.toLowerCase().replace(/\s+/g, '-')
+                resource: $scope.global.communityForm.resource ? $scope.global.communityForm.resource.key : "",
+                url: encodedUrl || $scope.global.communityForm.name.toLowerCase().replace(/\s+/g, '-')
             };
 
             if (community.type == 'cluster') {
-                newCommunity.profile['industries'] = $rootScope.global.communityForm.industries;
+                newCommunity.profile['industries'] = $scope.global.communityForm.industries;
             }
 
             if (community.community_profiles && community.community_profiles[loc_key] && community.community_profiles[loc_key].embed) {
@@ -866,7 +866,7 @@ function CommunityController($uibModalInstance, $mixpanel, sweet, community_serv
             type: "warning",
             showCancelButton: true,
             confirmButtonColor: "#DD6B55",
-            confirmButtonText: "Yes, delete " + $rootScope.global.community.name + "!",
+            confirmButtonText: "Yes, delete " + $scope.global.community.name + "!",
             closeOnConfirm: false
         }, function () {
 
@@ -884,7 +884,7 @@ function CommunityController($uibModalInstance, $mixpanel, sweet, community_serv
                     } else {
                         sweet.show({
                             title: "Deleted!",
-                            text: "The " + $rootScope.global.community.name + " community is gone.",
+                            text: "The " + $scope.global.community.name + " community is gone.",
                             type: "success",
                             closeOnConfirm: true
                         });

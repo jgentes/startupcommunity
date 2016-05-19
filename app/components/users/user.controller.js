@@ -5,7 +5,7 @@ angular
     .controller('InviteUserController', InviteUserController)
     .controller('ContactUserController', ContactUserController);
 
-function UserController($rootScope, $scope, $stateParams, $location, user_service, result_service, $sce) {
+function UserController($scope, $stateParams, $location, user_service, result_service, $sce) {
     //todo usercontroller and company controller are dups, need to be consolidated
 
     this.selectedClusters = [];
@@ -44,14 +44,14 @@ function UserController($rootScope, $scope, $stateParams, $location, user_servic
         }
 
         if (self.selectedClusters.length == 0 && self.selectedResources.length == 0) {
-            if ($rootScope.global.community.community_profiles && $rootScope.global.community.community_profiles[$stateParams.location_path]) {
-                self.selection = $rootScope.global.community.community_profiles[$stateParams.location_path].name;
-            } else self.selection = $rootScope.global.community.profile.name;
+            if ($scope.global.community.community_profiles && $scope.global.community.community_profiles[$stateParams.location_path]) {
+                self.selection = $scope.global.community.community_profiles[$stateParams.location_path].name;
+            } else self.selection = $scope.global.community.profile.name;
         } else {
             self.selection = "";
             var selectedCommunities = self.selectedClusters.concat(self.selectedResources);
             for (item in selectedCommunities) {
-                self.selection += $rootScope.global.community[selectedCommunities[item]].profile.name;
+                self.selection += $scope.global.community[selectedCommunities[item]].profile.name;
                 if (item < selectedCommunities.length - 1) {
                     if (item < selectedCommunities.length - 2 ) {
                         self.selection += ', ';
@@ -66,13 +66,13 @@ function UserController($rootScope, $scope, $stateParams, $location, user_servic
             self.title = 'People matching <strong>"' + query + '"</strong> ';
             self.title += 'in <strong>';
             if ($stateParams.community_path && $stateParams.location_path) {
-                if ($rootScope.global.community.community_profiles && $rootScope.global.community.community_profiles[$stateParams.location_path]) {
-                    self.title += $rootScope.global.community.community_profiles[$stateParams.location_path].name +'</strong>';
-                } else self.title += $rootScope.global.community.profile.name +'</strong>';
-            } else self.title += $rootScope.global.community[$stateParams.location_path].profile.name + '</strong>';
+                if ($scope.global.community.community_profiles && $scope.global.community.community_profiles[$stateParams.location_path]) {
+                    self.title += $scope.global.community.community_profiles[$stateParams.location_path].name +'</strong>';
+                } else self.title += $scope.global.community.profile.name +'</strong>';
+            } else self.title += $scope.global.community[$stateParams.location_path].profile.name + '</strong>';
         }
 
-        var pageTitle = '<br><small>' + $rootScope.global.community.profile.name + '</small>';
+        var pageTitle = '<br><small>' + $scope.global.community.profile.name + '</small>';
         self.pageTitle = $sce.trustAsHtml(pageTitle);
     };
 
@@ -101,13 +101,13 @@ function UserController($rootScope, $scope, $stateParams, $location, user_servic
                 });
         };
 
-        if ($rootScope.global.community.type == 'cluster') {
-            if ($rootScope.global.community.community_profiles[$stateParams.location_path]) {
-                self.clusterFilter = $rootScope.global.community.community_profiles[$stateParams.location_path].industries;
-            } else self.clusterFilter = $rootScope.global.community.profile.industries;
+        if ($scope.global.community.type == 'cluster') {
+            if ($scope.global.community.community_profiles[$stateParams.location_path]) {
+                self.clusterFilter = $scope.global.community.community_profiles[$stateParams.location_path].industries;
+            } else self.clusterFilter = $scope.global.community.profile.industries;
         } else {
             self.clusterFilter = [];
-            if ($rootScope.global.community.key && $rootScope.global.community.key !== $rootScope.global.location.key) self.communityFilter.push($rootScope.global.community.key);
+            if ($scope.global.community.key && $scope.global.community.key !== $scope.global.location.key) self.communityFilter.push($scope.global.community.key);
         }
 
         onLoad(); // de-register the watcher
@@ -116,7 +116,7 @@ function UserController($rootScope, $scope, $stateParams, $location, user_servic
     };
 
     var onLoad = $scope.$watch(function () {
-        if ($rootScope.global.community && $rootScope.global.community.type) {
+        if ($scope.global.community && $scope.global.community.type) {
             loadCtrl();
         }
     });
@@ -188,7 +188,7 @@ function UserController($rootScope, $scope, $stateParams, $location, user_servic
 
 function ContactUserController($uibModalInstance, notify_service, sweet, community_key, location_key){
 
-    this.user = $rootScope.global.user; //used in view
+    this.user = $scope.global.user; //used in view
     var self = this;
 
     this.send = function () {
@@ -201,7 +201,7 @@ function ContactUserController($uibModalInstance, notify_service, sweet, communi
                 "reason" : self.form.reason_value
             };
 
-            notify_service.contact($rootScope.global.user.key, formdata, community_key, location_key)
+            notify_service.contact($scope.global.user.key, formdata, community_key, location_key)
                 .then(function(response) {
 
                     $uibModalInstance.close();
@@ -234,7 +234,7 @@ function ContactUserController($uibModalInstance, notify_service, sweet, communi
     };
 }
 
-function UserProfileController($rootScope, $scope, $stateParams, $http, $uibModal, $mixpanel, user_service, community_service, message_service) {
+function UserProfileController($scope, $stateParams, $http, $uibModal, $mixpanel, user_service, community_service, message_service) {
 
     var self = this;
 
@@ -247,9 +247,9 @@ function UserProfileController($rootScope, $scope, $stateParams, $http, $uibModa
 
     var loadCtrl = function() {
 
-        if ($rootScope.global.community && $rootScope.global.community.type == "user" && $rootScope.global.community.companies) {
+        if ($scope.global.community && $scope.global.community.type == "user" && $scope.global.community.companies) {
             // if directly accessed via url
-            self.user = $rootScope.global.community;
+            self.user = $scope.global.community;
         } else {
             var userkey = (self.user && self.user.key) ?
                 self.user.key :
@@ -268,7 +268,7 @@ function UserProfileController($rootScope, $scope, $stateParams, $http, $uibModa
     };
 
     var onLoad = $scope.$watch(function () {
-        if ($rootScope.global.community && $rootScope.global.community.type) {
+        if ($scope.global.community && $scope.global.community.type) {
             loadCtrl();
         }
     });
@@ -288,14 +288,14 @@ function UserProfileController($rootScope, $scope, $stateParams, $http, $uibModa
                     return community_key;
                 },
                 location_key: function() {
-                    return $rootScope.global.location.key;
+                    return $scope.global.location.key;
                 }
             }
         });
     };
 
     this.getKey = function() {
-        if (!$rootScope.global.user.profile.api_key) {
+        if (!$scope.global.user.profile.api_key) {
             user_service.getKey()
                 .then(function(response) {
                     var api_key = response.data;
@@ -307,10 +307,10 @@ function UserProfileController($rootScope, $scope, $stateParams, $http, $uibModa
     this.askQuestion = function() {
         self.working = true;
 
-        if (self.question && $rootScope.global.user) {
+        if (self.question && $scope.global.user) {
             // update user profile
 
-            message_service.addMessage('question', $rootScope.global.user, self.user, self.question)
+            message_service.addMessage('question', $scope.global.user, self.user, self.question)
                 .then(function (response) {
                     self.question = undefined;
 
@@ -318,8 +318,8 @@ function UserProfileController($rootScope, $scope, $stateParams, $http, $uibModa
                         self.alert = {type: 'danger', message: String(response.data.message)};
                     } else {
                         self.working = false;
-                        if (!$rootScope.global.community.newmessages) $rootScope.global.community.newmessages = {};
-                        $rootScope.global.community.newmessages[response.data.key] = response.data;
+                        if (!$scope.global.community.newmessages) $scope.global.community.newmessages = {};
+                        $scope.global.community.newmessages[response.data.key] = response.data;
                         $http.get('/api/2.1/community/' + self.user.key); // refresh outdated cache
                     }
 
@@ -354,9 +354,9 @@ function UserProfileController($rootScope, $scope, $stateParams, $http, $uibModa
                         self.alert = {type: 'danger', message: String(response.data.message)};
                     } else {
                         self.working[parent.key] = false;
-                        if ($rootScope.global.community.messages[parent.key]) {
-                            $rootScope.global.community.messages[parent.key].replies.push(response.data);
-                        } else $rootScope.global.community.newmessages[parent.key].replies.push(response.data);
+                        if ($scope.global.community.messages[parent.key]) {
+                            $scope.global.community.messages[parent.key].replies.push(response.data);
+                        } else $scope.global.community.newmessages[parent.key].replies.push(response.data);
                         $http.get('/api/2.1/community/' + self.user.key); // refresh outdated cache
                     }
 
@@ -370,9 +370,9 @@ function UserProfileController($rootScope, $scope, $stateParams, $http, $uibModa
     }
 }
 
-function InviteUserController($rootScope, $mixpanel, user_service, community_service) {
+function InviteUserController($scope, $mixpanel, user_service, community_service) {
     var self = this;
-    this.user = $rootScope.global.user;
+    this.user = $scope.global.user;
 
     var leader = [];
 
@@ -386,7 +386,7 @@ function InviteUserController($rootScope, $mixpanel, user_service, community_ser
             });
     } else self.resources = {};
 
-    if ($rootScope.global.community.type == 'cluster' || $rootScope.global.community.resource && $rootScope.global.location) $rootScope.global.community = $rootScope.global.location;
+    if ($scope.global.community.type == 'cluster' || $scope.global.community.resource && $scope.global.location) $scope.global.community = $scope.global.location;
 
     this.inviteUser = function() {
 
@@ -413,7 +413,7 @@ function InviteUserController($rootScope, $mixpanel, user_service, community_ser
 
                     if (self.user) {
 
-                        user_service.inviteUser(formdata.email, formdata.message, $rootScope.global.location.profile.name, $rootScope.global.location.key, formdata.resources)
+                        user_service.inviteUser(formdata.email, formdata.message, $scope.global.location.profile.name, $scope.global.location.key, formdata.resources)
                             .then(function(response) {
                                 self.working = false;
                                 self.form = {
@@ -437,7 +437,7 @@ function InviteUserController($rootScope, $mixpanel, user_service, community_ser
                                 self.alert = { type: 'danger', message: String(error.data.message) };
                             })
                     } else {
-                        user_service.join(formdata.email, formdata.message, $rootScope.global.location.profile.name, $rootScope.global.location.key)
+                        user_service.join(formdata.email, formdata.message, $scope.global.location.profile.name, $scope.global.location.key)
                             .then(function(response) {
                                 self.working = false;
                                 self.form = {

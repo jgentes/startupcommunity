@@ -19,5 +19,5 @@
             <div ng-if="$last" style="margin-bottom:-11px;"></div>
         </div>
     </div>
-    <div ng-if="!profile.user.companies[type.name]" style="padding-top: 10px;">None yet..&nbsp;<a ng-if="profile.user.key == global.user.key" style="font-size:12px;" ng-href="{{$rootScope.global.location.key + '/companies/add'}}">&nbsp; add one?</a></div>
+    <div ng-if="!profile.user.companies[type.name]" style="padding-top: 10px;">None yet..&nbsp;<a ng-if="profile.user.key == global.user.key" style="font-size:12px;" ng-href="{{global.location.key + '/companies/add'}}">&nbsp; add one?</a></div>
 </div>

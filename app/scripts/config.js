@@ -46,7 +46,7 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
         // the root state with core dependencies for injection in child states
         // note: if you set a param in root, and use/change that param in a ui-sref link, it will reload root
         .state('root', {
-            url: "/:location_path/:community_path",
+            url: "/:location_path/:community_path/:tail_path",
             templateUrl: "components/nav/nav.html",
             controller: "NavigationController as nav",
             params: {
@@ -54,6 +54,10 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                     squash: true
                 },
                 community_path: {
+                    squash: true
+                },
+                tail_path: {
+                    // tail path is used to force refresh of nav controller when loc_path and com_path remain constant during navigation (back button)
                     squash: true
                 },
                 tour: false
@@ -299,8 +303,7 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
         })
         .state('community.dashboard', {
             params: {
-                tour: false,
-                pageTitle: 'Overview'
+                tour: false
             },
             views: {
                 'people': {
@@ -340,7 +343,7 @@ angular
         });
     })
     .run(function($rootScope, $state, $timeout, $auth) {
-        $rootScope.global = {}; // initialize my global object
+        $rootScope.global = {}; // initialize my global scope object (required even though only $scope.global is used)
 
         $rootScope.$state = $state; // allows use if $state within views
         //window.$state = $state; // allows use of $state within console

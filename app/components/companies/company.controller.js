@@ -3,7 +3,7 @@ angular
     .controller('CompanyController', CompanyController)
     .controller('CompanyProfileController', CompanyProfileController);
 
-function CompanyController($rootScope, $scope, $stateParams, $state, $location, company_service, result_service, $sce) {
+function CompanyController($scope, $stateParams, $state, $location, company_service, result_service, $sce) {
 
     this.selectedClusters = [];
     this.selectedResources = [];
@@ -47,14 +47,14 @@ function CompanyController($rootScope, $scope, $stateParams, $state, $location, 
         }
 
         if (self.selectedClusters.length == 0 && self.selectedResources.length == 0) {
-            if ($rootScope.global.community.community_profiles && $rootScope.global.community.community_profiles[$stateParams.location_path]) {
-                self.selection = $rootScope.global.community.community_profiles[$stateParams.location_path].name;
-            } else self.selection = $rootScope.global.community.profile.name;
+            if ($scope.global.community.community_profiles && $scope.global.community.community_profiles[$stateParams.location_path]) {
+                self.selection = $scope.global.community.community_profiles[$stateParams.location_path].name;
+            } else self.selection = $scope.global.community.profile.name;
         } else {
             self.selection = "";
             var selectedCommunities = self.selectedClusters.concat(self.selectedResources);
             for (item in selectedCommunities) {
-                self.selection += $rootScope.global.community[selectedCommunities[item]].profile.name;
+                self.selection += $scope.global.community[selectedCommunities[item]].profile.name;
                 if (item < selectedCommunities.length - 1) {
                     if (item < selectedCommunities.length - 2 ) {
                         self.selection += ', ';
@@ -69,13 +69,13 @@ function CompanyController($rootScope, $scope, $stateParams, $state, $location, 
             self.title = 'Companies matching <strong>"' + query + '"</strong> ';
             self.title += 'in <strong>';
             if ($stateParams.community_path && $stateParams.location_path) {
-                if ($rootScope.global.community.community_profiles && $rootScope.global.community.community_profiles[$stateParams.location_path]) {
-                    self.title += $rootScope.global.community.community_profiles[$stateParams.location_path].name +'</strong>';
-                } else self.title += $rootScope.global.community.profile.name +'</strong>';
-            } else self.title += $rootScope.global.community[$stateParams.location_path].profile.name + '</strong>';
+                if ($scope.global.community.community_profiles && $scope.global.community.community_profiles[$stateParams.location_path]) {
+                    self.title += $scope.global.community.community_profiles[$stateParams.location_path].name +'</strong>';
+                } else self.title += $scope.global.community.profile.name +'</strong>';
+            } else self.title += $scope.global.community[$stateParams.location_path].profile.name + '</strong>';
         }
 
-        var pageTitle = '<br><small>' + $rootScope.global.community.profile.name + '</small>';
+        var pageTitle = '<br><small>' + $scope.global.community.profile.name + '</small>';
         self.pageTitle = $sce.trustAsHtml(pageTitle);
     };
 
@@ -193,13 +193,13 @@ function CompanyController($rootScope, $scope, $stateParams, $state, $location, 
                 });
         };
 
-        if ($rootScope.global.community.type == 'cluster') {
-            if ($rootScope.global.community.community_profiles[$stateParams.location_path]) {
-                self.clusterFilter = $rootScope.global.community.community_profiles[$stateParams.location_path].industries;
-            } else self.clusterFilter = $rootScope.global.community.profile.industries;
+        if ($scope.global.community.type == 'cluster') {
+            if ($scope.global.community.community_profiles[$stateParams.location_path]) {
+                self.clusterFilter = $scope.global.community.community_profiles[$stateParams.location_path].industries;
+            } else self.clusterFilter = $scope.global.community.profile.industries;
         } else {
             self.clusterFilter = [];
-            if ($rootScope.global.community.key && $rootScope.global.community.key !== $rootScope.global.community.key) self.communityFilter.push($rootScope.global.community.key);
+            if ($scope.global.community.key && $scope.global.community.key !== $scope.global.community.key) self.communityFilter.push($scope.global.community.key);
         }
 
         onLoad(); //de-register the watcher
@@ -207,13 +207,13 @@ function CompanyController($rootScope, $scope, $stateParams, $state, $location, 
     };
 
     var onLoad = $scope.$watch(function () {
-        if ($rootScope.global.community && $rootScope.global.community.type) {
+        if ($scope.global.community && $scope.global.community.type) {
             loadCtrl();
         }
     });
 }
 
-function CompanyProfileController($rootScope, $scope, $stateParams, $mixpanel, user_service, community_service, result_service, $location, sweet, $window, $http) {
+function CompanyProfileController($scope, $stateParams, $mixpanel, user_service, community_service, result_service, $location, sweet, $window, $http) {
 
     $mixpanel.track('Viewed Company');
 
@@ -223,9 +223,9 @@ function CompanyProfileController($rootScope, $scope, $stateParams, $mixpanel, u
     this.team_panels = user_service.team_panels();
 
     var loadCtrl = function() {
-        if ($rootScope.global.community && $rootScope.global.community.type == "company" && $rootScope.global.community.team) {
+        if ($scope.global.community && $scope.global.community.type == "company" && $scope.global.community.team) {
             // if directly accessed via url
-            self.company = $rootScope.global.community;
+            self.company = $scope.global.community;
         } else {
             var companykey = (self.company && self.company.key) ?
                 self.company.key :
@@ -244,7 +244,7 @@ function CompanyProfileController($rootScope, $scope, $stateParams, $mixpanel, u
     };
 
     var onLoad = $scope.$watch(function () {
-        if ($rootScope.global.community && $rootScope.global.community.type) {
+        if ($scope.global.community && $scope.global.community.type) {
             loadCtrl();
         }
     });
@@ -282,7 +282,7 @@ function CompanyProfileController($rootScope, $scope, $stateParams, $mixpanel, u
 
         var limit = $location.search().limit;
 
-        user_service.search([$rootScope.global.location.key, self.company.key], [], '*', undefined, limit, alturl)
+        user_service.search([$scope.global.location.key, self.company.key], [], '*', undefined, limit, alturl)
             .then(function (response) {
                 self.users = result_service.setPage(response.data);
                 self.loadingUser = false;                

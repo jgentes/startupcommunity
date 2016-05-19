@@ -3,13 +3,13 @@ angular
     .controller('ResourceController', ResourceController)
     .controller('EditCompanyController', EditCompanyController);
 
-function ResourceController($rootScope, nav_communities, company_service, top, $auth) {
+function ResourceController($scope, nav_communities, company_service, top, $auth) {
     var self = this;
 
     this.top = top || {}; // this is passed in to avoid re-pulling top on nav click if possible
     this.resources = this.resources || {};
-    this.user = $auth.isAuthenticated() ? $rootScope.global.user : {};
-    $rootScope.global.location_key = $rootScope.global.location.key;
+    this.user = $auth.isAuthenticated() ? $scope.global.user : {};
+    $scope.global.location_key = $scope.global.location.key;
 
     this.types = company_service.resource_types();
     var resources = nav_communities;
@@ -26,11 +26,11 @@ function ResourceController($rootScope, nav_communities, company_service, top, $
     
 }
 
-function EditCompanyController($rootScope, sweet, $state, $q, $window, $http, user_service, company_service, community_service) {
+function EditCompanyController($scope, sweet, $state, $q, $window, $http, user_service, company_service, community_service) {
     var self = this;
     
     this.step = 1;
-    this.user = $rootScope.global.user;
+    this.user = $scope.global.user;
     this.update = false; // used if company already exists
     this.working = false; // used for waiting indicator
     this.parents = []; // need a placeholder until next call is resolved
@@ -40,8 +40,8 @@ function EditCompanyController($rootScope, sweet, $state, $q, $window, $http, us
     this.industries = []; // need a placeholder until next call is resolved
     this.industries = community_service.industries();
     this.selectedCompany = {
-        city: $rootScope.global.location.profile.city,
-        state: $rootScope.global.location.profile.state
+        city: $scope.global.location.profile.city,
+        state: $scope.global.location.profile.state
     };
 
     this.stages = [ 'Bootstrap', 'Seed', 'Series A', 'Series B', 'Later'];
@@ -50,18 +50,18 @@ function EditCompanyController($rootScope, sweet, $state, $q, $window, $http, us
 
     if (!this.selectedRole) this.selectedRole = 'not involved';
        
-    this.is_resource = ($state.current.name == 'resource.add') || ($rootScope.global.community && $rootScope.global.community.resource);
+    this.is_resource = ($state.current.name == 'resource.add') || ($scope.global.community && $scope.global.community.resource);
 
     this.showCurrent = function () {
 
-        self.selectedCompany = $rootScope.global.community.profile;
-        self.selectedCompany['url'] = $rootScope.global.community.key;
-        self.selectedCompany['resource_types'] = $rootScope.global.community.resource_types;
+        self.selectedCompany = $scope.global.community.profile;
+        self.selectedCompany['url'] = $scope.global.community.key;
+        self.selectedCompany['resource_types'] = $scope.global.community.resource_types;
         
-        if ($rootScope.global.community.profile && $rootScope.global.community.profile.address) {
-            self.selectedCompany['street'] = $rootScope.global.community.profile.address.street;
-            self.selectedCompany['city'] = $rootScope.global.community.profile.address.city;
-            self.selectedCompany['state'] = $rootScope.global.community.profile.address.state;
+        if ($scope.global.community.profile && $scope.global.community.profile.address) {
+            self.selectedCompany['street'] = $scope.global.community.profile.address.street;
+            self.selectedCompany['city'] = $scope.global.community.profile.address.city;
+            self.selectedCompany['state'] = $scope.global.community.profile.address.state;
         }
 
         if (self.selectedCompany.parents && self.selectedCompany.parents.length) {
@@ -79,7 +79,7 @@ function EditCompanyController($rootScope, sweet, $state, $q, $window, $http, us
 
         for (role in user.roles) {
             for (co in user.roles[role]) {
-                if (co == $rootScope.global.community.key) {
+                if (co == $scope.global.community.key) {
                     self.selectedRole = role;
                     break;
                 }
@@ -89,7 +89,7 @@ function EditCompanyController($rootScope, sweet, $state, $q, $window, $http, us
     };
 
     // check if editing existing record
-    if ($rootScope.global.community && ($rootScope.global.community.type == 'company' || $rootScope.global.community.resource)) {
+    if ($scope.global.community && ($scope.global.community.type == 'company' || $scope.global.community.resource)) {
         this.update = true;
         this.showCurrent();
     }
@@ -126,11 +126,11 @@ function EditCompanyController($rootScope, sweet, $state, $q, $window, $http, us
         self.working = true;
         var role = self.selectedRole == 'not involved' ? undefined : self.selectedRole;
 
-        var community_path = $rootScope.global.location.key; // resources can only be created in locations (for now)
+        var community_path = $scope.global.location.key; // resources can only be created in locations (for now)
 
         self.selectedCompany.url = self.selectedCompany.url || self.selectedCompany.name.toLowerCase().replace(/\s+/g, '-'); // in case they changed it
 
-        company_service.addCompany(self.selectedCompany, role, $rootScope.global.location.key, community_path, self.update ? $rootScope.global.community.key : undefined)
+        company_service.addCompany(self.selectedCompany, role, $scope.global.location.key, community_path, self.update ? $scope.global.community.key : undefined)
             .then(function(response) {
                 self.working = false;
 

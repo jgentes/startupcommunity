@@ -2,9 +2,9 @@ angular
     .module('startupcommunity')
     .controller('WelcomeController', WelcomeController);
 
-function WelcomeController($rootScope, $auth, $q, $http, $mixpanel, $stateParams, $state, sweet, user_service, community_service) {
+function WelcomeController($scope, $auth, $q, $http, $mixpanel, $stateParams, $state, sweet, user_service, community_service) {
     var self = this;
-    $rootScope.global.location = jQuery.isEmptyObject($rootScope.global.location) ? $rootScope.global.community.profile.name : $rootScope.global.location.profile.name.split(',')[0];
+    $scope.global.location = jQuery.isEmptyObject($scope.global.location) ? $scope.global.community.profile.name : $scope.global.location.profile.name.split(',')[0];
     this.auth = false;
     this.working = false; // used for waiting indicator
     var community_path = $stateParams.community_path ? $stateParams.community_path : $stateParams.location_path;
@@ -12,7 +12,7 @@ function WelcomeController($rootScope, $auth, $q, $http, $mixpanel, $stateParams
     this.industries = community_service.industries();
     this.parents = []; // need a placeholder until next call is resolved
     this.parents = community_service.parents();
-    this.user = $rootScope.global.user;
+    this.user = $scope.global.user;
     this.quote = true;
     this.submitted = false;
 
@@ -222,7 +222,7 @@ function WelcomeController($rootScope, $auth, $q, $http, $mixpanel, $stateParams
                         .then(function(response) {
                             self.submitted = false;
                             
-                            $rootScope.global.user = response.data;
+                            $scope.global.user = response.data;
                             
                             if ($stateParams.go) {
                                 $state.go('user.dashboard', {
