@@ -11,10 +11,10 @@ function UserController($rootScope, $scope, $stateParams, $location, user_servic
     this.selectedClusters = [];
     this.selectedResources = [];
     this.selectedRole = ['*'];
-
+    this.communityFilter = [$stateParams.location_path];
+    
     var self = this; // for accessing 'this' in child functions
     var query;
-    var communityFilter = [$stateParams.location_path];
 
     $stateParams.query ? query = $stateParams.query : query = '*';
 
@@ -76,6 +76,51 @@ function UserController($rootScope, $scope, $stateParams, $location, user_servic
         self.pageTitle = $sce.trustAsHtml(pageTitle);
     };
 
+    var loadUsers = function() {
+
+        self.searchUsers = function(alturl) {
+            self.loadingUser = true;
+
+            // remove random sort
+            if (alturl) alturl = alturl.replace(/([&\?]sort=_random*$|sort=_random&|[?&]sort=_random(?=#))/, '');
+
+            if (query !== '*') {
+                self.tag = query;
+            } else self.tag = undefined;
+
+            var limit = $location.search().limit;
+
+            setTitle();
+
+            user_service.search(self.communityFilter, self.clusterFilter, query, undefined, limit || self.usercount, alturl)
+                .then(function (response) {
+                    self.tag = undefined;
+                    self.users = result_service.setPage(response.data);
+                    self.loadingUser = false;
+                    self.lastQuery = query;
+                });
+        };
+
+        if ($rootScope.global.community.type == 'cluster') {
+            if ($rootScope.global.community.community_profiles[$stateParams.location_path]) {
+                self.clusterFilter = $rootScope.global.community.community_profiles[$stateParams.location_path].industries;
+            } else self.clusterFilter = $rootScope.global.community.profile.industries;
+        } else {
+            self.clusterFilter = [];
+            if ($rootScope.global.community.key && $rootScope.global.community.key !== $rootScope.global.location.key) self.communityFilter.push($rootScope.global.community.key);
+        }
+
+        onLoad(); // de-register the watcher
+        self.searchUsers();
+
+    };
+
+    var onLoad = $scope.$watch(function () {
+        if ($rootScope.global.community && $rootScope.global.community.type) {
+            loadUsers();
+        }
+    });
+
     this.filterRole = function(role) {
         self.loadingRole = true;
         if (role == '*') {
@@ -92,7 +137,7 @@ function UserController($rootScope, $scope, $stateParams, $location, user_servic
             }
         }
 
-        user_service.search(communityFilter, clusterFilter, '*', self.selectedRole, 20, undefined)
+        user_service.search(self.communityFilter, self.clusterFilter, '*', self.selectedRole, 20, undefined)
             .then(function(response) {
                 self.loadingRole = false;
                 self.users = result_service.setPage(response.data);
@@ -110,7 +155,7 @@ function UserController($rootScope, $scope, $stateParams, $location, user_servic
             if (self.selectedClusters.length == 0) self.allClusters = true;
         }
 
-        user_service.search(communityFilter, self.selectedClusters, '*', self.selectedRole, 30, undefined)
+        user_service.search(self.communityFilter, self.selectedClusters, '*', self.selectedRole, 30, undefined)
             .then(function(response) {
                 self.loadingCluster = false;
                 self.loadingResource = false;
@@ -129,9 +174,9 @@ function UserController($rootScope, $scope, $stateParams, $location, user_servic
             if (self.selectedResources.length == 0) self.allResources = true;
         }
 
-        communityFilter = communityFilter.concat(self.selectedResources);
+        self.communityFilter = self.communityFilter.concat(self.selectedResources);
 
-        user_service.search(communityFilter, clusterFilter, '*', self.selectedRole, 20, undefined)
+        user_service.search(self.communityFilter, self.clusterFilter, '*', self.selectedRole, 20, undefined)
             .then(function(response) {
                 self.loadingCluster = false;
                 self.loadingResource = false;
@@ -139,51 +184,6 @@ function UserController($rootScope, $scope, $stateParams, $location, user_servic
                 setTitle();
             });
     };
-
-    var loadUsers = function() {
-
-        self.searchUsers = function(alturl) {
-            self.loadingUser = true;
-
-            // remove random sort
-            if (alturl) alturl = alturl.replace(/([&\?]sort=_random*$|sort=_random&|[?&]sort=_random(?=#))/, '');
-
-            if (query !== '*') {
-                self.tag = query;
-            } else self.tag = undefined;
-
-            var limit = $location.search().limit;
-
-            setTitle();
-
-            user_service.search(communityFilter, clusterFilter, query, undefined, limit || self.usercount, alturl)
-                .then(function (response) {
-                    self.tag = undefined;
-                    self.users = result_service.setPage(response.data);
-                    self.loadingUser = false;
-                    self.lastQuery = query;
-                });
-        };
-
-        if ($rootScope.global.community.type == 'cluster') {
-            if ($rootScope.global.community.community_profiles[$stateParams.location_path]) {
-                var clusterFilter = $rootScope.global.community.community_profiles[$stateParams.location_path].industries;
-            } else clusterFilter = $rootScope.global.community.profile.industries;
-        } else {
-            clusterFilter = [];
-            if ($rootScope.global.community.key && $rootScope.global.community.key !== $rootScope.global.location.key) communityFilter.push($rootScope.global.community.key);
-        }
-
-        onLoad(); // de-register the watcher
-        self.searchUsers();
-
-    };
-
-    var onLoad = $scope.$watch(function () {
-        if ($rootScope.global.community && $rootScope.global.community.type) {
-            loadUsers();
-        }
-    });
 }
 
 function ContactUserController($uibModalInstance, notify_service, sweet, community_key, location_key){

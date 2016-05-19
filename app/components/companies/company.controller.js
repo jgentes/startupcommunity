@@ -9,10 +9,11 @@ function CompanyController($rootScope, $scope, $stateParams, $state, $location, 
     this.selectedResources = [];
     this.selectedStage = ['*'];
     this.selectedType = ['*'];
-
+    this.communityFilter = [$stateParams.location_path];
+    
     var self = this; // for accessing 'this' in child functions
     var query;
-    var communityFilter = [$stateParams.location_path];
+
     this.resource_page = $state.includes('resource.list');
     this.resource_types = company_service.resource_types();
 
@@ -95,7 +96,7 @@ function CompanyController($rootScope, $scope, $stateParams, $state, $location, 
             }
         }
 
-        company_service.search(communityFilter, clusterFilter, '*', null, self.selectedType, 20, self.resource_page, undefined)
+        company_service.search(self.communityFilter, self.clusterFilter, '*', null, self.selectedType, 20, self.resource_page, undefined)
             .then(function(response) {
                 self.loadingType = false;
                 self.companies = result_service.setPage(response.data);
@@ -119,7 +120,7 @@ function CompanyController($rootScope, $scope, $stateParams, $state, $location, 
             }
         }
 
-        company_service.search(communityFilter, clusterFilter, '*', self.selectedStage, null, 20, self.resource_page, undefined)
+        company_service.search(self.communityFilter, self.clusterFilter, '*', self.selectedStage, null, 20, self.resource_page, undefined)
             .then(function(response) {
                 self.loadingStage = false;
                 self.companies = result_service.setPage(response.data);
@@ -137,7 +138,7 @@ function CompanyController($rootScope, $scope, $stateParams, $state, $location, 
             if (self.selectedClusters.length == 0) self.allClusters = true;
         }
 
-        company_service.search(communityFilter, self.selectedClusters, '*', self.selectedStage, null, 30, self.resource_page, undefined)
+        company_service.search(self.communityFilter, self.selectedClusters, '*', self.selectedStage, null, 30, self.resource_page, undefined)
             .then(function(response) {
                 self.loadingCluster = false;
                 self.loadingResource = false;
@@ -156,9 +157,9 @@ function CompanyController($rootScope, $scope, $stateParams, $state, $location, 
             if (self.selectedResources.length == 0) self.allResources = true;
         }
 
-        communityFilter = communityFilter.concat(self.selectedResources);
+        self.communityFilter = self.communityFilter.concat(self.selectedResources);
 
-        company_service.search(communityFilter, clusterFilter, '*', self.selectedStage, null, 20, self.resource_page, undefined)
+        company_service.search(self.communityFilter, self.clusterFilter, '*', self.selectedStage, null, 20, self.resource_page, undefined)
             .then(function(response) {
                 self.loadingCluster = false;
                 self.loadingResource = false;
@@ -183,7 +184,7 @@ function CompanyController($rootScope, $scope, $stateParams, $state, $location, 
 
             setTitle();
 
-            company_service.search(communityFilter, clusterFilter, query, undefined, undefined, limit || self.usercount, self.resource_page, alturl)
+            company_service.search(self.communityFilter, self.clusterFilter, query, undefined, undefined, limit || self.usercount, self.resource_page, alturl)
                 .then(function (response) {
                     self.tag = undefined;
                     self.companies = result_service.setPage(response.data);
@@ -194,11 +195,11 @@ function CompanyController($rootScope, $scope, $stateParams, $state, $location, 
 
         if ($rootScope.global.community.type == 'cluster') {
             if ($rootScope.global.community.community_profiles[$stateParams.location_path]) {
-                var clusterFilter = $rootScope.global.community.community_profiles[$stateParams.location_path].industries;
-            } else clusterFilter = $rootScope.global.community.profile.industries;
+                self.clusterFilter = $rootScope.global.community.community_profiles[$stateParams.location_path].industries;
+            } else self.clusterFilter = $rootScope.global.community.profile.industries;
         } else {
-            clusterFilter = [];
-            if ($rootScope.global.community.key && $rootScope.global.community.key !== $rootScope.global.community.key) communityFilter.push($rootScope.global.community.key);
+            self.clusterFilter = [];
+            if ($rootScope.global.community.key && $rootScope.global.community.key !== $rootScope.global.community.key) self.communityFilter.push($rootScope.global.community.key);
         }
 
         onLoad(); //de-register the watcher
