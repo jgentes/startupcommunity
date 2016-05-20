@@ -50,7 +50,7 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
             templateUrl: "components/nav/nav.html",
             controller: "NavigationController as nav",
             params: {
-                // params must be defined here to be used in children
+                // params must be defined here to be used in children (except for paths)
                 location_path: {
                     squash: true
                 },
@@ -234,9 +234,6 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
         .state('settings', {
             parent: 'root',
             url: '/settings',
-            params: {
-                location_path: null
-            },
             views: {
                 'content': {
                     templateUrl: "components/settings.html",
@@ -364,6 +361,7 @@ angular
         $rootScope.$on('$stateChangeStart',
             function(event, toState, toParams, fromState, fromParams){
                 $('#minorsplash').css('display', 'block');
+                console.log('----------------------------');
                 console.log('from: ' + fromState.name);
                 //console.log(fromState);
                 console.log('to:' + toState.name);

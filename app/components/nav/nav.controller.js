@@ -13,7 +13,7 @@ function NavigationController($scope, $auth, $state, $window, $location, $stateP
     this.state = $state; // used in view because path doesn't always update properly.. esp. for /people
 
     var nav_community,
-        lastitems = ["people", "companies", "resources", "search", "invite", "add", "welcome"];
+        lastitems = ["people", "companies", "resources", "search", "invite", "add", "welcome", "settings"];
 
     var getProfile = function() {
         
@@ -109,7 +109,7 @@ function NavigationController($scope, $auth, $state, $window, $location, $stateP
             if ($scope.global && $scope.global.location && $scope.global.location.key == nav_community.profile.home) {
                 getNavTop();
             } else
-                community_service.getKey(nav_community.profile.home)
+                community_service.getCommunity(nav_community.profile.home)
                     .then(function(response) {
                         $scope.global.location = response.data;
                         getNavTop();
@@ -121,7 +121,7 @@ function NavigationController($scope, $auth, $state, $window, $location, $stateP
         } else
             if ($stateParams.location_path !== nav_community.key) {
 
-                community_service.getKey($stateParams.location_path)
+                community_service.getCommunity($stateParams.location_path)
                     .then(function(response) {
                         $scope.global.location = response.data;
                         getNavTop();
@@ -243,6 +243,10 @@ function NavigationController($scope, $auth, $state, $window, $location, $stateP
                 $state.go('search.dashboard', {}, { location: false });
                 break;
 
+            case 'settings':
+                $state.go('settings', {}, { location: false });
+                break;
+
             default:
 
                 switch (nav_community.type) {
@@ -268,14 +272,12 @@ function NavigationController($scope, $auth, $state, $window, $location, $stateP
             $window.location.reload();
         }
         // the industry_icons save me a db call on every controller reload :) because top doesn't include item values.. maybe combine this with 'parents' service?
-        self.industry_icons = { "construction": {"icon": "fa-wrench"}, "legal": {"icon": "fa-gavel"}, "tech": {"icon": "fa-code"}, "medical": {"icon": "fa-stethoscope"}, "healthcare": {"icon": "fa-ambulance"}, "recreation": {"icon": "fa-sun-o"}, "art": {"icon": "fa-picture-o"}, "transportation": {"icon": "fa-road"}, "consumer-goods": {"icon": "fa-barcode"}, "non-profit": {"icon": "fa-heart-o"}, "corporate": {"icon": "fa-building-o"}, "government": {"icon": "fa-university"}, "finance": {"icon": "fa-pie-chart"}, "education": {"icon": "fa-graduation-cap"}, "manufacturing": {"icon": "fa-cube"}, "agriculture": {"icon": "fa-pagelines"}, "services": {"icon": "fa-bell-o"}};
+        $scope.global.industry_icons = { "construction": {"icon": "fa-wrench"}, "legal": {"icon": "fa-gavel"}, "tech": {"icon": "fa-code"}, "medical": {"icon": "fa-stethoscope"}, "healthcare": {"icon": "fa-ambulance"}, "recreation": {"icon": "fa-sun-o"}, "art": {"icon": "fa-picture-o"}, "transportation": {"icon": "fa-road"}, "consumer-goods": {"icon": "fa-barcode"}, "non-profit": {"icon": "fa-heart-o"}, "corporate": {"icon": "fa-building-o"}, "government": {"icon": "fa-university"}, "finance": {"icon": "fa-pie-chart"}, "education": {"icon": "fa-graduation-cap"}, "manufacturing": {"icon": "fa-cube"}, "agriculture": {"icon": "fa-pagelines"}, "services": {"icon": "fa-bell-o"}};
 
         var parents = community_service.parents();
         parents = parents.join('|').toLowerCase().split('|'); // change all to lowercase
 
         var location_key = $scope.global.location.key;
-
-        if (angular.equals({}, self.clusters)) self.clusters = undefined; // had a hard time checking for empty object in the html
 
         // For tour
         if ($stateParams.tour) {
@@ -347,7 +349,7 @@ function NavigationController($scope, $auth, $state, $window, $location, $stateP
 
         // COMMUNITY SETTINGS
 
-        self.embedSettings = function(community) {
+        self.embedSettings = function(community_record) {
 
             var modalInstance = $uibModal.open({
                 templateUrl: 'components/nav/nav.embed_settings.html',
@@ -355,14 +357,13 @@ function NavigationController($scope, $auth, $state, $window, $location, $stateP
                 controllerAs: 'settings',
                 windowClass: "hmodal-success",
                 resolve: {
-                    community: function() {
-                        return community || $scope.global.community;
-                    },
-                    location: function() {
-                        return $scope.global.location;
-                    },
-                    user: function() {
-                        return $scope.global.user;
+                    embed_community: function() {
+
+                        //force pull of community settings every time to avoid stale data
+                        return community_service.getKey(community_record.key)
+                            .then(function(response) {
+                                return response.data;
+                            })
                     }
                 }
             });
@@ -613,6 +614,7 @@ function NavigationController($scope, $auth, $state, $window, $location, $stateP
 function SettingsController($scope, community_service) {
     var self = this, 
         leader = [];
+    this.clusters = {};
     
     if ($scope.global.user.roles && $scope.global.user.roles.leader) {
         
@@ -624,22 +626,24 @@ function SettingsController($scope, community_service) {
             })
     } else self.resources = {};
     
+    if ($scope.global.location && $scope.global.location.clusters) {
+        
+        for (c in $scope.global.location.clusters) {
+            self.clusters[c] = $scope.global.location.clusters[c];
+        }
+    }
+    
 }
 
-function EmbedSettingsController($scope, $uibModalInstance, sweet, community_service){
+function EmbedSettingsController($scope, $uibModalInstance, sweet, embed_community, community_service){
     
-    var self = this;
+    var self = this,
+        thiscommunity = embed_community;
 
-    //force pull of community settings every time to avoid stale data
-    community_service.getKey(community.key)
-        .then(function(response) {
-            $scope.global.community = response.data;
-
-            // load existing embed settings
-            if ($scope.global.community.community_profiles && $scope.global.community.community_profiles[location.key] && $scope.global.community.community_profiles[location.key].embed) {
-                self.embed = $scope.global.community.community_profiles[location.key].embed;
-            } else if ($scope.global.community.profile && $scope.global.community.profile.embed) self.embed = $scope.global.community.profile.embed; // for locations
-        });
+    // load existing embed settings
+    if (thiscommunity.community_profiles && thiscommunity.community_profiles[$scope.global.location.key] && thiscommunity.community_profiles[$scope.global.location.key].embed) {
+        self.embed = thiscommunity.community_profiles[$scope.global.location.key].embed;
+    } else if (thiscommunity.profile && thiscommunity.profile.embed) self.embed = thiscommunity.profile.embed; // for locations
 
     this.addEmbed = function() {
         if (self.form.$valid) {
@@ -665,7 +669,7 @@ function EmbedSettingsController($scope, $uibModalInstance, sweet, community_ser
 
     this.save = function () {
 
-        community_service.setSettings(self.embed, location.key, $scope.global.community.key)
+        community_service.setSettings(self.embed, $scope.global.location.key, thiscommunity.key)
             .then(function(response) {
 
                 if (response.status !== 201) {
@@ -680,7 +684,6 @@ function EmbedSettingsController($scope, $uibModalInstance, sweet, community_ser
                         title: "Settings saved!",
                         type: "success"
                     }, function(){
-                        //$http.get('/api/2.1/community/' + location.key + '/' + $scope.global.community.key);
                         $uibModalInstance.close();
                     });
                 }

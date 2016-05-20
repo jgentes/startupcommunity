@@ -129,7 +129,7 @@ function handleGetCommunity(req, res) {
                                         // i believe this is for navigation
                                         var cluster_type = results[item].value.community_profiles[community].parents[0];
                                         if (!newresponse.clusters[cluster_type]) newresponse.clusters[cluster_type] = {};
-                                        newresponse.clusters[cluster_type][item] = results[item].value;
+                                        newresponse.clusters[cluster_type][results[item].path.key] = results[item].value;
                                     }
                                     break;
                                 case "company":
@@ -387,8 +387,8 @@ function handleGetResources(req, res) {
             searchstring += resources[r];
             if (r < resources.length - 1) searchstring += ' OR ';
         }
-        searchstring += ')'
-    } else searchstring = '@value.type:"company" AND @value.resource: true AND @value.communities: "' + location_key + '"';
+        searchstring += ') AND @value.resource: true'
+    } else searchstring = '@value.resource: true AND @value.communities: "' + location_key + '"';
 
     if (searchstring) {
         

@@ -49,13 +49,13 @@
                 </div>
                 <hr>
                 <div ng-repeat="(k, v) in global.user.roles.leader">
-                    <div ng-if="global.community[k].type == 'cluster'" style="padding-bottom:10px; font-size: 18px;">{{ global.community[k].community_profiles[global.user.profile.home].name }}
-                        <button ng-click="nav.embedSettings(global.community[k]);" class="btn btn-xs pull-right">Embed</button>
-                        <button ng-click="nav.editCommunity(global.community[k]);" class="btn btn-primary btn-xs pull-right" style="margin-right: 5px;">Edit</button>
+                    <div ng-if="v == global.location.key && settings.clusters[k]" style="padding-bottom:10px; font-size: 18px;">{{ settings.clusters[k].community_profiles[global.location.key].name }}
+                        <button ng-click="nav.embedSettings(settings.clusters[k]);" class="btn btn-xs pull-right">Embed</button>
+                        <button ng-click="nav.editCommunity(settings.clusters[k]);" class="btn btn-primary btn-xs pull-right" style="margin-right: 5px;">Edit</button>
                     </div>
                 </div>
                 <ul class="nav nav-second-level" style="margin-left: -15px;">
-                    <li ng-if="global.user.communities.indexOf(global.user.profile.home) > -1">
+                    <li ng-if="global.user.communities.indexOf(global.location.key) > -1">
                         <button class="btn btn-success" ng-click="nav.editCommunity({type:'cluster'});" style="margin: 10px 15px;">+&nbsp;&nbsp;Add Industry</button>
                     </li>
                 </ul>
@@ -69,13 +69,8 @@
                     <small>Locations are cities, counties, regions, or states.</small>
                 </div>
                 <hr>
-                <div ng-if="global.community[global.user.profile.home]" style="padding-bottom:10px; font-size: 18px;">{{ global.community[global.user.profile.home].profile.name }}
-                    <button ng-click="nav.embedSettings(global.community[global.user.profile.home]);" class="btn btn-xs pull-right">Embed</button>
-                </div>
-                <div ng-repeat="(k, v) in global.user.roles.leader">
-                    <div ng-if="global.community[k].type == 'location' && k !== global.user.profile.home" style="padding-bottom:10px; font-size: 18px;">{{ global.community[k].profile.name }}
-                        <button ng-click="nav.embedSettings(global.community[k]);" class="btn btn-xs pull-right">Embed</button>
-                    </div>
+                <div ng-if="global.user.communities.indexOf(global.location.key) > -1" style="padding-bottom:10px; font-size: 18px;">{{ global.location.profile.name }}
+                    <button ng-click="nav.embedSettings(global.location);" class="btn btn-xs pull-right">Embed</button>
                 </div>
             </div>
         </div>
