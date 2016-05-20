@@ -637,13 +637,13 @@ function SettingsController($scope, community_service) {
 
 function EmbedSettingsController($scope, $uibModalInstance, sweet, embed_community, community_service){
     
-    var self = this,
-        thiscommunity = embed_community;
+    var self = this;
+    this.thiscommunity = embed_community;
 
     // load existing embed settings
-    if (thiscommunity.community_profiles && thiscommunity.community_profiles[$scope.global.location.key] && thiscommunity.community_profiles[$scope.global.location.key].embed) {
-        self.embed = thiscommunity.community_profiles[$scope.global.location.key].embed;
-    } else if (thiscommunity.profile && thiscommunity.profile.embed) self.embed = thiscommunity.profile.embed; // for locations
+    if (self.thiscommunity.community_profiles && self.thiscommunity.community_profiles[$scope.global.location.key] && self.thiscommunity.community_profiles[$scope.global.location.key].embed) {
+        self.embed = self.thiscommunity.community_profiles[$scope.global.location.key].embed;
+    } else if (self.thiscommunity.profile && self.thiscommunity.profile.embed) self.embed = self.thiscommunity.profile.embed; // for locations
 
     this.addEmbed = function() {
         if (self.form.$valid) {
@@ -669,7 +669,7 @@ function EmbedSettingsController($scope, $uibModalInstance, sweet, embed_communi
 
     this.save = function () {
 
-        community_service.setSettings(self.embed, $scope.global.location.key, thiscommunity.key)
+        community_service.setSettings(self.embed, $scope.global.location.key, self.thiscommunity.key)
             .then(function(response) {
 
                 if (response.status !== 201) {
