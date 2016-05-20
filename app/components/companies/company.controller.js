@@ -12,12 +12,11 @@ function CompanyController($scope, $stateParams, $state, $location, company_serv
     this.communityFilter = [$stateParams.location_path];
     
     var self = this; // for accessing 'this' in child functions
-    var query;
 
     this.resource_page = $state.includes('resource.list');
     this.resource_types = company_service.resource_types();
 
-    $stateParams.query ? query = $stateParams.query : query = '*';
+    var query = $stateParams.query || '*';
 
     this.url = $stateParams.community_path && $stateParams.location_path ?
         "({community_path: val})" :

@@ -14,9 +14,9 @@ function UserController($scope, $stateParams, $location, user_service, result_se
     this.communityFilter = [$stateParams.location_path];
     
     var self = this; // for accessing 'this' in child functions
-    var query;
+    console.log($stateParams);
 
-    $stateParams.query ? query = $stateParams.query : query = '*';
+    var query = $stateParams.query || '*';
 
     this.url = $stateParams.community_path && $stateParams.location_path ?
         "({community_path: val})" :
