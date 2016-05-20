@@ -194,19 +194,19 @@ function NavigationController($scope, $auth, $state, $window, $location, $stateP
 
         if ($auth.isAuthenticated() && $scope.global.user) {
 
-            self.user = $scope.global.user; // reference 'this' by using 'nav' from 'NavigationController as nav' - * nav is also usable in child views *
+            var user = $scope.global.user; // reference 'this' by using 'nav' from 'NavigationController as nav' - * nav is also usable in child views *
 
             // LOAD 3RD PARTY SERVICES
 
-            knowtify.push(['load_inbox', 'knowtify', {email: self.user.profile.email}]);
+            knowtify.push(['load_inbox', 'knowtify', {email: user.profile.email}]);
 
             if ($window.JacoRecorder)
-                $window.JacoRecorder.identify(self.user.profile.email);
+                $window.JacoRecorder.identify(user.profile.email);
 
             rollbar_payload.payload['person'] = {
-                "id": self.user.key,
-                "name": self.user.profile.name,
-                "email": self.user.profile.email
+                "id": user.key,
+                "name": user.profile.name,
+                "email": user.profile.email
             };
 
         } else go_rollbar();
@@ -287,7 +287,7 @@ function NavigationController($scope, $auth, $state, $window, $location, $stateP
         }
 
         self.end = function() {
-            $state.go('user.dashboard', {profile: self.user, location_path: self.user.key, tour: false});
+            $state.go('user.dashboard', {profile: $scope.global.user, location_path: $scope.global.user.key, tour: false});
         };
 
         // to set correct root path when navigating
@@ -362,7 +362,7 @@ function NavigationController($scope, $auth, $state, $window, $location, $stateP
                         return $scope.global.location;
                     },
                     user: function() {
-                        return self.user;
+                        return $scope.global.user;
                     }
                 }
             });
@@ -385,7 +385,7 @@ function NavigationController($scope, $auth, $state, $window, $location, $stateP
                         return community;
                     },
                     user: function() {
-                        return self.user;
+                        return $scope.global.user;
                     }
                 }
             });
@@ -426,7 +426,7 @@ function NavigationController($scope, $auth, $state, $window, $location, $stateP
                 windowClass: "hmodal-warning",
                 resolve: {
                     user: function() {
-                        return self.user;
+                        return $scope.global.user;
                     },
                     location: function() {
                         return $scope.global.location;
@@ -440,7 +440,7 @@ function NavigationController($scope, $auth, $state, $window, $location, $stateP
             modalInstance.closed.then(function () {
                 user_service.getProfile()
                     .then(function(response) {
-                        self.user = response.data;
+                        $scope.global.user = response.data;
                     })
             });
 
@@ -448,7 +448,7 @@ function NavigationController($scope, $auth, $state, $window, $location, $stateP
 
         self.syncNewsletter = function() {
             self.syncworking = true;
-            newsletter_service.syncMembers(self.user.newsletter.lists, self.user.newsletter.brand_id, location.key)
+            newsletter_service.syncMembers($scope.global.user.newsletter.lists, $scope.global.user.newsletter.brand_id, location.key)
                 .then(function(response) {
                     self.syncworking = false;
                     if (response.status !== 201) {
@@ -503,7 +503,7 @@ function NavigationController($scope, $auth, $state, $window, $location, $stateP
             windowClass: "hmodal-info",
             resolve: {
                 user: function() {
-                    return self.user;
+                    return $scope.global.user;
                 },
                 community: function() {
                     return self.community;
@@ -611,8 +611,8 @@ function NavigationController($scope, $auth, $state, $window, $location, $stateP
 }
 
 function SettingsController($scope, community_service) {
-    var self = this;
-    var leader = [];
+    var self = this, 
+        leader = [];
     
     if ($scope.global.user.roles && $scope.global.user.roles.leader) {
         
@@ -626,11 +626,9 @@ function SettingsController($scope, community_service) {
     
 }
 
-function EmbedSettingsController($uibModalInstance, sweet, community_service, community, location){
-
-    this.user = $scope.global.user;
+function EmbedSettingsController($scope, $uibModalInstance, sweet, community_service){
+    
     var self = this;
-    $scope.global.location = location; // used in view
 
     //force pull of community settings every time to avoid stale data
     community_service.getKey(community.key)
@@ -653,7 +651,7 @@ function EmbedSettingsController($uibModalInstance, sweet, community_service, co
                 "url" : self.formdata.embed_url_value,
                 "color" : self.formdata.embed_color_value || '#fff',
                 "full" : self.formdata.embed_full_value || false,
-                "creator" : self.user.key
+                "creator" : $scope.global.user.key
             });
 
         } else {
@@ -694,10 +692,8 @@ function EmbedSettingsController($uibModalInstance, sweet, community_service, co
     };
 }
 
-function CommunityController($uibModalInstance, $mixpanel, sweet, community_service, community, location, $http, $window, user, $state){
-
-    $scope.global.location = location;
-    var loc_key = location.key;
+function CommunityController($scope, $uibModalInstance, $mixpanel, sweet, community_service, $http, $window, $state){
+    
     $scope.global.communityForm = {"name":""}; // to avoid 'undefined' for initial url
     var self = this;
     this.update = false;
@@ -708,22 +704,22 @@ function CommunityController($uibModalInstance, $mixpanel, sweet, community_serv
         return encodeURI(uri.toLowerCase().replace(/\s+/g, '-'));
     };
 
-    if (community.type == 'cluster') {
+    if ($scope.global.community.type == 'cluster') {
         self.parents = community_service.parents();
-    } else if (community.resource) {
-        community_service.getResources(loc_key)
+    } else if ($scope.global.community.resource) {
+        community_service.getResources($scope.global.location.key)
             .then(function(recs) {
                 self.resources = recs.data;
             });
     }
 
-    if (community.key) {
+    if ($scope.global.community.key) {
 
-        loc_key = user.roles.leader[community.key][0]; // this will need to be selected by the user if they are a leader of one resource in multiple locations
+        loc_key = user.roles.leader[$scope.global.community.key][0]; // this will need to be selected by the user if they are a leader of one resource in multiple locations
 
         //force pull of community settings every time to avoid stale data
 
-        community_service.getKey(community.key)
+        community_service.getKey($scope.global.community.key)
             .then(function(response) {
                 var community = response.data;
 
@@ -765,7 +761,8 @@ function CommunityController($uibModalInstance, $mixpanel, sweet, community_serv
 
     this.editCommunity = function() {
         self.working = true;
-        var rename = false;
+        var rename = false,
+            thiscommunity = $scope.global.community;
 
         if (self.form.$valid) {
 
@@ -787,7 +784,7 @@ function CommunityController($uibModalInstance, $mixpanel, sweet, community_serv
             } else parents = [];
 
             var newCommunity = {
-                type: community.type,
+                type: thiscommunity.type,
                 profile: {
                     name: $scope.global.communityForm.name,
                     headline: $scope.global.communityForm.headline,
@@ -797,15 +794,15 @@ function CommunityController($uibModalInstance, $mixpanel, sweet, community_serv
                 url: encodedUrl || $scope.global.communityForm.name.toLowerCase().replace(/\s+/g, '-')
             };
 
-            if (community.type == 'cluster') {
+            if (thiscommunity.type == 'cluster') {
                 newCommunity.profile['industries'] = $scope.global.communityForm.industries;
             }
 
-            if (community.community_profiles && community.community_profiles[loc_key] && community.community_profiles[loc_key].embed) {
-                newCommunity.profile['embed'] = community.community_profiles[loc_key].embed;
+            if (thiscommunity.community_profiles && thiscommunity.community_profiles[loc_key] && thiscommunity.community_profiles[loc_key].embed) {
+                newCommunity.profile['embed'] = $scope.global.community.community_profiles[loc_key].embed;
             }
 
-            if (community.key && (community.key !== newCommunity.url)) rename = true; // determine if this is a rename operation
+            if (thiscommunity.key && (thiscommunity.key !== newCommunity.url)) rename = true; // determine if this is a rename operation
 
             community_service.editCommunity(newCommunity, loc_key)
                 .then(function(response) {
@@ -826,7 +823,7 @@ function CommunityController($uibModalInstance, $mixpanel, sweet, community_serv
                         $http.get('/api/2.1/community/' + loc_key);
 
                         sweet.show({
-                            title: community.type[0].toUpperCase() + community.type.slice(1) + (self.update ? " updated!" : " created!"),
+                            title: thiscommunity.type[0].toUpperCase() + thiscommunity.type.slice(1) + (self.update ? " updated!" : " created!"),
                             type: "success",
                             closeOnConfirm: true
                         });
@@ -835,7 +832,7 @@ function CommunityController($uibModalInstance, $mixpanel, sweet, community_serv
                             $window.location.href = '/'+ loc_key + '/' + newCommunity.url;
                         });
                     }
-                    $mixpanel.track('Added ' + community.type[0].toUpperCase() + community.type.slice(1));
+                    $mixpanel.track('Added ' + thiscommunity.type[0].toUpperCase() + thiscommunity.type.slice(1));
                 });
 
         } else {
@@ -847,9 +844,9 @@ function CommunityController($uibModalInstance, $mixpanel, sweet, community_serv
     this.deleteCommunity = function () {
         self.working = true;
 
-        if (community.type == 'cluster') {
+        if ($scope.global.community.type == 'cluster') {
             var text = "You can recreate this cluster at any time.";
-        } else if (community.resource) {
+        } else if ($scope.global.community.resource) {
             text = "Members will be removed from the resource, but they will remain in the community."
         } else text = "";
 
