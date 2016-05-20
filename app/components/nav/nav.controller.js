@@ -349,7 +349,7 @@ function NavigationController($scope, $auth, $state, $window, $location, $stateP
 
         // COMMUNITY SETTINGS
 
-        self.embedSettings = function(community_record) {
+        self.embedSettings = function(community_key) {
 
             var modalInstance = $uibModal.open({
                 templateUrl: 'components/nav/nav.embed_settings.html',
@@ -360,7 +360,7 @@ function NavigationController($scope, $auth, $state, $window, $location, $stateP
                     embed_community: function() {
 
                         //force pull of community settings every time to avoid stale data
-                        return community_service.getKey(community_record.key)
+                        return community_service.getKey(community_key)
                             .then(function(response) {
                                 return response.data;
                             })
@@ -371,22 +371,21 @@ function NavigationController($scope, $auth, $state, $window, $location, $stateP
 
         // ADD OR MODIFY CLUSTER, RESOURCE, OR LOCATION
 
-        self.editCommunity = function(community) {
+        self.editCommunity = function(community_key) {
 
             var modalInstance = $uibModal.open({
-                templateUrl: 'components/nav/nav.edit_' + community.type + '.html',
+                templateUrl: 'components/nav/nav.edit_cluster.html',
                 controller: CommunityController,
                 controllerAs: 'edit',
                 windowClass: "hmodal-success",
                 resolve: {
-                    location: function() {
-                        return $scope.global.location;
-                    },
-                    community: function() {
-                        return community;
-                    },
-                    user: function() {
-                        return $scope.global.user;
+                    edit_community: function() {
+
+                        //force pull of community settings every time to avoid stale data
+                        return community_service.getKey(community_key)
+                            .then(function(response) {
+                                return response.data;
+                            })
                     }
                 }
             });
@@ -695,71 +694,60 @@ function EmbedSettingsController($scope, $uibModalInstance, sweet, embed_communi
     };
 }
 
-function CommunityController($scope, $uibModalInstance, $mixpanel, sweet, community_service, $http, $window, $state){
+function CommunityController($scope, $uibModalInstance, $mixpanel, sweet, edit_community, community_service, $http, $window, $state){
     
-    $scope.global.communityForm = {"name":""}; // to avoid 'undefined' for initial url
-    var self = this;
+    var self = this,
+        community = edit_community,
+        loc_key = $scope.global.location.key;
+    
     this.update = false;
-
+    this.communityForm = {"name":""}; // to avoid 'undefined' for initial url
     this.industryList = community_service.industries();
 
     this.encode = function(uri) {
         return encodeURI(uri.toLowerCase().replace(/\s+/g, '-'));
     };
 
-    if ($scope.global.community.type == 'cluster') {
+    if (community.type == 'cluster') {
         self.parents = community_service.parents();
-    } else if ($scope.global.community.resource) {
-        community_service.getResources($scope.global.location.key)
+    } else if (community.resource) {
+        community_service.getResources(loc_key)
             .then(function(recs) {
                 self.resources = recs.data;
             });
     }
 
-    if ($scope.global.community.key) {
+    if (community && community.community_profiles && community.community_profiles[loc_key]) {
+        self.update = true;
+        self.community = community.community_profiles[loc_key];
+        self.communityForm = {
+            "name": community.name,
+            "headline": community.headline,
+            "industries": community.industries,
+            "url": decodeURI(community.key)
+        };
 
-        loc_key = user.roles.leader[$scope.global.community.key][0]; // this will need to be selected by the user if they are a leader of one resource in multiple locations
-
-        //force pull of community settings every time to avoid stale data
-
-        community_service.getKey($scope.global.community.key)
-            .then(function(response) {
-                var community = response.data;
-
-                if (community && community.community_profiles && community.community_profiles[loc_key]) {
-                    self.update = true;
-                    $scope.global.community = community.community_profiles[loc_key];
-                    $scope.global.communityForm = {
-                        "name": $scope.global.community.name,
-                        "headline": $scope.global.community.headline,
-                        "industries": $scope.global.community.industries,
-                        "url": decodeURI(community.key)
-                    };
-
-                    if ($scope.global.community.parents) {
-                        switch ($scope.global.community.parents[0]) {
-                            case 'consumer-goods':
-                                $scope.global.communityForm['parent'] = 'Consumer Goods';
-                                break;
-                            case 'non-profit':
-                                $scope.global.communityForm['parent'] = 'Non-Profit';
-                                break;
-                            default:
-                                if (community.resource) {
-                                    // allow multiply types only for resources
-                                    var _parents = $scope.global.community.parents || [];
-                                    $scope.global.communityForm['parent'] = _parents.filter(function(item) {
-                                        return item !== null;
-                                    });
-                                }
-                                else {
-                                    $scope.global.communityForm['parent'] = $scope.global.community.parents[0][0].toUpperCase() + $scope.global.community.parents[0].slice(1);
-                                }
-                        }
+        if (self.community.parents) {
+            switch (self.community.parents[0]) {
+                case 'consumer-goods':
+                    self.communityForm['parent'] = 'Consumer Goods';
+                    break;
+                case 'non-profit':
+                    self.communityForm['parent'] = 'Non-Profit';
+                    break;
+                default:
+                    if (self.community.resource) {
+                        // allow multiply types only for resources
+                        var _parents = self.community.parents || [];
+                        self.communityForm['parent'] = _parents.filter(function(item) {
+                            return item !== null;
+                        });
                     }
-                }
-
-            });
+                    else {
+                        self.communityForm['parent'] = self.parents[0][0].toUpperCase() + self.community.parents[0].slice(1);
+                    }
+            }
+        }
     }
 
     this.editCommunity = function() {
@@ -819,7 +807,7 @@ function CommunityController($scope, $uibModalInstance, $mixpanel, sweet, commun
                         });
 
                     } else {
-                        if (rename) community_service.deleteCommunity(community, loc_key, newCommunity.url);
+                        if (rename) community_service.deleteCommunity(newCommunity, loc_key, newCommunity.url);
 
                         // refresh outdated cache
                         $http.get('/api/2.1/community/' + user.key);
