@@ -82,7 +82,7 @@ var searchInCommunity = function(communities, clusters, stages, types, limit, of
     var allowed = false;
     var userperms;
     
-    console.log(key); //concern is that a passed in key is new and overwrites existing key
+    //console.log(key); //concern is that a passed in key is new and overwrites existing key
 
     if (key) { //check api key to determine if restricted profile data is included with results
             try {
@@ -172,7 +172,7 @@ var searchInCommunity = function(communities, clusters, stages, types, limit, of
 
 
 
-    if (query) { searchstring += ' AND ' + '(' + query + ')'; }
+    if (query) { searchstring += ' AND ' + '(@value.profile.*: ' + query + ')'; }
 
     console.log('Pulling Companies: ' + searchstring);
 

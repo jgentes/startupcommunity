@@ -93,7 +93,7 @@ angular
                         clusters: clusters,
                         roles: roles,
                         limit: limit,
-                        query: query
+                        query: query || '*'
                     });
                 return $http.get(alturl || urlString);
             },
@@ -338,7 +338,7 @@ angular
                         stages: stages,
                         types: types,
                         limit: limit,
-                        query: query,
+                        query: query || '*',
                         get_resources: get_resources
                     });
                 return $http.get(alturl || urlString);

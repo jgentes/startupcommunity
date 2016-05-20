@@ -60,12 +60,12 @@ function CompanyController($scope, $stateParams, $state, $location, company_serv
             }
         }
         
-        $scope.query = $stateParams.query || '*';
+        $scope.global.query = $stateParams.query || undefined;
 
-        if ($scope.query == "*") {
+        if (!$scope.global.query || $scope.global.query == "*") {
             self.title = '<strong>' + self.stage + '</strong> in ' + self.selection;
         } else {
-            self.title = 'Companies matching <strong>"' + $scope.query + '"</strong> ';
+            self.title = self.resource_page ? 'Resources' : 'Companies' + ' matching <strong>"' + $scope.global.query + '"</strong> ';
             self.title += 'in <strong>';
             if ($stateParams.community_path && $stateParams.location_path) {
                 if ($scope.global.community.community_profiles && $scope.global.community.community_profiles[$stateParams.location_path]) {
@@ -95,7 +95,7 @@ function CompanyController($scope, $stateParams, $state, $location, company_serv
             }
         }
 
-        company_service.search(self.communityFilter, self.clusterFilter, '*', null, self.selectedType, 20, self.resource_page, undefined)
+        company_service.search(self.communityFilter, self.clusterFilter, undefined, null, self.selectedType, 20, self.resource_page, undefined)
             .then(function(response) {
                 self.loadingType = false;
                 self.companies = result_service.setPage(response.data);
@@ -119,7 +119,7 @@ function CompanyController($scope, $stateParams, $state, $location, company_serv
             }
         }
 
-        company_service.search(self.communityFilter, self.clusterFilter, '*', self.selectedStage, null, 20, self.resource_page, undefined)
+        company_service.search(self.communityFilter, self.clusterFilter, undefined, self.selectedStage, null, 20, self.resource_page, undefined)
             .then(function(response) {
                 self.loadingStage = false;
                 self.companies = result_service.setPage(response.data);
@@ -137,7 +137,7 @@ function CompanyController($scope, $stateParams, $state, $location, company_serv
             if (self.selectedClusters.length == 0) self.allClusters = true;
         }
 
-        company_service.search(self.communityFilter, self.selectedClusters, '*', self.selectedStage, null, 30, self.resource_page, undefined)
+        company_service.search(self.communityFilter, self.selectedClusters, undefined, self.selectedStage, null, 30, self.resource_page, undefined)
             .then(function(response) {
                 self.loadingCluster = false;
                 self.loadingResource = false;
@@ -158,7 +158,7 @@ function CompanyController($scope, $stateParams, $state, $location, company_serv
 
         self.communityFilter = self.communityFilter.concat(self.selectedResources);
 
-        company_service.search(self.communityFilter, self.clusterFilter, '*', self.selectedStage, null, 20, self.resource_page, undefined)
+        company_service.search(self.communityFilter, self.clusterFilter, undefined, self.selectedStage, null, 20, self.resource_page, undefined)
             .then(function(response) {
                 self.loadingCluster = false;
                 self.loadingResource = false;
@@ -175,20 +175,20 @@ function CompanyController($scope, $stateParams, $state, $location, company_serv
             // remove random sort
             if (alturl) alturl = alturl.replace(/([&\?]sort=_random*$|sort=_random&|[?&]sort=_random(?=#))/, '');
 
-            if ($scope.query !== '*') {
-                self.tag = $scope.query;
+            if ($scope.global.query && $scope.global.query !== '*') {
+                self.tag = $scope.global.query;
             } else self.tag = undefined;
 
             var limit = $location.search().limit;
 
             setTitle();
 
-            company_service.search(self.communityFilter, self.clusterFilter, $scope.query, undefined, undefined, limit || self.usercount, self.resource_page, alturl)
+            company_service.search(self.communityFilter, self.clusterFilter, $scope.global.query, undefined, undefined, limit || self.usercount, self.resource_page, alturl)
                 .then(function (response) {
                     self.tag = undefined;
                     self.companies = result_service.setPage(response.data);
                     self.loadingUser = false;
-                    self.lastQuery = $scope.query;
+                    self.lastQuery = $scope.global.query;
                 });
         };
 

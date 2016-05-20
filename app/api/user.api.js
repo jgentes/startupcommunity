@@ -124,7 +124,7 @@ var searchInCommunity = function(communities, clusters, roles, limit, offset, qu
         searchstring += ')';
     }
 
-    if (query) { searchstring += ' AND ' + '(' + query + ')'; }
+    if (query) { searchstring += ' AND ' + '(@value.profile.*: ' + query + ')'; }
 
     console.log(searchstring);
     var deferred = Q.defer();

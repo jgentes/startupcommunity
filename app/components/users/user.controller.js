@@ -57,12 +57,12 @@ function UserController($scope, $stateParams, $location, user_service, result_se
             }
         }
 
-        $scope.query = $stateParams.query || '*';
+        $scope.global.query = $stateParams.query || undefined;
 
-        if ($scope.query == "*") {
+        if (!$scope.global.query || $scope.global.query == "*") {
             self.title = '<strong>' + self.role + '</strong> in ' + self.selection;
         } else {
-            self.title = 'People matching <strong>"' + $scope.query + '"</strong> ';
+            self.title = 'People matching <strong>"' + $scope.global.query + '"</strong> ';
             self.title += 'in <strong>';
             if ($stateParams.community_path && $stateParams.location_path) {
                 if ($scope.global.community.community_profiles && $scope.global.community.community_profiles[$stateParams.location_path]) {
@@ -83,20 +83,20 @@ function UserController($scope, $stateParams, $location, user_service, result_se
             // remove random sort
             if (alturl) alturl = alturl.replace(/([&\?]sort=_random*$|sort=_random&|[?&]sort=_random(?=#))/, '');
 
-            if ($scope.query !== '*') {
-                self.tag = $scope.query;
+            if ($scope.global.query && $scope.global.query !== '*') {
+                self.tag = $scope.global.query;
             } else self.tag = undefined;
 
             var limit = $location.search().limit;
 
             setTitle();
 
-            user_service.search(self.communityFilter, self.clusterFilter, $scope.query, undefined, limit || self.usercount, alturl)
+            user_service.search(self.communityFilter, self.clusterFilter, $scope.global.query, undefined, limit || self.usercount, alturl)
                 .then(function (response) {
                     self.tag = undefined;
                     self.users = result_service.setPage(response.data);
                     self.loadingUser = false;
-                    self.lastQuery = $scope.query;
+                    self.lastQuery = $scope.global.query;
                 });
         };
 
@@ -136,7 +136,7 @@ function UserController($scope, $stateParams, $location, user_service, result_se
             }
         }
 
-        user_service.search(self.communityFilter, self.clusterFilter, '*', self.selectedRole, 20, undefined)
+        user_service.search(self.communityFilter, self.clusterFilter, undefined, self.selectedRole, 20, undefined)
             .then(function(response) {
                 self.loadingRole = false;
                 self.users = result_service.setPage(response.data);
@@ -154,7 +154,7 @@ function UserController($scope, $stateParams, $location, user_service, result_se
             if (self.selectedClusters.length == 0) self.allClusters = true;
         }
 
-        user_service.search(self.communityFilter, self.selectedClusters, '*', self.selectedRole, 30, undefined)
+        user_service.search(self.communityFilter, self.selectedClusters, undefined, self.selectedRole, 30, undefined)
             .then(function(response) {
                 self.loadingCluster = false;
                 self.loadingResource = false;
@@ -175,7 +175,7 @@ function UserController($scope, $stateParams, $location, user_service, result_se
 
         self.communityFilter = self.communityFilter.concat(self.selectedResources);
 
-        user_service.search(self.communityFilter, self.clusterFilter, '*', self.selectedRole, 20, undefined)
+        user_service.search(self.communityFilter, self.clusterFilter, undefined, self.selectedRole, 20, undefined)
             .then(function(response) {
                 self.loadingCluster = false;
                 self.loadingResource = false;
