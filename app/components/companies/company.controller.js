@@ -169,6 +169,7 @@ function CompanyController($scope, $stateParams, $state, $location, company_serv
     };
 
     var loadCtrl = function() {
+        onLoad(); //de-register the watcher
 
         self.searchCompanies = function (resource_page, alturl) {
             self.loadingUser = true;
@@ -202,7 +203,6 @@ function CompanyController($scope, $stateParams, $state, $location, company_serv
             if ($scope.global.community.key && $scope.global.community.key !== $scope.global.community.key) self.communityFilter.push($scope.global.community.key);
         }
 
-        onLoad(); //de-register the watcher
         self.searchCompanies(self.resource_page);
     };
 
@@ -223,6 +223,8 @@ function CompanyProfileController($scope, $stateParams, $mixpanel, user_service,
     this.team_panels = user_service.team_panels();
 
     var loadCtrl = function() {
+        onLoad(); // de-register the watcher
+        
         if ($scope.global.community && $scope.global.community.type == "company" && $scope.global.community.team) {
             // if directly accessed via url
             self.company = $scope.global.community;
@@ -238,8 +240,6 @@ function CompanyProfileController($scope, $stateParams, $mixpanel, user_service,
                     self.company = response.data;
                 });
         }
-        
-        onLoad(); // de-register the watcher
         
     };
 
@@ -291,9 +291,9 @@ function CompanyProfileController($scope, $stateParams, $mixpanel, user_service,
 
 }
 
-function EditCompanyController($scope, $stateParams, sweet, $state, $q, $window, $http, user_service, company_service, community_service) {
+function EditCompanyController($scope, $state, $stateParams, sweet, $q, $window, $http, user_service, company_service, community_service) {
     var self = this;
-    console.log($stateParams.community_path);
+
     this.step = 1;
     this.update = false; // used if company already exists
     this.working = false; // used for waiting indicator
@@ -303,60 +303,12 @@ function EditCompanyController($scope, $stateParams, sweet, $state, $q, $window,
     this.resource_types = company_service.resource_types();
     this.industries = []; // need a placeholder until next call is resolved
     this.industries = community_service.industries();
-    this.selectedCompany = {
-        city: $scope.global.location.profile.city,
-        state: $scope.global.location.profile.state
-    };
 
     this.stages = [ 'Bootstrap', 'Seed', 'Series A', 'Series B', 'Later'];
 
     this.selectRoles = user_service.roles();
 
     if (!this.selectedRole) this.selectedRole = 'not involved';
-
-    this.is_resource = ($state.current.name == 'resource.add' || $state.current.name == 'resource.edit') || ($scope.global.community && $scope.global.community.resource);
-
-    this.showCurrent = function () {
-
-        self.selectedCompany = $scope.global.community.profile;
-        self.selectedCompany['url'] = $scope.global.community.key;
-        self.selectedCompany['resource_types'] = $scope.global.community.resource_types;
-
-        if ($scope.global.community.profile && $scope.global.community.profile.address) {
-            self.selectedCompany['street'] = $scope.global.community.profile.address.street;
-            self.selectedCompany['city'] = $scope.global.community.profile.address.city;
-            self.selectedCompany['state'] = $scope.global.community.profile.address.state;
-        }
-
-        if (self.selectedCompany.parents && self.selectedCompany.parents.length) {
-            switch (self.selectedCompany.parents[0]) {
-                case 'consumer-goods':
-                    self.selectedCompany['parent'] = 'Consumer Goods';
-                    break;
-                case 'non-profit':
-                    self.selectedCompany['parent'] = 'Non-Profit';
-                    break;
-                default:
-                    self.selectedCompany['parent'] = self.selectedCompany.parents[0][0].toUpperCase() + self.selectedCompany.parents[0].slice(1);
-            }
-        }
-
-        for (role in user.roles) {
-            for (co in user.roles[role]) {
-                if (co == $scope.global.community.key) {
-                    self.selectedRole = role;
-                    break;
-                }
-            }
-        }
-
-    };
-
-    // check if editing existing record
-    if ($scope.global.community && ($scope.global.community.type == 'company' || $scope.global.community.resource)) {
-        this.update = true;
-        this.showCurrent();
-    }
 
     // for startup logo upload to S3
     this.uploadLogo = function (file) {
@@ -412,15 +364,14 @@ function EditCompanyController($scope, $stateParams, sweet, $state, $q, $window,
                             text: response.data.message,
                             type: "success"
                         }, function() {
-                            $window.location.href = '/' + response.data.key;
+                            $state.go('company.dashboard', {location_path: $scope.global.community.key, community_path: null, profile: $scope.global.community, tail_path: '' });
                         });
                     }
                 };
 
                 $http.get('/api/2.1/community/' + response.data.key + '?nocache=true')
                     .then(function() {
-                        wrap();
-                    }, function() {
+                        $scope.global.community = response.data;
                         wrap();
                     }); //clear cache
 
@@ -493,4 +444,81 @@ function EditCompanyController($scope, $stateParams, sweet, $state, $q, $window,
                 });
         });
     };
+
+    var loadCtrl = function() {
+        onLoad(); //de-register the watcher
+
+        var next = function() {
+
+            self.selectedCompany = {
+                city: $scope.global.location.profile.city,
+                state: $scope.global.location.profile.state
+            };
+
+            self.is_resource = $scope.global.community && $scope.global.community.resource;
+
+            self.showCurrent = function () {
+
+                self.selectedCompany = $scope.global.community.profile;
+                self.selectedCompany['url'] = $scope.global.community.key;
+                self.selectedCompany['resource_types'] = $scope.global.community.resource_types;
+
+                if ($scope.global.community.profile && $scope.global.community.profile.address) {
+                    self.selectedCompany['street'] = $scope.global.community.profile.address.street;
+                    self.selectedCompany['city'] = $scope.global.community.profile.address.city;
+                    self.selectedCompany['state'] = $scope.global.community.profile.address.state;
+                }
+
+                if (self.selectedCompany.parents && self.selectedCompany.parents.length) {
+                    switch (self.selectedCompany.parents[0]) {
+                        case 'consumer-goods':
+                            self.selectedCompany['parent'] = 'Consumer Goods';
+                            break;
+                        case 'non-profit':
+                            self.selectedCompany['parent'] = 'Non-Profit';
+                            break;
+                        default:
+                            self.selectedCompany['parent'] = self.selectedCompany.parents[0][0].toUpperCase() + self.selectedCompany.parents[0].slice(1);
+                    }
+                }
+
+                for (role in $scope.global.user.roles) {
+                    for (co in $scope.global.user.roles[role]) {
+                        if (co == $scope.global.community.key) {
+                            self.selectedRole = role;
+                            break;
+                        }
+                    }
+                }
+
+            };
+
+            // check if editing existing record
+            if ($scope.global.community && ($scope.global.community.type == 'company' || $scope.global.community.resource)) {
+                self.update = true;
+                self.showCurrent();
+            }
+
+        };
+
+        if ($stateParams.community_path !== $scope.global.community.key) {
+            if ($stateParams.community_path !== $scope.global.location.key) {
+                community_service.getCommunity($stateParams.community_path)
+                    .then(function (response) {
+                        $scope.global.community = response.data;
+                        next();
+                    })
+            } else {
+                $scope.global.community = $scope.global.location;
+                next();
+            }
+        } else next();
+
+    };
+
+    var onLoad = $scope.$watch(function () {
+        if ($scope.global.community && $scope.global.community.type) {
+           loadCtrl();
+        }
+    });
 }

@@ -22,7 +22,7 @@
                 <div ng-repeat="k in settings.resources">
                     <div style="padding-bottom:10px; font-size: 18px;">{{ k.profile.name }}
                         <button ng-click="nav.embedSettings(k.key)" class="btn btn-xs pull-right">Embed</button>
-                        <button ui-sref="resource.edit({community_path: k.key})" class="btn btn-primary btn-xs pull-right" style="margin-right: 5px;">Edit</button>
+                        <button ui-sref="company.edit({community_path: k.key})" ui-sref-opts="{notify: false}" class="btn btn-primary btn-xs pull-right" style="margin-right: 5px;">Edit</button>
                     </div>
                 </div>
                 <ul class="nav nav-second-level" style="margin-left: -15px;">

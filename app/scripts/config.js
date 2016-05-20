@@ -131,15 +131,16 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
             }
         })
         .state('company.add', {
-            url: "/companies/add",
+            url: "^/:location_path/:community_path/add",
             params: {
-                community: {},
-                pageTitle: 'Add a Company'
+                location_path: {
+                    squash: true
+                },
+                community_path: {
+                    squash: true
+                }
             },
             views: {
-                'header': {
-                    templateUrl: "components/header/header_small.html"
-                },
                 'content': {
                     templateUrl: '../components/resources/resource.add.html',
                     controller: "EditCompanyController as add"
@@ -148,14 +149,7 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
         })
         .state('company.edit', {
             url: "/edit",
-            params: {
-                community: {},
-                pageTitle: 'Edit a Company'
-            },
             views: {
-                'header': {
-                    templateUrl: "components/header/header_small.html"
-                },
                 'content': {
                     templateUrl: '../components/resources/resource.add.html',
                     controller: "EditCompanyController as add"
@@ -177,31 +171,6 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                 'content': {
                     templateUrl: '../components/companies/company.list.html',
                     controller: "CompanyController as companies"
-                }
-            }
-        })
-        .state('resource.edit', {
-            url: "/edit",
-            views: {
-                'content': {
-                    templateUrl: '../components/resources/resource.add.html',
-                    controller: "EditCompanyController as add"
-                }
-            }
-        })
-        .state('resource.add', {
-            url: "^/:location_path/:community_path/resources/add",
-            params: {
-                community_path: {
-                    value: null,
-                    squash: true
-                },
-                pageTitle: 'Add a Resource'
-            },
-            views: {
-                'content': {
-                    templateUrl: '../components/resources/resource.add.html',
-                    controller: "EditCompanyController as add"
                 }
             }
         })

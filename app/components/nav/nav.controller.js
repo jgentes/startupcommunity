@@ -13,7 +13,7 @@ function NavigationController($scope, $auth, $state, $window, $location, $stateP
     this.state = $state; // used in view because path doesn't always update properly.. esp. for /people
 
     var nav_community,
-        lastitems = ["people", "companies", "resources", "search", "invite", "add", "welcome", "settings"];
+        lastitems = ["people", "companies", "resources", "search", "invite", "add", "welcome", "settings", "edit"];
 
     var getProfile = function() {
         
@@ -245,6 +245,10 @@ function NavigationController($scope, $auth, $state, $window, $location, $stateP
 
             case 'settings':
                 $state.go('settings', {}, { location: false });
+                break;
+
+            case 'edit':
+                $state.go('company.edit', {}, { location: false });
                 break;
 
             default:

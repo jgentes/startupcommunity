@@ -76,6 +76,7 @@ function UserController($scope, $stateParams, $location, user_service, result_se
     };
 
     var loadCtrl = function() {
+        onLoad(); // de-register the watcher
 
         self.searchUsers = function(alturl) {
             self.loadingUser = true;
@@ -108,8 +109,7 @@ function UserController($scope, $stateParams, $location, user_service, result_se
             self.clusterFilter = [];
             if ($scope.global.community.key && $scope.global.community.key !== $scope.global.location.key) self.communityFilter.push($scope.global.community.key);
         }
-
-        onLoad(); // de-register the watcher
+        
         self.searchUsers();
 
     };
@@ -245,6 +245,7 @@ function UserProfileController($scope, $stateParams, $http, $uibModal, $mixpanel
     $mixpanel.track('Viewed Profile');
 
     var loadCtrl = function() {
+        onLoad(); // de-register the watcher
 
         if ($scope.global.community && $scope.global.community.type == "user" && $scope.global.community.companies) {
             // if directly accessed via url
@@ -261,8 +262,6 @@ function UserProfileController($scope, $stateParams, $http, $uibModal, $mixpanel
                     self.user = response.data;
                 });
         }
-
-        onLoad(); // de-register the watcher
 
     };
 
