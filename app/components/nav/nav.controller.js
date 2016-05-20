@@ -309,7 +309,7 @@ function NavigationController($scope, $auth, $state, $window, $location, $stateP
 
         self.search = function(query) {
             
-            if ($scope.global.community.type == "cluster") {
+            if ($scope.global.community.type == "cluster" || $scope.global.community.resource) {
                 $stateParams.location_path == $scope.global.community.key ?
                         $state.go('search.dashboard', {location_path: $stateParams.location_path, query: query, tail_path: ''}, {notify: false}) :
                         $state.go('search.dashboard', {location_path: $stateParams.location_path, community_path: $scope.global.community.key, query: query, tail_path: ''}, {reload: true});
