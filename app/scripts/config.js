@@ -180,6 +180,15 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                 }
             }
         })
+        .state('resource.edit', {
+            url: "/edit",
+            views: {
+                'content': {
+                    templateUrl: '../components/resources/resource.add.html',
+                    controller: "EditCompanyController as add"
+                }
+            }
+        })
         .state('resource.add', {
             url: "^/:location_path/:community_path/resources/add",
             params: {
@@ -353,14 +362,13 @@ angular
             // remove the splash screen
             $timeout( function() {
                 $('#majorsplash').css('display', 'none');
-                $('#minorsplash').css('display', 'none');
+                //$('#minorsplash').css('display', 'none');
             }, 500);
         });
 
 
         $rootScope.$on('$stateChangeStart',
             function(event, toState, toParams, fromState, fromParams){
-                $('#minorsplash').css('display', 'block');
                 console.log('----------------------------');
                 console.log('from: ' + fromState.name);
                 //console.log(fromState);
