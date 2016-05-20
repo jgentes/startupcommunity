@@ -16,8 +16,6 @@ function CompanyController($scope, $stateParams, $state, $location, company_serv
     this.resource_page = $state.includes('resource.list');
     this.resource_types = company_service.resource_types();
 
-    var query = $stateParams.query || '*';
-
     this.url = $stateParams.community_path && $stateParams.location_path ?
         "({community_path: val})" :
         "({location_path: val})";
@@ -61,11 +59,13 @@ function CompanyController($scope, $stateParams, $state, $location, company_serv
                 }
             }
         }
+        
+        $scope.query = $stateParams.query || '*';
 
-        if (query == "*") {
+        if ($scope.query == "*") {
             self.title = '<strong>' + self.stage + '</strong> in ' + self.selection;
         } else {
-            self.title = 'Companies matching <strong>"' + query + '"</strong> ';
+            self.title = 'Companies matching <strong>"' + $scope.query + '"</strong> ';
             self.title += 'in <strong>';
             if ($stateParams.community_path && $stateParams.location_path) {
                 if ($scope.global.community.community_profiles && $scope.global.community.community_profiles[$stateParams.location_path]) {
@@ -175,20 +175,20 @@ function CompanyController($scope, $stateParams, $state, $location, company_serv
             // remove random sort
             if (alturl) alturl = alturl.replace(/([&\?]sort=_random*$|sort=_random&|[?&]sort=_random(?=#))/, '');
 
-            if (query !== '*') {
-                self.tag = query;
+            if ($scope.query !== '*') {
+                self.tag = $scope.query;
             } else self.tag = undefined;
 
             var limit = $location.search().limit;
 
             setTitle();
 
-            company_service.search(self.communityFilter, self.clusterFilter, query, undefined, undefined, limit || self.usercount, self.resource_page, alturl)
+            company_service.search(self.communityFilter, self.clusterFilter, $scope.query, undefined, undefined, limit || self.usercount, self.resource_page, alturl)
                 .then(function (response) {
                     self.tag = undefined;
                     self.companies = result_service.setPage(response.data);
                     self.loadingUser = false;
-                    self.lastQuery = query;
+                    self.lastQuery = $scope.query;
                 });
         };
 

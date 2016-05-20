@@ -311,7 +311,7 @@ function NavigationController($scope, $auth, $state, $window, $location, $stateP
 
         // SEARCH
 
-        if ($stateParams.query) self.query = $stateParams.query;
+        if ($stateParams.query) $scope.global.query = $stateParams.query;
 
         if ($scope.global.community.type == "cluster" || $scope.global.community.resource) {
             if ($scope.global.community.community_profiles && $scope.global.community.community_profiles[$stateParams.location_path]) {
