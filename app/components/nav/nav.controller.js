@@ -9,7 +9,7 @@ function NavigationController($scope, $auth, $state, $window, $location, $stateP
     var self = this;
     
     $scope.global.path = $location.path().replace(/\/$/, ""); //used for routing and used in view
-    $scope.global.query = $stateParams.query == '*' ? undefined : $stateParams.query;
+    $scope.global.query = undefined;
     this.state = $state; // used in view because path doesn't always update properly.. esp. for /people
 
     var nav_community,
@@ -308,10 +308,7 @@ function NavigationController($scope, $auth, $state, $window, $location, $stateP
         // SEARCH
 
         self.search = function(query) {
-
-            if (!query) query = "*";
-            $scope.global.query = query;
-            console.log($stateParams.location_path == $scope.global.community.key, $scope.global.community.type)
+            
             if ($scope.global.community.type == "cluster") {
                 $stateParams.location_path == $scope.global.community.key ?
                         $state.go('search.dashboard', {location_path: $stateParams.location_path, query: query, tail_path: ''}, {notify: false}) :

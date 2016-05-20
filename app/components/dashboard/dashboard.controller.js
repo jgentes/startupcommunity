@@ -2,8 +2,9 @@ angular
     .module('startupcommunity')
     .controller('DashboardController', DashboardController);
 
-function DashboardController($stateParams) {
-    
+function DashboardController($scope, $stateParams) {
+
+    $scope.global.query = undefined;
     this.path = $stateParams.community_path || $stateParams.location_path;
     
     angular.element(document).ready(function () {
