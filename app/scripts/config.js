@@ -50,6 +50,7 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
             templateUrl: "components/nav/nav.html",
             controller: "NavigationController as nav",
             params: {
+                // params must be defined here to be used in children
                 location_path: {
                     squash: true
                 },
@@ -60,7 +61,8 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                     // tail path is used to force refresh of nav controller when loc_path and com_path remain constant during navigation (back button)
                     squash: true
                 },
-                tour: false
+                tour: false,
+                query: undefined
             }
         })
 
@@ -267,14 +269,10 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
             }
         })
         .state('search.dashboard', {
-            url: "^/:location_path/:community_path/search",
+            url: "/search",
             params: {
-                community_path: {
-                    value: null,
-                    squash: true
-                },
-                query: '*',
-                pageTitle: 'Search'
+                tail_path: '',
+                query: '*'
             },
             views: {
                 'people': {
@@ -282,7 +280,7 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                     controller: "UserController as users"
                 },
                 'companies': {
-                    templateUrl: '../components/companies/company.list.html',
+                    templateUrl: 'components/companies/company.list.html',
                     controller: "CompanyController as companies"
                 }
             }

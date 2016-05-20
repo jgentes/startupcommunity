@@ -72,7 +72,7 @@ function CompanyController($scope, $stateParams, $state, $location, company_serv
                 if ($scope.global.community.community_profiles && $scope.global.community.community_profiles[$stateParams.location_path]) {
                     self.title += $scope.global.community.community_profiles[$stateParams.location_path].name +'</strong>';
                 } else self.title += $scope.global.community.profile.name +'</strong>';
-            } else self.title += $scope.global.community[$stateParams.location_path].profile.name + '</strong>';
+            } else self.title += $scope.global.community.profile.name + '</strong>';
         }
 
         var pageTitle = '<br><small>' + $scope.global.community.profile.name + '</small>';
