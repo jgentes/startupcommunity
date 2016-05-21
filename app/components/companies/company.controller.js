@@ -172,7 +172,7 @@ function CompanyController($scope, $stateParams, $state, $location, company_serv
         onLoad(); //de-register the watcher
 
         self.searchCompanies = function (resource_page, alturl) {
-            self.loadingUser = true;
+            self.loadingCompany = true;
 
             // remove random sort
             if (alturl) alturl = alturl.replace(/([&\?]sort=_random*$|sort=_random&|[?&]sort=_random(?=#))/, '');
@@ -189,7 +189,7 @@ function CompanyController($scope, $stateParams, $state, $location, company_serv
                 .then(function (response) {
                     self.tag = undefined;
                     self.companies = result_service.setPage(response.data);
-                    self.loadingUser = false;
+                    self.loadingCompany = false;
                     self.lastQuery = $scope.global.query;
                 });
         };

@@ -126,7 +126,7 @@
                         </div>
                     </div>
                     <span style="font-size: 17px;" ng-bind-html="companies.title"></span>
-                    <span><i ng-show="companies.loadingCompanies" class="fa fa-refresh fa-spin" style="padding: 4px; color: #aaa; font-size: 17px; margin-left: 5px;"></i></span>
+                    <span loading-bars ng-if="companies.loadingCompany"></span>
                 </div>
 
                 <div class="panel-body content" style="padding-top: 0;">

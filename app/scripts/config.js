@@ -195,46 +195,16 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                 }
             }
         })
-        .state('welcome.roles', {
-            templateUrl: "components/welcome/welcome.roles.html"
-        })
-        .state('welcome.skills', {
-            templateUrl: "components/welcome/welcome.skills.html"
-        })
-        .state('welcome.profile', {
-            templateUrl: "components/welcome/welcome.profile.html"
-        })
-        .state('welcome.invite', {
-            templateUrl: "components/welcome/welcome.invite.html",
-            controller: "InviteUserController as invite"
-        })
+        .state('welcome.roles', { templateUrl: "components/welcome/welcome.roles.html" })
+        .state('welcome.skills', { templateUrl: "components/welcome/welcome.skills.html" })
+        .state('welcome.profile', { templateUrl: "components/welcome/welcome.profile.html" })
+        .state('welcome.invite', { templateUrl: "components/welcome/welcome.invite.html", controller: "InviteUserController as invite" })
 
-        .state('settings', {
-            parent: 'root',
-            url: '/settings',
-            views: {
-                'content': {
-                    templateUrl: "components/settings.html",
-                    controller: "SettingsController as settings"
-                }
-            }
-        })
+        .state('settings', { parent: 'root', url: '/settings', views: { 'content': { templateUrl: "components/settings.html", controller: "SettingsController as settings" }}})
 
-        .state('newsletter', {
-            parent: 'root',
-            url: '/newsletter',
-            views: {
-                'content': {
-                    templateUrl: "components/newsletter/newsletter.html",
-                    controller: 'NewsletterController as news'
-                }
-            }
-        })
+        .state('newsletter', { parent: 'root', url: '/newsletter', views: { 'content': { templateUrl: "components/newsletter/newsletter.html", controller: 'NewsletterController as news' }}})
 
-        .state('search', {
-            parent: 'root',
-            abstract: true,
-            views: {
+        .state('search', { parent: 'root', abstract: true, views: {
                 'header': {
                     templateUrl: "components/header/header_small.html"
                 },
@@ -243,8 +213,7 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                 }
             }
         })
-        .state('search.dashboard', {
-            url: "/search",
+        .state('search.dashboard', { url: "/search",
             params: {
                 tail_path: '',
                 query: '*'
@@ -262,10 +231,7 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
         })
 
         // Community views
-        .state('community', {
-            parent: "root",
-            abstract: true,
-            views: {
+        .state('community', { parent: "root", abstract: true, views: {
                 'header': {
                     templateUrl: "components/header/header_small.html"
                 },
@@ -274,11 +240,7 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                 }
             }
         })
-        .state('community.dashboard', {
-            params: {
-                tour: false
-            },
-            views: {
+        .state('community.dashboard', { params: { tour: false }, views: {
                 'people': {
                     templateUrl: 'components/dashboard/dashboard.html',
                     controller: "DashboardController as dashboard"

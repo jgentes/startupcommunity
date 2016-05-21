@@ -7,7 +7,9 @@
                         <div class="col-xs-8">
                             <div class="stats-title pull-left">
                                 <a ui-sref="user.list">
-                                    <h3>People</h3>
+                                    <h3>People
+                                        <span loading-bars ng-if="!global.top"></span>
+                                    </h3>
                                 </a>
                             </div>
                         </div>
@@ -36,7 +38,9 @@
                         <div class="col-xs-8">
                             <div class="stats-title pull-left">
                                 <a ui-sref="company.list">
-                                    <h3>Companies</h3>
+                                    <h3>Companies
+                                        <span loading-bars ng-if="!global.top"></span>
+                                    </h3>
                                 </a>
                             </div>
                         </div>
@@ -65,7 +69,9 @@
                         <div class="col-xs-8">
                             <div class="stats-title pull-left">
                                 <a ui-sref="resource.list">
-                                    <h3>Resources</h3>
+                                    <h3>Resources
+                                        <span loading-bars ng-if="!global.top"></span>
+                                    </h3>
                                 </a>
                             </div>
                         </div>
@@ -94,7 +100,9 @@
                 <div class="hpanel forum-box" style="overflow: hidden;">
 
                     <div class="panel-heading" style="border-bottom: 2px solid #3498db">
-                        <h3>Top Skills</h3>
+                        <h3>Top Skills
+                            <span loading-bars ng-if="!global.top"></span>
+                        </h3>
                         <small class="small-column-title"># People</small>
                     </div>
 
@@ -119,7 +127,9 @@
                 <div class="hpanel forum-box" style="overflow: hidden;">
 
                     <div class="panel-heading" style="border-bottom: 2px solid #34495E;">
-                        <h3>Top Markets</h3>
+                        <h3>Top Markets
+                            <span loading-bars ng-if="!global.top"></span>
+                        </h3>
                         <small class="small-column-title"># Companies</small>
                     </div>
 
@@ -144,7 +154,9 @@
                 <div class="hpanel forum-box" style="overflow: hidden;">
 
                     <div class="panel-heading" style="border-bottom: 2px solid #34495E;">
-                        <h3>Top Industries</h3>
+                        <h3>Top Industries
+                            <span loading-bars ng-if="!global.top"></span>
+                        </h3>
                     </div>
 
                     <div class="panel-body" ng-repeat="item in global.top.parents | limitTo: 5">

@@ -10,6 +10,7 @@ function NavigationController($scope, $auth, $state, $window, $location, $stateP
     
     $scope.global.path = $location.path().replace(/\/$/, ""); //used for routing and used in view
     $scope.global.query = undefined;
+    $scope.global.top = undefined;
     this.state = $state; // used in view because path doesn't always update properly.. esp. for /people
 
     var nav_community,
