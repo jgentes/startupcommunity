@@ -67,7 +67,7 @@ function CompanyController($scope, $stateParams, $state, $location, company_serv
             self.title = '<strong>' + self.stage + '</strong> in ' + self.selection;
         } else {
             self.title = self.resource_page ? 'Resources' : 'Companies' + ' matching <strong>"' + $scope.global.query + '"</strong> ';
-            self.title += 'in <strong>';
+            self.title += ' in <strong>';
             if ($stateParams.community_path && $stateParams.location_path) {
                 if ($scope.global.community.community_profiles && $scope.global.community.community_profiles[$stateParams.location_path]) {
                     self.title += $scope.global.community.community_profiles[$stateParams.location_path].name +'</strong>';

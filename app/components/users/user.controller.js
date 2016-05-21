@@ -63,7 +63,7 @@ function UserController($scope, $stateParams, $location, user_service, result_se
             self.title = '<strong>' + self.role + '</strong> in ' + self.selection;
         } else {
             self.title = 'People matching <strong>"' + $scope.global.query + '"</strong> ';
-            self.title += 'in <strong>';
+            self.title += ' in <strong>';
             if ($stateParams.community_path && $stateParams.location_path) {
                 if ($scope.global.community.community_profiles && $scope.global.community.community_profiles[$stateParams.location_path]) {
                     self.title += $scope.global.community.community_profiles[$stateParams.location_path].name +'</strong>';
