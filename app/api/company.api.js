@@ -353,20 +353,30 @@ function handleDeleteCompany(req, res) {
                                 .query('@value.type:"user" AND @value.roles.*.' + params.company_key + ':*')
                                 .then(function (flush) {
                                     for (r in flush.body.results) {
-                                        for (i in flush.body.results[r].value.roles) {
-                                            for (c in flush.body.results[r].value.roles[i]) {
+                                        var flush_key = flush.body.results[r].path.key,
+                                            flush_value = flush.body.results[r].value;
+                                        
+                                        for (i in flush_value.roles) {
+                                            for (c in flush_value.roles[i]) {
                                                 if (c == params.company_key) {
-                                                    delete flush.body.results[r].value.roles[i][c];
-                                                    var flush_key = flush.body.results[r].path.key,
-                                                        flush_value = flush.body.results[r].value;
-
-                                                    db.put(process.env.DB_COMMUNITIES, flush_key, flush_value)
-                                                        .then(function(response) {
-                                                            console.log('Deleted ' + i + ' from ' + flush_key);        
-                                                        })
+                                                    delete flush_value.roles[i][c];
+                                                    
                                                 }
                                             }
                                         }
+                                        
+                                        // remove from communities
+                                        if (flush_value.communities.indexOf(params.company_key) > -1) {
+                                            var findex = flush_value.communities.indexOf(params.company_key);
+                                            flush_value.communities.splice(findex, 1);
+                                        }
+
+
+                                        db.put(process.env.DB_COMMUNITIES, flush_key, flush_value)
+                                            .then(function(response) {
+                                                console.log('Deleted ' + params.company_key + ' from ' + flush_key);
+                                            })
+                                        
                                     }
                                     res.status(204).send({message: 'Company deleted!'});
                                 })
@@ -461,7 +471,7 @@ var addRole = function(company_key, role, location_key, user_key) {
                     }
                 }
 
-                
+                console.log(role, company_key, location_key);
 
                 // add new role
 

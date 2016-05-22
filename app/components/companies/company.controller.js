@@ -458,7 +458,7 @@ function EditCompanyController($scope, $state, $stateParams, sweet, $q, $window,
                 state: $scope.global.location.profile.state
             };
 
-            self.is_resource = $scope.global.community && $scope.global.community.resource;
+            self.is_resource = ($scope.global.community && $scope.global.community.resource) || $state.current.name == 'resource.add';
 
             self.showCurrent = function () {
 

@@ -15,7 +15,7 @@ function NavigationController($scope, $auth, $state, $window, $location, $stateP
     this.state = $state; // used in view because path doesn't always update properly.. esp. for /people
 
     var nav_community,
-        lastitems = ["people", "companies", "resources", "search", "invite", "add", "welcome", "settings", "edit"];
+        lastitems = ["people", "companies", "resources", "search", "invite", "add-company", "add-resource", "welcome", "settings", "edit"];
 
     var getProfile = function() {
         
@@ -238,6 +238,7 @@ function NavigationController($scope, $auth, $state, $window, $location, $stateP
         $scope.global['nav'] = $scope.global.nav || {};
 
         if (($scope.global.location.key !== $scope.global.community.key && lastitems.indexOf($stateParams.community_path) < 0 && $scope.global.community.type !== 'user' && $scope.global.community.type !== 'company') || ($scope.global.community.type == 'cluster')) {
+            $scope.global.nav['overview'] = $scope.global.community.key;
             $scope.global.nav['people'] = {
                 community: $scope.global.community.key,
                 tail: 'people'
@@ -251,6 +252,7 @@ function NavigationController($scope, $auth, $state, $window, $location, $stateP
                 tail: 'resources'
             };
         } else {
+            $scope.global.nav['overview'] = '';
             $scope.global.nav['people'] = {
                 community: 'people',
                 tail: undefined
@@ -297,8 +299,12 @@ function NavigationController($scope, $auth, $state, $window, $location, $stateP
                     $state.go('company.edit', {}, {location: false});
                     break;
 
-                case 'add':
+                case 'add-company':
                     $state.go('company.add', {}, {location: false});
+                    break;
+
+                case 'add-resource':
+                    $state.go('resource.add', {}, {location: false});
                     break;
             }
         } else {

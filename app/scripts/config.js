@@ -129,7 +129,7 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
             }
         })
         .state('company.add', {
-            url: "^/:location_path/company/add",
+            url: "^/:location_path/add-company",
             views: {
                 'content': {
                     templateUrl: 'components/resources/resource.add.html',
@@ -164,7 +164,7 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
             }
         })
         .state('resource.add', {
-            url: "^/:location_path/resource/add",
+            url: "^/:location_path/add-resource",
             views: {
                 'content': {
                     templateUrl: 'components/resources/resource.add.html',
