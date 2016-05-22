@@ -472,6 +472,7 @@ var addRole = function(company_key, role, location_key, user_key) {
                 }
 
                 console.log(role, company_key, location_key);
+                console.log(response.body.roles);
 
                 // add new role
 
