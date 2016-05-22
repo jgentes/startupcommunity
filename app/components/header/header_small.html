@@ -6,13 +6,13 @@
                     <li ui-sref="community.dashboard" ng-class="{ 'active' : nav.state.current.name == 'community.dashboard' }">
                         <a>OVERVIEW</a>
                     </li>
-                    <li ui-sref="{{'user.list' + nav.nav_url}}" ui-sref-opts="{{nav.notify}}" ng-class="{ 'active' : nav.state.current.name == 'user.list' }">
+                    <li ui-sref="user.list({location_path: global.location.key, community_path: global.nav.people.community, tail_path: global.nav.people.tail, query: undefined})" ui-sref-opts="{notify: true}" ng-class="{ 'active' : nav.state.current.name == 'user.list' }">
                         <a>PEOPLE</a>
                     </li>
-                    <li ui-sref="{{'company.list' + nav.nav_url}}" ui-sref-opts="{{nav.notify}}" ng-class="{ 'active' : nav.state.current.name == 'company.list' }">
+                    <li ui-sref="company.list({location_path: global.location.key, community_path: global.nav.companies.community, tail_path: global.nav.companies.tail, query: undefined})" ui-sref-opts="{notify: true}" ng-class="{ 'active' : nav.state.current.name == 'company.list' }">
                         <a>COMPANIES</a>
                     </li>
-                    <li ui-sref="{{'resource.list' + nav.nav_url}}" ui-sref-opts="{{nav.notify}}" ng-class="{ 'active' : nav.state.current.name == 'resource.list' }">
+                    <li ui-sref="resource.list({location_path: global.location.key, community_path: global.nav.resources.community, tail_path: global.nav.resources.tail, query: undefined})" ui-sref-opts="{notify: true}" ng-class="{ 'active' : nav.state.current.name == 'resource.list' }">
                         <a>RESOURCES</a>
                     </li>
                 </ul>

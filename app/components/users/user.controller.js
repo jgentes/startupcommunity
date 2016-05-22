@@ -258,6 +258,7 @@ function UserProfileController($scope, $stateParams, $http, $uibModal, $mixpanel
                 $stateParams.community_path ?
                     $stateParams.community_path :
                     $stateParams.location_path;
+            console.log('pull ' + userkey + ' from UserProfileController')
 
             community_service.getCommunity(userkey)
                 .then(function (response) {

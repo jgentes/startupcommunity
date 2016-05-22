@@ -65,13 +65,13 @@
                     <li ng-if="global.user" class="dropdown" style="padding-top: 10px; padding-left: 10px;" tour-step order="4" title="Your Profile" content="People can ask you questions on your profile page. Click 'End tour' to take a look." placement="bottom">
                         <div class="pull-left" style="padding-top: 1px; white-space: nowrap;     text-align: right; padding-right: 20px;">
                             <span loading-bars ng-if="p_working" style="padding-right:40px;"></span>
-                            <a ui-sref="user.dashboard({profile: global.user, location_path: global.user.key})" ng-click="p_working = true">{{::global.user.profile.name}}</a>
+                            <a ui-sref="user.dashboard({location_path: global.user.key, community_path: '', tail_path: '', profile: global.user})" ng-click="p_working = true">{{::global.user.profile.name}}</a>
                             <div style="margin-left: -10px; padding-top: 1px;">
                                 <span ng-repeat="(item, val) in ::global.user.roles" class="user-role" ><i ng-attr-title="{{::item[0].toUpperCase() + item.slice(1);}}" style="font-weight: bold;" ng-class="{'text-primary pe-7s-paper-plane' : item == 'founder', 'text-danger pe-7s-flag' : item == 'leader', 'text-info pe-7s-study' : item == 'mentor', 'text-success pe-7s-gleam' : item == 'investor', 'text-default pe-7s-ball' : item == 'team', 'text-warning pe-7s-portfolio' : item == 'provider'}"></i></span>
                             </div>
                         </div>
                         <div class="pull-right" style="padding-right: 10px;">
-                            <a ui-sref="user.dashboard({profile: global.user, location_path: global.user.key})" ng-click="p_working = true"><img title="Your Profile" class="img-circle m-b" ng-src="{{::global.user.profile.avatar || '/public/images/blank_avatar.png'}}" alt="{{::global.user.profile.name}}" style="height: 40px; width: 40px; " onerror="this.src='/public/images/blank_avatar.png'"/></a>
+                            <a ui-sref="user.dashboard({location_path: global.user.key, community_path: '', tail_path: '', profile: global.user})" ng-click="p_working = true"><img title="Your Profile" class="img-circle m-b" ng-src="{{::global.user.profile.avatar || '/public/images/blank_avatar.png'}}" alt="{{::global.user.profile.name}}" style="height: 40px; width: 40px; " onerror="this.src='/public/images/blank_avatar.png'"/></a>
                         </div>
                     </li>
                     <li ng-if="!global.user" class="dropdown">

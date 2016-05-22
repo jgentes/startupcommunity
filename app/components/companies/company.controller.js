@@ -200,9 +200,10 @@ function CompanyController($scope, $stateParams, $state, $location, company_serv
             } else self.clusterFilter = $scope.global.community.profile.industries;
         } else {
             self.clusterFilter = [];
-            if ($scope.global.community.type == 'user' || $scope.global.community.type == 'company') {
+           /* if ($scope.global.community.type == 'user' || $scope.global.community.type == 'company') {
                 $scope.global.community = $scope.global.location;
-            } else if ($scope.global.community.key && $scope.global.community.key !== $scope.global.location.key) self.communityFilter.push($scope.global.community.key);
+            } else*/ 
+            if ($scope.global.community.key && $scope.global.community.key !== $scope.global.location.key) self.communityFilter.push($scope.global.community.key);
         }
 
         self.searchCompanies(self.resource_page);

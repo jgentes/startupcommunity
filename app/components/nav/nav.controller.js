@@ -11,6 +11,7 @@ function NavigationController($scope, $auth, $state, $window, $location, $stateP
     $scope.global.path = $location.path().replace(/\/$/, ""); //used for routing and used in view
     $scope.global.query = undefined;
     $scope.global.top = undefined;
+    $scope.global.community = undefined;
     this.state = $state; // used in view because path doesn't always update properly.. esp. for /people
 
     var nav_community,
@@ -52,11 +53,25 @@ function NavigationController($scope, $auth, $state, $window, $location, $stateP
     var getCommunity = function () {
 
         var pullCommunity = function (comm_path) {
+            console.log('pull ' + comm_path + ' from NavController getCommunity')
 
             community_service.getCommunity(comm_path)
                 .then(function (response) {
                     $scope.global.community = response.data;
                     getLocation();
+                })
+                .catch(function(response) {
+                    if (response.status == 404) {
+                        $state.go('404');
+                    } else {
+                        sweet.show({
+                            title: "Sorry, something went wrong.",
+                            text: "Here's what we know: " + response.data.message,
+                            type: "error"
+                        }, function() {
+                            $state.reload();
+                        })
+                    }
                 })
         };
 
@@ -76,23 +91,19 @@ function NavigationController($scope, $auth, $state, $window, $location, $stateP
             }
         };
 
-        // fix urls with spaces
+        // replace spaces in urls with hyphens
         if ($stateParams.community_path) $stateParams.community_path = $stateParams.community_path.replace(/\s+/g, '-');
         if ($stateParams.location_path) $stateParams.location_path = $stateParams.location_path.replace(/\s+/g, '-');
 
         // check if community is already in $scope.global
 
         if ($stateParams.community_path && lastitems.indexOf($stateParams.community_path) < 0) {
-            if ($scope.global.community && $scope.global.community.key == $stateParams.community_path)
-                getLocation();
-            else if ($scope.global.location && $scope.global.location.key == $stateParams.community_path) {
+            if ($scope.global.location && $scope.global.location.key == $stateParams.community_path) {
                 $scope.global.community = $scope.global.location;
                 getLocation();
             } else next();
         } else if ($stateParams.location_path) {
-            if ($scope.global.community && $scope.global.community.key == $stateParams.location_path)
-                getLocation();
-            else if ($scope.global.location && $scope.global.location.key == $stateParams.location_path) {
+            if ($scope.global.location && $scope.global.location.key == $stateParams.location_path) {
                 $scope.global.community = $scope.global.location;
                 getLocation();
             } else next();
@@ -173,8 +184,6 @@ function NavigationController($scope, $auth, $state, $window, $location, $stateP
 
     var loadNav = function() {
 
-        console.log('StateParams: ', $stateParams);
-
         console.log('Nav RootScope Location: ', $scope.global.location ? $scope.global.location.key : null);
         console.log('Nav RootScope Community: ', $scope.global.community ? $scope.global.community.key : null);
 
@@ -224,74 +233,89 @@ function NavigationController($scope, $auth, $state, $window, $location, $stateP
             });
         }
 
-        // to set correct root path when navigating
+        // to set correct root path when navigating via header liniks.. craziness is needed because using bracket syntax inside of ui-sref doesn't work
+        
+        $scope.global['nav'] = $scope.global.nav || {};
 
-        if ($scope.global.location.key == $scope.global.community.key || lastitems.indexOf($stateParams.community_path) < 0 || $scope.global.community.type == 'user' || $scope.global.community.type == 'company') {
-            self.nav_url = "({location_path: global.location.key, community_path: '', tail_path: '', query: undefined})";
-            self.notify = "{notify: false}";
+        if (($scope.global.location.key !== $scope.global.community.key && lastitems.indexOf($stateParams.community_path) < 0 && $scope.global.community.type !== 'user' && $scope.global.community.type !== 'company') || ($scope.global.community.type == 'cluster')) {
+            $scope.global.nav['people'] = {
+                community: $scope.global.community.key,
+                tail: 'people'
+            };
+            $scope.global.nav['companies'] = {
+                community: $scope.global.community.key,
+                tail: 'companies'
+            };
+            $scope.global.nav['resources'] = {
+                community: $scope.global.community.key,
+                tail: 'resources'
+            };
         } else {
-            self.nav_url = "({location_path: global.location.key, community_path: global.community.key, tail_path: '', query: undefined})";
-            self.notify = "{notify: true}";
+            $scope.global.nav['people'] = {
+                community: 'people',
+                tail: undefined
+            };
+            $scope.global.nav['companies'] = {
+                community: 'companies',
+                tail: undefined
+            };
+            $scope.global.nav['resources'] = {
+                community: 'resources',
+                tail: undefined
+            };
         }
-
-        self.nav_jump = ($scope.global.location && $scope.global.location.type == 'location') || (($scope.global.community.type == "user" || $scope.global.community.type == "company") &&
-        ($scope.global.location && $scope.global.location.type == 'location')) ?
-            "({ location_path: global.location.key, community_path: item.key })" :
-            "({ location_path: global.user.profile.home, community_path: item.key })";
-
 
         // *** ROUTING OF ROOT PATHS ***
 
-        switch ($location.path().replace(/\/$/, "").split('/').pop()) {
+        var path_url = $location.path().replace(/\/$/, "").split('/').pop();
 
-            case 'people':
-                $state.go('user.list', {}, { location: false });
-                break;
+        if (lastitems.indexOf(path_url) > -1) {
 
-            case 'companies':
-                $state.go('company.list', {}, { location: false });
-                break;
+            switch (path_url) {
 
-            case 'resources':
-                $state.go('resource.list', {}, { location: false });
-                break;
+                case 'people':
+                    $state.go('user.list');
+                    break;
 
-            case 'search':
-                $state.go('search.dashboard', {}, { location: false });
-                break;
+                case 'companies':
+                    $state.go('company.list');
+                    break;
 
-            case 'settings':
-                $state.go('settings', {}, { location: false });
-                break;
+                case 'resources':
+                    $state.go('resource.list');
+                    break;
 
-            case 'edit':
-                $state.go('company.edit', {}, { location: false });
-                break;
+                case 'search':
+                    $state.go('search.dashboard', {}, {location: false});
+                    break;
 
-            default:
+                case 'settings':
+                    $state.go('settings', {}, {location: false});
+                    break;
 
-                switch (nav_community.type) {
+                case 'edit':
+                    $state.go('company.edit', {}, {location: false});
+                    break;
+            }
+        } else {
 
-                    case 'user':
-                        $state.go('user.dashboard');
-                        break;
+            switch (nav_community.type) {
 
-                    case 'company':
-                        $state.go('company.dashboard');
-                        break;
+                case 'user':
+                    $state.go('user.dashboard');
+                    break;
 
-                    default:
-                        $state.go('community.dashboard');
-                }
+                case 'company':
+                    $state.go('company.dashboard');
+                    break;
+
+                default:
+                    $state.go('community.dashboard');
+            }
         }
 
         self.loaders = {}; // for various loading indicators in navigation
 
-        if (!$scope.global.community) $scope.global.community = $scope.global.community[$stateParams.location_path];
-        if (!$scope.global.community) {
-            // if still no community, there's a problem, reload the app
-            $window.location.reload();
-        }
         // the industry_icons save me a db call on every controller reload :) because top doesn't include item values.. maybe combine this with 'parents' service?
         $scope.global.industry_icons = { "construction": {"icon": "fa-wrench"}, "legal": {"icon": "fa-gavel"}, "tech": {"icon": "fa-code"}, "medical": {"icon": "fa-stethoscope"}, "healthcare": {"icon": "fa-ambulance"}, "recreation": {"icon": "fa-sun-o"}, "art": {"icon": "fa-picture-o"}, "transportation": {"icon": "fa-road"}, "consumer-goods": {"icon": "fa-barcode"}, "non-profit": {"icon": "fa-heart-o"}, "corporate": {"icon": "fa-building-o"}, "government": {"icon": "fa-university"}, "finance": {"icon": "fa-pie-chart"}, "education": {"icon": "fa-graduation-cap"}, "manufacturing": {"icon": "fa-cube"}, "agriculture": {"icon": "fa-pagelines"}, "services": {"icon": "fa-bell-o"}};
 

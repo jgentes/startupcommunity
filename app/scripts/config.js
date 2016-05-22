@@ -87,7 +87,6 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
             }
         })
         .state('user.list', {
-            url: "/people",
             views: {
                 'header': {
                     templateUrl: "components/header/header_small.html"
@@ -119,7 +118,6 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
             }
         })
         .state('company.list', {
-            url: "/companies",
             views: {
                 'header': {
                     templateUrl: "components/header/header_small.html"
@@ -163,7 +161,6 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
             abstract: true
         })
         .state('resource.list', {
-            url: "/resources",
             views: {
                 'header': {
                     templateUrl: "components/header/header_small.html"
