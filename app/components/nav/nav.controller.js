@@ -224,6 +224,22 @@ function NavigationController($scope, $auth, $state, $window, $location, $stateP
             });
         }
 
+        // to set correct root path when navigating
+
+        if ($scope.global.location.key == $scope.global.community.key || lastitems.indexOf($stateParams.community_path) < 0 || $scope.global.community.type == 'user' || $scope.global.community.type == 'company') {
+            self.nav_url = "({location_path: global.location.key, community_path: '', tail_path: '', query: undefined})";
+            self.notify = "{notify: false}";
+        } else {
+            self.nav_url = "({location_path: global.location.key, community_path: global.community.key, tail_path: '', query: undefined})";
+            self.notify = "{notify: true}";
+        }
+
+        self.nav_jump = ($scope.global.location && $scope.global.location.type == 'location') || (($scope.global.community.type == "user" || $scope.global.community.type == "company") &&
+        ($scope.global.location && $scope.global.location.type == 'location')) ?
+            "({ location_path: global.location.key, community_path: item.key })" :
+            "({ location_path: global.user.profile.home, community_path: item.key })";
+
+
         // *** ROUTING OF ROOT PATHS ***
 
         switch ($location.path().replace(/\/$/, "").split('/').pop()) {
@@ -297,20 +313,6 @@ function NavigationController($scope, $auth, $state, $window, $location, $stateP
             $state.go('user.dashboard', {profile: $scope.global.user, location_path: $scope.global.user.key, tour: false});
         };
 
-        // to set correct root path when navigating
-
-        if ($scope.global.location.key == $scope.global.community.key || lastitems.indexOf($stateParams.community_path) < 0) {
-            self.nav_url = "({location_path: global.location.key, community_path: '', tail_path: '', query: undefined})";
-            self.notify = "{notify: false}";
-        } else {
-            self.nav_url = "({location_path: global.location.key, community_path: global.community.key, tail_path: '', query: undefined})";
-            self.notify = "{notify: true}";
-        }
-
-        self.nav_jump = ($scope.global.location && $scope.global.location.type == 'location') || (($scope.global.community.type == "user" || $scope.global.community.type == "company") &&
-        ($scope.global.location && $scope.global.location.type == 'location')) ?
-            "({community_path: item.key, location_path: global.location.key })" :
-            "({community_path: item.key, location_path: global.user.profile.home })";
 
         // SEARCH
 

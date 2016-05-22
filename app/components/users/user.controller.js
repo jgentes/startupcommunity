@@ -107,7 +107,9 @@ function UserController($scope, $stateParams, $location, user_service, result_se
             } else self.clusterFilter = $scope.global.community.profile.industries;
         } else {
             self.clusterFilter = [];
-            if ($scope.global.community.key && $scope.global.community.key !== $scope.global.location.key) self.communityFilter.push($scope.global.community.key);
+            if ($scope.global.community.type == 'user' || $scope.global.community.type == 'company') {
+                $scope.global.community = $scope.global.location;
+            } else if ($scope.global.community.key && $scope.global.community.key !== $scope.global.location.key) self.communityFilter.push($scope.global.community.key);
         }
         
         self.searchUsers();

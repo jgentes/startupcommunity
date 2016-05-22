@@ -2,7 +2,7 @@
     <div class="hpanel">
         <div class="panel-body" style="width: 100%;" ng-class="{'header-embedded' : global.embedded, 'no-sides' : !global.embedded}">
             <div class="pull-left" tour-step order="1" title="People and Companies" content="To view people by role or industry, or sort companies by investment, visit the People and Company pages." placement="bottom">
-                <ul ng-if="global.community.type !== 'user' && global.community.type !== 'company'" class="header-nav">
+                <ul class="header-nav">
                     <li ui-sref="community.dashboard" ng-class="{ 'active' : nav.state.current.name == 'community.dashboard' }">
                         <a>OVERVIEW</a>
                     </li>
@@ -12,10 +12,14 @@
                     <li ui-sref="{{'company.list' + nav.nav_url}}" ui-sref-opts="{{nav.notify}}" ng-class="{ 'active' : nav.state.current.name == 'company.list' }">
                         <a>COMPANIES</a>
                     </li>
-                    <li ui-sref="{{'resource.list' + nav.nav_url}}" ui-sref-opts="{{nav.notify}}" ng-class="{ 'active' : nav.state.current.name == 'resource.list' }" ng-if="!global.community.resource">
+                    <li ui-sref="{{'resource.list' + nav.nav_url}}" ui-sref-opts="{{nav.notify}}" ng-class="{ 'active' : nav.state.current.name == 'resource.list' }">
                         <a>RESOURCES</a>
                     </li>
                 </ul>
+
+            </div>
+
+            <div class="pull-right">
 
                 <ul ng-if="global.community.type == 'user' || global.community.type == 'company'" class="header-nav" style="margin-left:-40px;" >
                     <li ng-if="global.location.key !== global.community.key">
@@ -26,22 +30,19 @@
                         <a ui-sref="community.dashboard({location_path: global.community.key})" style="color:#bbb;">&nbsp;&nbsp;{{ global.community.profile.name.toUpperCase() }}</a>
                     </li>
                 </ul>
-            </div>
+                <div ng-if="global.community.type !== 'user' && global.community.type !== 'company'">
+                    <div ng-if="!global.user" style="padding-top: 6px; margin-right: 8px; float: right;">
+                        <button ladda="addco" class="ladda-btn btn btn-sm btn-success" ng-click="addco = true; nav.requestInvitation();" style="font-size: 12px; color: #fff;">Add Company</button>
+                    </div>
+                    <div ng-if="global.user" style="padding-top: 6px; margin-right: 8px; float: right;">
+                        <button ng-if="nav.state.current.name !== 'resource.list'" ladda="addco" ng-click="addco = true" class="ladda-btn btn btn-sm btn-success" ui-sref="company.add" style="font-size: 12px; color: #fff;">Add Company</button>
+                        <button ng-if="nav.state.current.name == 'resource.list'" ladda="addres" ng-click="addres = true" class="ladda-btn btn btn-sm btn-success" ui-sref="resource.add" style="font-size: 12px; color: #fff;">Add Resource</button>
+                    </div>
 
-            <div class="pull-right" ng-if="(nav.state.current.name !== 'resource.list')">
-                <div ng-if="!global.user && (nav.state.current.name == 'company.list')" style="padding-top: 6px; margin-right: 8px; float: right;">
-                    <button ladda="addco" class="ladda-btn btn btn-sm btn-success" ng-click="addco = true; nav.requestInvitation();" style="font-size: 12px; color: #fff;">Add Company</button>
+                    <div ng-if="global.user" style="padding-top: 6px; margin-right: 8px; float: right;">
+                        <button ladda="invitepeople" class="ladda-btn btn btn-sm btn-info" ng-click="invitepeople = true; nav.invitePeople();" style="font-size: 12px; color: #fff;">Invite People</button>
+                    </div>
                 </div>
-                <div ng-if="global.user && (global.community.type == 'cluster' || (global.community.resource && global.user.roles.leader[global.community.key]) || (global.community.type == 'location' && global.user.communities.indexOf(nav.location.key) > -1))" style="padding-top: 6px; margin-right: 8px; float: right;">
-                    <button ladda="addco" ng-click="addco = true" class="ladda-btn btn btn-sm btn-success" ui-sref="company.add" style="font-size: 12px; color: #fff;">Add Company</button>
-                </div>
-
-                <div ng-if="global.user && (global.community.type == 'cluster' || (global.community.resource && global.user.roles.leader[global.community.key]) || (global.community.type == 'location' && global.user.communities.indexOf(global.location.key) > -1))" style="padding-top: 6px; margin-right: 8px; float: right;">
-                    <button ladda="invitepeople" class="ladda-btn btn btn-sm btn-info" ng-click="invitepeople = true; nav.invitePeople();" style="font-size: 12px; color: #fff;">Invite People</button>
-                </div>
-            </div>
-            <div class="pull-right" ng-if="global.user && (nav.state.current.name == 'resource.list')" style="padding-top: 6px; margin-right: 8px;">
-                <button ladda="addres" ng-click="addres = true" class="ladda-btn btn btn-sm btn-success" ui-sref="resource.add" style="font-size: 12px; color: #fff;">Add Resource</button>
             </div>
         </div>
     </div>
