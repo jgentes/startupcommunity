@@ -296,6 +296,10 @@ function NavigationController($scope, $auth, $state, $window, $location, $stateP
                 case 'edit':
                     $state.go('company.edit', {}, {location: false});
                     break;
+
+                case 'add':
+                    $state.go('company.add', {}, {location: false});
+                    break;
             }
         } else {
 
@@ -313,8 +317,6 @@ function NavigationController($scope, $auth, $state, $window, $location, $stateP
                     $state.go('community.dashboard');
             }
         }
-
-        self.loaders = {}; // for various loading indicators in navigation
 
         // the industry_icons save me a db call on every controller reload :) because top doesn't include item values.. maybe combine this with 'parents' service?
         $scope.global.industry_icons = { "construction": {"icon": "fa-wrench"}, "legal": {"icon": "fa-gavel"}, "tech": {"icon": "fa-code"}, "medical": {"icon": "fa-stethoscope"}, "healthcare": {"icon": "fa-ambulance"}, "recreation": {"icon": "fa-sun-o"}, "art": {"icon": "fa-picture-o"}, "transportation": {"icon": "fa-road"}, "consumer-goods": {"icon": "fa-barcode"}, "non-profit": {"icon": "fa-heart-o"}, "corporate": {"icon": "fa-building-o"}, "government": {"icon": "fa-university"}, "finance": {"icon": "fa-pie-chart"}, "education": {"icon": "fa-graduation-cap"}, "manufacturing": {"icon": "fa-cube"}, "agriculture": {"icon": "fa-pagelines"}, "services": {"icon": "fa-bell-o"}};

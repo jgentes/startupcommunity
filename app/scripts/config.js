@@ -112,7 +112,7 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                     templateUrl: "components/header/header_small.html"
                 },
                 'content': {
-                    templateUrl: "../components/companies/company.dashboard.html",
+                    templateUrl: "components/companies/company.dashboard.html",
                     controller: 'CompanyProfileController as profile'
                 }
             }
@@ -123,24 +123,16 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                     templateUrl: "components/header/header_small.html"
                 },
                 'content': {
-                    templateUrl: '../components/companies/company.list.html',
+                    templateUrl: 'components/companies/company.list.html',
                     controller: "CompanyController as companies"
                 }
             }
         })
         .state('company.add', {
-            url: "^/:location_path/:community_path/add",
-            params: {
-                location_path: {
-                    squash: true
-                },
-                community_path: {
-                    squash: true
-                }
-            },
+            url: "^/:location_path/company/add",
             views: {
                 'content': {
-                    templateUrl: '../components/resources/resource.add.html',
+                    templateUrl: 'components/resources/resource.add.html',
                     controller: "EditCompanyController as add"
                 }
             }
@@ -149,7 +141,7 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
             url: "/edit",
             views: {
                 'content': {
-                    templateUrl: '../components/resources/resource.add.html',
+                    templateUrl: 'components/resources/resource.add.html',
                     controller: "EditCompanyController as add"
                 }
             }
@@ -166,8 +158,26 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                     templateUrl: "components/header/header_small.html"
                 },
                 'content': {
-                    templateUrl: '../components/companies/company.list.html',
+                    templateUrl: 'components/companies/company.list.html',
                     controller: "CompanyController as companies"
+                }
+            }
+        })
+        .state('resource.add', {
+            url: "^/:location_path/resource/add",
+            views: {
+                'content': {
+                    templateUrl: 'components/resources/resource.add.html',
+                    controller: "EditCompanyController as add"
+                }
+            }
+        })
+        .state('resource.edit', {
+            url: "/edit",
+            views: {
+                'content': {
+                    templateUrl: 'components/resources/resource.add.html',
+                    controller: "EditCompanyController as add"
                 }
             }
         })

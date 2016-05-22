@@ -9,12 +9,12 @@
             <a title="Show Summary" ng-click="showSummary = !showSummary" class="user-summary">&nbsp;&nbsp;<i style="font-size: 8px;" class="fa fa-chevron-down"></i></a>
         </div>
         <span loading-bars ng-if="nav.loaders[item.value.profile.name]"></span>
-        <span ng-if="!item.value.resource">
+        <span ng-if="!item.value.resource && item.value.profile.parents[0]">
             <li class="role-right">
                 <button style="cursor: default;" class="btn btn-xs btn-outline btn-default">{{item.value.profile.parents[0][0].toUpperCase() + item.value.profile.parents[0].slice(1);}}</button>
             </li>
         </span>
-        <span ng-if="item.value.resource">
+        <span ng-if="item.value.resource && item.value.resource_types[0]">
             <li class="role-right">
                 <button style="cursor: default;" class="btn btn-xs btn-outline btn-default">{{item.value.resource_types[0][0].toUpperCase() + item.value.resource_types[0].slice(1);}}</button>
             </li>

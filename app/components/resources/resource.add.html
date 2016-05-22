@@ -4,7 +4,7 @@
 
         <div ng-if="!add.update">
             <div class="col-xs-12">
-                <h4 class="modal-title">Add a {{ add.is_resource ? 'resource' : 'company' }} to {{global.location.profile.name.split(',').slice(0, (global.location.profile.name.split(',').length - 1) || 1).join()}}</h4>
+                <h4 class="modal-title">Add a {{ nav.state.current.name == 'resource.add' ? 'resource' : 'company' }} to {{global.location.profile.name.split(',').slice(0, (global.location.profile.name.split(',').length - 1) || 1).join()}}</h4>
                 <p class="font-bold">{{ add.is_resource ?
                     'Resources are coworking spaces, accelerators, investment funds, networking events, and other organizations that support entrepreneurship.' :
                     'Only add companies that are part of your local startup community.' }} </p>
@@ -195,7 +195,7 @@
                 <button ng-click="add.step = 1" ng-disabled="add.step == 1" class="btn btn-default">Previous</button>
                 <button ng-click="add.checkUrl()" ng-disabled="!add.selectedCompany.name || !add.selectedCompany.parent" ng-hide="add.step == 2" class="btn btn-success">Next</button>
                 <button ladda="add.working" class="ladda-button finish btn-success btn" data-style="zoom-in" data-spinner-size="25" ng-show="add.step == 2" ng-click="add.addCompany($event)" type="submit">{{ (add.update ? 'Update ' : 'Add ') + (add.selectedCompany.name || (add.is_resource ? 'Resource' : 'Company')) }}</button>
-                <div ng-if="!add.update && !add.is_resource" class="pull-left" style="margin-top:10px;"><i><a ui-sref="resource.add">Click here if this company is a resource (coworking space, accelerator, event, etc)</a></i></div>
+                <div ng-if="!add.update && nav.state.current.name !== 'resource.add'" class="pull-left" style="margin-top:10px;"><i><a ui-sref="resource.add">Click here if this company is a resource (coworking space, accelerator, event, etc)</a></i></div>
             </div>
 
         </form>
