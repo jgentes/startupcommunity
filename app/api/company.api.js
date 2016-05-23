@@ -455,22 +455,6 @@ var addRole = function(company_key, role, location_key, user_key) {
 
             if (response.body.code !== "items_not_found") {
 
-                if (!response.body.roles) {
-                    response.body["roles"] = {};
-                } else {
-                    // search for existing role and delete if found
-
-                    for (r in response.body.roles) {
-                        if (r !== 'leader') {
-                            for (co in response.body.roles[r]) {
-                                if (co == company_key) {
-                                    delete response.body.roles[r][co];
-                                }
-                            }
-                        }                        
-                    }
-                }
-
                 console.log(role, company_key, location_key);
                 console.log(response.body.roles);
 

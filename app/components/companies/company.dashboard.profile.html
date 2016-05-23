@@ -2,17 +2,17 @@
     <div class="col-sm-12">
         <div style="padding-bottom: 20px;">
             <div>
-                <div ng-if="::profile.company.profile.angellist.angellist_url" class="pull-right">
-                    <a href="{{::profile.company.profile.angellist.angellist_url}}" target="_blank"><i class="fa fa-angellist btn btn-default btn-xs"></i>
+                <div ng-if="::global.profile.profile.angellist.angellist_url" class="pull-right">
+                    <a href="{{::global.profile.profile.angellist.angellist_url}}" target="_blank"><i class="fa fa-angellist btn btn-default btn-xs"></i>
                     </a>
                 </div>
                 <div class="pull-left">
-                    <img ng-src="{{profile.company.profile.avatar}}" style="height:60px; padding-right: 10px;"/>
+                    <img ng-src="{{global.profile.profile.avatar}}" style="height:60px; padding-right: 10px;"/>
                 </div>
             </div>
-            <h3 style="padding-left: 4px;">{{::profile.company.profile.name}}</h3>
+            <h3 style="padding-left: 4px;">{{::global.profile.profile.name}}</h3>
             <h4>
-                {{::profile.company.profile.headline}}
+                {{::global.profile.profile.headline}}
             </h4>
         </div>
 
@@ -62,17 +62,17 @@
     <div>
         <ul class="profile-ul">
             <p style="font-size: 14px; padding: 2px 5px 0 20px; float: left;">Communities:</p>
-            <li ng-repeat="community in profile.company.communities" class="profile-roles">
+            <li ng-repeat="community in global.profile.communities" class="profile-roles">
                 <a ui-sref="community.dashboard({location_path: community})" class="btn btn-xs btn-outline" ng-class="{'btn-danger' : global.community[community].type == 'company', 'btn-info' : global.community[community].resource, 'btn-primary' : global.community[community].type == 'cluster', 'btn-success' : global.community[community].type == 'location'}"><i class="fa {{global.community[community].profile.icon}}"></i> {{global.community[community].profile.name}}</a>
             </li>
         </ul>
     </div>
 </div>
 
-<div ng-show="profile.company.profile.summary" class="panel-footer" style="margin-top:10px;">
+<div ng-show="global.profile.profile.summary" class="panel-footer" style="margin-top:10px;">
     <h3>Summary</h3>
-    <p style="white-space:pre-wrap;" ng-bind-html="::profile.company.profile.summary | linky:'_blank'"></p>
+    <p style="white-space:pre-wrap;" ng-bind-html="::global.profile.profile.summary | linky:'_blank'"></p>
     <hr>
-    <h3 ng-show="profile.company.profile.industries">Markets</h3>
-    <li ng-repeat="industry in profile.company.profile.industries" class="label btn-default skills"><a href="#" ui-sref="search.dashboard({location_path: global.location.key})">{{::industry}}</a></li>
+    <h3 ng-show="global.profile.profile.industries">Markets</h3>
+    <li ng-repeat="industry in global.profile.profile.industries" class="label btn-default skills"><a href="#" ui-sref="search.dashboard({location_path: global.location.key})">{{::industry}}</a></li>
 </div>

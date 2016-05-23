@@ -220,7 +220,7 @@ function CompanyProfileController($scope, $stateParams, $mixpanel, user_service,
 
     $mixpanel.track('Viewed Company');
 
-    if (!jQuery.isEmptyObject($stateParams.profile)) this.company = $stateParams.profile; // set basic profile details while pulling the rest
+    if (!jQuery.isEmptyObject($stateParams.profile)) $scope.global['profile'] = $stateParams.profile; // set basic profile details while pulling the rest
 
     var self = this;
     this.team_panels = user_service.team_panels();
@@ -230,17 +230,17 @@ function CompanyProfileController($scope, $stateParams, $mixpanel, user_service,
         
         if ($scope.global.community && $scope.global.community.type == "company" && $scope.global.community.team) {
             // if directly accessed via url
-            self.company = $scope.global.community;
+            $scope.global['profile'] = $scope.global.community;
         } else {
-            var companykey = (self.company && self.company.key) ?
-                self.company.key :
+            var companykey = ($scope.global.profile && $scope.global.profile.key) ?
+                $scope.global.profile.key :
                 $stateParams.community_path ?
                     $stateParams.community_path :
                     $stateParams.location_path;
 
             community_service.getCommunity(companykey)
                 .then(function (response) {
-                    self.company = response.data;
+                    $scope.global['profile'] = response.data;
                 });
         }
         
@@ -254,9 +254,9 @@ function CompanyProfileController($scope, $stateParams, $mixpanel, user_service,
 
     this.remove = function(role) {
         
-        user_service.removeRole(role, self.company.key)
+        user_service.removeRole(role, $scope.global.profile.key)
             .then(function(response) {
-                $http.get('/api/2.1/community/' + self.company.key + '?nocache=true'); //clear cache
+                $http.get('/api/2.1/community/' + $scope.global.profile.key + '?nocache=true'); //clear cache
 
                 if (response.status !== 201) {
                     sweet.show({
@@ -271,7 +271,7 @@ function CompanyProfileController($scope, $stateParams, $mixpanel, user_service,
                         text: response.data.message,
                         type: "success"
                     }, function () {
-                        $window.location.href = '/' + self.company.key;
+                        $window.location.href = '/' + $scope.global.profile.key;
                     });
                 }
             })
@@ -285,7 +285,7 @@ function CompanyProfileController($scope, $stateParams, $mixpanel, user_service,
 
         var limit = $location.search().limit;
 
-        user_service.search([$scope.global.location.key, self.company.key], [], '*', undefined, limit, alturl)
+        user_service.search([$scope.global.location.key, $scope.global.profile.key], [], '*', undefined, limit, alturl)
             .then(function (response) {
                 self.users = result_service.setPage(response.data);
                 self.loadingUser = false;                
@@ -367,14 +367,14 @@ function EditCompanyController($scope, $state, $stateParams, sweet, $q, $window,
                             text: response.data.message,
                             type: "success"
                         }, function() {
-                            $state.go('company.dashboard', {location_path: $scope.global.community.key, community_path: null, profile: $scope.global.community, tail_path: '' });
+                            $state.go('company.dashboard', {location_path: $scope.global.community.key, community_path: null, profile: $scope.global.profile, tail_path: '' });
                         });
                     }
                 };
 
                 $http.get('/api/2.1/community/' + response.data.key + '?nocache=true')
                     .then(function() {
-                        $scope.global.community = response.data;
+                        $scope.global.profile = response.data;
                         wrap();
                     }); //clear cache
 
