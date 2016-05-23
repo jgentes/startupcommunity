@@ -7,7 +7,7 @@ angular
 function NavigationController($scope, $auth, $state, $window, $location, $stateParams, $uibModal, $mixpanel, user_service, community_service, sweet, knowtify, errorLogService, newsletter_service) {
 
     var self = this;
-    
+
     $scope.global.path = $location.path().replace(/\/$/, ""); //used for routing and used in view
     $scope.global.query = undefined;
     $scope.global.top = undefined;

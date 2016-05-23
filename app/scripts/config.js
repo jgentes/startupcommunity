@@ -300,13 +300,14 @@ angular
             // remove the splash screen
             $timeout( function() {
                 $('#majorsplash').css('display', 'none');
-                //$('#minorsplash').css('display', 'none');
+                $('#minorsplash').css('display', 'none');
             }, 500);
         });
 
 
         $rootScope.$on('$stateChangeStart',
             function(event, toState, toParams, fromState, fromParams){
+                $('#minorsplash').css('display', 'block');
                 console.log('----------------------------');
                 console.log('from: ' + fromState.name);
                 //console.log(fromState);
