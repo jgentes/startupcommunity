@@ -12,10 +12,10 @@ function NavigationController($scope, $auth, $state, $window, $location, $stateP
     $scope.global.query = undefined;
     $scope.global.top = undefined;
     $scope.global.community = undefined;
+    $scope.global.lastitems = ["people", "companies", "resources", "search", "invite", "add-company", "add-resource", "welcome", "settings", "edit"];
     this.state = $state; // used in view because path doesn't always update properly.. esp. for /people
 
-    var nav_community,
-        lastitems = ["people", "companies", "resources", "search", "invite", "add-company", "add-resource", "welcome", "settings", "edit"];
+    var nav_community;
 
     var getProfile = function() {
         
@@ -81,11 +81,8 @@ function NavigationController($scope, $auth, $state, $window, $location, $stateP
                 lastitem = url.pop(),
                 root = url.pop();
 
-            if (lastitems.indexOf(lastitem) > -1) {
-                if (lastitem == "invite" || lastitem == "add") {
-                    pullCommunity(url.pop());
-                    // return preceding url path as community, such as tech for 'bend-or/tech/people'
-                } else pullCommunity(root);
+            if ($scope.global.lastitems.indexOf(lastitem) > -1) {
+                pullCommunity(root);
             } else {
                 pullCommunity($stateParams.community_path || $stateParams.location_path);
             }
@@ -97,7 +94,7 @@ function NavigationController($scope, $auth, $state, $window, $location, $stateP
 
         // check if community is already in $scope.global
 
-        if ($stateParams.community_path && lastitems.indexOf($stateParams.community_path) < 0) {
+        if ($stateParams.community_path && $scope.global.lastitems.indexOf($stateParams.community_path) < 0) {
             if ($scope.global.location && $scope.global.location.key == $stateParams.community_path) {
                 $scope.global.community = $scope.global.location;
                 getLocation();
@@ -132,7 +129,7 @@ function NavigationController($scope, $auth, $state, $window, $location, $stateP
             getNavTop();
         } else
             if ($stateParams.location_path !== nav_community.key) {
-
+                
                 community_service.getCommunity($stateParams.location_path)
                     .then(function(response) {
                         $scope.global.location = response.data;
@@ -237,7 +234,7 @@ function NavigationController($scope, $auth, $state, $window, $location, $stateP
         
         $scope.global['nav'] = $scope.global.nav || {};
 
-        if (($scope.global.location.key !== $scope.global.community.key && lastitems.indexOf($stateParams.community_path) < 0 && $scope.global.community.type !== 'user' && $scope.global.community.type !== 'company') || ($scope.global.community.type == 'cluster')) {
+        if (($scope.global.location.key !== $scope.global.community.key && $scope.global.lastitems.indexOf($stateParams.community_path) < 0 && $scope.global.community.type !== 'user' && $scope.global.community.type !== 'company') || ($scope.global.community.type == 'cluster')) {
             $scope.global.nav['overview'] = $scope.global.community.key;
             $scope.global.nav['people'] = {
                 community: $scope.global.community.key,
@@ -271,7 +268,7 @@ function NavigationController($scope, $auth, $state, $window, $location, $stateP
 
         var path_url = $location.path().replace(/\/$/, "").split('/').pop();
 
-        if (lastitems.indexOf(path_url) > -1) {
+        if ($scope.global.lastitems.indexOf(path_url) > -1) {
 
             switch (path_url) {
 
@@ -356,7 +353,7 @@ function NavigationController($scope, $auth, $state, $window, $location, $stateP
                         $state.go('search.dashboard', {location_path: $stateParams.location_path, community_path: $scope.global.community.key, query: query, tail_path: ''}, {reload: true});
             } else if ($scope.global.community.type == "user" || $scope.global.community.type == "company") {
                 $state.go('search.dashboard', {location_path: $scope.global.community.profile.home, query: query, tail_path: ''}, {notify: false});
-            } else if (lastitems.indexOf($stateParams.community_path) > -1) {
+            } else if ($scope.global.lastitems.indexOf($stateParams.community_path) > -1) {
                 $state.go('search.dashboard', {location_path: $stateParams.location_path, community_path: '', query: query, tail_path: ''}, {location: false})
             } else $state.go('search.dashboard', {query: query, tail_path: ''}, {notify: false});
 

@@ -505,7 +505,7 @@ function EditCompanyController($scope, $state, $stateParams, sweet, $q, $window,
         };
 
         if ($stateParams.community_path !== $scope.global.community.key) {
-            if ($stateParams.community_path !== $scope.global.location.key) {
+            if ($stateParams.community_path !== $scope.global.location.key && $scope.global.lastitems.indexOf($stateParams.community_path) < 0) {
                 community_service.getCommunity($stateParams.community_path)
                     .then(function (response) {
                         $scope.global.community = response.data;
