@@ -518,7 +518,6 @@ function handleCheckUrl(req, res) {
 }
 
 var companyPost = function (company, role, location_key, user, key, update, callback) {
-    console.log(company);
 
     db.put(process.env.DB_COMMUNITIES, key, company)
         .then(function (response) {
