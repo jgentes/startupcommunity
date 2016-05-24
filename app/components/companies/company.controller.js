@@ -367,16 +367,13 @@ function EditCompanyController($scope, $state, $stateParams, sweet, $q, $window,
                             text: response.data.message,
                             type: "success"
                         }, function() {
-                            $state.go('company.dashboard', {location_path: $scope.global.community.key, community_path: null, profile: $scope.global.profile, tail_path: '' });
+                            $state.go('company.dashboard', {location_path: $scope.global.profile.key, community_path: null, profile: $scope.global.profile, tail_path: '' });
                         });
                     }
                 };
 
-                $http.get('/api/2.1/community/' + response.data.key + '?nocache=true')
-                    .then(function() {
-                        $scope.global.profile = response.data;
-                        wrap();
-                    }); //clear cache
+                $scope.global.profile = response.data;
+                wrap();
 
             })
             .catch(function(error) {
@@ -426,6 +423,7 @@ function EditCompanyController($scope, $state, $stateParams, sweet, $q, $window,
             company_service.deleteCompany(company_key)
                 .then(function(response) {
                     self.del_working = false;
+                    $http.get('/' + $scope.global.user.profile.home); // refresh outdated cache for top
 
                     if (response.status !== 204) {
                         sweet.show({
@@ -440,7 +438,6 @@ function EditCompanyController($scope, $state, $stateParams, sweet, $q, $window,
                             text: self.selectedCompany.name + " is gone.",
                             type: "success"
                         }, function() {
-                            $http.get('/api/2.1/community/' + $scope.global.user.profile.home); // refresh outdated cache
                             $window.location.href = '/' + $scope.global.user.profile.home;
                         })
                     }

@@ -458,13 +458,13 @@ var addRole = function(company_key, roles, location_key, user_key) {
                 // add new role
                 
                 for (role in roles) {
-                    if (!response.body.roles[role]) {
-                        response.body.roles[role] = {};
-                        response.body.roles[role][company_key] = [location_key];
-                    } else if (!response.body.roles[role][company_key]) {
-                        response.body.roles[role][company_key] = [location_key];
-                    } else if (response.body.roles[role][company_key].indexOf(location_key) < 0) {
-                        response.body.roles[role][company_key].push(location_key);
+                    if (!response.body.roles[roles[role]]) {
+                        response.body.roles[roles[role]] = {};
+                        response.body.roles[roles[role]][company_key] = [location_key];
+                    } else if (!response.body.roles[roles[role]][company_key]) {
+                        response.body.roles[roles[role]][company_key] = [location_key];
+                    } else if (response.body.roles[roles[role]][company_key].indexOf(location_key) < 0) {
+                        response.body.roles[roles[role]][company_key].push(location_key);
                     } // else the damn thing is already there
 
                     // add community
@@ -477,11 +477,9 @@ var addRole = function(company_key, roles, location_key, user_key) {
                     }
                 }
 
-               
-
                 db.put(process.env.DB_COMMUNITIES, user_key, response.body)
                     .then(function(result) {
-                        console.log('User ' + user_key + ' updated with ' + toString(roles));
+                        console.log('User ' + user_key + ' updated with ', roles);
                     })
                     .fail(function(err){
                         console.warn("WARNING: ", err);
@@ -540,8 +538,6 @@ var companyPost = function (company, role, location_key, user, key, update, call
             } else {
 
                 // if resource, add creator as leader
-
-                
 
                 console.log("REGISTERED: " + company.profile.name + " as " + companykey);
                 company["message"] = "Well done! You've added " + company.profile.name + " to the community.";
