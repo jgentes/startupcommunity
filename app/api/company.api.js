@@ -448,39 +448,40 @@ function handleDeleteCompany(req, res) {
     }
 }
 
-var addRole = function(company_key, role, location_key, user_key) {
+var addRole = function(company_key, roles, location_key, user_key) {
 
     db.get(process.env.DB_COMMUNITIES, user_key)
         .then(function(response){
 
             if (response.body.code !== "items_not_found") {
 
-                console.log(role, company_key, location_key);
-                console.log(response.body.roles);
-
                 // add new role
+                
+                for (role in roles) {
+                    if (!response.body.roles[role]) {
+                        response.body.roles[role] = {};
+                        response.body.roles[role][company_key] = [location_key];
+                    } else if (!response.body.roles[role][company_key]) {
+                        response.body.roles[role][company_key] = [location_key];
+                    } else if (response.body.roles[role][company_key].indexOf(location_key) < 0) {
+                        response.body.roles[role][company_key].push(location_key);
+                    } // else the damn thing is already there
 
-                if (!response.body.roles[role]) {
-                    response.body.roles[role] = {};
-                    response.body.roles[role][company_key] = [location_key];
-                } else if (!response.body.roles[role][company_key]) {
-                    response.body.roles[role][company_key] = [location_key];
-                } else if (response.body.roles[role][company_key].indexOf(location_key) < 0) {
-                    response.body.roles[role][company_key].push(location_key);
-                } // else the damn thing is already there
+                    // add community
+                    if (!response.body.communities) {
+                        response.body["communities"] = {};
+                    }
 
-                // add community
-                if (!response.body.communities) {
-                    response.body["communities"] = {};
+                    if (response.body.communities.indexOf(company_key) < 0) {
+                        response.body.communities.push(company_key);
+                    }
                 }
 
-                if (response.body.communities.indexOf(company_key) < 0) {
-                    response.body.communities.push(company_key);
-                }
+               
 
                 db.put(process.env.DB_COMMUNITIES, user_key, response.body)
                     .then(function(result) {
-                        console.log('User ' + user_key + ' updated with ' + role + ' role.');
+                        console.log('User ' + user_key + ' updated with ' + toString(roles));
                     })
                     .fail(function(err){
                         console.warn("WARNING: ", err);
@@ -524,8 +525,11 @@ var companyPost = function (company, role, location_key, user, key, update, call
 
             var companykey = response.headers.location.split('/')[3];
 
-            if (role) {
-                addRole(companykey, role, location_key, user);
+            roles = role ? [role] : [];
+            if (company.resource) roles.push('leader');
+            
+            if (roles.length) {
+                addRole(companykey, roles, location_key, user);
             }
 
             if (update) {
@@ -537,7 +541,7 @@ var companyPost = function (company, role, location_key, user, key, update, call
 
                 // if resource, add creator as leader
 
-                if (company.resource) addRole(companykey, 'leader', location_key, user);
+                
 
                 console.log("REGISTERED: " + company.profile.name + " as " + companykey);
                 company["message"] = "Well done! You've added " + company.profile.name + " to the community.";
