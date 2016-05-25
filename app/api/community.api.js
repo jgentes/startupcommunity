@@ -379,6 +379,7 @@ function handleGetResources(req, res) {
 
     var location_key = req.body.location_key,
         resources = req.body.resources,
+        clusters = req.body.clusters,
         searchstring;
 
     if (resources) {
@@ -387,8 +388,12 @@ function handleGetResources(req, res) {
             searchstring += resources[r];
             if (r < resources.length - 1) searchstring += ' OR ';
         }
-        searchstring += ') AND @value.resource: true'
-    } else searchstring = '@value.resource: true AND @value.communities: "' + location_key + '"';
+        searchstring += ')';
+    } else searchstring = '@value.communities: "' + location_key + '"';
+    
+    if (clusters) {
+        searchstring += ' AND (@value.resource: true OR @value.type: "cluster")';
+    } else searchstring += ' AND @value.resource: true';
 
     if (searchstring) {
         

@@ -1,16 +1,16 @@
 <div class="col-md-12 dash-table">
     <div>
-        <a ui-sref="user.dashboard({ community_path: item.path.key, tail_path: '', profile: item.value, query: null })" ng-click="nav.loaders[item.value.profile.name] = true" title="View {{::item.value.profile.name | words:0}}'s Profile">
+        <a ui-sref="user.dashboard({ community_path: item.path.key, tail_path: '', profile: item.value, query: null })" ng-click="global.loaders[item.value.profile.name] = true" title="View {{::item.value.profile.name | words:0}}'s Profile">
             <img ng-src="{{item.value.profile.avatar || '/public/images/blank_avatar.png'}}" alt="{{::item.value.profile.name}}" class="user-img widget-image img-circle pull-left" onerror="this.src='/public/images/blank_avatar.png'"/>
         </a>
     </div>
     <div class="user-row list-hr">
         <a ng-show="(global.community.resource || global.location.resource) && global.user.roles.leader[global.community.key]" ng-click="nav.removeUser(item)" title="Remove {{::item.value.profile.name}} from {{global.community.profile.name}}" style="font-size: 11px; color:#bbb; padding-left:4px;">remove</a>
-        <a ui-sref="user.dashboard({ community_path: item.path.key, tail_path: '', profile: item.value, query: null })" title="View {{::item.value.profile.name | words:0}}'s Profile" ng-click="nav.loaders[item.value.profile.name] = true" class="dash-row-div"><strong>{{::item.value.profile.name}} </strong></a>
+        <a ui-sref="user.dashboard({ community_path: item.path.key, tail_path: '', profile: item.value, query: null })" title="View {{::item.value.profile.name | words:0}}'s Profile" ng-click="global.loaders[item.value.profile.name] = true" class="dash-row-div"><strong>{{::item.value.profile.name}} </strong></a>
         <div class="dash-row-summary" ng-show="item.value.profile.summary.length > 0">
             <a title="Show Summary" ng-click="showSummary = !showSummary" class="user-summary">&nbsp;<i style="font-size: 8px;" class="fa fa-chevron-down"></i></a>
         </div>
-        <span loading-bars ng-if="nav.loaders[item.value.profile.name]"></span>
+        <span loading-bars ng-if="global.loaders[item.value.profile.name]"></span>
         <li ng-repeat="(item, val) in item.value.roles" class="user-role role-right" ><i ng-attr-title="{{item[0].toUpperCase() + item.slice(1);}}" style="font-weight: bold;" ng-class="{'text-primary pe-7s-paper-plane' : item == 'founder', 'text-danger pe-7s-flag' : item == 'leader', 'text-info pe-7s-study' : item == 'mentor', 'text-success pe-7s-gleam' : item == 'investor', 'text-default pe-7s-ball' : item == 'team', 'text-warning pe-7s-portfolio' : item == 'provider'}"></i></li>
         <br>
         <div class="dash-row">

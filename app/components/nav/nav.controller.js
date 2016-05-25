@@ -12,6 +12,7 @@ function NavigationController($scope, $auth, $state, $window, $location, $stateP
     $scope.global.query = undefined;
     $scope.global.top = undefined;
     $scope.global.community = undefined;
+    $scope.global.loaders = undefined;
     $scope.global.lastitems = ["people", "companies", "resources", "search", "invite", "add-company", "add-resource", "welcome", "settings", "edit"];
     this.state = $state; // used in view because path doesn't always update properly.. esp. for /people
 
@@ -303,6 +304,13 @@ function NavigationController($scope, $auth, $state, $window, $location, $stateP
                 case 'add-resource':
                     $state.go('resource.add', {}, {location: false});
                     break;
+
+                case 'welcome':
+                    $state.go('welcome', {}, {location: false});
+                    break;
+
+                default:
+                    $state.go('404', {}, {location: false});
             }
         } else {
 
@@ -508,51 +516,35 @@ function NavigationController($scope, $auth, $state, $window, $location, $stateP
                 templateUrl: 'components/users/user.request_invite.html',
                 controller: InviteUserController,
                 controllerAs: 'invite',
-                windowClass: "hmodal-info",
-                resolve: {
-                    user: function() {
-                        return null;
-                    },
-                    community: function() {
-                        return $scope.global.location;
-                    },
-                    communities: function() {
-                        return $scope.global.community;
-                    },
-                    location: function() {
-                        if ($scope.global.location.resource || $scope.global.location.type == 'cluster') {
-                            return $scope.global.community[$scope.global.location.profile.home];
-                        } else return $scope.global.location;
-                    }
-                }
+                windowClass: "hmodal-info"
             });
         };
 
         // INVITE PEOPLE
     
-    this.invitePeople = function() {
-        
-        var modalInstance = $uibModal.open({
-            templateUrl: 'components/users/user.invite.html',
-            controller: InviteUserController,
-            controllerAs: 'invite',
-            windowClass: "hmodal-info",
-            resolve: {
-                user: function() {
-                    return $scope.global.user;
-                },
-                community: function() {
-                    return self.community;
-                },
-                communities: function() {
-                    return self.communities;
-                },
-                location: function() {
-                    return self.location;
+        self.invitePeople = function() {
+
+            var modalInstance = $uibModal.open({
+                templateUrl: 'components/users/user.invite.html',
+                controller: InviteUserController,
+                controllerAs: 'invite',
+                windowClass: "hmodal-info",
+                resolve: {
+                    user: function() {
+                        return $scope.global.user;
+                    },
+                    community: function() {
+                        return self.community;
+                    },
+                    communities: function() {
+                        return self.communities;
+                    },
+                    location: function() {
+                        return self.location;
+                    }
                 }
-            }
-        });
-    };
+            });
+        };
 
         // CHECK FOR IFRAME (redirect, if needed, must happen after routing)
         

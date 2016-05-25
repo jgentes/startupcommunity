@@ -16,7 +16,7 @@
                         <input type="text" placeholder="Optional message.." class="form-control input-lg" name="message" ng-model="invite.form.message_value">
                     </div>
                     <table class="form-group" style="font-size: 20px; font-weight:300;">
-                        <tr ng-repeat="k in invite.resources" ng-if="k.resource">
+                        <tr ng-repeat="k in invite.resources">
                             <td style="width:20px;">
                                 <input type="checkbox" class="form-control checkbox" ng-model="invite.form.resources[k.key]">
                             </td>
@@ -25,7 +25,7 @@
                             </td>
                         </tr>
                     </table>
-                    <input type="submit" style="float:left" class="finish btn-success btn" ng-class="{'disabled' : disabled}" value="Send Invitation" /><div style="padding-top: 6px; margin-bottom: -24px;" ng-show="invite.working" loading-bars></div>
+                    <input type="submit" style="float:left" class="finish btn-success btn" ng-class="{'disabled' : disabled}" value="Send Invitation" /><div style="padding-top: 6px; margin-bottom: -24px;" ng-show="global.loaders['invite']" loading-bars></div>
                 </form>
             </div>
         </div>

@@ -2,42 +2,43 @@ angular
     .module('startupcommunity')
     .controller('WelcomeController', WelcomeController);
 
-function WelcomeController($scope, $auth, $q, $http, $mixpanel, $stateParams, $state, sweet, user_service, community_service) {
-    var self = this;
+function WelcomeController($scope, $auth, $location, $q, $http, $mixpanel, $stateParams, $state, sweet, user_service, community_service) {
+    var self = this,
+        user = $scope.global.user,
+        community_path = $stateParams.community_path ? $stateParams.community_path : $stateParams.location_path;
+    
     $scope.global.location = jQuery.isEmptyObject($scope.global.location) ? $scope.global.community.profile.name : $scope.global.location.profile.name.split(',')[0];
-    this.auth = false;
+    this.panel = 'auth';
     this.working = false; // used for waiting indicator
-    var community_path = $stateParams.community_path ? $stateParams.community_path : $stateParams.location_path;
     this.industries = []; // need a placeholder until next call is resolved
     this.industries = community_service.industries();
     this.parents = []; // need a placeholder until next call is resolved
     this.parents = community_service.parents();
-    this.user = $scope.global.user;
     this.quote = true;
     this.submitted = false;
 
     var checkProfile = function() {
-        if (!self.user.profile["name"]) self.user.profile["name"] = self.user.profile.linkedin.firstName + ' ' + self.user.profile.linkedin.lastName;
-        if (!self.user.profile["email"]) self.user.profile["email"] = self.user.profile.linkedin.emailAddress;
-        if (!self.user.profile["headline"]) self.user.profile["headline"] = self.user.profile.linkedin.headline;
-        if (!self.user.profile["avatar"]) self.user.profile["avatar"] = self.user.profile.linkedin.pictureUrl;
-        if (!self.user.profile["summary"]) self.user.profile["summary"] = self.user.profile.linkedin.summary;
+        if (!user.profile["name"]) $scope.global.user.profile["name"] = user.profile.linkedin.firstName + ' ' + user.profile.linkedin.lastName;
+        if (!user.profile["email"]) $scope.global.user.profile["email"] = user.profile.linkedin.emailAddress;
+        if (!user.profile["headline"]) $scope.global.user.profile["headline"] = user.profile.linkedin.headline;
+        if (!user.profile["avatar"]) $scope.global.user.profile["avatar"] = user.profile.linkedin.pictureUrl;
+        if (!user.profile["summary"]) $scope.global.user.profile["summary"] = user.profile.linkedin.summary;
 
-        if (self.user.roles) {
+        if (user.roles) {
             if (!self.roles) self["roles"] = {};
-            for (role in self.user.roles) {
+            for (role in user.roles) {
                 if (role !== 'leader') {
                     self.roles[role] = true;
                 }
             }
         }
 
-        if (self.user.profile.skills) {
-            self.skills = self.user.profile.skills;
+        if (user.profile.skills) {
+            self.skills = user.profile.skills;
         } else self.skills =[];
 
-        if (self.user.profile.parents) {
-            switch(self.user.profile.parents[0]) {
+        if (user.profile.parents) {
+            switch(user.profile.parents[0]) {
                 case 'consumer-goods':
                     self.selectedParent = 'Consumer Goods';
                     break;
@@ -45,7 +46,7 @@ function WelcomeController($scope, $auth, $q, $http, $mixpanel, $stateParams, $s
                     self.selectedParent = 'Non-Profit';
                     break;
                 default:
-                    self.selectedParent = self.user.profile.parents[0][0].toUpperCase() + self.user.profile.parents[0].slice(1);
+                    self.selectedParent = user.profile.parents[0][0].toUpperCase() + user.profile.parents[0].slice(1);
             }
         }
     };
@@ -80,19 +81,18 @@ function WelcomeController($scope, $auth, $q, $http, $mixpanel, $stateParams, $s
     this.authenticate = function() {
 
         self.working = true;
-        if (!$stateParams.invite_code) {
+        if (!$location.search().invite_code) {
             this.alert = {type: 'danger', message: 'You must have an invitation to continue. Please check your email and click on the link provided there.'};
             self.working = false;
         } else {
-            $auth.authenticate('linkedin', {invite_code: $stateParams.invite_code})
+            $auth.authenticate('linkedin', {invite_code: $location.search().invite_code})
                 .then(function(response) {
 
                     if (response.status !== 200) {
                         self.alert = { type: 'danger', message: 'There was a problem: ' + String(response.data.message) };
                     } else {
-                        self.auth = true;
-                        self.user = response.data.value;
-                        self.user["key"] = response.data.path.key;
+                        $scope.global.user = response.data.value;
+                        $scope.global.user["key"] = response.data.path.key;
                         self.quote = false;
 
                         checkProfile();
@@ -100,7 +100,7 @@ function WelcomeController($scope, $auth, $q, $http, $mixpanel, $stateParams, $s
                         $mixpanel.identify(response.data.path.key);
                         $mixpanel.track('Accepted Invite');
 
-                        $state.go('welcome.roles');
+                        self.panel = 'roles';
                     }
 
                 })
@@ -115,12 +115,10 @@ function WelcomeController($scope, $auth, $q, $http, $mixpanel, $stateParams, $s
     };
 
     // if already authenticated, just move straight to roles
-    if (this.user && this.user.profile) {
+
+    if (user && user.profile) {
         checkProfile();
-        if ($stateParams.go) {
-            this.auth = true;
-            $state.go($stateParams.go);
-        }
+        this.panel = 'roles';
     }
 
     // for profile pic upload to S3
@@ -139,7 +137,7 @@ function WelcomeController($scope, $auth, $q, $http, $mixpanel, $stateParams, $s
 
                     xhr.onreadystatechange = function(e) {
                         if ( 4 == this.readyState ) {
-                            self.user.profile["avatar"] = fileUrl;
+                            $scope.global.user.profile["avatar"] = fileUrl;
                             d_completed.resolve(true);
                         }
                     };
@@ -154,7 +152,7 @@ function WelcomeController($scope, $auth, $q, $http, $mixpanel, $stateParams, $s
     this.submitProfile = function() {
 
         if (self.selectedParent) {
-            $state.go('welcome.skills');
+            self.panel = 'skills';
             self.submitted = false;
         } else self.submitted = true;
 
@@ -170,25 +168,27 @@ function WelcomeController($scope, $auth, $q, $http, $mixpanel, $stateParams, $s
     this.submit = function() {
         self.submitted = true;
 
+        user = $scope.global.user;
+
         // add roles
-        if (!self.user.roles) {
-            self.user["roles"] = {};
+        if (!user.roles) {
+            user["roles"] = {};
         }
 
         for (role in self.roles) {
             // do not allow founder of location
             if (!((role == 'founder') && (community_path == $stateParams.location_path))) {
 
-                if (!self.user.roles[role]) {
-                    self.user.roles[role] = {};
-                    self.user.roles[role][community_path] = [$stateParams.location_path];
-                    self.user.roles[role][$stateParams.location_path] = [$stateParams.location_path];
-                } else if (!self.user.roles[role][community_path]) {
-                    self.user.roles[role][community_path] = [$stateParams.location_path];
-                    self.user.roles[role][$stateParams.location_path] = [$stateParams.location_path];
-                } else if (self.user.roles[role][community_path].indexOf($stateParams.location_path) < 0) {
-                    self.user.roles[role][community_path].push($stateParams.location_path);
-                    self.user.roles[role][$stateParams.location_path] = [$stateParams.location_path];
+                if (!user.roles[role]) {
+                    user.roles[role] = {};
+                    user.roles[role][community_path] = [$stateParams.location_path];
+                    user.roles[role][$stateParams.location_path] = [$stateParams.location_path];
+                } else if (!user.roles[role][community_path]) {
+                    user.roles[role][community_path] = [$stateParams.location_path];
+                    user.roles[role][$stateParams.location_path] = [$stateParams.location_path];
+                } else if (user.roles[role][community_path].indexOf($stateParams.location_path) < 0) {
+                    user.roles[role][community_path].push($stateParams.location_path);
+                    user.roles[role][$stateParams.location_path] = [$stateParams.location_path];
                 } // else it's already there
             }
 
@@ -200,25 +200,25 @@ function WelcomeController($scope, $auth, $q, $http, $mixpanel, $stateParams, $s
 
         for (dRole in rolelist) {
             if (self.roles && !self.roles[rolelist[dRole]]) {
-                if (self.user.roles[rolelist[dRole]] && self.user.roles[rolelist[dRole]][community_path]) delete self.user.roles[rolelist[dRole]][community_path];
-                if (self.user.roles[rolelist[dRole]] && self.user.roles[rolelist[dRole]][$stateParams.location_path]) delete self.user.roles[rolelist[dRole]][$stateParams.location_path];
-                if (jQuery.isEmptyObject(self.user.roles[rolelist[dRole]])) delete self.user.roles[rolelist[dRole]];
+                if (user.roles[rolelist[dRole]] && user.roles[rolelist[dRole]][community_path]) delete user.roles[rolelist[dRole]][community_path];
+                if (user.roles[rolelist[dRole]] && user.roles[rolelist[dRole]][$stateParams.location_path]) delete user.roles[rolelist[dRole]][$stateParams.location_path];
+                if (jQuery.isEmptyObject(user.roles[rolelist[dRole]])) delete user.roles[rolelist[dRole]];
             }
         }
 
         // add skills
-        self.user.profile["skills"] = self.skills;
+        user.profile["skills"] = self.skills;
 
         // add parent industry
-        self.user.profile["parents"] = [self.selectedParent.toLowerCase()];
+        user.profile["parents"] = [self.selectedParent.toLowerCase()];
 
         // update user profile
-        user_service.updateProfile(self.user)
+        user_service.updateProfile(user)
             .then(function(response) {
                 if (response.status !== 200) {
                     self.alert = { type: 'danger', message: String(response.data.message) };
                 } else {
-                    $http.get('/api/2.1/community/' + self.user.key + '?nocache=true')
+                    $http.get('/api/2.1/community/' + user.key + '?nocache=true')
                         .then(function(response) {
                             self.submitted = false;
                             
@@ -226,8 +226,8 @@ function WelcomeController($scope, $auth, $q, $http, $mixpanel, $stateParams, $s
                             
                             if ($stateParams.go) {
                                 $state.go('user.dashboard', {
-                                    profile: self.user,
-                                    location_path: self.user.key,
+                                    profile: user,
+                                    location_path: user.key,
                                     tour: false
                                 });
                             } else {
@@ -242,7 +242,7 @@ function WelcomeController($scope, $auth, $q, $http, $mixpanel, $stateParams, $s
                                     function (isConfirm) {
                                         if (isConfirm) {
                                             $state.go('community.dashboard', {
-                                                profile: self.user,
+                                                profile: user,
                                                 location_path: $stateParams.location_path,
                                                 tour: true
                                             });

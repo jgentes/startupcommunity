@@ -230,10 +230,11 @@ angular
               getCommunity: function(community) {
                   return $http.get('/api/2.1/community/' + community);
               },
-              getResources: function(location_key, resources) {
+              getResources: function(location_key, resources, clusters) {
                   return $http.post('/api/2.3/resources', {
                       location_key: location_key,
-                      resources: resources
+                      resources: resources,
+                      clusters: !!clusters
                   })
               },
               getKey: function(key) {

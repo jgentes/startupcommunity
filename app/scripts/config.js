@@ -184,13 +184,12 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
 
         .state('welcome', {
             parent: "root",
-            url: "^/:location_path/:community_path/welcome?invite_code",
+            url: "^/:location_path/:community_path/welcome",
             params: {
                 community_path: {
                     value: null,
                     squash: true
-                },
-                go: null
+                }
             },
             resolve: {
               $uibModalInstance: function() { return null; } // necessary to avoid unknown provider for $uibModalInstance when controller not invoked through modal
