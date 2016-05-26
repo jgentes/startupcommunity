@@ -4,10 +4,8 @@ angular
 
 function WelcomeController($scope, $auth, $location, $q, $http, $mixpanel, $stateParams, $state, sweet, user_service, community_service) {
     var self = this,
-        user = $scope.global.user,
-        community_path = $stateParams.community_path ? $stateParams.community_path : $stateParams.location_path;
-    
-    $scope.global.location = jQuery.isEmptyObject($scope.global.location) ? $scope.global.community.profile.name : $scope.global.location.profile.name.split(',')[0];
+        user = $scope.global.user;
+
     this.panel = 'auth';
     this.working = false; // used for waiting indicator
     this.industries = []; // need a placeholder until next call is resolved
@@ -25,10 +23,10 @@ function WelcomeController($scope, $auth, $location, $q, $http, $mixpanel, $stat
         if (!user.profile["summary"]) $scope.global.user.profile["summary"] = user.profile.linkedin.summary;
 
         if (user.roles) {
-            if (!self.roles) self["roles"] = {};
+            if (!self.rolelist) self["rolelist"] = {};
             for (role in user.roles) {
                 if (role !== 'leader') {
-                    self.roles[role] = true;
+                    self.rolelist[role] = true;
                 }
             }
         }
@@ -40,7 +38,7 @@ function WelcomeController($scope, $auth, $location, $q, $http, $mixpanel, $stat
         if (user.profile.parents) {
             switch(user.profile.parents[0]) {
                 case 'consumer-goods':
-                    self.selectedParent = 'Consumer Goods';
+                    self.selectedParent = 'Consumer-Goods';
                     break;
                 case 'non-profit':
                     self.selectedParent = 'Non-Profit';
@@ -165,6 +163,23 @@ function WelcomeController($scope, $auth, $location, $q, $http, $mixpanel, $stat
 
     };
 
+    this.changeRole = function(selection) {
+        console.log(user.roles[selection])
+        if (!user.roles[selection]) {
+            self.rolelist[selection] = !self.rolelist[selection];
+        } else if (Object.keys(user.roles[selection]).length == 1 && Object.keys(user.roles[selection]).indexOf($stateParams.location_path) == 0) {
+            self.rolelist[selection] = !self.rolelist[selection];
+        } else {
+
+            sweet.show({
+                title: "Hold on a sec.",
+                text: "You have this role in one or more companies. You'll need to remove yourself from them before removing this role. Go to your <a href='" + $scope.global.user.key + "'>profile page</a> to view them.",
+                type: "warning",
+                html: true
+            });
+        }
+    };
+
     this.submit = function() {
         self.submitted = true;
 
@@ -175,34 +190,26 @@ function WelcomeController($scope, $auth, $location, $q, $http, $mixpanel, $stat
             user["roles"] = {};
         }
 
-        for (role in self.roles) {
+        for (role in self.rolelist) {
             // do not allow founder of location
-            if (!((role == 'founder') && (community_path == $stateParams.location_path))) {
+            if (!((role == 'founder'))) {
 
-                if (!user.roles[role]) {
-                    user.roles[role] = {};
-                    user.roles[role][community_path] = [$stateParams.location_path];
-                    user.roles[role][$stateParams.location_path] = [$stateParams.location_path];
-                } else if (!user.roles[role][community_path]) {
-                    user.roles[role][community_path] = [$stateParams.location_path];
-                    user.roles[role][$stateParams.location_path] = [$stateParams.location_path];
-                } else if (user.roles[role][community_path].indexOf($stateParams.location_path) < 0) {
-                    user.roles[role][community_path].push($stateParams.location_path);
-                    user.roles[role][$stateParams.location_path] = [$stateParams.location_path];
-                } // else it's already there
+                if (!user.roles[role]) user.roles[role] = {};
+                user.roles[role][$stateParams.location_path] = [$stateParams.location_path];
             }
-
-
         }
 
         // allow user to remove roles
-        var rolelist = ['founder', 'investor', 'team', 'mentor', 'provider'];
+        var rolenames = ['founder', 'investor', 'team', 'mentor', 'provider'];
+        console.log(self.rolelist);
+        console.log(user.roles);
+        for (dRole in rolenames) {
 
-        for (dRole in rolelist) {
-            if (self.roles && !self.roles[rolelist[dRole]]) {
-                if (user.roles[rolelist[dRole]] && user.roles[rolelist[dRole]][community_path]) delete user.roles[rolelist[dRole]][community_path];
-                if (user.roles[rolelist[dRole]] && user.roles[rolelist[dRole]][$stateParams.location_path]) delete user.roles[rolelist[dRole]][$stateParams.location_path];
-                if (jQuery.isEmptyObject(user.roles[rolelist[dRole]])) delete user.roles[rolelist[dRole]];
+            if (self.rolelist && !self.rolelist[rolenames[dRole]]) {
+                if (user.roles[rolenames[dRole]] && user.roles[rolenames[dRole]][$stateParams.location_path])
+                    delete user.roles[rolenames[dRole]][$stateParams.location_path];
+                if (jQuery.isEmptyObject(user.roles[rolenames[dRole]]))
+                    delete user.roles[rolenames[dRole]];
             }
         }
 
@@ -216,41 +223,52 @@ function WelcomeController($scope, $auth, $location, $q, $http, $mixpanel, $stat
         user_service.updateProfile(user)
             .then(function(response) {
                 if (response.status !== 200) {
-                    self.alert = { type: 'danger', message: String(response.data.message) };
+                    self.submitted = false;
+                    sweet.show({
+                        title: "Sorry, something went wrong.",
+                        text: "Here's what we know: " + response.data.message,
+                        type: "error"
+                    }, function() {
+                        $state.go('community.dashboard', {
+                            location_path: $stateParams.location_path,
+                            community_path: '',
+                            tail_path: '',
+                            tour: true
+                        });
+                    });
                 } else {
-                    $http.get('/api/2.1/community/' + user.key + '?nocache=true')
-                        .then(function(response) {
-                            self.submitted = false;
-                            
-                            $scope.global.user = response.data;
-                            
-                            if ($stateParams.go) {
-                                $state.go('user.dashboard', {
-                                    profile: user,
-                                    location_path: user.key,
-                                    tour: false
-                                });
-                            } else {
-                                sweet.show({
-                                        title: "Welcome.",
-                                        text: "Let's have a look at your community.",
-                                        type: "success",
-                                        showCancelButton: false,
-                                        confirmButtonText: "Let's go!",
-                                        closeOnConfirm: true
-                                    },
-                                    function (isConfirm) {
-                                        if (isConfirm) {
-                                            $state.go('community.dashboard', {
-                                                profile: user,
-                                                location_path: $stateParams.location_path,
-                                                tour: true
-                                            });
-                                        }
-                                    });
-                            }
-                        })
+                    self.submitted = false;
+                    $scope.global.user = response.data.user;
 
+                    if (!$location.search().invite_code) {
+                        $state.go('user.dashboard', {
+                            profile: $scope.global.user,
+                            location_path: $scope.global.user.key,
+                            community_path: '',
+                            tail_path: '',
+                            tour: false
+                        });
+                    } else {
+                        sweet.show({
+                                title: "Welcome.",
+                                text: "Let's have a look at your community.",
+                                type: "success",
+                                showCancelButton: false,
+                                confirmButtonText: "Let's go!",
+                                closeOnConfirm: true
+                            },
+                            function (isConfirm) {
+                                if (isConfirm) {
+                                    $state.go('community.dashboard', {
+                                        profile: $scope.global.user,
+                                        location_path: $stateParams.location_path,
+                                        community_path: '',
+                                        tail_path: '',
+                                        tour: true
+                                    });
+                                }
+                            });
+                    }
 
                 }
             })

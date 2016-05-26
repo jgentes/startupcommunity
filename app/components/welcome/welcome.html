@@ -36,8 +36,8 @@
                             <div class="panel-body no-padding">
                                 <div class="list-group ">
 
-                                    <a class="list-group-item" ng-repeat="r in welcome.selectRoles" ng-if="$index >= 1" ng-class="{'active' : welcome.roles[r.value]}" ng-click="welcome.roles[r.value] = !welcome.roles[r.value]">
-                                        <div class="stats-icon pull-right" ng-show="welcome.roles[r.value]"><i class="pe-7s-check fa-2x" ></i></div>
+                                    <a class="list-group-item" ng-repeat="r in welcome.selectRoles" ng-if="$index >= 1" ng-class="{'active' : welcome.rolelist[r.value]}" ng-click="welcome.changeRole(r.value)">
+                                        <div class="stats-icon pull-right" ng-show="welcome.rolelist[r.value]"><i class="pe-7s-check fa-2x" ></i></div>
                                         <h5 class="list-group-item-heading">{{ r.text }}</h5>
                                         <p class="list-group-item-text">{{ r.description }}</p>
                                     </a>
@@ -68,7 +68,7 @@
                                 </label>
 
                                 <div style="margin-left: -10px; padding-top: 1px;">
-            <span ng-repeat="(item, val) in welcome.roles" class="user-role"><i
+            <span ng-repeat="(item, val) in welcome.rolelist" class="user-role"><i
                     ng-attr-title="{{item.toUpperCase()[0] + item.slice(1);}}"
                     ng-class="{'text-primary pe-7s-paper-plane' : val && item == 'founder', 'text-danger pe-7s-flag' : val && item == 'leader', 'text-info pe-7s-study' : val && item == 'mentor', 'text-success pe-7s-gleam' : val && item == 'investor', 'text-default pe-7s-ball' : val && item == 'team', 'text-warning pe-7s-portfolio' : val && item == 'provider'}"></i></span>
                                 </div>
@@ -136,7 +136,7 @@
 
                         <!-- Invite People -->
 
-                        <div ng-if="welcome.panel == 'invite'" class="hpanel">
+                        <div ng-if="welcome.panel == 'invite'" class="hpanel" ng-controller="InviteUserController as invite">
                             <div class="panel-heading" style="text-align:center;">
                                 <h4 class="modal-title">Invite others to join this community.</h4>
                             </div>
@@ -151,7 +151,7 @@
                                                     <span class="text-danger" ng-show="invite.form.email.$error">&nbsp;&nbsp;<i class="fa fa-exclamation-triangle"></i> Please enter a valid email address..</span>
                                                 </div>
                                             </div>
-                                            <input type="submit" style="float:left" class="finish btn-success btn" ng-class="{'disabled' : disabled}" value="Invite Person" /><div style="padding-top: 6px; margin-bottom: -24px;" ng-show="invite.working" loading-bars></div>
+                                            <input type="submit" style="float:left" class="finish btn-success btn" ng-class="{'disabled' : disabled}" value="Invite Person" /><div style="padding-top: 6px; margin-bottom: -24px;" ng-show="global.loaders.sendinvite" loading-bars></div>
                                         </form>
                                     </div>
                                 </div>

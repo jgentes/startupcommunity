@@ -227,8 +227,8 @@ angular
 
       .factory('community_service', function($http) {
           return {
-              getCommunity: function(community) {
-                  return $http.get('/api/2.1/community/' + community);
+              getCommunity: function(community, nocache) {
+                  return $http.get('/api/2.1/community/' + community + (nocache ? '?nocache=true' : ''));
               },
               getResources: function(location_key, resources, clusters) {
                   return $http.post('/api/2.3/resources', {

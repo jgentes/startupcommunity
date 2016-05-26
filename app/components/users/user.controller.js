@@ -249,22 +249,16 @@ function UserProfileController($scope, $stateParams, $http, $uibModal, $mixpanel
     var loadCtrl = function() {
         onLoad(); // de-register the watcher
 
-        if ($scope.global.community && $scope.global.community.type == "user" && $scope.global.community.companies) {
-            // if directly accessed via url
-            self.user = $scope.global.community;
-        } else {
-            var userkey = (self.user && self.user.key) ?
-                self.user.key :
-                $stateParams.community_path ?
-                    $stateParams.community_path :
-                    $stateParams.location_path;
-            console.log('pull ' + userkey + ' from UserProfileController')
+        var userkey = (self.user && self.user.key) ?
+            self.user.key :
+            $stateParams.community_path ?
+                $stateParams.community_path :
+                $stateParams.location_path;
 
-            community_service.getCommunity(userkey)
-                .then(function (response) {
-                    self.user = response.data;
-                });
-        }
+        community_service.getCommunity(userkey, $stateParams.profile ? true : false)
+            .then(function (response) {
+                self.user = response.data;
+            });
 
     };
 

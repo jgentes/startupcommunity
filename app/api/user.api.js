@@ -437,15 +437,16 @@ function handleUpdateProfile(req, res) {
     // validate user updates only their own record
     if (userid == profile.key) {
         delete profile.key;
+
         db.put(process.env.DB_COMMUNITIES, userid, profile)
             .then(function(response){
-                if (response.body.code !== "items_not_found") {
-                    response.body["key"] = userid;
-                    res.status(200).send({ token: jwt.sign(userid, process.env.SC_TOKEN_SECRET), user: response.body });
+                if (response.statusCode == 201) {
+                    profile["key"] = userid;
+                    res.status(200).send({ token: jwt.sign(userid, process.env.SC_TOKEN_SECRET), user: profile });
 
                 } else {
-                    console.warn('WARNING:  User not found.');
-                    res.status(200).send({ message: 'User not found.' });
+                    console.warn('WARNING:  Something went wrong. This updates req.user, would only fail if not logged in or token expired.');
+                    res.status(202).send({ message: 'Try logging out and back in again. We will also look into it on our end!' });
                 }
             })
 

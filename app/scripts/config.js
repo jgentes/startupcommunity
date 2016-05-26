@@ -201,10 +201,6 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                 }
             }
         })
-        .state('welcome.roles', { templateUrl: "components/welcome/welcome.roles.html" })
-        .state('welcome.skills', { templateUrl: "components/welcome/welcome.skills.html" })
-        .state('welcome.profile', { templateUrl: "components/welcome/welcome.profile.html" })
-        .state('welcome.invite', { templateUrl: "components/welcome/welcome.invite.html", controller: "InviteUserController as invite" })
 
         .state('settings', { parent: 'root', url: '/settings', views: { 'content': { templateUrl: "components/settings.html", controller: "SettingsController as settings" }}})
 

@@ -227,22 +227,25 @@ function CompanyProfileController($scope, $stateParams, $mixpanel, user_service,
 
     var loadCtrl = function() {
         onLoad(); // de-register the watcher
-        
-        if ($scope.global.community && $scope.global.community.type == "company" && $scope.global.community.team) {
-            // if directly accessed via url
-            $scope.global['profile'] = $scope.global.community;
-        } else {
-            var companykey = ($scope.global.profile && $scope.global.profile.key) ?
-                $scope.global.profile.key :
-                $stateParams.community_path ?
-                    $stateParams.community_path :
-                    $stateParams.location_path;
 
-            community_service.getCommunity(companykey)
-                .then(function (response) {
-                    $scope.global['profile'] = response.data;
-                });
-        }
+        var companykey = ($scope.global.profile && $scope.global.profile.key) ?
+            $scope.global.profile.key :
+            $stateParams.community_path ?
+                $stateParams.community_path :
+                $stateParams.location_path;
+        
+        community_service.getCommunity(companykey, $stateParams.profile ? true : false)
+            .then(function (response) {
+                $scope.global['profile'] = response.data;
+
+                user_service.getProfile()
+                    .then(function(response2) {
+                        $scope.global.user = response2.data;
+                    });
+
+            });
+
+
         
     };
 
@@ -256,7 +259,16 @@ function CompanyProfileController($scope, $stateParams, $mixpanel, user_service,
         
         user_service.removeRole(role, $scope.global.profile.key)
             .then(function(response) {
-                $http.get('/api/2.1/community/' + $scope.global.profile.key + '?nocache=true'); //clear cache
+
+                community_service.getCommunity($scope.global.profile.key, true)
+                    .then(function(response) {
+                        $scope.global.profile = response.data;
+
+                        user_service.getProfile()
+                            .then(function(response2) {
+                                $scope.global.user = response2.data;
+                            });
+                    });
 
                 if (response.status !== 201) {
                     sweet.show({
@@ -270,8 +282,6 @@ function CompanyProfileController($scope, $stateParams, $mixpanel, user_service,
                         title: "Success!",
                         text: response.data.message,
                         type: "success"
-                    }, function () {
-                        $window.location.href = '/' + $scope.global.profile.key;
                     });
                 }
             })
@@ -503,7 +513,7 @@ function EditCompanyController($scope, $state, $stateParams, sweet, $q, $window,
 
         if ($stateParams.community_path !== $scope.global.community.key) {
             if ($stateParams.community_path !== $scope.global.location.key && $scope.global.lastitems.indexOf($stateParams.community_path) < 0) {
-                community_service.getCommunity($stateParams.community_path)
+                community_service.getCommunity($stateParams.community_path, true)
                     .then(function (response) {
                         $scope.global.community = response.data;
                         next();

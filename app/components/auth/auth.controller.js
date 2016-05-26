@@ -2,7 +2,7 @@ angular
     .module('startupcommunity')
     .controller('LoginController', LoginController);
 
-function LoginController($auth, $state, $mixpanel, $stateParams, sweet) {
+function LoginController($auth, $scope, $state, $mixpanel, $stateParams, sweet) {
 
     if (!jQuery.isEmptyObject($stateParams.alert)) this.alert = {type: 'danger', msg: $stateParams.alert};
     var self = this;
@@ -11,6 +11,7 @@ function LoginController($auth, $state, $mixpanel, $stateParams, sweet) {
     var postLogin = function(auth_response) { // from getprofile
 
         auth_response.data.value["key"] = auth_response.data.path.key;
+        $scope.global.user = auth_response.data.value;
         if (auth_response.config.data.state !== '/login') {
             $state.reload();
         } else $state.go('user.dashboard', {profile: auth_response.data.value, location_path: auth_response.data.value.key});

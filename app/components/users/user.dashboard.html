@@ -16,12 +16,9 @@
                         {{global.community[profile.user.profile.home].profile.name}}
                     </button>
                 </div>
-                <h1 style="overflow:hidden; line-height: 1.25;">
-                    {{profile.user.profile.headline}}
-                </h1>
                 <h3 ng-show="profile.user.profile.name" style="padding-top: 5px; line-height: 1.5;">
                     My name is <span class="name">{{profile.user.profile.name | words:0}} {{profile.user.profile.name |
-                    words:1}}</span><span ng-show="profile.user.profile.summary">, <span ng-bind-html="(profile.user.profile.summary) | sentence | linky:'_blank'"></span></span>
+                    words:1}}</span><span ng-show="profile.user.profile.summary">, <span ng-bind-html="profile.user.profile.headline"></span></span>
                 </h3>
                 <a ng-click="profile.ask()" class="btn btn-success btn-sm">Ask me a question</a>
                 <a ng-click="profile.contact(global.community.key)" title="Contact {{item.value.profile.name}}" class="btn btn-sm btn-info" style="margin-left: 5px;">Contact me

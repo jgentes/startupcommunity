@@ -12,7 +12,7 @@ function NavigationController($scope, $auth, $state, $window, $location, $stateP
     $scope.global.query = undefined;
     $scope.global.top = undefined;
     $scope.global.community = undefined;
-    $scope.global.loaders = undefined;
+    $scope.global.loaders = {};
     $scope.global.lastitems = ["people", "companies", "resources", "search", "invite", "add-company", "add-resource", "welcome", "settings", "edit"];
     this.state = $state; // used in view because path doesn't always update properly.. esp. for /people
 
@@ -54,7 +54,6 @@ function NavigationController($scope, $auth, $state, $window, $location, $stateP
     var getCommunity = function () {
 
         var pullCommunity = function (comm_path) {
-            console.log('pull ' + comm_path + ' from NavController getCommunity')
 
             community_service.getCommunity(comm_path)
                 .then(function (response) {

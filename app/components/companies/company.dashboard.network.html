@@ -9,5 +9,5 @@
     </div>
 </div>
 <div class="row" style="text-align: center;">
-    <button class="btn btn-xs btn-default" ui-sref="company.add">Add yourself to this {{global.profile.resource ? 'resource' : 'company'}}</button>
+    <button class="btn btn-xs btn-default" ui-sref="company.edit({community_path: global.profile.key})">Add yourself to this {{global.profile.resource ? 'resource' : 'company'}}</button>
 </div>
