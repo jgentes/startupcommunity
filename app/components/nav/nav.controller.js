@@ -316,11 +316,11 @@ function NavigationController($scope, $auth, $state, $window, $location, $stateP
             switch (nav_community.type) {
 
                 case 'user':
-                    $state.go('user.dashboard');
+                    $state.go('user.dashboard', {noreload: true});
                     break;
 
                 case 'company':
-                    $state.go('company.dashboard');
+                    $state.go('company.dashboard', {noreload: true});
                     break;
 
                 default:

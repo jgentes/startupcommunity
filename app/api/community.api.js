@@ -124,8 +124,8 @@ function handleGetCommunity(req, res) {
                                     newresponse.locations[results[item].path.key] = results[item].value;
                                     break;
                                 case "cluster":
-                                    if (!newresponse.clusters) newresponse['clusters'] = {};
                                     if (results[item].value.community_profiles && results[item].value.community_profiles[community] && results[item].value.community_profiles[community].parents && results[item].value.community_profiles[community].parents[0]) {
+                                        if (!newresponse.clusters) newresponse['clusters'] = {};
                                         // i believe this is for navigation
                                         var cluster_type = results[item].value.community_profiles[community].parents[0];
                                         if (!newresponse.clusters[cluster_type]) newresponse.clusters[cluster_type] = {};

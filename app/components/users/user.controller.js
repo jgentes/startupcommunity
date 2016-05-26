@@ -255,10 +255,12 @@ function UserProfileController($scope, $stateParams, $http, $uibModal, $mixpanel
                 $stateParams.community_path :
                 $stateParams.location_path;
 
-        community_service.getCommunity(userkey, $stateParams.profile ? true : false)
-            .then(function (response) {
-                self.user = response.data;
-            });
+        if (!$stateParams.noreload) {
+            community_service.getCommunity(userkey, $stateParams.profile ? true : false)
+                .then(function (response) {
+                    self.user = response.data;
+                });
+        } else self.user = $scope.global.community;
 
     };
 
@@ -330,8 +332,10 @@ function UserProfileController($scope, $stateParams, $http, $uibModal, $mixpanel
     this.ask = function() {
         $('#ask').addClass('active');
         $('#profile').removeClass('active');
+        $('#companies').removeClass('active');
         $('#ask_li').addClass('active');
         $('#profile_li').removeClass('active');
+        $('#companies_li').removeClass('active');
         $('#questionbox').addClass('glowing-border');
     };
 

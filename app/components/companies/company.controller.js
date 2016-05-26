@@ -233,19 +233,21 @@ function CompanyProfileController($scope, $stateParams, $mixpanel, user_service,
             $stateParams.community_path ?
                 $stateParams.community_path :
                 $stateParams.location_path;
-        
-        community_service.getCommunity(companykey, $stateParams.profile ? true : false)
-            .then(function (response) {
-                $scope.global['profile'] = response.data;
 
-                user_service.getProfile()
-                    .then(function(response2) {
-                        $scope.global.user = response2.data;
-                    });
+        console.log($stateParams.nav);
 
+        if (!$stateParams.noreload) {
+            community_service.getCommunity(companykey, $stateParams.profile ? true : false)
+                .then(function (response) {
+                    $scope.global['profile'] = response.data;
+
+                });
+        } else $scope.global['profile'] = $scope.global.community;
+
+        user_service.getProfile()
+            .then(function(response) {
+                $scope.global.user = response.data;
             });
-
-
         
     };
 

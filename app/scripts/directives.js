@@ -293,8 +293,9 @@ function randomQuote() {
         "&quot;The truth is, the cost of preventing errors is often far greater than the cost of fixing them.&quot; -- Ed Catmull, President of Pixar",
         "&quot;Believe in yourself. Under-confidence leads to a self-fulfilling prophecy that you are not good enough for your work.&quot; -- Dr. Roopleen",
         "&quot;Change is the essence of life. Be willing to surrender what you are for what you could become.&quot; -- Reinhold Niebuhr",
-        "&quot;Fear, uncertainty and discomfort are your compasses toward growth.&quot; -- Unknown"
-    ];
+        "&quot;Fear, uncertainty and discomfort are your compasses toward growth.&quot; -- Unknown",
+        "&quot;Respect yourself enough to walk away from anything that no longer serves you, grows you, or makes you happy.&quot; -- Robert Tew"
+];
     var rand = quotes[Math.floor(Math.random() * quotes.length)];
     return {
         restrict: 'A',

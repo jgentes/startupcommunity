@@ -74,7 +74,8 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
         })
         .state('user.dashboard', {
             params: {
-                profile: {}
+                profile: {},
+                noreload: false
             },
             views: {
                 'header': {
@@ -105,7 +106,8 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
         })
         .state('company.dashboard', {
             params: {
-                profile: {}
+                profile: {},
+                noreload: false
             },
             views: {
                 'header': {
