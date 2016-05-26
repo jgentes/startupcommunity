@@ -187,7 +187,7 @@ function UserController($scope, $stateParams, $location, user_service, result_se
     };
 }
 
-function ContactUserController($uibModalInstance, notify_service, sweet, community_key, location_key){
+function ContactUserController($scope, $uibModalInstance, notify_service, sweet){
 
     this.user = $scope.global.user; //used in view
     var self = this;
@@ -202,7 +202,7 @@ function ContactUserController($uibModalInstance, notify_service, sweet, communi
                 "reason" : self.form.reason_value
             };
 
-            notify_service.contact($scope.global.user.key, formdata, community_key, location_key)
+            notify_service.contact($scope.global.user.key, formdata, $scope.global.community.key, $scope.global.location.key)
                 .then(function(response) {
 
                     $uibModalInstance.close();

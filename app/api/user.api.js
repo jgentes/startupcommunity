@@ -237,15 +237,12 @@ function handleContactUser(req, res) {
 
     var user_key = req.query.user_key,
         formdata = req.query.formdata,
-        community_key = req.query.community_key,
         location_key = req.query.location_key;
-
-    if (user_key == community_key) community_key = location_key;
 
     // search format is 'roles.leader[community]: location'
 
     // create searchstring to get leader of community
-    var searchstring = '(@value.roles.leader.' + community_key + ': *) AND @value.type: "user"';
+    var searchstring = '(@value.roles.leader.' + location_key + ': *) AND @value.type: "user"';
 
     db.newSearchBuilder()
         .collection(process.env.DB_COMMUNITIES)
@@ -322,7 +319,6 @@ function handleContactUser(req, res) {
                                         .from(process.env.DB_COMMUNITIES, user_key)
                                         .type('contact_request')
                                         .data({
-                                            "community_key" : community_key,
                                             "location_key" : location_key,
                                             "leaders" : contacts,
                                             "source_name" : formdata.name,
