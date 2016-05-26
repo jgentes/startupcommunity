@@ -216,7 +216,7 @@ function CompanyController($scope, $stateParams, $state, $location, company_serv
     });
 }
 
-function CompanyProfileController($scope, $stateParams, $mixpanel, user_service, community_service, result_service, $location, sweet, $window, $http) {
+function CompanyProfileController($scope, $stateParams, $mixpanel, user_service, community_service, result_service, $location, sweet) {
 
     $mixpanel.track('Viewed Company');
 
@@ -233,8 +233,6 @@ function CompanyProfileController($scope, $stateParams, $mixpanel, user_service,
             $stateParams.community_path ?
                 $stateParams.community_path :
                 $stateParams.location_path;
-
-        console.log($stateParams.nav);
 
         if (!$stateParams.noreload) {
             community_service.getCommunity(companykey, $stateParams.profile ? true : false)
@@ -513,7 +511,7 @@ function EditCompanyController($scope, $state, $stateParams, sweet, $q, $window,
 
         };
 
-        if ($stateParams.community_path !== $scope.global.community.key) {
+        if ($stateParams.community_path !== $scope.global.community.key && $stateParams.location_path !== $scope.global.community.key) {
             if ($stateParams.community_path !== $scope.global.location.key && $scope.global.lastitems.indexOf($stateParams.community_path) < 0) {
                 community_service.getCommunity($stateParams.community_path, true)
                     .then(function (response) {
