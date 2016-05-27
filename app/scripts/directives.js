@@ -12,7 +12,8 @@ angular
     .directive('backToTop', backToTop)
     .filter('safe_html', safeHTML)
     .filter('words', words)
-    .filter('sentence', sentence);
+    .filter('sentence', sentence)
+    .filter('encode', encode);
 
 // custom
 
@@ -325,6 +326,14 @@ function sentence() {
             return text.split(".")[0] + '.';
         }
     };
+}
+
+function encode() {
+    return function(uri) {
+        if (uri) {
+            return uri.toLowerCase().replace(/\s+/g, '-');
+        }
+    }
 }
 
 

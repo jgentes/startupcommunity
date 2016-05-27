@@ -829,7 +829,7 @@ function handleEditCommunity(req, res) {
 
                                             update_user(req.user, 'leader', pathname, settings.location_key, function(good) {
                                                 if (good) {
-                                                    res.status(201).send({message: settings.community.type.toUpperCase() + settings.community.type.slice(1) + ' created!'});
+                                                    res.status(201).send({message: 'Industry cluster created!'});
                                                 } else {
                                                     res.status(202).send({message: "Something went wrong."});
                                                 }
@@ -866,7 +866,7 @@ function handleEditCommunity(req, res) {
 
                                         db.put(process.env.DB_COMMUNITIES, pathname, response.body)
                                             .then(function (finalres) {
-                                                res.status(201).send({message: settings.community.type.toUpperCase() + settings.community.type.slice(1) + ' updated!'});
+                                                res.status(201).send({message: 'Successfully updated!'});
                                             })
                                             .fail(function (err) {
                                                 console.warn('WARNING: ', err);
@@ -894,7 +894,7 @@ function handleEditCommunity(req, res) {
 
                                         update_user(req.user, 'leader', pathname, settings.location_key, function(good) {
                                             if (good) {
-                                                res.status(201).send({message: settings.community.type[0].toUpperCase() + settings.community.type.slice(1) + ' created!'});
+                                                res.status(201).send({message: 'Industry cluster created!'});
                                             } else res.status(202).send({message: "Something went wrong."});
 
                                         })
@@ -966,13 +966,33 @@ function handleDeleteCommunity(req, res) {
                                     response.body.communities.splice(index, 1);
                                 }
 
+                                var wrapup = function() {
+                                    if (settings.new_community_key) {
+
+                                        // this is a rename operation
+
+                                        rename_community(settings.community.key, settings.location_key, settings.new_community_key);
+
+                                    } else {
+
+                                        update_user(req.user, 'delete', settings.community.key, settings.location_key, function (good) {
+                                            if (good) {
+                                                console.log('Community deleted.');
+                                                res.status(204).send({message: settings.community.type[0].toUpperCase() + settings.community.type.slice(1) + ' deleted!'});
+                                            } else {
+                                                res.status(202).send({message: "Something went wrong."});
+                                            }
+                                        })
+                                    }
+                                }
+
                                 if (response.body.communities.length == 0) {
 
                                     // delete the whole thing
 
                                     db.remove(process.env.DB_COMMUNITIES, settings.community.key, 'true')
                                         .then(function (finalres) {
-                                            res.status(204).send({message: settings.community.type[0].toUpperCase() + settings.community.type.slice(1) + ' deleted!'});
+                                            wrapup();
                                         })
                                         .fail(function (err) {
                                             console.warn('WARNING: community620', err);
@@ -983,30 +1003,12 @@ function handleDeleteCommunity(req, res) {
 
                                     db.put(process.env.DB_COMMUNITIES, settings.community.key, response.body)
                                         .then(function (finalres) {
-                                            res.status(204).send({message: settings.community.type[0].toUpperCase() + settings.community.type.slice(1) + ' deleted!'});
+                                            wrapup();
                                         })
                                         .fail(function (err) {
                                             console.warn('WARNING: community629 ', err);
                                             res.status(202).send({message: "Something went wrong."});
                                         });
-                                }
-
-                                if (settings.new_community_key) {
-
-                                    // this is a rename operation
-
-                                    rename_community(settings.community.key, settings.location_key, settings.new_community_key);
-
-                                } else {
-
-                                    update_user(req.user, 'delete', settings.community.key, settings.location_key, function (good) {
-                                        if (good) {
-                                            console.log('Community deleted.');
-                                            res.status(204).send({message: settings.community.type[0].toUpperCase() + settings.community.type.slice(1) + ' deleted!'});
-                                        } else {
-                                            res.status(202).send({message: "Something went wrong."});
-                                        }
-                                    })
                                 }
 
                             } else {

@@ -406,7 +406,7 @@ function NavigationController($scope, $auth, $state, $window, $location, $stateP
         self.editCommunity = function(community_key) {
 
             var modalInstance = $uibModal.open({
-                templateUrl: 'components/nav/nav.test.html',
+                templateUrl: 'components/nav/nav.edit_cluster.html',
                 controller: CommunityController,
                 controllerAs: 'edit',
                 windowClass: "hmodal-success",
@@ -724,29 +724,25 @@ function EmbedSettingsController($scope, $uibModalInstance, sweet, embed_communi
     };
 }
 
-function CommunityController($scope, $uibModalInstance, $mixpanel, sweet, edit_community, community_service, user_service, $http, $window, $state){
+function CommunityController($scope, $uibModalInstance, $mixpanel, sweet, edit_community, community_service, user_service, $window){
     
     var self = this,
         community = edit_community,
         loc_key = $scope.global.location.key;
-    
+
     this.update = false;
     this.communityForm = {"name":""}; // to avoid 'undefined' for initial url
-    //this.industryList = community_service.industries();
-
-    this.encode = function(uri) {
-        return encodeURI(uri.toLowerCase().replace(/\s+/g, '-'));
-    };
+    this.industryList = community_service.industries();
 
     self.parents = community_service.parents();
-
+    
     if (community && community.community_profiles && community.community_profiles[loc_key]) {
         self.update = true;
         self.community = community.community_profiles[loc_key];
         self.communityForm = {
-            "name": community.name,
-            "headline": community.headline,
-            "industries": community.industries,
+            "name": self.community.name,
+            "headline": self.community.headline,
+            "industries": self.community.industries,
             "url": decodeURI(community.key)
         };
 
@@ -767,12 +763,13 @@ function CommunityController($scope, $uibModalInstance, $mixpanel, sweet, edit_c
                         });
                     }
                     else {
-                        self.communityForm['parent'] = self.parents[0][0].toUpperCase() + self.community.parents[0].slice(1);
+                        self.communityForm['parent'] = self.community.parents[0][0].toUpperCase() + self.community.parents[0].slice(1);
                     }
             }
         }
+
     }
-/*
+
     this.updateCommunity = function(type) {
         self.working = true;
         var rename = false,
@@ -818,7 +815,7 @@ function CommunityController($scope, $uibModalInstance, $mixpanel, sweet, edit_c
                 newCommunity.profile['embed'] = $scope.global.community.community_profiles[loc_key].embed;
             }
 
-            if (thiscommunity.key && (thiscommunity.key !== newCommunity.url)) rename = true; // determine if this is a rename operation
+            if (thiscommunity.key && (thiscommunity.key !== newCommunity.url)) rename = true; // determine if this is a rename operation (not currently used)
 
             community_service.editCommunity(newCommunity, loc_key)
                 .then(function(response) {
@@ -839,23 +836,29 @@ function CommunityController($scope, $uibModalInstance, $mixpanel, sweet, edit_c
                         community_service.getCommunity(loc_key, true)
                             .then(function (response) {
                                 $scope.global.location = response.data;
-
                             });
+
+                        community_service.getTop(loc_key)
+                            .then(function(response) {
+
+                                sweet.show({
+                                    title: "Successfully" + (self.update ? " updated!" : " created!"),
+                                    type: "success",
+                                    closeOnConfirm: true
+                                }, function() {
+                                    $scope.global.nav_top = {};
+                                    $window.location.href = '/'+ loc_key + '/' + newCommunity.url;
+                                });
+
+                            }); // clear cache
+
 
                         user_service.getProfile()
                             .then(function(response) {
                                 $scope.global.user = response.data;
                             });
 
-                        sweet.show({
-                            title: thiscommunity.type[0].toUpperCase() + thiscommunity.type.slice(1) + (self.update ? " updated!" : " created!"),
-                            type: "success",
-                            closeOnConfirm: true
-                        });
 
-                        $http.get('/api/2.1/community/' + loc_key + '/' + newCommunity.url + '/top').then(function() {
-                            $window.location.href = '/'+ loc_key + '/' + newCommunity.url;
-                        });
                     }
                     $mixpanel.track('Added ' + thiscommunity.type);
                 });
@@ -881,7 +884,7 @@ function CommunityController($scope, $uibModalInstance, $mixpanel, sweet, edit_c
             type: "warning",
             showCancelButton: true,
             confirmButtonColor: "#DD6B55",
-            confirmButtonText: "Yes, delete " + $scope.global.community.name + "!",
+            confirmButtonText: "Yes, delete " + $scope.global.community.profile.name + "!",
             closeOnConfirm: false
         }, function () {
 
@@ -897,14 +900,20 @@ function CommunityController($scope, $uibModalInstance, $mixpanel, sweet, edit_c
                         });
 
                     } else {
-                        sweet.show({
-                            title: "Deleted!",
-                            text: "The " + $scope.global.community.name + " community is gone.",
-                            type: "success",
-                            closeOnConfirm: true
-                        });
-                        
-                        $state.reload();
+
+                        community_service.getTop(loc_key)
+                            .then(function(response) {
+                                $scope.global.nav_top = response.data;
+
+                                sweet.show({
+                                    title: "Deleted!",
+                                    text: "The " + $scope.global.community.profile.name + " community is gone.",
+                                    type: "success",
+                                    closeOnConfirm: true
+                                }, function () {
+                                    $window.location.href = '/' + loc_key + '/settings';
+                                });
+                            });
                     }
                 });
         });
@@ -913,5 +922,5 @@ function CommunityController($scope, $uibModalInstance, $mixpanel, sweet, edit_c
     this.cancel = function () {
         self.working = false;
         $uibModalInstance.dismiss('cancel');
-    };*/
+    };
 }

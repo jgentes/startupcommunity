@@ -2,7 +2,7 @@
     <div class="color-line"></div>
     <div class="modal-header">
         <h4 class="modal-title" ng-show="!edit.update">Add an Industry in {{global.location.profile.name}}</h4>
-        <h4 class="modal-title" ng-show="edit.update">Update {{global.community.name}} in {{global.location.profile.name}}</h4>
+        <h4 class="modal-title" ng-show="edit.update">Update {{edit.community.name}} in {{global.location.profile.name}}</h4>
         <p class="font-bold">An industry cluster is an entrepreneurial ecosystem in support of a market vertical.</p>
     </div>
     <div class="modal-body">
@@ -23,8 +23,8 @@
                 </div>
                 <br>
                 <div class="panel-heading" style="font-size: 20px;">3. Customize the url path</div>
-                <input type="text" class="form-control input-lg" placeholder="{{ edit.encode(edit.communityForm.name) }}" ng-model="edit.communityForm.url" style="margin-bottom: 5px;">
-                <em>Your url will be: https://startupcommunity.org/{{global.location.key}}/<strong><span style="text-transform: lowercase;">{{ edit.encode(edit.communityForm.url || edit.communityForm.name) }}</span></strong></em>
+                <input type="text" class="form-control input-lg" placeholder="{{ edit.communityForm.name | encode }}" ng-model="edit.communityForm.url" style="margin-bottom: 5px;" ng-disabled="edit.update">
+                <em>Your url will be: https://startupcommunity.org/{{global.location.key}}/<strong><span style="text-transform: lowercase;">{{(edit.communityForm.url || edit.communityForm.name) | encode }}</span></strong></em>
                 <br><br>
                 <div class="panel-heading" style="font-size: 20px;">4. And a short description</div>
                 <input type="text" class="form-control input-lg" placeholder="Local hardware and software product companies" ng-model="edit.communityForm.headline">
