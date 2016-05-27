@@ -8,7 +8,7 @@
   "private": true,
   "appPath": "app",
   "dependencies": {
-    "angular": "~1.4.10",
+    "angular": "~1.4.11",
     "angular-bootstrap": "~1.1.2",
     "angular-h-sweetalert": "~1.4.5",
     "angular-knowtify": "*",
