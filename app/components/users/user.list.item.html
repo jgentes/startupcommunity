@@ -22,7 +22,7 @@
                 <span class="text-muted" style="white-space:pre-wrap;" ng-bind-html="::item.value.profile.summary | linky:'_blank' | highlight:users.lastQuery | safe_html"></span>
                 <div id="skills" ng-if="(showSummary || users.lastQuery) && item.value.profile.summary" class="skills-top">
                     <li ng-repeat="skill in item.value.profile.skills" class="label btn-default skills">
-                        <a><span ui-sref="search.dashboard({location_path: global.location.key})" ng-bind-html="::skill | highlight:users.lastQuery"></span></a>
+                        <a><span ng-click="nav.search(skill)" ng-bind-html="::skill | highlight:users.lastQuery"></span></a>
                     </li>
                 </div>
             </div>

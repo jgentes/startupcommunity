@@ -24,9 +24,9 @@
                 <a ng-click="profile.contact(global.community.key)" title="Contact {{item.value.profile.name}}" class="btn btn-sm btn-info" style="margin-left: 5px;">Contact me
                 </a>
                 <div style="padding-top:10px; overflow: hidden; height: 50px; margin-bottom: -10px;">
-                    <buttn ng-repeat="skill in profile.user.profile.skills" style="margin-right: 5px;" ladda="btnworking" ng-click="btnworking = true" class="ladda-btn btn btn-outline btn-default btn-xs" ui-sref="search.dashboard({location_path: global.location.key, community_path: '', tail_path: '', query: skill})">
+                    <button ng-repeat="skill in profile.user.profile.skills" style="margin-right: 5px;" ladda="btnworking" class="ladda-btn btn btn-outline btn-default btn-xs" ng-click="btnworking = true; nav.search(skill);">
                         {{::skill}}
-                    </buttn>
+                    </button>
                 </div>
             </header>
         </div>

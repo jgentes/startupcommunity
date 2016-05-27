@@ -16,24 +16,26 @@
                         <div class="col-xs-4">
                             <div class="stats-icon pull-right">
                                 <a ui-sref="user.list">
-                                    <h3 class="text-info">{{global.top.people.count}}</h3>
+                                    <h3>{{global.top.people.count}}</h3>
                                 </a>
                             </div>
                         </div>
                     </div>
-                    <div class="panel-footer" style="background: #fff; text-align: center; padding-bottom:9px;">
+                    <div class="panel-footer" style="background: #fff; text-align: center; padding-bottom:49px;">
                         <div ng-repeat="item in global.top.people.entries" style="text-align: left;">
                             <div style="margin-right: -2px; margin-bottom:-5px;">
                                 <div class="row" ng-include="'components/users/user.list.item.html'"></div>
                                 <div ng-if="$last" style="margin-bottom:-12px;"></div>
                             </div>
                         </div>
-                        <button ng-if="global.top.people.count > 4" class="btn btn-xs btn-default" style="margin-top: 20px;" ui-sref="user.list({location_path: global.location.key, community_path: global.nav.people.community, tail_path: global.nav.people.tail, query: undefined})">view all</button>
+                        <button ng-if="!global.user" ladda="global.loaders['invite']" class="ladda-btn btn btn-xs btn-outline btn-info" style="margin-top: 20px; float:left;" ng-click="global.loaders['invite'] = true; nav.requestInvitation();">Invite People</button>
+                        <button ng-if="global.user" ladda="global.loaders['invite']" class="ladda-btn btn btn-xs btn-outline btn-info" style="margin-top: 20px; float:left;" ng-click="global.loaders['invite'] = true; nav.invitePeople();">Invite People</button>
+                        <button ng-if="global.top.people.count > 4" class="btn btn-xs btn-default" style="margin-top: 20px; float:right;" ui-sref="user.list({location_path: global.location.key, community_path: global.nav.people.community, tail_path: global.nav.people.tail, query: undefined})">view all</button>
                     </div>
                 </div>
             </div>
             <div class="col-xs-12 col-sm-4">
-                <div class="hpanel" style="border-top: 2px solid #34495E;">
+                <div class="hpanel hnavyblue">
                     <div class="panel-body" style="padding: 10px 5px; margin-bottom: -12px;">
                         <div class="col-xs-8">
                             <div class="stats-title pull-left">
@@ -47,24 +49,26 @@
                         <div class="col-xs-4">
                             <div class="stats-icon pull-right">
                                 <a ui-sref="company.list">
-                                    <h3 style="color:#34495E;">{{global.top.companies.count}}</h3>
+                                    <h3>{{global.top.companies.count}}</h3>
                                 </a>
                             </div>
                         </div>
                     </div>
-                    <div class="panel-footer" style="background: #fff; text-align: center; padding-bottom:9px;">
+                    <div class="panel-footer" style="background: #fff; text-align: center; padding-bottom:49px;">
                         <div ng-repeat="item in global.top.companies.entries" style="text-align: left;">
                             <div style="margin-right: -2px; margin-bottom:-5px;">
                                 <div class="row" ng-include="'components/companies/company.list.item.html'"></div>
                                 <div ng-if="$last" style="margin-bottom:-12px;"></div>
                             </div>
                         </div>
-                        <button ng-if="global.top.companies.count > 4" class="btn btn-xs btn-default" style="margin-top: 20px;" ui-sref="company.list({location_path: global.location.key, community_path: global.nav.companies.community, tail_path: global.nav.companies.tail, query: undefined})">view all</button>
+                        <button ng-if="!global.user" ladda="global.loaders['addco']" class="ladda-btn btn btn-xs btn-outline btn-primary" style="margin-top: 20px; float:left;" ng-click="global.loaders['addco'] = true; nav.requestInvitation();">Add Company</button>
+                        <button ng-if="global.user" ladda="global.loaders['addco']" class="ladda-btn btn btn-xs btn-outline btn-primary" style="margin-top: 20px; float:left;" ng-click="global.loaders['addco'] = true;" ui-sref="company.add">Add Company</button>
+                        <button ng-if="global.top.companies.count > 4" class="btn btn-xs btn-default" style="margin-top: 20px; float: right;" ui-sref="company.list({location_path: global.location.key, community_path: global.nav.companies.community, tail_path: global.nav.companies.tail, query: undefined})">view all</button>
                     </div>
                 </div>
             </div>
             <div class="col-xs-12 col-sm-4">
-                <div class="hpanel" style="border-top: 2px solid #ffb606;">
+                <div class="hpanel hgreen">
                     <div class="panel-body" style="padding: 10px 5px; margin-bottom: -12px;">
                         <div class="col-xs-8">
                             <div class="stats-title pull-left">
@@ -78,19 +82,21 @@
                         <div class="col-xs-4">
                             <div class="stats-icon pull-right">
                                 <a ui-sref="resource.list">
-                                    <h3 style="color:#34495E;">{{global.top.resources.count}}</h3>
+                                    <h3>{{global.top.resources.count}}</h3>
                                 </a>
                             </div>
                         </div>
                     </div>
-                    <div class="panel-footer" style="background: #fff; text-align: center; padding-bottom:9px;">
+                    <div class="panel-footer" style="background: #fff; text-align: center; padding-bottom:49px;">
                         <div ng-repeat="item in global.top.resources.entries" style="text-align: left;">
                             <div style="margin-right: -2px; margin-bottom:-5px;">
                                 <div class="row" ng-include="'components/companies/company.list.item.html'"></div>
                                 <div ng-if="$last" style="margin-bottom:-12px;"></div>
                             </div>
                         </div>
-                        <button ng-if="global.top.resources.count > 4" class="btn btn-xs btn-default" style="margin-top: 20px;" ui-sref="resource.list({location_path: global.location.key, community_path: global.nav.resources.community, tail_path: global.nav.resources.tail, query: undefined})">view all</button>
+                        <button ng-if="!global.user" ladda="global.loaders['addres']" class="ladda-btn btn btn-xs btn-outline btn-success" style="margin-top: 20px; float:left;" ng-click="global.loaders['addres'] = true; nav.requestInvitation();">Add Resource</button>
+                        <button ng-if="global.user" ladda="global.loaders['addres']" class="ladda-btn btn btn-xs btn-outline btn-success" style="margin-top: 20px; float:left;" ng-click="global.loaders['addres'] = true" ui-sref="resource.add">Add Resource</button>
+                        <button ng-if="global.top.resources.count > 4" class="btn btn-xs btn-default" style="margin-top: 20px; float: right;" ui-sref="resource.list({location_path: global.location.key, community_path: global.nav.resources.community, tail_path: global.nav.resources.tail, query: undefined})">view all</button>
                     </div>
                 </div>
             </div>

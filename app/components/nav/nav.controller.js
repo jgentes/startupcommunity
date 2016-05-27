@@ -7,13 +7,12 @@ angular
 function NavigationController($scope, $auth, $state, $window, $location, $stateParams, $uibModal, $mixpanel, user_service, community_service, sweet, knowtify, errorLogService, newsletter_service) {
 
     var self = this;
-
     $scope.global.path = $location.path().replace(/\/$/, ""); //used for routing and used in view
     $scope.global.query = undefined;
     $scope.global.top = undefined;
     $scope.global.community = undefined;
     $scope.global.loaders = {};
-    $scope.global.lastitems = ["people", "companies", "resources", "search", "invite", "add-company", "add-resource", "welcome", "settings", "edit"];
+    $scope.global.lastitems = ["people", "companies", "resources", "search", "invite", "add-company", "add-resource", "welcome", "settings", "edit", "newsletter"];
     this.state = $state; // used in view because path doesn't always update properly.. esp. for /people
 
     var nav_community;
@@ -181,8 +180,23 @@ function NavigationController($scope, $auth, $state, $window, $location, $stateP
 
     var loadNav = function() {
 
-        console.log('Nav RootScope Location: ', $scope.global.location ? $scope.global.location.key : null);
-        console.log('Nav RootScope Community: ', $scope.global.community ? $scope.global.community.key : null);
+        //console.log('Nav RootScope Location: ', $scope.global.location ? $scope.global.location.key : null);
+        //console.log('Nav RootScope Community: ', $scope.global.community ? $scope.global.community.key : null);
+        
+        // for header breadcrumbs
+        switch ($scope.global.community.type) {
+            case ('company'):
+                self.btype = $scope.global.community.resource ? 'resource' : 'company';
+                break;
+            
+            case ('cluster'):
+                self.btype = 'industry';
+                break;
+            
+            default:
+                self.btype = $scope.global.community.type;
+                break;                    
+        }
 
         var rollbar_payload = {
                 "payload": {
@@ -292,6 +306,10 @@ function NavigationController($scope, $auth, $state, $window, $location, $stateP
                     $state.go('settings', {}, {location: false});
                     break;
 
+                case 'newsletter':
+                    $state.go('newsletter', {}, {location: false});
+                    break;
+
                 case 'edit':
                     $state.go('company.edit', {}, {location: false});
                     break;
@@ -350,7 +368,7 @@ function NavigationController($scope, $auth, $state, $window, $location, $stateP
         };
 
 
-        // SEARCH
+        // SEARCH (this function is a good example of replacing ui-sref for common links)
 
         self.search = function(query) {
             

@@ -21,28 +21,17 @@
 
             <div class="pull-right">
 
-                <ul ng-if="global.community.type == 'user' || global.community.type == 'company'" class="header-nav" style="margin-left:-40px;" >
-                    <li ng-if="global.location.key !== global.community.key">
-                        <a ui-sref="community.dashboard({location_path: global.location.key})">
-                            &nbsp;&nbsp;{{ global.location.profile.name.toUpperCase(); }}&nbsp;&nbsp;</a>/
+                <ul class="header-nav" style="margin-left:-40px;" >
+                    <li>
+                        <p ng-if="nav.btype">
+                            {{ nav.btype.toUpperCase() }}&nbsp;&nbsp;/
+                        </p>
                     </li>
-                    <li ng-if="global.community.type == 'user' || global.community.type == 'company'" style="margin-left:-17px;">
+                    <li style="margin-left:-17px;">
                         <a ui-sref="community.dashboard({location_path: global.community.key})" style="color:#bbb;">&nbsp;&nbsp;{{ global.community.profile.name.toUpperCase() }}</a>
                     </li>
                 </ul>
-                <div ng-if="global.community.type !== 'user' && global.community.type !== 'company'">
-                    <div ng-if="!global.user" style="padding-top: 6px; margin-right: 8px; float: right;">
-                        <button ladda="global.loaders['addco']" class="ladda-btn btn btn-sm btn-success" ng-click="global.loaders['addco'] = true; nav.requestInvitation();" style="font-size: 12px; color: #fff;">Add Company</button>
-                    </div>
-                    <div ng-if="global.user" style="padding-top: 6px; margin-right: 8px; float: right;">
-                        <button ng-if="nav.state.current.name !== 'resource.list'" ladda="global.loaders['addco']" ng-click="global.loaders['addco'] = true" class="ladda-btn btn btn-sm btn-success" ui-sref="company.add" style="font-size: 12px; color: #fff;">Add Company</button>
-                        <button ng-if="nav.state.current.name == 'resource.list'" ladda="global.loaders['addres']" ng-click="global.loaders['addres'] = true" class="ladda-btn btn btn-sm btn-success" ui-sref="resource.add" style="font-size: 12px; color: #fff;">Add Resource</button>
-                    </div>
 
-                    <div ng-if="global.user" style="padding-top: 6px; margin-right: 8px; float: right;">
-                        <button ladda="global.loaders['invite']" class="ladda-btn btn btn-sm btn-info" ng-click="global.loaders['invite'] = true; nav.invitePeople();" style="font-size: 12px; color: #fff;">Invite People</button>
-                    </div>
-                </div>
             </div>
         </div>
     </div>

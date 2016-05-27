@@ -11,8 +11,7 @@
                     <div class="panel-body" style="padding: 15px; border-top: 1px solid #82bc4b;">
                         <h4 class="text-center" style="margin-bottom: 20px; color: #5A5A5A;">Kickstart your city's entrepreneurial ecosystem</h4>
                         <h4 class="text-center" style="margin-bottom: 13px;">
-                            <button class="btn btn-info" ng-click="auth.authenticate('linkedin')" ng-class="{'disabled' : auth.working}">Log in using Linkedin</button>
-                            <span loading-bars ng-show="auth.working"></span>
+                            <button ladda="auth.working" class="ladda-button btn btn-info" ng-click="auth.authenticate('linkedin')" ng-class="{'disabled' : auth.working}">Log in using Linkedin</button>
                             <br><p style="font-size:11px; margin: 12px 0 -12px 0;">We use Linkedin to retrieve your basic profile details only.</p>
                         </h4>
 

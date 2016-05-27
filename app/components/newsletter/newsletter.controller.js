@@ -3,18 +3,18 @@ angular
     .controller('NewsletterController', NewsletterController)
     .controller('SetupNewsController', SetupNewsController);
 
-function NewsletterController(newsletter_service, user_service, $sce, errorLogService) {
+function NewsletterController(newsletter_service, $scope, user_service, $sce, errorLogService) {
     var self = this;
 
     this.ie = navigator.userAgent.indexOf('Trident') > 0 || navigator.userAgent.indexOf('MSIE') > 0;
 
     user_service.getProfile()
         .then(function(response) {
-            self.user = response.data;
+            $scope.global.user = response.data;
 
-            if (self.user.newsletter) {
+            if ($scope.global.user.newsletter) {
 
-                newsletter_service.login(self.user)
+                newsletter_service.login($scope.global.user)
                     .then(function (response) {
 
                         self.frame_content = $sce.trustAsHtml(response.data);
@@ -41,7 +41,7 @@ function NewsletterController(newsletter_service, user_service, $sce, errorLogSe
     
 }
 
-function SetupNewsController($uibModalInstance, user, sweet, community_service, newsletter_service, $state, location) {
+function SetupNewsController($uibModalInstance, $scope, sweet, community_service, newsletter_service) {
     var self = this;
 
     this.setup = function() {
@@ -61,10 +61,10 @@ function SetupNewsController($uibModalInstance, user, sweet, community_service, 
                 password : self.setupForm.password
             };
 
-            if (user.newsletter && user.newsletter.brand_id) {
+            if ($scope.global.user.newsletter && $scope.global.user.newsletter.brand_id) {
                 /// update existing newsletter
 
-                newsletter_service.updateNewsletter(settings, user.profile.email, user.newsletter.brand_id)
+                newsletter_service.updateNewsletter(settings, $scope.global.user.profile.email, $scope.global.user.newsletter.brand_id)
                     .then(function(response) {
 
                         self.working = false;
@@ -93,13 +93,13 @@ function SetupNewsController($uibModalInstance, user, sweet, community_service, 
 
                 var leader = [];
 
-                for (l in user.roles.leader) leader.push(l);
+                for (l in $scope.global.user.roles.leader) leader.push(l);
 
                 community_service.getResources(undefined, leader)
                     .then(function(response) {
                         var resource_list = response.data;
 
-                        newsletter_service.setupNewsletter(settings, resource_list, location.key)
+                        newsletter_service.setupNewsletter(settings, resource_list, $scope.global.location.key)
                             .then(function(response) {
 
                                 self.working = false;
