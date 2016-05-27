@@ -28,7 +28,7 @@
                                 <div ng-if="$last" style="margin-bottom:-12px;"></div>
                             </div>
                         </div>
-                        <button class="btn btn-xs btn-default" style="margin-top: 20px;" ui-sref="user.list">view all</button>
+                        <button ng-if="global.top.people.count > 4" class="btn btn-xs btn-default" style="margin-top: 20px;" ui-sref="user.list({location_path: global.location.key, community_path: global.nav.people.community, tail_path: global.nav.people.tail, query: undefined})">view all</button>
                     </div>
                 </div>
             </div>
@@ -59,7 +59,7 @@
                                 <div ng-if="$last" style="margin-bottom:-12px;"></div>
                             </div>
                         </div>
-                        <button class="btn btn-xs btn-default" style="margin-top: 20px;" ui-sref="company.list">view all</button>
+                        <button ng-if="global.top.companies.count > 4" class="btn btn-xs btn-default" style="margin-top: 20px;" ui-sref="company.list({location_path: global.location.key, community_path: global.nav.companies.community, tail_path: global.nav.companies.tail, query: undefined})">view all</button>
                     </div>
                 </div>
             </div>
@@ -90,7 +90,7 @@
                                 <div ng-if="$last" style="margin-bottom:-12px;"></div>
                             </div>
                         </div>
-                        <button class="btn btn-xs btn-default" style="margin-top: 20px;" ui-sref="resource.list">view all</button>
+                        <button ng-if="global.top.resources.count > 4" class="btn btn-xs btn-default" style="margin-top: 20px;" ui-sref="resource.list({location_path: global.location.key, community_path: global.nav.resources.community, tail_path: global.nav.resources.tail, query: undefined})">view all</button>
                     </div>
                 </div>
             </div>
@@ -109,12 +109,12 @@
                     <div class="panel-body" ng-repeat="item in global.top.skills.entries">
                         <div class="row">
                             <div class="col-xs-10 forum-heading">
-                                <a ui-sref="search.dashboard({location_path: dashboard.location_path, community_path: dashboard.community_path, query: item.value})"><h4 style="font-weight: 200;">{{item.value}}</h4>
+                                <a ng-click="nav.search(item.value)"><h4 style="font-weight: 200;">{{item.value}}</h4>
                                     <uib-progressbar ng-attr-value="(item.count/global.top.skills.entries[0].count)*100" type="info" class="progress-small full" style="margin-top: 7px;"></uib-progressbar>
                                 </a>
                             </div>
                             <div class="col-xs-2 forum-info">
-                                <a ui-sref="search.dashboard({location_path: dashboard.location_path, community_path: dashboard.community_path, query: item.value})">
+                                <a ng-click="nav.search(item.value)">
                                     <span class="number number-column">{{item.count}}</span>
                                 </a>
                             </div>
@@ -136,12 +136,12 @@
                     <div class="panel-body" ng-repeat="item in global.top.industries.entries">
                         <div class="row">
                             <div class="col-xs-10 forum-heading">
-                                <a ui-sref="search.dashboard({location_path: dashboard.location_path, community_path: dashboard.community_path, query: item.value})"><h4 style="font-weight: 200;">{{item.value}}</h4>
+                                <a ng-click="nav.search(item.value)"><h4 style="font-weight: 200;">{{item.value}}</h4>
                                     <uib-progressbar ng-attr-value="(item.count/global.top.industries.entries[0].count)*100" type="default" class="progress-small full" style="margin-top: 7px;"></uib-progressbar>
                                 </a>
                             </div>
                             <div class="col-xs-2 forum-info">
-                                <a ui-sref="search.dashboard({location_path: dashboard.location_path, community_path: dashboard.community_path, query: item.value})">
+                                <a ng-click="nav.search(item.value)">
                                     <span class="number number-column">{{item.count}}</span>
                                 <a/>
                             </div>
@@ -162,12 +162,12 @@
                     <div class="panel-body" ng-repeat="item in global.top.parents | limitTo: 5">
                         <div class="row">
                             <div class="col-xs-10 forum-heading">
-                                <a ui-sref="community.dashboard({community_path: item.label, location_path: global.location.key})"><h4 style="font-weight: 200;">{{item.label[0].toUpperCase() + item.label.slice(1);}}</h4>
+                                <a ng-click="nav.search(item.value)"><h4 style="font-weight: 200;">{{item.label[0].toUpperCase() + item.label.slice(1);}}</h4>
                                     <uib-progressbar value="item.value" max="global.top.max" type="success" class="progress-small full" style="margin-top: 7px;"></uib-progressbar>
                                 </a>
                             </div>
                             <div class="col-xs-2 forum-info">
-                                <a ui-sref="community.dashboard({community_path: item.label, location_path: global.location.key})">
+                                <a ng-click="nav.search(item.value)">
                                     <span class="number number-column">{{((item.value / global.top.max)*100).toFixed(0)}}%</span>
                                 </a>
                             </div>

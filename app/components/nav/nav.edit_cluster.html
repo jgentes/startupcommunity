@@ -1,8 +1,8 @@
 <div class="inmodal">
     <div class="color-line"></div>
     <div class="modal-header">
-        <h4 class="modal-title" ng-show="!edit.update">Add an Industry in {{edit.location.profile.name}}</h4>
-        <h4 class="modal-title" ng-show="edit.update">Update {{edit.community.name}} in {{edit.location.profile.name}}</h4>
+        <h4 class="modal-title" ng-show="!edit.update">Add an Industry in {{global.location.profile.name}}</h4>
+        <h4 class="modal-title" ng-show="edit.update">Update {{global.community.name}} in {{global.location.profile.name}}</h4>
         <p class="font-bold">An industry cluster is an entrepreneurial ecosystem in support of a market vertical.</p>
     </div>
     <div class="modal-body">
@@ -24,7 +24,7 @@
                 <br>
                 <div class="panel-heading" style="font-size: 20px;">3. Customize the url path</div>
                 <input type="text" class="form-control input-lg" placeholder="{{ edit.encode(edit.communityForm.name) }}" ng-model="edit.communityForm.url" style="margin-bottom: 5px;">
-                <em>Your url will be: https://startupcommunity.org/{{edit.location.key}}/<strong><span style="text-transform: lowercase;">{{ edit.encode(edit.communityForm.url || edit.communityForm.name) }}</span></strong></em>
+                <em>Your url will be: https://startupcommunity.org/{{global.location.key}}/<strong><span style="text-transform: lowercase;">{{ edit.encode(edit.communityForm.url || edit.communityForm.name) }}</span></strong></em>
                 <br><br>
                 <div class="panel-heading" style="font-size: 20px;">4. And a short description</div>
                 <input type="text" class="form-control input-lg" placeholder="Local hardware and software product companies" ng-model="edit.communityForm.headline">
@@ -47,11 +47,8 @@
     </div>
     <div class="modal-footer">
         <button type="button" class="btn btn-default" ng-click="edit.cancel()">Cancel</button>
-        <button type="button" class="btn btn-danger pull-left" ng-click="edit.deleteCommunity()" ng-show="edit.update">Delete {{edit.communityForm.name || 'Industry'}}</button>
-        <button type="button" class="btn btn-primary" ng-click="edit.editCommunity()">
-            <span ng-show="!edit.update">Create</span><span ng-show="edit.update">Update</span> {{edit.communityForm.name || 'Industry'}}
-            <div loading-bars ng-show="edit.working" style="padding-top: 5px; display: inline;"></div>
-        </button>
+        <button ladda="edit.deleting" class="ladda-button btn btn-danger pull-left" ng-click="edit.deleteCommunity()" ng-show="edit.update">Delete {{edit.communityForm.name || 'Industry'}}</button>
+        <button ladda="edit.working" class="ladda-button btn btn-primary" ng-click="edit.updateCommunity('cluster')">{{(edit.update ? 'Update ' : 'Create ') + edit.communityForm.name || 'Industry'}}</button>
     </div>
 </div>
 

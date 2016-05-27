@@ -34,13 +34,11 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
         })
 
         .state('404', {
-            templateUrl: "components/errors/404.html",
-            controller: "ErrorPageController as error"
+            templateUrl: "components/errors/404.html"
         })
 
         .state('500', {
-            templateUrl: "components/errors/500.html",
-            controller: "ErrorPageController as error"
+            templateUrl: "components/errors/500.html"
         })
 
         // the root state with core dependencies for injection in child states

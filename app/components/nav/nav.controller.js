@@ -374,19 +374,7 @@ function NavigationController($scope, $auth, $state, $window, $location, $stateP
                 templateUrl: 'components/users/user.contact.html',
                 controller: ContactUserController,
                 controllerAs: 'contact',
-                windowClass: "hmodal-warning",
-                resolve: {
-                    user: function() {
-                        user.value["key"] = user.path.key;
-                        return user.value;
-                    },
-                    community_key: function() {
-                        return $scope.global.community.key;
-                    },
-                    location_key: function() {
-                        return $stateParams.location_path;
-                    }
-                }
+                windowClass: "hmodal-warning"
             });
         };
 
@@ -405,6 +393,7 @@ function NavigationController($scope, $auth, $state, $window, $location, $stateP
                         //force pull of community settings every time to avoid stale data
                         return community_service.getKey(community_key)
                             .then(function(response) {
+                                $scope.global.community = response.data;
                                 return response.data;
                             })
                     }
@@ -413,22 +402,27 @@ function NavigationController($scope, $auth, $state, $window, $location, $stateP
         };
 
         // ADD OR MODIFY CLUSTER, RESOURCE, OR LOCATION
-
+        // note there are *2* editcommunity functions in this file :)
         self.editCommunity = function(community_key) {
 
             var modalInstance = $uibModal.open({
-                templateUrl: 'components/nav/nav.edit_cluster.html',
+                templateUrl: 'components/nav/nav.test.html',
                 controller: CommunityController,
                 controllerAs: 'edit',
                 windowClass: "hmodal-success",
                 resolve: {
                     edit_community: function() {
 
-                        //force pull of community settings every time to avoid stale data
-                        return community_service.getKey(community_key)
-                            .then(function(response) {
-                                return response.data;
-                            })
+                        if (community_key) {
+
+                            //force pull of community settings every time to avoid stale data
+                            return community_service.getKey(community_key)
+                                .then(function(response) {
+                                    $scope.global.community = response.data;
+                                    return response.data;
+                                })
+
+                        } else return null;
                     }
                 }
             });
@@ -650,12 +644,17 @@ function SettingsController($scope, community_service) {
             .then(function(response) {
                 self.resources = response.data;
             })
+            .catch(function() {
+                self.resources = {};
+            })
     } else self.resources = {};
     
     if ($scope.global.location && $scope.global.location.clusters) {
         
         for (c in $scope.global.location.clusters) {
-            self.clusters[c] = $scope.global.location.clusters[c];
+            for (clus in $scope.global.location.clusters[c]) {
+                self.clusters[clus] = $scope.global.location.clusters[c][clus];
+            }
         }
     }
     
@@ -695,8 +694,12 @@ function EmbedSettingsController($scope, $uibModalInstance, sweet, embed_communi
 
     this.save = function () {
 
+        self.working = true;
+
         community_service.setSettings(self.embed, $scope.global.location.key, self.thiscommunity.key)
             .then(function(response) {
+
+                self.working = false;
 
                 if (response.status !== 201) {
                     sweet.show({
@@ -721,7 +724,7 @@ function EmbedSettingsController($scope, $uibModalInstance, sweet, embed_communi
     };
 }
 
-function CommunityController($scope, $uibModalInstance, $mixpanel, sweet, edit_community, community_service, $http, $window, $state){
+function CommunityController($scope, $uibModalInstance, $mixpanel, sweet, edit_community, community_service, user_service, $http, $window, $state){
     
     var self = this,
         community = edit_community,
@@ -729,20 +732,13 @@ function CommunityController($scope, $uibModalInstance, $mixpanel, sweet, edit_c
     
     this.update = false;
     this.communityForm = {"name":""}; // to avoid 'undefined' for initial url
-    this.industryList = community_service.industries();
+    //this.industryList = community_service.industries();
 
     this.encode = function(uri) {
         return encodeURI(uri.toLowerCase().replace(/\s+/g, '-'));
     };
 
-    if (community.type == 'cluster') {
-        self.parents = community_service.parents();
-    } else if (community.resource) {
-        community_service.getResources(loc_key)
-            .then(function(recs) {
-                self.resources = recs.data;
-            });
-    }
+    self.parents = community_service.parents();
 
     if (community && community.community_profiles && community.community_profiles[loc_key]) {
         self.update = true;
@@ -757,7 +753,7 @@ function CommunityController($scope, $uibModalInstance, $mixpanel, sweet, edit_c
         if (self.community.parents) {
             switch (self.community.parents[0]) {
                 case 'consumer-goods':
-                    self.communityForm['parent'] = 'Consumer Goods';
+                    self.communityForm['parent'] = 'Consumer-Goods';
                     break;
                 case 'non-profit':
                     self.communityForm['parent'] = 'Non-Profit';
@@ -776,17 +772,19 @@ function CommunityController($scope, $uibModalInstance, $mixpanel, sweet, edit_c
             }
         }
     }
-
-    this.editCommunity = function() {
+/*
+    this.updateCommunity = function(type) {
         self.working = true;
         var rename = false,
             thiscommunity = $scope.global.community;
 
+        thiscommunity.type = type || '';
+
         if (self.form.$valid) {
 
-            if ($scope.global.communityForm.url) {
+            if (self.communityForm.url) {
                 try {
-                    var encodedUrl = $scope.global.communityForm.url.toLowerCase().replace(/\s+/g, '-');
+                    var encodedUrl = self.communityForm.url.toLowerCase().replace(/\s+/g, '-');
                 }
                 catch (e) {
                     sweet.show({
@@ -797,23 +795,23 @@ function CommunityController($scope, $uibModalInstance, $mixpanel, sweet, edit_c
                 }
             }
             
-            if ($scope.global.communityForm.parent) {
-                var parents = angular.isArray($scope.global.communityForm.parent) ? $scope.global.communityForm.parent : [$scope.global.communityForm.parent.toLowerCase()];
+            if (self.communityForm.parent) {
+                var parents = angular.isArray(self.communityForm.parent) ? self.communityForm.parent : [self.communityForm.parent.toLowerCase()];
             } else parents = [];
 
             var newCommunity = {
                 type: thiscommunity.type,
                 profile: {
-                    name: $scope.global.communityForm.name,
-                    headline: $scope.global.communityForm.headline,
+                    name: self.communityForm.name,
+                    headline: self.communityForm.headline,
                     parents: parents
                 },
-                resource: $scope.global.communityForm.resource ? $scope.global.communityForm.resource.key : "",
-                url: encodedUrl || $scope.global.communityForm.name.toLowerCase().replace(/\s+/g, '-')
+                resource: self.communityForm.resource ? self.communityForm.resource.key : false,
+                url: encodedUrl || self.communityForm.name.toLowerCase().replace(/\s+/g, '-')
             };
 
             if (thiscommunity.type == 'cluster') {
-                newCommunity.profile['industries'] = $scope.global.communityForm.industries;
+                newCommunity.profile['industries'] = self.communityForm.industries;
             }
 
             if (thiscommunity.community_profiles && thiscommunity.community_profiles[loc_key] && thiscommunity.community_profiles[loc_key].embed) {
@@ -837,8 +835,17 @@ function CommunityController($scope, $uibModalInstance, $mixpanel, sweet, edit_c
                         if (rename) community_service.deleteCommunity(newCommunity, loc_key, newCommunity.url);
 
                         // refresh outdated cache
-                        $http.get('/api/2.1/community/' + user.key);
-                        $http.get('/api/2.1/community/' + loc_key);
+
+                        community_service.getCommunity(loc_key, true)
+                            .then(function (response) {
+                                $scope.global.location = response.data;
+
+                            });
+
+                        user_service.getProfile()
+                            .then(function(response) {
+                                $scope.global.user = response.data;
+                            });
 
                         sweet.show({
                             title: thiscommunity.type[0].toUpperCase() + thiscommunity.type.slice(1) + (self.update ? " updated!" : " created!"),
@@ -850,7 +857,7 @@ function CommunityController($scope, $uibModalInstance, $mixpanel, sweet, edit_c
                             $window.location.href = '/'+ loc_key + '/' + newCommunity.url;
                         });
                     }
-                    $mixpanel.track('Added ' + thiscommunity.type[0].toUpperCase() + thiscommunity.type.slice(1));
+                    $mixpanel.track('Added ' + thiscommunity.type);
                 });
 
         } else {
@@ -860,7 +867,7 @@ function CommunityController($scope, $uibModalInstance, $mixpanel, sweet, edit_c
     };
 
     this.deleteCommunity = function () {
-        self.working = true;
+        self.deleting = true;
 
         if ($scope.global.community.type == 'cluster') {
             var text = "You can recreate this cluster at any time.";
@@ -880,7 +887,7 @@ function CommunityController($scope, $uibModalInstance, $mixpanel, sweet, edit_c
 
             community_service.deleteCommunity(community, loc_key)
                 .then(function(response) {
-                    self.working = false;
+                    self.deleting = false;
 
                     if (response.status !== 204) {
                         sweet.show({
@@ -906,5 +913,5 @@ function CommunityController($scope, $uibModalInstance, $mixpanel, sweet, edit_c
     this.cancel = function () {
         self.working = false;
         $uibModalInstance.dismiss('cancel');
-    };
+    };*/
 }

@@ -117,7 +117,7 @@ function handleGetCommunity(req, res) {
                             results[item].value['key'] = results[item].path.key;
 
                             // sort communities for use in nav and child dashboard pages
-                                
+                              
                             switch (results[item].value.type) {
                                 case "location":
                                     if (!newresponse.locations) newresponse['locations'] = {};
@@ -827,9 +827,12 @@ function handleEditCommunity(req, res) {
                                     db.put(process.env.DB_COMMUNITIES, pathname, response.body)
                                         .then(function (finalres) {
 
-                                            update_user(req.user, 'leader', pathname, settings.location_key)
-                                                .then(function() {
-                                                res.status(201).send({message: settings.community.type.toUpperCase() + settings.community.type.slice(1) + ' created!'});
+                                            update_user(req.user, 'leader', pathname, settings.location_key, function(good) {
+                                                if (good) {
+                                                    res.status(201).send({message: settings.community.type.toUpperCase() + settings.community.type.slice(1) + ' created!'});
+                                                } else {
+                                                    res.status(202).send({message: "Something went wrong."});
+                                                }
                                             })
                                         })
                                         .fail(function (err) {
@@ -889,9 +892,11 @@ function handleEditCommunity(req, res) {
                                 db.put(process.env.DB_COMMUNITIES, pathname, profile)
                                     .then(function (finalres) {
 
-                                        update_user(req.user, 'leader', pathname, settings.location_key)
-                                            .then(function() {
-                                            res.status(201).send({message: settings.community.type[0].toUpperCase() + settings.community.type.slice(1) + ' created!'});
+                                        update_user(req.user, 'leader', pathname, settings.location_key, function(good) {
+                                            if (good) {
+                                                res.status(201).send({message: settings.community.type[0].toUpperCase() + settings.community.type.slice(1) + ' created!'});
+                                            } else res.status(202).send({message: "Something went wrong."});
+
                                         })
                                     })
                                     .fail(function (err) {
@@ -994,10 +999,14 @@ function handleDeleteCommunity(req, res) {
 
                                 } else {
 
-                                    update_user(req.user, 'delete', settings.community.key, settings.location_key)
-                                        .then(function () {
+                                    update_user(req.user, 'delete', settings.community.key, settings.location_key, function (good) {
+                                        if (good) {
                                             console.log('Community deleted.');
-                                        })
+                                            res.status(204).send({message: settings.community.type[0].toUpperCase() + settings.community.type.slice(1) + ' deleted!'});
+                                        } else {
+                                            res.status(202).send({message: "Something went wrong."});
+                                        }
+                                    })
                                 }
 
                             } else {
@@ -1029,9 +1038,9 @@ function handleDeleteCommunity(req, res) {
 
 }
 
-var update_user = function(user_key, role, community_key, location_key) {
-
-    return db.get(process.env.DB_COMMUNITIES, user_key)
+var update_user = function(user_key, role, community_key, location_key, callback) {
+    
+    db.get(process.env.DB_COMMUNITIES, user_key)
         .then(function(response){
 
             if (response.body.code !== "items_not_found") {
@@ -1082,18 +1091,22 @@ var update_user = function(user_key, role, community_key, location_key) {
                 db.put(process.env.DB_COMMUNITIES, user_key, response.body)
                     .then(function(result) {
                         console.log('User ' + user_key + ' updated with community role.');
+                        callback(true);
                     })
                     .fail(function(err){
                         console.warn("WARNING: community706", err);
+                        callback(false);
                     });
 
             } else {
                 console.warn('WARNING:  User not found.');
+                callback(false);
             }
         })
 
         .fail(function(err){
             console.warn("WARNING: community715", err);
+            callback(false);
         });
 };
 
