@@ -51,11 +51,10 @@ angular
 
     .factory('notify_service', function($http) {
         return {
-            contact: function(user_key, formdata, community_key, location_key) {
+            contact: function(user_key, formdata, location_key) {
                 return $http.post('/api/2.1/contact?' + jQuery.param({
                         user_key: user_key,
                         formdata: formdata,
-                        community_key: community_key,
                         location_key: location_key
                         })
                 )

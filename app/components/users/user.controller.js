@@ -202,7 +202,8 @@ function ContactUserController($scope, $uibModalInstance, notify_service, sweet)
                 "reason" : self.form.reason_value
             };
 
-            notify_service.contact($scope.global.user.key, formdata, $scope.global.community.key, $scope.global.location.key)
+
+            notify_service.contact($scope.global.community.key, formdata, $scope.global.location.key)
                 .then(function(response) {
 
                     $uibModalInstance.close();
