@@ -244,7 +244,7 @@ function NavigationController($scope, $auth, $state, $window, $location, $stateP
             });
         }
 
-        // to set correct root path when navigating via header liniks.. craziness is needed because using bracket syntax inside of ui-sref doesn't work
+        // to set correct root path when navigating via header liniks..  craziness is needed because using bracket syntax inside of ui-sref doesn't work
         
         $scope.global['nav'] = $scope.global.nav || {};
 
