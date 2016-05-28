@@ -13,7 +13,7 @@ function NavigationController($scope, $auth, $state, $window, $location, $stateP
     $scope.global.community = undefined;
     $scope.global.loaders = {};
     $scope.global.lastitems = ["people", "companies", "resources", "search", "invite", "add-company", "add-resource", "welcome", "settings", "edit", "newsletter"];
-    this.state = $state; // used in view because path doesn't always update properly.. esp. for /people
+    this.state = $state; // used in header because path doesn't always update properly..
 
     var nav_community;
 
@@ -248,7 +248,7 @@ function NavigationController($scope, $auth, $state, $window, $location, $stateP
         
         $scope.global['nav'] = $scope.global.nav || {};
 
-        if (($scope.global.location.key !== $scope.global.community.key && $scope.global.lastitems.indexOf($stateParams.community_path) < 0 && $scope.global.community.type !== 'user' && $scope.global.community.type !== 'company') || ($scope.global.community.type == 'cluster')) {
+        if (($scope.global.location.key !== $scope.global.community.key && $scope.global.lastitems.indexOf($stateParams.community_path) < 0 && $scope.global.community.type !== 'user' && $scope.global.community.type !== 'company') || $scope.global.community.type == 'cluster' || $scope.global.community.resource) {
             $scope.global.nav['overview'] = $scope.global.community.key;
             $scope.global.nav['people'] = {
                 community: $scope.global.community.key,
