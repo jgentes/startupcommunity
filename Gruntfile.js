@@ -212,6 +212,16 @@ module.exports = function (grunt) {
                 configFile: "test/protractor.conf.js"
             },
             run: {}
+        },
+        lineending: {
+            dist: {
+                options: {
+                    overwrite: true
+                },
+                files: {
+                    '': ['.tmp/concat/scripts/*']
+                }
+            }
         }
     });
 
