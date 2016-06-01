@@ -132,20 +132,20 @@
                 </ul>
             </li>
 
-            <li class="active" ng-show="global.locations">
-                <a style="cursor:default;"><span>
+            <li class="active" ng-show="global.location.locations">
+                <a style="cursor:default; margin-left: -7px;"><span>
 
                     Locations
 
                 </span>
                 </a>
                 <ul class="nav nav-second-level">
-                    <li ng-if="::!global.locations || global.locations === {}">
+                    <li ng-if="!global.community.locations || global.community.locations === {}">
                         <a>No locations yet</a>
                     </li>
-                    <li ng-repeat="item in global.locations">
+                    <li ng-repeat="item in global.community.locations">
                         <a ui-sref="community.dashboard({location_path: item.key, community_path: '', tail_path: ''})" ng-class="{active: global.path.includes('/' + item.key)}" ng-click="li_working = true"><i class="fa fa-globe"></i>
-                            {{::item.profile.name}}
+                            {{item.profile.name}}
                             <span loading-bars ng-show="li_working"></span>
                         </a>
                     </li>

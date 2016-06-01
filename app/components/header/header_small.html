@@ -21,13 +21,13 @@
 
             <div class="pull-right">
 
-                <ul class="header-nav" style="margin-left:-40px;" >
-                    <li>
-                        <p ng-if="nav.btype">
+                <ul class="header-nav" style="margin-right:-14px;" >
+                    <li style="margin-right:0;">
+                        <p ng-if="nav.btype && nav.btype !== 'location'">
                             {{ nav.btype.toUpperCase() }}&nbsp;&nbsp;/
                         </p>
                     </li>
-                    <li style="margin-left:-17px;">
+                    <li>
                         <a ui-sref="community.dashboard({location_path: global.community.key})" style="color:#bbb;">&nbsp;&nbsp;{{ global.community.profile.name.toUpperCase() }}</a>
                     </li>
                 </ul>
