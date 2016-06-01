@@ -217,6 +217,7 @@ function NavigationController($scope, $auth, $state, $window, $location, $stateP
                     name: user.profile.name,
                     email: user.profile.email
                 };
+            }
 
         }
 

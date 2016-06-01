@@ -212,16 +212,6 @@ module.exports = function (grunt) {
                 configFile: "test/protractor.conf.js"
             },
             run: {}
-        },
-        lineending: {
-            dist: {
-                options: {
-                    overwrite: true
-                },
-                files: {
-                    '': ['.tmp/concat/scripts/*']
-                }
-            }
         }
     });
 
@@ -279,7 +269,5 @@ module.exports = function (grunt) {
     grunt.registerTask('heroku:staging', 'build');
 
     grunt.registerTask('heroku:production', 'build');
-
-    grunt.loadNpmTasks('grunt-lineending');
 
 };
