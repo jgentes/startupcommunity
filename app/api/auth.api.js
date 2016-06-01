@@ -248,7 +248,7 @@ function handleLinkedin(req, res) {
     // this function handles new user invites as well as existing user login
     var invite_code = req.body.invite_code,
         accessTokenUrl = 'https://www.linkedin.com/uas/oauth2/accessToken',
-        peopleApiUrl = 'https://api.linkedin.com/v1/people/~:(id,first-name,last-name,email-address,picture-url;secure=true,headline,location,specialties,positions,summary,industry,public-profile-url)';
+        peopleApiUrl = 'https://api.linkedin.com/v1/people/~:(id,first-name,last-name,email-address,picture-url;secure=true,headline,location,summary,industry,public-profile-url)';
 
     var params = {
         client_id: process.env.LINKEDIN_CLIENTID,
