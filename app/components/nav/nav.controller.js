@@ -198,19 +198,6 @@ function NavigationController($scope, $auth, $state, $window, $location, $stateP
                 break;                    
         }
 
-        var rollbar_payload = {
-                "payload": {
-                    "environment": $location.host() !== 'startupcommunity.org' ? "development" : "production"
-                }
-            };
-
-        var go_rollbar = function() {
-            if ($window.Rollbar)
-                $window.Rollbar.configure(rollbar_payload);
-            if (rollbar_payload.payload.jayco)
-                jaco(); // this removes the watcher for the session id;
-        };
-
         // ANONYMOUS OR LOGGED IN ?
 
         if ($auth.isAuthenticated() && $scope.global.user) {
@@ -224,25 +211,16 @@ function NavigationController($scope, $auth, $state, $window, $location, $stateP
             if ($window.JacoRecorder)
                 $window.JacoRecorder.identify(user.profile.email);
 
-            rollbar_payload.payload['person'] = {
-                "id": user.key,
-                "name": user.profile.name,
-                "email": user.profile.email
-            };
+            if ($window.Bugsnag) {
+                $window.Bugsnag.user = {
+                    key: user.key,
+                    name: user.profile.name,
+                    email: user.profile.email
+                };
 
-        } else go_rollbar();
-
-        if ($window.JacoRecorder) {
-
-            var jaco = $scope.$watch(function () {
-                if ($window.JacoRecorder.state && $window.JacoRecorder.state.session && $window.JacoRecorder.state.session.id) {
-                    rollbar_payload.payload['custom'] = {
-                        "jaco_url": "https://bo.getjaco.com/backoffice/sessions/%24%7" + $window.JacoRecorder.state.session.id + "%7D"
-                    };
-                    go_rollbar();
-                }
-            });
         }
+
+        if ($window.Bugsnag && $location.host() !== 'startupcommunity.org') $window.Bugsnag.releaseStage = "development";
 
         // to set correct root path when navigating via header liniks..  craziness is needed because using bracket syntax inside of ui-sref doesn't work
         

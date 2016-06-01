@@ -422,7 +422,7 @@ angular
             return function(exception, cause) {
                 getSourceMappedStackTrace(exception).then(function(final) {
                     errorLogService(final);
-                    if ($window.Rollbar) $window.Rollbar.error(final);
+                    Bugsnag.notifyException(exception, {diagnostics:{cause: cause}});
                 });
             };
         });
