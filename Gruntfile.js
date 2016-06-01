@@ -270,4 +270,6 @@ module.exports = function (grunt) {
 
     grunt.registerTask('heroku:production', 'build');
 
+    grunt.loadNpmTasks('grunt-lineending');
+
 };
