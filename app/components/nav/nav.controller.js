@@ -57,6 +57,7 @@ function NavigationController($scope, $auth, $state, $window, $location, $stateP
             community_service.getCommunity(comm_path)
                 .then(function (response) {
                     $scope.global.community = response.data;
+                    console.log(response.data);
                     getLocation();
                 })
                 .catch(function(response) {
@@ -93,6 +94,7 @@ function NavigationController($scope, $auth, $state, $window, $location, $stateP
 
         // check if community is already in $scope.global
         console.log($scope.global.location);
+        console.log($stateParams);
 
         if ($stateParams.community_path && $scope.global.lastitems.indexOf($stateParams.community_path) < 0) {
             if ($scope.global.location && $scope.global.location.key == $stateParams.community_path) {
@@ -109,7 +111,7 @@ function NavigationController($scope, $auth, $state, $window, $location, $stateP
     };
 
     var getLocation = function() {
-
+        console.log($scope.global.community);
         nav_community = $scope.global.community;
 
         // if community is a user or company, pull their home and use that for location [used when refreshing page on user profile]
