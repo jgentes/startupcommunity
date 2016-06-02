@@ -106,7 +106,8 @@ function handleGetCommunity(req, res) {
             .query(searchString)
             .then(function (result) {
 
-                var finalize = function (results) {
+                var newresponse,
+                    finalize = function (results) {
                     
                     // finalize iterates through results and formats them nicely
 
@@ -279,7 +280,7 @@ function handleGetCommunity(req, res) {
                         if (m.path.key == community) {
                             found = true;
 
-                            var newresponse = m.value;
+                            newresponse = m.value;
                             newresponse["key"] = community;
 
                             console.log('Pulling community for ' + m.value.profile.name);
