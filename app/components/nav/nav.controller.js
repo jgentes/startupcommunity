@@ -142,7 +142,7 @@ function NavigationController($scope, $auth, $state, $window, $location, $stateP
     };
 
     var getNavTop = function() {
-        console.log(nav_community);
+        
         // check if we already have correct navigation
         if ($scope.global && $scope.global.nav_top && $scope.global.nav_top.key == $stateParams.location_path)
             getCommunityTop();
