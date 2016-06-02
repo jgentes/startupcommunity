@@ -56,8 +56,6 @@ function NavigationController($scope, $auth, $state, $window, $location, $stateP
 
             community_service.getCommunity(comm_path)
                 .then(function (response) {
-                    var bigtest = response.data;
-                    console.log(bigtest);
                     $scope.global.community = response.data;
                     getLocation();
                 })
@@ -97,13 +95,11 @@ function NavigationController($scope, $auth, $state, $window, $location, $stateP
 
         if ($stateParams.community_path && $scope.global.lastitems.indexOf($stateParams.community_path) < 0) {
             if ($scope.global.location && $scope.global.location.key == $stateParams.community_path) {
-                console.log('hit')
                 $scope.global.community = $scope.global.location;
                 getLocation();
             } else next();
         } else if ($stateParams.location_path) {
             if ($scope.global.location && $scope.global.location.key == $stateParams.location_path) {
-                console.log('hit')
                 $scope.global.community = $scope.global.location;
                 getLocation();
             } else next();
@@ -146,7 +142,7 @@ function NavigationController($scope, $auth, $state, $window, $location, $stateP
     };
 
     var getNavTop = function() {
-
+        console.log(nav_community);
         // check if we already have correct navigation
         if ($scope.global && $scope.global.nav_top && $scope.global.nav_top.key == $stateParams.location_path)
             getCommunityTop();
