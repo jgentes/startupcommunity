@@ -110,6 +110,7 @@ function NavigationController($scope, $auth, $state, $window, $location, $stateP
     var getLocation = function() {
 
         nav_community = $scope.global.community;
+        console.log(nav_community);
 
         // if community is a user or company, pull their home and use that for location [used when refreshing page on user profile]
         if (nav_community && (nav_community.type == 'user' || nav_community.type == 'company')) {
@@ -172,6 +173,7 @@ function NavigationController($scope, $auth, $state, $window, $location, $stateP
                 })
         } else {
             $scope.global.top = $scope.global.nav_top;
+            console.log($scope.global.community);
             console.log($scope.global.location);
             loadNav();
         }
