@@ -584,9 +584,9 @@ function NavigationController($scope, $auth, $state, $window, $location, $stateP
             }
 
             try {
-                if ($scope.global.location.type === 'cluster' && $scope.global.location.community_profiles && $scope.global.location.community_profiles[$stateParams.location_path] && $scope.global.location.community_profiles[$stateParams.location_path].embed) {
+                if ($scope.global.community.type === 'cluster' && $scope.global.community.community_profiles && $scope.global.community.community_profiles[$stateParams.location_path] && $scope.global.community.community_profiles[$stateParams.location_path].embed) {
                     try {
-                        embed = $scope.global.location.community_profiles[$stateParams.location_path].embed;
+                        embed = $scope.global.community.community_profiles[$stateParams.location_path].embed;
                     }
                     catch (e) {
                         errorLogService('embed problem: ', e);
