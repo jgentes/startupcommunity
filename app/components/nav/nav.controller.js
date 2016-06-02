@@ -546,6 +546,8 @@ function NavigationController($scope, $auth, $state, $window, $location, $stateP
             $scope.global.embedded = true;
         }
 
+        //$scope.global.embedded = true; // for testing
+
         if ($scope.global.embedded) {
             var expired = true,
                 domain;
@@ -582,7 +584,7 @@ function NavigationController($scope, $auth, $state, $window, $location, $stateP
             }
 
             try {
-                if ($scope.global.location.type === 'cluster' && $scope.global.location.community_profiles[$stateParams.location_path] && $scope.global.location.community_profiles[$stateParams.location_path].embed) {
+                if ($scope.global.location.type === 'cluster' && $scope.global.location.community_profiles && $scope.global.location.community_profiles[$stateParams.location_path] && $scope.global.location.community_profiles[$stateParams.location_path].embed) {
                     try {
                         embed = $scope.global.location.community_profiles[$stateParams.location_path].embed;
                     }
@@ -619,8 +621,6 @@ function NavigationController($scope, $auth, $state, $window, $location, $stateP
                 }
             }
         }
-
-        //$scope.global.embedded = true; // for testing
 
     };
 
