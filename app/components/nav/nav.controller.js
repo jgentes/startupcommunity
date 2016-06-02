@@ -172,6 +172,7 @@ function NavigationController($scope, $auth, $state, $window, $location, $stateP
                 })
         } else {
             $scope.global.top = $scope.global.nav_top;
+            console.log($scope.global.location);
             loadNav();
         }
     };
