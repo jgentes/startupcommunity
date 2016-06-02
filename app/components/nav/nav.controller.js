@@ -92,6 +92,7 @@ function NavigationController($scope, $auth, $state, $window, $location, $stateP
         if ($stateParams.location_path) $stateParams.location_path = $stateParams.location_path.replace(/\s+/g, '-');
 
         // check if community is already in $scope.global
+        console.log($scope.global.location);
 
         if ($stateParams.community_path && $scope.global.lastitems.indexOf($stateParams.community_path) < 0) {
             if ($scope.global.location && $scope.global.location.key == $stateParams.community_path) {
@@ -172,8 +173,6 @@ function NavigationController($scope, $auth, $state, $window, $location, $stateP
                 })
         } else {
             $scope.global.top = $scope.global.nav_top;
-            console.log($scope.global.community);
-            console.log($scope.global.location);
             loadNav();
         }
     };
