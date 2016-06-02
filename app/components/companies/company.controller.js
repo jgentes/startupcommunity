@@ -220,6 +220,7 @@ function CompanyProfileController($scope, $stateParams, $mixpanel, user_service,
 
     $mixpanel.track('Viewed Company');
 
+    $scope.global.profile = undefined;
     if (!jQuery.isEmptyObject($stateParams.profile)) $scope.global['profile'] = $stateParams.profile; // set basic profile details while pulling the rest
 
     var self = this;
@@ -240,7 +241,9 @@ function CompanyProfileController($scope, $stateParams, $mixpanel, user_service,
                     $scope.global['profile'] = response.data;
 
                 });
-        } else $scope.global['profile'] = $scope.global.community;
+        } else if (!$scope.global.profile) {
+            $scope.global['profile'] = $scope.global.community;
+        } else $scope.global.community = $scope.global.profile;
 
         user_service.getProfile()
             .then(function(response) {
