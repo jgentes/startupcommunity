@@ -81,6 +81,7 @@ var schema = {
 function handleGetCommunity(req, res) {
 
     var checkcache = function(cache, community, newresponse) {
+        console.log(newresponse);
         if (!cache) res.status(200).send(newresponse);
 
         mc.set(community, JSON.stringify(newresponse), function(err, val) {

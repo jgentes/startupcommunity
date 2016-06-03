@@ -100,7 +100,6 @@ function NavigationController($scope, $auth, $state, $window, $location, $stateP
             } else next();
         } else if ($stateParams.location_path) {
             if ($scope.global.location && $scope.global.location.key == $stateParams.location_path) {
-                console.log('hit');
                 $scope.global.community = $scope.global.location;
                 getLocation();
             } else next();
@@ -136,7 +135,6 @@ function NavigationController($scope, $auth, $state, $window, $location, $stateP
                         getNavTop();
                     });
             } else {
-                console.log('hit');
                 $scope.global.location = nav_community;
                 getNavTop();
             }
