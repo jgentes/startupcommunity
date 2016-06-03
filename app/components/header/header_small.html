@@ -3,16 +3,16 @@
         <div class="panel-body" style="width: 100%;" ng-class="{'header-embedded' : global.embedded, 'no-sides' : !global.embedded}">
             <div class="pull-left" tour-step order="1" title="People, Companies, and Resources" content="To view people by role or industry, list companies, or find resources, click these links." placement="bottom">
                 <ul class="header-nav">
-                    <li ui-sref="community.dashboard({location_path: global.location.key, community_path: global.nav.overview, tail_path: '', query: undefined})" ng-class="{ 'active' : nav.state.current.name == 'community.dashboard' }">
+                    <li ui-sref="community.dashboard({location_path: global.location.key, community_path: global.nav.overview, tail_path: '', query: ''})" ng-class="{ 'active' : nav.state.current.name == 'community.dashboard' }">
                         <a>OVERVIEW</a>
                     </li>
-                    <li ui-sref="user.list({location_path: global.location.key, community_path: global.nav.people.community, tail_path: global.nav.people.tail, query: undefined})" ng-class="{ 'active' : nav.state.current.name == 'user.list' }">
+                    <li ui-sref="user.list({location_path: global.location.key, community_path: global.nav.people.community, tail_path: global.nav.people.tail, query: ''})" ng-class="{ 'active' : nav.state.current.name == 'user.list' }">
                         <a>PEOPLE</a>
                     </li>
-                    <li ui-sref="company.list({location_path: global.location.key, community_path: global.nav.companies.community, tail_path: global.nav.companies.tail, query: undefined})" ng-class="{ 'active' : nav.state.current.name == 'company.list' }">
+                    <li ui-sref="company.list({location_path: global.location.key, community_path: global.nav.companies.community, tail_path: global.nav.companies.tail, query: ''})" ng-class="{ 'active' : nav.state.current.name == 'company.list' }">
                         <a>COMPANIES</a>
                     </li>
-                    <li ui-sref="resource.list({location_path: global.location.key, community_path: global.nav.resources.community, tail_path: global.nav.resources.tail, query: undefined})" ng-class="{ 'active' : nav.state.current.name == 'resource.list' }">
+                    <li ui-sref="resource.list({location_path: global.location.key, community_path: global.nav.resources.community, tail_path: global.nav.resources.tail, query: ''})" ng-class="{ 'active' : nav.state.current.name == 'resource.list' }">
                         <a>RESOURCES</a>
                     </li>
                 </ul>

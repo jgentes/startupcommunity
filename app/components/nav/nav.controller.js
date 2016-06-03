@@ -180,8 +180,8 @@ function NavigationController($scope, $auth, $state, $window, $location, $stateP
 
     var loadNav = function() {
 
-        //console.log('Nav RootScope Location: ', $scope.global.location ? $scope.global.location.key : null);
-        //console.log('Nav RootScope Community: ', $scope.global.community ? $scope.global.community.key : null);
+        console.log('Nav RootScope Location: ', $scope.global.location ? $scope.global.location.key : null);
+        console.log('Nav RootScope Community: ', $scope.global.community ? $scope.global.community.key : null);
         
         // for header breadcrumbs
         switch ($scope.global.community.type) {
@@ -227,7 +227,8 @@ function NavigationController($scope, $auth, $state, $window, $location, $stateP
         
         $scope.global['nav'] = $scope.global.nav || {};
 
-        if (($scope.global.location.key !== $scope.global.community.key && $scope.global.lastitems.indexOf($stateParams.community_path) < 0 && $scope.global.community.type !== 'user' && $scope.global.community.type !== 'company') || $scope.global.community.type == 'cluster' || $scope.global.community.resource) {
+        if (($scope.global.location.key !== $scope.global.community.key && $scope.global.lastitems.indexOf($stateParams.community_path) < 0 && $scope.global.community.type !== 'user' && $scope.global.community.type !== 'company') || $scope.global.community.type == 'cluster') {
+
             $scope.global.nav['overview'] = $scope.global.community.key;
             $scope.global.nav['people'] = {
                 community: $scope.global.community.key,
@@ -241,7 +242,9 @@ function NavigationController($scope, $auth, $state, $window, $location, $stateP
                 community: $scope.global.community.key,
                 tail: 'resources'
             };
+
         } else {
+
             $scope.global.nav['overview'] = '';
             $scope.global.nav['people'] = {
                 community: 'people',
