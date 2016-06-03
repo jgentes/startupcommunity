@@ -179,9 +179,13 @@ function NavigationController($scope, $auth, $state, $window, $location, $stateP
     /* -------------- DEPENDENCIES HAVE BEEN RESOLVED --------------------- */
 
     var loadNav = function() {
+        
+        var path_url = $location.path().replace(/\/$/, "").split('/').pop(); // used for routing
 
-        //console.log('Nav RootScope Location: ', $scope.global.location ? $scope.global.location.key : null);
-        //console.log('Nav RootScope Community: ', $scope.global.community ? $scope.global.community.key : null);
+        console.log($stateParams);
+        console.log(path_url);
+        console.log('Nav RootScope Location: ', $scope.global.location ? $scope.global.location.key : null);
+        console.log('Nav RootScope Community: ', $scope.global.community ? $scope.global.community.key : null);
         
         // for header breadcrumbs
         switch ($scope.global.community.type) {
@@ -261,8 +265,6 @@ function NavigationController($scope, $auth, $state, $window, $location, $stateP
         }
 
         // *** ROUTING OF ROOT PATHS ***
-
-        var path_url = $location.path().replace(/\/$/, "").split('/').pop();
 
         if ($scope.global.lastitems.indexOf(path_url) > -1) {
 
