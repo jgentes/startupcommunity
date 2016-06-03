@@ -184,6 +184,7 @@ function NavigationController($scope, $auth, $state, $window, $location, $stateP
 
         console.log($stateParams);
         console.log(path_url);
+        console.log(nav_community);
         console.log('Nav RootScope Location: ', $scope.global.location ? $scope.global.location.key : null);
         console.log('Nav RootScope Community: ', $scope.global.community ? $scope.global.community.key : null);
         
@@ -314,7 +315,7 @@ function NavigationController($scope, $auth, $state, $window, $location, $stateP
                     $state.go('404', {}, {location: false});
             }
         } else {
-
+            
             switch (nav_community.type) {
 
                 case 'user':
