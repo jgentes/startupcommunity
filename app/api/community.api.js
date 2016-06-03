@@ -180,10 +180,10 @@ function handleGetCommunity(req, res) {
                                     return a.value.published < b.value.published;
                                 });
                                 newresponse.messages = {};
-                                for (m in messages.body.results) {
+                                for (mes in messages.body.results) {
 
-                                    messages.body.results[m].value["key"] = messages.body.results[m].path.key;
-                                    newresponse.messages[messages.body.results[m].path.key] = messages.body.results[m].value;
+                                    messages.body.results[mes].value["key"] = messages.body.results[mes].path.key;
+                                    newresponse.messages[messages.body.results[mes].path.key] = messages.body.results[mes].value;
                                 }
 
                                 checkcache(cache, community, newresponse);
