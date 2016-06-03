@@ -81,7 +81,6 @@ var schema = {
 function handleGetCommunity(req, res) {
 
     var checkcache = function(cache, community, newresponse) {
-        console.log(newresponse);
         if (!cache) res.status(200).send(newresponse);
 
         mc.set(community, JSON.stringify(newresponse), function(err, val) {
@@ -89,7 +88,7 @@ function handleGetCommunity(req, res) {
         });
     };
 
-    if (req.params.community) var community = req.params.community.replace(/\s+/g, '-');
+    var community = req.params.community ? req.params.community.replace(/\s+/g, '-') : 'bend-or';
 
     var searchString = '@path.key: ' + community; // grab the primary community object, don't use parens here
     searchString += ' OR ((@value.communities: "' + community + '"'; // + grab anything associated with this community in this location
@@ -107,9 +106,11 @@ function handleGetCommunity(req, res) {
             .query(searchString)
             .then(function (result) {
 
-                var newresponse,
-                    finalize = function (results) {
-                    
+                var newresponse;
+
+                var finalize = function (results) {
+                    console.log(newresponse);
+                    console.log(results);
                     // finalize iterates through results and formats them nicely
 
                     for (item in results) {
