@@ -156,17 +156,17 @@ function handleGetCommunity(req, res) {
                                     break;
                             }
 
-                            if (newresponse.resources && newresponse.resources.length) {
-                                newresponse.resources = newresponse.resources.sort(function(a, b) {
-                                    var x = a.key;
-                                    var y = b.key;
-                                    return ((x < y) ? -1 : ((x > y) ? 1 : 0));
-                                });
-                            }
-
                             //newresponse[results[item].path.key] = results[item].value;
                         
                         }
+                    }
+
+                    if (newresponse.resources && newresponse.resources.length) {
+                        newresponse.resources = newresponse.resources.sort(function(a, b) {
+                            var x = a.key;
+                            var y = b.key;
+                            return ((x < y) ? -1 : ((x > y) ? 1 : 0));
+                        });
                     }
                     
                     // get messages for users
@@ -225,27 +225,27 @@ function handleGetCommunity(req, res) {
                                             count = {};
 
                                         for (member in teamlist) {
-                                            m = teamlist[member];
+                                            t = teamlist[member];
                                             
                                             // delete sensitive data
-                                            if (m.path.collection) delete m.path.collection;
-                                            if (m.path.ref) delete m.path.ref;
-                                            if (m.value.profile.password) delete m.value.profile.password;
-                                            if (m.value.profile.email) delete m.value.profile.email;
-                                            if (m.value.newsletter) delete m.value.newsletter;
-                                            if (m.value.profile.linkedin) {
-                                                if (m.value.profile.linkedin.emailAddress) delete m.value.profile.linkedin.emailAddress;
-                                                if (m.value.profile.linkedin.access_token) delete m.value.profile.linkedin.access_token;
+                                            if (t.path.collection) delete t.path.collection;
+                                            if (t.path.ref) delete t.path.ref;
+                                            if (t.value.profile.password) delete t.value.profile.password;
+                                            if (t.value.profile.email) delete t.value.profile.email;
+                                            if (t.value.newsletter) delete t.value.newsletter;
+                                            if (t.value.profile.linkedin) {
+                                                if (t.value.profile.linkedin.emailAddress) delete t.value.profile.linkedin.emailAddress;
+                                                if (t.value.profile.linkedin.access_token) delete t.value.profile.linkedin.access_token;
                                             }
-                                            m.value["key"] = m.path.key;                                            
+                                            t.value["key"] = t.path.key;                                            
                                             
                                             // sort roles
-                                            for (role in m.value.roles) {
-                                                for (item in m.value.roles[role]) {
+                                            for (role in t.value.roles) {
+                                                for (item in t.value.roles[role]) {
                                                     if (item == thiskey) {
                                                         if (!teamresponse[role]) teamresponse[role] = [];
                                                         if (!count[role]) count[role] = 0;
-                                                        teamresponse[role].push(m);
+                                                        teamresponse[role].push(t);
                                                         ++ count[role];
                                                     }
                                                 }

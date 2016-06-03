@@ -182,12 +182,13 @@ function NavigationController($scope, $auth, $state, $window, $location, $stateP
         
         var path_url = $location.path().replace(/\/$/, "").split('/').pop(); // used for routing
 
+        /*  
         console.log($stateParams);
         console.log(path_url);
         console.log(nav_community);
         console.log('Nav RootScope Location: ', $scope.global.location ? $scope.global.location.key : null);
         console.log('Nav RootScope Community: ', $scope.global.community ? $scope.global.community.key : null);
-        
+        */
         // for header breadcrumbs
         switch ($scope.global.community.type) {
             case ('company'):
