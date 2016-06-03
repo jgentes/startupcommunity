@@ -100,6 +100,7 @@ function NavigationController($scope, $auth, $state, $window, $location, $stateP
             } else next();
         } else if ($stateParams.location_path) {
             if ($scope.global.location && $scope.global.location.key == $stateParams.location_path) {
+                console.log('hit');
                 $scope.global.community = $scope.global.location;
                 getLocation();
             } else next();
@@ -135,6 +136,7 @@ function NavigationController($scope, $auth, $state, $window, $location, $stateP
                         getNavTop();
                     });
             } else {
+                console.log('hit');
                 $scope.global.location = nav_community;
                 getNavTop();
             }
@@ -193,14 +195,14 @@ function NavigationController($scope, $auth, $state, $window, $location, $stateP
             case ('company'):
                 self.btype = $scope.global.community.resource ? 'resource' : 'company';
                 break;
-            
+
             case ('cluster'):
                 self.btype = 'industry';
                 break;
-            
+
             default:
                 self.btype = $scope.global.community.type;
-                break;                    
+                break;
         }
 
         // ANONYMOUS OR LOGGED IN ?
@@ -213,7 +215,7 @@ function NavigationController($scope, $auth, $state, $window, $location, $stateP
 
             knowtify.push(['load_inbox', 'knowtify', {email: user.profile.email}]);
 
-            if ($window.JacoRecorder)
+            if ($window.JacoRecorder && $location.host() !== 'localhost:5000')
                 $window.JacoRecorder.identify(user.profile.email);
 
             if ($window.Bugsnag) {
@@ -598,10 +600,17 @@ function NavigationController($scope, $auth, $state, $window, $location, $stateP
                         errorLogService('embed problem: ', e);
                     }
 
-                } else embed = $scope.global.location.profile.embed;
+                } else {
+                    try {
+                        embed = $scope.global.location.profile.embed;
+                    }
+                    catch (e) {
+                        errorLogService('embed problem2: ', e);
+                    }
+                }
             }
             catch (e) {
-                errorLogService('embed problem: ', e);
+                errorLogService('embed problem3: ', e);
             }
 
             if (embed) {
