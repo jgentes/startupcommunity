@@ -337,7 +337,7 @@ angular
 
                 $log.error.apply( $log, arguments );
 
-                Bugsnag.notifyException(exception, {diagnostics:{cause: cause}});
+                if ($window.Bugsnag) $window.Bugsnag.notifyException(exception, {diagnostics:{cause: cause}});
 
                 try {
                     var errorMessage = exception.toString();
