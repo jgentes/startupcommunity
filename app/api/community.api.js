@@ -109,8 +109,6 @@ function handleGetCommunity(req, res) {
                 var newresponse;
 
                 var finalize = function (results) {
-                    console.log(newresponse);
-                    console.log(results);
                     // finalize iterates through results and formats them nicely
 
                     for (item in results) {
@@ -225,7 +223,7 @@ function handleGetCommunity(req, res) {
                                             count = {};
 
                                         for (member in teamlist) {
-                                            t = teamlist[member];
+                                            var t = teamlist[member];
                                             
                                             // delete sensitive data
                                             if (t.path.collection) delete t.path.collection;
