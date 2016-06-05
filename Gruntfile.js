@@ -212,8 +212,19 @@ module.exports = function (grunt) {
                 configFile: "test/protractor.conf.js"
             },
             run: {}
+        },
+        cloudflare_purge: {
+            default: {
+                options: {
+                    apiKey: "738cd196cd5340ac71e588b97c1e07bfacfbc",
+                    email: "james@startupcommunity.org",
+                    zone: "startupcommunity.org"
+                }
+            }
         }
     });
+
+    grunt.loadNpmTasks('grunt-cloudflare-purge');
 
     grunt.registerTask('live', [
         'clean:server',
