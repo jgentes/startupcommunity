@@ -589,6 +589,8 @@ function NavigationController($scope, $auth, $state, $window, $location, $stateP
                 self.color = storage.color;
                 if (storage.full) $scope.global.embedded = false;
             }
+            
+            var embed;
 
             try {
                 if ($scope.global.community.type === 'cluster' && $scope.global.community.community_profiles && $scope.global.community.community_profiles[$stateParams.location_path] && $scope.global.community.community_profiles[$stateParams.location_path].embed) {
