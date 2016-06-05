@@ -512,6 +512,7 @@ function handleLinkedin(req, res) {
                                             new_invite_profile.profile.headline = profile.headline;
                                             new_invite_profile.profile.email = profile.emailAddress;
                                             new_invite_profile["communities"] = invite_profile.invite_communities;
+                                            new_invite_profile["roles"] = {};
                                             delete new_invite_profile.invite_communities;
                                             var invitor_email = invite_profile.invitor_email;
                                             delete new_invite_profile.invitor_email;
