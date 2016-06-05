@@ -2,7 +2,7 @@ angular
     .module('startupcommunity')
     .controller('WelcomeController', WelcomeController);
 
-function WelcomeController($scope, $auth, $location, $q, $http, $mixpanel, $stateParams, $state, sweet, user_service, community_service) {
+function WelcomeController($scope, $auth, $location, $q, $mixpanel, $stateParams, $state, sweet, user_service, community_service) {
     var self = this,
         user = $scope.global.user;
 
@@ -91,6 +91,7 @@ function WelcomeController($scope, $auth, $location, $q, $http, $mixpanel, $stat
                     } else {
                         $scope.global.user = response.data.value;
                         $scope.global.user["key"] = response.data.path.key;
+                        user = $scope.global.user;
                         self.quote = false;
 
                         checkProfile();
@@ -201,8 +202,7 @@ function WelcomeController($scope, $auth, $location, $q, $http, $mixpanel, $stat
 
         // allow user to remove roles
         var rolenames = ['founder', 'investor', 'team', 'mentor', 'provider'];
-        console.log(self.rolelist);
-        console.log(user.roles);
+ 
         for (dRole in rolenames) {
 
             if (self.rolelist && !self.rolelist[rolenames[dRole]]) {

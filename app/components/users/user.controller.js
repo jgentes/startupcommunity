@@ -390,6 +390,7 @@ function InviteUserController($scope, $mixpanel, user_service, community_service
         $scope.global.community = $scope.global.location;
 
     this.inviteUser = function() {
+        self.working = true;
 
         if (self.form.email_value) {
 
@@ -415,6 +416,7 @@ function InviteUserController($scope, $mixpanel, user_service, community_service
                         user_service.inviteUser(formdata.email, formdata.message, $scope.global.location.profile.name, $scope.global.location.key, formdata.resources)
                             .then(function(response) {
                                 $scope.global.loaders['sendinvite'] = false;
+                                self.working = false;
                                 self.form = {
                                     submitted: false,
                                     email_value: "",
@@ -432,6 +434,7 @@ function InviteUserController($scope, $mixpanel, user_service, community_service
                             })
                             .catch(function(error) {
                                 $scope.global.loaders['sendinvite'] = false;
+                                self.working = false;
                                 self.form = { submitted: false };
                                 self.alert = { type: 'danger', message: String(error.data.message) };
                             })
@@ -439,6 +442,7 @@ function InviteUserController($scope, $mixpanel, user_service, community_service
                         user_service.join(formdata.email, formdata.message, $scope.global.location.profile.name, $scope.global.location.key)
                             .then(function(response) {
                                 $scope.global.loaders['sendinvite'] = false;
+                                self.working = false;
                                 self.form = {
                                     submitted: false,
                                     email_value: "",
@@ -455,6 +459,7 @@ function InviteUserController($scope, $mixpanel, user_service, community_service
                             })
                             .catch(function(error) {
                                 $scope.global.loaders['sendinvite'] = false;
+                                self.working = false;
                                 self.form = { submitted: false };
                                 self.alert = { type: 'danger', message: String(error.data.message) };
                             })
@@ -464,10 +469,12 @@ function InviteUserController($scope, $mixpanel, user_service, community_service
 
             } else {
                 $scope.global.loaders['sendinvite'] = false;
+                self.working = false;
                 self.form.submitted = true;
             }
         } else {
             $scope.global.loaders['sendinvite'] = false;
+            self.working = false;
             self.form.submitted = true;
         }
 
