@@ -217,7 +217,7 @@ module.exports = function (grunt) {
             default: {
                 options: {
                     apiKey: "738cd196cd5340ac71e588b97c1e07bfacfbc",
-                    email: "james@startupcommunity.org",
+                    email: "james@jgentes.com",
                     zone: "startupcommunity.org"
                 }
             }
