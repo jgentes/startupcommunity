@@ -249,7 +249,8 @@ module.exports = function (grunt) {
         'uglify',
         //'filerev', caused issues with cloudflare
         'usemin',
-        'htmlmin'
+        'htmlmin',
+        'cloudflare_purge'
     ]);
 
     grunt.registerTask('test', [
