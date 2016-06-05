@@ -9,7 +9,7 @@ function UserController($scope, $stateParams, $location, user_service, result_se
     //todo usercontroller and company controller are dups, need to be consolidated
 
     this.selectedClusters = [];
-    this.selectedResources = [];
+    //this.selectedResources = [];
     this.selectedRole = ['*'];
     this.communityFilter = [$stateParams.location_path];
     
@@ -40,17 +40,16 @@ function UserController($scope, $stateParams, $location, user_service, result_se
             }
         }
 
-        if (self.selectedClusters.length == 0 && self.selectedResources.length == 0) {
+        if (self.selectedClusters.length == 0) {
             if ($scope.global.community.community_profiles && $scope.global.community.community_profiles[$stateParams.location_path]) {
                 self.selection = $scope.global.community.community_profiles[$stateParams.location_path].name;
             } else self.selection = $scope.global.community.profile.name;
         } else {
             self.selection = "";
-            var selectedCommunities = self.selectedClusters.concat(self.selectedResources);
-            for (item in selectedCommunities) {
-                self.selection += $scope.global.community[selectedCommunities[item]].profile.name;
-                if (item < selectedCommunities.length - 1) {
-                    if (item < selectedCommunities.length - 2 ) {
+            for (item in self.selectedClusters) {
+                self.selection += $scope.global.community.clusters[self.selectedClusters[item]].profile.name;
+                if (item < self.selectedClusters.length - 1) {
+                    if (item < self.selectedClusters.length - 2 ) {
                         self.selection += ', ';
                     } else self.selection += ' & ';
                 }
@@ -164,7 +163,7 @@ function UserController($scope, $stateParams, $location, user_service, result_se
                 setTitle();
             });
     };
-
+/*
     this.filterResources = function(selection) {
         if (selection == undefined) {
             self.selectedResources = [];
@@ -185,6 +184,7 @@ function UserController($scope, $stateParams, $location, user_service, result_se
                 setTitle();
             });
     };
+    */
 }
 
 function ContactUserController($scope, $uibModalInstance, notify_service, sweet){

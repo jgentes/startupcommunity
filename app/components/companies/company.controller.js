@@ -7,7 +7,7 @@ angular
 function CompanyController($scope, $stateParams, $state, $location, company_service, result_service, $sce) {
 
     this.selectedClusters = [];
-    this.selectedResources = [];
+    //this.selectedResources = [];
     this.selectedStage = ['*'];
     this.selectedType = ['*'];
     this.communityFilter = [$stateParams.location_path];
@@ -44,17 +44,16 @@ function CompanyController($scope, $stateParams, $state, $location, company_serv
             self.stage += " Companies";
         }
 
-        if (self.selectedClusters.length == 0 && self.selectedResources.length == 0) {
+        if (self.selectedClusters.length == 0) {
             if ($scope.global.community.community_profiles && $scope.global.community.community_profiles[$stateParams.location_path]) {
                 self.selection = $scope.global.community.community_profiles[$stateParams.location_path].name;
             } else self.selection = $scope.global.community.profile.name;
         } else {
             self.selection = "";
-            var selectedCommunities = self.selectedClusters.concat(self.selectedResources);
-            for (item in selectedCommunities) {
-                self.selection += $scope.global.community[selectedCommunities[item]].profile.name;
-                if (item < selectedCommunities.length - 1) {
-                    if (item < selectedCommunities.length - 2 ) {
+            for (item in self.selectedClusters) {
+                self.selection += $scope.global.community.clusters[self.selectedClusters[item]].profile.name;
+                if (item < self.selectedClusters.length - 1) {
+                    if (item < self.selectedClusters.length - 2 ) {
                         self.selection += ', ';
                     } else self.selection += ' & ';
                 }
@@ -147,6 +146,7 @@ function CompanyController($scope, $stateParams, $state, $location, company_serv
             });
     };
 
+    /*
     this.filterResources = function(selection) {
         if (selection == undefined) {
             self.selectedResources = [];
@@ -167,7 +167,7 @@ function CompanyController($scope, $stateParams, $state, $location, company_serv
                 setTitle();
             });
     };
-
+*/
     var loadCtrl = function() {
         onLoad(); //de-register the watcher
 
