@@ -425,7 +425,7 @@ angular
 
             return function(exception, cause) {
                 getSourceMappedStackTrace(exception).then(function(final) {
-                    errorLogService(final);
+                    errorLogService(final, $window);
                 });
             };
         });
