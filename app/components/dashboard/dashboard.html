@@ -28,8 +28,8 @@
                                 <div ng-if="$last" style="margin-bottom:-12px;"></div>
                             </div>
                         </div>
-                        <button ng-if="!global.user" ladda="global.loaders['invite']" class="ladda-btn btn btn-xs btn-outline btn-info" style="margin-top: 20px; float:left;" ng-click="global.loaders['invite'] = true; nav.requestInvitation();">Invite People</button>
-                        <button ng-if="global.user" ladda="global.loaders['invite']" class="ladda-btn btn btn-xs btn-outline btn-info" style="margin-top: 20px; float:left;" ng-click="global.loaders['invite'] = true; nav.invitePeople();">Invite People</button>
+                        <button ng-if="!global.user" ladda="global.loaders['invite']" class="ladda-btn btn btn-xs btn-outline btn-info" style="margin-top: 20px; float:left;" ng-click="global.loaders['invite'] = true; nav.requestInvitation();">+ Invite People</button>
+                        <button ng-if="global.user" ladda="global.loaders['invite']" class="ladda-btn btn btn-xs btn-outline btn-info" style="margin-top: 20px; float:left;" ng-click="global.loaders['invite'] = true; nav.invitePeople();">+ Invite People</button>
                         <button ng-if="global.top.people.count > 4" class="btn btn-xs btn-default" style="margin-top: 20px; float:right;" ui-sref="user.list({location_path: global.location.key, community_path: global.nav.people.community, tail_path: global.nav.people.tail, query: undefined})">view all</button>
                     </div>
                 </div>
@@ -61,8 +61,8 @@
                                 <div ng-if="$last" style="margin-bottom:-12px;"></div>
                             </div>
                         </div>
-                        <button ng-if="!global.user" ladda="global.loaders['addco']" class="ladda-btn btn btn-xs btn-outline btn-primary" style="margin-top: 20px; float:left;" ng-click="global.loaders['addco'] = true; nav.requestInvitation();">Add Company</button>
-                        <button ng-if="global.user" ladda="global.loaders['addco']" class="ladda-btn btn btn-xs btn-outline btn-primary" style="margin-top: 20px; float:left;" ng-click="global.loaders['addco'] = true;" ui-sref="company.add">Add Company</button>
+                        <button ng-if="!global.user" ladda="global.loaders['addco']" class="ladda-btn btn btn-xs btn-outline btn-primary" style="margin-top: 20px; float:left;" ng-click="global.loaders['addco'] = true; nav.requestInvitation();">+ Add Company</button>
+                        <button ng-if="global.user" ladda="global.loaders['addco']" class="ladda-btn btn btn-xs btn-outline btn-primary" style="margin-top: 20px; float:left;" ng-click="global.loaders['addco'] = true;" ui-sref="company.add">+ Add Company</button>
                         <button ng-if="global.top.companies.count > 4" class="btn btn-xs btn-default" style="margin-top: 20px; float: right;" ui-sref="company.list({location_path: global.location.key, community_path: global.nav.companies.community, tail_path: global.nav.companies.tail, query: undefined})">view all</button>
                     </div>
                 </div>
@@ -94,8 +94,8 @@
                                 <div ng-if="$last" style="margin-bottom:-12px;"></div>
                             </div>
                         </div>
-                        <button ng-if="!global.user" ladda="global.loaders['addres']" class="ladda-btn btn btn-xs btn-outline btn-success" style="margin-top: 20px; float:left;" ng-click="global.loaders['addres'] = true; nav.requestInvitation();">Add Resource</button>
-                        <button ng-if="global.user" ladda="global.loaders['addres']" class="ladda-btn btn btn-xs btn-outline btn-success" style="margin-top: 20px; float:left;" ng-click="global.loaders['addres'] = true" ui-sref="resource.add">Add Resource</button>
+                        <button ng-if="!global.user" ladda="global.loaders['addres']" class="ladda-btn btn btn-xs btn-outline btn-success" style="margin-top: 20px; float:left;" ng-click="global.loaders['addres'] = true; nav.requestInvitation();">+ Add Resource</button>
+                        <button ng-if="global.user" ladda="global.loaders['addres']" class="ladda-btn btn btn-xs btn-outline btn-success" style="margin-top: 20px; float:left;" ng-click="global.loaders['addres'] = true" ui-sref="resource.add">+ Add Resource</button>
                         <button ng-if="global.top.resources.count > 4" class="btn btn-xs btn-default" style="margin-top: 20px; float: right;" ui-sref="resource.list({location_path: global.location.key, community_path: global.nav.resources.community, tail_path: global.nav.resources.tail, query: undefined})">view all</button>
                     </div>
                 </div>
