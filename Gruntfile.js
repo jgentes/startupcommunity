@@ -173,10 +173,7 @@ module.exports = function (grunt) {
             dist: {
                 src: [
                     '<%= startupcommunity.dist %>/scripts/{,*/}*.js',
-                    '<%= startupcommunity.dist %>/styles/{,*/}*.css',
-                    '<%= startupcommunity.dist %>/frontend/css/{,*/}*.css',
-                    '<%= startupcommunity.dist %>/frontend/js/{,*/}*.js',
-                    '<%= startupcommunity.dist %>/styles/fonts/*'
+                    '<%= startupcommunity.dist %>/styles/{,*/}*.css'
                 ]
             }
         },
@@ -247,10 +244,10 @@ module.exports = function (grunt) {
         'copy:dist',
         'cssmin',
         'uglify',
-        //'filerev', caused issues with cloudflare
+        'filerev', caused issues with cloudflare
         'usemin',
         'htmlmin',
-        'cloudflare_purge'
+        //'cloudflare_purge'
     ]);
 
     grunt.registerTask('test', [
