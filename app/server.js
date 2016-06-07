@@ -168,7 +168,7 @@ app.get('/api/maint', maint.maintenance);
 // Client logger
 app.post('/api/logger', function (req, res) {
     console.warn('WARNING: Angular Error:', req.body);
-    //opbeat.captureError(new Error('WARNING: Angular Error:', req.body));
+    //bugsnag.notify(new Error(JSON.stringify(req.body)));
     res.end();
 });
 

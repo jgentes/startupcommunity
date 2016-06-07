@@ -337,8 +337,6 @@ angular
 
                 $log.error.apply( $log, arguments );
 
-                if ($window.Bugsnag) $window.Bugsnag.notify(exception, {diagnostics:{cause: cause}});
-
                 try {
                     var errorMessage = exception.toString();
 
@@ -425,6 +423,7 @@ angular
 
             return function(exception, cause) {
                 getSourceMappedStackTrace(exception).then(function(final) {
+                    if ($window.Bugsnag) $window.Bugsnag.notifyException(exception);
                     errorLogService(final, $window);
                 });
             };

@@ -214,9 +214,6 @@ function NavigationController($scope, $auth, $state, $window, $location, $stateP
 
             knowtify.push(['load_inbox', 'knowtify', {email: user.profile.email}]);
 
-            if ($window.JacoRecorder && $location.host() !== 'localhost:5000')
-                $window.JacoRecorder.identify(user.profile.email);
-
             if ($window.Bugsnag) {
                 $window.Bugsnag.user = {
                     key: user.key,
@@ -224,6 +221,8 @@ function NavigationController($scope, $auth, $state, $window, $location, $stateP
                     email: user.profile.email
                 };
             }
+
+            if ($window.JacoRecorder) $window.JacoRecorder.identify(user.profile.email);
 
         }
 
