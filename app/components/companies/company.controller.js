@@ -51,7 +51,7 @@ function CompanyController($scope, $stateParams, $state, $location, company_serv
         } else {
             self.selection = "";
             for (item in self.selectedClusters) {
-                self.selection += $scope.global.community.clusters[self.selectedClusters[item]].profile.name;
+                self.selection += self.selectedClusters[item][0].toUpperCase() + self.selectedClusters[item].slice(1);
                 if (item < self.selectedClusters.length - 1) {
                     if (item < self.selectedClusters.length - 2 ) {
                         self.selection += ', ';
