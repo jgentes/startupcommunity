@@ -597,6 +597,7 @@ function NavigationController($scope, $auth, $state, $window, $location, $stateP
                         embed = $scope.global.community.community_profiles[$stateParams.location_path].embed;
                     }
                     catch (e) {
+                        embed = false;
                         errorLogService('embed problem: ', e);
                     }
 
@@ -605,11 +606,13 @@ function NavigationController($scope, $auth, $state, $window, $location, $stateP
                         embed = $scope.global.location.profile.embed;
                     }
                     catch (e) {
-                        errorLogService('embed problem2: ', e);
+                        embed = false;
+                        //errorLogService('embed problem2: ', e);
                     }
                 }
             }
             catch (e) {
+                embed = false;
                 errorLogService('embed problem3: ', e);
             }
 
