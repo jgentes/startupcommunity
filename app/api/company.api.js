@@ -282,7 +282,7 @@ function handleAddCompany(req, res) {
                 if (!addCompany.key) {
                     addCompany.key = addCompany.profile.url.toLowerCase();
                     post();
-                } else if (addCompany.key && (addCompany.key !== addCompany.profile.url.toLowerCase())) {
+                } else if (addCompany.key && (addCompany.key !== addCompany.profile.url)) {
                     res.status(202).send({ message: 'Sorry, a url path cannot be changed.'})
                 } else {
                     update = true;
