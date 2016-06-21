@@ -152,13 +152,20 @@
                 </ul>
             </li>
 
+
+
             <li class="active" ng-show="global.nav_top.parents" tour-step order="3" title="Industry Clusters" content="A cluster is an entrepreneurial ecosystem in support of a specific industry.<br><br>Clusters are made up of mentors, investors, companies, accelerators, coworking spaces, and events that connect people and foster creation of new startups." placement="right">
-                <a style="cursor:default; margin-left: -7px;"><span>
+                <ul class="nav nav-second-level" style="border-bottom: 1px solid #eee;">
+                    <li>
+                        <a ui-sref="community.dashboard({location_path: global.location.key, community_path: '', tail_path: ''})" ng-class="{active: global.community.key == global.location.key}" style="padding-left: 12px; font-weight: 600;" ng-click="all_working = true">
+                            <span>
+                                All Industries
+                                <span loading-bars ng-show="all_working"></span>
+                            </span>
 
-                    Industries
-
-                </span>
-                </a>
+                        </a>
+                    </li>
+                </ul>
                 <ul class="nav nav-second-level">
                     <li ng-repeat="item in global.nav_top.parents | orderBy: 'item.value' : reverse">
                         <a ui-sref="community.dashboard({location_path: (global.location.key || global.user.profile.home), community_path: item.label, tail_path: ''})" ng-class="{active: global.path.includes('/' + item.label)}" ng-click="cl_working = true">
