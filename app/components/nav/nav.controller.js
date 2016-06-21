@@ -434,14 +434,14 @@ function NavigationController($scope, $auth, $state, $window, $location, $stateP
         self.removeUser = function(ruser) {
             sweet.show({
                 title: "Are you sure?",
-                text: "Removing this user from " + community.profile.name + " does not remove them from the entire community. You can easily add them to the resource again in the future.",
+                text: "Removing this user from " + $scope.global.community.profile.name + " does not remove them from the entire community. You can easily add them to the resource again in the future.",
                 type: "warning",
                 showCancelButton: true,
                 confirmButtonColor: "#DD6B55",
                 confirmButtonText: "Yes, remove " + ruser.value.profile.name,
                 closeOnConfirm: false
             }, function () {
-                user_service.removeCommunity(ruser.path.key, community)
+                user_service.removeCommunity(ruser.path.key, $scope.global.community)
                     .then(function(response) {
                         if (response.status !== 201) {
                             sweet.show({
@@ -452,6 +452,11 @@ function NavigationController($scope, $auth, $state, $window, $location, $stateP
 
                         } else {
                             sweet.show("Success!", ruser.value.profile.name + " has been removed.", "success");
+                            // refresh cache
+                            community_service.getCommunity($scope.global.community.key, true)
+                                .then(function (response) {
+                                    $window.location.href = $window.location.href;
+                                });
                         }
                     })
             });
