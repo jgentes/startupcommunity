@@ -106,11 +106,16 @@ var searchInCommunity = function(communities, clusters, roles, limit, offset, qu
         clusters = clusters.splice(',');
         searchstring += ' AND (';
 
+        var clusterstring = '';
+
+        if (clusters.indexOf('all') < 0) clusters.push('all');
+
         for (i in clusters) {
-            searchstring += '@value.profile.skills:"' + clusters[i] + '" OR @value.profile.parents:"' + clusters[i] + '"'; // scope to industries within the cluster
+            clusterstring += '"' + clusters[i] + '"';
             if (i < (clusters.length - 1)) { searchstring += ' OR '; }
         }
-        searchstring += ')';
+
+        searchstring += '@value.profile.skills:(' + clusterstring + ') OR @value.profile.parents:(' + clusterstring + ')'; // scope to industries within the cluster
     }
 
     if (roles && roles.length > 0 && roles[0] !== "*") {

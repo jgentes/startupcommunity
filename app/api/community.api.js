@@ -439,7 +439,7 @@ function handleGetTop(req, res) {
     var community_key = req.params.community_key,
         location_key = req.params.location_key,
         cluster_key = req.query.cluster_key,
-        industry_keys = req.query.industry_keys,
+        industry_keys = req.query.industry_keys || [],
         has_location = true,
         top_results = {
             people: {},
@@ -453,6 +453,8 @@ function handleGetTop(req, res) {
     if( typeof industry_keys === 'string' ) {
         industry_keys = [ industry_keys ];
     }
+
+    if (industry_keys.indexOf('all') < 0) industry_keys.push('all');
 
     if (cluster_key) {
 

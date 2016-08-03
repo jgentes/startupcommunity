@@ -141,16 +141,16 @@ var searchInCommunity = function(communities, clusters, stages, types, limit, of
         clusters = clusters.splice(',');
         searchstring += ' AND (';
 
-        var clusterstring;
+        var clusterstring = '';
 
         if (clusters.indexOf('all') < 0) clusters.push('all');
 
         for (i in clusters) {
-            clusterstring += clusters[i];
+            clusterstring += '"' + clusters[i] + '"';
             if (i < (clusters.length - 1)) { clusterstring += ' OR '; }
         }
 
-        searchstring += '@value.profile.industries:"' + clusterstring + '" OR @value.profile.parents:"' + clusterstring + '")'; // scope to industries within the cluster
+        searchstring += '@value.profile.industries:(' + clusterstring + ') OR @value.profile.parents:(' + clusterstring + '))'; // scope to industries within the cluster
 
     }
 
