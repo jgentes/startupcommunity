@@ -112,10 +112,10 @@ var searchInCommunity = function(communities, clusters, roles, limit, offset, qu
 
         for (i in clusters) {
             clusterstring += '"' + clusters[i] + '"';
-            if (i < (clusters.length - 1)) { searchstring += ' OR '; }
+            if (i < (clusters.length - 1)) { clusterstring += ' OR '; }
         }
 
-        searchstring += '@value.profile.skills:(' + clusterstring + ') OR @value.profile.parents:(' + clusterstring + ')'; // scope to industries within the cluster
+        searchstring += '@value.profile.skills:(' + clusterstring + ') OR @value.profile.parents:(' + clusterstring + '))'; // scope to industries within the cluster
     }
 
     if (roles && roles.length > 0 && roles[0] !== "*") {

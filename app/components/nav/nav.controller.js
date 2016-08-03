@@ -547,6 +547,8 @@ function NavigationController($scope, $auth, $state, $window, $location, $stateP
             });
         };
 
+        $scope.global.invitePeople = self.invitePeople;
+
         // CHECK FOR IFRAME (redirect, if needed, must happen after routing)
         
         $scope.global.embedded = false;

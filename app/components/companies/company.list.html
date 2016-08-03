@@ -145,6 +145,10 @@
                     </div>
                 </div>
                 <div class="panel-footer" style="height:45px;">
+                    <div class="pull-left" ng-if="global.user">
+                        <button ng-if="companies.resource_page" ladda="global.loaders['addres']" class="ladda-btn btn btn-xs btn-outline btn-success" ng-click="global.loaders['addres'] = true" ui-sref="resource.add">+ Add Resource</button>
+                        <button ng-if="!companies.resource_page" ladda="global.loaders['addco']" class="ladda-btn btn btn-xs btn-outline btn-primary" ng-click="global.loaders['addco'] = true;" ui-sref="company.add">+ Add Company</button>
+                    </div>
                     <div class="pull-right">
                         <strong>{{companies.companies.start}} - {{companies.companies.end}}</strong> of <strong>{{companies.companies.total_count}}&nbsp;&nbsp;</strong>
                         <div class="btn-group btn-group-sm" style="margin-top: -2px;">

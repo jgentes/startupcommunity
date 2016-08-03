@@ -133,6 +133,9 @@
                 </div>
             </div>
             <div class="panel-footer" style="height:45px;">
+                <div class="pull-left">
+                    <button ng-if="global.user" ladda="global.loaders['invite']" class="ladda-btn btn btn-xs btn-outline btn-info" ng-click="global.loaders['invite'] = true; global.invitePeople();">+ Invite People</button>
+                </div>
                 <div ng-show="!users.tag" class="pull-right">
                     <strong>{{users.users.start}} - {{users.users.end}}</strong> of <strong>{{users.users.total_count}}&nbsp;&nbsp;</strong>
                     <div class="btn-group btn-group-sm" style="margin-top: -2px;">
