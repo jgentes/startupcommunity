@@ -156,10 +156,6 @@ function WelcomeController($scope, $auth, $location, $q, $mixpanel, $stateParams
         } else self.submitted = true;
 
     };
-
-    this.paste = function(text) {
-        return text ? String(text).replace(/<[^>]+>/gm, '') : '';
-    };
     
     this.clickToTweet = function() {
         var getQuote = document.getElementById( "quote" ).innerHTML;
@@ -189,6 +185,8 @@ function WelcomeController($scope, $auth, $location, $q, $mixpanel, $stateParams
         self.submitted = true;
 
         user = $scope.global.user;
+
+        if (user.profile && user.profile.summary) user.profile.summary = String(user.profile.summary).replace(/<[^>]+>/gm, '');
 
         // add roles
         if (!user.roles) {
