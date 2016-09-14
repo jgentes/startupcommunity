@@ -90,7 +90,7 @@
                                     </h4>
                                 </div>
                                 <div class="summary_form" style="text-align: left;">
-                                    <div summernote class="summernote" ng-model="global.user.profile.summary" ng-model-options="{ debounce: 250, blur: 0 }" style="min-height: 34px;" config="{
+                                    <div summernote class="summernote" ng-model="global.user.profile.summary" ng-model-options="{ debounce: 250, blur: 0 }" style="min-height: 34px;" on-paste="welcome.paste()" config="{
                                 height: 50,
     toolbar: [
             ['edit',['undo','redo']],

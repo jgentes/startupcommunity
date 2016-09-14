@@ -155,7 +155,11 @@ function WelcomeController($scope, $auth, $location, $q, $mixpanel, $stateParams
             self.submitted = false;
         } else self.submitted = true;
 
-    };    
+    };
+
+    this.paste = function(text) {
+        return text ? String(text).replace(/<[^>]+>/gm, '') : '';
+    };
     
     this.clickToTweet = function() {
         var getQuote = document.getElementById( "quote" ).innerHTML;
