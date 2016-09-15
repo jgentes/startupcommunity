@@ -186,8 +186,6 @@ function WelcomeController($scope, $auth, $location, $q, $mixpanel, $stateParams
 
         user = $scope.global.user;
 
-        if (user.profile && user.profile.summary) user.profile.summary = String(user.profile.summary).replace(/<[^>]+>/gm, '');
-
         // add roles
         if (!user.roles) {
             user["roles"] = {};
