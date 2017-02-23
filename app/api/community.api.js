@@ -3,7 +3,23 @@ var memjs = require('memjs'),
     path = require('path'),
     request = require('request'),
     _ = require(path.join(__dirname, '../scripts/lodash40.js')),
+    Cloudant = require('cloudant'),
+    cloudant = Cloudant({
+      account: '2001b05d-38e3-44f7-b569-b13a66a81b70-bluemix',
+      key: 'heritherverthinterbingst',
+      password: '0f0f2a11e01f2f2db199b00bc3dbe6fc55a8728e'}),
     db = require('orchestrate')(process.env.DB_KEY);
+console.log(process.env.DB_COMMUNITIES)
+    var cdb = cloudant.db.use(process.env.DB_COMMUNITIES);
+
+    //cdb.find({ "selector": { "_id": "bend-or"}}
+   /* cdb.search('communities', 'communitySearch', {q: 'key:bend-or'}, function(err, doc) {
+      if(err) {
+        console.log("ERROR!",err);
+      } else {
+        console.log(doc);
+      }
+    });*/
 
 //var util = require('util'); //for util.inspect on request
 
@@ -90,10 +106,10 @@ function handleGetCommunity(req, res) {
 
     var community = req.params.community ? req.params.community.replace(/\s+/g, '-') : 'bend-or';
 
-    var searchString = '@path.key: ' + community; // grab the primary community object, don't use parens here
-    searchString += ' OR ((@value.communities: "' + community + '"'; // + grab anything associated with this community in this location
-    searchString += ' OR @value.parents: "' + community + '")'; // + grab anything that has this community as a parent
-    searchString += ' AND NOT @value.type:("company" OR "user"))'; // exclude companies and users, except if @path.key is a company or user
+    var searchString = 'key: ' + community; // grab the primary community object, don't use parens here
+    searchString += ' OR ((communities: "' + community + '"'; // + grab anything associated with this community in this location
+    searchString += ' OR parents: "' + community + '")'; // + grab anything that has this community as a parent
+    searchString += ' AND NOT type:("company" OR "user"))'; // exclude companies and users, except if key is a company or user
 
     var pullCommunity = function(cache) {
 
@@ -206,7 +222,7 @@ function handleGetCommunity(req, res) {
                                 .collection(process.env.DB_COMMUNITIES)
                                 .limit(100)
                                 .offset(startkey)
-                                .query('@value.type:"user" AND @value.roles.*.' + thiskey + ':*')
+                                .query('type:"user" AND @value.roles.*.' + thiskey + ':*')
                                 .then(function (team) {
 
                                     teamlist.push.apply(teamlist, team.body.results);
@@ -310,10 +326,10 @@ function handleGetCommunity(req, res) {
                                     }
                                 }
 
-                                var ubersearch = '(@path.key: (' + search + '))';
+                                var ubersearch = '(key: (' + search + '))';
 
                             } else if (m_home) {
-                                ubersearch = '(@path.key: ' + m_home + ')';
+                                ubersearch = '(key: ' + m_home + ')';
                             } else ubersearch = "";
 
                             console.log(ubersearch);
@@ -384,17 +400,17 @@ function handleGetResources(req, res) {
         searchstring;
 
     if (resources) {
-        searchstring = '@path.key: (';
+        searchstring = 'key: (';
         for (r in resources) {
             searchstring += resources[r];
             if (r < resources.length - 1) searchstring += ' OR ';
         }
         searchstring += ')';
-    } else searchstring = '@value.communities: "' + location_key + '"';
+    } else searchstring = 'communities: "' + location_key + '"';
     
     if (clusters) {
-        searchstring += ' AND (@value.resource: true OR @value.type: "cluster")';
-    } else searchstring += ' AND @value.resource: true';
+        searchstring += ' AND (resource: true OR type: "cluster")';
+    } else searchstring += ' AND resource: true';
 
     if (searchstring) {
         
@@ -482,12 +498,12 @@ function handleGetTop(req, res) {
 
     // add search based on home suffix (which allows for roll-up to state level)
     var search = state_suffix ?
-        '@value.profile.home: ("' + location_key + '"' + state :
-        '@value.communities: "' + location_key + '" AND @value.communities: ' + (community_key == '*' ? '*' : '"' + community_key + '"');
+        'profile.home: ("' + location_key + '"' + state :
+        'communities: "' + location_key + '" AND communities: ' + (community_key == '*' ? '*' : '"' + community_key + '"');
 
     // get companies and industries
 
-    var industrysearch = cluster_search ? '(@value.profile.parents:(' + cluster_search + ') OR @value.profile.industries:(' + cluster_search + ')) AND ' + search : search;
+    var industrysearch = cluster_search ? '(profile.parents:(' + cluster_search + ') OR profile.industries:(' + cluster_search + ')) AND ' + search : search;
 
     console.log('Pulling Top Results: ', industrysearch);
 
@@ -518,7 +534,7 @@ function handleGetTop(req, res) {
             .aggregate('top_values', 'value.profile.industries')
             .aggregate('top_values', 'value.profile.parents')
             .sortRandom()
-            .query(industrysearch + ' AND @value.type: "company" AND NOT @value.resource: true')
+            .query(industrysearch + ' AND type: "company" AND NOT resource: true')
             .then(function (result) {
 
                 for (a in result.body.aggregates) {
@@ -547,7 +563,7 @@ function handleGetTop(req, res) {
                     .collection(process.env.DB_COMMUNITIES)
                     .limit(4)
                     .sortRandom()
-                    .query(industrysearch + ' AND @value.resource: true')
+                    .query(industrysearch + ' AND resource: true')
                     .then(function (result) {
 
                         top_results.resources = {
@@ -557,7 +573,7 @@ function handleGetTop(req, res) {
 
                         // get people & skills
 
-                        var skillsearch = cluster_search ? '(@value.profile.parents:(' + cluster_search + ') OR @value.profile.skills:(' + cluster_search + ')) AND ' + search : search;
+                        var skillsearch = cluster_search ? '(profile.parents:(' + cluster_search + ') OR profile.skills:(' + cluster_search + ')) AND ' + search : search;
 
                         db.newSearchBuilder()
                             .collection(process.env.DB_COMMUNITIES)
@@ -565,7 +581,7 @@ function handleGetTop(req, res) {
                             .aggregate('top_values', 'value.profile.skills')
                             .aggregate('top_values', 'value.profile.parents')
                             .sortRandom()
-                            .query(skillsearch + ' AND @value.type: "user"')
+                            .query(skillsearch + ' AND type: "user"')
                             .then(function (result) {
 
                                 for (b in result.body.aggregates) {
@@ -1126,7 +1142,7 @@ var rename_community = function(old_community_key, location_key, new_community_k
             .collection(process.env.DB_COMMUNITIES)
             .limit(50)
             .offset(startKey)
-            .query('@value.communities: "' + old_community_key + '" OR @value.roles.*.' + old_community_key + ': "' + location_key + '" OR @value.invite_communities: "' + old_community_key + '"')
+            .query('communities: "' + old_community_key + '" OR roles.*.' + old_community_key + ': "' + location_key + '" OR invite_communities: "' + old_community_key + '"')
             .then(function (data) {
                 var item;
 

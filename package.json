@@ -7,6 +7,8 @@
     "aws-sdk": "^2.2.4",
     "bcryptjs": "^2.3.0",
     "body-parser": "^1.14.1",
+    "bugsnag": "^1.7.0",
+    "cloudant": "^1.7.1",
     "connect-wwwhisper": "^0.1.13",
     "debug-trace": "~0.2.3",
     "express": "^4.13.3",
@@ -26,7 +28,6 @@
     "q": "^1.4.1",
     "request": "^2.67.0",
     "request-debug": "^0.2.0",
-    "bugsnag": "^1.7.0",
     "satellizer": "~0.13.0"
   },
   "devDependencies": {
