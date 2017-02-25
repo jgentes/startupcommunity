@@ -120,7 +120,7 @@ function formatSearchResults(items) {
   for (i in items.rows) {
     items.rows[i].doc = {
       path: { key: items.rows[i].id },
-      value: item.rows[i].doc
+      value: items.rows[i].doc
     };
   }
   return items;
