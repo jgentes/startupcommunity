@@ -322,7 +322,7 @@ function handleContactUser(req, res) {
                                     // create event in user record for tracking purposes
                                     db.newEventBuilder()
                                         .from(process.env.DB_COMMUNITIES, user_key)
-                                        .type('contact_request')
+                                        .type('contact_request') // this has been refactored as part of value.type
                                         .data({
                                             "location_key" : location_key,
                                             "leaders" : contacts,
