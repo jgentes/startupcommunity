@@ -116,6 +116,16 @@ var schema = {
   }
 };
 
+function formatSearchResults(items) {
+  for (i in items.rows) {
+    items.rows[i].doc = {
+      path: { key: items.rows[i].id },
+      value: item.rows[i].doc
+    };
+  }
+  return items;
+}
+
 function handleGetCommunity(req, res) {
 
   var checkcache = function (cache, community, newresponse) {
@@ -144,34 +154,33 @@ function handleGetCommunity(req, res) {
         var newresponse;
 
         var finalize = function (results) {
+          console.log(results[0]);
           // finalize iterates through results and formats them nicely
 
           for (item in results) {
 
-            if (results[item].doc && results[item].id !== community) {
-
-              results[item].doc['key'] = results[item].id;
+            if (results[item].doc.value && results[item].id !== community) {
 
               // sort communities for use in nav and child dashboard pages
 
-              switch (results[item].doc.type) {
+              switch (results[item].doc.value.type) {
                 case "location":
                   if (!newresponse.locations) newresponse['locations'] = {};
-                  newresponse.locations[results[item].id] = results[item].doc;
+                  newresponse.locations[results[item].id] = results[item].doc.value;
                   break;
                 case "cluster":
-                  if (results[item].doc.community_profiles && results[item].doc.community_profiles[community] && results[item].doc.community_profiles[community].parents && results[item].doc.community_profiles[community].parents[0]) {
+                  if (results[item].doc.value.community_profiles && results[item].doc.value.community_profiles[community] && results[item].doc.value.community_profiles[community].parents && results[item].doc.value.community_profiles[community].parents[0]) {
                     if (!newresponse.clusters) newresponse['clusters'] = {};
                     // i believe this is for navigation
-                    var cluster_type = results[item].doc.community_profiles[community].parents[0];
+                    var cluster_type = results[item].doc.value.community_profiles[community].parents[0];
                     if (!newresponse.clusters[cluster_type]) newresponse.clusters[cluster_type] = {};
-                    newresponse.clusters[cluster_type][results[item].id] = results[item].doc;
+                    newresponse.clusters[cluster_type][results[item].id] = results[item].doc.value;
                   }
                   break;
                 case "company":
-                  if (results[item].doc.resource) {
+                  if (results[item].doc.value.resource) {
                     if (!newresponse.resources) newresponse["resources"] = [];
-                    newresponse.resources.push(results[item].doc);
+                    newresponse.resources.push(results[item].doc.value);
                   }
 
                   if (newresponse.type == 'user') {
@@ -189,7 +198,7 @@ function handleGetCommunity(req, res) {
                   break;
               }
 
-              //newresponse[results[item].id] = results[item].doc;
+              newresponse[results[item].id] = results[item].doc.value;
 
             }
           }
@@ -212,13 +221,13 @@ function handleGetCommunity(req, res) {
               .query('@value.to: "' + newresponse.key + '"')
               .then(function (messages) {
                 messages.body.results.sort(function (a, b) {
-                  return a.doc.published < b.doc.published;
+                  return a.doc.value.published < b.doc.value.published;
                 });
                 newresponse.messages = {};
                 for (mes in messages.body.results) {
 
-                  messages.body.results[mes].doc["key"] = messages.body.results[mes].id;
-                  newresponse.messages[messages.body.results[mes].id] = messages.body.results[mes].doc;
+                  messages.body.results[mes].doc.value["key"] = messages.body.results[mes].id;
+                  newresponse.messages[messages.body.results[mes].id] = messages.body.results[mes].doc.value;
                 }
 
                 checkcache(cache, community, newresponse);
@@ -263,18 +272,18 @@ function handleGetCommunity(req, res) {
                       // delete sensitive data
                       if (t.path.collection) delete t.path.collection;
                       if (t.path.ref) delete t.path.ref;
-                      if (t.doc.profile.password) delete t.doc.profile.password;
-                      if (t.doc.profile.email) delete t.doc.profile.email;
-                      if (t.doc.newsletter) delete t.doc.newsletter;
-                      if (t.doc.profile.linkedin) {
-                        if (t.doc.profile.linkedin.emailAddress) delete t.doc.profile.linkedin.emailAddress;
-                        if (t.doc.profile.linkedin.access_token) delete t.doc.profile.linkedin.access_token;
+                      if (t.doc.value.profile.password) delete t.doc.value.profile.password;
+                      if (t.doc.value.profile.email) delete t.doc.value.profile.email;
+                      if (t.doc.value.newsletter) delete t.doc.value.newsletter;
+                      if (t.doc.value.profile.linkedin) {
+                        if (t.doc.value.profile.linkedin.emailAddress) delete t.doc.value.profile.linkedin.emailAddress;
+                        if (t.doc.value.profile.linkedin.access_token) delete t.doc.value.profile.linkedin.access_token;
                       }
-                      t.doc["key"] = t.id;
+                      t.doc.value["key"] = t.id;
 
                       // sort roles
-                      for (role in t.doc.roles) {
-                        for (item in t.doc.roles[role]) {
+                      for (role in t.doc.value.roles) {
+                        for (item in t.doc.value.roles[role]) {
                           if (item == thiskey) {
                             if (!teamresponse[role]) teamresponse[role] = [];
                             if (!count[role]) count[role] = 0;
@@ -309,29 +318,30 @@ function handleGetCommunity(req, res) {
         };
 
         if (result.rows.length > 0) {
+          result = formatSearchResults(result);
+
           var found = false;
           for (comm in result.rows) {
             var m = result.rows[comm];
             if (m.id == community) {
               found = true;
 
-              newresponse = m.doc;
-              newresponse["key"] = community;
+              newresponse = m.doc.value;
 
-              console.log('Pulling community for ' + m.doc.profile.name);
+              console.log('Pulling community for ' + m.doc.value.profile.name);
 
               // grab home
-              if (m.doc.profile.home) var m_home = m.doc.profile.home;
+              if (m.doc.value.profile.home) var m_home = m.doc.value.profile.home;
 
-              if (!m.doc.resource || m.doc.type !== "location") {
+              if (!m.doc.value.resource || m.doc.value.type !== "location") {
 
                 // pull communities within record
-                var comm_items = m.doc.communities;
+                var comm_items = m.doc.value.communities;
 
                 // grab parent
-                if (m.doc.profile.parents && m.doc.profile.parents[0]) comm_items.push(m.doc.profile.parents[0]);
+                if (m.doc.value.profile.parents && m.doc.value.profile.parents[0]) comm_items.push(m.doc.value.profile.parents[0]);
 
-                if (m_home && m.doc.communities.indexOf(m_home) < 0) comm_items.push(m_home);
+                if (m_home && m.doc.value.communities.indexOf(m_home) < 0) comm_items.push(m_home);
 
                 var search = community;
 
@@ -357,8 +367,9 @@ function handleGetCommunity(req, res) {
 
                 cdb.search('communities', 'communitySearch', {q: ubersearch, include_docs: true})
                   .then(function (uber_result) {
+                    uber_result = formatSearchResults(uber_result);
 
-                    if (m_home || m.doc.type == "location") {
+                    if (m_home || m.doc.value.type == "location") {
                       var both = result.rows.concat(uber_result.rows);
                       finalize(both);
                     } else finalize(uber_result.rows);
@@ -445,7 +456,7 @@ function handleGetResources(req, res) {
           for (resource in result.rows) {
             var r = result.rows[resource];
 
-            newresponse[r.id] = r.doc;
+            newresponse[r.id] = r.doc.value;
             newresponse[r.id]["key"] = r.id;
           }
 
@@ -525,14 +536,14 @@ function handleGetTop(req, res) {
   var addkeys = function (data) {
     for (i in data) {
       // delete sensitive data
-      if (data[i].doc.profile.password) delete data[i].doc.profile.password;
-      if (data[i].doc.profile.email) delete data[i].doc.profile.email;
-      if (data[i].doc.newsletter) delete data[i].doc.newsletter;
-      if (data[i].doc.profile.linkedin) {
-        if (data[i].doc.profile.linkedin.emailAddress) delete data[i].doc.profile.linkedin.emailAddress;
-        if (data[i].doc.profile.linkedin.access_token) delete data[i].doc.profile.linkedin.access_token;
+      if (data[i].doc.value.profile.password) delete data[i].doc.value.profile.password;
+      if (data[i].doc.value.profile.email) delete data[i].doc.value.profile.email;
+      if (data[i].doc.value.newsletter) delete data[i].doc.value.newsletter;
+      if (data[i].doc.value.profile.linkedin) {
+        if (data[i].doc.value.profile.linkedin.emailAddress) delete data[i].doc.value.profile.linkedin.emailAddress;
+        if (data[i].doc.value.profile.linkedin.access_token) delete data[i].doc.value.profile.linkedin.access_token;
       }
-      data[i].doc["key"] = data[i].id;
+      data[i].doc.value["key"] = data[i].id;
     }
     return data;
   };
@@ -555,6 +566,8 @@ function handleGetTop(req, res) {
       include_docs: true
     })
       .then(function (result) {
+        result = formatSearchResults(result);
+
         if (result.counts && result.counts['profile.industries']) {
           var sortedIndustries = sortcounts(result.counts['profile.industries']);
 
@@ -585,6 +598,7 @@ function handleGetTop(req, res) {
           include_docs: true
         })
           .then(function (result) {
+            result = formatSearchResults(result);
 
             top_results.resources = {
               count: result.total_rows,
@@ -601,7 +615,7 @@ function handleGetTop(req, res) {
               include_docs: true
             })
               .then(function (result) {
-                console.log(result);
+                result = formatSearchResults(result);
 
                 if (result.counts && result.counts['profile.skills']) {
                   var sortedSkills = sortcounts(result.counts['profile.skills']);
@@ -625,8 +639,6 @@ function handleGetTop(req, res) {
                   entries: addkeys(result.rows)
                 };
 
-                console.log(top_results.people);
-
                 // BEGIN PARENTS (this is mostly to avoid another api call that includes both companies and users)
 
                 var c_labels = [],
@@ -635,17 +647,13 @@ function handleGetTop(req, res) {
                   p_numbers = [];
 
                 for (c in top_results.company_parents.entries) {
-                  if (top_results.company_parents.entries[c].doc) {
-                    c_labels.push(top_results.company_parents.entries[c].doc);
-                    c_numbers.push(top_results.company_parents.entries[c].count);
-                  }
+                  c_labels.push(c);
+                  c_numbers.push(top_results.company_parents.entries[c]);
                 }
 
                 for (p in top_results.people_parents.entries) {
-                  if (top_results.people_parents.entries[p].doc) {
-                    p_labels.push(top_results.people_parents.entries[p].doc);
-                    p_numbers.push(top_results.people_parents.entries[p].count);
-                  }
+                  p_labels.push(p);
+                  p_numbers.push(top_results.people_parents.entries[p]);
                 }
 
                 top_results['parents'] = {
@@ -661,13 +669,13 @@ function handleGetTop(req, res) {
                   if (p_numbers[p_labels.indexOf(top_results.parents.labels[l])]) {
                     r += p_numbers[p_labels.indexOf(top_results.parents.labels[l])];
                   }
-                  top_results.parents.docs.push(r);
+                  top_results.parents.values.push(r);
                 }
                 var temp = [];
                 for (a in top_results.parents.labels) {
                   temp.push({
                     label: top_results.parents.labels[a],
-                    value: top_results.parents.docs[a]
+                    value: top_results.parents.values[a]
                   });
                 }
 
@@ -683,7 +691,7 @@ function handleGetTop(req, res) {
                 top_results.max = 0;
                 if (top_results.parents) {
                   for (val in top_results.parents) {
-                    top_results.max += top_results.parents[val].doc;
+                    top_results.max += top_results.parents[val].value;
                   }
                 }
 
@@ -1171,7 +1179,7 @@ var rename_community = function (old_community_key, location_key, new_community_
 
         for (item in data.body.results) {
           var key = data.body.results[item].id,
-            newdata = data.body.results[item].doc; // get current record
+            newdata = data.body.results[item].doc.value; // get current record
 
           if (newdata.type == "invite") {
 

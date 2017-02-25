@@ -86,20 +86,20 @@ function (doc) {
     var i;
 
     if (doc.profile &&
-      doc.profile.parents && doc.profile.parents.length &&
-      doc.profile.industries && doc.profile.industries.length
+      doc.profile.parents &&
+      doc.profile.industries
     ) {
       if (doc.profile.name) index("profile", doc.profile.name, {"store": true})
       if (doc.profile.headline) index("profile", doc.profile.headline, {"store": true})
       if (doc.profile.summary) index("profile", doc.profile.summary, {"store": true})
       if (doc.profile.home) index("profile.home", doc.profile.home, {"store": true})
 
-      if (doc.profile.parents.length) {
+      if (doc.profile.parents && doc.profile.parents.length) {
         for (i = 0; i < doc.profile.parents.length; i++) {
           index("profile.parents", doc.profile.parents[i], {"store": true, "facet": true})
         }
       }
-      if (doc.profile.industries.length) {
+      if (doc.profile.industries && doc.profile.industries.length) {
         for (i = 0; i < doc.profile.industries.length; i++) {
           index("profile.industries", doc.profile.industries[i], {"store": true, "facet": true})
         }
@@ -156,12 +156,12 @@ function (doc) {
     if (doc.profile.summary) index("profile", doc.profile.summary, {"store": true})
     if (doc.profile.home) index("profile.home", doc.profile.home, {"store": true})
     
-    if (doc.profile.parents.length) {
+    if (doc.profile.parents && doc.profile.parents.length) {
       for (i=0; i<doc.profile.parents.length; i++) {
         index("profile.parents", doc.profile.parents[i], {"store": true, "facet": true})
       }
     }
-    if (doc.profile.industries.length) {
+    if (doc.profile.industries && doc.profile.industries.length) {
       for (i=0; i<doc.profile.industries.length; i++) {
         index("profile.industries", doc.profile.industries[i], {"store": true})
       }
