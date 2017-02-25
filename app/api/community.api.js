@@ -117,11 +117,13 @@ var schema = {
 };
 
 function formatSearchResults(items) {
-  for (i in items.rows) {
-    items.rows[i].doc = {
-      path: { key: items.rows[i].id },
-      value: items.rows[i].doc
-    };
+  if (items.rows && items.rows.length) {
+    for (i in items.rows) {
+      items.rows[i].doc = {
+        path: { key: items.rows[i].id },
+        value: items.rows[i].doc
+      };
+    }
   }
   return items;
 }
@@ -150,11 +152,11 @@ function handleGetCommunity(req, res) {
 
     cdb.search('communities', 'communitySearch', {q: searchString, include_docs: true})
       .then(function (result) {
+        result = formatSearchResults(result);
 
         var newresponse;
 
         var finalize = function (results) {
-          console.log(results[0]);
           // finalize iterates through results and formats them nicely
 
           for (item in results) {
@@ -318,7 +320,6 @@ function handleGetCommunity(req, res) {
         };
 
         if (result.rows.length > 0) {
-          result = formatSearchResults(result);
 
           var found = false;
           for (comm in result.rows) {
@@ -327,6 +328,7 @@ function handleGetCommunity(req, res) {
               found = true;
 
               newresponse = m.doc.value;
+              newresponse['key'] = community;
 
               console.log('Pulling community for ' + m.doc.value.profile.name);
 
@@ -544,6 +546,7 @@ function handleGetTop(req, res) {
         if (data[i].doc.value.profile.linkedin.access_token) delete data[i].doc.value.profile.linkedin.access_token;
       }
       data[i].doc.value["key"] = data[i].id;
+      data[i] = data[i].doc;
     }
     return data;
   };
