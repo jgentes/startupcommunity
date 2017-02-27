@@ -555,8 +555,15 @@ function handleGetTop(req, res) {
     return a + b;
   };
 
-  var sortcounts = function(counts) {
-    return _.fromPairs(_.sortBy(_.toPairs(counts), function(a){return a[1]}).reverse());
+  var sortcounts = function(counts, newArray) {
+    var sorted = _.fromPairs(_.sortBy(_.toPairs(counts), function(a){return a[1]}).reverse());
+    if (newArray) {
+      var countArray = [];
+      for (s in sorted) {
+        countArray.push({value: s, count: sorted[s]});
+      }
+      return countArray;
+    } else return sorted;
   };
 
   // get companies & industries
@@ -572,7 +579,7 @@ function handleGetTop(req, res) {
         result = formatSearchResults(result);
 
         if (result.counts && result.counts['profile.industries']) {
-          var sortedIndustries = sortcounts(result.counts['profile.industries']);
+          var sortedIndustries = sortcounts(result.counts['profile.industries'], true);
 
           top_results.industries = {
             count: Object.values(result.counts['profile.industries']).reduce(add, 0),
@@ -621,7 +628,7 @@ function handleGetTop(req, res) {
                 result = formatSearchResults(result);
 
                 if (result.counts && result.counts['profile.skills']) {
-                  var sortedSkills = sortcounts(result.counts['profile.skills']);
+                  var sortedSkills = sortcounts(result.counts['profile.skills'], true);
 
                   top_results.skills = {
                     count: Object.values(result.counts['profile.skills']).reduce(add, 0),
