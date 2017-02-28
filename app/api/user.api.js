@@ -6,7 +6,15 @@ var Q = require('q'),
     communityApis = new CommunityApi(),
     db = require('orchestrate')(process.env.DB_KEY),
     aws = require('aws-sdk'),
-    knowtify = require('knowtify-node');
+    knowtify = require('knowtify-node'),
+    Cloudant = require('cloudant'),
+    cloudant = Cloudant({
+      account: '2001b05d-38e3-44f7-b569-b13a66a81b70-bluemix',
+      key: 'itsartnerevishedifestimm',
+      password: 'ee4e2b18fb1d4fd5e34c802239a5a3bc8224cc73',
+      plugin: 'promises'
+    }),
+    cdb = cloudant.db.use(process.env.DB_COMMUNITIES);
 
 //require('request-debug')(request); // Very useful for debugging oauth and api req/res
 
@@ -39,194 +47,217 @@ function handleUserSearch(req, res){
         offset = req.query.offset,
         key = req.query.api_key;
 
-    searchInCommunity(communities, clusters, roles, limit, offset, query, key)
-        .then(function(userlist){
-            res.send(userlist);
+  var allowed = false;
+  var userperms;
+
+  if (key) { //check api key to determine if restricted profile data is included with results
+    try {
+      //var payload = jwt.decode(key, process.env.API_TOKEN_SECRET);
+      // Assuming key never expires
+      //check perms!
+      console.log('test then remove me')
+      //todo THIS SECTION NEEDS TO BE REWRITTEN
+      db.get(process.env.DB_COMMUNITIES, payload.sub)
+        .then(function (response) {
+            /*
+             if (location && community) {
+             userperms = findKey(response.body.communities, location + '.' + community, []);
+             } else if (location && !community) {
+             userperms = findKey(response.body.communities, (location || community), []);
+             }
+             if (userperms[0].roles.indexOf("admin") > -1) { allowed=true; }
+             */
         })
         .fail(function(err){
-            console.warn(err);
-            res.send({message:err});
+          console.warn("WARNING: user75", err);
+          return deferred.reject(new Error(err));
         });
+    } catch (err) {
+      return deferred.reject(new Error(err));
+    }
+  }
+
+  // create searchstring
+  searchstring = 'communities:(';
+  var state = "";
+
+  for (c in communities) {
+
+    // determine whether one of the communities is a state
+    var state_suffix = communityApis.convert_state(communities[c].replace('-',' '), 'abbrev'); // returns false if no match
+
+    if (state_suffix) {
+      state = " AND profile.home: ('" + communities[c] + "' OR '*-'" + state_suffix.toLowerCase() + "')";
+      var remove = communities.indexOf(communities[c]);
+      if (remove > -1) communities.splice(remove, 1); // to avoid issues with length check
+      if (communities.length == 0) searchstring += "*";
+    } else {
+      searchstring += "'" + communities[c] + "'";
+      if (c < (communities.length - 1)) { searchstring += ' AND '; }
+    }
+  }
+
+  searchstring += ")" + state;
+
+  if (clusters && clusters.length > 0 && clusters[0] !== '*') {
+    clusters = clusters.splice(',');
+    searchstring += ' AND (';
+
+    var clusterstring = '';
+
+    if (clusters.indexOf('all') < 0) clusters.push('all');
+
+    for (i in clusters) {
+      clusterstring += "'" + clusters[i] + "'";
+      if (i < (clusters.length - 1)) { clusterstring += ' OR '; }
+    }
+
+    searchstring += 'profile.skills:(' + clusterstring + ') OR profile.parents:(' + clusterstring + '))'; // scope to industries within the cluster
+  }
+
+  if (roles && roles.length > 0 && roles[0] !== "*") {
+    roles = roles.splice(',');
+    searchstring += ' AND (';
+
+    for (i in roles) {
+      searchstring += 'roles.' + roles[i] + '.*:*'; // scope to role
+      if (i < (roles.length - 1)) { searchstring += ' AND '; }
+    }
+    searchstring += ')';
+  }
+
+  if (query) { searchstring += ' AND ' + '(profile.*: ' + query + ')'; }
+
+  console.log(searchstring);
+
+  cdb.find({selector: {type: 'company', '$text': searchstring}, skip: Number(offset) || 0, limit: Number(limit) || 16})
+    .then(function(result){
+      result = formatFindResults(result);
+
+      var i;
+
+      try {
+        for (i=0; i < result.docs.length; i++) {
+          if (result.docs[i].value.profile.password) delete result.docs[i].value.profile.password;
+
+          if (result.docs[i].value.profile.email) delete result.docs[i].value.profile.email;
+
+          if (result.docs[i].value.profile.linkedin) {
+            if (result.docs[i].value.profile.linkedin.emailAddress) delete result.docs[i].value.profile.linkedin.emailAddress;
+            if (result.docs[i].value.profile.linkedin.access_token) delete result.docs[i].value.profile.linkedin.access_token;
+          }
+
+          result.docs[i].value["key"] = result.docs[i].path.id;
+
+          if (result.docs[i].value.newsletter) delete result.docs[i].value.newsletter;
+        }
+      } catch (error) {
+        console.warn('WARNING: user144 ', error);
+      }
+
+      result.next =
+        '/api/2.1/users?communities[]=' + communities +
+        '&clusters[]=' + (clusters || '*') +
+        '&roles[]=' + (roles || '*') +
+        '&limit=' + (Number(limit) || 16) +
+        '&offset=' + ((Number(offset) || 0) + (Number(limit) || 16)) +
+        '&query=' + (query || '*');
+
+      result.prev =
+        '/api/2.1/users?communities[]=' + communities +
+        '&clusters[]=' + (clusters || '*') +
+        '&roles[]=' + (roles || '*') +
+        '&limit=' + (Number(limit) || 16) +
+        '&offset=' + (offset ? (Number(offset) - ((Number(limit) || 16))) : 0) +
+        '&query=' + (query || '*');
+
+      result.results = result.docs;
+      delete result.docs;
+
+      res.send(result);
+    })
+    .catch(function(err){
+      console.log('WARNING: ', err);
+      res.send({message:err.message});
+    });
 }
 
-var searchInCommunity = function(communities, clusters, roles, limit, offset, query, key) {
-    var allowed = false;
-    var userperms;
-
-    if (key) { //check api key to determine if restricted profile data is included with results
-        try {
-            //var payload = jwt.decode(key, process.env.API_TOKEN_SECRET);
-            // Assuming key never expires
-            //check perms!
-            console.log('test then remove me')
-            //todo THIS SECTION NEEDS TO BE REWRITTEN
-            db.get(process.env.DB_COMMUNITIES, payload.sub)
-              .then(function (response) {
-                    /*
-                  if (location && community) {
-                      userperms = findKey(response.body.communities, location + '.' + community, []);
-                  } else if (location && !community) {
-                      userperms = findKey(response.body.communities, (location || community), []);
-                  }
-                  if (userperms[0].roles.indexOf("admin") > -1) { allowed=true; }
-                  */
-              })
-              .fail(function(err){
-                  console.warn("WARNING: user75", err);
-                  return deferred.reject(new Error(err));
-              });
-        } catch (err) {
-            return deferred.reject(new Error(err));
-        }
+function formatSearchResults(items) {
+  if (items.rows && items.rows.length) {
+    for (i in items.rows) {
+      items.rows[i].doc = {
+        path: { key: items.rows[i].id },
+        value: items.rows[i].doc
+      };
     }
+  }
+  return items;
+}
 
-    // create searchstring
-    searchstring = '@value.communities:(';
-    var state = "";
-
-    for (c in communities) {
-
-        // determine whether one of the communities is a state
-        var state_suffix = communityApis.convert_state(communities[c].replace('-',' '), 'abbrev'); // returns false if no match
-
-        if (state_suffix) {
-            var state = ' AND @value.profile.home: ("' + communities[c] + '" OR "*-' + state_suffix.toLowerCase() + '")';
-            var remove = communities.indexOf(communities[c]);
-            if (remove > -1) communities.splice(remove, 1); // to avoid issues with length check
-            if (communities.length == 0) searchstring += "*";
-        } else {
-            searchstring += '"' + communities[c] + '"';
-            if (c < (communities.length - 1)) { searchstring += ' AND '; }
-        }
+function formatFindResults(items) {
+  if (items.docs && items.docs.length) {
+    for (i in items.docs) {
+      items.docs[i] = {
+        path: { key: items.docs[i]._id },
+        value: items.docs[i]
+      };
     }
-
-    searchstring += ') AND @value.type: "user"' + state;
-
-    if (clusters && clusters.length > 0 && clusters[0] !== '*') {
-        clusters = clusters.splice(',');
-        searchstring += ' AND (';
-
-        var clusterstring = '';
-
-        if (clusters.indexOf('all') < 0) clusters.push('all');
-
-        for (i in clusters) {
-            clusterstring += '"' + clusters[i] + '"';
-            if (i < (clusters.length - 1)) { clusterstring += ' OR '; }
-        }
-
-        searchstring += '@value.profile.skills:(' + clusterstring + ') OR @value.profile.parents:(' + clusterstring + '))'; // scope to industries within the cluster
-    }
-
-    if (roles && roles.length > 0 && roles[0] !== "*") {
-        roles = roles.splice(',');
-        searchstring += ' AND (';
-
-        for (i in roles) {
-            searchstring += '@value.roles.' + roles[i] + '.*:*'; // scope to role
-            if (i < (roles.length - 1)) { searchstring += ' AND '; }
-        }
-        searchstring += ')';
-    }
-
-    if (query) { searchstring += ' AND ' + '(@value.profile.*: ' + query + ')'; }
-
-    console.log(searchstring);
-    var deferred = Q.defer();
-    db.newSearchBuilder()
-      .collection(process.env.DB_COMMUNITIES)
-      .limit(Number(limit) || 18)
-      .offset(Number(offset) || 0)
-      .sortRandom()
-      .query(searchstring)
-      .then(function(result){
-          var i;
-
-          try {
-              for (i=0; i < result.body.results.length; i++) {
-                  if (result.body.results[i].path.collection) delete result.body.results[i].path.collection;
-                  if (result.body.results[i].path.ref) delete result.body.results[i].path.ref;
-                  if (result.body.results[i].value.profile.password) delete result.body.results[i].value.profile.password;
-
-                  if (result.body.results[i].value.profile.email) delete result.body.results[i].value.profile.email;
-
-                  if (result.body.results[i].value.profile.linkedin) {
-                      if (result.body.results[i].value.profile.linkedin.emailAddress) delete result.body.results[i].value.profile.linkedin.emailAddress;
-                      if (result.body.results[i].value.profile.linkedin.access_token) delete result.body.results[i].value.profile.linkedin.access_token;
-                  }
-
-                  result.body.results[i].value["key"] = result.body.results[i].path.key;
-                  
-                  if (result.body.results[i].value.newsletter) delete result.body.results[i].value.newsletter;
-              }
-          } catch (error) {
-              console.warn('WARNING: user144 ', error);
-              console.log(result.body.results);
-          }
-
-          if (result.body.next) {
-              var getnext = url.parse(result.body.next, true);
-              result.body.next = '/api/2.1/search' + getnext.search;
-          }
-          if (result.body.prev) {
-              var getprev = url.parse(result.body.prev, true);
-              result.body.prev = '/api/2.1/search' + getprev.search;
-          }
-          deferred.resolve(result.body);
-      })
-      .fail(function(err){
-          console.log(err.body.message);
-          deferred.reject(err.body.message);
-      });
-
-    return deferred.promise;
-
-};
+  }
+  return items;
+}
 
 function handleDirectSearch(req, res) {
     //TODO check for key to protect info?
     var allowed = false;
 
-    db.newSearchBuilder()
-        .collection(process.env.DB_COMMUNITIES)
-        .limit(Number(req.query.limit) || 100)
-        .offset(Number(req.query.offset))
-        .query(req.query.query)
+    cdb.find({selector: {type: 'user', '$text': req.query.query}, skip: Number(req.query.offset) || 0, limit: Number(req.query.limit) || 100})
         .then(function(result){
+          result = formatFindResults(result);
+
             var i;
 
             try {
-                for (i=0; i < result.body.results.length; i++) {
-                    if (result.body.results[i].path.collection) delete result.body.results[i].path.collection;
-                    if (result.body.results[i].path.ref) delete result.body.results[i].path.ref;
-                    if (result.body.results[i].value.profile.password) delete result.body.results[i].value.profile.password;
+                for (i=0; i < result.docs.length; i++) {
 
-                    if (result.body.results[i].value.profile.email) delete result.body.results[i].value.profile.email;
+                    if (result.docs[i].value.profile.password) delete result.docs[i].value.profile.password;
 
-                    if (result.body.results[i].value.profile.linkedin) {
-                        if (result.body.results[i].value.profile.linkedin.emailAddress) delete result.body.results[i].value.profile.linkedin.emailAddress;
-                        if (result.body.results[i].value.profile.linkedin.access_token) delete result.body.results[i].value.profile.linkedin.access_token;
+                    if (result.docs[i].value.profile.email) delete result.docs[i].value.profile.email;
+
+                    if (result.docs[i].value.profile.linkedin) {
+                        if (result.docs[i].value.profile.linkedin.emailAddress) delete result.docs[i].value.profile.linkedin.emailAddress;
+                        if (result.docs[i].value.profile.linkedin.access_token) delete result.docs[i].value.profile.linkedin.access_token;
                     }
 
-                    result.body.results[i].value["key"] = result.body.results[i].path.key;
+                    result.docs[i].value["key"] = result.docs[i].path.id;
                 }
 
-                if (result.body.next) {
-                    var getnext = url.parse(result.body.next, true);
-                    result.body.next = '/api/2.1/search' + getnext.search;
-                }
-                if (result.body.prev) {
-                    var getprev = url.parse(result.body.prev, true);
-                    result.body.prev = '/api/2.1/search' + getprev.search;
-                }
+              result.next =
+                '/api/2.1/users?communities[]=' + req.query.communities +
+                '&clusters[]=' + (req.query.clusters || '*') +
+                '&roles[]=' + (req.query.roles || '*') +
+                '&limit=' + (Number(req.query.limit) || 16) +
+                '&offset=' + ((Number(req.query.offset) || 0) + (Number(req.query.limit) || 16)) +
+                '&query=' + (req.query.query || '*');
+
+              result.prev =
+                '/api/2.1/users?communities[]=' + req.query.communities +
+                '&clusters[]=' + (req.query.clusters || '*') +
+                '&roles[]=' + (req.query.roles || '*') +
+                '&limit=' + (Number(req.query.limit) || 16) +
+                '&offset=' + (req.query.offset ? (Number(req.query.offset) - ((Number(req.query.limit) || 16))) : 0) +
+                '&query=' + (req.query.query || '*');
+
             } catch (error) {
                 console.warn('WARNING: user206', error);
             }
 
-            res.status(200).send(result.body);
+          result.results = result.docs;
+          delete result.docs;
+
+            res.status(200).send(result);
         })
-        .fail(function(err){
-            console.log(err.body.message);
+        .catch(function(err){
+            console.log(err);
             res.status(202).send({ message: "Something went wrong."});
         });
 }
@@ -247,18 +278,16 @@ function handleContactUser(req, res) {
     // search format is 'roles.leader[community]: location'
 
     // create searchstring to get leader of community
-    var searchstring = '(@value.roles.leader.' + location_key + ': *) AND @value.type: "user"';
+    var searchstring = "roles.leader:" + location_key + " AND type: user";
 
-    db.newSearchBuilder()
-        .collection(process.env.DB_COMMUNITIES)
-        .limit(10)
-        .query(searchstring)
+  cdb.search('communities', 'communitySearch', {q: searchstring, include_docs: true})
         .then(function(result){
-            if (result.body.results.length > 0) {
+          //todo NEED TO VERIFY BELOW
+            if (result.rows.length > 0) {
                 console.log("Found leader(s)");
                 var leaders = [];
-                for (item in result.body.results) {
-                    leaders.push(result.body.results[item]);
+                for (item in result.rows) {
+                    leaders.push(result.rows[item]);
                 }
 
                 // now get user record for email address
@@ -270,9 +299,9 @@ function handleContactUser(req, res) {
 
                             for (leader in leaders) {
                                 contacts.push({
-                                    "id" : leaders[leader].path.key,
-                                    "name" : leaders[leader].value.profile.name,
-                                    "email" : leaders[leader].value.profile.email,
+                                    "id" : leaders[leader].path.id,
+                                    "name" : leaders[leader].doc.value.profile.name,
+                                    "email" : leaders[leader].doc.value.profile.email,
                                     "data" : {
                                         "source_name": formdata.name,
                                         "source_email" : formdata.email,

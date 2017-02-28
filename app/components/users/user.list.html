@@ -97,7 +97,6 @@
         <div class="hpanel">
             <div class="panel-footer top">
                 <div ng-show="!users.tag" class="pull-right">
-                    <strong>{{users.users.start}} - {{users.users.end}}</strong> of <strong>{{users.users.total_count}}&nbsp;&nbsp;</strong>
                     <div class="btn-group btn-group-sm" style="margin-top: -2px;">
                         <span ng-if="users.users.prev"><a ng-click="users.searchUsers(users.users.prev)" class="btn btn-sm btn-default" style="background-color: #fff;"><i class="fa fa-angle-left"></i></a></span>
                         <span ng-if="users.users.next"><a ng-click="users.searchUsers(users.users.next)" class="btn btn-sm btn-default" style="background-color: #fff;"><i class="fa fa-angle-right"></i></a></span>
@@ -137,7 +136,6 @@
                     <button ng-if="global.user" ladda="global.loaders['invite']" class="ladda-btn btn btn-xs btn-outline btn-info" ng-click="global.loaders['invite'] = true; global.invitePeople();">+ Invite People</button>
                 </div>
                 <div ng-show="!users.tag" class="pull-right">
-                    <strong>{{users.users.start}} - {{users.users.end}}</strong> of <strong>{{users.users.total_count}}&nbsp;&nbsp;</strong>
                     <div class="btn-group btn-group-sm" style="margin-top: -2px;">
                         <span ng-if="users.users.prev"><a ng-click="users.searchUsers(users.users.prev)" class="btn btn-sm btn-default" style="background-color: #fff;"><i class="fa fa-angle-left"></i></a></span>
                         <span ng-if="users.users.next"><a ng-click="users.searchUsers(users.users.next)" class="btn btn-sm btn-default" style="background-color: #fff;"><i class="fa fa-angle-right"></i></a></span>

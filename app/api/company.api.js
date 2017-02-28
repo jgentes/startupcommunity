@@ -4,7 +4,15 @@ var Q = require('q'),
     CommunityApi = require(__dirname + '/community.api.js'),
     communityApis = new CommunityApi(),
     aws = require('aws-sdk'),
-    db = require('orchestrate')(process.env.DB_KEY);
+    db = require('orchestrate')(process.env.DB_KEY),
+  Cloudant = require('cloudant'),
+  cloudant = Cloudant({
+    account: '2001b05d-38e3-44f7-b569-b13a66a81b70-bluemix',
+    key: 'itsartnerevishedifestimm',
+    password: 'ee4e2b18fb1d4fd5e34c802239a5a3bc8224cc73',
+    plugin: 'promises'
+  }),
+  cdb = cloudant.db.use(process.env.DB_COMMUNITIES);
 
 //require('request-debug')(request); // Very useful for debugging oauth and api req/res
 
@@ -57,6 +65,30 @@ var schema = {
     }
 };
 
+function formatSearchResults(items) {
+  if (items.rows && items.rows.length) {
+    for (i in items.rows) {
+      items.rows[i].doc = {
+        path: { key: items.rows[i].id },
+        value: items.rows[i].doc
+      };
+    }
+  }
+  return items;
+}
+
+function formatFindResults(items) {
+  if (items.docs && items.docs.length) {
+    for (i in items.docs) {
+      items.docs[i] = {
+        path: { key: items.docs[i]._id },
+        value: items.docs[i]
+      };
+    }
+  }
+  return items;
+}
+
 function handleCompanySearch(req, res){
         var communities = req.query.communities,
             clusters = req.query.clusters,
@@ -68,159 +100,155 @@ function handleCompanySearch(req, res){
             get_resources = req.query.get_resources,
             key = req.query.api_key;
 
-        searchInCommunity(communities, clusters, stages, types, limit, offset, query, get_resources, key)
-            .then(function(companylist){
-                    res.send(companylist);
-            })
-            .fail(function(err){
-                    console.warn(err);
-                    res.send({message:err});
-            });
-}
+  var allowed = false;
+  var userperms;
 
-var searchInCommunity = function(communities, clusters, stages, types, limit, offset, query, get_resources, key) {
-    var allowed = false;
-    var userperms;
-    
-    //console.log(key); //concern is that a passed in key is new and overwrites existing key
+  //console.log(key); //concern is that a passed in key is new and overwrites existing key
 
-    if (key) { //check api key to determine if restricted profile data is included with results
-            try {
-                    //var payload = jwt.decode(key, process.env.API_TOKEN_SECRET);
-                    // Assuming key never expires
-                    //check perms!
-                    console.log('test then remove me')
-                    //todo THIS SECTION NEEDS TO BE REWRITTEN
-                    db.get(process.env.DB_COMMUNITIES, payload.sub)
-                        .then(function (response) {
-                                /*
-                                 if (location && community) {
-                                 userperms = findKey(response.body.communities, location + '.' + community, []);
-                                 } else if (location && !community) {
-                                 userperms = findKey(response.body.communities, (location || community), []);
-                                 }
-                                 if (userperms[0].roles.indexOf("admin") > -1) { allowed=true; }
-                                 */
-                        })
-                        .fail(function(err){
-                                console.warn("WARNING: company85", err);
-                                return deferred.reject(new Error(err));
-                        });
-            } catch (err) {
-                    return deferred.reject(new Error(err));
-            }
-    }
-
-    // create searchstring
-    searchstring = '@value.communities:(';
-    var state = "";
-
-    if (communities) {
-        for (c in communities) {
-
-            // determine whether one of the communities is a state
-            var state_suffix = communityApis.convert_state(communities[c].replace('-',' '), 'abbrev'); // returns false if no match
-
-            if (state_suffix) {
-                var state = ' AND @value.profile.home: ("' + communities[c] + '" OR "*-' + state_suffix.toLowerCase() + '")';
-                var remove = communities.indexOf(communities[c]);
-                if (remove > -1) communities.splice(remove, 1); // to avoid issues with length check
-                if (communities.length == 0) searchstring += "*";
-            } else {
-                searchstring += '"' + communities[c] + '"';
-                if (c < (communities.length - 1)) { searchstring += ' AND '; }
-            }
-        }
-    } else searchstring += '*';
-
-    if (get_resources === "true") {
-        searchstring += ') AND @value.resource: true AND @value.type: "company"' + state;
-    } else searchstring += ') AND @value.type: "company"' + state;
-
-    if (clusters && clusters.length > 0 && clusters[0] !== '*') {
-        clusters = clusters.splice(',');
-        searchstring += ' AND (';
-
-        var clusterstring = '';
-
-        if (clusters.indexOf('all') < 0) clusters.push('all');
-
-        for (i in clusters) {
-            clusterstring += '"' + clusters[i] + '"';
-            if (i < (clusters.length - 1)) { clusterstring += ' OR '; }
-        }
-
-        searchstring += '@value.profile.industries:(' + clusterstring + ') OR @value.profile.parents:(' + clusterstring + '))'; // scope to industries within the cluster
-
-    }
-
-    if (stages && stages.length > 0 && stages[0] !== '*') {
-            stages = stages.splice(',');
-            searchstring += ' AND (';
-
-            for (i in stages) {
-                    searchstring += '@value.profile.stage:"' + stages[i] + '"'; // scope to stage
-                    if (i < (stages.length - 1)) { searchstring += ' OR '; }
-            }
-            searchstring += ')';
-    }
-
-    if (types && types.length > 0 && types[0] !== '*') {
-        types = types.splice(',');
-        searchstring += ' AND (';
-
-        for (i in types) {
-            searchstring += '@value.resource_types:"' + types[i] + '"'; // scope to stage
-            if (i < (types.length - 1)) { searchstring += ' OR '; }
-        }
-        searchstring += ')';
-    }
-
-
-
-    if (query) { searchstring += ' AND ' + '(@value.profile.*: ' + query + ')'; }
-
-    console.log('Pulling Companies: ' + searchstring);
-
-    var deferred = Q.defer();
-    db.newSearchBuilder()
-        .collection(process.env.DB_COMMUNITIES)
-        .limit(Number(limit) || 18)
-        .offset(Number(offset) || 0)
-        .sortRandom()
-        .query(searchstring)
-        .then(function(result){
-
-            var i;
-
-            try {
-                    for (i=0; i < result.body.results.length; i++) {
-
-                        result.body.results[i].value["key"] = result.body.results[i].path.key;
-                    }
-            } catch (error) {
-                    console.warn('WARNING: company144 ', error);
-                    console.log(result.body.results);
-            }
-
-            if (result.body.next) {
-                    var getnext = url.parse(result.body.next, true);
-                    result.body.next = '/api/2.1/search' + getnext.search;
-            }
-            if (result.body.prev) {
-                    var getprev = url.parse(result.body.prev, true);
-                    result.body.prev = '/api/2.1/search' + getprev.search;
-            }
-            deferred.resolve(result.body);
+  if (key) { //check api key to determine if restricted profile data is included with results
+    try {
+      //var payload = jwt.decode(key, process.env.API_TOKEN_SECRET);
+      // Assuming key never expires
+      //check perms!
+      console.log('test then remove me')
+      //todo THIS SECTION NEEDS TO BE REWRITTEN
+      db.get(process.env.DB_COMMUNITIES, payload.sub)
+        .then(function (response) {
+          /*
+           if (location && community) {
+           userperms = findKey(response.body.communities, location + '.' + community, []);
+           } else if (location && !community) {
+           userperms = findKey(response.body.communities, (location || community), []);
+           }
+           if (userperms[0].roles.indexOf("admin") > -1) { allowed=true; }
+           */
         })
         .fail(function(err){
-                console.log(err.body.message);
-                deferred.reject(err.body.message);
+          console.warn("WARNING: company85", err);
+          return deferred.reject(new Error(err));
         });
+    } catch (err) {
+      return deferred.reject(new Error(err));
+    }
+  }
 
-    return deferred.promise;
+  // create searchstring
+  searchstring = 'communities:(';
+  var state = "";
 
-};
+  if (communities) {
+    for (c in communities) {
+
+      // determine whether one of the communities is a state
+      var state_suffix = communityApis.convert_state(communities[c].replace('-',' '), 'abbrev'); // returns false if no match
+
+      if (state_suffix) {
+        var state = " AND profile.home: ('" + communities[c] + "' OR '*-'" + state_suffix.toLowerCase() + "')";
+        var remove = communities.indexOf(communities[c]);
+        if (remove > -1) communities.splice(remove, 1); // to avoid issues with length check
+        if (communities.length == 0) searchstring += "*";
+      } else {
+        searchstring += "'" + communities[c] + "'";
+        if (c < (communities.length - 1)) { searchstring += ' AND '; }
+      }
+    }
+  } else searchstring += '*';
+
+  if (get_resources === "true") {
+    searchstring += ") AND resource: true" + state;
+  } else searchstring += ") AND" + state;
+
+  if (clusters && clusters.length > 0 && clusters[0] !== '*') {
+    clusters = clusters.splice(',');
+    searchstring += ' AND (';
+
+    var clusterstring = '';
+
+    if (clusters.indexOf('all') < 0) clusters.push('all');
+
+    for (i in clusters) {
+      clusterstring += "'" + clusters[i] + "'";
+      if (i < (clusters.length - 1)) { clusterstring += ' OR '; }
+    }
+
+    searchstring += 'profile.industries:(' + clusterstring + ') OR profile.parents:(' + clusterstring + '))'; // scope to industries within the cluster
+
+  }
+
+  if (stages && stages.length > 0 && stages[0] !== '*') {
+    stages = stages.splice(',');
+    searchstring += ' AND (';
+
+    for (i in stages) {
+      searchstring += "profile.stage:'" + stages[i] + "'"; // scope to stage
+      if (i < (stages.length - 1)) { searchstring += ' OR '; }
+    }
+    searchstring += ')';
+  }
+
+  if (types && types.length > 0 && types[0] !== '*') {
+    types = types.splice(',');
+    searchstring += ' AND (';
+
+    for (i in types) {
+      searchstring += "resource_types:'" + types[i] + "'"; // scope to stage
+      if (i < (types.length - 1)) { searchstring += ' OR '; }
+    }
+    searchstring += ')';
+  }
+
+
+
+  if (query) { searchstring += ' AND ' + '(profile.*: ' + query + ')'; }
+
+  console.log('Pulling Companies: ' + searchstring);
+
+  cdb.find({selector: {type: 'company', '$text': searchstring}, skip: Number(offset) || 0, limit: Number(limit) || 16})
+    .then(function(result){
+      result = formatFindResults(result);
+
+      var i;
+
+      try {
+        for (i=0; i < result.docs.length; i++) {
+
+          result.docs[i].value["key"] = result.docs[i].path.key;
+        }
+      } catch (error) {
+        console.warn('WARNING: company144 ', error);
+      }
+
+      result.next =
+        '/api/2.1/companies?communities[]=' + req.query.communities +
+        '&clusters[]=' + (req.query.clusters || '*') +
+        '&stages[]=' + (req.query.stages || '*') +
+        '&types=' + (req.query.types || '*') +
+        '&limit=' + (Number(req.query.limit) || 16) +
+        '&offset=' + ((Number(req.query.offset) || 0) + (Number(req.query.limit) || 16)) +
+        '&get_resources=' + (req.query.get_resources || false) +
+        '&query=' + (req.query.query || '*');
+
+      result.prev =
+        '/api/2.1/compaies?communities[]=' + req.query.communities +
+        '&clusters[]=' + (req.query.clusters || '*') +
+        '&stages[]=' + (req.query.stages || '*') +
+        '&types=' + (req.query.types || '*') +
+        '&limit=' + (Number(req.query.limit) || 16) +
+        '&offset=' + (req.query.offset ? (Number(req.query.offset) - ((Number(req.query.limit) || 16))) : 0) +
+        '&get_resources=' + (req.query.get_resources || false) +
+        '&query=' + (req.query.query || '*');
+
+      result.results = result.docs;
+      delete result.docs;
+
+      res.send(result);
+
+    })
+    .catch(function(err){
+      console.log('WARNING: ', err);
+      res.send({message:err.message});
+    });
+}
 
 function handleGetLogoUrl(req, res) {
     // req data is guaranteed by ensureauth
@@ -356,7 +384,7 @@ function handleDeleteCompany(req, res) {
                                 .limit(100)
                                 .offset(0)
                                 .sortRandom()
-                                .query('@value.type:"user" AND @value.roles.*.' + params.company_key + ':*')
+                                .query('type:"user" AND roles.*.' + params.company_key + ':*')
                                 .then(function (flush) {
                                     for (r in flush.body.results) {
                                         var flush_key = flush.body.results[r].path.key,
@@ -417,7 +445,7 @@ function handleDeleteCompany(req, res) {
             .limit(100)
             .offset(0)
             .sortRandom()
-            .query('@value.type:"user" AND (@value.roles.founder.' + params.company_key + ':* OR @value.roles.team.' + params.company_key + ':*)')
+            .query('type:"user" AND (roles.founder.' + params.company_key + ':* OR roles.team.' + params.company_key + ':*)')
             .then(function (team) {
 
                 if (team.body && (team.body.count == 0)) {
@@ -512,7 +540,7 @@ function handleCheckUrl(req, res) {
     website = website.replace(/.*?:\/\//g, "");
     if(website.match(/^www\./)) website = website.substring(4);
 
-    db.search(process.env.DB_COMMUNITIES, '(@value.type = "company" AND (@value.profile.website: "' + website + '" OR @value.profile.website: "www.' + website + '"))')
+    db.search(process.env.DB_COMMUNITIES, '(type = "company" AND (profile.website: "' + website + '" OR profile.website: "www.' + website + '"))')
         .then(function(result) {
             if (result.body.results.length > 0) {
                 res.status(202).send({message: result.body.results[0].path.key});
