@@ -8,8 +8,8 @@ var Q = require('q'),
   Cloudant = require('cloudant'),
   cloudant = Cloudant({
     account: '2001b05d-38e3-44f7-b569-b13a66a81b70-bluemix',
-    key: 'itsartnerevishedifestimm',
-    password: 'ee4e2b18fb1d4fd5e34c802239a5a3bc8224cc73',
+    key: 'ingidlettlysenemediserni',
+    password: '42a75fe750f1f707299b5a5c230322d207a99a60',
     plugin: 'promises'
   }),
   cdb = cloudant.db.use(process.env.DB_COMMUNITIES);

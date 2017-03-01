@@ -10,8 +10,8 @@ var Q = require('q'),
     Cloudant = require('cloudant'),
     cloudant = Cloudant({
       account: '2001b05d-38e3-44f7-b569-b13a66a81b70-bluemix',
-      key: 'itsartnerevishedifestimm',
-      password: 'ee4e2b18fb1d4fd5e34c802239a5a3bc8224cc73',
+      key: 'ingidlettlysenemediserni',
+      password: '42a75fe750f1f707299b5a5c230322d207a99a60',
       plugin: 'promises'
     }),
     cdb = cloudant.db.use(process.env.DB_COMMUNITIES);
@@ -37,7 +37,6 @@ var UserApi = function() {
  |--------------------------------------------------------------------------
  */
 
-
 function handleUserSearch(req, res){
     var communities = req.query.communities,
         clusters = req.query.clusters,
@@ -49,34 +48,7 @@ function handleUserSearch(req, res){
 
   var allowed = false;
   var userperms;
-
-  if (key) { //check api key to determine if restricted profile data is included with results
-    try {
-      //var payload = jwt.decode(key, process.env.API_TOKEN_SECRET);
-      // Assuming key never expires
-      //check perms!
-      console.log('test then remove me')
-      //todo THIS SECTION NEEDS TO BE REWRITTEN
-      db.get(process.env.DB_COMMUNITIES, payload.sub)
-        .then(function (response) {
-            /*
-             if (location && community) {
-             userperms = findKey(response.body.communities, location + '.' + community, []);
-             } else if (location && !community) {
-             userperms = findKey(response.body.communities, (location || community), []);
-             }
-             if (userperms[0].roles.indexOf("admin") > -1) { allowed=true; }
-             */
-        })
-        .fail(function(err){
-          console.warn("WARNING: user75", err);
-          return deferred.reject(new Error(err));
-        });
-    } catch (err) {
-      return deferred.reject(new Error(err));
-    }
-  }
-
+  
   // create searchstring
   searchstring = 'communities:(';
   var state = "";
@@ -282,6 +254,8 @@ function handleContactUser(req, res) {
 
   cdb.search('communities', 'communitySearch', {q: searchstring, include_docs: true})
         .then(function(result){
+          result = formatSearchResults(result);
+
           //todo NEED TO VERIFY BELOW
             if (result.rows.length > 0) {
                 console.log("Found leader(s)");
@@ -291,15 +265,16 @@ function handleContactUser(req, res) {
                 }
 
                 // now get user record for email address
-                db.get(process.env.DB_COMMUNITIES, user_key)
+                cdb.get(user_key)
                     .then(function(response){
+
                         if (response.body.code !== "items_not_found") {
                             var contacts = [],
                                 knowtifyClient = new knowtify.Knowtify(process.env.KNOWTIFY, false);
 
                             for (leader in leaders) {
                                 contacts.push({
-                                    "id" : leaders[leader].path.id,
+                                    "id" : leaders[leader].path.key,
                                     "name" : leaders[leader].doc.value.profile.name,
                                     "email" : leaders[leader].doc.value.profile.email,
                                     "data" : {
@@ -307,9 +282,9 @@ function handleContactUser(req, res) {
                                         "source_email" : formdata.email,
                                         "source_company" : formdata.company,
                                         "source_reason" : formdata.reason,
-                                        "target_name" : response.body.profile.name,
-                                        "target_email" : response.body.profile.email,
-                                        "target_avatar" : response.body.profile.avatar
+                                        "target_name" : response.profile.name,
+                                        "target_email" : response.profile.email,
+                                        "target_avatar" : response.profile.avatar
                                     }
                                 })
                             }
@@ -333,9 +308,9 @@ function handleContactUser(req, res) {
                                                     "source_email" : formdata.email,
                                                     "source_company" : formdata.company,
                                                     "source_reason" : formdata.reason,
-                                                    "target_name" : response.body.profile.name,
-                                                    "target_email" : response.body.profile.email,
-                                                    "target_avatar" : response.body.profile.avatar
+                                                    "target_name" : response.profile.name,
+                                                    "target_email" : response.profile.email,
+                                                    "target_avatar" : response.profile.avatar
                                                 }
                                             }]
                                         },
@@ -347,21 +322,6 @@ function handleContactUser(req, res) {
                                             console.log(err);
                                         }
                                     );
-
-                                    // create event in user record for tracking purposes
-                                    db.newEventBuilder()
-                                        .from(process.env.DB_COMMUNITIES, user_key)
-                                        .type('contact_request') // this has been refactored as part of value.type
-                                        .data({
-                                            "location_key" : location_key,
-                                            "leaders" : contacts,
-                                            "source_name" : formdata.name,
-                                            "source_email" : formdata.email,
-                                            "source_company" : formdata.company,
-                                            "source_reason" : formdata.reason
-                                        })
-                                        .create();
-
                                 },
                                 function(err){
                                     console.warn('WARNING');
@@ -408,16 +368,11 @@ function handleGetProfile(req, res) {
     var userid = req.params.userid || req.user;
     console.log('Pulling user profile: ' + userid);
 
-    db.get(process.env.DB_COMMUNITIES, userid)
+    cdb.get(userid)
         .then(function(response){
-            if (response.body.code !== "items_not_found") {
-                response.body["key"] = userid;
-                response.body["token"] = jwt.sign(userid, process.env.SC_TOKEN_SECRET);
-                res.status(200).send(response.body);
-            } else {
-                console.warn('WARNING:  User not found.');
-                res.status(200).send({ message: 'User not found.' });
-            }
+          response["key"] = userid;
+          response["token"] = jwt.sign(userid, process.env.SC_TOKEN_SECRET);
+          res.status(200).send(response);
         })
         .fail(function(err){
             console.warn("Problem pulling user, sending 400 response. ", err.body);
@@ -468,7 +423,7 @@ function handleUpdateProfile(req, res) {
     if (userid == profile.key) {
         delete profile.key;
 
-        db.put(process.env.DB_COMMUNITIES, userid, profile)
+        cdb.insert(userid, profile)
             .then(function(response){
                 if (response.statusCode == 201) {
                     profile["key"] = userid;
@@ -498,22 +453,22 @@ function handleRemoveCommunity(req, res) {
     console.log("Removing community '" + community.key + "' for user " + user_key);
 
     // first confirm that req.user has leader role in community
-    db.get(process.env.DB_COMMUNITIES, userid)
+    cdb.get(userid)
         .then(function(response) {
-            if (response.body.roles.leader[community.key]) {
-                db.get(process.env.DB_COMMUNITIES, user_key)
+            if (response.roles.leader[community.key]) {
+                cdb.get(user_key)
                     .then(function(response) {
-                        for (role in response.body.roles) {
-                            for (comm in response.body.roles[role]) {
-                                if (response.body.roles[role][community.key]) {
-                                    delete response.body.roles[role][community.key];
+                        for (role in response.roles) {
+                            for (comm in response.roles[role]) {
+                                if (response.roles[role][community.key]) {
+                                    delete response.roles[role][community.key];
                                 }
                             }
                         }
-                        if (response.body.communities.indexOf(community.key) > -1) {
-                            response.body.communities.splice(response.body.communities.indexOf(community.key), 1);
+                        if (response.communities.indexOf(community.key) > -1) {
+                            response.communities.splice(response.communities.indexOf(community.key), 1);
                         }
-                        db.put(process.env.DB_COMMUNITIES, user_key, response.body)
+                        cdb.insert(user_key, response)
                             .then(function(response) {
                                 console.log('Successfully removed community from user profile.');
                                 res.status(201).send({ message: 'Community removed.'});
@@ -548,22 +503,22 @@ function handleRemoveRole(req, res) {
     console.log("Removing " + role + " for community " + community_key + " for user " + userid);
 
     // confirm user has role and remove it
-    db.get(process.env.DB_COMMUNITIES, userid)
+    cdb.get(userid)
         .then(function(response) {
-            if (response.body.roles[role] && response.body.roles[role][community_key]) {
-                delete response.body.roles[role][community_key];
+            if (response.roles[role] && response.roles[role][community_key]) {
+                delete response.roles[role][community_key];
                 
-                for (r in response.body.roles) {
-                    if (response.body.roles[r][community_key]) var del = true;
+                for (r in response.roles) {
+                    if (response.roles[r][community_key]) var del = true;
                 }
                 
                 if (del) {
-                    if (response.body.communities.indexOf(community_key) > -1) {
-                        response.body.communities.splice(response.body.communities.indexOf(community_key), 1);
+                    if (response.communities.indexOf(community_key) > -1) {
+                        response.communities.splice(response.communities.indexOf(community_key), 1);
                     }
                 }
                 
-                db.put(process.env.DB_COMMUNITIES, userid, response.body)
+                cdb.insert(userid, response)
                     .then(function(response) {
                         console.log('Successfully removed role from user profile.');
                         res.status(201).send({ message: 'Role removed.'});
@@ -589,11 +544,11 @@ function handleFeedback(req, res) {
     var userkey = req.user,
       data = JSON.parse(decodeURIComponent(req.query.data));
 
-    db.get(process.env.DB_COMMUNITIES, userkey)
+    cdb.get(userkey)
       .then(function (response) {
-          response.body['beta'] = data;
+          response['beta'] = data;
 
-          db.put(process.env.DB_COMMUNITIES, userkey, response.body)
+          cdb.insert(userkey, response)
             .then(function (finalres) {
                 res.status(201).send({ message: 'Profile updated.'});
             })
@@ -617,7 +572,7 @@ function handleFeedback(req, res) {
 
 function handleRemoveProfile(req, res) {
     var userid = req.params.userid;
-    db.remove(process.env.DB_COMMUNITIES, userid) // ideally I should store an undo option
+    cdb.destroy(userid) // ideally I should store an undo option
       .then(function(result){
           console.log('User removed.');
           res.status(200).send({ message: 'User removed' });
