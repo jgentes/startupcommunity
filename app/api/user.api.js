@@ -4,7 +4,6 @@ var Q = require('q'),
     jwt = require('jsonwebtoken'),
     CommunityApi = require(__dirname + '/community.api.js'),
     communityApis = new CommunityApi(),
-    db = require('orchestrate')(process.env.DB_KEY),
     aws = require('aws-sdk'),
     knowtify = require('knowtify-node'),
     Cloudant = require('cloudant'),
@@ -336,7 +335,7 @@ function handleContactUser(req, res) {
                         }
                     })
 
-                    .fail(function(err){
+                    .catch(function(err){
                         console.warn("WARNING: user338", err);
                         res.status(202).send({ message: "Something went wrong."});
                     });
@@ -349,7 +348,7 @@ function handleContactUser(req, res) {
                 res.status(202).send({ message: "Sorry, we can't seem to find a leader for this community. We took note of your request and we'll look into this and get back to you via email ASAP." });
             }
         })
-        .fail(function(err){
+        .catch(function(err){
             console.log("WARNING: user351", err);
             res.status(202).send({ message: "Something went wrong."});
         });
@@ -374,7 +373,7 @@ function handleGetProfile(req, res) {
           response["token"] = jwt.sign(userid, process.env.SC_TOKEN_SECRET);
           res.status(200).send(response);
         })
-        .fail(function(err){
+        .catch(function(err){
             console.warn("Problem pulling user, sending 400 response. ", err.body);
             res.status(400).send({ message: "Please try logging in again."});
         });
@@ -435,7 +434,7 @@ function handleUpdateProfile(req, res) {
                 }
             })
 
-            .fail(function(err){
+            .catch(function(err){
                 console.warn("WARNING: user457", err);
                 res.status(202).send({ message: "Something went wrong."});
             });
@@ -473,12 +472,12 @@ function handleRemoveCommunity(req, res) {
                                 console.log('Successfully removed community from user profile.');
                                 res.status(201).send({ message: 'Community removed.'});
                             })
-                            .fail(function(err){
+                            .catch(function(err){
                                 console.warn("WARNING: ", err);
                                 res.status(202).send({ message: "Something went wrong."});
                             });
                     })
-                    .fail(function(err){
+                    .catch(function(err){
                         console.warn("WARNING: ", err);
                         res.status(202).send({ message: "Something went wrong."});
                     });
@@ -487,7 +486,7 @@ function handleRemoveCommunity(req, res) {
                 res.status(202).send({ message: 'You do not have leader privileges for this community.' });
             }
         })
-        .fail(function(err){
+        .catch(function(err){
             console.warn("WARNING: ", err);
             res.status(202).send({ message: "Something went wrong."});
         });
@@ -523,7 +522,7 @@ function handleRemoveRole(req, res) {
                         console.log('Successfully removed role from user profile.');
                         res.status(201).send({ message: 'Role removed.'});
                     })
-                    .fail(function(err){
+                    .catch(function(err){
                         console.warn("WARNING: ", err);
                         res.status(202).send({ message: "Something went wrong."});
                     });
@@ -533,7 +532,7 @@ function handleRemoveRole(req, res) {
                 res.status(202).send({ message: 'You do not have the ' + role + ' role for record ' + community_key + '.' });
             }
         })
-        .fail(function(err){
+        .catch(function(err){
             console.warn("WARNING: ", err);
             res.status(202).send({ message: "Something went wrong."});
         });
@@ -552,13 +551,13 @@ function handleFeedback(req, res) {
             .then(function (finalres) {
                 res.status(201).send({ message: 'Profile updated.'});
             })
-            .fail(function (err) {
+            .catch(function (err) {
                 console.warn('WARNING: user547', err);
                 res.status(202).send({ message: "Something went wrong."});
             });
 
       })
-      .fail(function (err) {
+      .catch(function (err) {
           console.warn('WARNING: user553', err);
           res.status(202).send({ message: 'Something went wrong: ' + err});
       });
@@ -577,7 +576,7 @@ function handleRemoveProfile(req, res) {
           console.log('User removed.');
           res.status(200).send({ message: 'User removed' });
       })
-      .fail(function(err){
+      .catch(function(err){
           console.log("Remove FAIL:" + err);
           res.status(202).send({ message: 'Something went wrong: ' + err });
       });
