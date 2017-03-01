@@ -180,7 +180,6 @@ function NavigationController($scope, $auth, $state, $window, $location, $stateP
 
     var loadNav = function() {
 
-      console.log($scope.global.top);
         var path_url = $location.path().replace(/\/$/, "").split('/').pop(); // used for routing
 
         /*  

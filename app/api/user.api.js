@@ -91,7 +91,7 @@ function handleUserSearch(req, res){
     searchstring += ' AND (';
 
     for (i in roles) {
-      searchstring += 'roles.' + roles[i] + '.*:*'; // scope to role
+      searchstring += 'roles.' + roles[i] + ':[a* TO z*]'; // scope to role
       if (i < (roles.length - 1)) { searchstring += ' AND '; }
     }
     searchstring += ')';
@@ -101,7 +101,7 @@ function handleUserSearch(req, res){
 
   console.log(searchstring);
 
-  cdb.find({selector: {type: 'company', '$text': searchstring}, skip: Number(offset) || 0, limit: Number(limit) || 16})
+  cdb.find({selector: {type: 'user', '$text': searchstring}, skip: Number(offset) || 0, limit: Number(limit) || 16})
     .then(function(result){
       result = formatFindResults(result);
 

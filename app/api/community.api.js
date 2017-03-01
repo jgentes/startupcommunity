@@ -263,6 +263,7 @@ function handleGetCommunity(req, res) {
               thiskey = newresponse.key;
 
             var getTeam = function (startkey, teamlist) {
+
               cdb.search('communities', 'communitySearch', {q: 'type:user AND roles:' + thiskey, include_docs: true})
                 .then(function (team) {
                   team = formatSearchResults(team);
@@ -525,7 +526,7 @@ function handleGetTop(req, res) {
   // add search based on home suffix (which allows for roll-up to state level)
   var search = state_suffix ?
     'profile.home: (' + location_key + state :
-    'communities: ' + location_key + ' AND communities: ' + (community_key == '*' ? '*' : '"' + community_key + '"');
+    'communities: ' + location_key + ' AND communities: ' + (community_key == '*' ? '[a* TO z*]' : '"' + community_key + '"');
 
   // get companies and industries
 
