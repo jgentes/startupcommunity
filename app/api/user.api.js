@@ -97,7 +97,7 @@ function handleUserSearch(req, res){
     searchstring += ')';
   }
 
-  if (query) { searchstring += ' AND ' + '(profile.*: ' + query + ')'; }
+  if (query) { searchstring += ' AND ' + '(profile: ' + query + ')'; }
 
   console.log(searchstring);
 
