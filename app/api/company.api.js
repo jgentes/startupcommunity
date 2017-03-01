@@ -128,7 +128,7 @@ function handleCompanySearch(req, res){
 
   if (get_resources === "true") {
     searchstring += ") AND resource: true" + state;
-  } else searchstring += ") AND" + state;
+  } else searchstring += ")" + (state ? " AND" + state : '');
 
   if (clusters && clusters.length > 0 && clusters[0] !== '*') {
     clusters = clusters.splice(',');
@@ -139,14 +139,13 @@ function handleCompanySearch(req, res){
     if (clusters.indexOf('all') < 0) clusters.push('all');
 
     for (i in clusters) {
-      clusterstring += "'" + clusters[i] + "'";
+      clusterstring += clusters[i];
       if (i < (clusters.length - 1)) { clusterstring += ' OR '; }
     }
 
     searchstring += 'profile.industries:(' + clusterstring + ') OR profile.parents:(' + clusterstring + '))'; // scope to industries within the cluster
 
   }
-
   if (stages && stages.length > 0 && stages[0] !== '*') {
     stages = stages.splice(',');
     searchstring += ' AND (';
@@ -168,7 +167,6 @@ function handleCompanySearch(req, res){
     }
     searchstring += ')';
   }
-
 
 
   if (query) { searchstring += ' AND ' + '(profile: ' + query + ')'; }

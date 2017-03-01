@@ -58,12 +58,12 @@ function handleUserSearch(req, res){
     var state_suffix = communityApis.convert_state(communities[c].replace('-',' '), 'abbrev'); // returns false if no match
 
     if (state_suffix) {
-      state = " AND profile.home: ('" + communities[c] + "' OR '*-'" + state_suffix.toLowerCase() + "')";
+      state = " AND profile.home: (" + communities[c] + " OR *-" + state_suffix.toLowerCase() + ")";
       var remove = communities.indexOf(communities[c]);
       if (remove > -1) communities.splice(remove, 1); // to avoid issues with length check
       if (communities.length == 0) searchstring += "*";
     } else {
-      searchstring += "'" + communities[c] + "'";
+      searchstring += communities[c];
       if (c < (communities.length - 1)) { searchstring += ' AND '; }
     }
   }
@@ -79,7 +79,7 @@ function handleUserSearch(req, res){
     if (clusters.indexOf('all') < 0) clusters.push('all');
 
     for (i in clusters) {
-      clusterstring += "'" + clusters[i] + "'";
+      clusterstring += clusters[i];
       if (i < (clusters.length - 1)) { clusterstring += ' OR '; }
     }
 
