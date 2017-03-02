@@ -145,7 +145,7 @@ function handleSetupNewsletter(req,res) {
                 }
 
             })
-            .fail(function(err){
+            .catch(function(err){
                 res.status(204).send({ message: err});
                 console.warn("WARNING: ", err);
             });
@@ -370,7 +370,7 @@ function handleSetupNewsletter(req,res) {
         .then(function () {
             console.log('profile updated', lists);
         })
-        .fail(function (err) {
+        .catch(function (err) {
             console.log('WARNING: ', err);
         });
     };

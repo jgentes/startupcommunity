@@ -257,3 +257,5 @@ replace .fail with .catch
 NEXT: PRINT OUT ALL 'TYPES' OF RECORDS TO CATCH ANYTHING ELSE IN ADDITION TO 'CONTACT_REQUEST'
 
 cdb.search('communities', 'communitySearch', {q: usersearch, include_docs: true})
+
+//todo the /pe-icon-7-stroke should in no way be in the /build directory. that dir is for builds, and if the fonts dir is deleted, I lose my fonts. very not right.

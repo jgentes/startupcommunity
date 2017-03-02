@@ -267,13 +267,14 @@ function handleContactUser(req, res) {
                 cdb.get(user_key)
                     .then(function(response){
 
-                        if (response.body.code !== "items_not_found") {
+                        if (response.code !== "items_not_found") {
                             var contacts = [],
                                 knowtifyClient = new knowtify.Knowtify(process.env.KNOWTIFY, false);
 
                             for (leader in leaders) {
+
                                 contacts.push({
-                                    "id" : leaders[leader].path.key,
+                                    "id" : leaders[leader].doc.path.key,
                                     "name" : leaders[leader].doc.value.profile.name,
                                     "email" : leaders[leader].doc.value.profile.email,
                                     "data" : {
@@ -422,22 +423,30 @@ function handleUpdateProfile(req, res) {
     if (userid == profile.key) {
         delete profile.key;
 
-        cdb.insert(userid, profile)
-            .then(function(response){
-                if (response.statusCode == 201) {
-                    profile["key"] = userid;
-                    res.status(200).send({ token: jwt.sign(userid, process.env.SC_TOKEN_SECRET), user: profile });
+        cdb.get(userid)
+          .then(function(user) {
+            profile['_id'] = user._id;
+            profile['_rev'] = user._rev;
+
+            cdb.insert(profile, userid)
+              .then(function(response){
+
+                if (response.ok) {
+                  profile["key"] = userid;
+                  res.status(200).send({ token: jwt.sign(userid, process.env.SC_TOKEN_SECRET), user: profile });
 
                 } else {
-                    console.warn('WARNING:  Something went wrong. This updates req.user, would only fail if not logged in or token expired.');
-                    res.status(202).send({ message: 'Try logging out and back in again. We will also look into it on our end!' });
+                  console.warn('WARNING:  Something went wrong. This updates req.user, would only fail if not logged in or token expired.');
+                  res.status(202).send({ message: 'Try logging out and back in again. We will also look into it on our end!' });
                 }
-            })
+              })
 
-            .catch(function(err){
+              .catch(function(err){
                 console.warn("WARNING: user457", err);
                 res.status(202).send({ message: "Something went wrong."});
-            });
+              });
+          })
+
     } else {
         res.status(400).send({ message: 'You may only update your own user record.'})
     }

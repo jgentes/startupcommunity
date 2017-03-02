@@ -90,7 +90,7 @@ function handleAddMessage(req, res) {
                         });
 
                 })
-                .fail(function(err){
+                .catch(function(err){
                     console.log('User not found, no notification sent: ', notify.to.key);
                 });
         };
@@ -128,7 +128,7 @@ function handleAddMessage(req, res) {
                 to_notify(addMessage);
                 res.status(200).send(message);
             })
-            .fail(function (err) {
+            .catch(function (err) {
                 console.error("WARNING: ", err);
                 res.status(202).send({message: "Woah! Something went wrong, but we've been notified and will take care of it."});
             })
@@ -142,7 +142,7 @@ function handleAddMessage(req, res) {
                 to_notify(addMessage);
                 res.status(200).send(message);
             })
-            .fail(function (err) {
+            .catch(function (err) {
                 console.error("WARNING: ", err);
                 res.status(202).send({message: "Woah! Something went wrong, but we've been notified and will take care of it."});
             });

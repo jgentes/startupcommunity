@@ -172,52 +172,54 @@ function handleCompanySearch(req, res){
   if (query) { searchstring += ' AND ' + '(profile: ' + query + ')'; }
 
   console.log('Pulling Companies: ' + searchstring);
+//settimeout is to avoid bluemix 5per sec request issue
+  setTimeout(function() {
+    cdb.find({selector: {type: 'company', '$text': searchstring}, skip: Number(offset) || 0, limit: Number(limit) || 16})
+      .then(function(result){
+        result = formatFindResults(result);
 
-  cdb.find({selector: {type: 'company', '$text': searchstring}, skip: Number(offset) || 0, limit: Number(limit) || 16})
-    .then(function(result){
-      result = formatFindResults(result);
+        var i;
 
-      var i;
+        try {
+          for (i=0; i < result.docs.length; i++) {
 
-      try {
-        for (i=0; i < result.docs.length; i++) {
-
-          result.docs[i].value["key"] = result.docs[i].path.key;
+            result.docs[i].value["key"] = result.docs[i].path.key;
+          }
+        } catch (error) {
+          console.warn('WARNING: company144 ', error);
         }
-      } catch (error) {
-        console.warn('WARNING: company144 ', error);
-      }
 
-      result.next =
-        '/api/2.1/companies?communities[]=' + req.query.communities +
-        '&clusters[]=' + (req.query.clusters || '*') +
-        '&stages[]=' + (req.query.stages || '*') +
-        '&types=' + (req.query.types || '*') +
-        '&limit=' + (Number(req.query.limit) || 16) +
-        '&offset=' + ((Number(req.query.offset) || 0) + (Number(req.query.limit) || 16)) +
-        '&get_resources=' + (req.query.get_resources || false) +
-        '&query=' + (req.query.query || '*');
+        result.next =
+          '/api/2.1/companies?communities[]=' + req.query.communities +
+          '&clusters[]=' + (req.query.clusters || '*') +
+          '&stages[]=' + (req.query.stages || '*') +
+          '&types=' + (req.query.types || '*') +
+          '&limit=' + (Number(req.query.limit) || 16) +
+          '&offset=' + ((Number(req.query.offset) || 0) + (Number(req.query.limit) || 16)) +
+          '&get_resources=' + (req.query.get_resources || false) +
+          '&query=' + (req.query.query || '*');
 
-      result.prev =
-        '/api/2.1/compaies?communities[]=' + req.query.communities +
-        '&clusters[]=' + (req.query.clusters || '*') +
-        '&stages[]=' + (req.query.stages || '*') +
-        '&types=' + (req.query.types || '*') +
-        '&limit=' + (Number(req.query.limit) || 16) +
-        '&offset=' + (req.query.offset ? (Number(req.query.offset) - ((Number(req.query.limit) || 16))) : 0) +
-        '&get_resources=' + (req.query.get_resources || false) +
-        '&query=' + (req.query.query || '*');
+        result.prev =
+          '/api/2.1/compaies?communities[]=' + req.query.communities +
+          '&clusters[]=' + (req.query.clusters || '*') +
+          '&stages[]=' + (req.query.stages || '*') +
+          '&types=' + (req.query.types || '*') +
+          '&limit=' + (Number(req.query.limit) || 16) +
+          '&offset=' + (req.query.offset ? (Number(req.query.offset) - ((Number(req.query.limit) || 16))) : 0) +
+          '&get_resources=' + (req.query.get_resources || false) +
+          '&query=' + (req.query.query || '*');
 
-      result.results = result.docs;
-      delete result.docs;
+        result.results = result.docs;
+        delete result.docs;
 
-      res.send(result);
+        res.send(result);
 
-    })
-    .catch(function(err){
-      console.log('WARNING: ', err);
-      res.send({message:err.message});
-    });
+      })
+      .catch(function(err){
+        console.log('WARNING: ', err);
+        res.send({message:err.message});
+      });
+  }, 1000);
 }
 
 function handleGetLogoUrl(req, res) {

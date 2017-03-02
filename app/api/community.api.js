@@ -209,7 +209,7 @@ function handleGetCommunity(req, res) {
 
                         if (!newresponse.companies) newresponse['companies'] = {"count": {}};
                         if (!newresponse.companies[role]) newresponse.companies[role] = {};
-                        if (!newresponse.companies[role][results[item].id]) newresponse.companies[role][results[item].id] = results[item];
+                        if (!newresponse.companies[role][results[item].id]) newresponse.companies[role][results[item].id] = results[item].doc;
                         if (!newresponse.companies.count[role]) newresponse.companies.count[role] = 0;
                         ++newresponse.companies.count[role];
                       }
@@ -233,27 +233,31 @@ function handleGetCommunity(req, res) {
 
           // get messages for users
           if (newresponse.type == 'user') {
-            cdb_messages.find({selector: {'to': newresponse.key}, limit: 100, sort: [{'published': 'asc'}]})
-              .then(function (messages) {
-                messages = formatFindResults(messages);
+            // settimeout is to avoid 5 requests per second issue with api
+            setTimeout(function(){
+              cdb_messages.find({selector: {'to': newresponse.key}, limit: 100})
+                .then(function (messages) {
+                  messages = formatFindResults(messages);
 
-                messages.docs.sort(function (a, b) {
-                  return a.value.published < b.value.published;
+                  messages.docs.sort(function (a, b) {
+                    return a.value.published < b.value.published;
+                  });
+                  newresponse.messages = {};
+                  for (mes in messages.docs) {
+
+                    messages.docs[mes].value["key"] = messages.docs[mes]._id;
+                    newresponse.messages[messages.docs[mes].id] = messages.docs[mes].value;
+                  }
+
+                  checkcache(cache, community, newresponse);
+
+                })
+                .catch(function (err) {
+                  console.log("WARNING: community171", err);
+                  res.status(200).send(newresponse);
                 });
-                newresponse.messages = {};
-                for (mes in messages.docs) {
+            }, 1000);
 
-                  messages.docs[mes].value["key"] = messages.docs[mes]._id;
-                  newresponse.messages[messages.docs[mes].id] = messages.docs[mes].value;
-                }
-
-                checkcache(cache, community, newresponse);
-
-              })
-              .catch(function (err) {
-                console.log("WARNING: community171", err);
-                res.status(200).send(newresponse);
-              });
 
           } else if (newresponse.type == 'company') {
             // get team
@@ -263,57 +267,58 @@ function handleGetCommunity(req, res) {
               thiskey = newresponse.key;
 
             var getTeam = function (startkey, teamlist) {
+              setTimeout(function(){
+                cdb.search('communities', 'communitySearch', {q: 'type:user AND roles:' + thiskey, include_docs: true})
+                  .then(function (team) {
+                    team = formatSearchResults(team);
 
-              cdb.search('communities', 'communitySearch', {q: 'type:user AND roles:' + thiskey, include_docs: true})
-                .then(function (team) {
-                  team = formatSearchResults(team);
+                    teamlist.push.apply(teamlist, team.rows);
 
-                  teamlist.push.apply(teamlist, team.rows);
+                      var teamresponse = {},
+                        count = {};
 
-                    var teamresponse = {},
-                      count = {};
+                      for (member in teamlist) {
+                        var t = teamlist[member];
 
-                    for (member in teamlist) {
-                      var t = teamlist[member];
+                        // delete sensitive data
+                        if (t.doc.value.profile.password) delete t.doc.value.profile.password;
+                        if (t.doc.value.profile.email) delete t.doc.value.profile.email;
+                        if (t.doc.value.newsletter) delete t.doc.value.newsletter;
+                        if (t.doc.value.profile.linkedin) {
+                          if (t.doc.value.profile.linkedin.emailAddress) delete t.doc.value.profile.linkedin.emailAddress;
+                          if (t.doc.value.profile.linkedin.access_token) delete t.doc.value.profile.linkedin.access_token;
+                        }
+                        t.doc.value["key"] = t.id;
 
-                      // delete sensitive data
-                      if (t.doc.value.profile.password) delete t.doc.value.profile.password;
-                      if (t.doc.value.profile.email) delete t.doc.value.profile.email;
-                      if (t.doc.value.newsletter) delete t.doc.value.newsletter;
-                      if (t.doc.value.profile.linkedin) {
-                        if (t.doc.value.profile.linkedin.emailAddress) delete t.doc.value.profile.linkedin.emailAddress;
-                        if (t.doc.value.profile.linkedin.access_token) delete t.doc.value.profile.linkedin.access_token;
-                      }
-                      t.doc.value["key"] = t.id;
-
-                      // sort roles
-                      for (role in t.doc.value.roles) {
-                        for (item in t.doc.value.roles[role]) {
-                          if (item == thiskey) {
-                            if (!teamresponse[role]) teamresponse[role] = [];
-                            if (!count[role]) count[role] = 0;
-                            teamresponse[role].push(t);
-                            ++count[role];
+                        // sort roles
+                        for (role in t.doc.value.roles) {
+                          for (item in t.doc.value.roles[role]) {
+                            if (item == thiskey) {
+                              if (!teamresponse[role]) teamresponse[role] = [];
+                              if (!count[role]) count[role] = 0;
+                              teamresponse[role].push(t);
+                              ++count[role];
+                            }
                           }
                         }
                       }
-                    }
 
-                    newresponse['team'] = {
-                      count: count
-                    };
+                      newresponse['team'] = {
+                        count: count
+                      };
 
-                    for (r in teamresponse) {
-                      newresponse.team[r] = teamresponse[r].slice(0, 4); // cut the array down
-                    }
+                      for (r in teamresponse) {
+                        newresponse.team[r] = teamresponse[r].slice(0, 4); // cut the array down
+                      }
 
-                    checkcache(cache, community, newresponse);
+                      checkcache(cache, community, newresponse);
 
-                })
-                .catch(function (err) {
-                  console.log("WARNING: ", err);
-                  res.status(200).send(newresponse);
-                });
+                  })
+                  .catch(function (err) {
+                    console.log("WARNING: ", err);
+                    res.status(200).send(newresponse);
+                  });
+              }, 1000);
             };
 
             getTeam(startkey, teamlist)
@@ -368,20 +373,22 @@ function handleGetCommunity(req, res) {
               console.log(ubersearch);
 
               if (ubersearch) {
+                //settimeout for bluemix
+                setTimeout(function(){
+                  cdb.search('communities', 'communitySearch', {q: ubersearch, include_docs: true})
+                    .then(function (uber_result) {
+                      uber_result = formatSearchResults(uber_result);
 
-                cdb.search('communities', 'communitySearch', {q: ubersearch, include_docs: true})
-                  .then(function (uber_result) {
-                    uber_result = formatSearchResults(uber_result);
-
-                    if (m_home || m.doc.value.type == "location") {
-                      var both = result.rows.concat(uber_result.rows);
-                      finalize(both);
-                    } else finalize(uber_result.rows);
-                  })
-                  .catch(function (err) {
-                    console.log("WARNING: ", err);
-                    finalize(result.rows);
-                  });
+                      if (m_home || m.doc.value.type == "location") {
+                        var both = result.rows.concat(uber_result.rows);
+                        finalize(both);
+                      } else finalize(uber_result.rows);
+                    })
+                    .catch(function (err) {
+                      console.log("WARNING: ", err);
+                      finalize(result.rows);
+                    });
+                }, 1000);
               }
 
               break;
@@ -618,108 +625,110 @@ function handleGetTop(req, res) {
 
             var skillsearch = cluster_search ? '(profile.parents:(' + cluster_search + ') OR profile.skills:(' + cluster_search + ')) AND ' + search : search;
             console.log(skillsearch);
-            cdb.search('communities', 'peopleTop', {
-              q: skillsearch + ' AND type: user',
-              counts: ['profile.skills', 'profile.parents'],
-              include_docs: true
-            })
-              .then(function (result) {
-                result = formatSearchResults(result);
-
-                if (result.counts && result.counts['profile.skills']) {
-                  var sortedSkills = sortcounts(result.counts['profile.skills'], true);
-
-                  top_results.skills = {
-                    count: Object.values(result.counts['profile.skills']).reduce(add, 0),
-                    entries: sortedSkills
-                  };
-                }
-                if (result.counts && result.counts['profile.parents']) {
-                  var sortedPeopleParents = sortcounts(result.counts['profile.parents']);
-
-                  top_results.people_parents = {
-                    count: Object.values(result.counts['profile.parents']).reduce(add, 0),
-                    entries: sortedPeopleParents
-                  };
-                }
-
-                top_results.people = {
-                  count: result.total_rows,
-                  entries: addkeys(result.rows)
-                };
-
-                // BEGIN PARENTS (this is mostly to avoid another api call that includes both companies and users)
-
-                var c_labels = [],
-                  c_numbers = [],
-                  p_labels = [],
-                  p_numbers = [];
-
-                for (c in top_results.company_parents.entries) {
-                  c_labels.push(c);
-                  c_numbers.push(top_results.company_parents.entries[c]);
-                }
-
-                for (p in top_results.people_parents.entries) {
-                  p_labels.push(p);
-                  p_numbers.push(top_results.people_parents.entries[p]);
-                }
-
-                top_results['parents'] = {
-                  labels: _.union(c_labels, p_labels),
-                  values: []
-                };
-
-                for (l in top_results.parents.labels) {
-                  var r = 0;
-                  if (c_numbers[c_labels.indexOf(top_results.parents.labels[l])]) {
-                    r += c_numbers[c_labels.indexOf(top_results.parents.labels[l])];
-                  }
-                  if (p_numbers[p_labels.indexOf(top_results.parents.labels[l])]) {
-                    r += p_numbers[p_labels.indexOf(top_results.parents.labels[l])];
-                  }
-                  top_results.parents.values.push(r);
-                }
-                var temp = [];
-                for (a in top_results.parents.labels) {
-                  temp.push({
-                    label: top_results.parents.labels[a],
-                    value: top_results.parents.values[a]
-                  });
-                }
-
-                if (!_.isEmpty(temp)) {
-                  top_results.parents = _.orderBy(temp, 'value', 'desc');
-                } else delete top_results.parents;
-
-                delete top_results.people_parents;
-                delete top_results.company_parents;
-
-                // this is for dashboard view
-
-                top_results.max = 0;
-                if (top_results.parents) {
-                  for (val in top_results.parents) {
-                    top_results.max += top_results.parents[val].value;
-                  }
-                }
-
-                // END PARENTS
-
-                top_results['key'] = community_key;
-
-                if (!cache) res.status(200).send(top_results);
-
-                mc.set(industrysearch, JSON.stringify(top_results), function (err, val) {
-                  if (err) console.warn('WARNING: Memcache error: ', err)
-                });
-
-
+            //settimeout is to avoid bluemix 5per sec request issue
+            setTimeout(function() {
+              cdb.search('communities', 'peopleTop', {
+                q: skillsearch + ' AND type: user',
+                counts: ['profile.skills', 'profile.parents'],
+                include_docs: true
               })
-              .catch(function (err) {
-                console.log("WARNING: ", err);
-                res.status(202).send({message: 'Something went wrong: ' + err});
-              });
+                .then(function (result) {
+                  result = formatSearchResults(result);
+
+                  if (result.counts && result.counts['profile.skills']) {
+                    var sortedSkills = sortcounts(result.counts['profile.skills'], true);
+
+                    top_results.skills = {
+                      count: Object.values(result.counts['profile.skills']).reduce(add, 0),
+                      entries: sortedSkills
+                    };
+                  }
+                  if (result.counts && result.counts['profile.parents']) {
+                    var sortedPeopleParents = sortcounts(result.counts['profile.parents']);
+
+                    top_results.people_parents = {
+                      count: Object.values(result.counts['profile.parents']).reduce(add, 0),
+                      entries: sortedPeopleParents
+                    };
+                  }
+
+                  top_results.people = {
+                    count: result.total_rows,
+                    entries: addkeys(result.rows)
+                  };
+
+                  // BEGIN PARENTS (this is mostly to avoid another api call that includes both companies and users)
+
+                  var c_labels = [],
+                    c_numbers = [],
+                    p_labels = [],
+                    p_numbers = [];
+
+                  for (c in top_results.company_parents.entries) {
+                    c_labels.push(c);
+                    c_numbers.push(top_results.company_parents.entries[c]);
+                  }
+
+                  for (p in top_results.people_parents.entries) {
+                    p_labels.push(p);
+                    p_numbers.push(top_results.people_parents.entries[p]);
+                  }
+
+                  top_results['parents'] = {
+                    labels: _.union(c_labels, p_labels),
+                    values: []
+                  };
+
+                  for (l in top_results.parents.labels) {
+                    var r = 0;
+                    if (c_numbers[c_labels.indexOf(top_results.parents.labels[l])]) {
+                      r += c_numbers[c_labels.indexOf(top_results.parents.labels[l])];
+                    }
+                    if (p_numbers[p_labels.indexOf(top_results.parents.labels[l])]) {
+                      r += p_numbers[p_labels.indexOf(top_results.parents.labels[l])];
+                    }
+                    top_results.parents.values.push(r);
+                  }
+                  var temp = [];
+                  for (a in top_results.parents.labels) {
+                    temp.push({
+                      label: top_results.parents.labels[a],
+                      value: top_results.parents.values[a]
+                    });
+                  }
+
+                  if (!_.isEmpty(temp)) {
+                    top_results.parents = _.orderBy(temp, 'value', 'desc');
+                  } else delete top_results.parents;
+
+                  delete top_results.people_parents;
+                  delete top_results.company_parents;
+
+                  // this is for dashboard view
+
+                  top_results.max = 0;
+                  if (top_results.parents) {
+                    for (val in top_results.parents) {
+                      top_results.max += top_results.parents[val].value;
+                    }
+                  }
+
+                  // END PARENTS
+
+                  top_results['key'] = community_key;
+
+                  if (!cache) res.status(200).send(top_results);
+
+                  mc.set(industrysearch, JSON.stringify(top_results), function (err, val) {
+                    if (err) console.warn('WARNING: Memcache error: ', err)
+                  });
+
+                })
+                .catch(function (err) {
+                  console.log("WARNING: ", err);
+                  res.status(202).send({message: 'Something went wrong: ' + err});
+                });
+            }, 1000);
           })
           .catch(function (err) {
             console.log("WARNING: ", err);
