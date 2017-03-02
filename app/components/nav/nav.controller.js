@@ -13,6 +13,7 @@ function NavigationController($scope, $auth, $state, $window, $location, $stateP
     $scope.global.community = undefined;
     $scope.global.loaders = {};
     $scope.global.lastitems = ["people", "companies", "resources", "search", "invite", "add-company", "add-resource", "welcome", "settings", "edit", "newsletter"];
+    $scope.global.industries = community_service.industries();
     this.state = $state; // used in header because path doesn't always update properly..
 
     var nav_community;
