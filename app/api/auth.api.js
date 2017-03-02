@@ -4,7 +4,21 @@ var bcrypt = require('bcryptjs'),
     crypto = require('crypto'),
     NewsletterApi = require(__dirname + '/newsletter.api.js'),
     newsletterApis = new NewsletterApi(),
-    db = require('orchestrate')(process.env.DB_KEY),
+  Cloudant = require('cloudant'),
+  cloudant = Cloudant({
+    account: '2001b05d-38e3-44f7-b569-b13a66a81b70-bluemix',
+    key: 'ingidlettlysenemediserni',
+    password: '42a75fe750f1f707299b5a5c230322d207a99a60',
+    plugin: 'promises'
+  }),
+  cdb = cloudant.db.use(process.env.DB_COMMUNITIES),
+  cloudant_messages = Cloudant({
+    account: '2001b05d-38e3-44f7-b569-b13a66a81b70-bluemix',
+    key: 'phishablawlyingroctsearz',
+    password: '5c5d3799639476fef35d4412e09c6f515ffb24e1',
+    plugin: 'promises'
+  }),
+  cdb_messages = cloudant_messages.db.use('messages'),
     knowtify = require('knowtify-node');
 
 //require('request-debug')(request); // Very useful for debugging oauth and api req/res
@@ -125,18 +139,18 @@ function handleCreateAPIToken(req, res) {
     };
     res.status(201).send(jwt.encode(payload, process.env.API_TOKEN_SECRET));*/
 
-    db.get(process.env.DB_COMMUNITIES, req.user)
+    cdb.get(req.user)
         .then(function(response){
-            if (response.body.code !== "items_not_found") {
+            if (response.code !== "items_not_found") {
                 console.log('Matching user found.');
-                if (response.body.profile.api_key === undefined) {
+                if (response.profile.api_key === undefined) {
                     // todo update next line
                     //response.body.profile["api_key"] = jwt.encode(payload, process.env.API_TOKEN_SECRET); // get user account and re-upload with api_key
-                    db.put(process.env.DB_COMMUNITIES, req.user, response.body)
+                    cdb.insert(req.user, response)
                         .then(function () {
                             console.log("Profile updated.");
                         })
-                        .fail(function (err) {
+                        .catch(function (err) {
                             console.error("Profile update failed:");
                             console.error(err.body);
                         });
@@ -145,11 +159,23 @@ function handleCreateAPIToken(req, res) {
                 console.warn('WARNING:  API Token for a user that does not exist!!');
             }
         })
-        .fail(function(err){
+        .catch(function(err){
             console.log("WARNING: ", err);
             res.status(202).send({ message: 'Something went wrong: ' + String(err)});
         });
 
+}
+
+function formatFindResults(items) {
+  if (items.docs && items.docs.length) {
+    for (i in items.docs) {
+      items.docs[i] = {
+        path: { key: items.docs[i]._id },
+        value: items.docs[i]
+      };
+    }
+  }
+  return items;
 }
 
 /*
@@ -160,45 +186,42 @@ function handleCreateAPIToken(req, res) {
 function handleSignup(req, res) {
     var user = schema.signupform(req.body);
 
-    db.newSearchBuilder()
-        .collection(process.env.DB_COMMUNITIES)
-        .limit(1)
-        .query('@value.profile.email: "' + req.body.profile.email + '"')
-        .then(function(result){
-            if (result.body.results.length > 0) {
+  cdb.find({selector: {type: 'user', 'profile.email': req.body.profile.email}, limit: 1})
+    .then(function(result){
+      result = formatFindResults(result);
+
+            if (result.docs.length > 0) {
                 console.log('User already exists');
                 res.status(401).send({ message: 'That email address is already registered to a user.'}); //username already exists
             } else {
                 console.log('Email is free for use');
-                db.post(process.env.DB_COMMUNITIES, user)
+                cdb.insert(user)
                     .then(function () {
-                        db.newSearchBuilder()
-                            .collection(process.env.DB_COMMUNITIES)
-                            .limit(1)
-                            .query('@value.profile.email: "' + req.body.profile.email + '"')
-                            .then(function(result){
-                                if (result.body.results.length > 0) {
+                      cdb.find({selector: {type: 'user', 'profile.email': req.body.profile.email}, limit: 1})
+                        .then(function(result){
+                          result = formatFindResults(result);
+                                if (result.docs.length > 0) {
                                     console.log("USER:");
                                     console.log(user);
                                     // TODO put token in user record
-                                    res.send({ token: handleCreateToken(req, result.body.results[0]), user: result.body.results[0] });
+                                    res.send({ token: handleCreateToken(req, result.docs[0]), user: result.docs[0] });
                                 } else {
                                     console.warn("WARNING: Search couldn't find user after posting new user!");
                                     res.status(401).send({ message: 'Something went wrong!'});
                                 }
                             })
-                            .fail(function(err){
+                            .catch(function(err){
                                 console.log("WARNING: auth211", err);
                                 res.status(202).send({ message: "Something went wrong."});
                             })
-                            .fail(function (err) {
+                            .catch(function (err) {
                                 console.log("WARNING: auth215:", err);
                                 res.status(202).send({ message: "Something went wrong."});
                             });
                     });
             }
         })
-        .fail(function(err){
+        .catch(function(err){
             console.warn("WARNING: auth222", err);
             res.status(202).send({ message: "Something went wrong."});
         });
@@ -212,17 +235,16 @@ function handleSignup(req, res) {
  */
 
 function handleLogin(req, res) {
-    db.newSearchBuilder()
-        .collection(process.env.DB_COMMUNITIES)
-        .limit(1)
-        .query('@value.profile.email: "' + req.body.profile.email + '"')
-        .then(function(result){
-            if (result.body.results.length > 0) {
+  cdb.find({selector: {type: 'user', 'profile.email': req.body.profile.email}, limit: 1})
+    .then(function(result){
+      result = formatFindResults(result);
+
+            if (result.docs.length > 0) {
                 console.log("FOUND USER");
-                var hash = result.body.results[0].value.profile.password;
+                var hash = result.docs[0].value.profile.password;
                 if (bcrypt.compareSync(req.body.profile.password, hash)) {
                     // TODO put token in user record
-                    res.send({ token: handleCreateToken(req, result.body.results[0]), user: result.body.results[0] });
+                    res.send({ token: handleCreateToken(req, result.docs[0]), user: result.docs[0] });
                 } else {
                     console.log("PASSWORDS DO NOT MATCH");
                     return res.status(401).send({ message: 'Wrong email and/or password' });
@@ -232,7 +254,7 @@ function handleLogin(req, res) {
                 return res.status(401).send({ message: 'Wrong email and/or password' });
             }
         })
-        .fail(function(err){
+        .catch(function(err){
             console.warn("WARNING: ", err);
             res.status(202).send('Something went wrong: ' + String(err));
         });
@@ -305,11 +327,11 @@ function handleLinkedin(req, res) {
             "replies": []
         };
 
-        db.post(process.env.DB_MESSAGES, question)
+        cdb_mesages.insert(question)
             .then(function () {
                 console.log('Question posted to new user account')
             })
-            .fail(function (err) {
+            .catch(function (err) {
                 console.error("POST FAIL:");
                 console.error(err);
             });
@@ -317,11 +339,11 @@ function handleLinkedin(req, res) {
     };
 
     var delete_invite = function() {
-        db.remove(process.env.DB_COMMUNITIES, invite_code, true)
+        cdb.destroy(invite_code, true)
             .then(function (result) {
                 console.log('Invitation applied and deleted: ' + invite_code);
             })
-            .fail(function (err) {
+            .catch(function (err) {
                 console.warn('WARNING: Invitation was used but not deleted: ' + invite_code);
             })
     };
@@ -371,9 +393,9 @@ function handleLinkedin(req, res) {
                     .limit(1)
                     .query('@value.type: "invite" AND @path.key: ' + invite_code)
                     .then(function (result) {
-                        if (result.body.results.length > 0) {
+                        if (result.docs.length > 0) {
                             console.log('Verified invitation');
-                            userCheck(result.body.results[0].value);
+                            userCheck(result.docs[0].value);
                         } else {
                             console.log('Invalid invite code: ' + invite_code);
                             userCheck();
@@ -401,70 +423,67 @@ function handleLinkedin(req, res) {
             function userCheck(invite_profile) {
 
                 // check to see if this linkedin account is already linked to an existing user
+              cdb.find({selector: {type: 'user', 'profile.linkedin.id': profile.id}, limit: 1})
+                .then(function(result){
+                  result = formatFindResults(result);
 
-                db.newSearchBuilder()
-                    .collection(process.env.DB_COMMUNITIES)
-                    .limit(1)
-                    .query('@value.type: "user" AND @value.profile.linkedin.id: "' + profile.id + '"')
-                    .then(function (result) {
-                        if (result.body.results.length > 0) {
+                        if (result.docs.length > 0) {
 
                             // yes, there is an existing user in the system that matched the linkedin id
 
                             console.log("Found existing user: " + profile.firstName + ' ' + profile.lastName);
-                            result.body.results[0].value.profile["linkedin"] = profile;
+                            result.docs[0].value.profile["linkedin"] = profile;
 
                             // get user account and update with latest linkedin data
 
-                            if (!result.body.results[0].value.profile.avatar) {
-                                result.body.results[0].value.profile['avatar'] = profile.pictureUrl;
+                            if (!result.docs[0].value.profile.avatar) {
+                                result.docs[0].value.profile['avatar'] = profile.pictureUrl;
                             }
 
-                            if (!result.body.results[0].value.profile.summary) {
-                                result.body.results[0].value.profile['summary'] = profile.summary;
+                            if (!result.docs[0].value.profile.summary) {
+                                result.docs[0].value.profile['summary'] = profile.summary;
                             }
 
-                            if (!result.body.results[0].value.profile.headline) {
-                                result.body.results[0].value.profile['headline'] = profile.headline;
+                            if (!result.docs[0].value.profile.headline) {
+                                result.docs[0].value.profile['headline'] = profile.headline;
                             }
 
-                            if (!result.body.results[0].value.profile.name) {
-                                result.body.results[0].value.profile.name = profile.firstName + ' ' + profile.lastName;
+                            if (!result.docs[0].value.profile.name) {
+                                result.docs[0].value.profile.name = profile.firstName + ' ' + profile.lastName;
                             }
 
-                            if (!result.body.results[0].value.profile.email) {
-                                result.body.results[0].value.profile.email = profile.emailAddress;
+                            if (!result.docs[0].value.profile.email) {
+                                result.docs[0].value.profile.email = profile.emailAddress;
                             }
 
-                            result.body.results[0] = addCommunities(result.body.results[0], invite_profile);
+                            result.docs[0] = addCommunities(result.docs[0], invite_profile);
+                            result.docs[0].value['_id'] = result.docs[0].path.key;
 
-                            db.put(process.env.DB_COMMUNITIES, result.body.results[0].path.key, result.body.results[0].value)
+                            cdb.insert(result.docs[0].value)
                                 .then(function () {
-                                    console.log("Profile updated: " + result.body.results[0].value.profile.name);
+                                    console.log("Profile updated: " + result.docs[0].value.profile.name);
                                     if (invite_profile) {
-                                        accept_invite(invite_profile.profile.email, result.body.results[0].value.profile.name, invite_profile.invitor_email);
+                                        accept_invite(invite_profile.profile.email, result.docs[0].value.profile.name, invite_profile.invitor_email);
                                         delete_invite();
                                     }
-                                    add_knowtify(result.body.results[0].value);
+                                    add_knowtify(result.docs[0].value);
                                 })
-                                .fail(function (err) {
+                                .catch(function (err) {
                                     console.error("Profile update failed: ", err);
                                 });
 
-                            var newresponse = result.body.results[0];
-                            newresponse['token'] = handleCreateToken(req, result.body.results[0]);
+                            var newresponse = result.docs[0];
+                            newresponse['token'] = handleCreateToken(req, result.docs[0]);
                             res.send(newresponse);
 
                         } else {
 
                             // search by email
+                          cdb.find({selector: {type: 'user', 'profile.email': profile.emailAddress}, limit: 1})
+                            .then(function(result){
+                              result = formatFindResults(result);
 
-                            db.newSearchBuilder()
-                                .collection(process.env.DB_COMMUNITIES)
-                                .limit(1)
-                                .query('@value.type: "user" AND @value.profile.email: "' + profile.emailAddress + '"')
-                                .then(function (result) {
-                                    if (result.body.results.length > 0) {
+                                    if (result.docs.length > 0) {
 
                                         // yes, an existing user that matched email address of invitee.email
 
@@ -472,25 +491,26 @@ function handleLinkedin(req, res) {
 
                                         // get user account and re-upload with linkedin data
 
-                                        result.body.results[0].value.profile["linkedin"] = profile;
+                                        result.docs[0].value.profile["linkedin"] = profile;
 
-                                        result.body.results[0] = addCommunities(result.body.results[0], invite_profile);
+                                        result.docs[0] = addCommunities(result.docs[0], invite_profile);
+                                      result.docs[0].value['_id'] = result.docs[0].path.key;
 
-                                        db.put(process.env.DB_COMMUNITIES, result.body.results[0].path.key, result.body.results[0].value)
+                                        cdb.insert(result.docs[0].value)
                                             .then(function () {
                                                 console.log("Profile updated: " + profile.emailAddress);
                                                 if (invite_profile) {
                                                     accept_invite(invite_profile.profile.email, profile.firstName + ' ' + profile.lastName, invite_profile.invitor_email);
                                                     delete_invite();
                                                 }
-                                                add_knowtify(result.body.results[0].value);
+                                                add_knowtify(result.docs[0].value);
                                             })
-                                            .fail(function (err) {
+                                            .catch(function (err) {
                                                 console.warn("WARNING: ", err);
                                             });
 
-                                        var newresponse = result.body.results[0];
-                                        newresponse['token'] = handleCreateToken(req, result.body.results[0])
+                                        var newresponse = result.docs[0];
+                                        newresponse['token'] = handleCreateToken(req, result.docs[0])
                                         res.send(newresponse);
 
                                     } else {
@@ -525,7 +545,9 @@ function handleLinkedin(req, res) {
                                                 value: new_invite_profile
                                             };
 
-                                            db.put(process.env.DB_COMMUNITIES, invite_code, new_invite_profile)
+                                            new_invite_profile['_id'] = invite_code;
+
+                                            cdb.insert(new_invite_profile)
                                                 .then(function () {
                                                     console.log("Profile created: " + JSON.stringify(new_profile));
 
@@ -537,7 +559,7 @@ function handleLinkedin(req, res) {
                                                     add_knowtify(new_invite_profile);
                                                     accept_invite(invite_profile.profile.email, new_invite_profile.profile.name, invitor_email);
                                                 })
-                                                .fail(function (err) {
+                                                .catch(function (err) {
                                                     console.warn("WARNING: ", err);
                                                 });
 
@@ -550,13 +572,13 @@ function handleLinkedin(req, res) {
 
                                     }
                                 })
-                                .fail(function (err) {
+                                .catch(function (err) {
                                     console.warn("WARNING:", err);
                                     res.status(202).send({message: "Something went wrong."});
                                 });
                         }
                     })
-                    .fail(function (err) {
+                    .catch(function (err) {
                         console.warn("WARNING:", "Something went wrong. " + String(err));
                     });
             }
@@ -565,6 +587,18 @@ function handleLinkedin(req, res) {
     });
 }
 
+
+function formatSearchResults(items) {
+  if (items.rows && items.rows.length) {
+    for (i in items.rows) {
+      items.rows[i].doc = {
+        path: { key: items.rows[i].id },
+        value: items.rows[i].doc
+      };
+    }
+  }
+  return items;
+}
 
 /*
  |--------------------------------------------------------------------------
@@ -581,10 +615,10 @@ function handleInviteUser(req, res) {
     var goInvite = function() {
         // validate user has leader role within the location/community, or let them through if they are a member of the location
 
-        db.get(process.env.DB_COMMUNITIES, req.user)
+        cdb.get(req.user)
             .then(function(response){
 
-                if (response.body.code !== "items_not_found") {
+                if (response.code !== "items_not_found") {
                     var user = response.body;
 
                     if (user.communities.indexOf(inviteUser.location_key) < 0) {
@@ -599,15 +633,14 @@ function handleInviteUser(req, res) {
                     }
 
                     // check to see if the email address already exists within the system
-                    db.newSearchBuilder()
-                        .collection(process.env.DB_COMMUNITIES)
-                        .limit(1)
-                        .query('@value.type: "user" AND (@value.profile.linkedin.emailAddress: "' + inviteUser.email + '" OR @value.profile.email: "' + inviteUser.email + '")')
-                        .then(function (result) {
-                            if (result.body.results.length > 0) {
+                  cdb.search('communities', 'communitySearch', {q: 'type: user AND (profile.linkedin.emailAddress: ' + inviteUser.email + ' OR profile.email: ' + inviteUser.email + ')', include_docs: true})
+                    .then(function (result) {
+                      result = formatSearchResults(result);
+                    
+                            if (result.rows.length > 0) {
                                 console.log("Existing user found!");
 
-                                var existing = result.body.results[0].value;
+                                var existing = result.rows[0].value;
 
                                 if (!existing.communities) existing.communities = [];
 
@@ -621,12 +654,12 @@ function handleInviteUser(req, res) {
                                     existing.communities.push(inviteUser.location_key);
                                 }
 
-                                db.put(process.env.DB_COMMUNITIES, result.body.results[0].path.key, existing)
+                                db.put(process.env.DB_COMMUNITIES, result.rows[0].path.key, existing)
                                     .then(function (response) {
                                         console.log("User updated!");
-                                        res.status(200).send({message: 'Nice!  <a target="_blank" href="https://startupcommunity.org/' + result.body.results[0].path.key + '">' + result.body.results[0].value.profile.name + '</a> is a member of the community.'});
+                                        res.status(200).send({message: 'Nice!  <a target="_blank" href="https://startupcommunity.org/' + result.rows[0].path.key + '">' + result.rows[0].value.profile.name + '</a> is a member of the community.'});
                                     })
-                                    .fail(function(err) {
+                                    .catch(function(err) {
                                         console.log('WARNING: ', err);
                                         res.status(202).send({message: "Something went wrong."});
                                     })
@@ -638,7 +671,7 @@ function handleInviteUser(req, res) {
                                     .limit(1)
                                     .query('@value.type: "invite" AND @value.profile.email: "' + inviteUser.email + '"')
                                     .then(function (result) {
-                                        if (result.body.results.length > 0) {
+                                        if (result.docs.length > 0) {
                                             console.log("Existing invite found!");
                                             res.status(200).send({message: 'An invitation has already been sent to ' + inviteUser.email + '. We will send a reminder.'});
 
@@ -651,7 +684,7 @@ function handleInviteUser(req, res) {
                                                         {
                                                             "email": inviteUser.email,
                                                             "data": {
-                                                                "invite_code": result.body.results[0].path.key
+                                                                "invite_code": result.docs[0].path.key
                                                             }
                                                         }
                                                     ]
@@ -716,13 +749,13 @@ function handleInviteUser(req, res) {
                                                             db.delete(process.env.DB_COMMUNITIES, userkey, true)
                                                         });
                                                 })
-                                                .fail(function(err) {
+                                                .catch(function(err) {
                                                     console.log('WARNING: ', err);
                                                     res.status(202).send({message: "Woah! Something went wrong.  We're looking into it, but also try waiting a few minutes and give it another shot."});
                                                 })
                                         }
                                     })
-                                    .fail(function(err) {
+                                    .catch(function(err) {
                                         console.log('WARNING: ', err);
                                         res.status(202).send({message: "Woah! Something went wrong. We're looking into it, but also try waiting a few minutes and give it another shot."});
                                     })
@@ -734,27 +767,26 @@ function handleInviteUser(req, res) {
                 }
             })
 
-            .fail(function(err){
+            .catch(function(err){
                 console.warn("WARNING:", err);
             });
     };
 
     if (!req.user) {
-        db.newSearchBuilder()
-            .collection(process.env.DB_COMMUNITIES)
-            .limit(1)
-            .query('@value.type: "user" AND @value.roles.leader.' + inviteUser.location_key + ': "' + inviteUser.location_key + '"')
-            .then(function (result) {
-                if (result.body.results.length > 0) {
+      cdb.search('communities', 'communitySearch', {q: 'type: user AND roles.leader.' + inviteUser.location_key + ': ' + inviteUser.location_key, include_docs: true})
+        .then(function (result) {
+          result = formatSearchResults(result);
+      
+                if (result.rows.length > 0) {
                     console.log('Found leader to use for invite.');
-                    req.user = result.body.results[0].path.key;
+                    req.user = result.rows[0].path.key;
                     goInvite();
                 } else {
                     console.warn('WARNING: No leader found! Need one for user invitations to be sent.');
                     res.status(202).send({message: "There doesn't appear to be a leader for this community! We've been alerted and will look into it."});
                 }
             })
-            .fail(function (err) {
+            .catch(function (err) {
                 console.warn("WARNING: ", err);
                 res.status(202).send({message: "Something went wrong."});
             });

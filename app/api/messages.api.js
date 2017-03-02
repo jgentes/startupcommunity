@@ -1,5 +1,19 @@
 var knowtify = require('knowtify-node'),
-    db = require('orchestrate')(process.env.DB_KEY);
+  Cloudant = require('cloudant'),
+  cloudant = Cloudant({
+    account: '2001b05d-38e3-44f7-b569-b13a66a81b70-bluemix',
+    key: 'ingidlettlysenemediserni',
+    password: '42a75fe750f1f707299b5a5c230322d207a99a60',
+    plugin: 'promises'
+  }),
+  cdb = cloudant.db.use(process.env.DB_COMMUNITIES),
+  cloudant_messages = Cloudant({
+    account: '2001b05d-38e3-44f7-b569-b13a66a81b70-bluemix',
+    key: 'phishablawlyingroctsearz',
+    password: '5c5d3799639476fef35d4412e09c6f515ffb24e1',
+    plugin: 'promises'
+  }),
+  cdb_messages = cloudant_messages.db.use('messages');
 
 var MessagesApi = function() {
         this.addMessage = handleAddMessage;
@@ -47,10 +61,10 @@ function handleAddMessage(req, res) {
         if (!message.parent) message.parent = { content: "" };
 
         var go = function(notify) {
-            db.get(process.env.DB_COMMUNITIES, notify.to.key)
+            cdb.get(notify.to.key)
                 .then(function(response) {
 
-                    var user = response.body;
+                    var user = response;
 
                     // send email with knowtify with unique link
                     var knowtifyClient = new knowtify.Knowtify(process.env.KNOWTIFY, false);
@@ -103,7 +117,7 @@ function handleAddMessage(req, res) {
         }
     };
 
-    // check if this is a reply to existing thread
+   /* // check if this is a reply to existing thread
     if (addMessage.parent) {
 
         db.newPatchBuilder(process.env.DB_MESSAGES, addMessage.parent.key)
@@ -120,8 +134,8 @@ function handleAddMessage(req, res) {
             })
 
     } else {
-
-        db.post(process.env.DB_MESSAGES, message)
+*/
+        cdb_messages.insert(message)
             .then(function (response) {
                 addMessage["key"] = response.headers.location.split('/')[3];
                 message.key = addMessage.key;
@@ -132,7 +146,7 @@ function handleAddMessage(req, res) {
                 console.error("WARNING: ", err);
                 res.status(202).send({message: "Woah! Something went wrong, but we've been notified and will take care of it."});
             });
-    }
+   /* }*/
 
 }
 
