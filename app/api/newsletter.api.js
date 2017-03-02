@@ -1,7 +1,14 @@
 var jwt = require('jsonwebtoken'),
     request = require('request'),
     jsdom = require('jsdom'),
-    db = require('orchestrate')(process.env.DB_KEY);
+  Cloudant = require('cloudant'),
+  cloudant = Cloudant({
+    account: '2001b05d-38e3-44f7-b569-b13a66a81b70-bluemix',
+    key: 'ingidlettlysenemediserni',
+    password: '42a75fe750f1f707299b5a5c230322d207a99a60',
+    plugin: 'promises'
+  }),
+  cdb = cloudant.db.use(process.env.DB_COMMUNITIES);
 
 request = request.defaults({jar: true, followAllRedirects: true}); // required to maintain session
 
