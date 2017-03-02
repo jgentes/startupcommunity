@@ -24,7 +24,6 @@
     "method-override": "^2.3.5",
     "morgan": "^1.6.1",
     "nodalytics": "^1.1.0",
-    "orchestrate": "~0.7.0",
     "q": "^1.4.1",
     "request": "^2.67.0",
     "request-debug": "^0.2.0",
