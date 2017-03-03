@@ -550,10 +550,6 @@ function handleGetTop(req, res) {
     return data;
   };
 
-  var add = function(a, b) {
-    return a + b;
-  };
-
   var sortcounts = function(counts, newArray) {
     var sorted = _.fromPairs(_.sortBy(_.toPairs(counts), function(a){return a[1]}).reverse());
     if (newArray) {
@@ -581,7 +577,9 @@ function handleGetTop(req, res) {
           var sortedIndustries = sortcounts(result.counts['profile.industries'], true);
 
           top_results.industries = {
-            count: Object.values(result.counts['profile.industries']).reduce(add, 0),
+            count: Object.keys(result.counts['profile.industries']).reduce(function(previous, key) {
+                return previous + result.counts['profile.industries'][key].value;
+              }),
             entries: sortedIndustries
           };
 
@@ -589,9 +587,11 @@ function handleGetTop(req, res) {
 
         if (result.counts && result.counts['profile.parents']) {
           var sortedParents = sortcounts(result.counts['profile.parents']);
-          console.log(result.counts['profile.parents']);
+
           top_results.company_parents = {
-            count: Object.values(result.counts['profile.parents']).reduce(add, 0),
+            count: Object.keys(result.counts['profile.parents']).reduce(function(previous, key) {
+              return previous + result.counts['profile.parents'][key].value;
+            }),
             entries: sortedParents
           };
         }
@@ -631,9 +631,11 @@ function handleGetTop(req, res) {
 
                   if (result.counts && result.counts['profile.skills']) {
                     var sortedSkills = sortcounts(result.counts['profile.skills'], true);
-                    console.log(result.counts['profile.skills']);
+
                     top_results.skills = {
-                      count: Object.values(result.counts['profile.skills']).reduce(add, 0),
+                      count: Object.keys(result.counts['profile.skills']).reduce(function(previous, key) {
+                        return previous + result.counts['profile.skills'][key].value;
+                      }),
                       entries: sortedSkills
                     };
                   }
@@ -642,7 +644,9 @@ function handleGetTop(req, res) {
                     var sortedPeopleParents = sortcounts(result.counts['profile.parents']);
 
                     top_results.people_parents = {
-                      count: Object.values(result.counts['profile.parents']).reduce(add, 0),
+                      count: Object.keys(result.counts['profile.parents']).reduce(function(previous, key) {
+                        return previous + result.counts['profile.parents'][key].value;
+                      }),
                       entries: sortedPeopleParents
                     };
                   }

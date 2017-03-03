@@ -419,7 +419,6 @@ function handleLinkedin(req, res) {
               cdb.find({selector: {type: 'user', 'profile.linkedin.id': profile.id}, limit: 1})
                 .then(function(result){
                   result = formatFindResults(result);
-                  console.log(result);
 
                         if (result.docs.length > 0) {
 
