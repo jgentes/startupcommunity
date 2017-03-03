@@ -1,4 +1,11 @@
-var db = require('orchestrate')(process.env.DB_KEY),
+var Cloudant = require('cloudant'),
+  cloudant = Cloudant({
+    account: process.env.DB_ACCOUNT,
+    password: process.env.DB_PASSWORD,
+    plugin: 'promises'
+  }),
+  cdb = cloudant.db.use(process.env.DB_COMMUNITIES),
+  cdb_messages = cloudant.db.use(process.env.DB_MESSAGES),
     path = require('path'),
     _ = require(path.join(__dirname, '../scripts/lodash40.js')),
     knowtify = require('knowtify-node');

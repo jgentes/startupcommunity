@@ -119,7 +119,6 @@
             <div class="hpanel">
                 <div class="panel-footer top">
                     <div class="pull-right">
-                        <strong>{{companies.companies.start}} - {{companies.companies.end}}</strong> of <strong>{{companies.companies.total_count}}&nbsp;&nbsp;</strong>
                         <div class="btn-group btn-group-sm" style="margin-top: -2px;">
                             <span ng-if="companies.companies.prev"><a ng-click="companies.searchCompanies(undefined, companies.companies.prev)" class="btn btn-sm btn-default" style="background-color: #fff;"><i class="fa fa-angle-left"></i></a></span>
                             <span ng-if="companies.companies.next"><a ng-click="companies.searchCompanies(undefined, companies.companies.next)" class="btn btn-sm btn-default" style="background-color: #fff;"><i class="fa fa-angle-right"></i></a></span>
@@ -150,7 +149,6 @@
                         <button ng-if="!companies.resource_page" ladda="global.loaders['addco']" class="ladda-btn btn btn-xs btn-outline btn-primary" ng-click="global.loaders['addco'] = true;" ui-sref="company.add">+ Add Company</button>
                     </div>
                     <div class="pull-right">
-                        <strong>{{companies.companies.start}} - {{companies.companies.end}}</strong> of <strong>{{companies.companies.total_count}}&nbsp;&nbsp;</strong>
                         <div class="btn-group btn-group-sm" style="margin-top: -2px;">
                             <span ng-if="companies.companies.prev"><a ng-click="companies.searchCompanies(undefined, companies.companies.prev)" class="btn btn-sm btn-default" style="background-color: #fff;"><i class="fa fa-angle-left"></i></a></span>
                             <span ng-if="companies.companies.next"><a ng-click="companies.searchCompanies(undefined, companies.companies.next)" class="btn btn-sm btn-default" style="background-color: #fff;"><i class="fa fa-angle-right"></i></a></span>

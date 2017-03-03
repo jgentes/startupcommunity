@@ -1,5 +1,12 @@
 var knowtify = require('knowtify-node'),
-    db = require('orchestrate')(process.env.DB_KEY);
+  Cloudant = require('cloudant'),
+  cloudant = Cloudant({
+    account: process.env.DB_ACCOUNT,
+    password: process.env.DB_PASSWORD,
+    plugin: 'promises'
+  }),
+  cdb = cloudant.db.use(process.env.DB_COMMUNITIES),
+  cdb_messages = cloudant.db.use(process.env.DB_MESSAGES);
 
 var MessagesApi = function() {
         this.addMessage = handleAddMessage;
@@ -47,10 +54,10 @@ function handleAddMessage(req, res) {
         if (!message.parent) message.parent = { content: "" };
 
         var go = function(notify) {
-            db.get(process.env.DB_COMMUNITIES, notify.to.key)
+            cdb.get(notify.to.key)
                 .then(function(response) {
 
-                    var user = response.body;
+                    var user = response;
 
                     // send email with knowtify with unique link
                     var knowtifyClient = new knowtify.Knowtify(process.env.KNOWTIFY, false);
@@ -76,7 +83,7 @@ function handleAddMessage(req, res) {
                         });
 
                 })
-                .fail(function(err){
+                .catch(function(err){
                     console.log('User not found, no notification sent: ', notify.to.key);
                 });
         };
@@ -103,7 +110,7 @@ function handleAddMessage(req, res) {
         }
     };
 
-    // check if this is a reply to existing thread
+   /* // check if this is a reply to existing thread
     if (addMessage.parent) {
 
         db.newPatchBuilder(process.env.DB_MESSAGES, addMessage.parent.key)
@@ -114,25 +121,25 @@ function handleAddMessage(req, res) {
                 to_notify(addMessage);
                 res.status(200).send(message);
             })
-            .fail(function (err) {
+            .catch(function (err) {
                 console.error("WARNING: ", err);
                 res.status(202).send({message: "Woah! Something went wrong, but we've been notified and will take care of it."});
             })
 
     } else {
-
-        db.post(process.env.DB_MESSAGES, message)
+*/
+        cdb_messages.insert(message)
             .then(function (response) {
                 addMessage["key"] = response.headers.location.split('/')[3];
                 message.key = addMessage.key;
                 to_notify(addMessage);
                 res.status(200).send(message);
             })
-            .fail(function (err) {
+            .catch(function (err) {
                 console.error("WARNING: ", err);
                 res.status(202).send({message: "Woah! Something went wrong, but we've been notified and will take care of it."});
             });
-    }
+   /* }*/
 
 }
 

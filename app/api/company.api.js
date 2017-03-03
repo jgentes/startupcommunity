@@ -4,7 +4,14 @@ var Q = require('q'),
     CommunityApi = require(__dirname + '/community.api.js'),
     communityApis = new CommunityApi(),
     aws = require('aws-sdk'),
-    db = require('orchestrate')(process.env.DB_KEY);
+  Cloudant = require('cloudant'),
+  cloudant = Cloudant({
+    account: process.env.DB_ACCOUNT,
+    password: process.env.DB_PASSWORD,
+    plugin: 'promises'
+  }),
+  cdb = cloudant.db.use(process.env.DB_COMMUNITIES),
+  cdb_messages = cloudant.db.use(process.env.DB_MESSAGES);
 
 //require('request-debug')(request); // Very useful for debugging oauth and api req/res
 
@@ -57,6 +64,30 @@ var schema = {
     }
 };
 
+function formatSearchResults(items) {
+  if (items.rows && items.rows.length) {
+    for (i in items.rows) {
+      items.rows[i].doc = {
+        path: { key: items.rows[i].id },
+        value: items.rows[i].doc
+      };
+    }
+  }
+  return items;
+}
+
+function formatFindResults(items) {
+  if (items.docs && items.docs.length) {
+    for (i in items.docs) {
+      items.docs[i] = {
+        path: { key: items.docs[i]._id },
+        value: items.docs[i]
+      };
+    }
+  }
+  return items;
+}
+
 function handleCompanySearch(req, res){
         var communities = req.query.communities,
             clusters = req.query.clusters,
@@ -68,159 +99,128 @@ function handleCompanySearch(req, res){
             get_resources = req.query.get_resources,
             key = req.query.api_key;
 
-        searchInCommunity(communities, clusters, stages, types, limit, offset, query, get_resources, key)
-            .then(function(companylist){
-                    res.send(companylist);
-            })
-            .fail(function(err){
-                    console.warn(err);
-                    res.send({message:err});
-            });
+  var allowed = false;
+  var userperms;
+
+  //console.log(key); //concern is that a passed in key is new and overwrites existing key
+
+  // create searchstring
+  searchstring = 'communities:(';
+  var state = "";
+
+  if (communities) {
+    for (c in communities) {
+
+      // determine whether one of the communities is a state
+      var state_suffix = communityApis.convert_state(communities[c].replace('-',' '), 'abbrev'); // returns false if no match
+
+      if (state_suffix) {
+        var state = " AND profile.home: (" + communities[c] + " OR *-" + state_suffix.toLowerCase() + ")";
+        var remove = communities.indexOf(communities[c]);
+        if (remove > -1) communities.splice(remove, 1); // to avoid issues with length check
+        if (communities.length == 0) searchstring += "*";
+      } else {
+        searchstring += communities[c];
+        if (c < (communities.length - 1)) { searchstring += ' AND '; }
+      }
+    }
+  } else searchstring += '*';
+
+  if (get_resources === "true") {
+    searchstring += ") AND resource: true" + state;
+  } else searchstring += ")" + (state ? " AND" + state : '');
+
+  if (clusters && clusters.length > 0 && clusters[0] !== '*') {
+    clusters = clusters.splice(',');
+    searchstring += ' AND (';
+
+    var clusterstring = '';
+
+    if (clusters.indexOf('all') < 0) clusters.push('all');
+
+    for (i in clusters) {
+      clusterstring += clusters[i];
+      if (i < (clusters.length - 1)) { clusterstring += ' OR '; }
+    }
+
+    searchstring += 'profile.industries:(' + clusterstring + ') OR profile.parents:(' + clusterstring + '))'; // scope to industries within the cluster
+
+  }
+  if (stages && stages.length > 0 && stages[0] !== '*') {
+    stages = stages.splice(',');
+    searchstring += ' AND (';
+
+    for (i in stages) {
+      searchstring += "profile.stage:" + stages[i]; // scope to stage
+      if (i < (stages.length - 1)) { searchstring += ' OR '; }
+    }
+    searchstring += ')';
+  }
+
+  if (types && types.length > 0 && types[0] !== '*') {
+    types = types.splice(',');
+    searchstring += ' AND (';
+
+    for (i in types) {
+      searchstring += "resource_types:" + types[i]; // scope to stage
+      if (i < (types.length - 1)) { searchstring += ' OR '; }
+    }
+    searchstring += ')';
+  }
+
+
+  if (query) { searchstring += ' AND ' + '(profile: ' + query + ')'; }
+
+  console.log('Pulling Companies: ' + searchstring);
+//settimeout is to avoid bluemix 5per sec request issue
+  setTimeout(function() {
+    cdb.find({selector: {type: 'company', '$text': searchstring}, skip: Number(offset) || 0, limit: Number(limit) || 16})
+      .then(function(result){
+        result = formatFindResults(result);
+
+        var i;
+
+        try {
+          for (i=0; i < result.docs.length; i++) {
+
+            result.docs[i].value["key"] = result.docs[i].path.key;
+          }
+        } catch (error) {
+          console.warn('WARNING: company144 ', error);
+        }
+
+        result.next =
+          '/api/2.1/companies?communities[]=' + req.query.communities +
+          '&clusters[]=' + (req.query.clusters || '*') +
+          '&stages[]=' + (req.query.stages || '*') +
+          '&types=' + (req.query.types || '*') +
+          '&limit=' + (Number(req.query.limit) || 16) +
+          '&offset=' + ((Number(req.query.offset) || 0) + (Number(req.query.limit) || 16)) +
+          '&get_resources=' + (req.query.get_resources || false) +
+          '&query=' + (req.query.query || '*');
+
+        result.prev =
+          '/api/2.1/compaies?communities[]=' + req.query.communities +
+          '&clusters[]=' + (req.query.clusters || '*') +
+          '&stages[]=' + (req.query.stages || '*') +
+          '&types=' + (req.query.types || '*') +
+          '&limit=' + (Number(req.query.limit) || 16) +
+          '&offset=' + (req.query.offset ? (Number(req.query.offset) - ((Number(req.query.limit) || 16))) : 0) +
+          '&get_resources=' + (req.query.get_resources || false) +
+          '&query=' + (req.query.query || '*');
+
+        result.results = result.docs;
+        delete result.docs;
+
+        res.send(result);
+
+      })
+      .catch(function(err){
+        console.log('WARNING: ', err);
+        res.send({message:err.message});
+      });
+  }, 1000);
 }
-
-var searchInCommunity = function(communities, clusters, stages, types, limit, offset, query, get_resources, key) {
-    var allowed = false;
-    var userperms;
-    
-    //console.log(key); //concern is that a passed in key is new and overwrites existing key
-
-    if (key) { //check api key to determine if restricted profile data is included with results
-            try {
-                    //var payload = jwt.decode(key, process.env.API_TOKEN_SECRET);
-                    // Assuming key never expires
-                    //check perms!
-                    console.log('test then remove me')
-                    //todo THIS SECTION NEEDS TO BE REWRITTEN
-                    db.get(process.env.DB_COMMUNITIES, payload.sub)
-                        .then(function (response) {
-                                /*
-                                 if (location && community) {
-                                 userperms = findKey(response.body.communities, location + '.' + community, []);
-                                 } else if (location && !community) {
-                                 userperms = findKey(response.body.communities, (location || community), []);
-                                 }
-                                 if (userperms[0].roles.indexOf("admin") > -1) { allowed=true; }
-                                 */
-                        })
-                        .fail(function(err){
-                                console.warn("WARNING: company85", err);
-                                return deferred.reject(new Error(err));
-                        });
-            } catch (err) {
-                    return deferred.reject(new Error(err));
-            }
-    }
-
-    // create searchstring
-    searchstring = '@value.communities:(';
-    var state = "";
-
-    if (communities) {
-        for (c in communities) {
-
-            // determine whether one of the communities is a state
-            var state_suffix = communityApis.convert_state(communities[c].replace('-',' '), 'abbrev'); // returns false if no match
-
-            if (state_suffix) {
-                var state = ' AND @value.profile.home: ("' + communities[c] + '" OR "*-' + state_suffix.toLowerCase() + '")';
-                var remove = communities.indexOf(communities[c]);
-                if (remove > -1) communities.splice(remove, 1); // to avoid issues with length check
-                if (communities.length == 0) searchstring += "*";
-            } else {
-                searchstring += '"' + communities[c] + '"';
-                if (c < (communities.length - 1)) { searchstring += ' AND '; }
-            }
-        }
-    } else searchstring += '*';
-
-    if (get_resources === "true") {
-        searchstring += ') AND @value.resource: true AND @value.type: "company"' + state;
-    } else searchstring += ') AND @value.type: "company"' + state;
-
-    if (clusters && clusters.length > 0 && clusters[0] !== '*') {
-        clusters = clusters.splice(',');
-        searchstring += ' AND (';
-
-        var clusterstring = '';
-
-        if (clusters.indexOf('all') < 0) clusters.push('all');
-
-        for (i in clusters) {
-            clusterstring += '"' + clusters[i] + '"';
-            if (i < (clusters.length - 1)) { clusterstring += ' OR '; }
-        }
-
-        searchstring += '@value.profile.industries:(' + clusterstring + ') OR @value.profile.parents:(' + clusterstring + '))'; // scope to industries within the cluster
-
-    }
-
-    if (stages && stages.length > 0 && stages[0] !== '*') {
-            stages = stages.splice(',');
-            searchstring += ' AND (';
-
-            for (i in stages) {
-                    searchstring += '@value.profile.stage:"' + stages[i] + '"'; // scope to stage
-                    if (i < (stages.length - 1)) { searchstring += ' OR '; }
-            }
-            searchstring += ')';
-    }
-
-    if (types && types.length > 0 && types[0] !== '*') {
-        types = types.splice(',');
-        searchstring += ' AND (';
-
-        for (i in types) {
-            searchstring += '@value.resource_types:"' + types[i] + '"'; // scope to stage
-            if (i < (types.length - 1)) { searchstring += ' OR '; }
-        }
-        searchstring += ')';
-    }
-
-
-
-    if (query) { searchstring += ' AND ' + '(@value.profile.*: ' + query + ')'; }
-
-    console.log('Pulling Companies: ' + searchstring);
-
-    var deferred = Q.defer();
-    db.newSearchBuilder()
-        .collection(process.env.DB_COMMUNITIES)
-        .limit(Number(limit) || 18)
-        .offset(Number(offset) || 0)
-        .sortRandom()
-        .query(searchstring)
-        .then(function(result){
-
-            var i;
-
-            try {
-                    for (i=0; i < result.body.results.length; i++) {
-
-                        result.body.results[i].value["key"] = result.body.results[i].path.key;
-                    }
-            } catch (error) {
-                    console.warn('WARNING: company144 ', error);
-                    console.log(result.body.results);
-            }
-
-            if (result.body.next) {
-                    var getnext = url.parse(result.body.next, true);
-                    result.body.next = '/api/2.1/search' + getnext.search;
-            }
-            if (result.body.prev) {
-                    var getprev = url.parse(result.body.prev, true);
-                    result.body.prev = '/api/2.1/search' + getprev.search;
-            }
-            deferred.resolve(result.body);
-        })
-        .fail(function(err){
-                console.log(err.body.message);
-                deferred.reject(err.body.message);
-        });
-
-    return deferred.promise;
-
-};
 
 function handleGetLogoUrl(req, res) {
     // req data is guaranteed by ensureauth
@@ -259,11 +259,11 @@ function handleAddCompany(req, res) {
 
     var go = function() {
         // validate user is a member in the location/community
-        db.get(process.env.DB_COMMUNITIES, req.user)
+        cdb.get(req.user)
             .then(function(response){
                 console.log(addCompany);
 
-                var user = response.body,
+                var user = response,
                     update = false;
 
                 if (!addCompany.location_key) addCompany.location_key = addCompany.community_key;
@@ -304,7 +304,7 @@ function handleAddCompany(req, res) {
 
             })
 
-            .fail(function(err){
+            .catch(function(err){
                 console.warn("WARNING: ", err);
                 res.status(400).send({ message: "Something went wrong. We have been alerted and will take a look and get back to you." });
             });
@@ -318,11 +318,11 @@ function handleAddCompany(req, res) {
 
         // if no existing key is provided, validate the company.url doesn't already exist
         if (!addCompany.key) {
-            db.get(process.env.DB_COMMUNITIES, addCompany.profile.url)
+            cdb.get(addCompany.profile.url)
                 .then(function() {
                     res.status(400).send({ message: 'That url is already in use. Please specify a different url path.'})
                 })
-                .fail(function() {
+                .catch(function() {
                     // url is good
                     go();
                 })
@@ -341,26 +341,22 @@ function handleDeleteCompany(req, res) {
 
         // pull it first to make sure it's a company
 
-        db.get(process.env.DB_COMMUNITIES, params.company_key)
+        cdb.get(params.company_key)
             .then(function(response) {
 
-                if (response.body.type == 'company') {
+                if (response.type == 'company') {
 
-                    db.remove(process.env.DB_COMMUNITIES, params.company_key, 'true')
+                    cdb.destroy(params.company_key)
                         .then(function () {
 
                             // company has been deleted, now delete references in user records
+                          cdb.search('communities', 'communitySearch', {q: 'type:user AND roles:' + params.company_key, include_docs: true})
+                            .then(function (flush) {
+                              flush = formatSearchResults(flush);
 
-                            db.newSearchBuilder()
-                                .collection(process.env.DB_COMMUNITIES)
-                                .limit(100)
-                                .offset(0)
-                                .sortRandom()
-                                .query('@value.type:"user" AND @value.roles.*.' + params.company_key + ':*')
-                                .then(function (flush) {
-                                    for (r in flush.body.results) {
-                                        var flush_key = flush.body.results[r].path.key,
-                                            flush_value = flush.body.results[r].value;
+                                    for (r in flush.rows) {
+                                        var flush_key = flush.rows[r].path.key,
+                                            flush_value = flush.rows[r].value;
                                         
                                         for (i in flush_value.roles) {
                                             for (c in flush_value.roles[i]) {
@@ -378,7 +374,7 @@ function handleDeleteCompany(req, res) {
                                         }
 
 
-                                        db.put(process.env.DB_COMMUNITIES, flush_key, flush_value)
+                                        cdb.insert(flush_key, flush_value)
                                             .then(function(response) {
                                                 console.log('Deleted ' + params.company_key + ' from ' + flush_key);
                                             })
@@ -386,12 +382,12 @@ function handleDeleteCompany(req, res) {
                                     }
                                     res.status(204).send({message: 'Company deleted!'});
                                 })
-                                .fail(function (err) {
+                                .catch(function (err) {
                                     console.log("WARNING: ", err);
                                     res.status(202).send({message: "The company has been deleted, but something else went wrong."});
                                 });
                         })
-                        .fail(function (err) {
+                        .catch(function (err) {
                             console.warn('WARNING: community620', err);
                             res.status(202).send({message: "Something went wrong."});
                         });
@@ -400,7 +396,7 @@ function handleDeleteCompany(req, res) {
                     res.status(202).send({message: "This isn't a company!"});
                 }
             })
-            .fail(function (err) {
+            .catch(function (err) {
                 console.warn('No company found!');
                 res.status(202).send({message: "No company found!"});
             });
@@ -411,16 +407,11 @@ function handleDeleteCompany(req, res) {
         console.log('Deleting company: ' + params.company_key);
 
         // first determine if the company has founders or team members. Pull from DB to prevent tampering.
+      cdb.search('communities', 'communitySearch', {q: 'type:user AND roles.founder:' + params.company_key + ' OR roles.team: ' + params.company_key, include_docs: true})
+        .then(function (team) {
+          team = formatSearchResults(team);
 
-        db.newSearchBuilder()
-            .collection(process.env.DB_COMMUNITIES)
-            .limit(100)
-            .offset(0)
-            .sortRandom()
-            .query('@value.type:"user" AND (@value.roles.founder.' + params.company_key + ':* OR @value.roles.team.' + params.company_key + ':*)')
-            .then(function (team) {
-
-                if (team.body && (team.body.count == 0)) {
+                if (team.rows && (team.rows.length == 0)) {
 
                     // no founders or team members, so it can be deleted by anyone
 
@@ -431,9 +422,9 @@ function handleDeleteCompany(req, res) {
                     // need to validate whether the current user is one of the founders or team members
 
                     var del = false;
-                    for (t in team.body.results) {
+                    for (t in team.rows) {
 
-                        if (team.body.results[t].path.key == req.user) {
+                        if (team.rows[t].path.key == req.user) {
                             del = true;
                             delete_it();
                             break;
@@ -443,7 +434,7 @@ function handleDeleteCompany(req, res) {
                     if (!del) res.status(202).send({message: "Only a founder or team member of this company may delete it."});
                 }
             })
-            .fail(function (err) {
+            .catch(function (err) {
                 console.log("WARNING: ", err);
                 res.status(202).send({message: err});
             });
@@ -456,38 +447,38 @@ function handleDeleteCompany(req, res) {
 
 var addRole = function(company_key, roles, location_key, user_key) {
 
-    db.get(process.env.DB_COMMUNITIES, user_key)
+    cdb.get(user_key)
         .then(function(response){
 
-            if (response.body.code !== "items_not_found") {
+            if (response.code !== "items_not_found") {
 
                 // add new role
                 
                 for (role in roles) {
-                    if (!response.body.roles[roles[role]]) {
-                        response.body.roles[roles[role]] = {};
-                        response.body.roles[roles[role]][company_key] = [location_key];
-                    } else if (!response.body.roles[roles[role]][company_key]) {
-                        response.body.roles[roles[role]][company_key] = [location_key];
-                    } else if (response.body.roles[roles[role]][company_key].indexOf(location_key) < 0) {
-                        response.body.roles[roles[role]][company_key].push(location_key);
+                    if (!response.roles[roles[role]]) {
+                        response.roles[roles[role]] = {};
+                        response.roles[roles[role]][company_key] = [location_key];
+                    } else if (!response.roles[roles[role]][company_key]) {
+                        response.roles[roles[role]][company_key] = [location_key];
+                    } else if (response.roles[roles[role]][company_key].indexOf(location_key) < 0) {
+                        response.roles[roles[role]][company_key].push(location_key);
                     } // else the damn thing is already there
 
                     // add community
-                    if (!response.body.communities) {
-                        response.body["communities"] = {};
+                    if (!response.communities) {
+                        response["communities"] = {};
                     }
 
-                    if (response.body.communities.indexOf(company_key) < 0) {
-                        response.body.communities.push(company_key);
+                    if (response.communities.indexOf(company_key) < 0) {
+                        response.communities.push(company_key);
                     }
                 }
 
-                db.put(process.env.DB_COMMUNITIES, user_key, response.body)
+                cdb.insert(process.env.DB_COMMUNITIES, user_key, response)
                     .then(function(result) {
                         console.log('User ' + user_key + ' updated with ', roles);
                     })
-                    .fail(function(err){
+                    .catch(function(err){
                         console.warn("WARNING: ", err);
                     });
 
@@ -496,7 +487,7 @@ var addRole = function(company_key, roles, location_key, user_key) {
             }
         })
 
-        .fail(function(err){
+        .catch(function(err){
             console.warn("WARNING: ", err);
         });
 };
@@ -512,10 +503,11 @@ function handleCheckUrl(req, res) {
     website = website.replace(/.*?:\/\//g, "");
     if(website.match(/^www\./)) website = website.substring(4);
 
-    db.search(process.env.DB_COMMUNITIES, '(@value.type = "company" AND (@value.profile.website: "' + website + '" OR @value.profile.website: "www.' + website + '"))')
-        .then(function(result) {
-            if (result.body.results.length > 0) {
-                res.status(202).send({message: result.body.results[0].path.key});
+  cdb.search('communities', 'communitySearch', {q: 'type:company AND (profile: "' + website, include_docs: true})
+    .then(function (result) {
+      result = formatSearchResults(result);
+            if (result.rows.length > 0) {
+                res.status(202).send({message: result.rows[0].path.key});
             } else {
                 res.status(404).send();                
             }
@@ -524,7 +516,7 @@ function handleCheckUrl(req, res) {
 
 var companyPost = function (company, role, location_key, user, key, update, callback) {
 
-    db.put(process.env.DB_COMMUNITIES, key, company)
+    cdb.insert(key, company)
         .then(function (response) {
 
             var companykey = response.headers.location.split('/')[3];
@@ -554,7 +546,7 @@ var companyPost = function (company, role, location_key, user, key, update, call
             callback({"status": 200, "data": company});
 
         })
-        .fail(function (err) {
+        .catch(function (err) {
             console.log("WARNING: ", err);
             callback({"status": 500, "data" : {"message": "Something went wrong."}});
         });

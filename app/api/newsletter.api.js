@@ -1,7 +1,14 @@
 var jwt = require('jsonwebtoken'),
     request = require('request'),
     jsdom = require('jsdom'),
-    db = require('orchestrate')(process.env.DB_KEY);
+  Cloudant = require('cloudant'),
+  cloudant = Cloudant({
+    account: process.env.DB_ACCOUNT,
+    password: process.env.DB_PASSWORD,
+    plugin: 'promises'
+  }),
+  cdb = cloudant.db.use(process.env.DB_COMMUNITIES),
+  cdb_messages = cloudant.db.use(process.env.DB_MESSAGES);
 
 request = request.defaults({jar: true, followAllRedirects: true}); // required to maintain session
 
@@ -12,21 +19,30 @@ var NewsletterApi = function() {
     this.addSubscriber = addSubscriber;
 };
 
+function formatSearchResults(items) {
+  if (items.rows && items.rows.length) {
+    for (i in items.rows) {
+      items.rows[i].doc = {
+        path: { key: items.rows[i].id },
+        value: items.rows[i].doc
+      };
+    }
+  }
+  return items;
+}
+
 // this api is used internally and not exposed to client
 function addSubscriber(location_key, resource_key, user_profile) {
 
     console.log('getting leaders: ' + location_key + ' / ' + resource_key);
+  cdb.search('communities', 'communitySearch', {q: 'roles.leader:' + resource_key + ' AND type: user', include_docs: true})
+    .then(function (data) {
+      data = formatSearchResults(data);
 
-    db.newSearchBuilder()
-        .collection(process.env.DB_COMMUNITIES)
-        .limit(100)
-        .offset(0)
-        .query('@value.roles.leader.' + resource_key + ': "' + location_key + '" AND @value.type: "user"')
-        .then(function (data) {
             var profile;
-            for (x in data.body.results) {
+            for (x in data.rows) {
 
-                profile = data.body.results[x].value;
+                profile = data.rows[x].value;
 
                 if (profile.newsletter && profile.newsletter.lists && profile.newsletter.lists[resource_key]) {
 
@@ -62,6 +78,18 @@ function addSubscriber(location_key, resource_key, user_profile) {
             }
             res.status(201).end();
         });
+}
+
+function formatFindResults(items) {
+  if (items.docs && items.docs.length) {
+    for (i in items.docs) {
+      items.docs[i] = {
+        path: { key: items.docs[i]._id },
+        value: items.docs[i]
+      };
+    }
+  }
+  return items;
 }
 
 function handleSetupNewsletter(req,res) {
@@ -104,10 +132,10 @@ function handleSetupNewsletter(req,res) {
 
     getUser = function(callback) {
 
-        db.get(process.env.DB_COMMUNITIES, req.user)
+        cdb.get(req.user)
             .then(function(response) {
 
-                if (response.body.code !== "items_not_found") {
+                if (response.code !== "items_not_found") {
 
                     callback(response.body);
 
@@ -117,7 +145,7 @@ function handleSetupNewsletter(req,res) {
                 }
 
             })
-            .fail(function(err){
+            .catch(function(err){
                 res.status(204).send({ message: err});
                 console.warn("WARNING: ", err);
             });
@@ -250,29 +278,26 @@ function handleSetupNewsletter(req,res) {
             search = function (startKey) {
 
                 var searchstring = resource + " AND " + location_key;
+              cdb.find({selector: {type: 'user', '$text': 'communities: (' + searchstring + ')'}, skip: Number(startkey) || 0})
+                .then(function(data){
+                  data = formatFindResults(data);
 
-                db.newSearchBuilder()
-                    .collection(process.env.DB_COMMUNITIES)
-                    .limit(100)
-                    .offset(startKey)
-                    .query('@value.communities: (' + searchstring + ') AND @value.type: "user"')
-                    .then(function (data) {
                         var profile;
-                        for (x in data.body.results) {
-                            profile = data.body.results[x].value.profile;
+                        for (x in data.docs) {
+                            profile = data.docs[x].value.profile;
                             if (profile.email) {
                                 addSubscriber(brand_id, list_id, profile.name + ',' + profile.email)
                             }
                         }
-
+/*
                         if (data.body.next) {
                             console.log('Getting next group..');
                             startKey = startKey + 100;
                             search(startKey);
                         } else {
                             console.log(resource + ' done!');
-                        }
-
+                        }*/
+                  console.log(resource + ' done!');
                     });
             };
 
@@ -330,10 +355,11 @@ function handleSetupNewsletter(req,res) {
         })
     };
 
+/*
 
     updateProfile = function(brand_id, lists) {
 
-        db.merge(process.env.DB_COMMUNITIES, req.user, {
+        db.insert(process.env.DB_COMMUNITIES, req.user, {
             newsletter: {
                 username: newprofile.profile.email,
                 password: settings.pass,
@@ -344,10 +370,11 @@ function handleSetupNewsletter(req,res) {
         .then(function () {
             console.log('profile updated', lists);
         })
-        .fail(function (err) {
+        .catch(function (err) {
             console.log('WARNING: ', err);
         });
     };
+*/
 
     // login with primary account
 
@@ -493,15 +520,13 @@ function handleSyncMembers(req,res) {
 
             var searchstring = resource + " AND " + location_key;
 
-            db.newSearchBuilder()
-                .collection(process.env.DB_COMMUNITIES)
-                .limit(100)
-                .offset(startKey)
-                .query('@value.communities: (' + searchstring + ') AND @value.type: "user"')
-                .then(function (data) {
+          cdb.find({selector: {type: 'user', '$text': 'communities: (' + searchstring + ')'}, skip: Number(offset) || 0})
+            .then(function(data){
+              data = formatFindResults(data);
+
                     var profile;
-                    for (x in data.body.results) {
-                        profile = data.body.results[x].value.profile;
+                    for (x in data.docs) {
+                        profile = data.docs[x].value.profile;
                         if (profile.email) {
                             console.log('adding ' + profile.email);
 
@@ -521,6 +546,7 @@ function handleSyncMembers(req,res) {
 
                         }
                     }
+/*
 
                     if (data.body.next) {
                         console.log('Getting next group..');
@@ -530,7 +556,8 @@ function handleSyncMembers(req,res) {
                         console.log(resource + ' done!');
                         res.status(201).end();
                     }
-
+*/
+              res.status(201).end();
                 });
         };
 

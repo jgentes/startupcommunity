@@ -4,9 +4,16 @@ var Q = require('q'),
     jwt = require('jsonwebtoken'),
     CommunityApi = require(__dirname + '/community.api.js'),
     communityApis = new CommunityApi(),
-    db = require('orchestrate')(process.env.DB_KEY),
     aws = require('aws-sdk'),
-    knowtify = require('knowtify-node');
+    knowtify = require('knowtify-node'),
+  Cloudant = require('cloudant'),
+  cloudant = Cloudant({
+    account: process.env.DB_ACCOUNT,
+    password: process.env.DB_PASSWORD,
+    plugin: 'promises'
+  }),
+  cdb = cloudant.db.use(process.env.DB_COMMUNITIES),
+  cdb_messages = cloudant.db.use(process.env.DB_MESSAGES);
 
 //require('request-debug')(request); // Very useful for debugging oauth and api req/res
 
@@ -29,7 +36,6 @@ var UserApi = function() {
  |--------------------------------------------------------------------------
  */
 
-
 function handleUserSearch(req, res){
     var communities = req.query.communities,
         clusters = req.query.clusters,
@@ -39,194 +45,190 @@ function handleUserSearch(req, res){
         offset = req.query.offset,
         key = req.query.api_key;
 
-    searchInCommunity(communities, clusters, roles, limit, offset, query, key)
-        .then(function(userlist){
-            res.send(userlist);
-        })
-        .fail(function(err){
-            console.warn(err);
-            res.send({message:err});
-        });
+  var allowed = false;
+  var userperms;
+  
+  // create searchstring
+  searchstring = 'communities:(';
+  var state = "";
+
+  for (c in communities) {
+
+    // determine whether one of the communities is a state
+    var state_suffix = communityApis.convert_state(communities[c].replace('-',' '), 'abbrev'); // returns false if no match
+
+    if (state_suffix) {
+      state = " AND profile.home: (" + communities[c] + " OR *-" + state_suffix.toLowerCase() + ")";
+      var remove = communities.indexOf(communities[c]);
+      if (remove > -1) communities.splice(remove, 1); // to avoid issues with length check
+      if (communities.length == 0) searchstring += "*";
+    } else {
+      searchstring += communities[c];
+      if (c < (communities.length - 1)) { searchstring += ' AND '; }
+    }
+  }
+
+  searchstring += ")" + state;
+
+  if (clusters && clusters.length > 0 && clusters[0] !== '*') {
+    clusters = clusters.splice(',');
+    searchstring += ' AND (';
+
+    var clusterstring = '';
+
+    if (clusters.indexOf('all') < 0) clusters.push('all');
+
+    for (i in clusters) {
+      clusterstring += clusters[i];
+      if (i < (clusters.length - 1)) { clusterstring += ' OR '; }
+    }
+
+    searchstring += 'profile.skills:(' + clusterstring + ') OR profile.parents:(' + clusterstring + '))'; // scope to industries within the cluster
+  }
+
+  if (roles && roles.length > 0 && roles[0] !== "*") {
+    roles = roles.splice(',');
+    searchstring += ' AND (';
+
+    for (i in roles) {
+      searchstring += 'roles.' + roles[i] + ':[a* TO z*]'; // scope to role
+      if (i < (roles.length - 1)) { searchstring += ' AND '; }
+    }
+    searchstring += ')';
+  }
+
+  if (query) { searchstring += ' AND ' + '(profile: ' + query + ')'; }
+
+  console.log(searchstring);
+
+  cdb.find({selector: {type: 'user', '$text': searchstring}, skip: Number(offset) || 0, limit: Number(limit) || 16})
+    .then(function(result){
+      result = formatFindResults(result);
+
+      var i;
+
+      try {
+        for (i=0; i < result.docs.length; i++) {
+          if (result.docs[i].value.profile.password) delete result.docs[i].value.profile.password;
+
+          if (result.docs[i].value.profile.email) delete result.docs[i].value.profile.email;
+
+          if (result.docs[i].value.profile.linkedin) {
+            if (result.docs[i].value.profile.linkedin.emailAddress) delete result.docs[i].value.profile.linkedin.emailAddress;
+            if (result.docs[i].value.profile.linkedin.access_token) delete result.docs[i].value.profile.linkedin.access_token;
+          }
+
+          result.docs[i].value["key"] = result.docs[i].path.id;
+
+          if (result.docs[i].value.newsletter) delete result.docs[i].value.newsletter;
+        }
+      } catch (error) {
+        console.warn('WARNING: user144 ', error);
+      }
+
+      result.next =
+        '/api/2.1/users?communities[]=' + communities +
+        '&clusters[]=' + (clusters || '*') +
+        '&roles[]=' + (roles || '*') +
+        '&limit=' + (Number(limit) || 16) +
+        '&offset=' + ((Number(offset) || 0) + (Number(limit) || 16)) +
+        '&query=' + (query || '*');
+
+      result.prev =
+        '/api/2.1/users?communities[]=' + communities +
+        '&clusters[]=' + (clusters || '*') +
+        '&roles[]=' + (roles || '*') +
+        '&limit=' + (Number(limit) || 16) +
+        '&offset=' + (offset ? (Number(offset) - ((Number(limit) || 16))) : 0) +
+        '&query=' + (query || '*');
+
+      result.results = result.docs;
+      delete result.docs;
+
+      res.send(result);
+    })
+    .catch(function(err){
+      console.log('WARNING: ', err);
+      res.send({message:err.message});
+    });
 }
 
-var searchInCommunity = function(communities, clusters, roles, limit, offset, query, key) {
-    var allowed = false;
-    var userperms;
-
-    if (key) { //check api key to determine if restricted profile data is included with results
-        try {
-            //var payload = jwt.decode(key, process.env.API_TOKEN_SECRET);
-            // Assuming key never expires
-            //check perms!
-            console.log('test then remove me')
-            //todo THIS SECTION NEEDS TO BE REWRITTEN
-            db.get(process.env.DB_COMMUNITIES, payload.sub)
-              .then(function (response) {
-                    /*
-                  if (location && community) {
-                      userperms = findKey(response.body.communities, location + '.' + community, []);
-                  } else if (location && !community) {
-                      userperms = findKey(response.body.communities, (location || community), []);
-                  }
-                  if (userperms[0].roles.indexOf("admin") > -1) { allowed=true; }
-                  */
-              })
-              .fail(function(err){
-                  console.warn("WARNING: user75", err);
-                  return deferred.reject(new Error(err));
-              });
-        } catch (err) {
-            return deferred.reject(new Error(err));
-        }
+function formatSearchResults(items) {
+  if (items.rows && items.rows.length) {
+    for (i in items.rows) {
+      items.rows[i].doc = {
+        path: { key: items.rows[i].id },
+        value: items.rows[i].doc
+      };
     }
+  }
+  return items;
+}
 
-    // create searchstring
-    searchstring = '@value.communities:(';
-    var state = "";
-
-    for (c in communities) {
-
-        // determine whether one of the communities is a state
-        var state_suffix = communityApis.convert_state(communities[c].replace('-',' '), 'abbrev'); // returns false if no match
-
-        if (state_suffix) {
-            var state = ' AND @value.profile.home: ("' + communities[c] + '" OR "*-' + state_suffix.toLowerCase() + '")';
-            var remove = communities.indexOf(communities[c]);
-            if (remove > -1) communities.splice(remove, 1); // to avoid issues with length check
-            if (communities.length == 0) searchstring += "*";
-        } else {
-            searchstring += '"' + communities[c] + '"';
-            if (c < (communities.length - 1)) { searchstring += ' AND '; }
-        }
+function formatFindResults(items) {
+  if (items.docs && items.docs.length) {
+    for (i in items.docs) {
+      items.docs[i] = {
+        path: { key: items.docs[i]._id },
+        value: items.docs[i]
+      };
     }
-
-    searchstring += ') AND @value.type: "user"' + state;
-
-    if (clusters && clusters.length > 0 && clusters[0] !== '*') {
-        clusters = clusters.splice(',');
-        searchstring += ' AND (';
-
-        var clusterstring = '';
-
-        if (clusters.indexOf('all') < 0) clusters.push('all');
-
-        for (i in clusters) {
-            clusterstring += '"' + clusters[i] + '"';
-            if (i < (clusters.length - 1)) { clusterstring += ' OR '; }
-        }
-
-        searchstring += '@value.profile.skills:(' + clusterstring + ') OR @value.profile.parents:(' + clusterstring + '))'; // scope to industries within the cluster
-    }
-
-    if (roles && roles.length > 0 && roles[0] !== "*") {
-        roles = roles.splice(',');
-        searchstring += ' AND (';
-
-        for (i in roles) {
-            searchstring += '@value.roles.' + roles[i] + '.*:*'; // scope to role
-            if (i < (roles.length - 1)) { searchstring += ' AND '; }
-        }
-        searchstring += ')';
-    }
-
-    if (query) { searchstring += ' AND ' + '(@value.profile.*: ' + query + ')'; }
-
-    console.log(searchstring);
-    var deferred = Q.defer();
-    db.newSearchBuilder()
-      .collection(process.env.DB_COMMUNITIES)
-      .limit(Number(limit) || 18)
-      .offset(Number(offset) || 0)
-      .sortRandom()
-      .query(searchstring)
-      .then(function(result){
-          var i;
-
-          try {
-              for (i=0; i < result.body.results.length; i++) {
-                  if (result.body.results[i].path.collection) delete result.body.results[i].path.collection;
-                  if (result.body.results[i].path.ref) delete result.body.results[i].path.ref;
-                  if (result.body.results[i].value.profile.password) delete result.body.results[i].value.profile.password;
-
-                  if (result.body.results[i].value.profile.email) delete result.body.results[i].value.profile.email;
-
-                  if (result.body.results[i].value.profile.linkedin) {
-                      if (result.body.results[i].value.profile.linkedin.emailAddress) delete result.body.results[i].value.profile.linkedin.emailAddress;
-                      if (result.body.results[i].value.profile.linkedin.access_token) delete result.body.results[i].value.profile.linkedin.access_token;
-                  }
-
-                  result.body.results[i].value["key"] = result.body.results[i].path.key;
-                  
-                  if (result.body.results[i].value.newsletter) delete result.body.results[i].value.newsletter;
-              }
-          } catch (error) {
-              console.warn('WARNING: user144 ', error);
-              console.log(result.body.results);
-          }
-
-          if (result.body.next) {
-              var getnext = url.parse(result.body.next, true);
-              result.body.next = '/api/2.1/search' + getnext.search;
-          }
-          if (result.body.prev) {
-              var getprev = url.parse(result.body.prev, true);
-              result.body.prev = '/api/2.1/search' + getprev.search;
-          }
-          deferred.resolve(result.body);
-      })
-      .fail(function(err){
-          console.log(err.body.message);
-          deferred.reject(err.body.message);
-      });
-
-    return deferred.promise;
-
-};
+  }
+  return items;
+}
 
 function handleDirectSearch(req, res) {
     //TODO check for key to protect info?
     var allowed = false;
 
-    db.newSearchBuilder()
-        .collection(process.env.DB_COMMUNITIES)
-        .limit(Number(req.query.limit) || 100)
-        .offset(Number(req.query.offset))
-        .query(req.query.query)
+    cdb.find({selector: {type: 'user', '$text': req.query.query}, skip: Number(req.query.offset) || 0, limit: Number(req.query.limit) || 100})
         .then(function(result){
+          result = formatFindResults(result);
+
             var i;
 
             try {
-                for (i=0; i < result.body.results.length; i++) {
-                    if (result.body.results[i].path.collection) delete result.body.results[i].path.collection;
-                    if (result.body.results[i].path.ref) delete result.body.results[i].path.ref;
-                    if (result.body.results[i].value.profile.password) delete result.body.results[i].value.profile.password;
+                for (i=0; i < result.docs.length; i++) {
 
-                    if (result.body.results[i].value.profile.email) delete result.body.results[i].value.profile.email;
+                    if (result.docs[i].value.profile.password) delete result.docs[i].value.profile.password;
 
-                    if (result.body.results[i].value.profile.linkedin) {
-                        if (result.body.results[i].value.profile.linkedin.emailAddress) delete result.body.results[i].value.profile.linkedin.emailAddress;
-                        if (result.body.results[i].value.profile.linkedin.access_token) delete result.body.results[i].value.profile.linkedin.access_token;
+                    if (result.docs[i].value.profile.email) delete result.docs[i].value.profile.email;
+
+                    if (result.docs[i].value.profile.linkedin) {
+                        if (result.docs[i].value.profile.linkedin.emailAddress) delete result.docs[i].value.profile.linkedin.emailAddress;
+                        if (result.docs[i].value.profile.linkedin.access_token) delete result.docs[i].value.profile.linkedin.access_token;
                     }
 
-                    result.body.results[i].value["key"] = result.body.results[i].path.key;
+                    result.docs[i].value["key"] = result.docs[i].path.id;
                 }
 
-                if (result.body.next) {
-                    var getnext = url.parse(result.body.next, true);
-                    result.body.next = '/api/2.1/search' + getnext.search;
-                }
-                if (result.body.prev) {
-                    var getprev = url.parse(result.body.prev, true);
-                    result.body.prev = '/api/2.1/search' + getprev.search;
-                }
+              result.next =
+                '/api/2.1/users?communities[]=' + req.query.communities +
+                '&clusters[]=' + (req.query.clusters || '*') +
+                '&roles[]=' + (req.query.roles || '*') +
+                '&limit=' + (Number(req.query.limit) || 16) +
+                '&offset=' + ((Number(req.query.offset) || 0) + (Number(req.query.limit) || 16)) +
+                '&query=' + (req.query.query || '*');
+
+              result.prev =
+                '/api/2.1/users?communities[]=' + req.query.communities +
+                '&clusters[]=' + (req.query.clusters || '*') +
+                '&roles[]=' + (req.query.roles || '*') +
+                '&limit=' + (Number(req.query.limit) || 16) +
+                '&offset=' + (req.query.offset ? (Number(req.query.offset) - ((Number(req.query.limit) || 16))) : 0) +
+                '&query=' + (req.query.query || '*');
+
             } catch (error) {
                 console.warn('WARNING: user206', error);
             }
 
-            res.status(200).send(result.body);
+          result.results = result.docs;
+          delete result.docs;
+
+            res.status(200).send(result);
         })
-        .fail(function(err){
-            console.log(err.body.message);
+        .catch(function(err){
+            console.log(err);
             res.status(202).send({ message: "Something went wrong."});
         });
 }
@@ -247,40 +249,42 @@ function handleContactUser(req, res) {
     // search format is 'roles.leader[community]: location'
 
     // create searchstring to get leader of community
-    var searchstring = '(@value.roles.leader.' + location_key + ': *) AND @value.type: "user"';
+    var searchstring = "roles.leader:" + location_key + " AND type: user";
 
-    db.newSearchBuilder()
-        .collection(process.env.DB_COMMUNITIES)
-        .limit(10)
-        .query(searchstring)
+  cdb.search('communities', 'communitySearch', {q: searchstring, include_docs: true})
         .then(function(result){
-            if (result.body.results.length > 0) {
+          result = formatSearchResults(result);
+
+          //todo NEED TO VERIFY BELOW
+            if (result.rows.length > 0) {
                 console.log("Found leader(s)");
                 var leaders = [];
-                for (item in result.body.results) {
-                    leaders.push(result.body.results[item]);
+                for (item in result.rows) {
+                    leaders.push(result.rows[item]);
                 }
 
                 // now get user record for email address
-                db.get(process.env.DB_COMMUNITIES, user_key)
+                cdb.get(user_key)
                     .then(function(response){
-                        if (response.body.code !== "items_not_found") {
+
+                        if (response.code !== "items_not_found") {
                             var contacts = [],
                                 knowtifyClient = new knowtify.Knowtify(process.env.KNOWTIFY, false);
 
                             for (leader in leaders) {
+
                                 contacts.push({
-                                    "id" : leaders[leader].path.key,
-                                    "name" : leaders[leader].value.profile.name,
-                                    "email" : leaders[leader].value.profile.email,
+                                    "id" : leaders[leader].doc.path.key,
+                                    "name" : leaders[leader].doc.value.profile.name,
+                                    "email" : leaders[leader].doc.value.profile.email,
                                     "data" : {
                                         "source_name": formdata.name,
                                         "source_email" : formdata.email,
                                         "source_company" : formdata.company,
                                         "source_reason" : formdata.reason,
-                                        "target_name" : response.body.profile.name,
-                                        "target_email" : response.body.profile.email,
-                                        "target_avatar" : response.body.profile.avatar
+                                        "target_name" : response.profile.name,
+                                        "target_email" : response.profile.email,
+                                        "target_avatar" : response.profile.avatar
                                     }
                                 })
                             }
@@ -304,9 +308,9 @@ function handleContactUser(req, res) {
                                                     "source_email" : formdata.email,
                                                     "source_company" : formdata.company,
                                                     "source_reason" : formdata.reason,
-                                                    "target_name" : response.body.profile.name,
-                                                    "target_email" : response.body.profile.email,
-                                                    "target_avatar" : response.body.profile.avatar
+                                                    "target_name" : response.profile.name,
+                                                    "target_email" : response.profile.email,
+                                                    "target_avatar" : response.profile.avatar
                                                 }
                                             }]
                                         },
@@ -318,21 +322,6 @@ function handleContactUser(req, res) {
                                             console.log(err);
                                         }
                                     );
-
-                                    // create event in user record for tracking purposes
-                                    db.newEventBuilder()
-                                        .from(process.env.DB_COMMUNITIES, user_key)
-                                        .type('contact_request')
-                                        .data({
-                                            "location_key" : location_key,
-                                            "leaders" : contacts,
-                                            "source_name" : formdata.name,
-                                            "source_email" : formdata.email,
-                                            "source_company" : formdata.company,
-                                            "source_reason" : formdata.reason
-                                        })
-                                        .create();
-
                                 },
                                 function(err){
                                     console.warn('WARNING');
@@ -347,7 +336,7 @@ function handleContactUser(req, res) {
                         }
                     })
 
-                    .fail(function(err){
+                    .catch(function(err){
                         console.warn("WARNING: user338", err);
                         res.status(202).send({ message: "Something went wrong."});
                     });
@@ -360,7 +349,7 @@ function handleContactUser(req, res) {
                 res.status(202).send({ message: "Sorry, we can't seem to find a leader for this community. We took note of your request and we'll look into this and get back to you via email ASAP." });
             }
         })
-        .fail(function(err){
+        .catch(function(err){
             console.log("WARNING: user351", err);
             res.status(202).send({ message: "Something went wrong."});
         });
@@ -379,18 +368,13 @@ function handleGetProfile(req, res) {
     var userid = req.params.userid || req.user;
     console.log('Pulling user profile: ' + userid);
 
-    db.get(process.env.DB_COMMUNITIES, userid)
+    cdb.get(userid)
         .then(function(response){
-            if (response.body.code !== "items_not_found") {
-                response.body["key"] = userid;
-                response.body["token"] = jwt.sign(userid, process.env.SC_TOKEN_SECRET);
-                res.status(200).send(response.body);
-            } else {
-                console.warn('WARNING:  User not found.');
-                res.status(200).send({ message: 'User not found.' });
-            }
+          response["key"] = userid;
+          response["token"] = jwt.sign(userid, process.env.SC_TOKEN_SECRET);
+          res.status(200).send(response);
         })
-        .fail(function(err){
+        .catch(function(err){
             console.warn("Problem pulling user, sending 400 response. ", err.body);
             res.status(400).send({ message: "Please try logging in again."});
         });
@@ -439,22 +423,30 @@ function handleUpdateProfile(req, res) {
     if (userid == profile.key) {
         delete profile.key;
 
-        db.put(process.env.DB_COMMUNITIES, userid, profile)
-            .then(function(response){
-                if (response.statusCode == 201) {
-                    profile["key"] = userid;
-                    res.status(200).send({ token: jwt.sign(userid, process.env.SC_TOKEN_SECRET), user: profile });
+        cdb.get(userid)
+          .then(function(user) {
+            profile['_id'] = user._id;
+            profile['_rev'] = user._rev;
+
+            cdb.insert(profile, userid)
+              .then(function(response){
+
+                if (response.ok) {
+                  profile["key"] = userid;
+                  res.status(200).send({ token: jwt.sign(userid, process.env.SC_TOKEN_SECRET), user: profile });
 
                 } else {
-                    console.warn('WARNING:  Something went wrong. This updates req.user, would only fail if not logged in or token expired.');
-                    res.status(202).send({ message: 'Try logging out and back in again. We will also look into it on our end!' });
+                  console.warn('WARNING:  Something went wrong. This updates req.user, would only fail if not logged in or token expired.');
+                  res.status(202).send({ message: 'Try logging out and back in again. We will also look into it on our end!' });
                 }
-            })
+              })
 
-            .fail(function(err){
+              .catch(function(err){
                 console.warn("WARNING: user457", err);
                 res.status(202).send({ message: "Something went wrong."});
-            });
+              });
+          })
+
     } else {
         res.status(400).send({ message: 'You may only update your own user record.'})
     }
@@ -469,32 +461,32 @@ function handleRemoveCommunity(req, res) {
     console.log("Removing community '" + community.key + "' for user " + user_key);
 
     // first confirm that req.user has leader role in community
-    db.get(process.env.DB_COMMUNITIES, userid)
+    cdb.get(userid)
         .then(function(response) {
-            if (response.body.roles.leader[community.key]) {
-                db.get(process.env.DB_COMMUNITIES, user_key)
+            if (response.roles.leader[community.key]) {
+                cdb.get(user_key)
                     .then(function(response) {
-                        for (role in response.body.roles) {
-                            for (comm in response.body.roles[role]) {
-                                if (response.body.roles[role][community.key]) {
-                                    delete response.body.roles[role][community.key];
+                        for (role in response.roles) {
+                            for (comm in response.roles[role]) {
+                                if (response.roles[role][community.key]) {
+                                    delete response.roles[role][community.key];
                                 }
                             }
                         }
-                        if (response.body.communities.indexOf(community.key) > -1) {
-                            response.body.communities.splice(response.body.communities.indexOf(community.key), 1);
+                        if (response.communities.indexOf(community.key) > -1) {
+                            response.communities.splice(response.communities.indexOf(community.key), 1);
                         }
-                        db.put(process.env.DB_COMMUNITIES, user_key, response.body)
+                        cdb.insert(user_key, response)
                             .then(function(response) {
                                 console.log('Successfully removed community from user profile.');
                                 res.status(201).send({ message: 'Community removed.'});
                             })
-                            .fail(function(err){
+                            .catch(function(err){
                                 console.warn("WARNING: ", err);
                                 res.status(202).send({ message: "Something went wrong."});
                             });
                     })
-                    .fail(function(err){
+                    .catch(function(err){
                         console.warn("WARNING: ", err);
                         res.status(202).send({ message: "Something went wrong."});
                     });
@@ -503,7 +495,7 @@ function handleRemoveCommunity(req, res) {
                 res.status(202).send({ message: 'You do not have leader privileges for this community.' });
             }
         })
-        .fail(function(err){
+        .catch(function(err){
             console.warn("WARNING: ", err);
             res.status(202).send({ message: "Something went wrong."});
         });
@@ -519,27 +511,27 @@ function handleRemoveRole(req, res) {
     console.log("Removing " + role + " for community " + community_key + " for user " + userid);
 
     // confirm user has role and remove it
-    db.get(process.env.DB_COMMUNITIES, userid)
+    cdb.get(userid)
         .then(function(response) {
-            if (response.body.roles[role] && response.body.roles[role][community_key]) {
-                delete response.body.roles[role][community_key];
+            if (response.roles[role] && response.roles[role][community_key]) {
+                delete response.roles[role][community_key];
                 
-                for (r in response.body.roles) {
-                    if (response.body.roles[r][community_key]) var del = true;
+                for (r in response.roles) {
+                    if (response.roles[r][community_key]) var del = true;
                 }
                 
                 if (del) {
-                    if (response.body.communities.indexOf(community_key) > -1) {
-                        response.body.communities.splice(response.body.communities.indexOf(community_key), 1);
+                    if (response.communities.indexOf(community_key) > -1) {
+                        response.communities.splice(response.communities.indexOf(community_key), 1);
                     }
                 }
                 
-                db.put(process.env.DB_COMMUNITIES, userid, response.body)
+                cdb.insert(userid, response)
                     .then(function(response) {
                         console.log('Successfully removed role from user profile.');
                         res.status(201).send({ message: 'Role removed.'});
                     })
-                    .fail(function(err){
+                    .catch(function(err){
                         console.warn("WARNING: ", err);
                         res.status(202).send({ message: "Something went wrong."});
                     });
@@ -549,7 +541,7 @@ function handleRemoveRole(req, res) {
                 res.status(202).send({ message: 'You do not have the ' + role + ' role for record ' + community_key + '.' });
             }
         })
-        .fail(function(err){
+        .catch(function(err){
             console.warn("WARNING: ", err);
             res.status(202).send({ message: "Something went wrong."});
         });
@@ -560,21 +552,21 @@ function handleFeedback(req, res) {
     var userkey = req.user,
       data = JSON.parse(decodeURIComponent(req.query.data));
 
-    db.get(process.env.DB_COMMUNITIES, userkey)
+    cdb.get(userkey)
       .then(function (response) {
-          response.body['beta'] = data;
+          response['beta'] = data;
 
-          db.put(process.env.DB_COMMUNITIES, userkey, response.body)
+          cdb.insert(userkey, response)
             .then(function (finalres) {
                 res.status(201).send({ message: 'Profile updated.'});
             })
-            .fail(function (err) {
+            .catch(function (err) {
                 console.warn('WARNING: user547', err);
                 res.status(202).send({ message: "Something went wrong."});
             });
 
       })
-      .fail(function (err) {
+      .catch(function (err) {
           console.warn('WARNING: user553', err);
           res.status(202).send({ message: 'Something went wrong: ' + err});
       });
@@ -588,12 +580,12 @@ function handleFeedback(req, res) {
 
 function handleRemoveProfile(req, res) {
     var userid = req.params.userid;
-    db.remove(process.env.DB_COMMUNITIES, userid) // ideally I should store an undo option
+    cdb.destroy(userid) // ideally I should store an undo option
       .then(function(result){
           console.log('User removed.');
           res.status(200).send({ message: 'User removed' });
       })
-      .fail(function(err){
+      .catch(function(err){
           console.log("Remove FAIL:" + err);
           res.status(202).send({ message: 'Something went wrong: ' + err });
       });

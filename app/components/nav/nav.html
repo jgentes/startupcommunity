@@ -18,7 +18,7 @@
                         </a>
                     </li>
                     <form id="searchform" ng-submit="nav.search(global.query)" role="search" class="navbar-form-custom" method="post">
-                        <input ng-model="global.query" type="text" placeholder="Search.." class="form-control" name="search">
+                        <input ng-model="global.query" type="text" uib-typeahead="ind for ind in global.industries | filter:$viewValue | limitTo:8" placeholder="Search.." class="form-control" name="search">
                     </form>
                 </div>
             </div>

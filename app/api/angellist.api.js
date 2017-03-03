@@ -1,5 +1,4 @@
-var db = require('orchestrate')(process.env.DB_KEY),
-  request = require('request');
+var request = require('request');
 
 //require('request-debug')(request); // Very useful for debugging oauth and api req/res
 
