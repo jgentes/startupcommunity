@@ -611,8 +611,8 @@ function handleInviteUser(req, res) {
         cdb.get(req.user)
             .then(function(response){
 
-                if (response.code !== "items_not_found") {
-                    var user = response.body;
+
+                    var user = response;
 
                     if (user.communities.indexOf(inviteUser.location_key) < 0) {
                         res.status(202).send({ message: 'You must be a member of this community to invite someone.' });
@@ -629,7 +629,7 @@ function handleInviteUser(req, res) {
                   cdb.search('communities', 'communitySearch', {q: 'type: user AND (profile.linkedin.emailAddress: ' + inviteUser.email + ' OR profile.email: ' + inviteUser.email + ')', include_docs: true})
                     .then(function (result) {
                       result = formatSearchResults(result);
-                    
+
                             if (result.rows.length > 0) {
                                 console.log("Existing user found!");
 
@@ -647,7 +647,7 @@ function handleInviteUser(req, res) {
                                     existing.communities.push(inviteUser.location_key);
                                 }
 
-                                db.put(process.env.DB_COMMUNITIES, result.rows[0].path.key, existing)
+                                cdb.insert(existing)
                                     .then(function (response) {
                                         console.log("User updated!");
                                         res.status(200).send({message: 'Nice!  <a target="_blank" href="https://startupcommunity.org/' + result.rows[0].path.key + '">' + result.rows[0].value.profile.name + '</a> is a member of the community.'});
@@ -659,11 +659,10 @@ function handleInviteUser(req, res) {
 
                             } else {
                                 // no existing user, so search for existing invite
-                                db.newSearchBuilder()
-                                    .collection(process.env.DB_COMMUNITIES)
-                                    .limit(1)
-                                    .query('@value.type: "invite" AND @value.profile.email: "' + inviteUser.email + '"')
-                                    .then(function (result) {
+                              cdb.find({selector: {type: 'invite', 'profile.email': inviteUser.email}, limit: 1})
+                                .then(function(result){
+                                  result = formatFindResults(result);
+
                                         if (result.docs.length > 0) {
                                             console.log("Existing invite found!");
                                             res.status(200).send({message: 'An invitation has already been sent to ' + inviteUser.email + '. We will send a reminder.'});
@@ -707,9 +706,10 @@ function handleInviteUser(req, res) {
                                             var newUser = schema.invite(inviteUser.email, user.profile.email, inviteUser.location_key, inviteUser.resources);
                                             console.log('creating user');
 
-                                            db.post(process.env.DB_COMMUNITIES, newUser)
+                                            cdb.insert(newUser)
                                                 .then(function (response) {
-                                                    var userkey = response.headers.location.split('/')[3]; // hope their response format doesn't change :-/
+
+                                                    var userkey = response.id; // hope their response format doesn't change :-/
 
                                                     // send email with knowtify with unique link
                                                     var knowtifyClient = new knowtify.Knowtify(process.env.KNOWTIFY, false);
@@ -755,10 +755,8 @@ function handleInviteUser(req, res) {
                             }
                         });
 
-                } else {
-                    console.warn('WARNING:  User not found.');
                 }
-            })
+            )
 
             .catch(function(err){
                 console.warn("WARNING:", err);
