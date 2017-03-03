@@ -187,9 +187,10 @@ function UserController($scope, $stateParams, $location, user_service, result_se
     */
 }
 
-function ContactUserController($scope, $uibModalInstance, notify_service, sweet){
+function ContactUserController($scope, $uibModalInstance, notify_service, sweet, user){
 
-    this.user = $scope.global.user; //used in view
+    this.user = user || $scope.global.user; //used in view
+
     var self = this;
 
     this.send = function () {
