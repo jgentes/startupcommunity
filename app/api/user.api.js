@@ -6,14 +6,14 @@ var Q = require('q'),
     communityApis = new CommunityApi(),
     aws = require('aws-sdk'),
     knowtify = require('knowtify-node'),
-    Cloudant = require('cloudant'),
-    cloudant = Cloudant({
-      account: '2001b05d-38e3-44f7-b569-b13a66a81b70-bluemix',
-      key: 'ingidlettlysenemediserni',
-      password: '42a75fe750f1f707299b5a5c230322d207a99a60',
-      plugin: 'promises'
-    }),
-    cdb = cloudant.db.use(process.env.DB_COMMUNITIES);
+  Cloudant = require('cloudant'),
+  cloudant = Cloudant({
+    account: process.env.DB_ACCOUNT,
+    password: process.env.DB_PASSWORD,
+    plugin: 'promises'
+  }),
+  cdb = cloudant.db.use(process.env.DB_COMMUNITIES),
+  cdb_messages = cloudant.db.use(process.env.DB_MESSAGES);
 
 //require('request-debug')(request); // Very useful for debugging oauth and api req/res
 

@@ -5,19 +5,12 @@ var memjs = require('memjs'),
   _ = require(path.join(__dirname, '../scripts/lodash40.js')),
   Cloudant = require('cloudant'),
   cloudant = Cloudant({
-    account: '2001b05d-38e3-44f7-b569-b13a66a81b70-bluemix',
-    key: 'ingidlettlysenemediserni',
-    password: '42a75fe750f1f707299b5a5c230322d207a99a60',
+    account: process.env.DB_ACCOUNT,
+    password: process.env.DB_PASSWORD,
     plugin: 'promises'
   }),
   cdb = cloudant.db.use(process.env.DB_COMMUNITIES),
-  cloudant_messages = Cloudant({
-    account: '2001b05d-38e3-44f7-b569-b13a66a81b70-bluemix',
-    key: 'phishablawlyingroctsearz',
-    password: '5c5d3799639476fef35d4412e09c6f515ffb24e1',
-    plugin: 'promises'
-  }),
-  cdb_messages = cloudant_messages.db.use('messages');
+  cdb_messages = cloudant.db.use(process.env.DB_MESSAGES);
 
 //var util = require('util'); //for util.inspect on request
 
