@@ -579,13 +579,14 @@ function handleGetTop(req, res) {
 
         if (result.counts && result.counts['profile.industries']) {
           var sortedIndustries = sortcounts(result.counts['profile.industries'], true);
-
+          console.log(result.counts['profile.industries']);
           top_results.industries = {
             count: Object.values(result.counts['profile.industries']).reduce(add, 0),
             entries: sortedIndustries
           };
 
         }
+
         if (result.counts && result.counts['profile.parents']) {
           var sortedParents = sortcounts(result.counts['profile.parents']);
 
@@ -630,12 +631,13 @@ function handleGetTop(req, res) {
 
                   if (result.counts && result.counts['profile.skills']) {
                     var sortedSkills = sortcounts(result.counts['profile.skills'], true);
-
+                    console.log(result.counts['profile.skills']);
                     top_results.skills = {
                       count: Object.values(result.counts['profile.skills']).reduce(add, 0),
                       entries: sortedSkills
                     };
                   }
+
                   if (result.counts && result.counts['profile.parents']) {
                     var sortedPeopleParents = sortcounts(result.counts['profile.parents']);
 

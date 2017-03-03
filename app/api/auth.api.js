@@ -453,7 +453,7 @@ function handleLinkedin(req, res) {
                             result.docs[0] = addCommunities(result.docs[0], invite_profile);
                             result.docs[0].value['_id'] = result.docs[0].path.key;
                             result.docs[0].value['_rev'] = result.docs[0]._rev;
-
+                            console.log(result.docs[0].value;
                             cdb.insert(result.docs[0].value)
                                 .then(function () {
                                     console.log("Profile updated: " + result.docs[0].value.profile.name);
