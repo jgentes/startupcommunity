@@ -581,7 +581,7 @@ function handleLinkedin(req, res) {
                         }
                     })
                     .catch(function (err) {
-                        console.warn("WARNING:", "Something went wrong. " + String(err));
+                        console.warn("WARNING:", "Something went wrong. ", err);
                     });
             }
 
