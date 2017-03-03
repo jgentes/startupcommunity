@@ -135,7 +135,7 @@ module.exports = function (grunt) {
                     {
                         expand: true,
                         dot: true,
-                        cwd: 'build/fonts/pe-icon-7-stroke',
+                        cwd: 'app/fonts/pe-icon-7-stroke',
                         src: ['fonts/*.*'],
                         dest: '<%= startupcommunity.dist %>'
                     },
