@@ -579,7 +579,7 @@ function handleGetTop(req, res) {
 
         if (result.counts && result.counts['profile.industries']) {
           var sortedIndustries = sortcounts(result.counts['profile.industries'], true);
-          console.log(result.counts['profile.industries']);
+
           top_results.industries = {
             count: Object.values(result.counts['profile.industries']).reduce(add, 0),
             entries: sortedIndustries
@@ -589,7 +589,7 @@ function handleGetTop(req, res) {
 
         if (result.counts && result.counts['profile.parents']) {
           var sortedParents = sortcounts(result.counts['profile.parents']);
-
+          console.log(result.counts['profile.parents']);
           top_results.company_parents = {
             count: Object.values(result.counts['profile.parents']).reduce(add, 0),
             entries: sortedParents
