@@ -287,21 +287,23 @@ function handleGetCommunity(req, res) {
               thiskey = newresponse.key;
 
             var getTeam = function (startkey, teamlist) {
-              cdb.find({
-                selector: {
-                  "$and": [
-                    {"type": "user"},
-                    {
-                      "roles.leader." + thiskey:
-                      }
+              var temproles = {};
+              var selector = {"$or":[]};
 
-                  ]
-                }
-              })
+              temproles["roles.leader." + thiskey] = {"$exists": true};
+              temproles["roles.founder." + thiskey] = {"$exists": true};
+              temproles["roles.investor." + thiskey] = {"$exists": true};
+              temproles["roles.team." + thiskey] = {"$exists": true};
+              temproles["roles.mentor." + thiskey] = {"$exists": true};
+              temproles["roles.provider." + thiskey] = {"$exists": true};
+
+              selector["$or"].push(temproles);
+
+              cdb.find({selector: selector})
                 .then(function (team) {
-                  team = formatSearchResults(team);
+                  team = formatFindResults(team);
 
-                  teamlist.push.apply(teamlist, team.rows);
+                  teamlist.push.apply(teamlist, team.docs);
 
                   var teamresponse = {},
                     count = {};
@@ -310,18 +312,18 @@ function handleGetCommunity(req, res) {
                     var t = teamlist[member];
 
                     // delete sensitive data
-                    if (t.doc.value.profile.password) delete t.doc.value.profile.password;
-                    if (t.doc.value.profile.email) delete t.doc.value.profile.email;
-                    if (t.doc.value.newsletter) delete t.doc.value.newsletter;
-                    if (t.doc.value.profile.linkedin) {
-                      if (t.doc.value.profile.linkedin.emailAddress) delete t.doc.value.profile.linkedin.emailAddress;
-                      if (t.doc.value.profile.linkedin.access_token) delete t.doc.value.profile.linkedin.access_token;
+                    if (t.value.profile.password) delete t.value.profile.password;
+                    if (t.value.profile.email) delete t.value.profile.email;
+                    if (t.value.newsletter) delete t.value.newsletter;
+                    if (t.value.profile.linkedin) {
+                      if (t.value.profile.linkedin.emailAddress) delete t.value.profile.linkedin.emailAddress;
+                      if (t.value.profile.linkedin.access_token) delete t.value.profile.linkedin.access_token;
                     }
-                    t.doc.value["key"] = t.id;
+                    t.value["key"] = t.path.key;
 
                     // sort roles
-                    for (role in t.doc.value.roles) {
-                      for (item in t.doc.value.roles[role]) {
+                    for (role in t.value.roles) {
+                      for (item in t.value.roles[role]) {
                         if (item == thiskey) {
                           if (!teamresponse[role]) teamresponse[role] = [];
                           if (!count[role]) count[role] = 0;
@@ -357,6 +359,7 @@ function handleGetCommunity(req, res) {
         if (result.docs.length > 0) {
 
           var found = false;
+
           for (comm in result.docs) {
             var m = result.docs[comm];
             if (m.path.key == community) {
@@ -368,12 +371,15 @@ function handleGetCommunity(req, res) {
               console.log('Pulling community for ' + m.value.profile.name);
 
               // grab home
-              if (m.value.profile.home) var m_home = m.value.profile.home;
+
+              var m_home;
+
+              if (m.value.profile.home) m_home = m.value.profile.home;
 
               if (!m.value.resource || m.value.type !== "location") {
 
                 // pull communities within record
-                var comm_items = m.value.communities;
+                var comm_items = m.value.communities || [];
 
                 // grab parent
                 if (m.value.profile.parents && m.value.profile.parents[0]) comm_items.push(m.value.profile.parents[0]);
@@ -458,36 +464,40 @@ function handleGetResources(req, res) {
     clusters = req.body.clusters,
     searchstring;
 
-  if (resources) {
-    searchstring = 'key: (';
-    for (r in resources) {
-      searchstring += resources[r];
-      if (r < resources.length - 1) searchstring += ' OR ';
-    }
-    searchstring += ')';
-  } else searchstring = "communities: " + location_key;
+  var selector = {"$and": []};
+
+  if (resources && resources.length) {
+    selector["$and"].push({"_id": {"$in": resources}});
+  } else selector["$and"].push({"communities": location_key});
 
   if (clusters) {
-    searchstring += ' AND (resource: true OR type: cluster)';
-  } else searchstring += ' AND resource: true';
+    selector["$and"].push(
+      {
+        "$or":
+          [
+            {"resource": true},
+            {"type": "cluster"}
+          ]
+      })
+  } else selector["$and"].push({"resource": true});
 
   if (searchstring) {
 
     console.log(searchstring);
 
-    cdb.search('communities', 'communitySearch', {q: searchstring, include_docs: true})
+    cdb.find({selector: selector})
       .then(function (result) {
-        result = formatSearchResults(result);
+        result = formatFindResults(result);
 
         var newresponse = {};
 
-        if (result.rows.length > 0) {
+        if (result.docs.length > 0) {
 
-          for (resource in result.rows) {
-            var r = result.rows[resource];
+          for (resource in result.docs) {
+            var r = result.docs[resource];
 
-            newresponse[r.id] = r.doc.value;
-            newresponse[r.id]["key"] = r.id;
+            newresponse[r.path.key] = r.value;
+            newresponse[r.path.key]["key"] = r.path.key;
           }
 
           res.status(200).send(newresponse);
@@ -651,7 +661,7 @@ function handleGetTop(req, res) {
             var skillsearch = cluster_search ? '(profile.parents:(' + cluster_search + ') OR profile.skills:(' + cluster_search + ')) AND ' + search : search;
             console.log(skillsearch);
             //settimeout is to avoid bluemix 5per sec request issue
-            setTimeout(function () {
+
               cdb.search('communities', 'peopleTop', {
                 q: skillsearch + ' AND type: user',
                 counts: ['profile.skills', 'profile.parents'],
@@ -758,7 +768,6 @@ function handleGetTop(req, res) {
                   console.log("WARNING: ", err);
                   res.status(202).send({message: 'Something went wrong: ' + err});
                 });
-            }, 1000);
           })
           .catch(function (err) {
             console.log("WARNING: ", err);
