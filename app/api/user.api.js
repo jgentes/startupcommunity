@@ -49,9 +49,12 @@ function handleUserSearch(req, res){
   var userperms;
   
   // create searchstring
+  var selector = {"$and": [
+    {"type": "user"}
+  ]};
   searchstring = 'communities:(';
   var state = "";
-
+/*
   for (c in communities) {
 
     // determine whether one of the communities is a state
@@ -67,10 +70,23 @@ function handleUserSearch(req, res){
       if (c < (communities.length - 1)) { searchstring += ' AND '; }
     }
   }
+  */
+  selector["$and"].push({"communities": {"$in": communities}});
 
-  searchstring += ")" + state;
+  //searchstring += ")" + state;
 
   if (clusters && clusters.length > 0 && clusters[0] !== '*') {
+
+    selector["$and"].push(
+      {
+        "$or": [
+          {"profile.skills": {"$in": clusters}},
+          {"profile.parents": {"$in": clusters}}
+        ]
+      }
+    );
+
+    /*
     clusters = clusters.splice(',');
     searchstring += ' AND (';
 
@@ -84,24 +100,36 @@ function handleUserSearch(req, res){
     }
 
     searchstring += 'profile.skills:(' + clusterstring + ') OR profile.parents:(' + clusterstring + '))'; // scope to industries within the cluster
+    */
   }
 
   if (roles && roles.length > 0 && roles[0] !== "*") {
+
+    selector["$and"].push({"$or": []});
+/*
+
     roles = roles.splice(',');
     searchstring += ' AND (';
+*/
 
     for (i in roles) {
-      searchstring += 'roles.' + roles[i] + ':[a* TO z*]'; // scope to role
-      if (i < (roles.length - 1)) { searchstring += ' AND '; }
+      var sel = {};
+      sel['roles.' + roles[i]] = {"$exists": true};
+      selector["$and"]["$or"].push(sel);
+     /* searchstring += 'roles.' + roles[i] + ':[a* TO z*]'; // scope to role
+      if (i < (roles.length - 1)) { searchstring += ' AND '; }*/
     }
-    searchstring += ')';
+/*    searchstring += ')';*/
   }
 
-  if (query) { searchstring += ' AND ' + '(profile: ' + query + ')'; }
+  if (query) {
+    selector["$and"].push({"$text": query});
+    /*searchstring += ' AND ' + '(profile: ' + query + ')'; */
+  }
 
-  console.log(searchstring);
+  console.log('Pulling Users: ', selector);
 
-  cdb.find({selector: {type: 'user', '$text': searchstring}, skip: Number(offset) || 0, limit: Number(limit) || 16})
+  cdb.find({selector: selector, skip: Number(offset) || 0, limit: Number(limit) || 16})
     .then(function(result){
       result = formatFindResults(result);
 

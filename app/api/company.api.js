@@ -105,9 +105,12 @@ function handleCompanySearch(req, res){
   //console.log(key); //concern is that a passed in key is new and overwrites existing key
 
   // create searchstring
+  var selector = {"$and": [
+    {"type": "company"}
+  ]};
   searchstring = 'communities:(';
   var state = "";
-
+/*
   if (communities) {
     for (c in communities) {
 
@@ -124,13 +127,26 @@ function handleCompanySearch(req, res){
         if (c < (communities.length - 1)) { searchstring += ' AND '; }
       }
     }
-  } else searchstring += '*';
+  } else searchstring += '*';*/
+  selector["$and"].push({"communities": {"$in": communities}});
 
-  if (get_resources === "true") {
+ /* if (get_resources === "true") {
     searchstring += ") AND resource: true" + state;
-  } else searchstring += ")" + (state ? " AND" + state : '');
+  } else searchstring += ")" + (state ? " AND" + state : '');*/
+
+ if (get_resources == "true") selector["$and"].push({"resource": true});
 
   if (clusters && clusters.length > 0 && clusters[0] !== '*') {
+
+    selector["$and"].push(
+      {
+        "$or": [
+          {"profile.skills": {"$in": clusters}},
+          {"profile.parents": {"$in": clusters}}
+        ]
+      }
+    );
+    /*
     clusters = clusters.splice(',');
     searchstring += ' AND (';
 
@@ -144,37 +160,42 @@ function handleCompanySearch(req, res){
     }
 
     searchstring += 'profile.industries:(' + clusterstring + ') OR profile.parents:(' + clusterstring + '))'; // scope to industries within the cluster
+    */
 
   }
   if (stages && stages.length > 0 && stages[0] !== '*') {
-    stages = stages.splice(',');
+    selector["$and"].push({"profile.stage":{"$in": stages}});
+   /* stages = stages.splice(',');
     searchstring += ' AND (';
 
     for (i in stages) {
       searchstring += "profile.stage:" + stages[i]; // scope to stage
       if (i < (stages.length - 1)) { searchstring += ' OR '; }
     }
-    searchstring += ')';
+    searchstring += ')';*/
   }
 
   if (types && types.length > 0 && types[0] !== '*') {
-    types = types.splice(',');
+    selector["$and"].push({"resource_types":{"$in": types}});
+    /*types = types.splice(',');
     searchstring += ' AND (';
 
     for (i in types) {
       searchstring += "resource_types:" + types[i]; // scope to stage
       if (i < (types.length - 1)) { searchstring += ' OR '; }
     }
-    searchstring += ')';
+    searchstring += ')';*/
   }
 
 
-  if (query) { searchstring += ' AND ' + '(profile: ' + query + ')'; }
+  if (query) {
+    selector["$and"].push({"$text": query});
+    /*searchstring += ' AND ' + '(profile: ' + query + ')';*/
+  }
 
-  console.log('Pulling Companies: ' + searchstring);
-//settimeout is to avoid bluemix 5per sec request issue
-  setTimeout(function() {
-    cdb.find({selector: {type: 'company', '$text': searchstring}, skip: Number(offset) || 0, limit: Number(limit) || 16})
+  console.log('Pulling Companies: ', selector);
+
+    cdb.find({selector: selector, skip: Number(offset) || 0, limit: Number(limit) || 16})
       .then(function(result){
         result = formatFindResults(result);
 
@@ -219,7 +240,6 @@ function handleCompanySearch(req, res){
         console.log('WARNING: ', err);
         res.send({message:err.message});
       });
-  }, 1000);
 }
 
 function handleGetLogoUrl(req, res) {
