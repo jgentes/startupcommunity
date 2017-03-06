@@ -202,7 +202,7 @@ function handleGetCommunity(req, res) {
 
           for (item in results) {
 
-            if (results[item].value && results[item].id !== community) {
+            if (results[item].value && results[item].path.key !== community) {
 
               // sort communities for use in nav and child dashboard pages
 
