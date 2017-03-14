@@ -514,6 +514,14 @@ function handleGetResources(req, res) {
   } else res.status(404).send({message: 'Please specify a location!'});
 }
 
+function getMore(selector, bookmark) {
+  return cdb.find({
+    selector: selector,
+    limit: 1000,
+    bookmark: bookmark
+  })
+}
+
 function handleGetTop(req, res) {
 
   //console.log(util.inspect(req)); // used for logging circular request
@@ -598,7 +606,11 @@ function handleGetTop(req, res) {
     "$and": [{
       "type": "company"
     }, {
-      "resource": false
+      "$or": [ {
+        "resource": false
+    },{
+      "resource": {"$exists": false}
+    }]
     }]
   };
 
@@ -616,8 +628,6 @@ function handleGetTop(req, res) {
     })
       .then(function (result) {
         result = formatFindResults(result);
-
-        console.log(result);
 
             if (result.counts && result.counts['profile.industries']) {
               var sortedIndustries = sortcounts(result.counts['profile.industries'], true);
@@ -649,16 +659,22 @@ function handleGetTop(req, res) {
 
             // get resources
 
-        selector["$and"].resource = true;
+        selector = {
+          "$and": [{
+            "type": "company"
+          }, {"resource": true}]
+        };
+
+        if (cluster_search) {
+          selector["$or"] = [{"profile.parents": {"$in": cluster_search}}, {"profile.industries": {"$in": cluster_search}}];
+          if (search) selector["$and"].push(search);
+        } else selector["$and"].push(search);
 
         cdb.find({
           selector: selector
         })
           .then(function (result) {
             result = formatFindResults(result);
-
-            console.log(result);
-
 
             top_results.resources = {
                   count: result.total_rows,
@@ -667,110 +683,129 @@ function handleGetTop(req, res) {
 
                 // get people & skills
 
-                var skillsearch = cluster_search ? '(profile.parents:(' + cluster_search + ') OR profile.skills:(' + cluster_search + ')) AND ' + search : search;
-                console.log(skillsearch);
-                //settimeout is to avoid bluemix 5per sec request issue
+            selector = {
+              "$and": [{
+                "type": "user"
+              }]
+            };
 
-                cdb.search('communities', 'peopleTop', {
-                  q: skillsearch + ' AND type: user',
-                  counts: ['profile.skills', 'profile.parents'],
-                  include_docs: true
-                })
-                  .then(function (result) {
-                    result = formatSearchResults(result);
+            if (cluster_search) {
+              selector["$or"] = [{"profile.parents": {"$in": cluster_search}}, {"profile.skills": {"$in": cluster_search}}];
+              if (search) selector["$and"].push(search);
+            } else selector["$and"].push(search);
 
-                    if (result.counts && result.counts['profile.skills']) {
-                      var sortedSkills = sortcounts(result.counts['profile.skills'], true);
+            cdb.find({
+              selector: selector,
+              limit: 1000
+            })
+              .then(function (result) {
+                result = formatFindResults(result);
+                console.log(result.docs.length);
+                if (result.bookmark) {
+                  getMore(selector, result.bookmark)
+                    .then(function(more) {
+                      more = formatFindResults(more);
+                      var newresult = {};
+                      newresult["docs"] = result.docs.concat(more.docs);
+                      finish(newresult);
+                    });
+                } else finish(result);
 
-                      top_results.skills = {
-                        count: Object.keys(result.counts['profile.skills']).reduce(function (previous, key) {
-                          return previous + result.counts['profile.skills'][key].value;
-                        }),
-                        entries: sortedSkills
-                      };
-                    }
+                    var finish = function(result) {
 
-                    if (result.counts && result.counts['profile.parents']) {
-                      var sortedPeopleParents = sortcounts(result.counts['profile.parents']);
+                      if (result.counts && result.counts['profile.skills']) {
+                        var sortedSkills = sortcounts(result.counts['profile.skills'], true);
 
-                      top_results.people_parents = {
-                        count: Object.keys(result.counts['profile.parents']).reduce(function (previous, key) {
-                          return previous + result.counts['profile.parents'][key].value;
-                        }),
-                        entries: sortedPeopleParents
-                      };
-                    }
-
-                    top_results.people = {
-                      count: result.total_rows,
-                      entries: addkeys(result.rows)
-                    };
-
-                    // BEGIN PARENTS (this is mostly to avoid another api call that includes both companies and users)
-
-                    var c_labels = [],
-                      c_numbers = [],
-                      p_labels = [],
-                      p_numbers = [];
-
-                    for (c in top_results.company_parents.entries) {
-                      c_labels.push(c);
-                      c_numbers.push(top_results.company_parents.entries[c]);
-                    }
-
-                    for (p in top_results.people_parents.entries) {
-                      p_labels.push(p);
-                      p_numbers.push(top_results.people_parents.entries[p]);
-                    }
-
-                    top_results['parents'] = {
-                      labels: _.union(c_labels, p_labels),
-                      values: []
-                    };
-
-                    for (l in top_results.parents.labels) {
-                      var r = 0;
-                      if (c_numbers[c_labels.indexOf(top_results.parents.labels[l])]) {
-                        r += c_numbers[c_labels.indexOf(top_results.parents.labels[l])];
+                        top_results.skills = {
+                          count: Object.keys(result.counts['profile.skills']).reduce(function (previous, key) {
+                            return previous + result.counts['profile.skills'][key].value;
+                          }),
+                          entries: sortedSkills
+                        };
                       }
-                      if (p_numbers[p_labels.indexOf(top_results.parents.labels[l])]) {
-                        r += p_numbers[p_labels.indexOf(top_results.parents.labels[l])];
+
+                      if (result.counts && result.counts['profile.parents']) {
+                        var sortedPeopleParents = sortcounts(result.counts['profile.parents']);
+
+                        top_results.people_parents = {
+                          count: Object.keys(result.counts['profile.parents']).reduce(function (previous, key) {
+                            return previous + result.counts['profile.parents'][key].value;
+                          }),
+                          entries: sortedPeopleParents
+                        };
                       }
-                      top_results.parents.values.push(r);
-                    }
-                    var temp = [];
-                    for (a in top_results.parents.labels) {
-                      temp.push({
-                        label: top_results.parents.labels[a],
-                        value: top_results.parents.values[a]
+
+                      top_results.people = {
+                        count: result.total_rows,
+                        entries: addkeys(result.rows)
+                      };
+
+                      // BEGIN PARENTS (this is mostly to avoid another api call that includes both companies and users)
+
+                      var c_labels = [],
+                        c_numbers = [],
+                        p_labels = [],
+                        p_numbers = [];
+
+                      for (c in top_results.company_parents.entries) {
+                        c_labels.push(c);
+                        c_numbers.push(top_results.company_parents.entries[c]);
+                      }
+
+                      for (p in top_results.people_parents.entries) {
+                        p_labels.push(p);
+                        p_numbers.push(top_results.people_parents.entries[p]);
+                      }
+
+                      top_results['parents'] = {
+                        labels: _.union(c_labels, p_labels),
+                        values: []
+                      };
+
+                      for (l in top_results.parents.labels) {
+                        var r = 0;
+                        if (c_numbers[c_labels.indexOf(top_results.parents.labels[l])]) {
+                          r += c_numbers[c_labels.indexOf(top_results.parents.labels[l])];
+                        }
+                        if (p_numbers[p_labels.indexOf(top_results.parents.labels[l])]) {
+                          r += p_numbers[p_labels.indexOf(top_results.parents.labels[l])];
+                        }
+                        top_results.parents.values.push(r);
+                      }
+                      var temp = [];
+                      for (a in top_results.parents.labels) {
+                        temp.push({
+                          label: top_results.parents.labels[a],
+                          value: top_results.parents.values[a]
+                        });
+                      }
+
+                      if (!_.isEmpty(temp)) {
+                        top_results.parents = _.orderBy(temp, 'value', 'desc');
+                      } else delete top_results.parents;
+
+                      delete top_results.people_parents;
+                      delete top_results.company_parents;
+
+                      // this is for dashboard view
+
+                      top_results.max = 0;
+                      if (top_results.parents) {
+                        for (val in top_results.parents) {
+                          top_results.max += top_results.parents[val].value;
+                        }
+                      }
+
+                      // END PARENTS
+
+                      top_results['key'] = community_key;
+
+                      if (!cache) res.status(200).send(top_results);
+
+                      mc.set(selector.toString(), JSON.stringify(top_results), function (err, val) {
+                        if (err) console.warn('WARNING: Memcache error: ', err)
                       });
                     }
-
-                    if (!_.isEmpty(temp)) {
-                      top_results.parents = _.orderBy(temp, 'value', 'desc');
-                    } else delete top_results.parents;
-
-                    delete top_results.people_parents;
-                    delete top_results.company_parents;
-
-                    // this is for dashboard view
-
-                    top_results.max = 0;
-                    if (top_results.parents) {
-                      for (val in top_results.parents) {
-                        top_results.max += top_results.parents[val].value;
-                      }
-                    }
-
-                    // END PARENTS
-
-                    top_results['key'] = community_key;
-
-                    if (!cache) res.status(200).send(top_results);
-
-                    mc.set(industrysearch, JSON.stringify(top_results), function (err, val) {
-                      if (err) console.warn('WARNING: Memcache error: ', err)
-                    });
 
                   })
                   .catch(function (err) {
