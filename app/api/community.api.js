@@ -7,7 +7,7 @@ var memjs = require('memjs'),
   cloudant = Cloudant({
     account: process.env.DB_ACCOUNT,
     password: process.env.DB_PASSWORD,
-    plugin: 'promises'
+    plugin: 'retry'
   }),
   cdb = cloudant.db.use(process.env.DB_COMMUNITIES),
   cdb_messages = cloudant.db.use(process.env.DB_MESSAGES);
@@ -191,8 +191,8 @@ function handleGetCommunity(req, res) {
           }
         ]
       }
-    })
-      .then(function (result) {
+    }, function(err, result) {
+      if (!err) {
         result = formatFindResults(result);
 
         var newresponse;
@@ -256,8 +256,8 @@ function handleGetCommunity(req, res) {
 
           // get messages for users
           if (newresponse.type == 'user') {
-            cdb_messages.find({selector: {'to': newresponse.key}, limit: 100})
-              .then(function (messages) {
+            cdb_messages.find({selector: {'to': newresponse.key}, limit: 100}, function(err, messages) {
+              if (!err) {
                 messages = formatFindResults(messages);
 
                 messages.docs.sort(function (a, b) {
@@ -271,13 +271,11 @@ function handleGetCommunity(req, res) {
                 }
 
                 checkcache(cache, community, newresponse);
-
-              })
-              .catch(function (err) {
+              } else {
                 console.log("WARNING: community171", err);
                 res.status(200).send(newresponse);
-              });
-
+              }
+            })
 
           } else if (newresponse.type == 'company') {
             // get team
@@ -299,8 +297,8 @@ function handleGetCommunity(req, res) {
 
               selector["$or"].push(temproles);
 
-              cdb.find({selector: selector})
-                .then(function (team) {
+              cdb.find({selector: selector}, function(err, team) {
+                if (!err) {
                   team = formatFindResults(team);
 
                   teamlist.push.apply(teamlist, team.docs);
@@ -343,12 +341,11 @@ function handleGetCommunity(req, res) {
                   }
 
                   checkcache(cache, community, newresponse);
-
-                })
-                .catch(function (err) {
+                } else {
                   console.log("WARNING: ", err);
                   res.status(200).send(newresponse);
-                });
+                }
+              })
             };
 
             getTeam(startkey, teamlist)
@@ -404,19 +401,19 @@ function handleGetCommunity(req, res) {
                       "$in": ubersearch
                     }
                   }
-                })
-                  .then(function (uber_result) {
+                }, function(err, uber_result) {
+                  if (!err) {
                     uber_result = formatFindResults(uber_result);
 
                     if (m_home || m.value.type == "location") {
                       var both = result.docs.concat(uber_result.docs);
                       finalize(both);
                     } else finalize(uber_result.docs);
-                  })
-                  .catch(function (err) {
+                  } else {
                     console.log("WARNING: ", err);
                     finalize(result.docs);
-                  });
+                  }
+                })
               }
 
               break;
@@ -430,11 +427,11 @@ function handleGetCommunity(req, res) {
           console.log('INFO: Community not found!');
           res.status(404).send({message: 'Community not found.'});
         }
-      })
-      .catch(function (err) {
+      } else {
         console.log("WARNING: community236", err);
         res.status(202).send({message: 'Something went wrong: ' + err});
-      })
+      }
+    })
   };
 
   if (community) {
@@ -484,8 +481,8 @@ function handleGetResources(req, res) {
 
     console.log(searchstring);
 
-    cdb.find({selector: selector})
-      .then(function (result) {
+    cdb.find({selector: selector}, function(err, result) {
+      if (!err) {
         result = formatFindResults(result);
 
         var newresponse = {};
@@ -505,22 +502,21 @@ function handleGetResources(req, res) {
           console.log('INFO: No Resources found!');
           res.status(400).send({message: 'No resources found!'});
         }
-      })
-      .catch(function (err) {
+      } else {
         console.log("WARNING: ", err);
         res.status(202).send({message: 'Something went wrong: ' + err});
-      });
-
+      }
+    })
   } else res.status(404).send({message: 'Please specify a location!'});
 }
 
-function getMore(selector, bookmark) {
+function getMore(selector, bookmark, callback) {
   return cdb.find({
     selector: selector,
     limit: 1000,
     bookmark: bookmark
-  })
-}
+  }, function(err, results) { callback(results)})
+};
 
 function handleGetTop(req, res) {
 
@@ -624,8 +620,8 @@ function handleGetTop(req, res) {
 
     cdb.find({
       selector: selector
-    })
-      .then(function (result) {
+    }, function(err, result) {
+      if (!err) {
         result = formatFindResults(result);
 
         var industries = [];
@@ -650,20 +646,20 @@ function handleGetTop(req, res) {
           entries: sortedIndustries
         };
 
-              top_results.company_parents = {
-                count: Object.keys(parents).reduce(function (previous, key) {
-                  return previous + parents[key].value;
-                }),
-                entries: sortedParents
-              };
+        top_results.company_parents = {
+          count: Object.keys(parents).reduce(function (previous, key) {
+            return previous + parents[key].value;
+          }),
+          entries: sortedParents
+        };
 
 
-            top_results.companies = {
-              count: result.docs.length,
-              entries: addkeys(result.docs)
-            };
+        top_results.companies = {
+          count: result.docs.length,
+          entries: addkeys(result.docs)
+        };
 
-            // get resources
+        // get resources
 
         selector = {
           "$and": [{
@@ -678,16 +674,16 @@ function handleGetTop(req, res) {
 
         cdb.find({
           selector: selector
-        })
-          .then(function (result) {
+        }, function(err, result) {
+          if (!err) {
             result = formatFindResults(result);
 
             top_results.resources = {
-                  count: result.docs.length,
-                  entries: addkeys(result.docs)
-                };
+              count: result.docs.length,
+              entries: addkeys(result.docs)
+            };
 
-                // get people & skills
+            // get people & skills
 
             selector = {
               "$and": [{
@@ -703,140 +699,138 @@ function handleGetTop(req, res) {
             cdb.find({
               selector: selector,
               limit: 1000
-            })
-              .then(function (result) {
+            }, function(err, result) {
+              if (!err) {
                 result = formatFindResults(result);
 
                 if (result.bookmark) {
-                  getMore(selector, result.bookmark)
-                    .then(function(more) {
-                      more = formatFindResults(more);
-                      var newresult = {};
-                      newresult["docs"] = result.docs.concat(more.docs);
-                      finish(newresult);
-                    });
+                  getMore(selector, result.bookmark, function(more) {
+                    more = formatFindResults(more);
+                    var newresult = {};
+                    newresult["docs"] = result.docs.concat(more.docs);
+                    finish(newresult);
+                  })
                 } else finish(result);
 
-                    var finish = function(result) {
+                var finish = function(result) {
 
-                      var skills = [];
-                      var parents = [];
+                  var skills = [];
+                  var parents = [];
 
-                      result.docs.forEach(function(r) {
-                        if (r.value.profile && r.value.profile.skills) skills = skills.concat(r.value.profile.skills);
-                        if (r.value.profile && r.value.profile.parents) parents = parents.concat(r.value.profile.parents);
-                      });
-
-                      skills = _.countBy(skills);
-                      parents = _.countBy(parents);
-
-                      var sortedSkills = sortcounts(skills, true);
-                      var sortedPeopleParents = sortcounts(parents);
-
-                        top_results.skills = {
-                          count: Object.keys(skills).reduce(function (previous, key) {
-                            return previous + skills[key].value;
-                          }),
-                          entries: sortedSkills
-                        };
-
-                        top_results.people_parents = {
-                          count: Object.keys(parents).reduce(function (previous, key) {
-                            return previous + parents[key].value;
-                          }),
-                          entries: sortedPeopleParents
-                        };
-
-
-                      top_results.people = {
-                        count: result.docs.length,
-                        entries: addkeys(result.docs)
-                      };
-
-                      // BEGIN PARENTS (this is mostly to avoid another api call that includes both companies and users)
-
-                      var c_labels = [],
-                        c_numbers = [],
-                        p_labels = [],
-                        p_numbers = [];
-
-                      for (c in top_results.company_parents.entries) {
-                        c_labels.push(c);
-                        c_numbers.push(top_results.company_parents.entries[c]);
-                      }
-
-                      for (p in top_results.people_parents.entries) {
-                        p_labels.push(p);
-                        p_numbers.push(top_results.people_parents.entries[p]);
-                      }
-
-                      top_results['parents'] = {
-                        labels: _.union(c_labels, p_labels),
-                        values: []
-                      };
-
-                      for (l in top_results.parents.labels) {
-                        var r = 0;
-                        if (c_numbers[c_labels.indexOf(top_results.parents.labels[l])]) {
-                          r += c_numbers[c_labels.indexOf(top_results.parents.labels[l])];
-                        }
-                        if (p_numbers[p_labels.indexOf(top_results.parents.labels[l])]) {
-                          r += p_numbers[p_labels.indexOf(top_results.parents.labels[l])];
-                        }
-                        top_results.parents.values.push(r);
-                      }
-                      var temp = [];
-                      for (a in top_results.parents.labels) {
-                        temp.push({
-                          label: top_results.parents.labels[a],
-                          value: top_results.parents.values[a]
-                        });
-                      }
-
-                      if (!_.isEmpty(temp)) {
-                        top_results.parents = _.orderBy(temp, 'value', 'desc');
-                      } else delete top_results.parents;
-
-                      delete top_results.people_parents;
-                      delete top_results.company_parents;
-
-                      // this is for dashboard view
-
-                      top_results.max = 0;
-                      if (top_results.parents) {
-                        for (val in top_results.parents) {
-                          top_results.max += top_results.parents[val].value;
-                        }
-                      }
-
-                      // END PARENTS
-
-                      top_results['key'] = community_key;
-
-                      if (!cache) res.status(200).send(top_results);
-
-                      mc.set(selector.toString(), JSON.stringify(top_results), function (err, val) {
-                        if (err) console.warn('WARNING: Memcache error: ', err)
-                      });
-                    }
-
-                  })
-                  .catch(function (err) {
-                    console.log("WARNING: ", err);
-                    res.status(202).send({message: 'Something went wrong: ' + err});
+                  result.docs.forEach(function(r) {
+                    if (r.value.profile && r.value.profile.skills) skills = skills.concat(r.value.profile.skills);
+                    if (r.value.profile && r.value.profile.parents) parents = parents.concat(r.value.profile.parents);
                   });
-              })
-              .catch(function (err) {
+
+                  skills = _.countBy(skills);
+                  parents = _.countBy(parents);
+
+                  var sortedSkills = sortcounts(skills, true);
+                  var sortedPeopleParents = sortcounts(parents);
+
+                  top_results.skills = {
+                    count: Object.keys(skills).reduce(function (previous, key) {
+                      return previous + skills[key].value;
+                    }),
+                    entries: sortedSkills
+                  };
+
+                  top_results.people_parents = {
+                    count: Object.keys(parents).reduce(function (previous, key) {
+                      return previous + parents[key].value;
+                    }),
+                    entries: sortedPeopleParents
+                  };
+
+
+                  top_results.people = {
+                    count: result.docs.length,
+                    entries: addkeys(result.docs)
+                  };
+
+                  // BEGIN PARENTS (this is mostly to avoid another api call that includes both companies and users)
+
+                  var c_labels = [],
+                    c_numbers = [],
+                    p_labels = [],
+                    p_numbers = [];
+
+                  for (c in top_results.company_parents.entries) {
+                    c_labels.push(c);
+                    c_numbers.push(top_results.company_parents.entries[c]);
+                  }
+
+                  for (p in top_results.people_parents.entries) {
+                    p_labels.push(p);
+                    p_numbers.push(top_results.people_parents.entries[p]);
+                  }
+
+                  top_results['parents'] = {
+                    labels: _.union(c_labels, p_labels),
+                    values: []
+                  };
+
+                  for (l in top_results.parents.labels) {
+                    var r = 0;
+                    if (c_numbers[c_labels.indexOf(top_results.parents.labels[l])]) {
+                      r += c_numbers[c_labels.indexOf(top_results.parents.labels[l])];
+                    }
+                    if (p_numbers[p_labels.indexOf(top_results.parents.labels[l])]) {
+                      r += p_numbers[p_labels.indexOf(top_results.parents.labels[l])];
+                    }
+                    top_results.parents.values.push(r);
+                  }
+                  var temp = [];
+                  for (a in top_results.parents.labels) {
+                    temp.push({
+                      label: top_results.parents.labels[a],
+                      value: top_results.parents.values[a]
+                    });
+                  }
+
+                  if (!_.isEmpty(temp)) {
+                    top_results.parents = _.orderBy(temp, 'value', 'desc');
+                  } else delete top_results.parents;
+
+                  delete top_results.people_parents;
+                  delete top_results.company_parents;
+
+                  // this is for dashboard view
+
+                  top_results.max = 0;
+                  if (top_results.parents) {
+                    for (val in top_results.parents) {
+                      top_results.max += top_results.parents[val].value;
+                    }
+                  }
+
+                  // END PARENTS
+
+                  top_results['key'] = community_key;
+
+                  if (!cache) res.status(200).send(top_results);
+
+                  mc.set(selector.toString(), JSON.stringify(top_results), function (err, val) {
+                    if (err) console.warn('WARNING: Memcache error: ', err)
+                  });
+                }
+              } else {
                 console.log("WARNING: ", err);
                 res.status(202).send({message: 'Something went wrong: ' + err});
-              });
-
-          })
-          .catch(function (err) {
+              }
+            })
+          } else {
             console.log("WARNING: ", err);
             res.status(202).send({message: 'Something went wrong: ' + err});
-          });
-      };
+          }
+        })
+      } else {
+        console.log("WARNING: ", err);
+        res.status(202).send({message: 'Something went wrong: ' + err});
+      }
+    })
+
+  };
 
   mc.get(selector.toString(), function (err, value) {
     if (value) {
@@ -856,9 +850,8 @@ function handleGetTop(req, res) {
 
     console.log('Updating settings for ' + settings.location_key + ' / ' + settings.community_key);
 
-    cdb.get(req.user)
-      .then(function (response) {
-
+    cdb.get(req.user, function(err, response) {
+      if (!err) {
         var user = response;
 
         // validate user has leader role within the location/community
@@ -867,8 +860,8 @@ function handleGetTop(req, res) {
 
           // update the community
 
-          cdb.get(settings.community_key)
-            .then(function (response) {
+          cdb.get(settings.community_key, function(err, response) {
+            if (!err) {
               if (response.type !== 'location') { // use community_profiles
                 if (response.community_profiles === undefined) { // create community_profiles
                   response['community_profiles'] = {};
@@ -885,32 +878,27 @@ function handleGetTop(req, res) {
                 }
               } else response.profile["embed"] = settings.embed;
 
-              db.insert(settings.community_key, response)
-                .then(function (finalres) {
+              cdb.insert(settings.community_key, response, function(err, finalres) {
+                if (!err) {
                   res.status(201).send({message: 'Community settings updated.'});
-                })
-                .catch(function (err) {
+                } else {
                   console.warn('WARNING: community466 ', err);
                   res.status(202).send({message: "Something went wrong."});
-                });
-
-            })
-            .catch(function (err) {
+                }
+              })
+            } else {
               console.warn('WARNING: community472 ', err);
               res.status(202).send({message: "Something went wrong."});
-            });
-
+            }
+          })
         } else {
           console.warn("User is not a leader in location: " + settings.location_key + " and community: " + settings.community_key + "!");
           res.status(202).send({message: 'Sorry, you must be a Leader in this community to change these settings.'});
         }
-      })
-
-      .catch(function (err) {
+      } else {
         console.warn("WARNING: community493", err);
-      });
-
-
+      }
+    })
   }
 
   function handleEditCommunity(req, res) {
@@ -921,9 +909,8 @@ function handleGetTop(req, res) {
 
     console.log('Editing community: ' + settings.community.profile.name + ' in ' + settings.location_key);
 
-    cdb.get(req.user)
-      .then(function (response) {
-
+    cdb.get(req.user, function(err, response) {
+      if (!err) {
         var user = response,
           leader = false;
 
@@ -942,8 +929,8 @@ function handleGetTop(req, res) {
 
           // check to see if the community exists
 
-          cdb.get(pathname)
-            .then(function (response) {
+          cdb.get(pathname, function(err, response) {
+            if (!err) {
               // go to .catch if community doesn't exist (on .get rather than .search)
               // if community already exists and it's the same type as what's being created, we're good to add the community profile here
 
@@ -977,9 +964,8 @@ function handleGetTop(req, res) {
                     response.communities.push(settings.location_key);
                   }
 
-                  cdb.insert(pathname, response)
-                    .then(function (finalres) {
-
+                  cdb.insert(pathname, response, function(err, finalres) {
+                    if (!err) {
                       update_user(req.user, 'leader', pathname, settings.location_key, function (good) {
                         if (good) {
                           res.status(201).send({message: 'Industry cluster created!'});
@@ -987,12 +973,11 @@ function handleGetTop(req, res) {
                           res.status(202).send({message: "Something went wrong."});
                         }
                       })
-                    })
-                    .catch(function (err) {
+                    } else {
                       console.warn('WARNING: community533 ', err);
                       res.status(202).send({message: "Something went wrong."});
-                    });
-
+                    }
+                  })
 
                 } else {
 
@@ -1017,14 +1002,14 @@ function handleGetTop(req, res) {
                       response.communities.push(settings.location_key);
                     }
 
-                    cdb.insert(pathname, response.body)
-                      .then(function (finalres) {
+                    cdb.insert(pathname, response.body, function(err, finalres) {
+                      if (!err) {
                         res.status(201).send({message: 'Successfully updated!'});
-                      })
-                      .catch(function (err) {
+                      } else {
                         console.warn('WARNING: ', err);
                         res.status(202).send({message: "Something went wrong."});
-                      });
+                      }
+                    })
 
                   } else res.status(202).send({message: settings.community.profile.name + ' already exists in this location. Please change the name or delete the other one first.'});
                 }
@@ -1032,48 +1017,35 @@ function handleGetTop(req, res) {
               } else {
                 res.status(202).send({message: 'That name is taken. Try changing the name.'});
               }
+            } else {
+              // no existing path, go ahead and create
 
-            })
-            .catch(function (err) {
+              var profile = schema.community(settings.community, settings.location_key);
 
-              if (err.statusCode == '404') {
+              cdb.insert(pathname, profile, function(err, finalres) {
+                if (!err) {
+                  update_user(req.user, 'leader', pathname, settings.location_key, function (good) {
+                    if (good) {
+                      res.status(201).send({message: 'Industry cluster created!'});
+                    } else res.status(202).send({message: "Something went wrong."});
 
-                // no existing path, go ahead and create
-
-                var profile = schema.community(settings.community, settings.location_key);
-
-                cdb.insert(pathname, profile)
-                  .then(function (finalres) {
-
-                    update_user(req.user, 'leader', pathname, settings.location_key, function (good) {
-                      if (good) {
-                        res.status(201).send({message: 'Industry cluster created!'});
-                      } else res.status(202).send({message: "Something went wrong."});
-
-                    })
                   })
-                  .catch(function (err) {
-                    console.warn('WARNING: community565 ', err);
-                    res.status(202).send({message: "Something went wrong."});
-                  });
-
-              } else {
-                console.warn('WARNING: community570', err);
-                res.status(202).send({message: "Something went wrong."});
-              }
-
-            });
+                } else {
+                  console.warn('WARNING: community565 ', err);
+                  res.status(202).send({message: "Something went wrong."});
+                }
+              })
+            }
+          })
 
         } else {
           console.warn("User is not a member of community: " + settings.community.key + " and location: " + settings.location_key + "!");
           res.status(202).send({message: 'You must be a member of this community to add to it.'});
         }
-      })
-
-      .catch(function (err) {
+      } else {
         console.warn("WARNING: community611", err);
-      });
-
+      }
+    })
   }
 
   function handleDeleteCommunity(req, res) {
@@ -1083,9 +1055,8 @@ function handleGetTop(req, res) {
 
     console.log('Deleting community: ' + settings.community.profile.name + ' in ' + settings.location_key);
 
-    cdb.get(req.user)
-      .then(function (response) {
-
+    cdb.get(req.user, function(err, response) {
+      if (!err) {
         var user = response;
 
         // validate user is a leader of the community in this location
@@ -1094,9 +1065,8 @@ function handleGetTop(req, res) {
 
           // get the community
 
-          cdb.get(settings.community.key)
-            .then(function (response) {
-
+          cdb.get(settings.community.key, function(err, response) {
+            if (!err) {
               // remove the location profile
 
               if (response.type && (response.type == "cluster" || response.resource) && response.type == settings.community.type) {
@@ -1132,129 +1102,115 @@ function handleGetTop(req, res) {
                       }
                     })
                   }
-                }
+                };
 
                 if (response.communities.length == 0) {
 
                   // delete the whole thing
 
-                  db.remove(process.env.DB_COMMUNITIES, settings.community.key, 'true')
-                    .then(function (finalres) {
+                  cdb.destroy(settings.community.key, function(err, finalres) {
+                    if (!err) {
                       wrapup();
-                    })
-                    .catch(function (err) {
+                    } else {
                       console.warn('WARNING: community620', err);
                       res.status(202).send({message: "Something went wrong."});
-                    });
+                    }
+                  })
 
                 } else {
 
-                  cdb.insert(settings.community.key, response)
-                    .then(function (finalres) {
+                  cdb.insert(settings.community.key, response, function(err, finalres) {
+                    if (!err) {
                       wrapup();
-                    })
-                    .catch(function (err) {
+                    } else {
                       console.warn('WARNING: community629 ', err);
                       res.status(202).send({message: "Something went wrong."});
-                    });
+                    }
+                  })
                 }
 
               } else {
                 console.log('WARNING: Cannot delete community');
                 res.status(202).send({message: "You can't delete " + settings.community.profile.name + " for some reason, but we've been notified and will look into it."});
               }
-
-            })
-            .catch(function (err) {
-
+            } else {
               console.warn('WARNING: community644', err);
               res.status(202).send({message: "Something went wrong."});
-
-            });
+            }
+          })
 
         } else {
           console.warn("User is not a member of community: " + settings.community.key + " and location: " + settings.location_key + "!");
           res.status(202).send({message: 'You must be a leader of this community to delete it.'});
         }
-      })
-
-      .catch(function (err) {
+      } else {
         console.warn("WARNING: community699", err);
-      });
-
+      }
+    })
   }
 
   var update_user = function (user_key, role, community_key, location_key, callback) {
 
-    cdb.get(user_key)
-      .then(function (response) {
+    cdb.get(user_key, function(err, response) {
+      if (!err) {
+        // add role
 
-        if (response.code !== "items_not_found") {
+        if (!response.roles) {
+          response["roles"] = {};
+        }
 
-          // add role
+        if (role == 'delete') {
 
-          if (!response.roles) {
-            response["roles"] = {};
-          }
-
-          if (role == 'delete') {
-
-            try {
-              if (response.roles.leader[community_key].indexOf(location_key) > -1) {
-                response.roles.leader[community_key].splice(response.roles.leader[community_key].indexOf(location_key), 1);
-              }
-              if (response.roles.leader[community_key].length == 0) {
-                delete response.roles.leader[community_key]
-              }
-              if (response.communities.indexOf(community_key) > -1) {
-                response.communities.splice(response.communities.indexOf(community_key), 1);
-              }
+          try {
+            if (response.roles.leader[community_key].indexOf(location_key) > -1) {
+              response.roles.leader[community_key].splice(response.roles.leader[community_key].indexOf(location_key), 1);
             }
-            catch (e) {
+            if (response.roles.leader[community_key].length == 0) {
+              delete response.roles.leader[community_key]
             }
-
-          } else {
-
-            if (!response.roles[role]) {
-              response.roles[role] = {};
-              response.roles[role][community_key] = [location_key];
-            } else if (!response.roles[role][community_key]) {
-              response.roles[role][community_key] = [location_key];
-            } else if (response.roles[role][community_key].indexOf(location_key) < 0) {
-              response.roles[role][community_key].push(location_key);
-            } // else the damn thing is already there
-
-            // add community
-
-            if (!response.communities) {
-              response["communities"] = {};
-            }
-
-            if (response.communities.indexOf(community_key) < 0) {
-              response.communities.push(community_key);
+            if (response.communities.indexOf(community_key) > -1) {
+              response.communities.splice(response.communities.indexOf(community_key), 1);
             }
           }
-
-          cdb.insert(user_key, response)
-            .then(function (result) {
-              console.log('User ' + user_key + ' updated with community role.');
-              callback(true);
-            })
-            .catch(function (err) {
-              console.warn("WARNING: community706", err);
-              callback(false);
-            });
+          catch (e) {
+          }
 
         } else {
-          console.warn('WARNING:  User not found.');
-          callback(false);
-        }
-      })
 
-      .catch(function (err) {
+          if (!response.roles[role]) {
+            response.roles[role] = {};
+            response.roles[role][community_key] = [location_key];
+          } else if (!response.roles[role][community_key]) {
+            response.roles[role][community_key] = [location_key];
+          } else if (response.roles[role][community_key].indexOf(location_key) < 0) {
+            response.roles[role][community_key].push(location_key);
+          } // else the damn thing is already there
+
+          // add community
+
+          if (!response.communities) {
+            response["communities"] = {};
+          }
+
+          if (response.communities.indexOf(community_key) < 0) {
+            response.communities.push(community_key);
+          }
+        }
+
+        cdb.insert(user_key, response, function(err, result) {
+          if (!err) {
+            console.log('User ' + user_key + ' updated with community role.');
+            callback(true);
+          } else {
+            console.warn("WARNING: community706", err);
+            callback(false);
+          }
+        })
+      } else {
         console.warn("WARNING: community715", err);
         callback(false);
-      });
+      }
+    })
   };
 
   var rename_community = function (old_community_key, location_key, new_community_key) {
@@ -1343,8 +1299,8 @@ function handleGetTop(req, res) {
     console.log('Pulling key: ' + req.params.key);
 
     function pullKey() {
-      cdb.get(req.params.key)
-        .then(function (result) {
+      cdb.get(req.params.key, function(err, result) {
+        if (!err) {
           if (result.statusCode == 200) {
             result["key"] = req.params.key;
             res.status(200).send(result);
@@ -1352,15 +1308,15 @@ function handleGetTop(req, res) {
             console.warn('WARNING: Key not found!');
             res.status(202).send({message: 'Key not found.'});
           }
-        })
-        .catch(function (err) {
+        } else {
           if (err.statusCode == 404) {
             res.status(404).end();
           } else {
             console.log("WARNING: community737:", err);
             res.status(202).send({message: "Something went wrong."});
           }
-        });
+        }
+      })
     }
 
     pullKey();
