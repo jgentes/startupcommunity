@@ -574,15 +574,14 @@ function handleGetTop(req, res) {
   var addkeys = function (data) {
     for (i in data) {
       // delete sensitive data
-      if (data[i].doc.value.profile.password) delete data[i].doc.value.profile.password;
-      if (data[i].doc.value.profile.email) delete data[i].doc.value.profile.email;
-      if (data[i].doc.value.newsletter) delete data[i].doc.value.newsletter;
-      if (data[i].doc.value.profile.linkedin) {
-        if (data[i].doc.value.profile.linkedin.emailAddress) delete data[i].doc.value.profile.linkedin.emailAddress;
-        if (data[i].doc.value.profile.linkedin.access_token) delete data[i].doc.value.profile.linkedin.access_token;
+      if (data[i].value.profile.password) delete data[i].value.profile.password;
+      if (data[i].value.profile.email) delete data[i].value.profile.email;
+      if (data[i].value.newsletter) delete data[i].value.newsletter;
+      if (data[i].value.profile.linkedin) {
+        if (data[i].value.profile.linkedin.emailAddress) delete data[i].value.profile.linkedin.emailAddress;
+        if (data[i].value.profile.linkedin.access_token) delete data[i].value.profile.linkedin.access_token;
       }
-      data[i].doc.value["key"] = data[i].id;
-      data[i] = data[i].doc;
+      data[i].value["key"] = data[i].path.key;
     }
     return data;
   };
@@ -629,32 +628,39 @@ function handleGetTop(req, res) {
       .then(function (result) {
         result = formatFindResults(result);
 
-            if (result.counts && result.counts['profile.industries']) {
-              var sortedIndustries = sortcounts(result.counts['profile.industries'], true);
+        var industries = [];
+        var parents = [];
 
-              top_results.industries = {
-                count: Object.keys(result.counts['profile.industries']).reduce(function (previous, key) {
-                  return previous + result.counts['profile.industries'][key].value;
-                }),
-                entries: sortedIndustries
-              };
+        // create array of items
+        result.docs.forEach(function(r) {
+          if (r.value.profile && r.value.profile.industries) industries = industries.concat(r.value.profile.industries);
+          if (r.value.profile && r.value.profile.parents) parents = parents.concat(r.value.profile.parents);
+        });
 
-            }
+        industries = _.countBy(industries);
+        parents = _.countBy(parents);
 
-            if (result.counts && result.counts['profile.parents']) {
-              var sortedParents = sortcounts(result.counts['profile.parents']);
+        var sortedIndustries = sortcounts(industries, true);
+        var sortedParents = sortcounts(parents);
+
+        top_results.industries = {
+          count: Object.keys(industries).reduce(function (previous, key) {
+            return previous + industries[key].value;
+          }),
+          entries: sortedIndustries
+        };
 
               top_results.company_parents = {
-                count: Object.keys(result.counts['profile.parents']).reduce(function (previous, key) {
-                  return previous + result.counts['profile.parents'][key].value;
+                count: Object.keys(parents).reduce(function (previous, key) {
+                  return previous + parents[key].value;
                 }),
                 entries: sortedParents
               };
-            }
+
 
             top_results.companies = {
-              count: result.total_rows,
-              entries: addkeys(result.rows)
+              count: result.docs.length,
+              entries: addkeys(result.docs)
             };
 
             // get resources
@@ -677,8 +683,8 @@ function handleGetTop(req, res) {
             result = formatFindResults(result);
 
             top_results.resources = {
-                  count: result.total_rows,
-                  entries: addkeys(result.rows)
+                  count: result.docs.length,
+                  entries: addkeys(result.docs)
                 };
 
                 // get people & skills
@@ -700,7 +706,7 @@ function handleGetTop(req, res) {
             })
               .then(function (result) {
                 result = formatFindResults(result);
-                console.log(result.docs.length);
+
                 if (result.bookmark) {
                   getMore(selector, result.bookmark)
                     .then(function(more) {
@@ -713,31 +719,38 @@ function handleGetTop(req, res) {
 
                     var finish = function(result) {
 
-                      if (result.counts && result.counts['profile.skills']) {
-                        var sortedSkills = sortcounts(result.counts['profile.skills'], true);
+                      var skills = [];
+                      var parents = [];
+
+                      result.docs.forEach(function(r) {
+                        if (r.value.profile && r.value.profile.skills) skills = skills.concat(r.value.profile.skills);
+                        if (r.value.profile && r.value.profile.parents) parents = parents.concat(r.value.profile.parents);
+                      });
+
+                      skills = _.countBy(skills);
+                      parents = _.countBy(parents);
+
+                      var sortedSkills = sortcounts(skills, true);
+                      var sortedPeopleParents = sortcounts(parents);
 
                         top_results.skills = {
-                          count: Object.keys(result.counts['profile.skills']).reduce(function (previous, key) {
-                            return previous + result.counts['profile.skills'][key].value;
+                          count: Object.keys(skills).reduce(function (previous, key) {
+                            return previous + skills[key].value;
                           }),
                           entries: sortedSkills
                         };
-                      }
-
-                      if (result.counts && result.counts['profile.parents']) {
-                        var sortedPeopleParents = sortcounts(result.counts['profile.parents']);
 
                         top_results.people_parents = {
-                          count: Object.keys(result.counts['profile.parents']).reduce(function (previous, key) {
-                            return previous + result.counts['profile.parents'][key].value;
+                          count: Object.keys(parents).reduce(function (previous, key) {
+                            return previous + parents[key].value;
                           }),
                           entries: sortedPeopleParents
                         };
-                      }
+
 
                       top_results.people = {
-                        count: result.total_rows,
-                        entries: addkeys(result.rows)
+                        count: result.docs.length,
+                        entries: addkeys(result.docs)
                       };
 
                       // BEGIN PARENTS (this is mostly to avoid another api call that includes both companies and users)
