@@ -1,74 +1,74 @@
 var Q = require('q'),
-    request = require('request'),
-    url = require('url'),
-    CommunityApi = require(__dirname + '/community.api.js'),
-    communityApis = new CommunityApi(),
-    aws = require('aws-sdk'),
+  request = require('request'),
+  url = require('url'),
+  CommunityApi = require(__dirname + '/community.api.js'),
+  communityApis = new CommunityApi(),
+  aws = require('aws-sdk'),
   Cloudant = require('cloudant'),
   cloudant = Cloudant({
     account: process.env.DB_ACCOUNT,
     password: process.env.DB_PASSWORD,
-    plugin: 'promises'
+    plugin: 'retry'
   }),
   cdb = cloudant.db.use(process.env.DB_COMMUNITIES),
   cdb_messages = cloudant.db.use(process.env.DB_MESSAGES);
 
 //require('request-debug')(request); // Very useful for debugging oauth and api req/res
 
-var CompanyApi = function() {
-        this.companySearch = handleCompanySearch;
-        this.addCompany = handleAddCompany;
-        this.deleteCompany = handleDeleteCompany;
-        this.getLogoUrl = handleGetLogoUrl;
-        this.checkUrl = handleCheckUrl;
+var CompanyApi = function () {
+  this.companySearch = handleCompanySearch;
+  this.addCompany = handleAddCompany;
+  this.deleteCompany = handleDeleteCompany;
+  this.getLogoUrl = handleGetLogoUrl;
+  this.checkUrl = handleCheckUrl;
 };
 
 var schema = {
-    company: function (profile, location_key, community_key) {
+  company: function (profile, location_key, community_key) {
 
-        var communities = location_key == community_key ?
-            [location_key] :
-            [location_key, community_key];
+    var communities = location_key == community_key ?
+      [location_key] :
+      [location_key, community_key];
 
-        var newprofile = {
-            "type": "company",
-            "resource": profile.resource,
-            "resource_types": profile.resource_types,
-            "profile": {
-                "home": location_key,
-                "name": profile.name,
-                "parents": [profile.parent.toLowerCase()],
-                "headline": profile.headline,
-                "summary": profile.summary,
-                "avatar": profile.avatar || "",
-                "stage": profile.stage,
-                "industries": profile.industries,
-                "website": profile.website,
-                "address": {
-                    "street": profile.street,
-                    "city": profile.city,
-                    "state": profile.state
-                },
-                "angellist": {
-                    "id": profile.id,
-                    "angellist_url": profile.angellist_url
-                }
-            },
-            "community_profiles": {},
-            "communities": communities
-        };
+    var newprofile = {
+      "type": "company",
+      "resource": profile.resource,
+      "resource_types": profile.resource_types,
+      "profile": {
+        "home": location_key,
+        "name": profile.name,
+        "parents": [profile.parent.toLowerCase()],
+        "headline": profile.headline,
+        "summary": profile.summary,
+        "avatar": profile.avatar || "",
+        "stage": profile.stage,
+        "industries": profile.industries,
+        "website": profile.website,
+        "address": {
+          "street": profile.street,
+          "city": profile.city,
+          "state": profile.state
+        },
+        "angellist": {
+          "id": profile.id,
+          "angellist_url": profile.angellist_url
+        }
+      },
+      "community_profiles": {},
+      "communities": communities
+    };
 
-        newprofile.community_profiles[location_key] = newprofile.profile;
+    newprofile.community_profiles[location_key] = newprofile.profile;
 
-        return newprofile;
-    }
+    return newprofile;
+  }
 };
 
 function formatSearchResults(items) {
   if (items.rows && items.rows.length) {
     for (i in items.rows) {
       items.rows[i].doc = {
-        path: { key: items.rows[i].id },
+        path: {key: items.rows[i].id},
         value: items.rows[i].doc
       };
     }
@@ -80,7 +80,7 @@ function formatFindResults(items) {
   if (items.docs && items.docs.length) {
     for (i in items.docs) {
       items.docs[i] = {
-        path: { key: items.docs[i]._id },
+        path: {key: items.docs[i]._id},
         value: items.docs[i]
       };
     }
@@ -88,16 +88,16 @@ function formatFindResults(items) {
   return items;
 }
 
-function handleCompanySearch(req, res){
-        var communities = req.query.communities,
-            clusters = req.query.clusters,
-            stages = req.query.stages,
-            types = req.query.types,
-            query = req.query.query,
-            limit = req.query.limit,
-            offset = req.query.offset,
-            get_resources = req.query.get_resources,
-            key = req.query.api_key;
+function handleCompanySearch(req, res) {
+  var communities = req.query.communities,
+    clusters = req.query.clusters,
+    stages = req.query.stages,
+    types = req.query.types,
+    query = req.query.query,
+    limit = req.query.limit,
+    offset = req.query.offset,
+    get_resources = req.query.get_resources,
+    key = req.query.api_key;
 
   var allowed = false;
   var userperms;
@@ -105,36 +105,38 @@ function handleCompanySearch(req, res){
   //console.log(key); //concern is that a passed in key is new and overwrites existing key
 
   // create searchstring
-  var selector = {"$and": [
-    {"type": "company"}
-  ]};
+  var selector = {
+    "$and": [
+      {"type": "company"}
+    ]
+  };
   searchstring = 'communities:(';
   var state = "";
-/*
-  if (communities) {
-    for (c in communities) {
+  /*
+   if (communities) {
+   for (c in communities) {
 
-      // determine whether one of the communities is a state
-      var state_suffix = communityApis.convert_state(communities[c].replace('-',' '), 'abbrev'); // returns false if no match
+   // determine whether one of the communities is a state
+   var state_suffix = communityApis.convert_state(communities[c].replace('-',' '), 'abbrev'); // returns false if no match
 
-      if (state_suffix) {
-        var state = " AND profile.home: (" + communities[c] + " OR *-" + state_suffix.toLowerCase() + ")";
-        var remove = communities.indexOf(communities[c]);
-        if (remove > -1) communities.splice(remove, 1); // to avoid issues with length check
-        if (communities.length == 0) searchstring += "*";
-      } else {
-        searchstring += communities[c];
-        if (c < (communities.length - 1)) { searchstring += ' AND '; }
-      }
-    }
-  } else searchstring += '*';*/
+   if (state_suffix) {
+   var state = " AND profile.home: (" + communities[c] + " OR *-" + state_suffix.toLowerCase() + ")";
+   var remove = communities.indexOf(communities[c]);
+   if (remove > -1) communities.splice(remove, 1); // to avoid issues with length check
+   if (communities.length == 0) searchstring += "*";
+   } else {
+   searchstring += communities[c];
+   if (c < (communities.length - 1)) { searchstring += ' AND '; }
+   }
+   }
+   } else searchstring += '*';*/
   selector["$and"].push({"communities": {"$in": communities}});
 
- /* if (get_resources === "true") {
-    searchstring += ") AND resource: true" + state;
-  } else searchstring += ")" + (state ? " AND" + state : '');*/
+  /* if (get_resources === "true") {
+   searchstring += ") AND resource: true" + state;
+   } else searchstring += ")" + (state ? " AND" + state : '');*/
 
- if (get_resources == "true") selector["$and"].push({"resource": true});
+  if (get_resources == "true") selector["$and"].push({"resource": true});
 
   if (clusters && clusters.length > 0 && clusters[0] !== '*') {
 
@@ -147,44 +149,44 @@ function handleCompanySearch(req, res){
       }
     );
     /*
-    clusters = clusters.splice(',');
-    searchstring += ' AND (';
+     clusters = clusters.splice(',');
+     searchstring += ' AND (';
 
-    var clusterstring = '';
+     var clusterstring = '';
 
-    if (clusters.indexOf('all') < 0) clusters.push('all');
+     if (clusters.indexOf('all') < 0) clusters.push('all');
 
-    for (i in clusters) {
-      clusterstring += clusters[i];
-      if (i < (clusters.length - 1)) { clusterstring += ' OR '; }
-    }
+     for (i in clusters) {
+     clusterstring += clusters[i];
+     if (i < (clusters.length - 1)) { clusterstring += ' OR '; }
+     }
 
-    searchstring += 'profile.industries:(' + clusterstring + ') OR profile.parents:(' + clusterstring + '))'; // scope to industries within the cluster
-    */
+     searchstring += 'profile.industries:(' + clusterstring + ') OR profile.parents:(' + clusterstring + '))'; // scope to industries within the cluster
+     */
 
   }
   if (stages && stages.length > 0 && stages[0] !== '*') {
-    selector["$and"].push({"profile.stage":{"$in": stages}});
-   /* stages = stages.splice(',');
-    searchstring += ' AND (';
+    selector["$and"].push({"profile.stage": {"$in": stages}});
+    /* stages = stages.splice(',');
+     searchstring += ' AND (';
 
-    for (i in stages) {
-      searchstring += "profile.stage:" + stages[i]; // scope to stage
-      if (i < (stages.length - 1)) { searchstring += ' OR '; }
-    }
-    searchstring += ')';*/
+     for (i in stages) {
+     searchstring += "profile.stage:" + stages[i]; // scope to stage
+     if (i < (stages.length - 1)) { searchstring += ' OR '; }
+     }
+     searchstring += ')';*/
   }
 
   if (types && types.length > 0 && types[0] !== '*') {
-    selector["$and"].push({"resource_types":{"$in": types}});
+    selector["$and"].push({"resource_types": {"$in": types}});
     /*types = types.splice(',');
-    searchstring += ' AND (';
+     searchstring += ' AND (';
 
-    for (i in types) {
-      searchstring += "resource_types:" + types[i]; // scope to stage
-      if (i < (types.length - 1)) { searchstring += ' OR '; }
-    }
-    searchstring += ')';*/
+     for (i in types) {
+     searchstring += "resource_types:" + types[i]; // scope to stage
+     if (i < (types.length - 1)) { searchstring += ' OR '; }
+     }
+     searchstring += ')';*/
   }
 
 
@@ -195,382 +197,388 @@ function handleCompanySearch(req, res){
 
   console.log('Pulling Companies: ', selector);
 
-    cdb.find({selector: selector, skip: Number(offset) || 0, limit: Number(limit) || 16})
-      .then(function(result){
-        result = formatFindResults(result);
+  cdb.find({selector: selector, skip: Number(offset) || 0, limit: Number(limit) || 16}, function (err, result) {
+    if (!err) {
+      result = formatFindResults(result);
 
-        var i;
+      var i;
 
-        try {
-          for (i=0; i < result.docs.length; i++) {
+      try {
+        for (i = 0; i < result.docs.length; i++) {
 
-            result.docs[i].value["key"] = result.docs[i].path.key;
-          }
-        } catch (error) {
-          console.warn('WARNING: company144 ', error);
+          result.docs[i].value["key"] = result.docs[i].path.key;
         }
+      } catch (error) {
+        console.warn('WARNING: company144 ', error);
+      }
 
-        result.next =
-          '/api/2.1/companies?communities[]=' + req.query.communities +
-          '&clusters[]=' + (req.query.clusters || '*') +
-          '&stages[]=' + (req.query.stages || '*') +
-          '&types=' + (req.query.types || '*') +
-          '&limit=' + (Number(req.query.limit) || 16) +
-          '&offset=' + ((Number(req.query.offset) || 0) + (Number(req.query.limit) || 16)) +
-          '&get_resources=' + (req.query.get_resources || false) +
-          '&query=' + (req.query.query || '*');
+      result.next =
+        '/api/2.1/companies?communities[]=' + req.query.communities +
+        '&clusters[]=' + (req.query.clusters || '*') +
+        '&stages[]=' + (req.query.stages || '*') +
+        '&types=' + (req.query.types || '*') +
+        '&limit=' + (Number(req.query.limit) || 16) +
+        '&offset=' + ((Number(req.query.offset) || 0) + (Number(req.query.limit) || 16)) +
+        '&get_resources=' + (req.query.get_resources || false) +
+        '&query=' + (req.query.query || '*');
 
-        result.prev =
-          '/api/2.1/compaies?communities[]=' + req.query.communities +
-          '&clusters[]=' + (req.query.clusters || '*') +
-          '&stages[]=' + (req.query.stages || '*') +
-          '&types=' + (req.query.types || '*') +
-          '&limit=' + (Number(req.query.limit) || 16) +
-          '&offset=' + (req.query.offset ? (Number(req.query.offset) - ((Number(req.query.limit) || 16))) : 0) +
-          '&get_resources=' + (req.query.get_resources || false) +
-          '&query=' + (req.query.query || '*');
+      result.prev =
+        '/api/2.1/compaies?communities[]=' + req.query.communities +
+        '&clusters[]=' + (req.query.clusters || '*') +
+        '&stages[]=' + (req.query.stages || '*') +
+        '&types=' + (req.query.types || '*') +
+        '&limit=' + (Number(req.query.limit) || 16) +
+        '&offset=' + (req.query.offset ? (Number(req.query.offset) - ((Number(req.query.limit) || 16))) : 0) +
+        '&get_resources=' + (req.query.get_resources || false) +
+        '&query=' + (req.query.query || '*');
 
-        result.results = result.docs;
-        delete result.docs;
+      result.results = result.docs;
+      delete result.docs;
 
-        res.send(result);
-
-      })
-      .catch(function(err){
-        console.log('WARNING: ', err);
-        res.send({message:err.message});
-      });
+      res.send(result);
+    } else {
+      console.log('WARNING: ', err);
+      res.send({message: err.message});
+    }
+  })
 }
 
 function handleGetLogoUrl(req, res) {
-    // req data is guaranteed by ensureauth
-    var company_name = req.query.company_name,
-        filename = req.query.filename;
+  // req data is guaranteed by ensureauth
+  var company_name = req.query.company_name,
+    filename = req.query.filename;
 
-    aws.config.update({
-        accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-        secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
-        signatureVersion: 'v4',
-        region: 'us-west-2'
-    });
+  aws.config.update({
+    accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+    signatureVersion: 'v4',
+    region: 'us-west-2'
+  });
 
-    var s3 = new aws.S3();
-    var s3_params = {
-        Bucket: process.env.AWS_BUCKET,
-        Key:  'logos/' + company_name + '_' + filename,
-        Expires: 60,
-        ACL: 'public-read'
-    };
-    s3.getSignedUrl('putObject', s3_params, function (err, signedUrl) {
-        var parsedUrl = url.parse(signedUrl);
-        parsedUrl.search = null;
-        var objectUrl = url.format(parsedUrl);
+  var s3 = new aws.S3();
+  var s3_params = {
+    Bucket: process.env.AWS_BUCKET,
+    Key: 'logos/' + company_name + '_' + filename,
+    Expires: 60,
+    ACL: 'public-read'
+  };
+  s3.getSignedUrl('putObject', s3_params, function (err, signedUrl) {
+    var parsedUrl = url.parse(signedUrl);
+    parsedUrl.search = null;
+    var objectUrl = url.format(parsedUrl);
 
-        if (!err) {
-            res.send({ put: signedUrl, get: objectUrl });
-        } else res.status(400).send({ message: "Something went wrong." });
+    if (!err) {
+      res.send({put: signedUrl, get: objectUrl});
+    } else res.status(400).send({message: "Something went wrong."});
 
-    });
+  });
 }
 
 function handleAddCompany(req, res) {
-    // always use ensureAuth before this (to acquire req.user)
-    var addCompany = req.body.params;
+  // always use ensureAuth before this (to acquire req.user)
+  var addCompany = req.body.params;
 
-    var go = function() {
-        // validate user is a member in the location/community
-        cdb.get(req.user)
-            .then(function(response){
-                console.log(addCompany);
+  var go = function () {
+    // validate user is a member in the location/community
+    cdb.get(req.user, function (err, response) {
+      if (!err) {
+        console.log(addCompany);
 
-                var user = response,
-                    update = false;
+        var user = response,
+          update = false;
 
-                if (!addCompany.location_key) addCompany.location_key = addCompany.community_key;
+        if (!addCompany.location_key) addCompany.location_key = addCompany.community_key;
 
-                if (user.communities.indexOf(addCompany.location_key) < 0) {
-                    res.status(202).send({ message: 'You must be a member of this community to add a company.' });
-                } else if (!addCompany.community_key || (user.roles && user.roles.leader && user.roles.leader[addCompany.community_key] && user.roles.leader[addCompany.community_key].indexOf(addCompany.location_key) < 0)) {
-                    console.warn("No community specified, or user is not a leader in community: " + addCompany.community_key + " for location: " + addCompany.location_key + "!");
-                    addCompany.community_key = addCompany.location_key;
-                }
+        if (user.communities.indexOf(addCompany.location_key) < 0) {
+          res.status(202).send({message: 'You must be a member of this community to add a company.'});
+        } else if (!addCompany.community_key || (user.roles && user.roles.leader && user.roles.leader[addCompany.community_key] && user.roles.leader[addCompany.community_key].indexOf(addCompany.location_key) < 0)) {
+          console.warn("No community specified, or user is not a leader in community: " + addCompany.community_key + " for location: " + addCompany.location_key + "!");
+          addCompany.community_key = addCompany.location_key;
+        }
 
-                var company = schema.company(addCompany.profile, addCompany.location_key, addCompany.community_key);
+        var company = schema.company(addCompany.profile, addCompany.location_key, addCompany.community_key);
 
-                var post = function() {
-                    companyPost(company, addCompany.role, addCompany.location_key, req.user, addCompany.key, update, function(result) {
-                        res.status(result.status).send(result.data);
-                    });
-                };
+        var post = function () {
+          companyPost(company, addCompany.role, addCompany.location_key, req.user, addCompany.key, update, function (result) {
+            res.status(result.status).send(result.data);
+          });
+        };
 
-                // add company
+        // add company
 
-                if (!addCompany.key) {
-                    addCompany.key = addCompany.profile.url.toLowerCase();
-                    post();
-                } else if (addCompany.key && (addCompany.key !== addCompany.profile.url)) {
-                    res.status(202).send({ message: 'Sorry, a url path cannot be changed.'})
-                } else {
-                    update = true;
-                    post();
-                }
-
-                /*
-                 } else {
-                 console.warn("User is not a member of community: " + addCompany.community_key + " and location: " + addCompany.location_key + "!");
-                 res.status(400).send({ message: 'You must be a member of this community and/or a leader of this resource to add a company to it.' });
-                 }
-                 */
-
-            })
-
-            .catch(function(err){
-                console.warn("WARNING: ", err);
-                res.status(400).send({ message: "Something went wrong. We have been alerted and will take a look and get back to you." });
-            });
-    };
-
-    if (!addCompany.profile) {
-        console.warn("No company specified!");
-        res.status(400).send({ message: 'Some information was missing.' });
-    } else {
-        console.log('Adding company ' + addCompany.profile.name + ' to ' + addCompany.location_key + ' / ' + addCompany.community_key);
-
-        // if no existing key is provided, validate the company.url doesn't already exist
         if (!addCompany.key) {
-            cdb.get(addCompany.profile.url)
-                .then(function() {
-                    res.status(400).send({ message: 'That url is already in use. Please specify a different url path.'})
-                })
-                .catch(function() {
-                    // url is good
-                    go();
-                })
+          addCompany.key = addCompany.profile.url.toLowerCase();
+          post();
+        } else if (addCompany.key && (addCompany.key !== addCompany.profile.url)) {
+          res.status(202).send({message: 'Sorry, a url path cannot be changed.'})
+        } else {
+          update = true;
+          post();
+        }
 
-        } else go();
+        /*
+         } else {
+         console.warn("User is not a member of community: " + addCompany.community_key + " and location: " + addCompany.location_key + "!");
+         res.status(400).send({ message: 'You must be a member of this community and/or a leader of this resource to add a company to it.' });
+         }
+         */
 
-    }
+      } else {
+        console.warn("WARNING: ", err);
+        res.status(400).send({message: "Something went wrong. We have been alerted and will take a look and get back to you."});
+      }
+    })
+
+  };
+
+  if (!addCompany.profile) {
+    console.warn("No company specified!");
+    res.status(400).send({message: 'Some information was missing.'});
+  } else {
+    console.log('Adding company ' + addCompany.profile.name + ' to ' + addCompany.location_key + ' / ' + addCompany.community_key);
+
+    // if no existing key is provided, validate the company.url doesn't already exist
+    if (!addCompany.key) {
+      cdb.get(addCompany.profile.url, function (err, result) {
+        if (!err) {
+          go();
+        } else {
+          res.status(400).send({message: 'That url is already in use. Please specify a different url path.'})
+        }
+      })
+
+    } else go();
+
+  }
 }
 
 function handleDeleteCompany(req, res) {
 
-    // always use ensureAuth before this (to acquire req.user)
-    var params = req.body.params;
+  // always use ensureAuth before this (to acquire req.user)
+  var params = req.body.params;
 
-    var delete_it = function() {
+  var delete_it = function () {
 
-        // pull it first to make sure it's a company
+    // pull it first to make sure it's a company
 
-        cdb.get(params.company_key)
-            .then(function(response) {
+    cdb.get(params.company_key, function (err, response) {
+      if (!err) {
+        if (response.type == 'company') {
 
-                if (response.type == 'company') {
+          cdb.destroy(params.company_key, function (err, response) {
+            if (!err) {
+              // company has been deleted, now delete references in user records
+              cdb.search('communities', 'communitySearch', {
+                q: 'type:user AND roles:' + params.company_key,
+                include_docs: true
+              }, function (err, flush) {
+                if (!err) {
+                  flush = formatSearchResults(flush);
 
-                    cdb.destroy(params.company_key)
-                        .then(function () {
+                  for (r in flush.rows) {
+                    var flush_key = flush.rows[r].path.key,
+                      flush_value = flush.rows[r].value;
 
-                            // company has been deleted, now delete references in user records
-                          cdb.search('communities', 'communitySearch', {q: 'type:user AND roles:' + params.company_key, include_docs: true})
-                            .then(function (flush) {
-                              flush = formatSearchResults(flush);
+                    for (i in flush_value.roles) {
+                      for (c in flush_value.roles[i]) {
+                        if (c == params.company_key) {
+                          delete flush_value.roles[i][c];
 
-                                    for (r in flush.rows) {
-                                        var flush_key = flush.rows[r].path.key,
-                                            flush_value = flush.rows[r].value;
-                                        
-                                        for (i in flush_value.roles) {
-                                            for (c in flush_value.roles[i]) {
-                                                if (c == params.company_key) {
-                                                    delete flush_value.roles[i][c];
-                                                    
-                                                }
-                                            }
-                                        }
-                                        
-                                        // remove from communities
-                                        if (flush_value.communities.indexOf(params.company_key) > -1) {
-                                            var findex = flush_value.communities.indexOf(params.company_key);
-                                            flush_value.communities.splice(findex, 1);
-                                        }
-
-
-                                        cdb.insert(flush_key, flush_value)
-                                            .then(function(response) {
-                                                console.log('Deleted ' + params.company_key + ' from ' + flush_key);
-                                            })
-                                        
-                                    }
-                                    res.status(204).send({message: 'Company deleted!'});
-                                })
-                                .catch(function (err) {
-                                    console.log("WARNING: ", err);
-                                    res.status(202).send({message: "The company has been deleted, but something else went wrong."});
-                                });
-                        })
-                        .catch(function (err) {
-                            console.warn('WARNING: community620', err);
-                            res.status(202).send({message: "Something went wrong."});
-                        });
-                } else {
-                    console.warn('Not a company!');
-                    res.status(202).send({message: "This isn't a company!"});
-                }
-            })
-            .catch(function (err) {
-                console.warn('No company found!');
-                res.status(202).send({message: "No company found!"});
-            });
-
-    };
-
-    try {
-        console.log('Deleting company: ' + params.company_key);
-
-        // first determine if the company has founders or team members. Pull from DB to prevent tampering.
-      cdb.search('communities', 'communitySearch', {q: 'type:user AND roles.founder:' + params.company_key + ' OR roles.team: ' + params.company_key, include_docs: true})
-        .then(function (team) {
-          team = formatSearchResults(team);
-
-                if (team.rows && (team.rows.length == 0)) {
-
-                    // no founders or team members, so it can be deleted by anyone
-
-                    delete_it();
-
-                } else {
-
-                    // need to validate whether the current user is one of the founders or team members
-
-                    var del = false;
-                    for (t in team.rows) {
-
-                        if (team.rows[t].path.key == req.user) {
-                            del = true;
-                            delete_it();
-                            break;
                         }
+                      }
                     }
 
-                    if (!del) res.status(202).send({message: "Only a founder or team member of this company may delete it."});
+                    // remove from communities
+                    if (flush_value.communities.indexOf(params.company_key) > -1) {
+                      var findex = flush_value.communities.indexOf(params.company_key);
+                      flush_value.communities.splice(findex, 1);
+                    }
+
+
+                    cdb.insert(flush_key, flush_value, function (err, response) {
+                      if (!err) {
+                        console.log('Deleted ' + params.company_key + ' from ' + flush_key);
+                      } else {
+
+                      }
+                    })
+
+                  }
+                  res.status(204).send({message: 'Company deleted!'});
+                } else {
+                  console.log("WARNING: ", err);
+                  res.status(202).send({message: "The company has been deleted, but something else went wrong."});
                 }
-            })
-            .catch(function (err) {
-                console.log("WARNING: ", err);
-                res.status(202).send({message: err});
-            });
-    }
-    catch(err) {
-        console.warn("WARNING: ", err);
+              })
+            } else {
+              console.warn('WARNING: community620', err);
+              res.status(202).send({message: "Something went wrong."});
+            }
+          })
+
+        } else {
+          console.warn('Not a company!');
+          res.status(202).send({message: "This isn't a company!"});
+        }
+      } else {
+        console.warn('No company found!');
+        res.status(202).send({message: "No company found!"});
+      }
+    })
+
+  };
+
+  try {
+    console.log('Deleting company: ' + params.company_key);
+
+    // first determine if the company has founders or team members. Pull from DB to prevent tampering.
+    cdb.search('communities', 'communitySearch', {
+      q: 'type:user AND roles.founder:' + params.company_key + ' OR roles.team: ' + params.company_key,
+      include_docs: true
+    }, function (err, team) {
+      if (!err) {
+        team = formatSearchResults(team);
+
+        if (team.rows && (team.rows.length == 0)) {
+
+          // no founders or team members, so it can be deleted by anyone
+
+          delete_it();
+
+        } else {
+
+          // need to validate whether the current user is one of the founders or team members
+
+          var del = false;
+          for (t in team.rows) {
+
+            if (team.rows[t].path.key == req.user) {
+              del = true;
+              delete_it();
+              break;
+            }
+          }
+
+          if (!del) res.status(202).send({message: "Only a founder or team member of this company may delete it."});
+        }
+      } else {
+        console.log("WARNING: ", err);
         res.status(202).send({message: err});
-    }
+      }
+    })
+
+  }
+  catch (err) {
+    console.warn("WARNING: ", err);
+    res.status(202).send({message: err});
+  }
 }
 
-var addRole = function(company_key, roles, location_key, user_key) {
+var addRole = function (company_key, roles, location_key, user_key) {
 
-    cdb.get(user_key)
-        .then(function(response){
+  cdb.get(user_key, function (err, response) {
+    if (!err) {
+// add new role
 
-            if (response.code !== "items_not_found") {
+      for (role in roles) {
+        if (!response.roles[roles[role]]) {
+          response.roles[roles[role]] = {};
+          response.roles[roles[role]][company_key] = [location_key];
+        } else if (!response.roles[roles[role]][company_key]) {
+          response.roles[roles[role]][company_key] = [location_key];
+        } else if (response.roles[roles[role]][company_key].indexOf(location_key) < 0) {
+          response.roles[roles[role]][company_key].push(location_key);
+        } // else the damn thing is already there
 
-                // add new role
-                
-                for (role in roles) {
-                    if (!response.roles[roles[role]]) {
-                        response.roles[roles[role]] = {};
-                        response.roles[roles[role]][company_key] = [location_key];
-                    } else if (!response.roles[roles[role]][company_key]) {
-                        response.roles[roles[role]][company_key] = [location_key];
-                    } else if (response.roles[roles[role]][company_key].indexOf(location_key) < 0) {
-                        response.roles[roles[role]][company_key].push(location_key);
-                    } // else the damn thing is already there
+        // add community
+        if (!response.communities) {
+          response["communities"] = {};
+        }
 
-                    // add community
-                    if (!response.communities) {
-                        response["communities"] = {};
-                    }
+        if (response.communities.indexOf(company_key) < 0) {
+          response.communities.push(company_key);
+        }
+      }
 
-                    if (response.communities.indexOf(company_key) < 0) {
-                        response.communities.push(company_key);
-                    }
-                }
+      cdb.insert(user_key, response, function (err, result) {
+        if (!err) {
+          console.log('User ' + user_key + ' updated with ', roles);
+        } else {
+          console.warn("WARNING: ", err);
+        }
+      })
 
-                cdb.insert(process.env.DB_COMMUNITIES, user_key, response)
-                    .then(function(result) {
-                        console.log('User ' + user_key + ' updated with ', roles);
-                    })
-                    .catch(function(err){
-                        console.warn("WARNING: ", err);
-                    });
+    } else {
+      console.warn("WARNING: ", err);
+    }
+  })
 
-            } else {
-                console.warn('WARNING:  User not found.');
-            }
-        })
-
-        .catch(function(err){
-            console.warn("WARNING: ", err);
-        });
 };
 
 function handleCheckUrl(req, res) {
 
-    var website = req.body.params.website;
+  var website = req.body.params.website;
 
-    console.log('Looking for existing company based on website url: ' + website);
+  console.log('Looking for existing company based on website url: ' + website);
 
-    // cleanup url
+  // cleanup url
 
-    website = website.replace(/.*?:\/\//g, "");
-    if(website.match(/^www\./)) website = website.substring(4);
+  website = website.replace(/.*?:\/\//g, "");
+  if (website.match(/^www\./)) website = website.substring(4);
 
-  cdb.search('communities', 'communitySearch', {q: 'type:company AND (profile: "' + website, include_docs: true})
-    .then(function (result) {
+  cdb.search('communities', 'communitySearch', {
+    q: 'type:company AND (profile: "' + website,
+    include_docs: true
+  }, function (err, result) {
+    if (!err) {
       result = formatSearchResults(result);
-            if (result.rows.length > 0) {
-                res.status(202).send({message: result.rows[0].path.key});
-            } else {
-                res.status(404).send();                
-            }
-        });
+      if (result.rows.length > 0) {
+        res.status(202).send({message: result.rows[0].path.key});
+      } else {
+        res.status(404).send();
+      }
+    } else {
+      console.warn("WARNING: ", err);
+    }
+
+  });
+
+  var companyPost = function (company, role, location_key, user, key, update, callback) {
+
+    cdb.insert(key, company, function (err, response) {
+      if (!err) {
+        var companykey = response.headers.location.split('/')[3];
+
+        roles = role ? [role] : [];
+        if (company.resource) roles.push('leader');
+
+        if (roles.length) {
+          addRole(companykey, roles, location_key, user);
+        }
+
+        if (update) {
+
+          console.log("UPDATED: " + company.profile.name);
+          company["message"] = "Well done! " + company.profile.name + " has been updated.";
+
+        } else {
+
+          // if resource, add creator as leader
+
+          console.log("REGISTERED: " + company.profile.name + " as " + companykey);
+          company["message"] = "Well done! You've added " + company.profile.name + " to the community.";
+
+        }
+
+        company["key"] = companykey;
+        callback({"status": 200, "data": company});
+      } else {
+        console.log("WARNING: ", err);
+        callback({"status": 500, "data": {"message": "Something went wrong."}});
+      }
+    })
+
+  };
 }
-
-var companyPost = function (company, role, location_key, user, key, update, callback) {
-
-    cdb.insert(key, company)
-        .then(function (response) {
-
-            var companykey = response.headers.location.split('/')[3];
-
-            roles = role ? [role] : [];
-            if (company.resource) roles.push('leader');
-            
-            if (roles.length) {
-                addRole(companykey, roles, location_key, user);
-            }
-
-            if (update) {
-
-                console.log("UPDATED: " + company.profile.name);
-                company["message"] = "Well done! " + company.profile.name + " has been updated.";
-
-            } else {
-
-                // if resource, add creator as leader
-
-                console.log("REGISTERED: " + company.profile.name + " as " + companykey);
-                company["message"] = "Well done! You've added " + company.profile.name + " to the community.";
-
-            }
-
-            company["key"] = companykey;
-            callback({"status": 200, "data": company});
-
-        })
-        .catch(function (err) {
-            console.log("WARNING: ", err);
-            callback({"status": 500, "data" : {"message": "Something went wrong."}});
-        });
-    
-};
 
 module.exports = CompanyApi;
