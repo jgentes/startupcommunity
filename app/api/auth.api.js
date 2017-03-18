@@ -381,11 +381,10 @@ function handleLinkedin(req, res) {
 
       // if this is an invitation, pull that invite data first
       if (invite_code) {
-        db.newSearchBuilder()
-          .collection(process.env.DB_COMMUNITIES)
-          .limit(1)
-          .query('@value.type: "invite" AND @path.key: ' + invite_code)
+        cdb.find({selector: {type: 'invite', '_id': invite_code}, limit: 1})
           .then(function (result) {
+            result = formatFindResults(result);
+
             if (result.docs.length > 0) {
               console.log('Verified invitation');
               userCheck(result.docs[0].value);
