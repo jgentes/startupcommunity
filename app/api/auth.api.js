@@ -770,8 +770,11 @@ function handleInviteUser(req, res) {
 
     var selector = {};
 
-    selector["$and"] = [{"type": "user"},{"roles.leader": {}}];
-    selector["$and"]["roles.leader"][inviteUser.location_key] = {"$exists": true};
+    var leader = {};
+    leader[inviteUser.location_key] = {"$exists": true};
+
+    selector["$and"] = [{"type": "user"}];
+    selector["$and"].push({"roles.leader": leader});
 
     console.log(selector);
 
