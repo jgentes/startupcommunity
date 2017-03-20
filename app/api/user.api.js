@@ -6,6 +6,7 @@ var Q = require('q'),
   communityApis = new CommunityApi(),
   aws = require('aws-sdk'),
   knowtify = require('knowtify-node'),
+  jqparam = require('jquery-param'),
   Cloudant = require('cloudant'),
   cloudant = Cloudant({
     account: process.env.DB_ACCOUNT,
@@ -107,20 +108,21 @@ function handleUserSearch(req, res) {
 
   if (roles && roles.length > 0 && roles[0] !== "*") {
 
-    selector["$and"].push({"$or": []});
+    selector["$and"] = [];
     /*
 
      roles = roles.splice(',');
      searchstring += ' AND (';
      */
-
+    var selroles = [];
     for (i in roles) {
       var sel = {};
       sel['roles.' + roles[i]] = {"$exists": true};
-      selector["$and"]["$or"].push(sel);
+      selroles.push(sel);
       /* searchstring += 'roles.' + roles[i] + ':[a* TO z*]'; // scope to role
        if (i < (roles.length - 1)) { searchstring += ' AND '; }*/
     }
+    if (selroles.length) for (s in selroles) selector["$and"].push({"$or": [selroles[s]]});
     /*    searchstring += ')';*/
   }
 
@@ -129,9 +131,11 @@ function handleUserSearch(req, res) {
     /*searchstring += ' AND ' + '(profile: ' + query + ')'; */
   }
 
-  console.log('Pulling Users: ', selector);
+  var find = {selector: selector, skip: Number(offset) || 0, limit: Number(limit) || 16};
 
-  cdb.find({selector: selector, skip: Number(offset) || 0, limit: Number(limit) || 16}, function (err, result) {
+  console.log('Pulling Users: ', JSON.stringify(find));
+
+  cdb.find(find, function (err, result) {
     if (!err) {
       result = formatFindResults(result);
 
@@ -156,21 +160,23 @@ function handleUserSearch(req, res) {
         console.warn('WARNING: user144 ', error);
       }
 
-      result.next =
-        '/api/2.1/users?communities[]=' + communities +
-        '&clusters[]=' + (clusters || '*') +
-        '&roles[]=' + (roles || '*') +
-        '&limit=' + (Number(limit) || 16) +
-        '&offset=' + ((Number(offset) || 0) + (Number(limit) || 16)) +
-        '&query=' + (query || '*');
+      result.next = '/api/2.1/users?' + jqparam({
+          communities: communities,
+          clusters: (clusters || '*'),
+          roles: (roles || '*'),
+          limit: (Number(limit) || 16),
+          offset: ((Number(offset) || 0) + (Number(limit) || 16)),
+          query: (query || '*')
+        });
 
-      result.prev =
-        '/api/2.1/users?communities[]=' + communities +
-        '&clusters[]=' + (clusters || '*') +
-        '&roles[]=' + (roles || '*') +
-        '&limit=' + (Number(limit) || 16) +
-        '&offset=' + (offset ? (Number(offset) - ((Number(limit) || 16))) : 0) +
-        '&query=' + (query || '*');
+      result.prev = '/api/2.1/users?' + jqparam({
+          communities: communities,
+          clusters: (clusters || '*'),
+          roles: (roles || '*'),
+          limit: (Number(limit) || 16),
+          offset: (offset ? (Number(offset) - ((Number(limit) || 16))) : 0),
+          query: (query || '*')
+        });
 
       result.results = result.docs;
       delete result.docs;
@@ -236,21 +242,23 @@ function handleDirectSearch(req, res) {
           result.docs[i].value["key"] = result.docs[i].path.id;
         }
 
-        result.next =
-          '/api/2.1/users?communities[]=' + req.query.communities +
-          '&clusters[]=' + (req.query.clusters || '*') +
-          '&roles[]=' + (req.query.roles || '*') +
-          '&limit=' + (Number(req.query.limit) || 16) +
-          '&offset=' + ((Number(req.query.offset) || 0) + (Number(req.query.limit) || 16)) +
-          '&query=' + (req.query.query || '*');
+        result.next = '/api/2.1/users?' + jqparam({
+            communities: req.query.communities,
+            clusters: (req.query.clusters || '*'),
+            roles: (req.query.roles || '*'),
+            limit: (Number(req.query.limit) || 16),
+            offset: ((Number(req.query.offset) || 0) + (Number(req.query.limit) || 16)),
+            query: (req.query.query || '*')
+          });
 
-        result.prev =
-          '/api/2.1/users?communities[]=' + req.query.communities +
-          '&clusters[]=' + (req.query.clusters || '*') +
-          '&roles[]=' + (req.query.roles || '*') +
-          '&limit=' + (Number(req.query.limit) || 16) +
-          '&offset=' + (req.query.offset ? (Number(req.query.offset) - ((Number(req.query.limit) || 16))) : 0) +
-          '&query=' + (req.query.query || '*');
+        result.prev = '/api/2.1/users?' + jqparam({
+            communities: req.query.communities,
+            clusters: (req.query.clusters || '*'),
+            roles: (req.query.roles || '*'),
+            limit: (Number(req.query.limit) || 16),
+            offset: (req.query.offset ? (Number(req.query.offset) - ((Number(req.query.limit) || 16))) : 0),
+            query: (req.query.query || '*')
+          });
 
       } catch (error) {
         console.warn('WARNING: user206', error);

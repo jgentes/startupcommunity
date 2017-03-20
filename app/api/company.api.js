@@ -4,6 +4,7 @@ var Q = require('q'),
   CommunityApi = require(__dirname + '/community.api.js'),
   communityApis = new CommunityApi(),
   aws = require('aws-sdk'),
+  jqparam = require('jquery-param'),
   Cloudant = require('cloudant'),
   cloudant = Cloudant({
     account: process.env.DB_ACCOUNT,
@@ -212,25 +213,27 @@ function handleCompanySearch(req, res) {
         console.warn('WARNING: company144 ', error);
       }
 
-      result.next =
-        '/api/2.1/companies?communities[]=' + req.query.communities +
-        '&clusters[]=' + (req.query.clusters || '*') +
-        '&stages[]=' + (req.query.stages || '*') +
-        '&types=' + (req.query.types || '*') +
-        '&limit=' + (Number(req.query.limit) || 16) +
-        '&offset=' + ((Number(req.query.offset) || 0) + (Number(req.query.limit) || 16)) +
-        '&get_resources=' + (req.query.get_resources || false) +
-        '&query=' + (req.query.query || '*');
+      result.next = '/api/2.1/users?' + jqparam({
+          communities: req.query.communities,
+          clusters: (req.query.clusters || '*'),
+          stages: (req.query.stages || '*'),
+          types: (req.query.types || '*'),
+          limit: (Number(req.query.limit) || 16),
+          get_resources: (req.query.get_resources || false),
+          offset: ((Number(req.query.offset) || 0) + (Number(req.query.limit) || 16)),
+          query: (req.query.query || '*')
+        });
 
-      result.prev =
-        '/api/2.1/compaies?communities[]=' + req.query.communities +
-        '&clusters[]=' + (req.query.clusters || '*') +
-        '&stages[]=' + (req.query.stages || '*') +
-        '&types=' + (req.query.types || '*') +
-        '&limit=' + (Number(req.query.limit) || 16) +
-        '&offset=' + (req.query.offset ? (Number(req.query.offset) - ((Number(req.query.limit) || 16))) : 0) +
-        '&get_resources=' + (req.query.get_resources || false) +
-        '&query=' + (req.query.query || '*');
+      result.prev = '/api/2.1/users?' + jqparam({
+          communities: req.query.communities,
+          clusters: (req.query.clusters || '*'),
+          stages: (req.query.stages || '*'),
+          types: (req.query.types || '*'),
+          limit: (Number(req.query.limit) || 16),
+          get_resources: (req.query.get_resources || false),
+          offset: (req.query.offset ? (Number(req.query.offset) - ((Number(req.query.limit) || 16))) : 0),
+          query: (req.query.query || '*')
+        });
 
       result.results = result.docs;
       delete result.docs;

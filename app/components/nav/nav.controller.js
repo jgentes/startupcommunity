@@ -359,8 +359,8 @@ function NavigationController($scope, $auth, $state, $window, $location, $stateP
         self.search = function(query) {
             
             if ($scope.global.community.type == "cluster" || $scope.global.community.resource) {
-                $stateParams.location_path == $scope.global.community.key ?
-                        $state.go('search.dashboard', {location_path: $stateParams.location_path, query: query, tail_path: ''}, {notify: false}) :
+              $stateParams.location_path == $scope.global.community.key ?
+                        $state.go('search.dashboard', {location_path: $stateParams.location_path, query: query, tail_path: ''}, {notify: !!$scope.global.query ? true : false, location: !!$scope.global.query ? false : true}) :
                         $state.go('search.dashboard', {location_path: $stateParams.location_path, community_path: $scope.global.community.key, query: query, tail_path: ''}, {reload: true});
             } else if ($scope.global.community.type == "user" || $scope.global.community.type == "company") {
                 $state.go('search.dashboard', {location_path: $scope.global.community.profile.home, query: query, tail_path: ''}, {notify: false});
