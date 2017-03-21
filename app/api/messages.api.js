@@ -130,7 +130,7 @@ function handleAddMessage(req, res) {
 */
         cdb_messages.insert(message)
             .then(function (response) {
-                addMessage["key"] = response.headers.location.split('/')[3];
+                addMessage["key"] = response.id;
                 message.key = addMessage.key;
                 to_notify(addMessage);
                 res.status(200).send(message);

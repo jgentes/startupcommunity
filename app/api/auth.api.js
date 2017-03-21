@@ -139,7 +139,7 @@ function handleCreateAPIToken(req, res) {
         if (response.profile.api_key === undefined) {
           // todo update next line
           //response.body.profile["api_key"] = jwt.encode(payload, process.env.API_TOKEN_SECRET); // get user account and re-upload with api_key
-          cdb.insert(req.user, response)
+          cdb.insert(response, req.user)
             .then(function () {
               console.log("Profile updated.");
             })

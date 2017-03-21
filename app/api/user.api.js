@@ -467,7 +467,7 @@ function handleUpdateProfile(req, res) {
         profile['_id'] = user._id;
         profile['_rev'] = user._rev;
 
-        cdb.insert(profile, userid, function (err, response) {
+        cdb.insert(userid, profile, function (err, response) {
           if (!err) {
             profile["key"] = userid;
             res.status(200).send({token: jwt.sign(userid, process.env.SC_TOKEN_SECRET), user: profile});
@@ -512,7 +512,7 @@ function handleRemoveCommunity(req, res) {
             if (response.communities.indexOf(community.key) > -1) {
               response.communities.splice(response.communities.indexOf(community.key), 1);
             }
-            cdb.insert(user_key, response, function (err, response) {
+            cdb.insert(response, user_key, function (err, response) {
               if (!err) {
                 console.log('Successfully removed community from user profile.');
                 res.status(201).send({message: 'Community removed.'});
@@ -565,7 +565,7 @@ function handleRemoveRole(req, res) {
           }
         }
 
-        cdb.insert(userid, response, function (err, response) {
+        cdb.insert(response, userid, function (err, response) {
           if (!err) {
             console.log('Successfully removed role from user profile.');
             res.status(201).send({message: 'Role removed.'});
@@ -597,7 +597,7 @@ function handleFeedback(req, res) {
     if (!err) {
       response['beta'] = data;
 
-      cdb.insert(userkey, response, function (err, finalres) {
+      cdb.insert(response, userkey, function (err, finalres) {
         if (!err) {
           res.status(201).send({message: 'Profile updated.'});
         } else {

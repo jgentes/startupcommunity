@@ -79,7 +79,7 @@ function CompanyController($scope, $stateParams, $state, $location, company_serv
     };
 
     this.filterType = function(type) {
-        console.log(type);
+
         self.loadingType = true;
         if (type == '*') {
             self.selectedType = ['*'];

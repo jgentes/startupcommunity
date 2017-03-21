@@ -344,9 +344,9 @@ function handleAddCompany(req, res) {
     if (!addCompany.key) {
       cdb.get(addCompany.profile.url, function (err, result) {
         if (!err) {
-          go();
-        } else {
           res.status(400).send({message: 'That url is already in use. Please specify a different url path.'})
+        } else {
+          go();
         }
       })
 
@@ -398,7 +398,7 @@ function handleDeleteCompany(req, res) {
                     }
 
 
-                    cdb.insert(flush_key, flush_value, function (err, response) {
+                    cdb.insert(flush_value, flush_key, function (err, response) {
                       if (!err) {
                         console.log('Deleted ' + params.company_key + ' from ' + flush_key);
                       } else {
@@ -503,7 +503,7 @@ var addRole = function (company_key, roles, location_key, user_key) {
         }
       }
 
-      cdb.insert(user_key, response, function (err, result) {
+      cdb.insert(response, user_key, function (err, result) {
         if (!err) {
           console.log('User ' + user_key + ' updated with ', roles);
         } else {
@@ -530,7 +530,7 @@ function handleCheckUrl(req, res) {
   if (website.match(/^www\./)) website = website.substring(4);
 
   cdb.search('communities', 'communitySearch', {
-    q: 'type:company AND (profile: "' + website,
+    q: 'type:company AND profile: ' + website,
     include_docs: true
   }, function (err, result) {
     if (!err) {
@@ -546,42 +546,44 @@ function handleCheckUrl(req, res) {
 
   });
 
-  var companyPost = function (company, role, location_key, user, key, update, callback) {
-
-    cdb.insert(key, company, function (err, response) {
-      if (!err) {
-        var companykey = response.headers.location.split('/')[3];
-
-        roles = role ? [role] : [];
-        if (company.resource) roles.push('leader');
-
-        if (roles.length) {
-          addRole(companykey, roles, location_key, user);
-        }
-
-        if (update) {
-
-          console.log("UPDATED: " + company.profile.name);
-          company["message"] = "Well done! " + company.profile.name + " has been updated.";
-
-        } else {
-
-          // if resource, add creator as leader
-
-          console.log("REGISTERED: " + company.profile.name + " as " + companykey);
-          company["message"] = "Well done! You've added " + company.profile.name + " to the community.";
-
-        }
-
-        company["key"] = companykey;
-        callback({"status": 200, "data": company});
-      } else {
-        console.log("WARNING: ", err);
-        callback({"status": 500, "data": {"message": "Something went wrong."}});
-      }
-    })
-
-  };
 }
+
+var companyPost = function (company, role, location_key, user, key, update, callback) {
+
+  cdb.insert(company, key, function (err, response) {
+
+    if (!err) {
+      var companykey = response.id;
+
+      roles = role ? [role] : [];
+      if (company.resource) roles.push('leader');
+
+      if (roles.length) {
+        addRole(companykey, roles, location_key, user);
+      }
+
+      if (update) {
+
+        console.log("UPDATED: " + company.profile.name);
+        company["message"] = "Well done! " + company.profile.name + " has been updated.";
+
+      } else {
+
+        // if resource, add creator as leader
+
+        console.log("REGISTERED: " + company.profile.name + " as " + companykey);
+        company["message"] = "Well done! You've added " + company.profile.name + " to the community.";
+
+      }
+
+      company["key"] = companykey;
+      callback({"status": 200, "data": company});
+    } else {
+      console.log("WARNING: ", err);
+      callback({"status": 500, "data": {"message": "Something went wrong."}});
+    }
+  })
+
+};
 
 module.exports = CompanyApi;

@@ -879,7 +879,7 @@ function handleGetTop(req, res) {
                 }
               } else response.profile["embed"] = settings.embed;
 
-              cdb.insert(settings.community_key, response, function(err, finalres) {
+              cdb.insert(response, settings.community_key, function(err, finalres) {
                 if (!err) {
                   res.status(201).send({message: 'Community settings updated.'});
                 } else {
@@ -965,7 +965,7 @@ function handleGetTop(req, res) {
                     response.communities.push(settings.location_key);
                   }
 
-                  cdb.insert(pathname, response, function(err, finalres) {
+                  cdb.insert(response, pathname, function(err, finalres) {
                     if (!err) {
                       update_user(req.user, 'leader', pathname, settings.location_key, function (good) {
                         if (good) {
@@ -1003,7 +1003,7 @@ function handleGetTop(req, res) {
                       response.communities.push(settings.location_key);
                     }
 
-                    cdb.insert(pathname, response.body, function(err, finalres) {
+                    cdb.insert(response.body, pathname, function(err, finalres) {
                       if (!err) {
                         res.status(201).send({message: 'Successfully updated!'});
                       } else {
@@ -1023,7 +1023,7 @@ function handleGetTop(req, res) {
 
               var profile = schema.community(settings.community, settings.location_key);
 
-              cdb.insert(pathname, profile, function(err, finalres) {
+              cdb.insert(profile, pathname, function(err, finalres) {
                 if (!err) {
                   update_user(req.user, 'leader', pathname, settings.location_key, function (good) {
                     if (good) {
@@ -1120,7 +1120,7 @@ function handleGetTop(req, res) {
 
                 } else {
 
-                  cdb.insert(settings.community.key, response, function(err, finalres) {
+                  cdb.insert(response, settings.community.key, function(err, finalres) {
                     if (!err) {
                       wrapup();
                     } else {
@@ -1198,7 +1198,7 @@ function handleGetTop(req, res) {
           }
         }
 
-        cdb.insert(user_key, response, function(err, result) {
+        cdb.insert(response, user_key, function(err, result) {
           if (!err) {
             console.log('User ' + user_key + ' updated with community role.');
             callback(true);
@@ -1271,7 +1271,7 @@ function handleGetTop(req, res) {
 
      db.put(process.env.DB_COMMUNITIES, key, newdata)
      .then(function (result) {
-     console.log('User ' + result.headers.location.split('/')[3] + ' updated with new community data.');
+     console.log('User ' + result.id + ' updated with new community data.');
      })
      .catch(function (err) {
      console.warn("WARNING: community706", err);
