@@ -640,16 +640,16 @@ function handleGetTop(req, res) {
         var sortedParents = sortcounts(parents);
 
         top_results.industries = {
-          count: Object.keys(industries).reduce(function (previous, key) {
+          count: Object.keys(industries).length ? Object.keys(industries).reduce(function (previous, key) {
             return previous + industries[key].value;
-          }),
+          }) : [],
           entries: sortedIndustries
         };
 
         top_results.company_parents = {
-          count: Object.keys(parents).reduce(function (previous, key) {
+          count: Object.keys(parents).length ? Object.keys(parents).reduce(function (previous, key) {
             return previous + parents[key].value;
-          }),
+          }) : [],
           entries: sortedParents
         };
 
@@ -729,16 +729,16 @@ function handleGetTop(req, res) {
                   var sortedPeopleParents = sortcounts(parents);
 
                   top_results.skills = {
-                    count: Object.keys(skills).reduce(function (previous, key) {
+                    count: Object.keys(skills).length ? Object.keys(skills).reduce(function (previous, key) {
                       return previous + skills[key].value;
-                    }),
+                    }) : [],
                     entries: sortedSkills
                   };
 
                   top_results.people_parents = {
-                    count: Object.keys(parents).reduce(function (previous, key) {
+                    count: Object.keys(parents).length ? Object.keys(parents).reduce(function (previous, key) {
                       return previous + parents[key].value;
-                    }),
+                    }) : [],
                     entries: sortedPeopleParents
                   };
 
