@@ -353,7 +353,6 @@ function NavigationController($scope, $auth, $state, $window, $location, $stateP
             $state.go('user.dashboard', {profile: $scope.global.user, location_path: $scope.global.user.key, tour: false});
         };
 
-
         // SEARCH (this function is a good example of replacing ui-sref for common links)
 
         self.search = function(query) {

@@ -134,6 +134,7 @@ function formatFindResults(items) {
         path: {key: items.docs[i]._id},
         value: items.docs[i]
       };
+      items.docs[i].value.key = items.docs[i].path.key;
     }
   }
   return items;
@@ -214,10 +215,10 @@ function handleGetCommunity(req, res) {
                 case "cluster":
                   if (results[item].value.community_profiles && results[item].value.community_profiles[community] && results[item].value.community_profiles[community].parents && results[item].value.community_profiles[community].parents[0]) {
                     if (!newresponse.clusters) newresponse['clusters'] = {};
-                    // i believe this is for navigation
+                    // this is for navigation
                     var cluster_type = results[item].value.community_profiles[community].parents[0];
                     if (!newresponse.clusters[cluster_type]) newresponse.clusters[cluster_type] = {};
-                    newresponse.clusters[cluster_type][results[item].id] = results[item].value;
+                    newresponse.clusters[cluster_type][results[item].path.key] = results[item].value;
                   }
                   break;
                 case "company":
