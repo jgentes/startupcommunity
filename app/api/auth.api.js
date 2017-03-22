@@ -320,7 +320,7 @@ function handleLinkedin(req, res) {
       "replies": []
     };
 
-    cdb_mesages.insert(question)
+    cdb_messages.insert(question)
       .then(function () {
         console.log('Question posted to new user account')
       })
