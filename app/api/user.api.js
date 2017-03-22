@@ -467,7 +467,7 @@ function handleUpdateProfile(req, res) {
         profile['_id'] = user._id;
         profile['_rev'] = user._rev;
 
-        cdb.insert(userid, profile, function (err, response) {
+        cdb.insert(profile, userid, function (err, response) {
           if (!err) {
             profile["key"] = userid;
             res.status(200).send({token: jwt.sign(userid, process.env.SC_TOKEN_SECRET), user: profile});
