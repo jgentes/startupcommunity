@@ -1109,7 +1109,7 @@ function handleGetTop(req, res) {
 
                   // delete the whole thing
 
-                  cdb.destroy(settings.community.key, function(err, finalres) {
+                  cdb.destroy(settings.community.key, response._rev, function(err, finalres) {
                     if (!err) {
                       wrapup();
                     } else {

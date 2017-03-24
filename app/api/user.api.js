@@ -622,15 +622,20 @@ function handleFeedback(req, res) {
 
 function handleRemoveProfile(req, res) {
   var userid = req.params.userid;
-  cdb.destroy(userid, function (err, result) {
+  cdb.get(userid, function (err, result) {
     if (!err) {
-      console.log('User removed.');
-      res.status(200).send({message: 'User removed'});
-    } else {
-      console.log("Remove FAIL:" + err);
-      res.status(202).send({message: 'Something went wrong: ' + err});
+      cdb.destroy(userid, result._rev, function (err, result) {
+        if (!err) {
+          console.log('User removed.');
+          res.status(200).send({message: 'User removed'});
+        } else {
+          console.log("Remove FAIL:" + err);
+          res.status(202).send({message: 'Something went wrong: ' + err});
+        }
+      }) // ideally I should store an undo option
     }
-  }) // ideally I should store an undo option
+  });
+
 
 }
 

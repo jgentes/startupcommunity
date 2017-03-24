@@ -42,7 +42,7 @@ function addSubscriber(location_key, resource_key, user_profile) {
             var profile;
             for (x in data.rows) {
 
-                profile = data.rows[x].value;
+                profile = data.rows[x].doc.value;
 
                 if (profile.newsletter && profile.newsletter.lists && profile.newsletter.lists[resource_key]) {
 

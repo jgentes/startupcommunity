@@ -365,10 +365,12 @@ function handleDeleteCompany(req, res) {
     // pull it first to make sure it's a company
 
     cdb.get(params.company_key, function (err, response) {
+
       if (!err) {
         if (response.type == 'company') {
 
-          cdb.destroy(params.company_key, function (err, response) {
+          cdb.destroy(response._id, response._rev, function (err, response) {
+
             if (!err) {
               // company has been deleted, now delete references in user records
               cdb.search('communities', 'communitySearch', {
@@ -379,8 +381,8 @@ function handleDeleteCompany(req, res) {
                   flush = formatSearchResults(flush);
 
                   for (r in flush.rows) {
-                    var flush_key = flush.rows[r].path.key,
-                      flush_value = flush.rows[r].value;
+                    var flush_key = flush.rows[r].doc.path.key,
+                      flush_value = flush.rows[r].doc.value;
 
                     for (i in flush_value.roles) {
                       for (c in flush_value.roles[i]) {
@@ -455,7 +457,7 @@ function handleDeleteCompany(req, res) {
           var del = false;
           for (t in team.rows) {
 
-            if (team.rows[t].path.key == req.user) {
+            if (team.rows[t].doc.path.key == req.user) {
               del = true;
               delete_it();
               break;
@@ -536,7 +538,7 @@ function handleCheckUrl(req, res) {
     if (!err) {
       result = formatSearchResults(result);
       if (result.rows.length > 0) {
-        res.status(202).send({message: result.rows[0].path.key});
+        res.status(202).send({message: result.rows[0].doc.path.key});
       } else {
         res.status(404).send();
       }

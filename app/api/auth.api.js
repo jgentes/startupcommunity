@@ -332,13 +332,17 @@ function handleLinkedin(req, res) {
   };
 
   var delete_invite = function () {
-    cdb.destroy(invite_code, true)
-      .then(function (result) {
-        console.log('Invitation applied and deleted: ' + invite_code);
-      })
-      .catch(function (err) {
-        console.warn('WARNING: Invitation was used but not deleted: ' + invite_code);
-      })
+    cdb.get(invite_code, function(err, result) {
+      if (!err) {
+        cdb.destroy(invite_code, result._rev)
+          .then(function (result) {
+            console.log('Invitation applied and deleted: ' + invite_code);
+          })
+          .catch(function (err) {
+            console.warn('WARNING: Invitation was used but not deleted: ' + invite_code);
+          })
+      }
+    })
   };
 
   var add_knowtify = function (user) {
@@ -381,13 +385,11 @@ function handleLinkedin(req, res) {
 
       // if this is an invitation, pull that invite data first
       if (invite_code) {
-        cdb.find({selector: {type: 'invite', '_id': invite_code}, limit: 1})
+        cdb.get(invite_code)
           .then(function (result) {
-            result = formatFindResults(result);
-
-            if (result.docs.length > 0) {
+            if (result) {
               console.log('Verified invitation');
-              userCheck(result.docs[0].value);
+              userCheck(result);
             } else {
               console.log('Invalid invite code: ' + invite_code);
               userCheck();
