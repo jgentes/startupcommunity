@@ -98,7 +98,7 @@
             <div class="panel-footer top">
                 <div ng-show="!users.tag" class="pull-right">
                     <div class="btn-group btn-group-sm" style="margin-top: -2px;">
-                        <span ng-if="users.users.prev"><a ng-click="users.searchUsers(users.users.prev)" class="btn btn-sm btn-default" style="background-color: #fff;"><i class="fa fa-angle-left"></i></a></span>
+                        <span ng-if="users.users.prev && users.users.end !== 16"><a ng-click="users.searchUsers(users.users.prev)" class="btn btn-sm btn-default" style="background-color: #fff;"><i class="fa fa-angle-left"></i></a></span>
                         <span ng-if="users.users.next"><a ng-click="users.searchUsers(users.users.next)" class="btn btn-sm btn-default" style="background-color: #fff;"><i class="fa fa-angle-right"></i></a></span>
                     </div>
                 </div>
@@ -137,7 +137,7 @@
                 </div>
                 <div ng-show="!users.tag" class="pull-right">
                     <div class="btn-group btn-group-sm" style="margin-top: -2px;">
-                        <span ng-if="users.users.prev"><a ng-click="users.searchUsers(users.users.prev)" class="btn btn-sm btn-default" style="background-color: #fff;"><i class="fa fa-angle-left"></i></a></span>
+                        <span ng-if="users.users.prev && users.users.end !== 16"><a ng-click="users.searchUsers(users.users.prev)" class="btn btn-sm btn-default" style="background-color: #fff;"><i class="fa fa-angle-left"></i></a></span>
                         <span ng-if="users.users.next"><a ng-click="users.searchUsers(users.users.next)" class="btn btn-sm btn-default" style="background-color: #fff;"><i class="fa fa-angle-right"></i></a></span>
                     </div>
                 </div>

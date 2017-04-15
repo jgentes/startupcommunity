@@ -120,7 +120,7 @@
                 <div class="panel-footer top">
                     <div class="pull-right">
                         <div class="btn-group btn-group-sm" style="margin-top: -2px;">
-                            <span ng-if="companies.companies.prev"><a ng-click="companies.searchCompanies(undefined, companies.companies.prev)" class="btn btn-sm btn-default" style="background-color: #fff;"><i class="fa fa-angle-left"></i></a></span>
+                            <span ng-if="companies.companies.prev && companies.companies.end !== 16"><a ng-click="companies.searchCompanies(undefined, companies.companies.prev)" class="btn btn-sm btn-default" style="background-color: #fff;"><i class="fa fa-angle-left"></i></a></span>
                             <span ng-if="companies.companies.next"><a ng-click="companies.searchCompanies(undefined, companies.companies.next)" class="btn btn-sm btn-default" style="background-color: #fff;"><i class="fa fa-angle-right"></i></a></span>
                         </div>
                     </div>
@@ -150,7 +150,7 @@
                     </div>
                     <div class="pull-right">
                         <div class="btn-group btn-group-sm" style="margin-top: -2px;">
-                            <span ng-if="companies.companies.prev"><a ng-click="companies.searchCompanies(undefined, companies.companies.prev)" class="btn btn-sm btn-default" style="background-color: #fff;"><i class="fa fa-angle-left"></i></a></span>
+                            <span ng-if="companies.companies.prev && companies.companies.end !== 16"><a ng-click="companies.searchCompanies(undefined, companies.companies.prev)" class="btn btn-sm btn-default" style="background-color: #fff;"><i class="fa fa-angle-left"></i></a></span>
                             <span ng-if="companies.companies.next"><a ng-click="companies.searchCompanies(undefined, companies.companies.next)" class="btn btn-sm btn-default" style="background-color: #fff;"><i class="fa fa-angle-right"></i></a></span>
                         </div>
                     </div>

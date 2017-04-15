@@ -97,6 +97,7 @@ function UserController($scope, $stateParams, $location, user_service, result_se
                     self.users = result_service.setPage(response.data);
                     self.loadingUser = false;
                     self.lastQuery = $scope.global.query;
+                  console.log(self.users);
                 });
         };
 
