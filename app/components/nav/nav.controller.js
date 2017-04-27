@@ -191,19 +191,22 @@ function NavigationController($scope, $auth, $state, $window, $location, $stateP
         console.log('Nav RootScope Community: ', $scope.global.community ? $scope.global.community.key : null);
         */
         // for header breadcrumbs
+      if ($scope.global.community.type) {
         switch ($scope.global.community.type) {
-            case ('company'):
-                self.btype = $scope.global.community.resource ? 'resource' : 'company';
-                break;
+          case ('company'):
+            self.btype = $scope.global.community.resource ? 'resource' : 'company';
+            break;
 
-            case ('cluster'):
-                self.btype = 'industry';
-                break;
+          case ('cluster'):
+            self.btype = 'industry';
+            break;
 
-            default:
-                self.btype = $scope.global.community.type;
-                break;
+          default:
+            self.btype = $scope.global.community.type;
+            break;
         }
+      } else self.btype = 'user';
+
 
         // ANONYMOUS OR LOGGED IN ?
 

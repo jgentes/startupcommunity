@@ -345,10 +345,10 @@ function UserProfileController($scope, $stateParams, $http, $uibModal, $mixpanel
     this.postReply = function(parent) {
         self.working[parent.key] = true;
 
-        if (self.reply[parent.key] && user) {
+        if (self.reply[parent.key] && $scope.global.user) {
             // update user profile
 
-            message_service.addMessage('reply', user, self.user, self.reply[parent.key], parent)
+            message_service.addMessage('reply', $scope.global.user, self.user, self.reply[parent.key], parent)
                 .then(function (response) {
                     self.reply[parent.key] = undefined;
 
