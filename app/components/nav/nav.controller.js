@@ -164,7 +164,7 @@ function NavigationController($scope, $auth, $state, $window, $location, $stateP
     };
 
     var getCommunityTop = function() {
-      errorLogService('getCommunityTop166: ', nav_community);
+      if (!nav_community.type) errorLogService('getCommunityTop166: ', nav_community);
         if (nav_community && nav_community.key && $scope.global.location && $scope.global.location.key && (nav_community.key !== $scope.global.location.key && ((nav_community.type == 'location') || (nav_community.resource) || (nav_community.type == 'cluster')))) {
 
             community_service.getTop($scope.global.location.key, nav_community.key, nav_community)
@@ -192,7 +192,7 @@ function NavigationController($scope, $auth, $state, $window, $location, $stateP
         console.log('Nav RootScope Community: ', $scope.global.community ? $scope.global.community.key : null);
         */
         // for header breadcrumbs
-      errorLogService('navController194: ', $scope.global.community);
+      if (!$scope.global.community.type) errorLogService('navController194: ', $scope.global.community);
       if ($scope.global.community.type) {
         switch ($scope.global.community.type) {
           case ('company'):
@@ -321,7 +321,7 @@ function NavigationController($scope, $auth, $state, $window, $location, $stateP
                     $state.go('404', {}, {location: false});
             }
         } else {
-          errorLogService('navController323: ', nav_community);
+          if (!nav_community.type) errorLogService('navController323: ', nav_community);
             switch (nav_community.type) {
 
                 case 'user':

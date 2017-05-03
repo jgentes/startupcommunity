@@ -247,7 +247,7 @@ module.exports = function (grunt) {
         'filerev',
         'usemin',
         'htmlmin',
-        'clean:server'
+        'clean:server',
         //'cloudflare_purge'
     ]);
 
