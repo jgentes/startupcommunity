@@ -91,8 +91,7 @@ module.exports = function (grunt) {
         uglify: {
             options: {
                 mangle: false,
-                sourceMap : true,
-                sourceMapRoot: 'https://startupcommunity.org/scripts'
+                sourceMap : true
             }
         },
         // Clean dist folder
@@ -247,7 +246,8 @@ module.exports = function (grunt) {
         'uglify',
         'filerev',
         'usemin',
-        'htmlmin'
+        'htmlmin',
+        'clean:server'
         //'cloudflare_purge'
     ]);
 
