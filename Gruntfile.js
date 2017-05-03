@@ -92,7 +92,7 @@ module.exports = function (grunt) {
             options: {
                 mangle: false,
                 sourceMap : true,
-                sourceMapRoot: 'scripts/'
+                sourceMapRoot: 'https://startupcommunity.org/scripts'
             }
         },
         // Clean dist folder
