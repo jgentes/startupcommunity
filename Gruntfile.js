@@ -91,7 +91,8 @@ module.exports = function (grunt) {
         uglify: {
             options: {
                 mangle: false,
-                sourceMap : true
+                sourceMap : true,
+                sourceMapRoot: 'scripts/'
             }
         },
         // Clean dist folder
