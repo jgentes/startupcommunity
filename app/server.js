@@ -11,7 +11,7 @@ var express = require('express'),
     logger = require('morgan'),
     bugsnag = require('bugsnag'),
     nodalytics = require('nodalytics'),
-    ghost = require('ghost'),
+    //ghost = require('ghost'),
     parentApp = express();
 
 var app = express();
