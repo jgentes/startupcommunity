@@ -176,6 +176,7 @@ app.post('/api/logger', function (req, res) {
 app.get('/', function (req, res, next) {
   res.sendFile("frontend.html", {root: root + process.env.SC_PATH});
 });
+/*
 
 ghost({
   config: __dirname + '/frontend/ghost/config.js'
@@ -184,6 +185,7 @@ ghost({
 
   ghostServer.start(parentApp);
 });
+*/
 
 // Backend App
 
