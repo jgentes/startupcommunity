@@ -4,8 +4,8 @@ console.format = function(c) { return "[" + c.filename + ":" + c.getLineNumber()
 
 var express = require('express'),
     enforce = require('express-sslify'),
-    httpProxy = require('http-proxy'),
-    blogProxy = httpProxy.createProxyServer(),
+    //httpProxy = require('http-proxy'),
+    //blogProxy = httpProxy.createProxyServer(),
     bodyParser = require('body-parser'),
     methodOverride = require('method-override'),
     logger = require('morgan'),
@@ -37,11 +37,13 @@ function wwwRedirect(req, res, next) {
 
 app.set('trust proxy', true); // important for https
 app.use(wwwRedirect);
+/*
 
 // Proxy for Ghost, which runs on different port
 app.all("/blog*", function(req, res){
     blogProxy.web(req, res, { target: 'http://localhost:2368' });
 });
+*/
 
 // remove trailing slash
 app.use(function(req, res, next) {
