@@ -189,12 +189,30 @@ ghost({
 });
 */
 
+// database
+const mysql = require('mysql2');
+const db = mysql.createConnection({
+  host: 'otwsl2e23jrxcqvx.cbetxkdyhwsb.us-east-1.rds.amazonaws.com',
+  user: 'cd8do5g1qfary77u',
+  password: 'bix38gi0i1nsf9gx',
+  database: 'otcktbzgpblfpu07'
+});
+/*
+db.execute(
+  'SELECT * FROM cities ORDER BY ID_COUNTY',
+  (err, results) => {
+    if (err) console.log(err);
+    console.log(results.length, ' results');
+    
+  }
+);*/
+
 // Backend App
 
 app.get('/*', function (req, res, next) {
   res.sendFile("app.html", {root: root + process.env.SC_PATH});
 });
 
-var port = process.env.PORT || 5000;
+var port = process.env.PORT || 8080;
 app.listen(port);
 console.log("StartupCommunity.org ready!");
