@@ -1,16 +1,8 @@
-var jwt = require('jsonwebtoken'),
-    request = require('request'),
+const jwt = require('jsonwebtoken'),
+    request = require('request').defaults({jar: true, followAllRedirects: true}), // required to maintain session
     jsdom = require('jsdom'),
-  Cloudant = require('cloudant'),
-  cloudant = Cloudant({
-    account: process.env.DB_ACCOUNT,
-    password: process.env.DB_PASSWORD,
-    plugin: 'promises'
-  }),
-  cdb = cloudant.db.use(process.env.DB_COMMUNITIES),
-  cdb_messages = cloudant.db.use(process.env.DB_MESSAGES);
-
-request = request.defaults({jar: true, followAllRedirects: true}); // required to maintain session
+    {cdb} = require('../../db'),
+    knowtify = require('knowtify-node');
 
 var NewsletterApi = function() {
     this.setupNewsletter = handleSetupNewsletter;
@@ -18,7 +10,7 @@ var NewsletterApi = function() {
     this.syncMembers = handleSyncMembers;
     this.addSubscriber = addSubscriber;
 };
-
+/*
 function formatSearchResults(items) {
   if (items.rows && items.rows.length) {
     for (i in items.rows) {
@@ -29,20 +21,17 @@ function formatSearchResults(items) {
     }
   }
   return items;
-}
+}*/
 
 // this api is used internally and not exposed to client
 function addSubscriber(location_key, resource_key, user_profile) {
 
     console.log('getting leaders: ' + location_key + ' / ' + resource_key);
-  cdb.search('communities', 'communitySearch', {q: 'roles.leader:' + resource_key + ' AND type: user', include_docs: true})
-    .then(function (data) {
-      data = formatSearchResults(data);
+  cdb.findAll({where: {'roles.leader': resource_key, type: 'user'}})
+    .then(data => {
+            for (var x in data) {
 
-            var profile;
-            for (x in data.rows) {
-
-                profile = data.rows[x].doc.value;
+                var profile = x;
 
                 if (profile.newsletter && profile.newsletter.lists && profile.newsletter.lists[resource_key]) {
 
@@ -79,7 +68,7 @@ function addSubscriber(location_key, resource_key, user_profile) {
             res.status(201).end();
         });
 }
-
+/*
 function formatFindResults(items) {
   if (items.docs && items.docs.length) {
     for (i in items.docs) {
@@ -90,7 +79,7 @@ function formatFindResults(items) {
     }
   }
   return items;
-}
+}*/
 
 function handleSetupNewsletter(req,res) {
     console.log('setup newsletter');
@@ -132,12 +121,12 @@ function handleSetupNewsletter(req,res) {
 
     getUser = function(callback) {
 
-        cdb.get(req.user)
-            .then(function(response) {
+        cdb.findById(req.user)
+            .then(response => {
 
-                if (response.code !== "items_not_found") {
+                if (response) {
 
-                    callback(response.body);
+                    callback(response);
 
                 } else {
                     console.warn('WARNING:  User not found.');
@@ -278,7 +267,7 @@ function handleSetupNewsletter(req,res) {
             search = function (startKey) {
 
                 var searchstring = resource + " AND " + location_key;
-              cdb.find({selector: {type: 'user', '$text': 'communities: (' + searchstring + ')'}, skip: Number(startkey) || 0})
+              cdb.find({where: {type: 'user', '$text': 'communities: (' + searchstring + ')'}, skip: Number(startkey) || 0})
                 .then(function(data){
                   data = formatFindResults(data);
 

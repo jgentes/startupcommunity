@@ -1,14 +1,6 @@
-var Cloudant = require('cloudant'),
-  cloudant = Cloudant({
-    account: process.env.DB_ACCOUNT,
-    password: process.env.DB_PASSWORD,
-    plugin: 'promises'
-  }),
-  cdb = cloudant.db.use(process.env.DB_COMMUNITIES),
-  cdb_messages = cloudant.db.use(process.env.DB_MESSAGES),
-    path = require('path'),
-    _ = require(path.join(__dirname, '../scripts/lodash40.js')),
-    knowtify = require('knowtify-node');
+var path = require('path'),
+  {db, cdb, idb, mdb, Sequelize, sequelize, Op} = require('../../db'),
+  knowtify = require('knowtify-node');
 
 var MaintApi = function() {
     this.maintenance = handleMaintenance;
@@ -29,7 +21,7 @@ function handleMaintenance(res, req) {
         collection = 'communities-dev';
 
     function getList(startkey, userlist, limit) {
-        db.newSearchBuilder()
+/*        cdb.newSearchBuilder()
             .collection(collection)
             .limit(limit)
             .offset(startkey)
@@ -70,8 +62,8 @@ function handleMaintenance(res, req) {
 
                 }
 
-                /*console.log('Job done!');
-                res.end();*/
+                console.log('Job done!');
+                res.end();
 
                 if (data.body.next) {
                     startkey = startkey + limit;
@@ -82,20 +74,13 @@ function handleMaintenance(res, req) {
                     res.status(200).end();
 
 
-                    /*
-                     for (var user in userlist) {
-                     console.log('Updating ' + userlist[user].value.name);
-                     db.put(keys.db.collections.users, userlist[user].path.key, userlist[user].value)
-                     .then(function(response) {
-                     console.log('Record updated!');
-                     });
-                     }
-                     */
                 }
 
 
             });
+            */
     }
+    
 
     if (enabled) {
         console.log('Starting maintenance..');
