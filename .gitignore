@@ -31,3 +31,6 @@ dist
 
 # theme
 theme
+
+#heroku local
+.env
