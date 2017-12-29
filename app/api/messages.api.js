@@ -1,12 +1,6 @@
 var knowtify = require('knowtify-node'),
-  Cloudant = require('cloudant'),
-  cloudant = Cloudant({
-    account: process.env.DB_ACCOUNT,
-    password: process.env.DB_PASSWORD,
-    plugin: 'promises'
-  }),
-  cdb = cloudant.db.use(process.env.DB_COMMUNITIES),
-  cdb_messages = cloudant.db.use(process.env.DB_MESSAGES);
+  path = require('path'),
+  {mdb, cdb} = require('../../db');
 
 var MessagesApi = function() {
         this.addMessage = handleAddMessage;
@@ -21,9 +15,9 @@ var schema = {
             "type": type,
             "from": {
                 "key": from.key,
-                "name": from.profile.name,
-                "avatar": from.profile.avatar,
-                "headline": from.profile.headline
+                "name": from.name,
+                "avatar": from.avatar,
+                "headline": from.headline
             },
             "to": to_key,
             "published": datetime.getTime(),
@@ -37,7 +31,7 @@ function handleAddMessage(req, res) {
     // always use ensureAuth before this (to acquire req.user)
     var addMessage = req.body.params;
 
-    console.log('Adding message from ' + addMessage.from.profile.name + ' to ' + addMessage.to.profile.name);
+    console.log('Adding message from ' + addMessage.from.name + ' to ' + addMessage.to.name);
 
     var message = schema.message(addMessage.type, addMessage.from, addMessage.to.key, addMessage.content);
 
@@ -54,8 +48,8 @@ function handleAddMessage(req, res) {
         if (!message.parent) message.parent = { content: "" };
 
         var go = function(notify) {
-            cdb.get(notify.to.key)
-                .then(function(response) {
+            cdb.findById(notify.to.key)
+                .then(response => {
 
                     var user = response;
 
@@ -65,10 +59,10 @@ function handleAddMessage(req, res) {
                     knowtifyClient.contacts.upsert({
                             "event": notify.type,
                             "contacts": [{
-                                "email": user.profile.email,
+                                "email": user.email,
                                 "data": {
-                                    "from_name": notify.from.profile.name,
-                                    "from_image": notify.from.profile.avatar,
+                                    "from_name": notify.from.name,
+                                    "from_image": notify.from.avatar,
                                     "link": notify.link,
                                     "content": notify.content,
                                     "parent": notify.parent.content
@@ -76,7 +70,7 @@ function handleAddMessage(req, res) {
                             }]
                         },
                         function (success) {
-                            console.log('Notification sent to ' + user.profile.email);
+                            console.log('Notification sent to ' + user.email);
                         },
                         function (error) {
                             console.log('WARNING: messages73', error);
@@ -99,7 +93,7 @@ function handleAddMessage(req, res) {
             if (message.to.key) nodups.push(message.to.key);
             if (message.from.key) nodups.push(message.from.key);
 
-            for (reply in message.parent.replies) {
+            for (var reply in message.parent.replies) {
                 // never send multiple emails to same person
                 if (nodups.indexOf(message.parent.replies[reply].from.key) < 0) {
                     newMessage.to = message.parent.replies[reply].from;
@@ -128,10 +122,8 @@ function handleAddMessage(req, res) {
 
     } else {
 */
-        cdb_messages.insert(message)
+        mdb.create(message)
             .then(function (response) {
-                addMessage["key"] = response.id;
-                message.key = addMessage.key;
                 to_notify(addMessage);
                 res.status(200).send(message);
             })

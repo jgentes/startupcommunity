@@ -4,8 +4,9 @@ console.format = function(c) { return "[" + c.filename + ":" + c.getLineNumber()
 
 var express = require('express'),
     enforce = require('express-sslify'),
-    //httpProxy = require('http-proxy'),
+    httpProxy = require('http-proxy'),
     //blogProxy = httpProxy.createProxyServer(),
+    forestProxy = httpProxy.createProxyServer(),
     bodyParser = require('body-parser'),
     methodOverride = require('method-override'),
     logger = require('morgan'),
@@ -35,7 +36,7 @@ function wwwRedirect(req, res, next) {
     next();
 }
 
-app.set('trust proxy', true); // important for https
+//app.set('trust proxy', true); // important for https
 app.use(wwwRedirect);
 /*
 
@@ -45,6 +46,11 @@ app.all("/blog*", function(req, res){
 });
 */
 
+// Proxy for Forest, which runs on different port.. only works when deployed to heroku
+app.all("/forestadmin*", function(req, res){
+    forestProxy.web(req, res, { target: process.env.API_BASE_URL + ':3000' });
+});
+
 // remove trailing slash
 app.use(function(req, res, next) {
     if(req.url.substr(-1) == '/' && req.url.length > 1)
@@ -53,7 +59,7 @@ app.use(function(req, res, next) {
         next();
 });
 
-var root = __dirname.substring(0, __dirname.lastIndexOf('/')) || __dirname.substring(0, __dirname.lastIndexOf('\\')); // returns /app for heroku [should replace with path.join(__dirname, '../../dir')]
+var root = __dirname.substring(0, __dirname.lastIndexOf('/')) || __dirname.substring(0, __dirname.lastIndexOf('\\')); // returns /app for heroku
 
 // Order really matters here..!
 app.disable('x-powered-by');
@@ -65,6 +71,15 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use("/", express.static(root + process.env.SC_PATH));
 app.use("/public", express.static(root + '/public'));
 app.use(bugsnag.errorHandler);
+
+// Forest Admin
+
+app.use(require('forest-express-sequelize').init({
+  modelsDir: root + '/db',
+  envSecret: process.env.FOREST_ENV_SECRET,
+  authSecret: process.env.FOREST_AUTH_SECRET,
+  sequelize: require(root + '/db').sequelize
+}));
 
 // Production environment
 
@@ -188,24 +203,6 @@ ghost({
   ghostServer.start(parentApp);
 });
 */
-
-// database
-const mysql = require('mysql2');
-const db = mysql.createConnection({
-  host: 'otwsl2e23jrxcqvx.cbetxkdyhwsb.us-east-1.rds.amazonaws.com',
-  user: 'cd8do5g1qfary77u',
-  password: 'bix38gi0i1nsf9gx',
-  database: 'otcktbzgpblfpu07'
-});
-/*
-db.execute(
-  'SELECT * FROM cities ORDER BY ID_COUNTY',
-  (err, results) => {
-    if (err) console.log(err);
-    console.log(results.length, ' results');
-    
-  }
-);*/
 
 // Backend App
 
