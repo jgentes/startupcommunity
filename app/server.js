@@ -47,7 +47,7 @@ app.all("/blog*", function(req, res){
 
 // Proxy for Forest, which runs on different port.. only works when deployed to heroku
 app.all("/forestadmin*", function(req, res){
-    forestProxy.web(req, res, { target: 'http://localhost:3000' });
+    forestProxy.web(req, res, { target: 'http://' + process.env.IP + ':3000' });
 });
 
 // remove trailing slash
