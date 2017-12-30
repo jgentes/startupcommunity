@@ -13,7 +13,6 @@
     "continuation-local-storage": "^3.2.1",
     "express": "^4.13.3",
     "express-sslify": "^1.0.1",
-    "forest-express-sequelize": "^2.0.4",
     "grunt": "^1.0.1",
     "http-proxy": "^1.9.0",
     "jquery-param": "^0.2.0",

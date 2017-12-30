@@ -5,7 +5,6 @@ var express = require('express'),
     enforce = require('express-sslify'),
     httpProxy = require('http-proxy'),
     //blogProxy = httpProxy.createProxyServer(),
-    forestProxy = httpProxy.createProxyServer(),
     bodyParser = require('body-parser'),
     methodOverride = require('method-override'),
     logger = require('morgan'),
@@ -45,11 +44,6 @@ app.all("/blog*", function(req, res){
 });
 */
 
-// Proxy for Forest, which runs on different port.. only works when deployed to heroku
-app.all("/forestadmin*", function(req, res){
-    forestProxy.web(req, res, { target: process.env.API_BASE_URL + ':3000' });
-});
-
 // remove trailing slash
 app.use(function(req, res, next) {
     if(req.url.substr(-1) == '/' && req.url.length > 1)
@@ -71,14 +65,6 @@ app.use("/", express.static(root + process.env.SC_PATH));
 app.use("/public", express.static(root + '/public'));
 app.use(bugsnag.errorHandler);
 
-// Forest Admin
-
-app.use(require('forest-express-sequelize').init({
-  modelsDir: root + '/db',
-  envSecret: process.env.FOREST_ENV_SECRET,
-  authSecret: process.env.FOREST_AUTH_SECRET,
-  sequelize: require(root + '/db').sequelize
-}));
 
 // Production environment
 
