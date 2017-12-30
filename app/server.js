@@ -65,7 +65,6 @@ app.use("/", express.static(root + process.env.SC_PATH));
 app.use("/public", express.static(root + '/public'));
 app.use(bugsnag.errorHandler);
 
-
 // Production environment
 
 if (process.env.NODE_ENV === "production" || process.env.NODE_ENV === "development") {
