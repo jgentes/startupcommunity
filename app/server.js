@@ -1,5 +1,4 @@
 // for debugging
-require('debug-trace')({ always: true, colors: { log: '32' } });
 console.format = function(c) { return "[" + c.filename + ":" + c.getLineNumber() + "]"; };
 
 var express = require('express'),
@@ -61,6 +60,7 @@ app.use(function(req, res, next) {
 
 var root = __dirname.substring(0, __dirname.lastIndexOf('/')) || __dirname.substring(0, __dirname.lastIndexOf('\\')); // returns /app for heroku
 
+console.log(root);
 // Order really matters here..!
 app.disable('x-powered-by');
 app.use(bugsnag.requestHandler);
@@ -94,7 +94,6 @@ if (process.env.NODE_ENV === "production" || process.env.NODE_ENV === "developme
 }
 
 // API ROUTE METHODS
-
 var AuthApi = require(__dirname + '/api/auth.api.js'),
     auth = new AuthApi(),
     UserApi = require(__dirname + '/api/user.api.js'),
