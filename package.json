@@ -4,14 +4,13 @@
   "description": "StartupCommunity.org - Kickstart your city's entrepreneurial ecosystem",
   "private": true,
   "dependencies": {
-    "aws-sdk": "^2.171.0",
+    "aws-sdk": "^2.176.0",
     "bcryptjs": "^2.3.0",
     "body-parser": "^1.14.1",
     "bugsnag": "^2.0.1",
     "cloudant": "^1.7.1",
     "connect-wwwhisper": "^0.1.13",
     "continuation-local-storage": "^3.2.1",
-    "debug-trace": "~2.2.1",
     "express": "^4.13.3",
     "express-sslify": "^1.0.1",
     "forest-express-sequelize": "^2.0.4",
@@ -30,7 +29,7 @@
     "request": "^2.67.0",
     "request-debug": "^0.2.0",
     "satellizer": "~0.15.5",
-    "sequelize": "^4.28.5"
+    "sequelize": "^4.28.6"
   },
   "devDependencies": {
     "bower": "^1.8.0",
@@ -53,8 +52,7 @@
     "time-grunt": "^1.0.0"
   },
   "engines": {
-    "node": "7.10.1",
-    "npm": "5.6.0"
+    "node": "7.10.1"
   },
   "scripts": {
     "test": "grunt test",
