@@ -5,7 +5,6 @@ var express = require('express'),
     enforce = require('express-sslify'),
     httpProxy = require('http-proxy'),
     //blogProxy = httpProxy.createProxyServer(),
-    forestProxy = httpProxy.createProxyServer(),
     bodyParser = require('body-parser'),
     methodOverride = require('method-override'),
     logger = require('morgan'),
@@ -44,11 +43,6 @@ app.all("/blog*", function(req, res){
     blogProxy.web(req, res, { target: 'http://localhost:2368' });
 });
 */
-
-// Proxy for Forest, which runs on different port.. only works when deployed to heroku
-app.all("/forestadmin*", function(req, res){
-    forestProxy.web(req, res, { target: process.env.API_BASE_URL + ':3000' });
-});
 
 // remove trailing slash
 app.use(function(req, res, next) {
