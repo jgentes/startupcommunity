@@ -5,6 +5,7 @@ var express = require('express'),
     enforce = require('express-sslify'),
     httpProxy = require('http-proxy'),
     //blogProxy = httpProxy.createProxyServer(),
+    forestProxy = httpProxy.createProxyServer(),
     bodyParser = require('body-parser'),
     methodOverride = require('method-override'),
     logger = require('morgan'),
@@ -44,6 +45,11 @@ app.all("/blog*", function(req, res){
 });
 */
 
+// Proxy for Forest, which runs on different port.. only works when deployed to heroku
+app.all("/forestadmin*", function(req, res){
+    forestProxy.web(req, res, { target: 'http://localhost:3000' });
+});
+
 // remove trailing slash
 app.use(function(req, res, next) {
     if(req.url.substr(-1) == '/' && req.url.length > 1)
@@ -54,7 +60,6 @@ app.use(function(req, res, next) {
 
 var root = __dirname.substring(0, __dirname.lastIndexOf('/')) || __dirname.substring(0, __dirname.lastIndexOf('\\')); // returns /app for heroku
 
-console.log(root);
 // Order really matters here..!
 app.disable('x-powered-by');
 app.use(bugsnag.requestHandler);
