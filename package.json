@@ -17,7 +17,7 @@
     "grunt-cli": "^1.2.0",
     "http-proxy": "^1.9.0",
     "jquery-param": "^0.2.0",
-    "jsdom": "^11.5.1",
+    "jsdom": "^11.4",
     "jsonwebtoken": "^8.1.0",
     "knowtify-node": "^0.1.0",
     "memjs": "^1.1.0",
