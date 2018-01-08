@@ -7,10 +7,9 @@ const
   }),
   cls = require('continuation-local-storage'),
   path = require('path'),
-  db = sequelize.import(__dirname + "/communities"),
-  cdb = require(path.join(__dirname, "../db")).communities,
-  idb= require(path.join(__dirname, "../db")).invitations,
-  mdb = require(path.join(__dirname, "../db")).messages,
+  cdb = sequelize.import(__dirname + "/communities"),
+  idb = sequelize.import(__dirname + "/invitations"),
+  mdb = sequelize.import(__dirname + "/messages"),
   Op = Sequelize.Op;
   
 Sequelize.useCLS(cls.createNamespace('sc-mobile'));
@@ -44,50 +43,32 @@ sequelize
 
 //SELECT id, roles FROM communities WHERE JSON_CONTAINS(roles->>'$.leader."bend-or"', \'["bend-or"]\')
 //SELECT id, communities FROM communities WHERE JSON_CONTAINS(communities, \'["bendtech"]\')
-
-/*sequelize
+const test = ["bendtech", "bend-or"];
+const buildQuery = vals => {
+  let q = '';
+  vals.forEach((v,i) => {
+    q += ' JSON_CONTAINS(invite_communities, \'["' + v + '"]\')';
+    if (vals.length > 1 && i < vals.length-1) q += ' OR';
+  })
+  return q;
+};
+console.log(buildQuery(test));
+sequelize
   .query(
-    'SELECT id, communities FROM communities WHERE JSON_CONTAINS(communities, \'["bendtech"]\')',
-    { model: db}
+    'SELECT * FROM invitations WHERE' + buildQuery(test),
+    { model: idb}
   ).then(u => {
   if (u) u.forEach(ul => console.log(ul.id));
-  })*/
+  })
 /*db.findOne({where: {'roles.leader.bend-or': {[Op.ne]: null}}})
   .then(u => {
     if (u) console.log(u.id);
   })*/
-/*
-var User = sequelize.define('user', {
-  data: Sequelize.DataTypes.JSONB
-});
-
-sequelize.sync({
-  force: true,
-  logging: console.log
-})
-  .then(() => {
-    return User.create({
-      data: {
-        components: ['abc', 'bca', 'bac']
-      }
-    })
-  })
-  .then(() => {
-    return User.findAll({
-      where : {
-        data: {
-          '$contains': { components: [ 'abc' ]}
-        }
-      }
-    });
-  })
-  .then(console.log)
-  .finally(() => sequelize.close());
-*/
-/*db.findOne({where: {'communities': {[Op.contains]: ['bendtech']}}})
+  /*
+idb.findOne({where: {'invite_communities': {[Op.contains]: ["bendtech"]}}})
   .then(u => {
     if (u) console.log(u.id);
-  })*/
+  })
   /*
 db.execute(
   'SELECT * FROM cities ORDER BY ID_COUNTY',
@@ -98,4 +79,4 @@ db.execute(
   }
 );*/
 
-exports = {sequelize, Sequelize, db, cdb, idb, mdb, Op};
+exports = {sequelize, Sequelize, cdb, idb, mdb, Op};

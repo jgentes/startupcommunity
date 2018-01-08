@@ -4,7 +4,7 @@ var bcrypt = require('bcryptjs'),
   crypto = require('crypto'),
   NewsletterApi = require(__dirname + '/newsletter.api.js'),
   newsletterApis = new NewsletterApi(),
-  {idb, mdb, Op} = require('../../db'),
+  {cdb, idb, mdb, Op} = require('../../db'),
   knowtify = require('knowtify-node');
 
 //require('request-debug')(request); // Very useful for debugging oauth and api req/res
@@ -695,7 +695,7 @@ function handleInviteUser(req, res) {
   if (!req.user) {
     // just take first one ?
     const where = {};
-    where['roles.leader' + inviteUser.location_key] = {[Op.ne]:null};
+    where['roles.leader.' + inviteUser.location_key] = {[Op.ne]:null};
     cdb.findOne(where).then(result => {
         if (result) {
           console.log('Found leader to use for invite.');
