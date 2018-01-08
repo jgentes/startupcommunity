@@ -136,65 +136,26 @@ function handleGetCommunity(req, res) {
     if (!cache) res.status(200).send(newresponse);
 
     mc.set(community, JSON.stringify(newresponse), function (err, val) {
-      if (err) console.warn('WARNING: Memcache error: ', err)
+      if (err) console.warn('WARNING: Memcache error: ', err);
     });
   };
 
-  var community = req.params.community ? req.params.community.replace(/\s+/g, '-') : 'bend-or';
+  var community = req.params.community && req.params.community.replace(/\s+/g, '-');
 
-  var pullCommunity = function (cache) {
-
-    // need to determine what 'this' community is, but to optimize the first query, grab all communities and then figure it out (rather than a 'get' for the first community, then another call for the rest)
-
-    cdb.findAll({
-      where: {
-        [Op.or]: [
-          {"slug": community},
-          {
-            [Op.or]: [
-              {
-                [Op.and]: [
-                  {
-                    "communities": {
-                      [Op.in]: [community]
-                    }
-                  }, {
-                    "type": {
-                      [Op.notIn]: ["user", "company"]
-                    }
-                  }
-                ]
-              },
-              {
-                [Op.and]: [
-                  {
-                    "communities": {
-                     [Op.in]: [community]
-                    }
-                  }, {
-                    "type": {
-                      [Op.notIn]: ["user", "company"]
-                    }
-                  }
-                ]
-              }
-            ]
-          }
-        ]
-      }
-    }).then(result => {
-      if (result.length) {
-
-        var newresponse;
-
-        var finalize = results => {
-          // finalize iterates through results and formats them nicely
-
-          results.forEach(item => {
-            if (item && item.id !== community) {
-
+  const pullCommunity = cache => {
+        
+    cdb.findOne({where: {"slug": community}})
+    .then(async m => {
+      if (m) {
+        let ubersearch = null;
+        let newresponse = {...m};
+        
+        const sortCommunities = items => {
+          items.forEach(item => {
+            if (item) {
+    
               // sort communities for use in nav and child dashboard pages
-
+    
               switch (item.type) {
                 case "location":
                   if (!newresponse.locations) newresponse.locations = {};
@@ -214,11 +175,11 @@ function handleGetCommunity(req, res) {
                     if (!newresponse.resources) newresponse.resources = [];
                     newresponse.resources.push(item);
                   }
-
+    
                   if (newresponse.type == 'user') {
                     for (var role in newresponse.roles) {
                       if (newresponse.roles[role][item.id]) {
-
+    
                         if (!newresponse.companies) newresponse.companies = {"count": {}};
                         if (!newresponse.companies[role]) newresponse.companies[role] = {};
                         if (!newresponse.companies[role][item.id]) newresponse.companies[role][item.id] = item;
@@ -229,13 +190,51 @@ function handleGetCommunity(req, res) {
                   }
                   break;
               }
-
+    
               newresponse[item.id] = item;
-
             }
           })
-
-          if (newresponse.resources && newresponse.resources.length) {
+        }
+  
+        console.log('Pulling community for ' + m.name);
+  
+        if (!m.resource || m.type !== "location") {
+  
+          // pull communities within record
+          var comm_items = m.communities || [];
+  
+          // grab parent
+          if (m.parents && m.parents[0]) comm_items.push(m.parents[0]);
+  
+          if (m.home && m.communities.indexOf(m.home) < 0) comm_items.push(m.home);
+  
+          comm_items.push(community);
+  
+          ubersearch = comm_items;
+  
+        } else if (m.home) {
+          ubersearch = [m.home];
+        }
+  
+        console.log('Ubersearch: ', ubersearch);
+  
+        if (ubersearch) {
+          await cdb.findAll({
+            where: {
+              "slug": {
+                [Op.in]: ubersearch
+              }
+            }
+          }).then(sortCommunities);
+        }
+        
+        await sequelize
+          .query(
+            'SELECT * FROM communities WHERE JSON_CONTAINS(communities, \'["' + community + '"]\') OR JSON_CONTAINS(parents, \'["' + community + '"]\') AND NOT type="user" AND NOT type="company" AND NOT slug="' + community + '"',
+            { model: cdb}
+          ).then(sortCommunities);
+        
+        if (newresponse.resources && newresponse.resources.length) {
             newresponse.resources = newresponse.resources.sort(function (a, b) {
               var x = a.slug;
               var y = b.slug;
@@ -261,7 +260,7 @@ function handleGetCommunity(req, res) {
                 console.log("WARNING: community171");
                 res.status(200).send(newresponse);
               }
-            })
+            });
 
           } else if (newresponse.type == 'company') {
             // get team
@@ -322,94 +321,32 @@ function handleGetCommunity(req, res) {
                   console.log("WARNING: ");
                   res.status(200).send(newresponse);
                 }
-              })
+              });
             };
 
-            getTeam(startkey, teamlist)
+            getTeam(startkey, teamlist);
 
           } else checkcache(cache, community, newresponse);
-        };
-
-          var found = false;
-
-          for (var m in result) {
-            if (m.slug == community) {
-              let ubersearch;
-              found = true;
-
-              newresponse = m;
-
-              console.log('Pulling community for ' + m.name);
-
-              if (!m.resource || m.type !== "location") {
-
-                // pull communities within record
-                var comm_items = m.communities || [];
-
-                // grab parent
-                if (m.parents && m.parents[0]) comm_items.push(m.parents[0]);
-
-                if (m.home && m.communities.indexOf(m.home) < 0) comm_items.push(m.home);
-
-                comm_items.push(community);
-
-                ubersearch = comm_items;
-
-              } else if (m.home) {
-                ubersearch = [m.home];
-              } else ubersearch = null;
-
-              console.log(ubersearch);
-
-              if (ubersearch) {
-
-                cdb.findAll({
-                  where: {
-                    "slug": {
-                      [Op.in]: ubersearch
-                    }
-                  }
-                }).then(uber_result => {
-                  if (uber_result.length) {
-
-                    if (m.home || m.type == "location") {
-                      var both = result.concat(uber_result);
-                      finalize(both);
-                    } else finalize(uber_result);
-                  } else {
-                    console.log("WARNING: ");
-                    finalize(result);
-                  }
-                })
-              }
-
-              break;
-            }
-          }
-          if (!found) {
-            console.log('INFO: Community not found!');
-            res.status(404).send({message: 'Community not found.'});
-          }
-      
+        
       } else {
-        console.log("WARNING: community236");
-        res.status(202).send({message: 'Something went wrong: '});
+        console.log('INFO: Community not found!');
+        res.status(404).send({message: 'Community not found.'});
       }
-    })
+    });
   };
 
   if (community) {
 
     if (!req.query.nocache) {
       mc.get(community, function (err, value) {
-
+        if (err) console.log('ERROR: ', err);
         if (value) {
           res.status(200).send(value);
           pullCommunity(true);
         } else {
           pullCommunity(false);
         }
-      })
+      });
     } else {
       mc.delete(community);
       pullCommunity(false);
