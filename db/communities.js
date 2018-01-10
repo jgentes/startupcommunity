@@ -102,7 +102,7 @@ module.exports = function(sequelize, DataTypes) {
       allowNull: true
     },
     resource: {
-      type: DataTypes.BOOL,
+      type: DataTypes.BOOLEAN,
       allowNull: true
     },
     resource_types: {
