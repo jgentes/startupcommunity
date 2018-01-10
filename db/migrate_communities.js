@@ -13,7 +13,7 @@ Sequelize.useCLS(cls.createNamespace('startupcommunity'));
 // Create Communities Table
 /*
 sequelize.query(
-  'CREATE TABLE `communities` ( `id` int(11) unsigned NOT NULL AUTO_INCREMENT, `slug` varchar(250) NOT NULL, `type` varchar(250) NOT NULL, `name` varchar(250) NOT NULL, `home` varchar(250) NOT NULL, `parents` varchar(250) DEFAULT NULL, `communities` varchar(1000) DEFAULT NULL,  `community_profiles` json DEFAULT NULL,  `icon` varchar(250) NOT NULL,  `email` varchar(250) NOT NULL,  `avatar` varchar(250) NOT NULL,  `linkedin` json DEFAULT NULL,  `api_key` varchar(250) NOT NULL,  `headline` varchar(250) NOT NULL,  `summary` text COLLATE utf8_unicode_ci NOT NULL,  `skills` varchar(1000) DEFAULT NULL,  `roles` json DEFAULT NULL,  `country` varchar(250) NOT NULL,  `state` varchar(250) NOT NULL,  `county` varchar(250) NOT NULL,  `city` varchar(250) NOT NULL,  `description` text COLLATE utf8_unicode_ci NOT NULL,  `sc_logo` varchar(250) NOT NULL,  `embed` json DEFAULT NULL,  `resource` tinyint(4) DEFAULT NULL,  `resource_types` varchar(1000) DEFAULT NULL,  `industries` varchar(1000) DEFAULT NULL,`website` varchar(250) NOT NULL,  `street` varchar(250) NOT NULL,  `angellist` json DEFAULT NULL,  `logo` varchar(250) NOT NULL,  `token` varchar(250) NOT NULL,  `newsletter` json DEFAULT NULL,  `stage` varchar(250) NOT NULL,  PRIMARY KEY (`id`), FULLTEXT (name, headline, summary, skills, description)) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci').then(console.log('finished'));
+  'CREATE TABLE `communities` ( `id` int(11) unsigned NOT NULL AUTO_INCREMENT, `slug` varchar(50) NOT NULL UNIQUE, `type` varchar(50) NOT NULL, `name` varchar(50) NOT NULL, `home` varchar(50) NOT NULL, `parents` varchar(250) DEFAULT NULL, `communities` varchar(1000) DEFAULT NULL,  `community_profiles` json DEFAULT NULL,  `icon` varchar(250),  `email` varchar(50),  `avatar` varchar(250),  `linkedin` json DEFAULT NULL,  `api_key` varchar(100),  `headline` varchar(250),  `summary` varchar(1000),  `skills` varchar(1000) DEFAULT NULL,  `roles` json DEFAULT NULL,  `country` varchar(50) NOT NULL,  `state` varchar(50) NOT NULL,  `county` varchar(50),  `city` varchar(50) NOT NULL,  `description` varchar(1000),  `sc_logo` varchar(250),  `embed` json DEFAULT NULL,  `resource` BOOL DEFAULT 0,  `resource_types` varchar(250) DEFAULT NULL,  `industries` varchar(1000) DEFAULT NULL,`website` varchar(250),  `street` varchar(250),  `angellist` json DEFAULT NULL,  `logo` varchar(250),  `token` varchar(250),  `newsletter` json DEFAULT NULL,  `stage` varchar(50),  PRIMARY KEY (`id`), FULLTEXT (name, headline, summary, skills, description)) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci').then(console.log('finished'));
 */
 
 // Create Invitations Table
@@ -22,7 +22,7 @@ sequelize.query('CREATE TABLE `invitations` (`id` int(11) NOT NULL AUTO_INCREMEN
 */
 
 // Load communities and invitations from dump of communities db in couchdb
-/*
+
 community_array.forEach(async c => {
   if (c.type == "location") {
     const fields = '(slug, type, parents, country, state, county, city, name, description, sc_logo, embed)';
@@ -125,4 +125,3 @@ community_array.forEach(async c => {
   }
   
 });
-*/

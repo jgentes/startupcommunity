@@ -10,26 +10,27 @@ module.exports = function(sequelize, DataTypes) {
     },
     slug: {
       type: DataTypes.STRING(50),
-      unique: true
+      unique: true,
+      allowNull: false
     },
     type: {
-      type: DataTypes.TEXT,
-      allowNull: true
+      type: DataTypes.STRING(50),
+      allowNull: false
     },
     name: {
-      type: DataTypes.TEXT,
-      allowNull: true
+      type: DataTypes.STRING(50),
+      allowNull: false
     },
     home: {
-      type: DataTypes.TEXT,
-      allowNull: true
+      type: DataTypes.STRING(50),
+      allowNull: false
     },
     parents: {
-      type: DataTypes.JSON,
+      type: DataTypes.STRING(250),
       allowNull: true
     },
     communities: {
-      type: DataTypes.JSON,
+      type: DataTypes.STRING(1000),
       allowNull: true
     },
     community_profiles: {
@@ -37,15 +38,15 @@ module.exports = function(sequelize, DataTypes) {
       allowNull: true
     },
     icon: {
-      type: DataTypes.TEXT,
+      type: DataTypes.STRING(250),
       allowNull: true
     },
     email: {
-      type: DataTypes.TEXT,
+      type: DataTypes.STRING(50),
       allowNull: true
     },
     avatar: {
-      type: DataTypes.TEXT,
+      type: DataTypes.STRING(250),
       allowNull: true
     },
     linkedin: {
@@ -53,19 +54,19 @@ module.exports = function(sequelize, DataTypes) {
       allowNull: true
     },
     api_key: {
-      type: DataTypes.TEXT,
+      type: DataTypes.STRING(100),
       allowNull: true
     },
     headline: {
-      type: DataTypes.TEXT,
+      type: DataTypes.STRING(250),
       allowNull: true
     },
     summary: {
-      type: DataTypes.TEXT,
+      type: DataTypes.STRING(1000),
       allowNull: true
     },
     skills: {
-      type: DataTypes.JSON,
+      type: DataTypes.STRING(1000),
       allowNull: true
     },
     roles: {
@@ -73,27 +74,27 @@ module.exports = function(sequelize, DataTypes) {
       allowNull: true
     },
     country: {
-      type: DataTypes.TEXT,
-      allowNull: true
+      type: DataTypes.STRING(50),
+      allowNull: false
     },
     state: {
-      type: DataTypes.TEXT,
-      allowNull: true
+      type: DataTypes.STRING(50),
+      allowNull: false
     },
     county: {
-      type: DataTypes.TEXT,
+      type: DataTypes.STRING(50),
       allowNull: true
     },
     city: {
-      type: DataTypes.TEXT,
-      allowNull: true
+      type: DataTypes.STRING(50),
+      allowNull: false
     },
     description: {
-      type: DataTypes.TEXT,
+      type: DataTypes.STRING(1000),
       allowNull: true
     },
     sc_logo: {
-      type: DataTypes.TEXT,
+      type: DataTypes.STRING(250),
       allowNull: true
     },
     embed: {
@@ -101,23 +102,23 @@ module.exports = function(sequelize, DataTypes) {
       allowNull: true
     },
     resource: {
-      type: DataTypes.INTEGER(4),
+      type: DataTypes.BOOL,
       allowNull: true
     },
     resource_types: {
-      type: DataTypes.JSON,
+      type: DataTypes.STRING(250),
       allowNull: true
     },
     industries: {
-      type: DataTypes.JSON,
+      type: DataTypes.STRING(1000),
       allowNull: true
     },
     website: {
-      type: DataTypes.TEXT,
+      type: DataTypes.STRING(250),
       allowNull: true
     },
     street: {
-      type: DataTypes.TEXT,
+      type: DataTypes.STRING(250),
       allowNull: true
     },
     angellist: {
@@ -125,11 +126,11 @@ module.exports = function(sequelize, DataTypes) {
       allowNull: true
     },
     logo: {
-      type: DataTypes.TEXT,
+      type: DataTypes.STRING(250),
       allowNull: true
     },
     token: {
-      type: DataTypes.TEXT,
+      type: DataTypes.STRING(250),
       allowNull: true
     },
     newsletter: {
@@ -137,7 +138,7 @@ module.exports = function(sequelize, DataTypes) {
       allowNull: true
     },
     stage: {
-      type: DataTypes.TEXT,
+      type: DataTypes.STRING(50),
       allowNull: true
     }
   }, {
