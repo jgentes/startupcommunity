@@ -125,3 +125,4 @@ community_array.forEach(async c => {
   }
   
 });
+*/
