@@ -80,13 +80,7 @@ db.execute(
 );*/
 
 // FULL TEXT SEARCH
-cdb.execute(
-  "SELECT * FROM articles WHERE MATCH (title,body) AGAINST ('database' IN NATURAL LANGUAGE MODE);",
-  (err, results) => {
-    if (err) console.log(err);
-    console.log(results.length, ' results');
-  }
-);
-
+sequelize.query('SELECT * FROM communities WHERE MATCH (name, headline, summary, skills, description) AGAINST ("energies" IN NATURAL LANGUAGE MODE);')
+.then(results => results[0].forEach(r => console.log(r.name)));
 
 exports = {sequelize, Sequelize, cdb, idb, mdb, Op};
