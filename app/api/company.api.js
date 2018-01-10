@@ -5,11 +5,11 @@ var Q = require('q'),
   communityApis = new CommunityApi(),
   aws = require('aws-sdk'),
   jqparam = require('jquery-param'),
-  {cdb, sequelize, Op} = require('../../db');
+  { cdb, sequelize, Op } = require('../../db');
 
 //require('request-debug')(request); // Very useful for debugging oauth and api req/res
 
-var CompanyApi = function () {
+var CompanyApi = function() {
   this.companySearch = handleCompanySearch;
   this.addCompany = handleAddCompany;
   this.deleteCompany = handleDeleteCompany;
@@ -18,11 +18,9 @@ var CompanyApi = function () {
 };
 
 var schema = {
-  company: function (profile, location_key, community_key) {
+  company: function(profile, location_key, community_key) {
 
-    var communities = location_key == community_key ?
-      [location_key] :
-      [location_key, community_key];
+    var communities = location_key == community_key ? [location_key] : [location_key, community_key];
 
     var newprofile = {
       "type": "company",
@@ -111,7 +109,7 @@ function handleCompanySearch(req, res) {
   // create searchstring
   var selector = {
     ["$and"]: [
-      {"type": "company"}
+      { "type": "company" }
     ]
   };
   var searchstring = 'communities:(';
@@ -134,24 +132,25 @@ function handleCompanySearch(req, res) {
    }
    }
    } else searchstring += '*';*/
-  selector["$and"].push({"communities": {[Op.in]: communities}});
+  selector["$and"].push({ "communities": {
+      [Op.in]: communities } });
 
   /* if (get_resources === "true") {
    searchstring += ") AND resource: true" + state;
    } else searchstring += ")" + (state ? " AND" + state : '');*/
 
-  if (get_resources == "true") selector["$and"].push({"resource": true});
+  if (get_resources == "true") selector["$and"].push({ "resource": true });
 
   if (clusters && clusters.length > 0 && clusters[0] !== '*') {
 
-    selector["$and"].push(
-      {
-        [Op.or]: [
-          {"skills": {[Op.in]: clusters}},
-          {"parents": {[Op.in]: clusters}}
-        ]
-      }
-    );
+    selector["$and"].push({
+      [Op.or]: [
+        { "skills": {
+            [Op.in]: clusters } },
+        { "parents": {
+            [Op.in]: clusters } }
+      ]
+    });
     /*
      clusters = clusters.splice(',');
      searchstring += ' AND (';
@@ -170,7 +169,8 @@ function handleCompanySearch(req, res) {
 
   }
   if (stages && stages.length > 0 && stages[0] !== '*') {
-    selector["$and"].push({"stage": {[Op.in]: stages}});
+    selector["$and"].push({ "stage": {
+        [Op.in]: stages } });
     /* stages = stages.splice(',');
      searchstring += ' AND (';
 
@@ -182,7 +182,8 @@ function handleCompanySearch(req, res) {
   }
 
   if (types && types.length > 0 && types[0] !== '*') {
-    selector["$and"].push({"resource_types": {[Op.in]: types}});
+    selector["$and"].push({ "resource_types": {
+        [Op.in]: types } });
     /*types = types.splice(',');
      searchstring += ' AND (';
 
@@ -196,41 +197,42 @@ function handleCompanySearch(req, res) {
 
   if (query) {
     //todo this will no doubt be broken
-    selector["$and"].push({"$text": query});
+    selector[Op.].push({ "$text": query });
     /*searchstring += ' AND ' + '(profile: ' + query + ')';*/
   }
 
   console.log('Pulling Companies: ', selector);
 
-  cdb.findAll({where: selector},{offset: Number(offset) || 0, limit: Number(limit) || 16}).then(result => {
+  cdb.findAll({ where: selector }, { offset: Number(offset) || 0, limit: Number(limit) || 16 }).then(result => {
     if (result) {
 
       result.next = '/api/2.1/users?' + jqparam({
-          communities: req.query.communities,
-          clusters: (req.query.clusters || '*'),
-          stages: (req.query.stages || '*'),
-          types: (req.query.types || '*'),
-          limit: (Number(req.query.limit) || 16),
-          get_resources: (req.query.get_resources || false),
-          offset: ((Number(req.query.offset) || 0) + (Number(req.query.limit) || 16)),
-          query: (req.query.query || '*')
-        });
+        communities: req.query.communities,
+        clusters: (req.query.clusters || '*'),
+        stages: (req.query.stages || '*'),
+        types: (req.query.types || '*'),
+        limit: (Number(req.query.limit) || 16),
+        get_resources: (req.query.get_resources || false),
+        offset: ((Number(req.query.offset) || 0) + (Number(req.query.limit) || 16)),
+        query: (req.query.query || '*')
+      });
 
       result.prev = '/api/2.1/users?' + jqparam({
-          communities: req.query.communities,
-          clusters: (req.query.clusters || '*'),
-          stages: (req.query.stages || '*'),
-          types: (req.query.types || '*'),
-          limit: (Number(req.query.limit) || 16),
-          get_resources: (req.query.get_resources || false),
-          offset: (req.query.offset ? (Number(req.query.offset) - ((Number(req.query.limit) || 16))) : 0),
-          query: (req.query.query || '*')
-        });
+        communities: req.query.communities,
+        clusters: (req.query.clusters || '*'),
+        stages: (req.query.stages || '*'),
+        types: (req.query.types || '*'),
+        limit: (Number(req.query.limit) || 16),
+        get_resources: (req.query.get_resources || false),
+        offset: (req.query.offset ? (Number(req.query.offset) - ((Number(req.query.limit) || 16))) : 0),
+        query: (req.query.query || '*')
+      });
 
       res.send(result);
-    } else {
+    }
+    else {
       console.log('WARNING: ');
-      res.send({message: 'No companies found!'});
+      res.send({ message: 'No companies found!' });
     }
   })
 }
@@ -254,14 +256,15 @@ function handleGetLogoUrl(req, res) {
     Expires: 60,
     ACL: 'public-read'
   };
-  s3.getSignedUrl('putObject', s3_params, function (err, signedUrl) {
+  s3.getSignedUrl('putObject', s3_params, function(err, signedUrl) {
     var parsedUrl = url.parse(signedUrl);
     parsedUrl.search = null;
     var objectUrl = url.format(parsedUrl);
 
     if (!err) {
-      res.send({put: signedUrl, get: objectUrl});
-    } else res.status(400).send({message: "Something went wrong."});
+      res.send({ put: signedUrl, get: objectUrl });
+    }
+    else res.status(400).send({ message: "Something went wrong." });
 
   });
 }
@@ -270,7 +273,7 @@ function handleAddCompany(req, res) {
   // always use ensureAuth before this (to acquire req.user)
   var addCompany = req.body.params;
 
-  var go = function () {
+  var go = function() {
     // validate user is a member in the location/community
     cdb.findById(req.user).then(response => {
       if (response) {
@@ -282,16 +285,17 @@ function handleAddCompany(req, res) {
         if (!addCompany.location_key) addCompany.location_key = addCompany.community_key;
 
         if (user.communities.indexOf(addCompany.location_key) < 0) {
-          res.status(202).send({message: 'You must be a member of this community to add a company.'});
-        } else if (!addCompany.community_key || (user.roles && user.roles.leader && user.roles.leader[addCompany.community_key] && user.roles.leader[addCompany.community_key].indexOf(addCompany.location_key) < 0)) {
+          res.status(202).send({ message: 'You must be a member of this community to add a company.' });
+        }
+        else if (!addCompany.community_key || (user.roles && user.roles.leader && user.roles.leader[addCompany.community_key] && user.roles.leader[addCompany.community_key].indexOf(addCompany.location_key) < 0)) {
           console.warn("No community specified, or user is not a leader in community: " + addCompany.community_key + " for location: " + addCompany.location_key + "!");
           addCompany.community_key = addCompany.location_key;
         }
 
         var company = schema.company(addCompany, addCompany.location_key, addCompany.community_key);
 
-        var post = function () {
-          companyPost(company, addCompany.role, addCompany.location_key, req.user, addCompany.key, update, function (result) {
+        var post = function() {
+          companyPost(company, addCompany.role, addCompany.location_key, req.user, addCompany.key, update, function(result) {
             res.status(result.status).send(result.data);
           });
         };
@@ -301,9 +305,11 @@ function handleAddCompany(req, res) {
         if (!addCompany.key) {
           addCompany.key = addCompany.url.toLowerCase();
           post();
-        } else if (addCompany.key && (addCompany.key !== addCompany.url)) {
-          res.status(202).send({message: 'Sorry, a url path cannot be changed.'})
-        } else {
+        }
+        else if (addCompany.key && (addCompany.key !== addCompany.url)) {
+          res.status(202).send({ message: 'Sorry, a url path cannot be changed.' })
+        }
+        else {
           update = true;
           post();
         }
@@ -315,9 +321,10 @@ function handleAddCompany(req, res) {
          }
          */
 
-      } else {
+      }
+      else {
         console.warn("WARNING: ");
-        res.status(400).send({message: "Something went wrong. We have been alerted and will take a look and get back to you."});
+        res.status(400).send({ message: "Something went wrong. We have been alerted and will take a look and get back to you." });
       }
     })
 
@@ -325,21 +332,24 @@ function handleAddCompany(req, res) {
 
   if (!addCompany) {
     console.warn("No company specified!");
-    res.status(400).send({message: 'Some information was missing.'});
-  } else {
+    res.status(400).send({ message: 'Some information was missing.' });
+  }
+  else {
     console.log('Adding company ' + addCompany.name + ' to ' + addCompany.location_key + ' / ' + addCompany.community_key);
 
     // if no existing key is provided, validate the company.url doesn't already exist
     if (!addCompany.key) {
-      cdb.findOne({where: {slug: addCompany.url}}).then(result => {
+      cdb.findOne({ where: { slug: addCompany.url } }).then(result => {
         if (result) {
-          res.status(400).send({message: 'That url is already in use. Please specify a different url path.'})
-        } else {
+          res.status(400).send({ message: 'That url is already in use. Please specify a different url path.' })
+        }
+        else {
           go();
         }
       })
 
-    } else go();
+    }
+    else go();
 
   }
 }
@@ -349,7 +359,7 @@ function handleDeleteCompany(req, res) {
   // always use ensureAuth before this (to acquire req.user)
   var params = req.body.params;
 
-  var delete_it = function () {
+  var delete_it = function() {
 
     // pull it first to make sure it's a company
 
@@ -362,7 +372,7 @@ function handleDeleteCompany(req, res) {
 
             if (response) {
               // company has been deleted, now delete references in user records
-              cdb.findAll({where: 'type:user AND roles:' + params.company_key}).then(flush => {
+              cdb.findAll({ where: 'type:user AND roles:' + params.company_key }).then(flush => {
                 if (flush) {
                   for (var r in flush) {
                     var flush_key = flush[r].id,
@@ -383,35 +393,40 @@ function handleDeleteCompany(req, res) {
                     }
 
 
-                    cdb.update(flush_value, {where: {id: flush_key}}).then(response => {
+                    cdb.update(flush_value, { where: { id: flush_key } }).then(response => {
                       if (response) {
                         console.log('Deleted ' + params.company_key + ' from ' + flush_key);
-                        res.status(204).send({message: 'Company deleted!'});
-                      } else {
+                        res.status(204).send({ message: 'Company deleted!' });
+                      }
+                      else {
                         console.log("WARNING: ");
-                        res.status(202).send({message: "The company has been deleted, but something else went wrong."});
+                        res.status(202).send({ message: "The company has been deleted, but something else went wrong." });
                       }
                     })
                   }
-                  
-                } else {
+
+                }
+                else {
                   console.log("WARNING: ");
-                  res.status(202).send({message: "The company has been deleted, but something else went wrong."});
+                  res.status(202).send({ message: "The company has been deleted, but something else went wrong." });
                 }
               })
-            } else {
+            }
+            else {
               console.warn('WARNING: community620');
-              res.status(202).send({message: "Something went wrong."});
+              res.status(202).send({ message: "Something went wrong." });
             }
           })
 
-        } else {
-          console.warn('Not a company!');
-          res.status(202).send({message: "This isn't a company!"});
         }
-      } else {
+        else {
+          console.warn('Not a company!');
+          res.status(202).send({ message: "This isn't a company!" });
+        }
+      }
+      else {
         console.warn('No company found!');
-        res.status(202).send({message: "No company found!"});
+        res.status(202).send({ message: "No company found!" });
       }
     })
 
@@ -423,8 +438,7 @@ function handleDeleteCompany(req, res) {
     // first determine if the company has founders or team members. Pull from DB to prevent tampering.
     sequelize
       .query(
-        'SELECT * FROM communities WHERE JSON_CONTAINS(roles->>\'$.founder."' + params.company_key + '"\', \'[*]\') OR JSON_CONTAINS(roles->>\'$.team."' + params.company_key + '"\', \'[*]\')',
-        { model: cdb}
+        'SELECT * FROM communities WHERE JSON_CONTAINS(roles->>\'$.founder."' + params.company_key + '"\', \'[*]\') OR JSON_CONTAINS(roles->>\'$.team."' + params.company_key + '"\', \'[*]\')', { model: cdb }
       ).then(team => {
         if (!team.length) {
 
@@ -432,7 +446,8 @@ function handleDeleteCompany(req, res) {
 
           delete_it();
 
-        } else {
+        }
+        else {
 
           // need to validate whether the current user is one of the founders or team members
 
@@ -446,30 +461,32 @@ function handleDeleteCompany(req, res) {
             }
           }
 
-          if (!del) res.status(202).send({message: "Only a founder or team member of this company may delete it."});
+          if (!del) res.status(202).send({ message: "Only a founder or team member of this company may delete it." });
         }
-    })
+      })
 
   }
   catch (err) {
     console.warn("WARNING: ", err);
-    res.status(202).send({message: err});
+    res.status(202).send({ message: err });
   }
 }
 
-var addRole = function (company_key, roles, location_key, user_key) {
+var addRole = function(company_key, roles, location_key, user_key) {
 
-  cdb.get(user_key, function (err, response) {
+  cdb.get(user_key, function(err, response) {
     if (!err) {
-// add new role
+      // add new role
 
       for (var role in roles) {
         if (!response.roles[roles[role]]) {
           response.roles[roles[role]] = {};
           response.roles[roles[role]][company_key] = [location_key];
-        } else if (!response.roles[roles[role]][company_key]) {
+        }
+        else if (!response.roles[roles[role]][company_key]) {
           response.roles[roles[role]][company_key] = [location_key];
-        } else if (response.roles[roles[role]][company_key].indexOf(location_key) < 0) {
+        }
+        else if (response.roles[roles[role]][company_key].indexOf(location_key) < 0) {
           response.roles[roles[role]][company_key].push(location_key);
         } // else the damn thing is already there
 
@@ -483,15 +500,17 @@ var addRole = function (company_key, roles, location_key, user_key) {
         }
       }
 
-      cdb.update(response, {where: {id: user_key}}).then(result => {
+      cdb.update(response, { where: { id: user_key } }).then(result => {
         if (result) {
           console.log('User ' + user_key + ' updated with ', roles);
-        } else {
+        }
+        else {
           console.warn("WARNING: ", err);
         }
       })
 
-    } else {
+    }
+    else {
       console.warn("WARNING: ", err);
     }
   })
@@ -510,14 +529,18 @@ function handleCheckUrl(req, res) {
   if (website.match(/^www\./)) website = website.substring(4);
 
   cdb.findAll({
-    where: {[Op.and]: {type: 'company', profile: website}}}).then(result => {
+    where: {
+      [Op.and]: { type: 'company', profile: website } }
+  }).then(result => {
     if (result) {
       if (result.length) {
-        res.status(202).send({message: result[0].id});
-      } else {
+        res.status(202).send({ message: result[0].id });
+      }
+      else {
         res.status(404).send();
       }
-    } else {
+    }
+    else {
       console.warn("WARNING: ");
     }
 
@@ -525,11 +548,11 @@ function handleCheckUrl(req, res) {
 
 }
 
-var companyPost = function (company, role, location_key, user, key, update, callback) {
+var companyPost = function(company, role, location_key, user, key, update, callback) {
 
   company.slug = key;
   cdb.create(company).then(response => {
-    
+
     if (response) {
       var companykey = response.id;
 
@@ -545,7 +568,8 @@ var companyPost = function (company, role, location_key, user, key, update, call
         console.log("UPDATED: " + company.name);
         company["message"] = "Well done! " + company.name + " has been updated.";
 
-      } else {
+      }
+      else {
 
         // if resource, add creator as leader
 
@@ -553,11 +577,12 @@ var companyPost = function (company, role, location_key, user, key, update, call
         company["message"] = "Well done! You've added " + company.name + " to the community.";
 
       }
-      
-      callback({"status": 200, "data": company});
-    } else {
+
+      callback({ "status": 200, "data": company });
+    }
+    else {
       console.log("WARNING: ");
-      callback({"status": 500, "data": {"message": "Something went wrong."}});
+      callback({ "status": 500, "data": { "message": "Something went wrong." } });
     }
   });
 

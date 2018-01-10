@@ -11,8 +11,8 @@ const
   idb = sequelize.import(__dirname + "/invitations"),
   mdb = sequelize.import(__dirname + "/messages"),
   Op = Sequelize.Op;
-  
-Sequelize.useCLS(cls.createNamespace('sc-mobile'));
+
+Sequelize.useCLS(cls.createNamespace('startupcommunity'));
 
 /*db.create({slug: 'test6', type: 'test', name: 'testing'}).then(a => {
   console.log(a.id)
@@ -43,7 +43,7 @@ sequelize
 
 //SELECT id, roles FROM communities WHERE JSON_CONTAINS(roles->>'$.leader."bend-or"', \'["bend-or"]\')
 //SELECT id, communities FROM communities WHERE JSON_CONTAINS(communities, \'["bendtech"]\')
-const test = ["bendtech", "bend-or"];
+/*const test = ["bendtech", "bend-or"];
 const buildQuery = vals => {
   let q = '';
   vals.forEach((v,i) => {
@@ -59,7 +59,7 @@ sequelize
     { model: idb}
   ).then(u => {
   if (u) u.forEach(ul => console.log(ul.id));
-  })
+  })*/
 /*db.findOne({where: {'roles.leader.bend-or': {[Op.ne]: null}}})
   .then(u => {
     if (u) console.log(u.id);
@@ -78,5 +78,15 @@ db.execute(
     
   }
 );*/
+
+// FULL TEXT SEARCH
+cdb.execute(
+  "SELECT * FROM articles WHERE MATCH (title,body) AGAINST ('database' IN NATURAL LANGUAGE MODE);",
+  (err, results) => {
+    if (err) console.log(err);
+    console.log(results.length, ' results');
+  }
+);
+
 
 exports = {sequelize, Sequelize, cdb, idb, mdb, Op};

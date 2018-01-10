@@ -384,12 +384,9 @@ function handleGetResources(req, res) {
 
         var newresponse = {};
 
-        for (var resource in result.docs) {
-            var r = result.docs[resource];
-
-            newresponse[r.path.key] = r.value;
-            newresponse[r.path.key]["key"] = r.path.key;
-          }
+        result.forEach(r => {
+          newresponse[r.id] = r;
+        });
 
         res.status(200).send(newresponse);
           
@@ -402,7 +399,7 @@ function handleGetResources(req, res) {
 }
 
 function getMore(selector, bookmark, callback) {
-  //todo this is likely broken
+  //todo this is likely broken because bookmark may not be a thing?
   return cdb.find({
     selector: selector,
     limit: 1000,
@@ -519,7 +516,7 @@ function handleGetTop(req, res) {
         // create array of items
         result.forEach(r => {
           if (r.industries) industries = industries.concat(r.industries);
-          if (r.value.parents) parents = parents.concat(r.parents);
+          if (r.parents) parents = parents.concat(r.parents);
         });
 
         industries = _.countBy(industries);
@@ -551,15 +548,16 @@ function handleGetTop(req, res) {
         // get resources
 
         selector = {
-          "$and": [{
-            "type": "company"
-          }, {"resource": true}]
+          [Op.and]: [{
+            type: "company"
+          }, {resource: true}]
         };
 
         if (cluster_search) {
-          selector["$or"] = [{"parents": {[Op.in]: cluster_search}}, {"industries": {[Op.in]: cluster_search}}];
-          if (search) selector["$and"].push(search);
-        } else selector["$and"].push(search);
+          selector[Op.or] = [{parents: {[Op.in]: cluster_search}}, {industries: {[Op.contains]: cluster_search}}];
+        }
+        
+        if (search) selector[Op.and].push(search);
 
         cdb.findAll({
           where: selector
@@ -574,17 +572,18 @@ function handleGetTop(req, res) {
             // get people & skills
 
             selector = {
-              "$and": [{
+              [Op.and]: [{
                 "type": "user"
               }]
             };
 
             if (cluster_search) {
-              selector["$or"] = [{"parents": {[Op.in]: cluster_search}}, {"skills": {[Op.in]: cluster_search}}];
-              if (search) selector["$and"].push(search);
-            } else selector["$and"].push(search);
+              selector[Op.or] = [{parents: {[Op.in]: cluster_search}}, {skills: {[Op.contains]: cluster_search}}];
+            }
+            
+            if (search) selector[Op.and].push(search);
 
-            cdb.find({
+            cdb.findAll({
               where: selector,
               limit: 1000
             }).then(result => {
@@ -595,7 +594,7 @@ function handleGetTop(req, res) {
                     var newresult = {};
                     newresult = result.concat(more);
                     finish(newresult);
-                  })
+                  });
                 } else finish(result);
 
                 var finish = function(result) {
