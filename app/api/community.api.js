@@ -228,11 +228,24 @@ function handleGetCommunity(req, res) {
           }).then(sortCommunities);
         }
         
-        await sequelize
-          .query(
-            'SELECT * FROM communities WHERE JSON_CONTAINS(communities, \'["' + community + '"]\') OR JSON_CONTAINS(parents, \'["' + community + '"]\') AND NOT type="user" AND NOT type="company" AND NOT slug="' + community + '"',
-            { model: cdb}
-          ).then(sortCommunities);
+        await cdb.findAll({
+          where: {
+            [Op.and]: [{
+              [Op.not]: {
+                [Op.or]: [
+                  {type: 'user'},
+                  {type: 'company'},
+                  {slug: community}
+                ]
+              }
+            },{
+              [Op.or]: [
+                {communities: {[Op.like]: '%"'+community+'"%'}},
+                {parents: {[Op.like]: '%"'+community+'"%'}},  
+              ]
+            }]
+          }
+        }).then(sortCommunities);
         
         if (newresponse.resources && newresponse.resources.length) {
             newresponse.resources = newresponse.resources.sort(function (a, b) {
@@ -366,13 +379,13 @@ function handleGetResources(req, res) {
 
   if (resources && resources.length) {
     selector.id = {[Op.in]: resources};
-  } else selector.communities = location_key;
+  } else selector.communities = {[Op.like]: '%"' + location_key + '"%'};
 
   if (clusters) {
-    selector[Op.or] = {
-      resource: true,
-      type: "cluster"
-    };
+    selector[Op.or] = [
+      {resource: true},
+      {type: "cluster"}
+    ];
   } else selector.resource = true;
 
   if (searchstring) {
@@ -400,12 +413,12 @@ function handleGetResources(req, res) {
 
 function getMore(selector, bookmark, callback) {
   //todo this is likely broken because bookmark may not be a thing?
-  return cdb.find({
+  return cdb.findAll({where: {
     selector: selector,
     limit: 1000,
     bookmark: bookmark
-  }, function(err, results) { callback(results)})
-};
+  }}).then(results => callback);
+}
 
 function handleGetTop(req, res) {
 
@@ -422,7 +435,7 @@ function handleGetTop(req, res) {
       people_parents: {},
       company_parents: {}
     },
-    cluster_search = "";
+    cluster_search = [];
 
   if (typeof industry_keys === 'string') {
     industry_keys = [industry_keys];
@@ -439,7 +452,11 @@ function handleGetTop(req, res) {
       search = '';
     }
 
-    if (industry_keys.length) cluster_search = industry_keys;
+    if (industry_keys.length) {
+      industry_keys.forEach(i => {
+        cluster_search.push({[Op.like]: '%"' + i + '"%'});
+      });
+    }
 
   } else if (!community_key || community_key == 'undefined') {
     community_key = location_key;
@@ -447,10 +464,25 @@ function handleGetTop(req, res) {
 
   // determine whether location is a state
   var state_suffix = handleConvert_state(location_key.replace('-', ' '), 'abbrev'); // returns false if no match
-  var state = state_suffix ? ' OR *-' + state_suffix.toLowerCase() + ')' : ')';
+  var state = state_suffix ? '"%-' + state_suffix.toLowerCase() + '"%' : ')';
 
   // add search based on home suffix (which allows for roll-up to state level)
-  var search = state_suffix ? {"home": location_key + state} : {"communities": {[Op.in]: [location_key, community_key == '*' ? '[a* TO z*]' : community_key]}};
+  var search = state_suffix ? {
+    [Op.or]: [
+      {home: location_key},
+      {home: {[Op.like]: state}}
+      ]
+    }
+    : 
+    {
+      communities: {
+        [Op.or]: [
+          {[Op.like]: '%"' + location_key + '"%'}
+        ]
+      }
+    };
+    
+  if (community_key != '*' && !state_suffix) search.communities[Op.or].push({[Op.like]: '%"' + community_key + '"%'});
 
   // get companies and industries
 
@@ -486,20 +518,19 @@ function handleGetTop(req, res) {
   // get companies & industries
 
   var selector = {
-    [Op.and]: 
-      [{
-        "type": "company"
-      }, {
-        [Op.not]: {
-          "resource": true
-        }
-      }]
+    [Op.and]: [
+      {type: "company"},
+      {resource: {[Op.not]: true}}
+    ]
   };
 
-  if (cluster_search) {
-    selector["$or"] = [{"parents": {[Op.in]: cluster_search}}, {"industries": {[Op.in]: cluster_search}}];
-    if (search) selector["$and"].push(search);
-  } else selector["$and"].push(search);
+  if (cluster_search.length) {
+    selector[Op.or] = [
+      {parents: {[Op.or]: cluster_search}},
+      {industries: {[Op.or]: cluster_search}}
+    ];
+    if (search) selector[Op.and].push(search);
+  } else selector[Op.and].push(search);
 
   console.log('Pulling Top Results: ', selector);
 
@@ -548,13 +579,17 @@ function handleGetTop(req, res) {
         // get resources
 
         selector = {
-          [Op.and]: [{
-            type: "company"
-          }, {resource: true}]
+          [Op.and]: [
+            {type: "company"}, 
+            {resource: true}
+          ]
         };
 
         if (cluster_search) {
-          selector[Op.or] = [{parents: {[Op.in]: cluster_search}}, {industries: {[Op.contains]: cluster_search}}];
+          selector[Op.or] = [
+            {parents: {[Op.or]: cluster_search}}, 
+            {industries: {[Op.or]: cluster_search}}
+          ];
         }
         
         if (search) selector[Op.and].push(search);
@@ -572,13 +607,16 @@ function handleGetTop(req, res) {
             // get people & skills
 
             selector = {
-              [Op.and]: [{
-                "type": "user"
-              }]
+              [Op.and]: [
+                {type: "user"}
+              ]
             };
 
             if (cluster_search) {
-              selector[Op.or] = [{parents: {[Op.in]: cluster_search}}, {skills: {[Op.contains]: cluster_search}}];
+              selector[Op.or] = [
+                {parents: {[Op.or]: cluster_search}}, 
+                {skills: {[Op.or]: cluster_search}}
+              ];
             }
             
             if (search) selector[Op.and].push(search);

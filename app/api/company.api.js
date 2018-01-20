@@ -1,8 +1,5 @@
 var Q = require('q'),
-  request = require('request'),
   url = require('url'),
-  CommunityApi = require(__dirname + '/community.api.js'),
-  communityApis = new CommunityApi(),
   aws = require('aws-sdk'),
   jqparam = require('jquery-param'),
   { cdb, sequelize, Op } = require('../../db');
@@ -65,31 +62,7 @@ var schema = {
     return newprofile;
   }
 };
-/*
-function formatSearchResults(items) {
-  if (items.rows && items.rows.length) {
-    for (var i in items.rows) {
-      items.rows[i].doc = {
-        path: {key: items.rows[i].id},
-        value: items.rows[i].doc
-      };
-    }
-  }
-  return items;
-}
 
-function formatFindResults(items) {
-  if (items.docs && items.docs.length) {
-    for (i in items.docs) {
-      items.docs[i] = {
-        path: {key: items.docs[i]._id},
-        value: items.docs[i]
-      };
-    }
-  }
-  return items;
-}
-*/
 function handleCompanySearch(req, res) {
   var communities = req.query.communities,
     clusters = req.query.clusters,
@@ -108,12 +81,19 @@ function handleCompanySearch(req, res) {
 
   // create searchstring
   var selector = {
-    ["$and"]: [
-      { "type": "company" }
+    [Op.and]: [
+      {type: "company"}
     ]
   };
-  var searchstring = 'communities:(';
-  var state = "";
+
+  var community_search = [];
+  
+  if (communities && communities.length) {
+    communities.forEach(c => {
+      community_search.push({[Op.like]: '%"' + c + '"%'});
+    });
+  }
+  
   /*
    if (communities) {
    for (c in communities) {
@@ -132,23 +112,24 @@ function handleCompanySearch(req, res) {
    }
    }
    } else searchstring += '*';*/
-  selector["$and"].push({ "communities": {
-      [Op.in]: communities } });
+  selector[Op.and].push({communities: {[Op.or]: community_search}});
 
   /* if (get_resources === "true") {
    searchstring += ") AND resource: true" + state;
    } else searchstring += ")" + (state ? " AND" + state : '');*/
 
-  if (get_resources == "true") selector["$and"].push({ "resource": true });
+  if (get_resources == "true") selector[Op.and].push({resource: true});
 
   if (clusters && clusters.length > 0 && clusters[0] !== '*') {
+    var cluster_search = [];
+    clusters.forEach(c => {
+      cluster_search.push({[Op.like]: '%"' + c + '"%'});
+    });
 
-    selector["$and"].push({
+    selector[Op.and].push({
       [Op.or]: [
-        { "skills": {
-            [Op.in]: clusters } },
-        { "parents": {
-            [Op.in]: clusters } }
+        {skills: {[Op.or]: cluster_search}},
+        {parents: {[Op.or]: cluster_search}}
       ]
     });
     /*
@@ -169,8 +150,7 @@ function handleCompanySearch(req, res) {
 
   }
   if (stages && stages.length > 0 && stages[0] !== '*') {
-    selector["$and"].push({ "stage": {
-        [Op.in]: stages } });
+    selector[Op.and].push({stage: {[Op.in]: stages}});
     /* stages = stages.splice(',');
      searchstring += ' AND (';
 
@@ -182,8 +162,12 @@ function handleCompanySearch(req, res) {
   }
 
   if (types && types.length > 0 && types[0] !== '*') {
-    selector["$and"].push({ "resource_types": {
-        [Op.in]: types } });
+    var type_search = [];
+    types.forEach(t => {
+      type_search.push({[Op.like]: '%"' + t + '"%'});
+    })
+    
+    selector[Op.and].push({resource_types: {[Op.or]: type_search}});
     /*types = types.splice(',');
      searchstring += ' AND (';
 
@@ -193,20 +177,11 @@ function handleCompanySearch(req, res) {
      }
      searchstring += ')';*/
   }
+  
+  const processCompanies = rows => {
+    if (rows.length) {
 
-
-  if (query) {
-    //todo this will no doubt be broken
-    selector[Op.].push({ "$text": query });
-    /*searchstring += ' AND ' + '(profile: ' + query + ')';*/
-  }
-
-  console.log('Pulling Companies: ', selector);
-
-  cdb.findAll({ where: selector }, { offset: Number(offset) || 0, limit: Number(limit) || 16 }).then(result => {
-    if (result) {
-
-      result.next = '/api/2.1/users?' + jqparam({
+      rows.next = '/api/2.1/users?' + jqparam({
         communities: req.query.communities,
         clusters: (req.query.clusters || '*'),
         stages: (req.query.stages || '*'),
@@ -217,7 +192,7 @@ function handleCompanySearch(req, res) {
         query: (req.query.query || '*')
       });
 
-      result.prev = '/api/2.1/users?' + jqparam({
+      rows.prev = '/api/2.1/users?' + jqparam({
         communities: req.query.communities,
         clusters: (req.query.clusters || '*'),
         stages: (req.query.stages || '*'),
@@ -228,13 +203,20 @@ function handleCompanySearch(req, res) {
         query: (req.query.query || '*')
       });
 
-      res.send(result);
+      res.send(rows);
     }
     else {
       console.log('WARNING: ');
       res.send({ message: 'No companies found!' });
     }
-  })
+  }
+
+  console.log('Pulling Companies: ', JSON.stringify(selector));
+  
+  if (query) {
+    //query runs without other parameters
+    sequelize.query('SELECT * FROM communities WHERE TYPE="company" AND MATCH (name, headline, summary, skills, description) AGAINST ("'+query+'" IN NATURAL LANGUAGE MODE) LIMIT '+Number(offset)+', '+Number(limit), { model: cdb}).then(processCompanies);
+  } else cdb.findAll({ where: selector }, { offset: Number(offset) || 0, limit: Number(limit) || 16 }).then(processCompanies)
 }
 
 function handleGetLogoUrl(req, res) {
@@ -371,8 +353,17 @@ function handleDeleteCompany(req, res) {
           cdb.destroy(response.id).then(response => {
 
             if (response) {
+              const roles = {};
+              roles[params.company_key] = {[Op.ne]: null};
               // company has been deleted, now delete references in user records
-              cdb.findAll({ where: 'type:user AND roles:' + params.company_key }).then(flush => {
+              cdb.findAll({
+                where: {
+                  [Op.and]: [
+                    {type: 'user'}, 
+                    roles
+                  ]
+                }
+              }).then(flush => {
                 if (flush) {
                   for (var r in flush) {
                     var flush_key = flush[r].id,
@@ -436,6 +427,7 @@ function handleDeleteCompany(req, res) {
     console.log('Deleting company: ' + params.company_key);
 
     // first determine if the company has founders or team members. Pull from DB to prevent tampering.
+    //todo need to test this!
     sequelize
       .query(
         'SELECT * FROM communities WHERE JSON_CONTAINS(roles->>\'$.founder."' + params.company_key + '"\', \'[*]\') OR JSON_CONTAINS(roles->>\'$.team."' + params.company_key + '"\', \'[*]\')', { model: cdb }
@@ -474,8 +466,9 @@ function handleDeleteCompany(req, res) {
 
 var addRole = function(company_key, roles, location_key, user_key) {
 
-  cdb.get(user_key, function(err, response) {
-    if (!err) {
+  cdb.findById(user_key)
+  .then(response => {
+    if (response) {
       // add new role
 
       for (var role in roles) {
@@ -505,16 +498,15 @@ var addRole = function(company_key, roles, location_key, user_key) {
           console.log('User ' + user_key + ' updated with ', roles);
         }
         else {
-          console.warn("WARNING: ", err);
+          console.warn("WARNING: ");
         }
       })
 
     }
     else {
-      console.warn("WARNING: ", err);
+      console.warn("WARNING: ");
     }
-  })
-
+  });
 };
 
 function handleCheckUrl(req, res) {
@@ -530,7 +522,7 @@ function handleCheckUrl(req, res) {
 
   cdb.findAll({
     where: {
-      [Op.and]: { type: 'company', profile: website } }
+      [Op.and]: [{ type: 'company'}, {profile: website }] }
   }).then(result => {
     if (result) {
       if (result.length) {
