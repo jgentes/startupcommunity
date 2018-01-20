@@ -80,7 +80,19 @@ db.execute(
 );*/
 
 // FULL TEXT SEARCH
-sequelize.query('SELECT * FROM communities WHERE MATCH (name, headline, summary, skills, description) AGAINST ("energies" IN NATURAL LANGUAGE MODE);')
-.then(results => results[0].forEach(r => console.log(r.name)));
-
+/*
+sequelize.query('SELECT * FROM communities WHERE MATCH (name, headline, summary, skills, description) AGAINST ("energies" IN NATURAL LANGUAGE MODE)', { model: cdb})
+.then(results => console.log(results.length));
+*/
+// LIKE OPERATOR - use quotes for exact match '%"prhase"%' or partial '%phrase%'
+/*
+cdb.findOne({where: {skills: {[Op.like]: '%energies%'}}}).then(u => console.log(u && u.skills));
+*/
+/*var go = async() => {
+  var three = await cdb.findAll({where: {skills: {[Op.like]: '%energy%'}}});
+  var query = await sequelize.query('SELECT * FROM communities WHERE MATCH (name, headline, summary, skills, description) AGAINST ("energies" IN NATURAL LANGUAGE MODE)', { model: cdb});
+  var done = three.concat(query);
+  console.log('DONE: ', three.length, query.length, done.length);
+};
+go()*/
 exports = {sequelize, Sequelize, cdb, idb, mdb, Op};

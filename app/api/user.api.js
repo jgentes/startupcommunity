@@ -1,20 +1,10 @@
 var Q = require('q'),
-  request = require('request'),
   url = require('url'),
   jwt = require('jsonwebtoken'),
-  CommunityApi = require(__dirname + '/community.api.js'),
-  communityApis = new CommunityApi(),
   aws = require('aws-sdk'),
   knowtify = require('knowtify-node'),
   jqparam = require('jquery-param'),
-  Cloudant = require('cloudant'),
-  cloudant = Cloudant({
-    account: process.env.DB_ACCOUNT,
-    password: process.env.DB_PASSWORD,
-    plugin: 'retry'
-  }),
-  cdb = cloudant.db.use(process.env.DB_COMMUNITIES),
-  cdb_messages = cloudant.db.use(process.env.DB_MESSAGES);
+  { cdb, sequelize, Op } = require('../../db');
 
 //require('request-debug')(request); // Very useful for debugging oauth and api req/res
 
@@ -51,12 +41,19 @@ function handleUserSearch(req, res) {
 
   // create searchstring
   var selector = {
-    "$and": [
-      {"type": "user"}
+    [Op.and]: [
+      {type: "user"}
     ]
   };
-  searchstring = 'communities:(';
-  var state = "";
+  
+  var community_search = [];
+  
+  if (communities && communities.length) {
+    communities.forEach(c => {
+      community_search.push({[Op.like]: '%"' + c + '"%'});
+    });
+  }
+  
   /*
    for (c in communities) {
 
@@ -74,20 +71,22 @@ function handleUserSearch(req, res) {
    }
    }
    */
-  selector["$and"].push({"communities": {"$in": communities}});
+  selector[Op.and].push({communities: {[Op.or]: community_search}});
 
   //searchstring += ")" + state;
 
   if (clusters && clusters.length > 0 && clusters[0] !== '*') {
+    var cluster_search = [];
+    clusters.forEach(c => {
+      cluster_search.push({[Op.like]: '%"' + c + '"%'});
+    });
 
-    selector["$and"].push(
-      {
-        "$or": [
-          {"profile.skills": {"$in": clusters}},
-          {"profile.parents": {"$in": clusters}}
-        ]
-      }
-    );
+    selector[Op.and].push({
+      [Op.or]: [
+        {skills: {[Op.or]: cluster_search}},
+        {parents: {[Op.or]: cluster_search}}
+      ]
+    });
 
     /*
      clusters = clusters.splice(',');
@@ -108,59 +107,45 @@ function handleUserSearch(req, res) {
 
   if (roles && roles.length > 0 && roles[0] !== "*") {
 
-    selector["$and"] = [];
+    selector[Op.and] = [];
     /*
 
      roles = roles.splice(',');
      searchstring += ' AND (';
      */
     var selroles = [];
-    for (i in roles) {
+    for (var i in roles) {
       var sel = {};
-      sel['roles.' + roles[i]] = {"$exists": true};
+      sel['roles.' + roles[i]] = {[Op.ne]: null};
       selroles.push(sel);
       /* searchstring += 'roles.' + roles[i] + ':[a* TO z*]'; // scope to role
        if (i < (roles.length - 1)) { searchstring += ' AND '; }*/
     }
-    if (selroles.length) for (s in selroles) selector["$and"].push({"$or": [selroles[s]]});
+    if (selroles.length) for (var s in selroles) selector[Op.and].push({[Op.or]: [selroles[s]]});
     /*    searchstring += ')';*/
   }
-
-  if (query) {
-    selector["$and"].push({"$text": query});
-    /*searchstring += ' AND ' + '(profile: ' + query + ')'; */
-  }
-
-  var find = {selector: selector, skip: Number(offset) || 0, limit: Number(limit) || 16};
-
-  console.log('Pulling Users: ', JSON.stringify(find));
-
-  cdb.find(find, function (err, result) {
-    if (!err) {
-      result = formatFindResults(result);
-
-      var i;
+  
+  const processUsers = rows => {
+    if (rows.length) {
 
       try {
-        for (i = 0; i < result.docs.length; i++) {
-          if (result.docs[i].value.profile.password) delete result.docs[i].value.profile.password;
+        rows.forEach(r => {
+          if (r.password) delete r.password;
 
-          if (result.docs[i].value.profile.email) delete result.docs[i].value.profile.email;
+          if (r.email) delete r.email;
 
-          if (result.docs[i].value.profile.linkedin) {
-            if (result.docs[i].value.profile.linkedin.emailAddress) delete result.docs[i].value.profile.linkedin.emailAddress;
-            if (result.docs[i].value.profile.linkedin.access_token) delete result.docs[i].value.profile.linkedin.access_token;
+          if (r.linkedin) {
+            if (r.linkedin.emailAddress) delete r.linkedin.emailAddress;
+            if (r.linkedin.access_token) delete r.linkedin.access_token;
           }
 
-          result.docs[i].value["key"] = result.docs[i].path.id;
-
-          if (result.docs[i].value.newsletter) delete result.docs[i].value.newsletter;
-        }
+          if (r.newsletter) delete r.newsletter;
+        });
       } catch (error) {
         console.warn('WARNING: user144 ', error);
       }
 
-      result.next = '/api/2.1/users?' + jqparam({
+      rows.next = '/api/2.1/users?' + jqparam({
           communities: communities,
           clusters: (clusters || '*'),
           roles: (roles || '*'),
@@ -169,7 +154,7 @@ function handleUserSearch(req, res) {
           query: (query || '*')
         });
 
-      result.prev = '/api/2.1/users?' + jqparam({
+      rows.prev = '/api/2.1/users?' + jqparam({
           communities: communities,
           clusters: (clusters || '*'),
           roles: (roles || '*'),
@@ -178,71 +163,40 @@ function handleUserSearch(req, res) {
           query: (query || '*')
         });
 
-      result.results = result.docs;
-      delete result.docs;
-
-      res.send(result);
+      res.send(rows);
     } else {
-      console.log('WARNING: ', err);
-      res.send({message: err.message});
+      console.log('WARNING: No users!');
+      res.send({message: 'No users found!'});
     }
-  })
-}
+  };
+  
+  console.log('Pulling Users: ', JSON.stringify(selector));
 
-function formatSearchResults(items) {
-  if (items.rows && items.rows.length) {
-    for (i in items.rows) {
-      items.rows[i].doc = {
-        path: {key: items.rows[i].id},
-        value: items.rows[i].doc
-      };
-    }
-  }
-  return items;
-}
-
-function formatFindResults(items) {
-  if (items.docs && items.docs.length) {
-    for (i in items.docs) {
-      items.docs[i] = {
-        path: {key: items.docs[i]._id},
-        value: items.docs[i]
-      };
-    }
-  }
-  return items;
+  if (query) {
+    //query runs without other parameters
+    sequelize.query('SELECT * FROM communities WHERE TYPE="user" AND MATCH (name, headline, summary, skills, description) AGAINST ("'+query+'" IN NATURAL LANGUAGE MODE) LIMIT '+Number(offset)+', '+Number(limit), { model: cdb}).then(processUsers);
+  } else cdb.findAll({ where: selector }, { offset: Number(offset) || 0, limit: Number(limit) || 16 }).then(processUsers);
 }
 
 function handleDirectSearch(req, res) {
   //TODO check for key to protect info?
-  var allowed = false;
 
-  cdb.find({
-    selector: {type: 'user', '$text': req.query.query},
-    skip: Number(req.query.offset) || 0,
-    limit: Number(req.query.limit) || 100
-  }, function (err, result) {
-    if (!err) {
-      result = formatFindResults(result);
-
-      var i;
-
+  sequelize.query('SELECT * FROM communities WHERE TYPE="user" AND MATCH (name, headline, summary, skills, description) AGAINST ("'+query+'" IN NATURAL LANGUAGE MODE) LIMIT '+Number(offset)+', '+Number(limit), { model: cdb})
+  .then(rows => {
+    if (rows.length) {
       try {
-        for (i = 0; i < result.docs.length; i++) {
+        rows.forEach(r => {
+          if (r.password) delete r.password;
 
-          if (result.docs[i].value.profile.password) delete result.docs[i].value.profile.password;
+          if (r.email) delete r.email;
 
-          if (result.docs[i].value.profile.email) delete result.docs[i].value.profile.email;
-
-          if (result.docs[i].value.profile.linkedin) {
-            if (result.docs[i].value.profile.linkedin.emailAddress) delete result.docs[i].value.profile.linkedin.emailAddress;
-            if (result.docs[i].value.profile.linkedin.access_token) delete result.docs[i].value.profile.linkedin.access_token;
+          if (r.linkedin) {
+            if (r.linkedin.emailAddress) delete r.linkedin.emailAddress;
+            if (r.linkedin.access_token) delete r.linkedin.access_token;
           }
+        });
 
-          result.docs[i].value["key"] = result.docs[i].path.id;
-        }
-
-        result.next = '/api/2.1/users?' + jqparam({
+        rows.next = '/api/2.1/users?' + jqparam({
             communities: req.query.communities,
             clusters: (req.query.clusters || '*'),
             roles: (req.query.roles || '*'),
@@ -251,7 +205,7 @@ function handleDirectSearch(req, res) {
             query: (req.query.query || '*')
           });
 
-        result.prev = '/api/2.1/users?' + jqparam({
+        rows.prev = '/api/2.1/users?' + jqparam({
             communities: req.query.communities,
             clusters: (req.query.clusters || '*'),
             roles: (req.query.roles || '*'),
@@ -264,16 +218,11 @@ function handleDirectSearch(req, res) {
         console.warn('WARNING: user206', error);
       }
 
-      result.results = result.docs;
-      delete result.docs;
-
-      res.status(200).send(result);
+      res.status(200).send(rows);
     } else {
-      console.log(err);
       res.status(202).send({message: "Something went wrong."});
     }
-  })
-
+  });
 }
 
 
@@ -289,110 +238,100 @@ function handleContactUser(req, res) {
     formdata = req.query.formdata,
     location_key = req.query.location_key;
 
-  var selector = {};
+  var selector = {
+    [Op.and]: []
+  };
 
-  selector["$and"] = [{"type": "user"}];
-  selector["$and"]["roles.leader"] = {};
-  selector["$and"]["roles.leader"][location_key] = {"$exists": true};
+  var loc = {};
+  loc[location_key] = {[Op.ne]: null};
+  
+  selector[Op.and].push({type: "user"});
+  selector[Op.and].push({"roles.leader": loc});
 
   console.log(selector);
 
-  cdb.find({
-    selector: selector
-  }, function (err, uber_result) {
-    if (!err) {
-      uber_result = formatFindResults(uber_result);
+  cdb.findAll({where: selector})
+  .then(leaders => {
+    if (leaders.length) {
+   
+      console.log("Found leader(s)");
 
+      // now get user record for email address
+      cdb.findById(user_key)
+      .then(user => {
+        if (user) {
+          var contacts = [],
+            knowtifyClient = new knowtify.Knowtify(process.env.KNOWTIFY, false);
 
-      //todo NEED TO VERIFY BELOW
-      if (result.docs.length > 0) {
-        console.log("Found leader(s)");
-        var leaders = [];
-        for (item in result.docs) {
-          leaders.push(result.docs[item]);
-        }
+          for (var leader in leaders) {
 
-        // now get user record for email address
-        cdb.get(user_key, function (err, response) {
-          if (!err) {
-            var contacts = [],
-              knowtifyClient = new knowtify.Knowtify(process.env.KNOWTIFY, false);
-
-            for (leader in leaders) {
-
-              contacts.push({
-                "id": leaders[leader].doc.path.key,
-                "name": leaders[leader].doc.value.profile.name,
-                "email": leaders[leader].doc.value.profile.email,
-                "data": {
-                  "source_name": formdata.name,
-                  "source_email": formdata.email,
-                  "source_company": formdata.company,
-                  "source_reason": formdata.reason,
-                  "target_name": response.profile.name,
-                  "target_email": response.profile.email,
-                  "target_avatar": response.profile.avatar
-                }
-              })
-            }
-
-            // send notification to leaders
-            knowtifyClient.contacts.upsert({
-                "event": "contact_request",
-                "contacts": contacts
-              },
-              function (success) {
-                console.log('Contact request sent!');
-                res.status(200).end();
-
-                // send notification to requestor.. a user id is only required if I create the record with an associated id
-                knowtifyClient.contacts.upsert({
-                    "event": "contact_receipt",
-                    "contacts": [{
-                      "email": formdata.email,
-                      "data": {
-                        "source_name": formdata.name,
-                        "source_email": formdata.email,
-                        "source_company": formdata.company,
-                        "source_reason": formdata.reason,
-                        "target_name": response.profile.name,
-                        "target_email": response.profile.email,
-                        "target_avatar": response.profile.avatar
-                      }
-                    }]
-                  },
-                  function (success) {
-                    console.log('Contact receipt sent to ' + formdata.name);
-                  },
-                  function (err) {
-                    console.warn('WARNING');
-                    console.log(err);
-                  }
-                );
-              },
-              function (err) {
-                console.warn('WARNING');
-                console.log(err);
-                res.status(202).send({message: "Something went wrong."});
+            contacts.push({
+              "id": leader.id,
+              "name": leader.name,
+              "email": leader.email,
+              "data": {
+                "source_name": formdata.name,
+                "source_email": formdata.email,
+                "source_company": formdata.company,
+                "source_reason": formdata.reason,
+                "target_name": user.name,
+                "target_email": user.email,
+                "target_avatar": user.avatar
               }
-            );
-          } else {
-            console.warn("WARNING: user338", err);
-            res.status(202).send({message: "Something went wrong."});
+            })
           }
-        })
 
+          // send notification to leaders
+          knowtifyClient.contacts.upsert({
+              "event": "contact_request",
+              "contacts": contacts
+            },
+            function (success) {
+              console.log('Contact request sent!');
+              res.status(200).end();
 
-      } else {
-        console.warn("WARNING: COULD NOT FIND LEADER FOR THIS COMMUNITY");
-        res.status(202).send({message: "Sorry, we can't seem to find a leader for this community. We took note of your request and we'll look into this and get back to you via email ASAP."});
-      }
+              // send notification to requestor.. a user id is only required if I create the record with an associated id
+              knowtifyClient.contacts.upsert({
+                  "event": "contact_receipt",
+                  "contacts": [{
+                    "email": formdata.email,
+                    "data": {
+                      "source_name": formdata.name,
+                      "source_email": formdata.email,
+                      "source_company": formdata.company,
+                      "source_reason": formdata.reason,
+                      "target_name": user.name,
+                      "target_email": user.email,
+                      "target_avatar": user.avatar
+                    }
+                  }]
+                },
+                function (success) {
+                  console.log('Contact receipt sent to ' + formdata.name);
+                },
+                function (err) {
+                  console.warn('WARNING');
+                  console.log(err);
+                }
+              );
+            },
+            function (err) {
+              console.warn('WARNING');
+              console.log(err);
+              res.status(202).send({message: "Something went wrong."});
+            }
+          );
+        } else {
+          console.warn("WARNING: user338");
+          res.status(202).send({message: "Something went wrong."});
+        }
+      })
+          
     } else {
-      console.log("WARNING: user351", err);
-      res.status(202).send({message: "Something went wrong."});
+      console.warn("WARNING: COULD NOT FIND LEADER FOR THIS COMMUNITY");
+        res.status(202).send({message: "Sorry, we can't seem to find a leader for this community. We took note of your request and we'll look into this and get back to you via email ASAP."});
     }
-  })
-
+  });
 }
 
 /*
@@ -406,18 +345,17 @@ function handleGetProfile(req, res) {
   var userid = req.params.userid || req.user;
   console.log('Pulling user profile: ' + userid);
 
-  cdb.get(userid, function (err, response) {
-    if (!err) {
-      response["key"] = userid;
-      response["token"] = jwt.sign(userid, process.env.SC_TOKEN_SECRET);
-      res.status(200).send(response);
+  cdb.findById(userid)
+  .then(user => {
+    if (user) {
+      user["key"] = userid;
+      user["token"] = jwt.sign(userid, process.env.SC_TOKEN_SECRET);
+      res.status(200).send(user);
     } else {
-      console.warn("Problem pulling user, sending 400 response. ", err.body);
+      console.warn("Problem pulling user, sending 400 response. ");
       res.status(400).send({message: "Please try logging in again."});
     }
-  })
-
-
+  });
 }
 
 function handleGetProfileUrl(req, res) {
@@ -462,29 +400,31 @@ function handleUpdateProfile(req, res) {
   if (userid == profile.key) {
     delete profile.key;
 
-    cdb.get(userid, function (err, user) {
-      if (!err) {
+    cdb.findById(userid)
+    .then(user => {
+      if (user) {
         profile['_id'] = user._id;
         profile['_rev'] = user._rev;
 
-        cdb.insert(profile, userid, function (err, response) {
-          if (!err) {
+        cdb.update(profile, {where: {id: userid}})
+        .then(response => {
+          if (response) {
             profile["key"] = userid;
             res.status(200).send({token: jwt.sign(userid, process.env.SC_TOKEN_SECRET), user: profile});
           } else {
-            console.warn("WARNING: user457", err);
+            console.warn("WARNING: user457");
             res.status(202).send({message: "Something went wrong."});
           }
         })
-
+        
       } else {
-        console.warn("WARNING: user457", err);
+        console.warn("WARNING: user457");
         res.status(202).send({message: "Something went wrong."});
       }
-    })
+    });
 
   } else {
-    res.status(400).send({message: 'You may only update your own user record.'})
+    res.status(400).send({message: 'You may only update your own user record.'});
   }
 }
 
@@ -497,13 +437,15 @@ function handleRemoveCommunity(req, res) {
   console.log("Removing community '" + community.key + "' for user " + user_key);
 
   // first confirm that req.user has leader role in community
-  cdb.get(userid, function (err, response) {
-    if (!err) {
+  cdb.findById(userid)
+  .then(response => {
+    if (response) {
       if (response.roles.leader[community.key]) {
-        cdb.get(user_key, function (err, response) {
-          if (!err) {
-            for (role in response.roles) {
-              for (comm in response.roles[role]) {
+        cdb.findById(user_key)
+        .then(response => {
+          if (response) {
+            for (var role in response.roles) {
+              for (var comm in response.roles[role]) {
                 if (response.roles[role][community.key]) {
                   delete response.roles[role][community.key];
                 }
@@ -512,32 +454,32 @@ function handleRemoveCommunity(req, res) {
             if (response.communities.indexOf(community.key) > -1) {
               response.communities.splice(response.communities.indexOf(community.key), 1);
             }
-            cdb.insert(response, user_key, function (err, response) {
-              if (!err) {
+            cdb.update(response, {where: {id: user_key}})
+            .then(response => {
+              if (response) {
                 console.log('Successfully removed community from user profile.');
                 res.status(201).send({message: 'Community removed.'});
               } else {
-                console.warn("WARNING: ", err);
+                console.warn("WARNING: ");
                 res.status(202).send({message: "Something went wrong."});
               }
-            })
+            });
 
           } else {
-            console.warn("WARNING: ", err);
+            console.warn("WARNING: ");
             res.status(202).send({message: "Something went wrong."});
           }
-        })
-
+        });
+          
       } else {
         console.warn('WARNING:  User does not have leader role in this community.');
         res.status(202).send({message: 'You do not have leader privileges for this community.'});
       }
     } else {
-      console.warn("WARNING: ", err);
+      console.warn("WARNING: ");
       res.status(202).send({message: "Something went wrong."});
     }
-  })
-
+  });
 }
 
 function handleRemoveRole(req, res) {
@@ -550,12 +492,13 @@ function handleRemoveRole(req, res) {
   console.log("Removing " + role + " for community " + community_key + " for user " + userid);
 
   // confirm user has role and remove it
-  cdb.get(userid, function (err, response) {
-    if (!err) {
+  cdb.findById(userid)
+  .then(response => {
+    if (response) {
       if (response.roles[role] && response.roles[role][community_key]) {
         delete response.roles[role][community_key];
 
-        for (r in response.roles) {
+        for (var r in response.roles) {
           if (response.roles[r][community_key]) var del = true;
         }
 
@@ -565,27 +508,27 @@ function handleRemoveRole(req, res) {
           }
         }
 
-        cdb.insert(response, userid, function (err, response) {
-          if (!err) {
+        cdb.update(response, {where: {id: userid}})
+        .then(response => {
+          if (response) {
             console.log('Successfully removed role from user profile.');
             res.status(201).send({message: 'Role removed.'});
           } else {
-            console.warn("WARNING: ", err);
+            console.warn("WARNING: ");
             res.status(202).send({message: "Something went wrong."});
           }
-        })
-
+        });
 
       } else {
         console.warn('WARNING:  User does not have the ' + role + ' role for record ' + community_key + '.');
         res.status(202).send({message: 'You do not have the ' + role + ' role for record ' + community_key + '.'});
       }
     } else {
-      console.warn("WARNING: ", err);
+      console.warn("WARNING: ");
       res.status(202).send({message: "Something went wrong."});
     }
-  })
-
+  });
+    
 }
 
 
@@ -593,25 +536,26 @@ function handleFeedback(req, res) {
   var userkey = req.user,
     data = JSON.parse(decodeURIComponent(req.query.data));
 
-  cdb.get(userkey, function (err, response) {
-    if (!err) {
+  cdb.findById(userkey)
+  .then(response => {
+    if (response) {
       response['beta'] = data;
 
-      cdb.insert(response, userkey, function (err, finalres) {
-        if (!err) {
+      cdb.update(response, {where: {id: userkey}})
+      .then(response => {
+        if (response) {
           res.status(201).send({message: 'Profile updated.'});
         } else {
-          console.warn('WARNING: user547', err);
+          console.warn('WARNING: user547');
           res.status(202).send({message: "Something went wrong."});
         }
-      })
-
+      });
+        
     } else {
-      console.warn('WARNING: user553', err);
-      res.status(202).send({message: 'Something went wrong: ' + err});
+      console.warn('WARNING: user553');
+      res.status(202).send({message: 'Something went wrong: ' });
     }
-  })
-
+  });
 }
 
 /*
@@ -622,21 +566,21 @@ function handleFeedback(req, res) {
 
 function handleRemoveProfile(req, res) {
   var userid = req.params.userid;
-  cdb.get(userid, function (err, result) {
-    if (!err) {
-      cdb.destroy(userid, result._rev, function (err, result) {
-        if (!err) {
+  cdb.findById(userid)
+  .then(result => {
+    if (result) {
+      cdb.destroy(userid)
+      .then(result => {
+        if (result) {
           console.log('User removed.');
           res.status(200).send({message: 'User removed'});
         } else {
-          console.log("Remove FAIL:" + err);
-          res.status(202).send({message: 'Something went wrong: ' + err});
+          console.log("Remove FAIL:");
+          res.status(202).send({message: 'Something went wrong: '});
         }
-      }) // ideally I should store an undo option
+      });
     }
   });
-
-
 }
 
 module.exports = UserApi;
