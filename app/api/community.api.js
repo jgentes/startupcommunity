@@ -2,8 +2,8 @@ var memjs = require('memjs'),
   mc = memjs.Client.create(),
   path = require('path'),
   _ = require(path.join(__dirname, '../scripts/lodash40.js')),
-  {mdb, cdb, sequelize, Op} = require('../../db');
-
+  {sequelize, cdb, mdb, Op} = require('../../db');
+  
 //var util = require('util'); //for util.inspect on request
 
 //require('request-debug')(request); // Very useful for debugging oauth and api req/res
@@ -133,8 +133,9 @@ function formatFindResults(items) {
 function handleGetCommunity(req, res) {
 
   var checkcache = function (cache, community, newresponse) {
+    console.log('NEWRESPONSE: ', newresponse)
     if (!cache) res.status(200).send(newresponse);
-
+    
     mc.set(community, JSON.stringify(newresponse), function (err, val) {
       if (err) console.warn('WARNING: Memcache error: ', err);
     });

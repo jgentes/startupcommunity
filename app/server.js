@@ -1,6 +1,3 @@
-// for debugging
-console.format = function(c) { return "[" + c.filename + ":" + c.getLineNumber() + "]"; };
-
 var express = require('express'),
     enforce = require('express-sslify'),
     httpProxy = require('http-proxy'),
@@ -11,6 +8,7 @@ var express = require('express'),
     bugsnag = require('bugsnag'),
     nodalytics = require('nodalytics'),
     //ghost = require('ghost'),
+    colors = require('colors'),
     parentApp = express();
 
 var app = express();
@@ -75,6 +73,34 @@ if (process.env.NODE_ENV === "production" || process.env.NODE_ENV === "developme
 
     app.use("/bower_components", express.static(root + "/bower_components"));
     app.use("/build", express.static(root + "/build"));
+    
+    // for better console logs
+    ['log', 'warn', 'error'].forEach((methodName) => {
+      const originalMethod = console[methodName];
+      console[methodName] = (...args) => {
+        let initiator = 'unknown place';
+        try {
+          throw new Error();
+        } catch (e) {
+          if (typeof e.stack === 'string') {
+            let isFirst = true;
+            for (const line of e.stack.split('\n')) {
+              const matches = line.match(/^\s+at\s+(.*)/);
+              if (matches) {
+                if (!isFirst) { // first line - current function
+                                // second line - caller (what we are looking for)
+                  initiator = matches[1];
+                  break;
+                }
+                isFirst = false;
+              }
+            }
+          }
+        }
+        originalMethod.apply(console, [...args, '\n', `  at ${initiator}` .green]);
+      };
+});
+    
 }
 
 // API ROUTE METHODS

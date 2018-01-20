@@ -6,10 +6,9 @@ const
     operatorsAliases: false
   }),
   cls = require('continuation-local-storage'),
-  path = require('path'),
-  cdb = sequelize.import(__dirname + "/communities"),
-  idb = sequelize.import(__dirname + "/invitations"),
-  mdb = sequelize.import(__dirname + "/messages"),
+  cdb = sequelize.import("communities"),
+  idb = sequelize.import("invitations"),
+  mdb = sequelize.import("messages"),
   Op = Sequelize.Op;
 
 Sequelize.useCLS(cls.createNamespace('startupcommunity'));
@@ -95,4 +94,9 @@ cdb.findOne({where: {skills: {[Op.like]: '%energies%'}}}).then(u => console.log(
   console.log('DONE: ', three.length, query.length, done.length);
 };
 go()*/
-exports = {sequelize, Sequelize, cdb, idb, mdb, Op};
+exports.sequelize = sequelize;
+exports.Sequelize = Sequelize;
+exports.cdb = cdb;
+exports.idb = idb;
+exports.mdb = mdb;
+exports.Op = Op;
