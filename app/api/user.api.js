@@ -451,6 +451,7 @@ function handleRemoveCommunity(req, res) {
                 }
               }
             }
+            if (response.communities) response.communities = JSON.parse(response.communities);
             if (response.communities.indexOf(community.key) > -1) {
               response.communities.splice(response.communities.indexOf(community.key), 1);
             }
@@ -503,6 +504,7 @@ function handleRemoveRole(req, res) {
         }
 
         if (del) {
+          if (response.communities) response.communities = JSON.parse(response.communities);
           if (response.communities.indexOf(community_key) > -1) {
             response.communities.splice(response.communities.indexOf(community_key), 1);
           }

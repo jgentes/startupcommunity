@@ -43,7 +43,7 @@ function UserController($scope, $stateParams, $location, user_service, result_se
         if (self.selectedClusters.length == 0) {
             if ($scope.global.community.community_profiles && $scope.global.community.community_profiles[$stateParams.location_path]) {
                 self.selection = $scope.global.community.community_profiles[$stateParams.location_path].name;
-            } else self.selection = $scope.global.community.profile.name;
+            } else self.selection = $scope.global.community.name;
         } else {
             self.selection = "";
             for (item in self.selectedClusters) {
@@ -66,11 +66,11 @@ function UserController($scope, $stateParams, $location, user_service, result_se
             if ($stateParams.community_path && $stateParams.location_path) {
                 if ($scope.global.community.community_profiles && $scope.global.community.community_profiles[$stateParams.location_path]) {
                     self.title += $scope.global.community.community_profiles[$stateParams.location_path].name +'</strong>';
-                } else self.title += $scope.global.community.profile.name +'</strong>';
-            } else self.title += $scope.global.community.profile.name + '</strong>';
+                } else self.title += $scope.global.community.name +'</strong>';
+            } else self.title += $scope.global.community.name + '</strong>';
         }
 
-        var pageTitle = '<br><small>' + $scope.global.community.profile.name + '</small>';
+        var pageTitle = '<br><small>' + $scope.global.community.name + '</small>';
         self.pageTitle = $sce.trustAsHtml(pageTitle);
     };
 
@@ -104,12 +104,12 @@ function UserController($scope, $stateParams, $location, user_service, result_se
         if ($scope.global.community.type == 'cluster') {
             if ($scope.global.community.community_profiles[$stateParams.location_path]) {
                 self.clusterFilter = $scope.global.community.community_profiles[$stateParams.location_path].industries;
-            } else self.clusterFilter = $scope.global.community.profile.industries;
+            } else self.clusterFilter = $scope.global.community.industries;
         } else {
             self.clusterFilter = [];
             if ($scope.global.community.type == 'user' || ($scope.global.community.type == 'company' && !$scope.global.community.resource)) {
                 $scope.global.community = $scope.global.location;
-            } else if ($scope.global.community.key && $scope.global.community.key !== $scope.global.location.key) self.communityFilter.push($scope.global.community.key);
+            } else if ($scope.global.community.slug && $scope.global.community.slug !== $scope.global.location.slug) self.communityFilter.push($scope.global.community.slug);
         }
         
         self.searchUsers();
@@ -205,7 +205,7 @@ function ContactUserController($scope, $uibModalInstance, notify_service, sweet,
             };
 
 
-            notify_service.contact($scope.global.community.key, formdata, $scope.global.location.key)
+            notify_service.contact($scope.global.community.slug, formdata, $scope.global.location.slug)
                 .then(function(response) {
 
                     $uibModalInstance.close();
@@ -252,8 +252,8 @@ function UserProfileController($scope, $stateParams, $http, $uibModal, $mixpanel
     var loadCtrl = function() {
         onLoad(); // de-register the watcher
 
-        var userkey = (self.user && self.user.key) ?
-            self.user.key :
+        var userkey = (self.user && self.user.slug) ?
+            self.user.slug :
             $stateParams.community_path ?
                 $stateParams.community_path :
                 $stateParams.location_path;
@@ -288,7 +288,7 @@ function UserProfileController($scope, $stateParams, $http, $uibModal, $mixpanel
                     return community_key;
                 },
                 location_key: function() {
-                    return $scope.global.location.key;
+                    return $scope.global.location.slug;
                 }
             }
         });
@@ -319,8 +319,8 @@ function UserProfileController($scope, $stateParams, $http, $uibModal, $mixpanel
                     } else {
                         self.working = false;
                         if (!$scope.global.community.newmessages) $scope.global.community.newmessages = {};
-                        $scope.global.community.newmessages[response.data.key] = response.data;
-                        $http.get('/api/2.1/community/' + self.user.key); // refresh outdated cache
+                        $scope.global.community.newmessages[response.data.slug] = response.data;
+                        $http.get('/api/2.1/community/' + self.user.slug); // refresh outdated cache
                     }
 
                     $mixpanel.track('Asked Question');
@@ -343,29 +343,29 @@ function UserProfileController($scope, $stateParams, $http, $uibModal, $mixpanel
     };
 
     this.postReply = function(parent) {
-        self.working[parent.key] = true;
+        self.working[parent.slug] = true;
 
-        if (self.reply[parent.key] && $scope.global.user) {
+        if (self.reply[parent.slug] && $scope.global.user) {
             // update user profile
 
-            message_service.addMessage('reply', $scope.global.user, self.user, self.reply[parent.key], parent)
+            message_service.addMessage('reply', $scope.global.user, self.user, self.reply[parent.slug], parent)
                 .then(function (response) {
-                    self.reply[parent.key] = undefined;
+                    self.reply[parent.slug] = undefined;
 
                     if (response.status !== 200) {
                         self.alert = {type: 'danger', message: String(response.data.message)};
                     } else {
-                        self.working[parent.key] = false;
-                        if ($scope.global.community.messages[parent.key]) {
-                            $scope.global.community.messages[parent.key].replies.push(response.data);
-                        } else $scope.global.community.newmessages[parent.key].replies.push(response.data);
-                        $http.get('/api/2.1/community/' + self.user.key); // refresh outdated cache
+                        self.working[parent.slug] = false;
+                        if ($scope.global.community.messages[parent.slug]) {
+                            $scope.global.community.messages[parent.slug].replies.push(response.data);
+                        } else $scope.global.community.newmessages[parent.slug].replies.push(response.data);
+                        $http.get('/api/2.1/community/' + self.user.slug); // refresh outdated cache
                     }
 
                     $mixpanel.track('Replied to Question');
                 })
                 .catch(function (error) {
-                    self.working[parent.key] = false;
+                    self.working[parent.slug] = false;
                     self.alert = {type: 'danger', message: String(error.data.message)};
                 });
         } else self.alert = {type: 'danger', message: 'Please login before posting a comment'};
@@ -398,7 +398,7 @@ function InviteUserController($scope, $mixpanel, user_service, community_service
 
             var emails = self.form.email_value.split(/\s*,\s*/),
                 message = self.form.message_value || "",
-                resources = self.form.resources ? Object.keys(self.form.resources) : undefined,
+                resources = self.form.resources ? Object.slugs(self.form.resources) : undefined,
                 formdata;
 
             if (self.form.$valid || emails.length > 0) {
@@ -415,7 +415,7 @@ function InviteUserController($scope, $mixpanel, user_service, community_service
 
                     if (user) {
 
-                        user_service.inviteUser(formdata.email, formdata.message, $scope.global.location.profile.name, $scope.global.location.key, formdata.resources)
+                        user_service.inviteUser(formdata.email, formdata.message, $scope.global.location.profile.name, $scope.global.location.slug, formdata.resources)
                             .then(function(response) {
                                 $scope.global.loaders['sendinvite'] = false;
                                 self.working = false;
@@ -441,7 +441,7 @@ function InviteUserController($scope, $mixpanel, user_service, community_service
                                 self.alert = { type: 'danger', message: String(error.data.message) };
                             })
                     } else {
-                        user_service.join(formdata.email, formdata.message, $scope.global.location.profile.name, $scope.global.location.key)
+                        user_service.join(formdata.email, formdata.message, $scope.global.location.profile.name, $scope.global.location.slug)
                             .then(function(response) {
                                 $scope.global.loaders['sendinvite'] = false;
                                 self.working = false;

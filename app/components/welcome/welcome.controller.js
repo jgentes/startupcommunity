@@ -89,14 +89,14 @@ function WelcomeController($scope, $auth, $location, $q, $mixpanel, $stateParams
                     if (response.status !== 200) {
                         self.alert = { type: 'danger', message: 'There was a problem: ' + String(response.data.message) };
                     } else {
-                        $scope.global.user = response.data.value;
-                        $scope.global.user["key"] = response.data.path.key;
+                        $scope.global.user = response.data;
+                        $scope.global.user["key"] = response.data.slug;
                         user = $scope.global.user;
                         self.quote = false;
 
                         checkProfile();
 
-                        $mixpanel.identify(response.data.path.key);
+                        $mixpanel.identify(response.data.slug);
                         $mixpanel.track('Accepted Invite');
 
                         self.panel = 'roles';
@@ -168,13 +168,13 @@ function WelcomeController($scope, $auth, $location, $q, $mixpanel, $stateParams
 
         if (!user.roles[selection]) {
             self.rolelist[selection] = !self.rolelist[selection];
-        } else if (Object.keys(user.roles[selection]).length == 1 && Object.keys(user.roles[selection]).indexOf($stateParams.location_path) == 0) {
+        } else if (Object.slugs(user.roles[selection]).length == 1 && Object.slugs(user.roles[selection]).indexOf($stateParams.location_path) == 0) {
             self.rolelist[selection] = !self.rolelist[selection];
         } else {
 
             sweet.show({
                 title: "Hold on a sec.",
-                text: "You have this role in one or more companies. You'll need to remove yourself from them before removing this role. Go to your <a href='" + $scope.global.user.key + "'>profile page</a> to view them.",
+                text: "You have this role in one or more companies. You'll need to remove yourself from them before removing this role. Go to your <a href='" + $scope.global.user.slug + "'>profile page</a> to view them.",
                 type: "warning",
                 html: true
             });
@@ -243,7 +243,7 @@ function WelcomeController($scope, $auth, $location, $q, $mixpanel, $stateParams
                     if (!$location.search().invite_code) {
                         $state.go('user.dashboard', {
                             profile: $scope.global.user,
-                            location_path: $scope.global.user.key,
+                            location_path: $scope.global.user.slug,
                             community_path: '',
                             tail_path: '',
                             tour: false

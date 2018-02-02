@@ -104,45 +104,20 @@ var schema = {
     };
   }
 };
-/*
-function formatSearchResults(items) {
-  if (items.rows && items.rows.length) {
-    for (i in items.rows) {
-      items.rows[i].doc = {
-        path: {key: items.rows[i].id},
-        value: items.rows[i].doc
-      };
-    }
-  }
-  return items;
-}
 
-function formatFindResults(items) {
-  if (items.docs && items.docs.length) {
-    for (i in items.docs) {
-      items.docs[i] = {
-        path: {key: items.docs[i]._id},
-        value: items.docs[i]
-      };
-      items.docs[i].value.key = items.docs[i].path.key;
-    }
-  }
-  return items;
-}
-*/
 function handleGetCommunity(req, res) {
 
   var checkcache = function (cache, community, newresponse) {
-    console.log('NEWRESPONSE: ', newresponse)
+    
     if (!cache) res.status(200).send(newresponse);
     
-    mc.set(community, JSON.stringify(newresponse), function (err, val) {
+  /*  mc.set(community, JSON.stringify(newresponse), function (err, val) {
       if (err) console.warn('WARNING: Memcache error: ', err);
-    });
+    });*/
   };
 
   var community = req.params.community && req.params.community.replace(/\s+/g, '-');
-
+  console.log('GET PARAMS: ', req.params)
   const pullCommunity = cache => {
         
     cdb.findOne({where: {"slug": community}})
@@ -153,6 +128,7 @@ function handleGetCommunity(req, res) {
         
         const sortCommunities = items => {
           items.forEach(item => {
+            console.log('ITEM: ', item.slug)
             if (item) {
     
               // sort communities for use in nav and child dashboard pages
@@ -163,10 +139,15 @@ function handleGetCommunity(req, res) {
                   newresponse.locations[item.id] = item;
                   break;
                 case "cluster":
-                  if (item.community_profiles && item.community_profiles[community] && item.community_profiles[community].parents && item.community_profiles[community].parents[0]) {
+                  if (item.community_profiles && item.community_profiles[community] && item.community_profiles[community].parents) {
                     if (!newresponse.clusters) newresponse.clusters = {};
                     // this is for navigation
-                    var cluster_type = item.community_profiles[community].parents[0];
+                    var cluster_type;
+                    try {
+                      item.community_profiles[community].parents = JSON.parse(item.community_profiles[community].parents);
+                    } finally {
+                      cluster_type = item.community_profiles[community].parents[0];
+                    }
                     if (!newresponse.clusters[cluster_type]) newresponse.clusters[cluster_type] = {};
                     newresponse.clusters[cluster_type][item.id] = item;
                   }
@@ -202,10 +183,17 @@ function handleGetCommunity(req, res) {
         if (!m.resource || m.type !== "location") {
   
           // pull communities within record
-          var comm_items = m.communities || [];
+          var comm_items = m.communities && JSON.parse(m.communities) || [];
   
           // grab parent
-          if (m.parents && m.parents[0]) comm_items.push(m.parents[0]);
+          if (m.parents) {
+            try {
+              m.parents = JSON.parse(m.parents);
+              comm_items.push(m.parents[0]);
+            } catch(err) {
+              console.log('WARNING: ', err);
+            }
+          }
   
           if (m.home && m.communities.indexOf(m.home) < 0) comm_items.push(m.home);
   
@@ -222,7 +210,7 @@ function handleGetCommunity(req, res) {
         if (ubersearch) {
           await cdb.findAll({
             where: {
-              "slug": {
+              slug: {
                 [Op.in]: ubersearch
               }
             }
@@ -384,7 +372,7 @@ function handleGetResources(req, res) {
 
   if (clusters) {
     selector[Op.or] = [
-      {resource: true},
+      {resource: {[Op.not]: false}},
       {type: "cluster"}
     ];
   } else selector.resource = true;
@@ -437,6 +425,7 @@ function handleGetTop(req, res) {
       company_parents: {}
     },
     cluster_search = [];
+    console.log('PARAMS: ', req.params, 'QUERY: ', req.query);
 
   if (typeof industry_keys === 'string') {
     industry_keys = [industry_keys];
@@ -466,7 +455,7 @@ function handleGetTop(req, res) {
   // determine whether location is a state
   var state_suffix = handleConvert_state(location_key.replace('-', ' '), 'abbrev'); // returns false if no match
   var state = state_suffix ? '"%-' + state_suffix.toLowerCase() + '"%' : ')';
-
+  
   // add search based on home suffix (which allows for roll-up to state level)
   var search = state_suffix ? {
     [Op.or]: [
@@ -483,7 +472,7 @@ function handleGetTop(req, res) {
       }
     };
     
-  if (community_key != '*' && !state_suffix) search.communities[Op.or].push({[Op.like]: '%"' + community_key + '"%'});
+  if (community_key != '*' && !state_suffix && community_key != location_key) search.communities[Op.or].push({[Op.like]: '%"' + community_key + '"%'});
 
   // get companies and industries
 
@@ -492,13 +481,20 @@ function handleGetTop(req, res) {
   var addkeys = function (data) {
     for (var i in data) {
       // delete sensitive data
-      if (data[i].password) delete data[i].profile.password;
-      if (data[i].email) delete data[i].profile.email;
+      if (data[i].password) delete data[i].password;
+      if (data[i].email) delete data[i].email;
       if (data[i].newsletter) delete data[i].newsletter;
       if (data[i].linkedin) {
         if (data[i].linkedin.emailAddress) delete data[i].linkedin.emailAddress;
         if (data[i].linkedin.access_token) delete data[i].linkedin.access_token;
       }
+      
+      // convert JSON objects stored in DB as strings
+      if (data[i].communities) data[i].communities = JSON.parse(data[i].communities);
+      if (data[i].industries) data[i].industries = JSON.parse(data[i].industries);
+      if (data[i].skills) data[i].skills = JSON.parse(data[i].skills);
+      if (data[i].parents) data[i].parents = JSON.parse(data[i].parents);
+      if (data[i].resource_types) data[i].resource_types = JSON.parse(data[i].resource_types);
     }
     return data;
   };
@@ -547,8 +543,8 @@ function handleGetTop(req, res) {
 
         // create array of items
         result.forEach(r => {
-          if (r.industries) industries = industries.concat(r.industries);
-          if (r.parents) parents = parents.concat(r.parents);
+          if (r.industries) industries = industries.concat(JSON.parse(r.industries));
+          if (r.parents) parents = parents.concat(JSON.parse(r.parents));
         });
 
         industries = _.countBy(industries);
@@ -558,23 +554,24 @@ function handleGetTop(req, res) {
         var sortedParents = sortcounts(parents);
 
         top_results.industries = {
-          count: Object.keys(industries).length ? Object.keys(industries).reduce(function (previous, key) {
-            return previous + industries[key];
+          count: Object.keys(industries).length ? Object.values(industries).reduce(function (total, val) {
+            return total+val;
           }) : [],
-          entries: sortedIndustries
+          entries: sortedIndustries.slice(5,sortedIndustries.length-5)
         };
 
         top_results.company_parents = {
-          count: Object.keys(parents).length ? Object.keys(parents).reduce(function (previous, key) {
-            return previous + parents[key];
+          count: Object.keys(parents).length ? Object.values(parents).reduce(function (total, val) {
+            return total+val;
           }) : [],
           entries: sortedParents
         };
-
+        
+        var companyResults = addkeys(result);
 
         top_results.companies = {
           count: result.length,
-          entries: addkeys(result)
+          entries: companyResults.slice(5,companyResults.length-5)
         };
 
         // get resources
@@ -582,11 +579,11 @@ function handleGetTop(req, res) {
         selector = {
           [Op.and]: [
             {type: "company"}, 
-            {resource: true}
+            {resource: {[Op.not]: false}}
           ]
         };
 
-        if (cluster_search) {
+        if (cluster_search.length) {
           selector[Op.or] = [
             {parents: {[Op.or]: cluster_search}}, 
             {industries: {[Op.or]: cluster_search}}
@@ -594,13 +591,11 @@ function handleGetTop(req, res) {
         }
         
         if (search) selector[Op.and].push(search);
-
+        
         cdb.findAll({
           where: selector
         }).then(result => {
-          if (result.length) {
-            
-            top_results.resources = {
+          top_results.resources = {
               count: result.length,
               entries: addkeys(result)
             };
@@ -613,7 +608,7 @@ function handleGetTop(req, res) {
               ]
             };
 
-            if (cluster_search) {
+            if (cluster_search.length) {
               selector[Op.or] = [
                 {parents: {[Op.or]: cluster_search}}, 
                 {skills: {[Op.or]: cluster_search}}
@@ -621,55 +616,42 @@ function handleGetTop(req, res) {
             }
             
             if (search) selector[Op.and].push(search);
-
-            cdb.findAll({
-              where: selector,
-              limit: 1000
-            }).then(result => {
-              if (result.length) {
-                //todo bookmark is not a thing in mysql
-                if (result.bookmark) {
-                  getMore(selector, result.bookmark, function(more) {
-                    var newresult = {};
-                    newresult = result.concat(more);
-                    finish(newresult);
-                  });
-                } else finish(result);
-
-                var finish = function(result) {
+            
+            var finish = function(result) {
 
                   var skills = [];
                   var parents = [];
-
+                  
                   result.forEach(r => {
-                    if (r.skills) skills = skills.concat(r.skills);
-                    if (r.parents) parents = parents.concat(r.parents);
+                    if (r.skills) skills = skills.concat(JSON.parse(r.skills));
+                    if (r.parents) parents = parents.concat(JSON.parse(r.parents));
                   });
 
                   skills = _.countBy(skills);
                   parents = _.countBy(parents);
-
+                  
                   var sortedSkills = sortcounts(skills, true);
                   var sortedPeopleParents = sortcounts(parents);
-
+                  
                   top_results.skills = {
-                    count: Object.keys(skills).length ? Object.keys(skills).reduce(function (previous, key) {
-                      return previous + skills[key];
+                    count: Object.keys(skills).length ? Object.values(skills).reduce(function (total, val) {
+                      return total+val;
                     }) : [],
-                    entries: sortedSkills
+                    entries: sortedSkills.slice(5,sortedSkills.length-5)
                   };
-
+                  
                   top_results.people_parents = {
-                    count: Object.keys(parents).length ? Object.keys(parents).reduce(function (previous, key) {
-                      return previous + parents[key];
+                    count: Object.keys(parents).length ? Object.values(parents).reduce(function (total, val) {
+                      return total+val;
                     }) : [],
                     entries: sortedPeopleParents
                   };
-
+                  
+                  var peopleResults = addkeys(result);
 
                   top_results.people = {
                     count: result.length,
-                    entries: addkeys(result)
+                    entries: peopleResults.slice(5,peopleResults.length-5)
                   };
 
                   // BEGIN PARENTS (this is mostly to avoid another api call that includes both companies and users)
@@ -734,19 +716,30 @@ function handleGetTop(req, res) {
 
                   if (!cache) res.status(200).send(top_results);
 
-                  mc.set(selector.toString(), JSON.stringify(top_results), function (err, val) {
+                 /* mc.set(selector.toString(), JSON.stringify(top_results), function (err, val) {
                     if (err) console.warn('WARNING: Memcache error: ', err)
-                  });
+                  });*/
                 }
+
+            cdb.findAll({
+              where: selector,
+              limit: 1000
+            }).then(result => {
+              if (result.length) {
+                //todo bookmark is not a thing in mysql
+                if (result.bookmark) {
+                  getMore(selector, result.bookmark, function(more) {
+                    var newresult = {};
+                    newresult = result.concat(more);
+                    finish(newresult);
+                  });
+                } else finish(result);
+
               } else {
                 console.log("WARNING: ");
                 res.status(202).send({message: 'Something went wrong: '});
               }
             })
-          } else {
-            console.log("WARNING: ");
-            res.status(202).send({message: 'Something went wrong: '});
-          }
         })
       } else {
         console.log("WARNING: ");
@@ -839,7 +832,7 @@ function handleGetTop(req, res) {
           leader = false;
 
         // validate user is a member in the location
-
+        if (user.communities) user.communities = JSON.parse(user.communities);
         if (user.communities.indexOf(settings.location_key) > -1) {
 
           var pathname = settings.community.url || settings.community.name.toLowerCase().replace(/\s+/g, '-');
@@ -881,7 +874,7 @@ function handleGetTop(req, res) {
                   // add community
 
                   if (!response.communities) {
-                    response["communities"] = {};
+                    response["communities"] = [];
                   }
 
                   if (response.communities.indexOf(settings.location_key) < 0) {
@@ -918,9 +911,8 @@ function handleGetTop(req, res) {
 
                     // add community
 
-                    if (!response.communities) {
-                      response.communities = {};
-                    }
+                    if (!response.communities) response.communities = {};
+                    else response.communities = JSON.parse(response.communities);
 
                     if (response.communities.indexOf(settings.location_key) < 0) {
                       response.communities.push(settings.location_key);
@@ -1006,7 +998,7 @@ function handleGetTop(req, res) {
                 }
 
                 // remove from community
-
+                if (response.communities) response.communities = JSON.parse(response.communities);
                 if (response.communities.indexOf(settings.location_key) > -1) {
                   var index = response.communities.indexOf(settings.location_key);
                   response.communities.splice(index, 1);
@@ -1085,9 +1077,8 @@ function handleGetTop(req, res) {
       if (response) {
         // add role
 
-        if (!response.roles) {
-          response.roles = {};
-        }
+        if (!response.roles) response.roles = {};
+        if (response.communities) response.communities = JSON.parse(response.communities);
 
         if (role == 'delete') {
 
@@ -1118,9 +1109,8 @@ function handleGetTop(req, res) {
 
           // add community
 
-          if (!response.communities) {
-            response.communities = {};
-          }
+          if (!response.communities) response.communities = [];
+          else response.communities = JSON.parse(response.communities);
 
           if (response.communities.indexOf(community_key) < 0) {
             response.communities.push(community_key);

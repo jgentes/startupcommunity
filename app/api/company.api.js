@@ -118,7 +118,7 @@ function handleCompanySearch(req, res) {
    searchstring += ") AND resource: true" + state;
    } else searchstring += ")" + (state ? " AND" + state : '');*/
 
-  if (get_resources == "true") selector[Op.and].push({resource: true});
+  if (get_resources == "true") selector[Op.and].push({resource: "true"});
 
   if (clusters && clusters.length > 0 && clusters[0] !== '*') {
     var cluster_search = [];
@@ -265,7 +265,7 @@ function handleAddCompany(req, res) {
           update = false;
 
         if (!addCompany.location_key) addCompany.location_key = addCompany.community_key;
-
+        if (user.communities) user.communities = JSON.parse(user.communities);
         if (user.communities.indexOf(addCompany.location_key) < 0) {
           res.status(202).send({ message: 'You must be a member of this community to add a company.' });
         }
@@ -378,6 +378,7 @@ function handleDeleteCompany(req, res) {
                     }
 
                     // remove from communities
+                    if (flush_value.communities) flush_value.communities = JSON.parse(flush_value.communities);
                     if (flush_value.communities.indexOf(params.company_key) > -1) {
                       var findex = flush_value.communities.indexOf(params.company_key);
                       flush_value.communities.splice(findex, 1);
@@ -484,9 +485,8 @@ var addRole = function(company_key, roles, location_key, user_key) {
         } // else the damn thing is already there
 
         // add community
-        if (!response.communities) {
-          response.communities = {};
-        }
+        if (!response.communities) response.communities = [];
+        else response.communities = JSON.parse(response.communities);
 
         if (response.communities.indexOf(company_key) < 0) {
           response.communities.push(company_key);

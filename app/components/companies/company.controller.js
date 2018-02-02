@@ -47,7 +47,7 @@ function CompanyController($scope, $stateParams, $state, $location, company_serv
         if (self.selectedClusters.length == 0) {
             if ($scope.global.community.community_profiles && $scope.global.community.community_profiles[$stateParams.location_path]) {
                 self.selection = $scope.global.community.community_profiles[$stateParams.location_path].name;
-            } else self.selection = $scope.global.community.profile.name;
+            } else self.selection = $scope.global.community.name;
         } else {
             self.selection = "";
             for (item in self.selectedClusters) {
@@ -70,11 +70,11 @@ function CompanyController($scope, $stateParams, $state, $location, company_serv
             if ($stateParams.community_path && $stateParams.location_path) {
                 if ($scope.global.community.community_profiles && $scope.global.community.community_profiles[$stateParams.location_path]) {
                     self.title += $scope.global.community.community_profiles[$stateParams.location_path].name +'</strong>';
-                } else self.title += $scope.global.community.profile.name +'</strong>';
-            } else self.title += $scope.global.community.profile.name + '</strong>';
+                } else self.title += $scope.global.community.name +'</strong>';
+            } else self.title += $scope.global.community.name + '</strong>';
         }
 
-        var pageTitle = '<br><small>' + $scope.global.community.profile.name + '</small>';
+        var pageTitle = '<br><small>' + $scope.global.community.name + '</small>';
         self.pageTitle = $sce.trustAsHtml(pageTitle);
     };
 
@@ -197,13 +197,13 @@ function CompanyController($scope, $stateParams, $state, $location, company_serv
         if ($scope.global.community.type == 'cluster') {
             if ($scope.global.community.community_profiles[$stateParams.location_path]) {
                 self.clusterFilter = $scope.global.community.community_profiles[$stateParams.location_path].industries;
-            } else self.clusterFilter = $scope.global.community.profile.industries;
+            } else self.clusterFilter = $scope.global.community.industries;
         } else {
             self.clusterFilter = [];
            /* if ($scope.global.community.type == 'user' || $scope.global.community.type == 'company') {
                 $scope.global.community = $scope.global.location;
             } else*/ 
-            if ($scope.global.community.key && $scope.global.community.key !== $scope.global.location.key) self.communityFilter.push($scope.global.community.key);
+            if ($scope.global.community.slug && $scope.global.community.slug !== $scope.global.location.slug) self.communityFilter.push($scope.global.community.slug);
         }
 
         self.searchCompanies(self.resource_page);
@@ -228,8 +228,8 @@ function CompanyProfileController($scope, $stateParams, $mixpanel, user_service,
     var loadCtrl = function() {
         onLoad(); // de-register the watcher
 
-        var companykey = ($scope.global.profile && $scope.global.profile.key) ?
-            $scope.global.profile.key :
+        var companykey = ($scope.global.profile && $scope.global.profile.slug) ?
+            $scope.global.profile.slug :
             $stateParams.community_path ?
                 $stateParams.community_path :
                 $stateParams.location_path;
@@ -257,10 +257,10 @@ function CompanyProfileController($scope, $stateParams, $mixpanel, user_service,
 
     this.remove = function(role) {
         
-        user_service.removeRole(role, $scope.global.profile.key)
+        user_service.removeRole(role, $scope.global.profile.slug)
             .then(function(response) {
 
-                community_service.getCommunity($scope.global.profile.key, true)
+                community_service.getCommunity($scope.global.profile.slug, true)
                     .then(function(response) {
                         $scope.global.profile = response.data;
 
@@ -295,7 +295,7 @@ function CompanyProfileController($scope, $stateParams, $mixpanel, user_service,
 
         var limit = $location.search().limit;
 
-        user_service.search([$scope.global.location.key, $scope.global.profile.key], [], '*', undefined, limit, alturl)
+        user_service.search([$scope.global.location.slug, $scope.global.profile.slug], [], '*', undefined, limit, alturl)
             .then(function (response) {
                 self.users = result_service.setPage(response.data);
                 self.loadingUser = false;                
@@ -326,7 +326,7 @@ function EditCompanyController($scope, $state, $stateParams, sweet, $q, $window,
     // for startup logo upload to S3
     this.uploadLogo = function (file) {
         // get the secure S3 url
-        company_service.getLogoUrl(file.name, $scope.global.user.key)
+        company_service.getLogoUrl(file.name, $scope.global.user.slug)
             .then(function(response) {
                 var signedUrl = response.data.put,
                     fileUrl = response.data.get;
@@ -355,11 +355,11 @@ function EditCompanyController($scope, $state, $stateParams, sweet, $q, $window,
         self.working = true;
         var role = self.selectedRole == 'not involved' ? undefined : self.selectedRole;
 
-        var community_path = $scope.global.location.key; // resources can only be created in locations (for now)
+        var community_path = $scope.global.location.slug; // resources can only be created in locations (for now)
 
         self.selectedCompany.url = self.selectedCompany.url || self.selectedCompany.name.toLowerCase().replace(/\s+/g, '-'); // in case they changed it
 
-        company_service.addCompany(self.selectedCompany, role, $scope.global.location.key, community_path, self.update ? $scope.global.community.key : undefined)
+        company_service.addCompany(self.selectedCompany, role, $scope.global.location.slug, community_path, self.update ? $scope.global.community.slug : undefined)
             .then(function(response) {
                 self.working = false;
 
@@ -377,7 +377,7 @@ function EditCompanyController($scope, $state, $stateParams, sweet, $q, $window,
                             text: response.data.message,
                             type: "success"
                         }, function() {
-                            $state.go('company.dashboard', {location_path: $scope.global.profile.key, community_path: null, profile: $scope.global.profile, tail_path: '' });
+                            $state.go('company.dashboard', {location_path: $scope.global.profile.slug, community_path: null, profile: $scope.global.profile, tail_path: '' });
                         });
                     }
                 };
@@ -470,13 +470,13 @@ function EditCompanyController($scope, $state, $stateParams, sweet, $q, $window,
             self.showCurrent = function () {
 
                 self.selectedCompany = $scope.global.community.profile;
-                self.selectedCompany['url'] = $scope.global.community.key;
+                self.selectedCompany['url'] = $scope.global.community.slug;
                 self.selectedCompany['resource_types'] = $scope.global.community.resource_types;
 
-                if ($scope.global.community.profile && $scope.global.community.profile.address) {
-                    self.selectedCompany['street'] = $scope.global.community.profile.address.street;
-                    self.selectedCompany['city'] = $scope.global.community.profile.address.city;
-                    self.selectedCompany['state'] = $scope.global.community.profile.address.state;
+                if ($scope.global.community.profile && $scope.global.community.address) {
+                    self.selectedCompany['street'] = $scope.global.community.address.street;
+                    self.selectedCompany['city'] = $scope.global.community.address.city;
+                    self.selectedCompany['state'] = $scope.global.community.address.state;
                 }
 
                 if (self.selectedCompany.parents && self.selectedCompany.parents.length) {
@@ -494,7 +494,7 @@ function EditCompanyController($scope, $state, $stateParams, sweet, $q, $window,
 
                 for (role in $scope.global.user.roles) {
                     for (co in $scope.global.user.roles[role]) {
-                        if (co == $scope.global.community.key) {
+                        if (co == $scope.global.community.slug) {
                             self.selectedRole = role;
                             break;
                         }
@@ -511,8 +511,8 @@ function EditCompanyController($scope, $state, $stateParams, sweet, $q, $window,
 
         };
 
-        if ($stateParams.community_path !== $scope.global.community.key && $stateParams.location_path !== $scope.global.community.key) {
-            if ($stateParams.community_path !== $scope.global.location.key && $scope.global.lastitems.indexOf($stateParams.community_path) < 0) {
+        if ($stateParams.community_path !== $scope.global.community.slug && $stateParams.location_path !== $scope.global.community.slug) {
+            if ($stateParams.community_path !== $scope.global.location.slug && $scope.global.lastitems.indexOf($stateParams.community_path) < 0) {
                 community_service.getCommunity($stateParams.community_path, true)
                     .then(function (response) {
                         $scope.global.community = response.data;

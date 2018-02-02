@@ -3,7 +3,7 @@
         <div style="padding: 20px 15px;">
             <header class="heading content" style="color:#fff">
                 <a href="javascript:window.location.href=window.location.href" style="color: #eee; font-size: 7px; float: left; margin-left: -40px; margin-top: -12px;">random image</a>
-                <button ng-if="global.user" ui-sref="company.edit({location_path: '', community_path: global.profile.key})" class="btn btn-warning pull-right" style="margin-left:-100px;">Edit</button>
+                <button ng-if="global.user" ui-sref="company.edit({location_path: '', community_path: global.profile.slug})" class="btn btn-warning pull-right" style="margin-left:-100px;">Edit</button>
                 <img class="img-circle m-b" ng-show="global.profile.profile.avatar" style="max-height:100px; max-width:100px;" ng-src="{{global.profile.profile.avatar}}" alt="{{global.profile.profile.name}}" onerror="this.src='/public/images/browser_icon.jpg'">
                 <div style="margin:-15px 0;">
                     <button ng-if="global.profile.profile.parents[0]" ladda="btnworking" ng-click="btnworking = true" class="ladda-btn btn btn-default btn-xs" ui-sref="community.dashboard({location_path: global.profile.profile.home, community_path: global.profile.profile.parents[0]})">
@@ -23,7 +23,7 @@
                     <a href="{{'http://' + global.profile.profile.website}}" target="_blank" style="font-size:14px; color: #6DC8EE;">{{global.profile.profile.website}}</a>
                 </div>
                 <div style="overflow: hidden; height: 40px; margin-bottom: -10px;">
-                    <button ng-repeat="industry in global.profile.profile.industries" style="margin-right: 5px;" ladda="btnworking" ng-click="btnworking = true" class="ladda-btn btn btn-outline btn-default btn-xs" ui-sref="search.dashboard({location_path: global.location.key, community_path: '', tail_path: '', query: industry
+                    <button ng-repeat="industry in global.profile.profile.industries" style="margin-right: 5px;" ladda="btnworking" ng-click="btnworking = true" class="ladda-btn btn btn-outline btn-default btn-xs" ui-sref="search.dashboard({location_path: global.location.slug, community_path: '', tail_path: '', query: industry
                     })">
                         {{industry}}
                     </button>

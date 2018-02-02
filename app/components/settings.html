@@ -21,8 +21,8 @@
                 <hr>
                 <div ng-repeat="k in settings.resources">
                     <div style="padding-bottom:10px; font-size: 18px;">{{ k.profile.name }}
-                        <button ng-click="nav.embedSettings(k.key)" class="btn btn-xs pull-right">Embed</button>
-                        <button ui-sref="company.edit({community_path: k.key})" ui-sref-opts="{notify: false}" class="btn btn-primary btn-xs pull-right" style="margin-right: 5px;">Edit</button>
+                        <button ng-click="nav.embedSettings(k.slug)" class="btn btn-xs pull-right">Embed</button>
+                        <button ui-sref="company.edit({community_path: k.slug})" ui-sref-opts="{notify: false}" class="btn btn-primary btn-xs pull-right" style="margin-right: 5px;">Edit</button>
                     </div>
                 </div>
                 <ul class="nav nav-second-level" style="margin-left: -15px;">
@@ -51,13 +51,13 @@
                 </div>
                 <hr>
                 <div ng-repeat="(k, v) in global.user.roles.leader">
-                    <div ng-if="v == global.location.key && settings.clusters[k]" style="padding-bottom:10px; font-size: 18px;">{{ settings.clusters[k].community_profiles[global.location.key].name }}
+                    <div ng-if="v == global.location.slug && settings.clusters[k]" style="padding-bottom:10px; font-size: 18px;">{{ settings.clusters[k].community_profiles[global.location.slug].name }}
                         <button ng-click="nav.embedSettings(k);" class="btn btn-xs pull-right">Embed</button>
                         <button ng-click="nav.editCommunity(k);" class="btn btn-primary btn-xs pull-right" style="margin-right: 5px;">Edit</button>
                     </div>
                 </div>
                 <ul class="nav nav-second-level" style="margin-left: -15px;">
-                    <li ng-if="global.user.communities.indexOf(global.location.key) > -1">
+                    <li ng-if="global.user.communities.indexOf(global.location.slug) > -1">
                         <button class="btn btn-success" ng-click="nav.editCommunity();" style="margin: 10px 15px;">+&nbsp;&nbsp;Add Industry</button>
                     </li>
                 </ul>
@@ -71,8 +71,8 @@
                     <small>Locations are cities, counties, regions, or states.</small>
                 </div>
                 <hr>
-                <div ng-if="global.user.communities.indexOf(global.location.key) > -1" style="padding-bottom:10px; font-size: 18px;">{{ global.location.profile.name }}
-                    <button ng-click="nav.embedSettings(global.location.key);" class="btn btn-xs pull-right">Embed</button>
+                <div ng-if="global.user.communities.indexOf(global.location.slug) > -1" style="padding-bottom:10px; font-size: 18px;">{{ global.location.profile.name }}
+                    <button ng-click="nav.embedSettings(global.location.slug);" class="btn btn-xs pull-right">Embed</button>
                 </div>
             </div>
         </div>

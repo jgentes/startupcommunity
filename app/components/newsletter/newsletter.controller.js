@@ -19,7 +19,7 @@ function NewsletterController(newsletter_service, $scope, user_service, $sce, er
 
                         self.frame_content = $sce.trustAsHtml(response.data);
 
-                        //newsletter_service.syncMembers(user.newsletter.lists, user.newsletter.brand_id, location.key);
+                        //newsletter_service.syncMembers(user.newsletter.lists, user.newsletter.brand_id, location.slug);
 
                     })
                     .catch(function(error) {
@@ -99,7 +99,7 @@ function SetupNewsController($uibModalInstance, $scope, sweet, community_service
                     .then(function(response) {
                         var resource_list = response.data;
 
-                        newsletter_service.setupNewsletter(settings, resource_list, $scope.global.location.key)
+                        newsletter_service.setupNewsletter(settings, resource_list, $scope.global.location.slug)
                             .then(function(response) {
 
                                 self.working = false;
