@@ -1,7 +1,7 @@
 <div class="inmodal">
     <div class="color-line"></div>
     <div class="modal-header">
-        <h4 class="modal-title">Settings for {{settings.thiscommunity.profile.name}}</h4>
+        <h4 class="modal-title">Settings for {{settings.thiscommunity.name}}</h4>
         <p class="font-bold">Note: These settings can be modified by other Leaders of this community.</p>
     </div>
     <div class="modal-body">
@@ -69,7 +69,7 @@
                             <td style="padding-left: 20px;">
                                 <input type="checkbox" class="form-control checkbox" ng-checked="domain.full" disabled>
                             </td>
-                            <td style="padding-left: 20px;" ng-show="domain.creator == global.user.key">
+                            <td style="padding-left: 20px;" ng-show="domain.creator == global.user.slug">
                                 <i class="pe-7s-close-circle" ng-click="settings.removeEmbed($index)" style="font-size: 28px; cursor: pointer;"></i>
                             </td>
                         </tr>
@@ -78,7 +78,7 @@
 
                 <div class="form-group" style="margin-top: 25px;">
                     <label>Use this code to embed this community:</label>
-                    <pre>[iframe src="https://startupcommunity.org/{{ global.community.key == global.location.key ? global.community.key : global.location.key + '/' + global.community.key }}" width="100%" height="1250"]</pre>
+                    <pre>[iframe src="https://startupcommunity.org/{{ global.community.slug == global.location.slug ? global.community.slug : global.location.slug + '/' + global.community.slug }}" width="100%" height="1250"]</pre>
                     <em>This code is an example using the <a target="_blank" href="https://wordpress.org/plugins/iframe/">Wordpress Iframe plugin</a>. We recommend a minimum width of around 650px and minimum height of 1250px for the iframe.</em>
                     <em>Add /people or /companies to the url for specific views.</em>
                 </div>

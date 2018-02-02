@@ -58,7 +58,7 @@
                                     Your role is:
 
                                 </h4>
-                                <select class="form-control input-lg industry-select" ng-model="add.selectedRole" ng-options="r.value as r.text for r in add.selectRoles"></select>
+                                <select class="form-control input-lg industry-select" ng-model="add.selectedRole" ng-options="r as r.text for r in add.selectRoles"></select>
                             </div>
                             <div class="form-group col-lg-6">
                                 <h4 class="w400">
@@ -189,7 +189,7 @@
 
             <div alert-box this-alert="add.alert" style="margin-top: -20px; margin-bottom: 20px;"></div>
 
-            <button ladda="add.del_working" class="ladda-button btn btn-danger pull-left" data-style="zoom-in" data-spinner-size="25" ng-click="add.deleteCompany(global.community.key)" ng-show="add.update && !add.alert">Delete {{global.community.profile.name || (add.is_resource ? 'Resource' : 'Company') }}</button>
+            <button ladda="add.del_working" class="ladda-button btn btn-danger pull-left" data-style="zoom-in" data-spinner-size="25" ng-click="add.deleteCompany(global.community.slug)" ng-show="add.update && !add.alert">Delete {{global.community.name || (add.is_resource ? 'Resource' : 'Company') }}</button>
 
             <div class="text-right m-t-xs">
                 <button ng-click="add.step = 1" ng-disabled="add.step == 1" class="btn btn-default">Previous</button>

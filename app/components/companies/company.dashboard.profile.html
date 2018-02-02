@@ -34,5 +34,5 @@
     <p style="white-space:pre-wrap;" ng-bind-html="::global.profile.profile.summary"></p>
     <hr>
     <h3 ng-show="global.profile.profile.industries">Markets</h3>
-    <li ng-repeat="industry in global.profile.profile.industries" class="label btn-default skills"><a href="#" ui-sref="search.dashboard({location_path: global.location.key})">{{::industry}}</a></li>
+    <li ng-repeat="industry in global.profile.profile.industries" class="label btn-default skills"><a href="#" ui-sref="search.dashboard({location_path: global.location.slug})">{{::industry}}</a></li>
 </div>

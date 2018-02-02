@@ -3,7 +3,10 @@ const
   sequelize = new Sequelize('otcktbzgpblfpu07', 'cd8do5g1qfary77u', 'bix38gi0i1nsf9gx', {
     host: 'otwsl2e23jrxcqvx.cbetxkdyhwsb.us-east-1.rds.amazonaws.com',
     dialect: 'mysql',
-    operatorsAliases: false
+    operatorsAliases: false,
+    query: {
+      raw: true
+    }
   }),
   cls = require('continuation-local-storage'),
   cdb = sequelize.import("communities"),
@@ -31,15 +34,23 @@ Sequelize.useCLS(cls.createNamespace('startupcommunity'));
 }).then(u => {
   if (u) u.forEach(ul => console.log(ul.name));
 })*/
+
+sequelize
+  .query(
+    "SELECT `id`, `slug`,`resource` FROM `communities` AS `communities` WHERE (`communities`.`type` = 'company' AND `communities`.`resource` IS NOT true AND (`communities`.`communities` LIKE '%\"bend-or\"%'))",
+    { model: cdb}
+  ).then(result => {
+    console.log(result.length)
+  })
 /*
 sequelize
   .query(
     'SELECT id, roles FROM communities WHERE JSON_CONTAINS(roles->>\'$.*."bend-or"\', \'["bend-or"]\')',
-    { model: db}
+    { model: cdb}
   ).then(result => {
     console.log(result)
-  })*/
-
+  })
+*/
 //SELECT id, roles FROM communities WHERE JSON_CONTAINS(roles->>'$.leader."bend-or"', \'["bend-or"]\')
 //SELECT id, communities FROM communities WHERE JSON_CONTAINS(communities, \'["bendtech"]\')
 /*const test = ["bendtech", "bend-or"];

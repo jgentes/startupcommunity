@@ -38,7 +38,7 @@
                             <a><i class="fa fa-fw fa-globe themed-color-dark icon-push"></i> All</a>
                         </li>
                         <li ng-if="global.community.type == 'cluster'" class="active">
-                            <a><i class="fa fa-fw fa-globe themed-color-dark icon-push"></i> {{global.community.profile.name}}</a>
+                            <a><i class="fa fa-fw fa-globe themed-color-dark icon-push"></i> {{global.community.name}}</a>
                         </li>
                         <hr style="margin: 10px 0 10px 0;">
                         <li ng-if="global.community.type !== 'cluster'" ng-repeat="cluster in global.top.parents" ng-class="{'active':companies.selectedClusters.indexOf(cluster.label) >= 0}" ng-click="companies.loadingCluster=true;  companies.allClusters=false; companies.filterClusters(cluster.label);">
@@ -104,7 +104,7 @@
                             <a><i class="fa fa-fw fa-globe themed-color-dark icon-push"></i> All</a>
                         </li>
                         <hr style="margin: 10px 0 10px 0;">
-                        <li ng-repeat="resource in nav.resources" ng-class="{'active':companies.selectedResources.indexOf(resource.key) >= 0}" ng-click="companies.allResources=false; companies.filterResources(resource.key);">
+                        <li ng-repeat="resource in nav.resources" ng-class="{'active':companies.selectedResources.indexOf(resource.slug) >= 0}" ng-click="companies.allResources=false; companies.filterResources(resource.slug);">
                             <a>{{resource.profile.name}}</a>
                         </li>
                     </ul>

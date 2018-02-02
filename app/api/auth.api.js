@@ -254,7 +254,7 @@ function handleLinkedin(req, res) {
         {
           "email": invitee_email,
           "data": {
-            "invite_accepted": true
+            "invite_accepted": "true"
           }
         }
       ]
@@ -361,11 +361,14 @@ function handleLinkedin(req, res) {
         if (invite_profile && invite_profile.invite_communities) {
 
           if (!user_profile.communities) user_profile.communities = [];
+          else user_profile.communities = JSON.parse(user_profile.communities);
 
           for (var i in invite_profile.invite_communities) {
 
-            if (user_profile.communities && user_profile.communities.indexOf(invite_profile.invite_communities[i]) < 0) {
-              user_profile.communities.push(invite_profile.invite_communities[i]);
+            if (user_profile.communities) {
+              if (user_profile.communities.indexOf(invite_profile.invite_communities[i]) < 0) {
+                user_profile.communities.push(invite_profile.invite_communities[i]);
+              }
             }
           }
         }
@@ -544,7 +547,8 @@ function handleInviteUser(req, res) {
       .then(response => {
 
           var user = response;
-
+          
+          if (user.communities) user.communities = JSON.parse(user.communities);
           if (user.communities.indexOf(inviteUser.location_key) < 0) {
             res.status(202).send({message: 'You must be a member of this community to invite someone.'});
           }
@@ -566,6 +570,7 @@ function handleInviteUser(req, res) {
                 var existing = result;
 
                 if (!existing.communities) existing.communities = [];
+                else existing.communities = JSON.parse(existing.communities);
 
                 for (var n in inviteUser.resources) {
                   if (existing.communities.indexOf(inviteUser.resources[n]) == -1) {

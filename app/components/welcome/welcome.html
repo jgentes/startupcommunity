@@ -36,8 +36,8 @@
                             <div class="panel-body no-padding">
                                 <div class="list-group ">
 
-                                    <a class="list-group-item" ng-repeat="r in welcome.selectRoles" ng-if="$index >= 1" ng-class="{'active' : welcome.rolelist[r.value]}" ng-click="welcome.changeRole(r.value)">
-                                        <div class="stats-icon pull-right" ng-show="welcome.rolelist[r.value]"><i class="pe-7s-check fa-2x" ></i></div>
+                                    <a class="list-group-item" ng-repeat="r in welcome.selectRoles" ng-if="$index >= 1" ng-class="{'active' : welcome.rolelist[r]}" ng-click="welcome.changeRole(r)">
+                                        <div class="stats-icon pull-right" ng-show="welcome.rolelist[r]"><i class="pe-7s-check fa-2x" ></i></div>
                                         <h5 class="list-group-item-heading">{{ r.text }}</h5>
                                         <p class="list-group-item-text">{{ r.description }}</p>
                                     </a>

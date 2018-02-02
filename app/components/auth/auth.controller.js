@@ -10,13 +10,13 @@ function LoginController($auth, $scope, $state, $mixpanel, $stateParams, sweet) 
 
     var postLogin = function(auth_response) { // from getprofile
 
-        auth_response.data.value["key"] = auth_response.data.path.key;
-        $scope.global.user = auth_response.data.value;
+        auth_response.data["key"] = auth_response.data.slug;
+        $scope.global.user = auth_response.data;
         if (auth_response.config.data.state !== '/login') {
             $state.reload();
-        } else $state.go('user.dashboard', {profile: auth_response.data.value, location_path: auth_response.data.value.key});
+        } else $state.go('user.dashboard', {profile: auth_response.data, location_path: auth_response.data.slug});
 
-        $mixpanel.identify(auth_response.data.path.key);
+        $mixpanel.identify(auth_response.data.slug);
         $mixpanel.track('Logged in');
     };
 
