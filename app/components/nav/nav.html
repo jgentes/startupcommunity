@@ -5,7 +5,7 @@
         </div>
         <div id="logo" class="light-version" style="transition: all 0.4s ease 0s;">
             <a ui-sref="community.dashboard({location_path: global.location.slug})">
-                <img ng-src="{{global.community.sc_logo || global.location.profile.sc_logo || '/public/images/sc_logo_small.png' }}"/>
+                <img ng-src="{{global.community.sc_logo || global.location.sc_logo || '/public/images/sc_logo_small.png' }}"/>
             </a>
         </div>
         <nav role="navigation">
@@ -65,13 +65,13 @@
                     <li ng-if="global.user" class="dropdown" style="padding-top: 10px; padding-left: 10px;" tour-step order="4" title="Your Profile" content="People can ask you questions on your profile page. Click 'End tour' to take a look." placement="bottom">
                         <div class="pull-left" style="padding-top: 1px; white-space: nowrap;     text-align: right; padding-right: 20px;">
                             <span loading-bars ng-if="global.loaders['myprofile']" style="padding-right:40px;"></span>
-                            <a ui-sref="user.dashboard({location_path: global.user.slug, community_path: '', tail_path: '', noreload: true, profile: global.user})" ng-click="global.loaders['myprofile'] = true">{{::global.user.profile.name}}</a>
+                            <a ui-sref="user.dashboard({location_path: global.user.slug, community_path: '', tail_path: '', noreload: true, profile: global.user})" ng-click="global.loaders['myprofile'] = true">{{::global.user.name}}</a>
                             <div style="margin-left: -10px; padding-top: 1px;">
                                 <span ng-repeat="(item, val) in ::global.user.roles" class="user-role" ><i ng-attr-title="{{::item[0].toUpperCase() + item.slice(1);}}" style="font-weight: bold;" ng-class="{'text-primary pe-7s-paper-plane' : item == 'founder', 'text-danger pe-7s-flag' : item == 'leader', 'text-info pe-7s-study' : item == 'mentor', 'text-success pe-7s-gleam' : item == 'investor', 'text-default pe-7s-ball' : item == 'team', 'text-warning pe-7s-portfolio' : item == 'provider'}"></i></span>
                             </div>
                         </div>
                         <div class="pull-right" style="padding-right: 10px;">
-                            <a ui-sref="user.dashboard({location_path: global.user.slug, community_path: '', tail_path: '', noreload: true, profile: global.user})" ng-click="global.loaders['myprofile'] = true"><img title="Your Profile" class="img-circle m-b" ng-src="{{::global.user.profile.avatar || '/public/images/blank_avatar.png'}}" alt="{{::global.user.profile.name}}" style="height: 40px; width: 40px; " onerror="this.src='/public/images/blank_avatar.png'"/></a>
+                            <a ui-sref="user.dashboard({location_path: global.user.slug, community_path: '', tail_path: '', noreload: true, profile: global.user})" ng-click="global.loaders['myprofile'] = true"><img title="Your Profile" class="img-circle m-b" ng-src="{{::global.user.avatar || '/public/images/blank_avatar.png'}}" alt="{{::global.user.name}}" style="height: 40px; width: 40px; " onerror="this.src='/public/images/blank_avatar.png'"/></a>
                         </div>
                     </li>
                     <li ng-if="!global.user" class="dropdown">
@@ -124,7 +124,7 @@
                     <li>
                         <a ui-sref="community.dashboard({location_path: global.location.slug, community_path: '', tail_path: ''})" style="padding-left: 6px; font-size: 16px; font-weight: bold; border-bottom: 1px solid #eee; background-color:#F6F8F9; border-left: 2px solid #82BC4B;" ng-click="l_working = true">
                             <span style="white-space:nowrap;font-size:18px;">
-                                &nbsp;{{global.location.profile.name}}
+                                &nbsp;{{global.location.name}}
                             </span>
                             <span loading-bars ng-if="l_working"></span>
                         </a>
@@ -145,7 +145,7 @@
                     </li>
                     <li ng-repeat="item in global.community.locations">
                         <a ui-sref="community.dashboard({location_path: item.slug, community_path: '', tail_path: ''})" ng-class="{active: global.path.includes('/' + item.slug)}" ng-click="li_working = true"><i class="fa fa-globe"></i>
-                            {{item.profile.name}}
+                            {{item.name}}
                             <span loading-bars ng-show="li_working"></span>
                         </a>
                     </li>
@@ -168,12 +168,12 @@
                 </ul>
                 <ul class="nav nav-second-level">
                     <li ng-repeat="item in global.nav_top.parents | orderBy: 'item' : reverse">
-                        <a ui-sref="community.dashboard({location_path: (global.location.slug || global.user.profile.home), community_path: item.label, tail_path: ''})" ng-class="{active: global.path.includes('/' + item.label)}" ng-click="cl_working = true">
+                        <a ui-sref="community.dashboard({location_path: (global.location.slug || global.user.home), community_path: item.label, tail_path: ''})" ng-class="{active: global.path.includes('/' + item.label)}" ng-click="cl_working = true">
                             <span>
                                 <i ng-class="'fa ' + global.industry_icons[item.label].icon"></i>
                                 {{::item.label[0].toUpperCase() + item.label.slice(1)}}
                                 <span loading-bars ng-show="cl_working"></span>
-                                <a ng-repeat="c in ::global.location.clusters[item.label]" ui-sref="community.dashboard({location_path: (global.location.slug || global.user.profile.home), community_path: c.slug, tail_path: ''})" ng-class="{active: global.path.includes('/' + c.slug)}" ng-click="clc_working = true" style="padding-left:30px;">
+                                <a ng-repeat="c in ::global.location.clusters[item.label]" ui-sref="community.dashboard({location_path: (global.location.slug || global.user.home), community_path: c.slug, tail_path: ''})" ng-class="{active: global.path.includes('/' + c.slug)}" ng-click="clc_working = true" style="padding-left:30px;">
                                     <i ng-class="'fa ' + global.industry_icons[item.label].icon"></i>
                                     {{::c.community_profiles[global.location.slug].name[0].toUpperCase() + c.community_profiles[global.location.slug].name.slice(1);}}
                                     <span loading-bars ng-show="clc_working"></span>

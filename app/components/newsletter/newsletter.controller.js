@@ -64,7 +64,7 @@ function SetupNewsController($uibModalInstance, $scope, sweet, community_service
             if ($scope.global.user.newsletter && $scope.global.user.newsletter.brand_id) {
                 /// update existing newsletter
 
-                newsletter_service.updateNewsletter(settings, $scope.global.user.profile.email, $scope.global.user.newsletter.brand_id)
+                newsletter_service.updateNewsletter(settings, $scope.global.user.email, $scope.global.user.newsletter.brand_id)
                     .then(function(response) {
 
                         self.working = false;

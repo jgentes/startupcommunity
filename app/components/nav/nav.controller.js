@@ -13,7 +13,7 @@ function NavigationController($scope, $auth, $state, $window, $location, $stateP
     $scope.global.community = undefined;
     $scope.global.loaders = {};
     $scope.global.lastitems = ["people", "companies", "resources", "search", "invite", "add-company", "add-resource", "welcome", "settings", "edit", "newsletter"];
-    $scope.global.industries = community_service.industries();
+    //$scope.global.industries = community_service.industries(); 
     this.state = $state; // used in header because path doesn't always update properly..
 
     var nav_community;
@@ -29,8 +29,8 @@ function NavigationController($scope, $auth, $state, $window, $location, $stateP
 
                     if (response.slug) {
                         $mixpanel.people.set({
-                            "$name": response.profile.name,
-                            "$email": response.profile.email
+                            "$name": response.name,
+                            "$email": response.email
                         });
                     }
 
@@ -53,7 +53,7 @@ function NavigationController($scope, $auth, $state, $window, $location, $stateP
     var getCommunity = function () {
 
         var pullCommunity = function (comm_path) {
-
+        
             community_service.getCommunity(comm_path)
                 .then(function (response) {
                     
@@ -218,17 +218,17 @@ function NavigationController($scope, $auth, $state, $window, $location, $stateP
 
             // LOAD 3RD PARTY SERVICES
 
-            knowtify.push(['load_inbox', 'knowtify', {email: user.profile.email}]);
+            knowtify.push(['load_inbox', 'knowtify', {email: user.email}]);
 
             if ($window.Bugsnag) {
                 $window.Bugsnag.user = {
                     id: user.id,
-                    name: user.profile.name,
-                    email: user.profile.email
+                    name: user.name,
+                    email: user.email
                 };
             }
 
-            if ($window.JacoRecorder) $window.JacoRecorder.identify(user.profile.email);
+            if ($window.JacoRecorder) $window.JacoRecorder.identify(user.email);
 
         }
 
@@ -388,7 +388,7 @@ function NavigationController($scope, $auth, $state, $window, $location, $stateP
 
         // COMMUNITY SETTINGS
 
-        self.embedSettings = function(community_key) {
+        self.embedSettings = function(community_id) {
 
             var modalInstance = $uibModal.open({
                 templateUrl: 'components/nav/nav.embed_settings.html',
@@ -399,7 +399,7 @@ function NavigationController($scope, $auth, $state, $window, $location, $stateP
                     embed_community: function() {
 
                         //force pull of community settings every time to avoid stale data
-                        return community_service.getKey(community_key)
+                        return community_service.getId(community_id)
                             .then(function(response) {
                                 $scope.global.community = response.data;
                                 return response.data;
@@ -411,7 +411,7 @@ function NavigationController($scope, $auth, $state, $window, $location, $stateP
 
         // ADD OR MODIFY CLUSTER, RESOURCE, OR LOCATION
         // note there are *2* editcommunity functions in this file :)
-        self.editCommunity = function(community_key) {
+        self.editCommunity = function(community_id) {
 
             var modalInstance = $uibModal.open({
                 templateUrl: 'components/nav/nav.edit_cluster.html',
@@ -421,10 +421,10 @@ function NavigationController($scope, $auth, $state, $window, $location, $stateP
                 resolve: {
                     edit_community: function() {
 
-                        if (community_key) {
+                        if (community_id) {
 
                             //force pull of community settings every time to avoid stale data
-                            return community_service.getKey(community_key)
+                            return community_service.getId(community_id)
                                 .then(function(response) {
                                     $scope.global.community = response.data;
                                     return response.data;
@@ -615,7 +615,7 @@ function NavigationController($scope, $auth, $state, $window, $location, $stateP
 
                 } else {
                     try {
-                        embed = $scope.global.location.profile.embed;
+                        embed = $scope.global.location.embed;
                     }
                     catch (e) {
                         embed = false;
@@ -697,7 +697,7 @@ function EmbedSettingsController($scope, $uibModalInstance, sweet, embed_communi
     // load existing embed settings
     if (self.thiscommunity.community_profiles && self.thiscommunity.community_profiles[$scope.global.location.slug] && self.thiscommunity.community_profiles[$scope.global.location.slug].embed) {
         self.embed = self.thiscommunity.community_profiles[$scope.global.location.slug].embed;
-    } else if (self.thiscommunity.profile && self.thiscommunity.embed) self.embed = self.thiscommunity.embed; // for locations
+    } else if (self.thiscommunity && self.thiscommunity.embed) self.embed = self.thiscommunity.embed; // for locations
 
     this.addEmbed = function() {
         if (self.form.$valid) {
@@ -837,11 +837,11 @@ function CommunityController($scope, $uibModalInstance, $mixpanel, sweet, edit_c
             };
 
             if (thiscommunity.type == 'cluster') {
-                newCommunity.profile['industries'] = self.communityForm.industries;
+                newCommunity.industries = self.communityForm.industries;
             }
 
             if (thiscommunity.community_profiles && thiscommunity.community_profiles[loc_key] && thiscommunity.community_profiles[loc_key].embed) {
-                newCommunity.profile['embed'] = $scope.global.community.community_profiles[loc_key].embed;
+                newCommunity.embed = $scope.global.community.community_profiles[loc_key].embed;
             }
 
             if (thiscommunity.slug && (thiscommunity.slug !== newCommunity.url)) rename = true; // determine if this is a rename operation (not currently used)

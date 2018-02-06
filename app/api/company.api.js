@@ -70,7 +70,7 @@ function handleCompanySearch(req, res) {
     types = req.query.types,
     query = req.query.query,
     limit = req.query.limit,
-    offset = req.query.offset,
+    offset = req.query.offset || 0,
     get_resources = req.query.get_resources,
     key = req.query.api_key;
 
@@ -118,7 +118,7 @@ function handleCompanySearch(req, res) {
    searchstring += ") AND resource: true" + state;
    } else searchstring += ")" + (state ? " AND" + state : '');*/
 
-  if (get_resources == "true") selector[Op.and].push({resource: "true"});
+  if (get_resources == "true") selector[Op.and].push({resource: {[Op.ne]: false}});
 
   if (clusters && clusters.length > 0 && clusters[0] !== '*') {
     var cluster_search = [];
@@ -213,10 +213,10 @@ function handleCompanySearch(req, res) {
 
   console.log('Pulling Companies: ', JSON.stringify(selector));
   
-  if (query) {
+  if (query && query != '*') {
     //query runs without other parameters
     sequelize.query('SELECT * FROM communities WHERE TYPE="company" AND MATCH (name, headline, summary, skills, description) AGAINST ("'+query+'" IN NATURAL LANGUAGE MODE) LIMIT '+Number(offset)+', '+Number(limit), { model: cdb}).then(processCompanies);
-  } else cdb.findAll({ where: selector }, { offset: Number(offset) || 0, limit: Number(limit) || 16 }).then(processCompanies)
+  } else cdb.findAll({ where: selector, offset: Number(offset) || 0, limit: Number(limit) || 16 }).then(processCompanies)
 }
 
 function handleGetLogoUrl(req, res) {
@@ -277,18 +277,18 @@ function handleAddCompany(req, res) {
         var company = schema.company(addCompany, addCompany.location_key, addCompany.community_key);
 
         var post = function() {
-          companyPost(company, addCompany.role, addCompany.location_key, req.user, addCompany.key, update, function(result) {
+          companyPost(company, addCompany.role, addCompany.location_key, req.user, addCompany.slug, update, function(result) {
             res.status(result.status).send(result.data);
           });
         };
 
         // add company
 
-        if (!addCompany.key) {
-          addCompany.key = addCompany.url.toLowerCase();
+        if (!addCompany.slug) {
+          addCompany.slug = addCompany.url.toLowerCase();
           post();
         }
-        else if (addCompany.key && (addCompany.key !== addCompany.url)) {
+        else if (addCompany.slug && (addCompany.slug !== addCompany.url)) {
           res.status(202).send({ message: 'Sorry, a url path cannot be changed.' })
         }
         else {
@@ -320,7 +320,7 @@ function handleAddCompany(req, res) {
     console.log('Adding company ' + addCompany.name + ' to ' + addCompany.location_key + ' / ' + addCompany.community_key);
 
     // if no existing key is provided, validate the company.url doesn't already exist
-    if (!addCompany.key) {
+    if (!addCompany.slug) {
       cdb.findOne({ where: { slug: addCompany.url } }).then(result => {
         if (result) {
           res.status(400).send({ message: 'That url is already in use. Please specify a different url path.' })

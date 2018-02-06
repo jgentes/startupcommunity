@@ -82,7 +82,7 @@
                         </li>
                         <hr style="margin: 10px 0 10px 0;">
                         <li ng-repeat="resource in nav.resources" ng-class="{'active':users.selectedResources.indexOf(resource.slug) >= 0}" ng-click="users.allResources=false; users.filterResources(resource.slug);">
-                            <a>{{resource.profile.name}}</a>
+                            <a>{{resource.name}}</a>
                         </li>
                     </ul>
                 </div>
@@ -121,8 +121,8 @@
                     <td style="border-bottom: 1px solid #fff; border-top: none; padding: 0;" colspan="3"></td>
                 </div>
                 <div ng-show="users.tag" style="text-align: center;" ng-cloak><h2><br/>Searching for {{users.tag}}..</h2><br/><br/></div>
-                <div ng-show="users.users.results.length == 0" style="text-align: center;" ng-cloak><h2><br/>Nothing here!</h2><br/><br/></div>
-                <div ng-repeat="item in users.users.results" ng-switch on="$index % 2">
+                <div ng-show="users.users.length == 0" style="text-align: center;" ng-cloak><h2><br/>Nothing here!</h2><br/><br/></div>
+                <div ng-repeat="item in users.users" ng-switch on="$index % 2">
                     <div class="col-md-6" ng-switch-when="0">
                         <div class="row"  ng-include="'components/users/user.list.item.html'"></div>
                     </div>

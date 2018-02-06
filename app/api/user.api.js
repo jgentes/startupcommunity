@@ -33,7 +33,7 @@ function handleUserSearch(req, res) {
     roles = req.query.roles,
     query = req.query.query,
     limit = req.query.limit,
-    offset = req.query.offset,
+    offset = req.query.offset || 0,
     key = req.query.api_key;
 
   var allowed = false;
@@ -172,10 +172,10 @@ function handleUserSearch(req, res) {
   
   console.log('Pulling Users: ', JSON.stringify(selector));
 
-  if (query) {
+  if (query && query != '*') {
     //query runs without other parameters
     sequelize.query('SELECT * FROM communities WHERE TYPE="user" AND MATCH (name, headline, summary, skills, description) AGAINST ("'+query+'" IN NATURAL LANGUAGE MODE) LIMIT '+Number(offset)+', '+Number(limit), { model: cdb}).then(processUsers);
-  } else cdb.findAll({ where: selector }, { offset: Number(offset) || 0, limit: Number(limit) || 16 }).then(processUsers);
+  } else cdb.findAll({ where: selector, offset: Number(offset) || 0, limit: Number(limit) || 16 }).then(processUsers);
 }
 
 function handleDirectSearch(req, res) {
@@ -397,19 +397,16 @@ function handleUpdateProfile(req, res) {
   console.log('Updating user profile: ' + userid);
 
   // validate user updates only their own record
-  if (userid == profile.key) {
-    delete profile.key;
+  if (userid == profile.id) {
+    delete profile.id;
 
     cdb.findById(userid)
     .then(user => {
       if (user) {
-        profile['_id'] = user._id;
-        profile['_rev'] = user._rev;
 
         cdb.update(profile, {where: {id: userid}})
         .then(response => {
           if (response) {
-            profile["key"] = userid;
             res.status(200).send({token: jwt.sign(userid, process.env.SC_TOKEN_SECRET), user: profile});
           } else {
             console.warn("WARNING: user457");
@@ -434,26 +431,26 @@ function handleRemoveCommunity(req, res) {
     user_key = req.body.params.user_key,
     community = req.body.params.community;
 
-  console.log("Removing community '" + community.key + "' for user " + user_key);
+  console.log("Removing community '" + community.slug + "' for user " + user_key);
 
   // first confirm that req.user has leader role in community
   cdb.findById(userid)
   .then(response => {
     if (response) {
-      if (response.roles.leader[community.key]) {
+      if (response.roles.leader[community.slug]) {
         cdb.findById(user_key)
         .then(response => {
           if (response) {
             for (var role in response.roles) {
               for (var comm in response.roles[role]) {
-                if (response.roles[role][community.key]) {
-                  delete response.roles[role][community.key];
+                if (response.roles[role][community.slug]) {
+                  delete response.roles[role][community.slug];
                 }
               }
             }
             if (response.communities) response.communities = JSON.parse(response.communities);
-            if (response.communities.indexOf(community.key) > -1) {
-              response.communities.splice(response.communities.indexOf(community.key), 1);
+            if (response.communities.indexOf(community.slug) > -1) {
+              response.communities.splice(response.communities.indexOf(community.slug), 1);
             }
             cdb.update(response, {where: {id: user_key}})
             .then(response => {
