@@ -3,27 +3,27 @@
         <div style="padding: 20px 15px;">
             <header class="heading content" style="color:#fff">
                 <a href="javascript:window.location.href=window.location.href" style="color: #eee; font-size: 7px; float: left; margin-left: -40px; margin-top: -12px;">random image</a>
-                <button ng-if="global.user" ui-sref="company.edit({location_path: '', community_path: global.profile.slug})" class="btn btn-warning pull-right" style="margin-left:-100px;">Edit</button>
-                <img class="img-circle m-b" ng-show="global.profile.profile.avatar" style="max-height:100px; max-width:100px;" ng-src="{{global.profile.profile.avatar}}" alt="{{global.profile.profile.name}}" onerror="this.src='/public/images/browser_icon.jpg'">
+                <button ng-if="global.user" ui-sref="company.edit({location_path: '', community_path: global.slug})" class="btn btn-warning pull-right" style="margin-left:-100px;">Edit</button>
+                <img class="img-circle m-b" ng-show="global.profile.avatar" style="max-height:100px; max-width:100px;" ng-src="{{global.profile.avatar}}" alt="{{global.profile.name}}" onerror="this.src='/public/images/browser_icon.jpg'">
                 <div style="margin:-15px 0;">
-                    <button ng-if="global.profile.profile.parents[0]" ladda="btnworking" ng-click="btnworking = true" class="ladda-btn btn btn-default btn-xs" ui-sref="community.dashboard({location_path: global.profile.profile.home, community_path: global.profile.profile.parents[0]})">
-                        {{global.profile.profile.parents[0][0].toUpperCase() + global.profile.profile.parents[0].slice(1);}}
+                    <button ng-if="global.profile.parents[0]" ladda="btnworking" ng-click="btnworking = true" class="ladda-btn btn btn-default btn-xs" ui-sref="community.dashboard({location_path: global.profile.home, community_path: global.profile.parents[0]})">
+                        {{global.profile.parents[0][0].toUpperCase() + global.profile.parents[0].slice(1);}}
                     </button>
-                    <button ng-if="global.profile.profile.stage" ladda="btnworking" ng-click="btnworking = true" class="ladda-btn btn btn-success btn-xs">
-                        {{global.profile.profile.stage}}
+                    <button ng-if="global.profile.stage" ladda="btnworking" ng-click="btnworking = true" class="ladda-btn btn btn-success btn-xs">
+                        {{global.profile.stage}}
                     </button>
                 </div>
                 <h1 style="overflow:hidden; line-height: 1.25;">
-                    {{global.profile.profile.name}}
+                    {{global.profile.name}}
                 </h1>
                 <h3 style="padding-top: 5px;" style="line-height: 1.5;">
-                    {{global.profile.profile.headline}}
+                    {{global.profile.headline}}
                 </h3>
                 <div style="margin-top:-18px; margin-bottom: -8px;">
-                    <a href="{{'http://' + global.profile.profile.website}}" target="_blank" style="font-size:14px; color: #6DC8EE;">{{global.profile.profile.website}}</a>
+                    <a href="{{'http://' + global.profile.website}}" target="_blank" style="font-size:14px; color: #6DC8EE;">{{global.profile.website}}</a>
                 </div>
                 <div style="overflow: hidden; height: 40px; margin-bottom: -10px;">
-                    <button ng-repeat="industry in global.profile.profile.industries" style="margin-right: 5px;" ladda="btnworking" ng-click="btnworking = true" class="ladda-btn btn btn-outline btn-default btn-xs" ui-sref="search.dashboard({location_path: global.location.slug, community_path: '', tail_path: '', query: industry
+                    <button ng-repeat="industry in global.profile.industries" style="margin-right: 5px;" ladda="btnworking" ng-click="btnworking = true" class="ladda-btn btn btn-outline btn-default btn-xs" ui-sref="search.dashboard({location_path: global.location.slug, community_path: '', tail_path: '', query: industry
                     })">
                         {{industry}}
                     </button>
@@ -56,7 +56,7 @@
 
             <div role="tabpanel" class="tab-pane" id="profile">
 
-                <div ng-include="'components/companies/company.dashboard.profile.html'"></div>
+                <div ng-include="'components/companies/company.dashboard.html'"></div>
 
             </div>
 

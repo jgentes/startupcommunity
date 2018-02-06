@@ -294,8 +294,8 @@ function UserProfileController($scope, $stateParams, $http, $uibModal, $mixpanel
         });
     };
 
-    this.getKey = function() {
-        if (!$scope.global.user.profile.api_key) {
+    this.get = function() {
+        if (!$scope.global.user.api_key) {
             user_service.getKey()
                 .then(function(response) {
                     var api_key = response.data;
@@ -415,7 +415,7 @@ function InviteUserController($scope, $mixpanel, user_service, community_service
 
                     if (user) {
 
-                        user_service.inviteUser(formdata.email, formdata.message, $scope.global.location.profile.name, $scope.global.location.slug, formdata.resources)
+                        user_service.inviteUser(formdata.email, formdata.message, $scope.global.location.name, $scope.global.location.slug, formdata.resources)
                             .then(function(response) {
                                 $scope.global.loaders['sendinvite'] = false;
                                 self.working = false;
@@ -441,7 +441,7 @@ function InviteUserController($scope, $mixpanel, user_service, community_service
                                 self.alert = { type: 'danger', message: String(error.data.message) };
                             })
                     } else {
-                        user_service.join(formdata.email, formdata.message, $scope.global.location.profile.name, $scope.global.location.slug)
+                        user_service.join(formdata.email, formdata.message, $scope.global.location.name, $scope.global.location.slug)
                             .then(function(response) {
                                 $scope.global.loaders['sendinvite'] = false;
                                 self.working = false;

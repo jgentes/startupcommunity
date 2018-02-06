@@ -14,7 +14,7 @@ var schema = {
         return {
             "type": type,
             "from": {
-                "key": from.key,
+                "id": from.id,
                 "name": from.name,
                 "avatar": from.avatar,
                 "headline": from.headline
@@ -33,7 +33,7 @@ function handleAddMessage(req, res) {
 
     console.log('Adding message from ' + addMessage.from.name + ' to ' + addMessage.to.name);
 
-    var message = schema.message(addMessage.type, addMessage.from, addMessage.to.key, addMessage.content);
+    var message = schema.message(addMessage.type, addMessage.from, addMessage.to.id, addMessage.content);
 
     var to_notify = function(message) {
 
@@ -41,14 +41,14 @@ function handleAddMessage(req, res) {
         // note: message.type triggers Knowtify event of 'question' or 'reply'
         message["link"] = 'https://startupcommunity.org/' +
             (message.type == 'question' ?
-                    message.to.key :
+                    message.to.id :
                     message.parent.to
-            ) + '#' + message.key;
+            ) + '#' + message.id;
 
         if (!message.parent) message.parent = { content: "" };
 
         var go = function(notify) {
-            cdb.findById(notify.to.key)
+            cdb.findById(notify.to.id)
                 .then(response => {
 
                     var user = response;
@@ -78,7 +78,7 @@ function handleAddMessage(req, res) {
 
                 })
                 .catch(function(err){
-                    console.log('User not found, no notification sent: ', notify.to.key);
+                    console.log('User not found, no notification sent: ', notify.to.id);
                 });
         };
 
@@ -90,15 +90,15 @@ function handleAddMessage(req, res) {
             var newMessage = message,
                 nodups = [];
 
-            if (message.to.key) nodups.push(message.to.key);
-            if (message.from.key) nodups.push(message.from.key);
+            if (message.to.id) nodups.push(message.to.id);
+            if (message.from.id) nodups.push(message.from.id);
 
             for (var reply in message.parent.replies) {
                 // never send multiple emails to same person
-                if (nodups.indexOf(message.parent.replies[reply].from.key) < 0) {
+                if (nodups.indexOf(message.parent.replies[reply].from.id) < 0) {
                     newMessage.to = message.parent.replies[reply].from;
                     go(newMessage);
-                    nodups.push(message.parent.replies[reply].from.key);
+                    nodups.push(message.parent.replies[reply].from.id);
                 }
             }
         }
@@ -107,11 +107,11 @@ function handleAddMessage(req, res) {
    /* // check if this is a reply to existing thread
     if (addMessage.parent) {
 
-        db.newPatchBuilder(process.env.DB_MESSAGES, addMessage.parent.key)
+        db.newPatchBuilder(process.env.DB_MESSAGES, addMessage.parent.slug)
             .append("replies", [message])
             .apply()
             .then(function (result) {
-                addMessage["key"] = addMessage.parent.key;
+                addMessage["key"] = addMessage.parent.slug;
                 to_notify(addMessage);
                 res.status(200).send(message);
             })

@@ -34,7 +34,7 @@ Sequelize.useCLS(cls.createNamespace('startupcommunity'));
 }).then(u => {
   if (u) u.forEach(ul => console.log(ul.name));
 })*/
-
+/*
 sequelize
   .query(
     "SELECT `id`, `slug`,`resource` FROM `communities` AS `communities` WHERE (`communities`.`type` = 'company' AND `communities`.`resource` IS NOT true AND (`communities`.`communities` LIKE '%\"bend-or\"%'))",
@@ -42,6 +42,7 @@ sequelize
   ).then(result => {
     console.log(result.length)
   })
+  */
 /*
 sequelize
   .query(
@@ -79,13 +80,11 @@ idb.findOne({where: {'invite_communities': {[Op.contains]: ["bendtech"]}}})
   .then(u => {
     if (u) console.log(u.id);
   })
-  /*
-db.execute(
-  'SELECT * FROM cities ORDER BY ID_COUNTY',
-  (err, results) => {
-    if (err) console.log(err);
-    console.log(results.length, ' results');
-    
+  */
+/*sequelize.query(
+  "SELECT `id`, `slug`, `type`, `name`, `home`, `parents`, `communities`, `community_profiles`, `icon`, `email`, `avatar`, `linkedin`, `api_key`, `headline`, `summary`, `skills`, `roles`, `country`, `state`, `county`, `city`, `description`, `sc_logo`, `embed`, `resource`, `resource_types`, `industries`, `website`, `street`, `angellist`, `logo`, `token`, `newsletter`, `stage` FROM `communities` AS `communities` WHERE (`communities`.`type` = 'company' AND `communities`.`resource` IS NOT true AND (`communities`.`communities` LIKE '%\"bend-or\"%' AND `communities`.`communities` LIKE '%\"tech\"%'))", {model: cdb})
+  .then(results => {
+    console.log('results: ', results)
   }
 );*/
 

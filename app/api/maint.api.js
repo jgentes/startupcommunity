@@ -54,8 +54,8 @@ function handleMaintenance(res, req) {
                     // ALSO BE CAREFUL TO NOT PULL FROM -DEV AND PUT INTO PRODUCTION DB!!
                     if (change) {                        
                         console.log('Updating record..');
-                        console.log(data.body.results[item].path.key);
-                        //db.put(collection, data.body.results[item].path.key, user);
+                        console.log(data.body.results[item].path.slug);
+                        //db.put(collection, data.body.results[item].path.slug, user);
                     }
 
 

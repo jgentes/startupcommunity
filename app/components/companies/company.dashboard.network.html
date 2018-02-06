@@ -2,5 +2,5 @@
     <div ng-include="'components/users/user.list.html'" ng-controller="UserController as users"></div>
 </div>
 <div class="row" style="text-align: center;">
-    <button class="btn btn-xs btn-default" ui-sref="company.edit({location_path: '', community_path: global.profile.slug})">Add yourself to this {{global.profile.resource ? 'resource' : 'company'}}</button>
+    <button class="btn btn-xs btn-default" ui-sref="company.edit({location_path: '', community_path: global.slug})">Add yourself to this {{global.resource ? 'resource' : 'company'}}</button>
 </div>

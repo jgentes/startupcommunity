@@ -124,7 +124,7 @@ var AuthApi = require(__dirname + '/api/auth.api.js'),
 // API
 
 // LEGACY 2.0 (REMOVE AFTER JAN 1, 2016)
-app.get('/api/2.0/key/:key', communityApis.getKey);
+app.get('/api/2.0/id/:id', communityApis.getId);
 app.get('/api/2.0/users', userApis.userSearch);
 app.get('/api/2.0/search', userApis.directSearch);
 app.get('/api/2.0/community', communityApis.getCommunity);
@@ -141,7 +141,7 @@ app.get('/api/2.0/companies', companyApis.companySearch);
 app.put('/api/2.0/settings', auth.ensureAuthenticated, communityApis.setCommunity);
 app.post('/api/2.0/contact', userApis.contactUser);
 
-app.get('/api/2.1/key/:key', communityApis.getKey);
+app.get('/api/2.1/id/:id', communityApis.getId);
 app.get('/api/2.1/users', userApis.userSearch);
 app.get('/api/2.1/search', userApis.directSearch);
 app.get('/api/2.1/community', communityApis.getCommunity);

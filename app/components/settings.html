@@ -20,24 +20,24 @@
                 </div>
                 <hr>
                 <div ng-repeat="k in settings.resources">
-                    <div style="padding-bottom:10px; font-size: 18px;">{{ k.profile.name }}
+                    <div style="padding-bottom:10px; font-size: 18px;">{{ k.name }}
                         <button ng-click="nav.embedSettings(k.slug)" class="btn btn-xs pull-right">Embed</button>
                         <button ui-sref="company.edit({community_path: k.slug})" ui-sref-opts="{notify: false}" class="btn btn-primary btn-xs pull-right" style="margin-right: 5px;">Edit</button>
                     </div>
                 </div>
                 <ul class="nav nav-second-level" style="margin-left: -15px;">
-                    <li ng-if="global.user.communities.indexOf(global.user.profile.home) > -1">
+                    <li ng-if="global.user.communities.indexOf(global.user.home) > -1">
                         <button class="btn btn-success" ui-sref="resource.add" style="margin: 10px 15px;">+&nbsp;&nbsp;Add Resource</button>
                     </li>
                 </ul>
             </div>
 <!--
 
-            <a ng-if="global.user.communities.indexOf(global.user.profile.home) > -1 && global.user.newsletter" class="btn btn-info pull-right" ui-sref="newsletter" style="margin-top:15px; width: 100%;">Create / Edit Email Newsletters</a>
+            <a ng-if="global.user.communities.indexOf(global.user.home) > -1 && global.user.newsletter" class="btn btn-info pull-right" ui-sref="newsletter" style="margin-top:15px; width: 100%;">Create / Edit Email Newsletters</a>
 
-            <button ng-if="global.user.communities.indexOf(global.user.profile.home) > -1 && global.user.newsletter" ladda="nav.syncworking" class="ladda-button btn btn-warning pull-right" data-style="zoom-in" data-spinner-size="25" ng-click="nav.syncNewsletter()" style="margin-top:15px; width: 100%;" title="This will synchronize your resource networks with your newsletter lists. This is only needed if names are missing from your lists.">Sync Newsletter Lists</button>
+            <button ng-if="global.user.communities.indexOf(global.user.home) > -1 && global.user.newsletter" ladda="nav.syncworking" class="ladda-button btn btn-warning pull-right" data-style="zoom-in" data-spinner-size="25" ng-click="nav.syncNewsletter()" style="margin-top:15px; width: 100%;" title="This will synchronize your resource networks with your newsletter lists. This is only needed if names are missing from your lists.">Sync Newsletter Lists</button>
 
-            <button ng-if="global.user.communities.indexOf(global.user.profile.home) > -1" class="btn btn-danger pull-right" ng-click="nav.setupNewsletter()" style="margin-top:15px; width: 100%;">Setup Email Newsletter</button>
+            <button ng-if="global.user.communities.indexOf(global.user.home) > -1" class="btn btn-danger pull-right" ng-click="nav.setupNewsletter()" style="margin-top:15px; width: 100%;">Setup Email Newsletter</button>
 -->
 
         </div>
@@ -71,7 +71,7 @@
                     <small>Locations are cities, counties, regions, or states.</small>
                 </div>
                 <hr>
-                <div ng-if="global.user.communities.indexOf(global.location.slug) > -1" style="padding-bottom:10px; font-size: 18px;">{{ global.location.profile.name }}
+                <div ng-if="global.user.communities.indexOf(global.location.slug) > -1" style="padding-bottom:10px; font-size: 18px;">{{ global.location.name }}
                     <button ng-click="nav.embedSettings(global.location.slug);" class="btn btn-xs pull-right">Embed</button>
                 </div>
             </div>

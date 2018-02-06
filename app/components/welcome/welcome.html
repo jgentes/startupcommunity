@@ -31,7 +31,7 @@
 
                         <div ng-if="welcome.panel == 'roles'" class="hpanel">
                             <div class="panel-heading" style="text-align:center;">
-                                <h4 style="font-size: 25px; line-height: 1.25;">{{global.user.profile.linkedin.firstName}}, please select your roles within the community:</h4>
+                                <h4 style="font-size: 25px; line-height: 1.25;">{{global.user.linkedin.firstName}}, please select your roles within the community:</h4>
                             </div>
                             <div class="panel-body no-padding">
                                 <div class="list-group ">
@@ -54,11 +54,11 @@
 
                         <div ng-if="welcome.panel == 'profile'" class="hpanel">
                             <div class="panel-heading" style="text-align:center;">
-                                <h4 style="font-size: 25px; line-height: 1.25;">{{global.user.profile.linkedin.firstName}}, please verify your
+                                <h4 style="font-size: 25px; line-height: 1.25;">{{global.user.linkedin.firstName}}, please verify your
                                     profile:</h4><br/>
 
                                 <img class="img-circle m-b" style="height:75px;"
-                                     ngf-thumbnail="global.user.profile.avatar || file || '/public/images/blank_avatar.png'">
+                                     ngf-thumbnail="global.user.avatar || file || '/public/images/blank_avatar.png'">
                                 <br/>
                                 <label class="uploader_text">
                                     <input type="file" ng-model="file" name="file" ngf-pattern="'image/*'"
@@ -74,9 +74,9 @@
                                 </div>
                                 <div>
                                     <h4 style="line-height:1.75;">
-                                        Your name is <input type="text" style="border: 1px solid #eee;" class="input-sm" ng-model="global.user.profile.name" />,<br/>
-                                        your email address is <input type="email" style="border: 1px solid #eee;" class="input-sm" ng-model="global.user.profile.email" /><br/>
-                                        and your headline will be: <input type="text" style="border: 1px solid #eee;" class="input-sm" ng-model="global.user.profile.headline" />.
+                                        Your name is <input type="text" style="border: 1px solid #eee;" class="input-sm" ng-model="global.user.name" />,<br/>
+                                        your email address is <input type="email" style="border: 1px solid #eee;" class="input-sm" ng-model="global.user.email" /><br/>
+                                        and your headline will be: <input type="text" style="border: 1px solid #eee;" class="input-sm" ng-model="global.user.headline" />.
                                         <br/><br/>
                                         Select an industry you most closely associate with:
                                         <select class="form-control m-b" ng-model="welcome.selectedParent" style="margin-bottom: 5px;" required>
@@ -90,7 +90,7 @@
                                     </h4>
                                 </div>
                                 <div class="summary_form" style="text-align: left;">
-                                    <div summernote class="summernote" ng-model="global.user.profile.summary" ng-model-options="{ debounce: 250, blur: 0 }" style="min-height: 34px;" config="{
+                                    <div summernote class="summernote" ng-model="global.user.summary" ng-model-options="{ debounce: 250, blur: 0 }" style="min-height: 34px;" config="{
                                 height: 50,
     toolbar: [
             ['edit',['undo','redo']],
@@ -101,7 +101,7 @@
             ['view', ['fullscreen']],
             ['insert', ['link','hr']]
         ]
-  }">{{global.user.profile.summary || 'Nothing here!'}}</div>
+  }">{{global.user.summary || 'Nothing here!'}}</div>
                                 </div>
 
 

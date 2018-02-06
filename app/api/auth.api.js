@@ -91,7 +91,7 @@ function handleEnsureAuthenticated(req, res, next) {
  |--------------------------------------------------------------------------
  */
 function handleCreateToken(req, user) {
-  return jwt.sign(user.path.key, process.env.SC_TOKEN_SECRET);
+  return jwt.sign(user.id, process.env.SC_TOKEN_SECRET);
 }
 
 function handleCreateAPIToken(req, res) {

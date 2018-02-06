@@ -69,11 +69,11 @@ angular
                     params: {
                         type: type,
                         from: {
-                            key: from.key,
+                            id: from.id,
                             profile: from.profile
                         },
                         to: {
-                            key: to.key,
+                            id: to.id,
                             profile: to.profile
                         },
                         content: content,
@@ -241,9 +241,7 @@ angular
                   return $http.get('/api/2.1/key/' + key);
               },
               getTop: function(location_key, community_key, community) {
-
-                  // this service relies on cache first, then calls the api to update the db for next pull
-
+                
                   var industry_keys = [];
 
                   if (community && community.type == 'cluster') {
@@ -251,12 +249,12 @@ angular
                       if (community_key) {
                           if (community.community_profiles && community.community_profiles[location_key] && community.community_profiles[location_key].industries) {
                               var industry_keys = community.community_profiles[location_key].industries;
-                          } else if (community.profile.industries) {
-                              industry_keys = community.profile.industries;
+                          } else if (community.industries) {
+                              industry_keys = community.industries;
                           }
                       } else {
-                          for (i in community.community_profiles) {
-                              for (ii in community.community_profiles[i].industries) {
+                          for (var i in community.community_profiles) {
+                              for (var ii in community.community_profiles[i].industries) {
                                   if (industry_keys.indexOf(community.community_profiles[i].industries[ii]) == -1) {
                                       industry_keys.push(community.community_profiles[i].industries[ii]);
                                   }
@@ -266,7 +264,7 @@ angular
                           location_key = '*'; // needed to avoid communities search for cluster (companies aren't tied to the cluster via community array)
                       }
 
-                      var cluster_key = community.key;
+                      var cluster_key = community.slug;
                   }
                   /*
                   var top = function() {
@@ -281,9 +279,9 @@ angular
                   if (community.community_profiles && community.community_profiles[location_key] && community.community_profiles[location_key].top) {
                       top();
                       return { data: community.community_profiles[location_key].top };
-                  } else if (community.profile && community.profile.top) {
+                  } else if (community.top) {
                       top();
-                      return { data: community.profile.top };
+                      return { data: community.top };
                   } else {
 
                   }*/

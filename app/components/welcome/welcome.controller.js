@@ -16,11 +16,11 @@ function WelcomeController($scope, $auth, $location, $q, $mixpanel, $stateParams
     this.submitted = false;
 
     var checkProfile = function() {
-        if (!user.profile["name"]) $scope.global.user.profile["name"] = user.profile.linkedin.firstName + ' ' + user.profile.linkedin.lastName;
-        if (!user.profile["email"]) $scope.global.user.profile["email"] = user.profile.linkedin.emailAddress;
-        if (!user.profile["headline"]) $scope.global.user.profile["headline"] = user.profile.linkedin.headline;
-        if (!user.profile["avatar"]) $scope.global.user.profile["avatar"] = user.profile.linkedin.pictureUrl;
-        if (!user.profile["summary"]) $scope.global.user.profile["summary"] = user.profile.linkedin.summary;
+        if (!user.profile["name"]) $scope.global.user.profile["name"] = user.linkedin.firstName + ' ' + user.linkedin.lastName;
+        if (!user.profile["email"]) $scope.global.user.profile["email"] = user.linkedin.emailAddress;
+        if (!user.profile["headline"]) $scope.global.user.profile["headline"] = user.linkedin.headline;
+        if (!user.profile["avatar"]) $scope.global.user.profile["avatar"] = user.linkedin.pictureUrl;
+        if (!user.profile["summary"]) $scope.global.user.profile["summary"] = user.linkedin.summary;
 
         if (user.roles) {
             if (!self.rolelist) self["rolelist"] = {};
@@ -31,12 +31,12 @@ function WelcomeController($scope, $auth, $location, $q, $mixpanel, $stateParams
             }
         }
 
-        if (user.profile.skills) {
-            self.skills = user.profile.skills;
+        if (user.skills) {
+            self.skills = user.skills;
         } else self.skills =[];
 
-        if (user.profile.parents) {
-            switch(user.profile.parents[0]) {
+        if (user.parents) {
+            switch(user.parents[0]) {
                 case 'consumer-goods':
                     self.selectedParent = 'Consumer-Goods';
                     break;
@@ -44,7 +44,7 @@ function WelcomeController($scope, $auth, $location, $q, $mixpanel, $stateParams
                     self.selectedParent = 'Non-Profit';
                     break;
                 default:
-                    self.selectedParent = user.profile.parents[0][0].toUpperCase() + user.profile.parents[0].slice(1);
+                    self.selectedParent = user.parents[0][0].toUpperCase() + user.parents[0].slice(1);
             }
         }
     };

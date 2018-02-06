@@ -40,8 +40,8 @@ function LoginController($auth, $scope, $state, $mixpanel, $stateParams, sweet) 
             .catch(function(response) {
                 if (response.data && response.data.profile) {
                     $mixpanel.people.set({
-                        "$name": response.data.profile.firstName + ' ' + response.data.profile.lastName,
-                        "$email": response.data.profile.emailAddress
+                        "$name": response.data.firstName + ' ' + response.data.lastName,
+                        "$email": response.data.emailAddress
                     });
                     $mixpanel.track('Attempted Login');
 

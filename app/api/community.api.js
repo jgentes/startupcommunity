@@ -14,7 +14,7 @@ var CommunityApi = function () {
   this.setCommunity = handleSetCommunity;
   this.editCommunity = handleEditCommunity;
   this.deleteCommunity = handleDeleteCommunity;
-  this.getKey = handleGetKey;
+  this.getId = handleGetId;
   this.getTop = handleGetTop;
   this.convert_state = handleConvert_state;
 };
@@ -146,7 +146,7 @@ function handleGetCommunity(req, res) {
                     try {
                       item.community_profiles[community].parents = JSON.parse(item.community_profiles[community].parents);
                     } finally {
-                      cluster_type = item.community_profiles[community].parents[0];
+                      if (item.community_profiles[community].parents.length) cluster_type = item.community_profiles[community].parents[0];
                     }
                     if (!newresponse.clusters[cluster_type]) newresponse.clusters[cluster_type] = {};
                     newresponse.clusters[cluster_type][item.id] = item;
@@ -175,11 +175,11 @@ function handleGetCommunity(req, res) {
     
               newresponse[item.id] = item;
             }
-          })
-        }
+          });
+        };
   
         console.log('Pulling community for ' + m.name);
-  
+        
         if (!m.resource || m.type !== "location") {
   
           // pull communities within record
@@ -189,7 +189,7 @@ function handleGetCommunity(req, res) {
           if (m.parents) {
             try {
               m.parents = JSON.parse(m.parents);
-              comm_items.push(m.parents[0]);
+              if (m.parents.length) comm_items.push(m.parents[0]);
             } catch(err) {
               console.log('WARNING: ', err);
             }
@@ -338,8 +338,8 @@ function handleGetCommunity(req, res) {
   };
 
   if (community) {
-
-    if (!req.query.nocache) {
+    pullCommunity(false);
+    /*if (!req.query.nocache) {
       mc.get(community, function (err, value) {
         if (err) console.log('ERROR: ', err);
         if (value) {
@@ -352,7 +352,7 @@ function handleGetCommunity(req, res) {
     } else {
       mc.delete(community);
       pullCommunity(false);
-    }
+    }*/
 
   } else res.status(404).send({message: 'Please specify a community!'});
 }
@@ -473,7 +473,7 @@ function handleGetTop(req, res) {
     };
     
   if (community_key != '*' && !state_suffix && community_key != location_key) search.communities[Op.or].push({[Op.like]: '%"' + community_key + '"%'});
-
+  
   // get companies and industries
 
   //var industrysearch = cluster_search ? '(profile.parents:(' + cluster_search + ') OR profile.industries:(' + cluster_search + ')) AND ' + search : search;
@@ -552,12 +552,12 @@ function handleGetTop(req, res) {
 
         var sortedIndustries = sortcounts(industries, true);
         var sortedParents = sortcounts(parents);
-
+        
         top_results.industries = {
           count: Object.keys(industries).length ? Object.values(industries).reduce(function (total, val) {
             return total+val;
           }) : [],
-          entries: sortedIndustries.slice(5,sortedIndustries.length-5)
+          entries: sortedIndustries.slice(0,5)
         };
 
         top_results.company_parents = {
@@ -571,7 +571,7 @@ function handleGetTop(req, res) {
 
         top_results.companies = {
           count: result.length,
-          entries: companyResults.slice(5,companyResults.length-5)
+          entries: companyResults.slice(0,5)
         };
 
         // get resources
@@ -637,7 +637,7 @@ function handleGetTop(req, res) {
                     count: Object.keys(skills).length ? Object.values(skills).reduce(function (total, val) {
                       return total+val;
                     }) : [],
-                    entries: sortedSkills.slice(5,sortedSkills.length-5)
+                    entries: sortedSkills.slice(0,5)
                   };
                   
                   top_results.people_parents = {
@@ -651,7 +651,7 @@ function handleGetTop(req, res) {
 
                   top_results.people = {
                     count: result.length,
-                    entries: peopleResults.slice(5,peopleResults.length-5)
+                    entries: peopleResults.slice(0,5)
                   };
 
                   // BEGIN PARENTS (this is mostly to avoid another api call that includes both companies and users)
@@ -748,15 +748,15 @@ function handleGetTop(req, res) {
     })
 
   };
-
-  mc.get(selector.toString(), function (err, value) {
+  pullTop(false);
+  /*mc.get(selector.toString(), function (err, value) {
     if (value) {
       res.status(200).send(value);
       pullTop(true);
     } else {
       pullTop(false);
     }
-  })
+  })*/
   }
 
   function handleSetCommunity(req, res) {
@@ -824,7 +824,7 @@ function handleGetTop(req, res) {
 
     var settings = req.body.params;
 
-    console.log('Editing community: ' + settings.community.profile.name + ' in ' + settings.location_key);
+    console.log('Editing community: ' + settings.community.name + ' in ' + settings.location_key);
 
     cdb.findById(req.user).then(response => {
       if (response) {
@@ -959,7 +959,7 @@ function handleGetTop(req, res) {
           })
 
         } else {
-          console.warn("User is not a member of community: " + settings.community.key + " and location: " + settings.location_key + "!");
+          console.warn("User is not a member of community: " + settings.community.slug + " and location: " + settings.location_key + "!");
           res.status(202).send({message: 'You must be a member of this community to add to it.'});
         }
       } else {
@@ -981,11 +981,11 @@ function handleGetTop(req, res) {
 
         // validate user is a leader of the community in this location
 
-        if (user.roles && user.roles.leader && user.roles.leader[settings.community.key].indexOf(settings.location_key) > -1) {
+        if (user.roles && user.roles.leader && user.roles.leader[settings.community.slug].indexOf(settings.location_key) > -1) {
 
           // get the community
 
-          cdb.findOne({where: {slug: settings.community.key}}).then(response => {
+          cdb.findOne({where: {slug: settings.community.slug}}).then(response => {
             if (response) {
               // remove the location profile
 
@@ -1009,11 +1009,11 @@ function handleGetTop(req, res) {
 
                     // this is a rename operation
 
-                    rename_community(settings.community.key, settings.location_key, settings.new_community_key);
+                    rename_community(settings.community.slug, settings.location_key, settings.new_community_key);
 
                   } else {
 
-                    update_user(req.user, 'delete', settings.community.key, settings.location_key, function (good) {
+                    update_user(req.user, 'delete', settings.community.slug, settings.location_key, function (good) {
                       if (good) {
                         console.log('Community deleted.');
                         res.status(204).send({message: settings.community.type[0].toUpperCase() + settings.community.type.slice(1) + ' deleted!'});
@@ -1028,7 +1028,7 @@ function handleGetTop(req, res) {
 
                   // delete the whole thing
 
-                  cdb.destroy({where: {id: settings.community.key}}).then(finalres => {
+                  cdb.destroy({where: {id: settings.community.slug}}).then(finalres => {
                     if (finalres) {
                       wrapup();
                     } else {
@@ -1039,7 +1039,7 @@ function handleGetTop(req, res) {
 
                 } else {
                   
-                  response.slug = settings.community.key;
+                  response.slug = settings.community.slug;
 
                   cdb.create(response).then(finalres => {
                     if (finalres) {
@@ -1062,7 +1062,7 @@ function handleGetTop(req, res) {
           })
 
         } else {
-          console.warn("User is not a member of community: " + settings.community.key + " and location: " + settings.location_key + "!");
+          console.warn("User is not a member of community: " + settings.community.slug + " and location: " + settings.location_key + "!");
           res.status(202).send({message: 'You must be a leader of this community to delete it.'});
         }
       } else {
@@ -1217,21 +1217,21 @@ function handleGetTop(req, res) {
 
   };
 
-  function handleGetKey(req, res) {
-    console.log('Pulling key: ' + req.params.key);
+  function handleGetId(req, res) {
+    console.log('Pulling id: ' + req.params.id);
 
-    function pullKey() {
-      cdb.findById(req.params.key).then(result => {
+    function pullId() {
+      cdb.findById(req.params.id).then(result => {
         if (result) {
           res.status(200).send(result);
         } else {
-          console.warn('WARNING: Key not found!');
-          res.status(202).send({message: 'Key not found.'});
+          console.warn('WARNING: Id not found!');
+          res.status(202).send({message: 'Id not found.'});
         }
       })
     }
 
-    pullKey();
+    pullId();
   }
 
   module.exports = CommunityApi;
