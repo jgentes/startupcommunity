@@ -102,7 +102,7 @@ function UserController($scope, $stateParams, $location, user_service, result_se
         };
 
         if ($scope.global.community.type == 'cluster') {
-            if ($scope.global.community.community_profiles[$stateParams.location_path]) {
+            if ($scope.global.community.community_profiles && $scope.global.community.community_profiles[$stateParams.location_path]) {
                 self.clusterFilter = $scope.global.community.community_profiles[$stateParams.location_path].industries;
             } else self.clusterFilter = $scope.global.community.industries;
         } else {
