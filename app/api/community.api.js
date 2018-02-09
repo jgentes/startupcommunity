@@ -431,7 +431,7 @@ function handleGetTop(req, res) {
     industry_keys = [industry_keys];
   }
 
-  if (industry_keys.indexOf('all') < 0) industry_keys.push('all');
+  if (industry_keys.length && industry_keys.indexOf('all') < 0) industry_keys.push('all');
 
   if (cluster_key) {
 
@@ -446,7 +446,7 @@ function handleGetTop(req, res) {
       industry_keys.forEach(i => {
         cluster_search.push({[Op.like]: '%"' + i + '"%'});
       });
-    }
+    } else cluster_search.push({[Op.like]: '%"' + cluster_key + '"%'});
 
   } else if (!community_key || community_key == 'undefined') {
     community_key = location_key;
@@ -688,10 +688,12 @@ function handleGetTop(req, res) {
                   }
                   var temp = [];
                   for (var a in top_results.parents.labels) {
-                    temp.push({
-                      label: top_results.parents.labels[a],
-                      value: top_results.parents.values[a]
-                    });
+                    if (top_results.parents.labels[a] != 'all') {
+                      temp.push({
+                        label: top_results.parents.labels[a],
+                        value: top_results.parents.values[a]
+                      });
+                    }
                   }
 
                   if (!_.isEmpty(temp)) {
