@@ -79,7 +79,7 @@ function UserController($scope, $stateParams, $location, user_service, result_se
 
         self.searchUsers = function(alturl) {
             self.loadingUser = true;
-
+            console.log('searchuser: ', self)
             // remove random sort
             if (alturl) alturl = alturl.replace(/([&\?]sort=_random*$|sort=_random&|[?&]sort=_random(?=#))/, '');
 
