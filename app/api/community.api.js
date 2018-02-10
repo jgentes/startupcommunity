@@ -426,11 +426,13 @@ function handleGetTop(req, res) {
     },
     cluster_search = [];
     console.log('PARAMS: ', req.params, 'QUERY: ', req.query);
-
+  
   if (typeof industry_keys === 'string') {
-    industry_keys = [industry_keys];
+    if (industry_keys[0] != '[') {
+      industry_keys = [industry_keys];
+    } else industry_keys = JSON.parse(industry_keys);
   }
-
+  
   if (industry_keys.length && industry_keys.indexOf('all') < 0) industry_keys.push('all');
 
   if (cluster_key) {
