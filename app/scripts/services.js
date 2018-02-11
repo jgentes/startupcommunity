@@ -87,7 +87,7 @@ angular
     .factory('user_service', function($http) {
         return {
             search: function(communities, clusters, query, roles, limit, alturl) { //alturl is for next/prev retrieval
-
+                  
                 var urlString = '/api/2.1/users?' + jQuery.param({
                         communities: communities,
                         clusters: clusters,
@@ -227,23 +227,35 @@ angular
 
       .factory('community_service', function($http) {
           return {
+              parseJSON: function(response) {
+                var community = response.data;
+                if (community.parents) community.parents = JSON.parse(community.parents);
+                if (community.communities) community.communities = JSON.parse(community.communities);
+                if (community.skills) community.skills = JSON.parse(community.skills);
+                if (community.resource_types) community.resource_types = JSON.parse(community.resource_types);
+                if (community.industries) community.industries = JSON.parse(community.industries);
+                response.data = community;
+                return response;
+              },
               getCommunity: function(community, nocache) {
-                  return $http.get('/api/2.1/community/' + community + (nocache ? '?nocache=true' : ''));
+                  return $http.get('/api/2.1/community/' + community + (nocache ? '?nocache=true' : ''))
+                  .then(this.parseJSON);
               },
               getResources: function(location_key, resources, clusters) {
                   return $http.post('/api/2.3/resources', {
                       location_key: location_key,
                       resources: resources,
                       clusters: !!clusters
-                  })
+                  }).then(this.parseJSON);
               },
               getKey: function(key) {
-                  return $http.get('/api/2.1/key/' + key);
+                  return $http.get('/api/2.1/key/' + key)
+                    .then(this.parseJSON);
               },
               getTop: function(location_key, community_key, community) {
                 
                   var industry_keys = [];
-
+                
                   if (community && community.type == 'cluster') {
                       // check to see if this is a root cluster or within a location
                       if (community_key) {
@@ -285,13 +297,13 @@ angular
                   } else {
 
                   }*/
-
-                  return $http.get('/api/2.1/community/' + location_key + '/' + (community_key ? community_key + '/top' : 'top'), {
-                      params: {
-                          cluster_key: cluster_key,
-                          industry_keys: industry_keys
-                      }
-                  });
+                  
+                  var params = {};
+                  if (cluster_key) params.cluster_key = cluster_key;
+                  if (industry_keys.length) params.industry_keys = industry_keys;
+                    
+                  return $http.get('/api/2.1/community/' + location_key + '/' + (community_key ? community_key + '/top' : 'top'), {params}
+                  )
 
               },
               setSettings: function(embed, location_key, community_key) {
@@ -309,7 +321,7 @@ angular
                           community: community,
                           location_key: location_key
                       }
-                  });
+                  }).then(this.parseJSON);
               },
               deleteCommunity: function(community, location_key, new_community_key) {
                   return $http.post('/api/2.1/community/delete', {

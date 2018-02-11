@@ -26,7 +26,7 @@ Sequelize.useCLS(cls.createNamespace('startupcommunity'));
   
 });*/
 
-//db.findById(496).then(f => console.log(f));
+//cdb.findById(496).then(f => console.log(f));
 //db.findOne({where: {"linkedin.id": "yc-B7Uvuxf"}}).then(u => console.log(u));
 /*db.findAll({
   where: {roles: {"keys-rock": {[Op.ne]:null}}
