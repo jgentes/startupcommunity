@@ -56,7 +56,6 @@ function NavigationController($scope, $auth, $state, $window, $location, $stateP
         
             community_service.getCommunity(comm_path)
                 .then(function (response) {
-                    
                     $scope.global.community = response.data;
                     getLocation();
                 })
