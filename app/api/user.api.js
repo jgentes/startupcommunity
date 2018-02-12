@@ -125,7 +125,8 @@ function handleUserSearch(req, res) {
     /*    searchstring += ')';*/
   }
   
-  const processUsers = rows => {
+  const processUsers = users => {
+    const rows = users.rows ? users.rows : users;
     
     if (rows.length) {
 
@@ -147,7 +148,7 @@ function handleUserSearch(req, res) {
           if (r.skills) r.skills = JSON.parse(r.skills);
           if (r.resource_types) r.resource_types = JSON.parse(r.resource_types);
           if (r.industries) r.industries = JSON.parse(r.industries);
-          
+          if (users.count) r.count = users.count;
         });
       } catch (error) {
         console.warn('WARNING: user144 ', error);
@@ -165,7 +166,7 @@ function handleUserSearch(req, res) {
   if (query && query != '*') {
     //query runs without other parameters
     sequelize.query('SELECT * FROM communities WHERE TYPE="user" AND MATCH (name, headline, summary, skills, description) AGAINST ("'+query+'" IN NATURAL LANGUAGE MODE) LIMIT '+Number(offset)+', '+Number(limit), { model: cdb}).then(processUsers);
-  } else cdb.findAll({ where: selector, offset: Number(offset) || 0, limit: Number(limit) || 16 }).then(processUsers);
+  } else cdb.findAndCountAll({ where: selector, offset: Number(offset) || 0, limit: Number(limit) || 16 }).then(processUsers);
 }
 
 function handleDirectSearch(req, res) {

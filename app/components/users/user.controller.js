@@ -19,8 +19,6 @@ function UserController($scope, $stateParams, $location, user_service, $sce) {
         "({community_path: val})" :
         "({location_path: val})";
 
-    this.usercount = 16;
-
     // Title of list box changes based on context
     var setTitle = function(){
         var item;
@@ -84,17 +82,21 @@ function UserController($scope, $stateParams, $location, user_service, $sce) {
                 self.tag = $scope.global.query;
             } else self.tag = undefined;
 
-            var limit = $location.search().limit;
+            var limit = $location.search().limit || 16;
 
             setTitle();
+            console.log('offset: ', offset)
 
-            user_service.search(self.communityFilter, self.clusterFilter, $scope.global.query, undefined, limit || self.usercount, offset)
+            user_service.search(self.communityFilter, self.clusterFilter, $scope.global.query, undefined, limit, offset)
                 .then(function (response) {
                     self.tag = undefined;
                     self.users = response.data;
                     self.loadingUser = false;
                     self.lastQuery = $scope.global.query;
-                    self.offset = (offset || 0) + (limit || self.usercount)
+                    self.offset = (offset || 0) + limit
+                    self.count = response.data[0] ? response.data[0].count : 0;
+                    self.limit = limit;
+                    console.log(self);
                 });
         };
 
@@ -142,6 +144,8 @@ function UserController($scope, $stateParams, $location, user_service, $sce) {
                 self.loadingRole = false;
                 self.users = response.data;
                 setTitle();
+                self.count = response.data[0] ? response.data[0].count : 0;
+                self.limit = 20;
             });
     };
 
@@ -155,12 +159,14 @@ function UserController($scope, $stateParams, $location, user_service, $sce) {
             if (self.selectedClusters.length == 0) self.allClusters = true;
         }
 
-        user_service.search(self.communityFilter, self.selectedClusters, undefined, self.selectedRole, 30, undefined)
+        user_service.search(self.communityFilter, self.selectedClusters, undefined, self.selectedRole, 20, undefined)
             .then(function(response) {
                 self.loadingCluster = false;
                 self.loadingResource = false;
                 self.users = response.data;
                 setTitle();
+                self.count = response.data[0] ? response.data[0].count : 0;
+                self.limit = 20;
             });
     };
 /*
