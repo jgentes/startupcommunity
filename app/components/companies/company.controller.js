@@ -4,7 +4,7 @@ angular
     .controller('CompanyProfileController', CompanyProfileController)
     .controller('EditCompanyController', EditCompanyController);
 
-function CompanyController($scope, $stateParams, $state, $location, company_service, result_service, $sce) {
+function CompanyController($scope, $stateParams, $state, $location, company_service, $sce) {
 
     this.selectedClusters = [];
     //this.selectedResources = [];
@@ -21,7 +21,7 @@ function CompanyController($scope, $stateParams, $state, $location, company_serv
         "({community_path: val})" :
         "({location_path: val})";
     
-    this.usercount = 16;
+    this.companycount = 16;
 
     // Title of list box changes based on context
     var setTitle = function(){
@@ -98,7 +98,7 @@ function CompanyController($scope, $stateParams, $state, $location, company_serv
         company_service.search(self.communityFilter, self.clusterFilter, undefined, null, self.selectedType, 20, self.resource_page, undefined)
             .then(function(response) {
                 self.loadingType = false;
-                self.companies = result_service.setPage(response.data);
+                self.companies = response.data;
                 setTitle();
             });
     };
@@ -122,7 +122,7 @@ function CompanyController($scope, $stateParams, $state, $location, company_serv
         company_service.search(self.communityFilter, self.clusterFilter, undefined, self.selectedStage, null, 20, self.resource_page, undefined)
             .then(function(response) {
                 self.loadingStage = false;
-                self.companies = result_service.setPage(response.data);
+                self.companies = response.data;
                 setTitle();
             });
     };
@@ -141,7 +141,7 @@ function CompanyController($scope, $stateParams, $state, $location, company_serv
             .then(function(response) {
                 self.loadingCluster = false;
                 self.loadingResource = false;
-                self.companies = result_service.setPage(response.data);
+                self.companies = response.data;
                 setTitle();
             });
     };
@@ -163,7 +163,7 @@ function CompanyController($scope, $stateParams, $state, $location, company_serv
             .then(function(response) {
                 self.loadingCluster = false;
                 self.loadingResource = false;
-                self.companies = result_service.setPage(response.data);
+                self.companies = response.data;
                 setTitle();
             });
     };
@@ -171,12 +171,10 @@ function CompanyController($scope, $stateParams, $state, $location, company_serv
     var loadCtrl = function() {
         onLoad(); //de-register the watcher
 
-        self.searchCompanies = function (resource_page, alturl) {
+        self.searchCompanies = function (resource_page, offset) {
             self.loadingCompany = true;
 
-            // remove random sort
-            if (alturl) alturl = alturl.replace(/([&\?]sort=_random*$|sort=_random&|[?&]sort=_random(?=#))/, '');
-
+            console.log('searchcomp: ', self)
             if ($scope.global.query && $scope.global.query !== '*') {
                 self.tag = $scope.global.query;
             } else self.tag = undefined;
@@ -185,17 +183,18 @@ function CompanyController($scope, $stateParams, $state, $location, company_serv
 
             setTitle();
 
-            company_service.search(self.communityFilter, self.clusterFilter, $scope.global.query, undefined, undefined, limit || self.usercount, self.resource_page, alturl)
+            company_service.search(self.communityFilter, self.clusterFilter, $scope.global.query, undefined, undefined, limit || self.companycount, self.resource_page, offset)
                 .then(function (response) {
                     self.tag = undefined;
-                    self.companies = result_service.setPage(response.data);
+                    self.companies = response.data;
                     self.loadingCompany = false;
                     self.lastQuery = $scope.global.query;
+                    self.offset = (offset || 0) + (limit || self.companycount)
                 });
         };
 
         if ($scope.global.community.type == 'cluster') {
-            if ($scope.global.community.community_profiles[$stateParams.location_path]) {
+            if ($scope.global.community.community_profiles && $scope.global.community.community_profiles[$stateParams.location_path]) {
                 self.clusterFilter = $scope.global.community.community_profiles[$stateParams.location_path].industries;
             } else self.clusterFilter = $scope.global.community.industries;
         } else {
@@ -216,7 +215,7 @@ function CompanyController($scope, $stateParams, $state, $location, company_serv
     });
 }
 
-function CompanyProfileController($scope, $stateParams, $mixpanel, user_service, community_service, result_service, $location, sweet) {
+function CompanyProfileController($scope, $stateParams, $mixpanel, user_service, community_service, $location, sweet) {
 
     $mixpanel.track('Viewed Company');
 
@@ -297,7 +296,7 @@ function CompanyProfileController($scope, $stateParams, $mixpanel, user_service,
 
         user_service.search([$scope.global.location.slug, $scope.global.slug], [], '*', undefined, limit, alturl)
             .then(function (response) {
-                self.users = result_service.setPage(response.data);
+                self.users = response.data;
                 self.loadingUser = false;                
             });
     };
