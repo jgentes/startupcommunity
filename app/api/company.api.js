@@ -178,7 +178,9 @@ function handleCompanySearch(req, res) {
      searchstring += ')';*/
   }
   
-  const processCompanies = rows => {
+  const processCompanies = companies => {
+    const rows = companies.rows ? companies.rows : companies;
+    
     if (rows.length) {
       
       try {
@@ -188,6 +190,7 @@ function handleCompanySearch(req, res) {
           if (r.skills) r.skills = JSON.parse(r.skills);
           if (r.resource_types) r.resource_types = JSON.parse(r.resource_types);
           if (r.industries) r.industries = JSON.parse(r.industries);
+          if (companies.count) r.count = companies.count;
         });
       } catch (error) {
         console.warn('WARNING: user144 ', error);
@@ -206,7 +209,7 @@ function handleCompanySearch(req, res) {
   if (query && query != '*') {
     //query runs without other parameters
     sequelize.query('SELECT * FROM communities WHERE TYPE="company" AND MATCH (name, headline, summary, skills, description) AGAINST ("'+query+'" IN NATURAL LANGUAGE MODE) LIMIT '+Number(offset)+', '+Number(limit), { model: cdb}).then(processCompanies);
-  } else cdb.findAll({ where: selector, offset: Number(offset) || 0, limit: Number(limit) || 16 }).then(processCompanies)
+  } else cdb.findAndCountAll({ where: selector, offset: Number(offset) || 0, limit: Number(limit) || 16 }).then(processCompanies)
 }
 
 function handleGetLogoUrl(req, res) {

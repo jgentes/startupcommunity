@@ -120,8 +120,8 @@
                 <div class="panel-footer top">
                     <div class="pull-right">
                         <div class="btn-group btn-group-sm" style="margin-top: -2px;">
-                            <span ng-if="companies.offset > 16"><a ng-click="companies.searchCompanies(undefined, companies.offset-(companies.companycount*2))" class="btn btn-sm btn-default" style="background-color: #fff;"><i class="fa fa-angle-left"></i></a></span>
-                            <span ng-if="companies.companycount > 15"><a ng-click="companies.searchCompanies(undefined, companies.offset)" class="btn btn-sm btn-default" style="background-color: #fff;"><i class="fa fa-angle-right"></i></a></span>
+                            <span ng-if="companies.offset > 16"><a ng-click="companies.searchCompanies(undefined, companies.offset-(companies.limit*2))" class="btn btn-sm btn-default" style="background-color: #fff;"><i class="fa fa-angle-left"></i></a></span>
+                            <span ng-if="companies.count > companies.offset"><a ng-click="companies.searchCompanies(undefined, companies.offset)" class="btn btn-sm btn-default" style="background-color: #fff;"><i class="fa fa-angle-right"></i></a></span>
                         </div>
                     </div>
                     <span style="font-size: 17px;" ng-bind-html="companies.title"></span>
@@ -132,8 +132,12 @@
                     <div class="row">
                         <td style="border-bottom: 1px solid #fff; border-top: none; padding: 0;" colspan="3"></td>
                     </div>
-                    <div ng-show="companies.tag" style="text-align: center" ng-cloak><h2><br/>Searching for {{companies.tag}}..</h2><br/><br/></div>
-                    <div ng-show="companies.companies.length == 0" style="text-align: center" ng-cloak><h2><br/>Nothing here!</h2><br/><br/></div>
+                    <div ng-show="companies.tag" style="text-align: center" ng-cloak>
+                        <h2><br/>Searching for {{companies.tag}}..</h2><br/><br/>
+                    </div>
+                    <div ng-show="companies.companies.length == 0" style="text-align: center" ng-cloak>
+                        <h2><br/>Nothing here!</h2><br/><br/>
+                    </div>
                     <div ng-repeat="item in companies.companies" ng-switch on="$index % 2">
                         <div class="col-md-6" ng-switch-when="0">
                             <div class="row"  ng-include="'components/companies/company.list.item.html'"></div>
@@ -150,8 +154,8 @@
                     </div>
                     <div class="pull-right">
                         <div class="btn-group btn-group-sm" style="margin-top: -2px;">
-                            <span ng-if="companies.offset > 16"><a ng-click="companies.searchCompanies(undefined, companies.offset-(companies.companycount*2))" class="btn btn-sm btn-default" style="background-color: #fff;"><i class="fa fa-angle-left"></i></a></span>
-                            <span ng-if="companies.companycount > 15"><a ng-click="companies.searchCompanies(undefined, companies.offset)" class="btn btn-sm btn-default" style="background-color: #fff;"><i class="fa fa-angle-right"></i></a></span>
+                            <span ng-if="companies.offset > 16"><a ng-click="companies.searchCompanies(undefined, companies.offset-(companies.limit*2))" class="btn btn-sm btn-default" style="background-color: #fff;"><i class="fa fa-angle-left"></i></a></span>
+                            <span ng-if="companies.count > companies.offset"><a ng-click="companies.searchCompanies(undefined, companies.offset)" class="btn btn-sm btn-default" style="background-color: #fff;"><i class="fa fa-angle-right"></i></a></span>
                         </div>
                     </div>
                 </div>
