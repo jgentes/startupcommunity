@@ -70,7 +70,7 @@ function handleCompanySearch(req, res) {
     types = req.query.types,
     query = req.query.query,
     limit = req.query.limit,
-    offset = req.query.offset || 0,
+    offset = req.query.offset < 0 ? 0 : req.query.offset || 0,
     get_resources = req.query.get_resources,
     key = req.query.api_key;
 
@@ -180,28 +180,18 @@ function handleCompanySearch(req, res) {
   
   const processCompanies = rows => {
     if (rows.length) {
-
-      rows.next = '/api/2.1/users?' + jqparam({
-        communities: req.query.communities,
-        clusters: (req.query.clusters || '*'),
-        stages: (req.query.stages || '*'),
-        types: (req.query.types || '*'),
-        limit: (Number(req.query.limit) || 16),
-        get_resources: (req.query.get_resources || false),
-        offset: ((Number(req.query.offset) || 0) + (Number(req.query.limit) || 16)),
-        query: (req.query.query || '*')
-      });
-
-      rows.prev = '/api/2.1/users?' + jqparam({
-        communities: req.query.communities,
-        clusters: (req.query.clusters || '*'),
-        stages: (req.query.stages || '*'),
-        types: (req.query.types || '*'),
-        limit: (Number(req.query.limit) || 16),
-        get_resources: (req.query.get_resources || false),
-        offset: (req.query.offset ? (Number(req.query.offset) - ((Number(req.query.limit) || 16))) : 0),
-        query: (req.query.query || '*')
-      });
+      
+      try {
+        rows.forEach(r => {
+          if (r.parents) r.parents = JSON.parse(r.parents);
+          if (r.communities) r.communities = JSON.parse(r.communities);
+          if (r.skills) r.skills = JSON.parse(r.skills);
+          if (r.resource_types) r.resource_types = JSON.parse(r.resource_types);
+          if (r.industries) r.industries = JSON.parse(r.industries);
+        });
+      } catch (error) {
+        console.warn('WARNING: user144 ', error);
+      }
 
       res.send(rows);
     }

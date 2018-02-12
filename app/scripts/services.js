@@ -86,16 +86,17 @@ angular
 
     .factory('user_service', function($http) {
         return {
-            search: function(communities, clusters, query, roles, limit, alturl) { //alturl is for next/prev retrieval
+            search: function(communities, clusters, query, roles, limit, offset) {
                   
                 var urlString = '/api/2.1/users?' + jQuery.param({
                         communities: communities,
                         clusters: clusters,
                         roles: roles,
                         limit: limit,
+                        offset: offset,
                         query: query || '*'
                     });
-                return $http.get(alturl || urlString);
+                return $http.get(urlString);
             },
             updateProfile: function(profile) {
                 return $http.post('/api/2.1/profile', {
@@ -225,7 +226,7 @@ angular
         };
     })
 
-      .factory('community_service', function($http) {
+    .factory('community_service', function($http) {
           return {
               parseJSON: function(response) {
                 var community = response.data;
@@ -342,17 +343,18 @@ angular
       })
     .factory('company_service', function($http) {
         return {
-            search: function(communities, clusters, query, stages, types, limit, get_resources, alturl) { //alturl is for next/prev retrieval
+            search: function(communities, clusters, query, stages, types, limit, get_resources, offset) { 
                 var urlString = '/api/2.1/companies?' + jQuery.param({
                         communities: communities,
                         clusters: clusters,
                         stages: stages,
                         types: types,
                         limit: limit,
+                        offset: offset,
                         query: query || '*',
                         get_resources: get_resources
                     });
-                return $http.get(alturl || urlString);
+                return $http.get(urlString);
             },
             addCompany: function(profile, role, location_key, community_key, company_key) {
                 return $http.post('/api/2.1/companies/add', {
@@ -396,27 +398,4 @@ angular
                 return $http.get('/api/2.1/angel/startup?id=' + id);
             }
         };
-    })
-
-    .factory('result_service', function() {
-      return {
-          setPage: function(results) {
-
-              if (results !== undefined) {
-                  if (results.next) {
-                      results.start = Number(results.next.match(/offset=([^&]+)/)[1]) - Number(results.count) + 1;
-                      results.end = Number(results.next.match(/offset=([^&]+)/)[1]);
-                  } else if (results.prev) {
-                      results.start = Number(results.total_count) - Number(results.count);
-                      results.end = results.total_count;
-                  } else if (results.count === 0 || results === undefined) {
-                      results.start = 0;
-                      results.end = 0;
-                  } else {
-                      results.start = 1; results.end = results.total_count;
-                  }
-              }
-              return results;
-          }
-      };
     });

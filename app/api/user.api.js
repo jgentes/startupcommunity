@@ -33,7 +33,7 @@ function handleUserSearch(req, res) {
     roles = req.query.roles,
     query = req.query.query,
     limit = req.query.limit,
-    offset = req.query.offset || 0,
+    offset = req.query.offset < 0 ? 0 : req.query.offset || 0,
     key = req.query.api_key;
 
   var allowed = false;
@@ -126,6 +126,7 @@ function handleUserSearch(req, res) {
   }
   
   const processUsers = rows => {
+    
     if (rows.length) {
 
       try {
@@ -140,28 +141,17 @@ function handleUserSearch(req, res) {
           }
 
           if (r.newsletter) delete r.newsletter;
+          
+          if (r.parents) r.parents = JSON.parse(r.parents);
+          if (r.communities) r.communities = JSON.parse(r.communities);
+          if (r.skills) r.skills = JSON.parse(r.skills);
+          if (r.resource_types) r.resource_types = JSON.parse(r.resource_types);
+          if (r.industries) r.industries = JSON.parse(r.industries);
+          
         });
       } catch (error) {
         console.warn('WARNING: user144 ', error);
       }
-
-      rows.next = '/api/2.1/users?' + jqparam({
-          communities: communities,
-          clusters: (clusters || '*'),
-          roles: (roles || '*'),
-          limit: (Number(limit) || 16),
-          offset: ((Number(offset) || 0) + (Number(limit) || 16)),
-          query: (query || '*')
-        });
-
-      rows.prev = '/api/2.1/users?' + jqparam({
-          communities: communities,
-          clusters: (clusters || '*'),
-          roles: (roles || '*'),
-          limit: (Number(limit) || 16),
-          offset: (offset ? (Number(offset) - ((Number(limit) || 16))) : 0),
-          query: (query || '*')
-        });
 
       res.send(rows);
     } else {
@@ -194,25 +184,13 @@ function handleDirectSearch(req, res) {
             if (r.linkedin.emailAddress) delete r.linkedin.emailAddress;
             if (r.linkedin.access_token) delete r.linkedin.access_token;
           }
+          
+          if (r.parents) r.parents = JSON.parse(r.parents);
+          if (r.communities) r.communities = JSON.parse(r.communities);
+          if (r.skills) r.skills = JSON.parse(r.skills);
+          if (r.resource_types) r.resource_types = JSON.parse(r.resource_types);
+          if (r.industries) r.industries = JSON.parse(r.industries);
         });
-
-        rows.next = '/api/2.1/users?' + jqparam({
-            communities: req.query.communities,
-            clusters: (req.query.clusters || '*'),
-            roles: (req.query.roles || '*'),
-            limit: (Number(req.query.limit) || 16),
-            offset: ((Number(req.query.offset) || 0) + (Number(req.query.limit) || 16)),
-            query: (req.query.query || '*')
-          });
-
-        rows.prev = '/api/2.1/users?' + jqparam({
-            communities: req.query.communities,
-            clusters: (req.query.clusters || '*'),
-            roles: (req.query.roles || '*'),
-            limit: (Number(req.query.limit) || 16),
-            offset: (req.query.offset ? (Number(req.query.offset) - ((Number(req.query.limit) || 16))) : 0),
-            query: (req.query.query || '*')
-          });
 
       } catch (error) {
         console.warn('WARNING: user206', error);

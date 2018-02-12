@@ -5,7 +5,7 @@ angular
     .controller('InviteUserController', InviteUserController)
     .controller('ContactUserController', ContactUserController);
 
-function UserController($scope, $stateParams, $location, user_service, result_service, $sce) {
+function UserController($scope, $stateParams, $location, user_service, $sce) {
     //todo usercontroller and company controller are dups, need to be consolidated
 
     this.selectedClusters = [];
@@ -77,11 +77,8 @@ function UserController($scope, $stateParams, $location, user_service, result_se
     var loadCtrl = function() {
         onLoad(); // de-register the watcher
 
-        self.searchUsers = function(alturl) {
+        self.searchUsers = function(offset) {
             self.loadingUser = true;
-            console.log('searchuser: ', self)
-            // remove random sort
-            if (alturl) alturl = alturl.replace(/([&\?]sort=_random*$|sort=_random&|[?&]sort=_random(?=#))/, '');
 
             if ($scope.global.query && $scope.global.query !== '*') {
                 self.tag = $scope.global.query;
@@ -91,13 +88,13 @@ function UserController($scope, $stateParams, $location, user_service, result_se
 
             setTitle();
 
-            user_service.search(self.communityFilter, self.clusterFilter, $scope.global.query, undefined, limit || self.usercount, alturl)
+            user_service.search(self.communityFilter, self.clusterFilter, $scope.global.query, undefined, limit || self.usercount, offset)
                 .then(function (response) {
                     self.tag = undefined;
-                    self.users = result_service.setPage(response.data);
+                    self.users = response.data;
                     self.loadingUser = false;
                     self.lastQuery = $scope.global.query;
-                  console.log(self.users);
+                    self.offset = (offset || 0) + (limit || self.usercount)
                 });
         };
 
@@ -121,6 +118,8 @@ function UserController($scope, $stateParams, $location, user_service, result_se
             loadCtrl();
         }
     });
+    
+    
 
     this.filterRole = function(role) {
         self.loadingRole = true;
@@ -141,7 +140,7 @@ function UserController($scope, $stateParams, $location, user_service, result_se
         user_service.search(self.communityFilter, self.clusterFilter, undefined, self.selectedRole, 20, undefined)
             .then(function(response) {
                 self.loadingRole = false;
-                self.users = result_service.setPage(response.data);
+                self.users = response.data;
                 setTitle();
             });
     };
@@ -160,7 +159,7 @@ function UserController($scope, $stateParams, $location, user_service, result_se
             .then(function(response) {
                 self.loadingCluster = false;
                 self.loadingResource = false;
-                self.users = result_service.setPage(response.data);
+                self.users = response.data;
                 setTitle();
             });
     };
@@ -181,7 +180,7 @@ function UserController($scope, $stateParams, $location, user_service, result_se
             .then(function(response) {
                 self.loadingCluster = false;
                 self.loadingResource = false;
-                self.users = result_service.setPage(response.data);
+                self.users = response.data;
                 setTitle();
             });
     };

@@ -120,8 +120,8 @@
                 <div class="panel-footer top">
                     <div class="pull-right">
                         <div class="btn-group btn-group-sm" style="margin-top: -2px;">
-                            <span ng-if="companies.companies.prev && companies.companies.end !== 16"><a ng-click="companies.searchCompanies(undefined, companies.companies.prev)" class="btn btn-sm btn-default" style="background-color: #fff;"><i class="fa fa-angle-left"></i></a></span>
-                            <span ng-if="companies.companies.next"><a ng-click="companies.searchCompanies(undefined, companies.companies.next)" class="btn btn-sm btn-default" style="background-color: #fff;"><i class="fa fa-angle-right"></i></a></span>
+                            <span ng-if="companies.offset > 16"><a ng-click="companies.searchCompanies(undefined, companies.offset-(companies.companycount*2))" class="btn btn-sm btn-default" style="background-color: #fff;"><i class="fa fa-angle-left"></i></a></span>
+                            <span ng-if="companies.companycount > 15"><a ng-click="companies.searchCompanies(undefined, companies.offset)" class="btn btn-sm btn-default" style="background-color: #fff;"><i class="fa fa-angle-right"></i></a></span>
                         </div>
                     </div>
                     <span style="font-size: 17px;" ng-bind-html="companies.title"></span>
@@ -150,8 +150,8 @@
                     </div>
                     <div class="pull-right">
                         <div class="btn-group btn-group-sm" style="margin-top: -2px;">
-                            <span ng-if="companies.companies.prev && companies.companies.end !== 16"><a ng-click="companies.searchCompanies(undefined, companies.companies.prev)" class="btn btn-sm btn-default" style="background-color: #fff;"><i class="fa fa-angle-left"></i></a></span>
-                            <span ng-if="companies.companies.next"><a ng-click="companies.searchCompanies(undefined, companies.companies.next)" class="btn btn-sm btn-default" style="background-color: #fff;"><i class="fa fa-angle-right"></i></a></span>
+                            <span ng-if="companies.offset > 16"><a ng-click="companies.searchCompanies(undefined, companies.offset-(companies.companycount*2))" class="btn btn-sm btn-default" style="background-color: #fff;"><i class="fa fa-angle-left"></i></a></span>
+                            <span ng-if="companies.companycount > 15"><a ng-click="companies.searchCompanies(undefined, companies.offset)" class="btn btn-sm btn-default" style="background-color: #fff;"><i class="fa fa-angle-right"></i></a></span>
                         </div>
                     </div>
                 </div>
