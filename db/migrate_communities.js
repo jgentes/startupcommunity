@@ -106,7 +106,7 @@ community_array.forEach(async c => {
       c._id,
       'cluster',
       JSON.stringify(c.profile.parents || []),
-      JSON.stringify(c.industries || []),
+      JSON.stringify(c.profile.industries || []),
       c.profile.country || '',
       c.profile.state || '',
       c.profile.county || '',

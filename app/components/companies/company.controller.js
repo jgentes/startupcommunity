@@ -93,13 +93,13 @@ function CompanyController($scope, $stateParams, $state, $location, company_serv
             }
         }
 
-        company_service.search(self.communityFilter, self.clusterFilter, undefined, null, self.selectedType, 20, self.resource_page, undefined)
+        company_service.search(self.communityFilter, self.clusterFilter, undefined, null, self.selectedType, 16, self.resource_page, undefined)
             .then(function(response) {
                 self.loadingType = false;
                 self.companies = response.data;
                 setTitle();
                 self.count = response.data[0] ? response.data[0].count : 0;
-                self.limit = 20;
+                self.limit = 16;
             });
     };
 
@@ -119,13 +119,13 @@ function CompanyController($scope, $stateParams, $state, $location, company_serv
             }
         }
 
-        company_service.search(self.communityFilter, self.clusterFilter, undefined, self.selectedStage, null, 20, self.resource_page, undefined)
+        company_service.search(self.communityFilter, self.clusterFilter, undefined, self.selectedStage, null, 16, self.resource_page, undefined)
             .then(function(response) {
                 self.loadingStage = false;
                 self.companies = response.data;
                 setTitle();
                 self.count = response.data[0] ? response.data[0].count : 0;
-                self.limit = 20;
+                self.limit = 16;
             });
     };
 
@@ -139,14 +139,14 @@ function CompanyController($scope, $stateParams, $state, $location, company_serv
             if (self.selectedClusters.length == 0) self.allClusters = true;
         }
 
-        company_service.search(self.communityFilter, self.selectedClusters, undefined, self.selectedStage, null, 20, self.resource_page, undefined)
+        company_service.search(self.communityFilter, self.selectedClusters, undefined, self.selectedStage, null, 16, self.resource_page, undefined)
             .then(function(response) {
                 self.loadingCluster = false;
                 self.loadingResource = false;
                 self.companies = response.data;
                 setTitle();
                 self.count = response.data[0] ? response.data[0].count : 0;
-                self.limit = 20;
+                self.limit = 16;
             });
     };
 
@@ -178,7 +178,6 @@ function CompanyController($scope, $stateParams, $state, $location, company_serv
         self.searchCompanies = function (resource_page, offset) {
             self.loadingCompany = true;
 
-            console.log('searchcomp: ', self)
             if ($scope.global.query && $scope.global.query !== '*') {
                 self.tag = $scope.global.query;
             } else self.tag = undefined;
@@ -186,7 +185,7 @@ function CompanyController($scope, $stateParams, $state, $location, company_serv
             var limit = $location.search().limit || 16;
 
             setTitle();
-
+            
             company_service.search(self.communityFilter, self.clusterFilter, $scope.global.query, undefined, undefined, limit, self.resource_page, offset)
                 .then(function (response) {
                     self.tag = undefined;

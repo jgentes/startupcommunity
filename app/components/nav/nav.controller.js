@@ -650,9 +650,6 @@ function NavigationController($scope, $auth, $state, $window, $location, $stateP
                 }
             }
         }
-        
-        console.log($scope.global)
-
     };
 
     getProfile();
