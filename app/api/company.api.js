@@ -192,12 +192,8 @@ function handleCompanySearch(req, res) {
         console.warn('WARNING: user144 ', error);
       }
 
-      res.send(rows);
     }
-    else {
-      console.log('WARNING: ');
-      res.send({ message: 'No companies found!' });
-    }
+    res.send(rows);
   }
 
   console.log('Pulling Companies: ', JSON.stringify(selector));

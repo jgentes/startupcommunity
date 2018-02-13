@@ -143,12 +143,8 @@ function handleUserSearch(req, res) {
       } catch (error) {
         console.warn('WARNING: user144 ', error);
       }
-
-      res.send(rows);
-    } else {
-      console.log('WARNING: No users!');
-      res.send({message: 'No users found!'});
     }
+    res.send(rows);
   };
   
   console.log('Pulling Users: ', JSON.stringify(selector));
