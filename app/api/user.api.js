@@ -3,7 +3,8 @@ var Q = require('q'),
   jwt = require('jsonwebtoken'),
   aws = require('aws-sdk'),
   knowtify = require('knowtify-node'),
-  jqparam = require('jquery-param'),
+  communityApi = require(__dirname + '/community.api.js'),
+  communityApis = new communityApi(),
   { cdb, sequelize, Op } = require('../../db');
 
 //require('request-debug')(request); // Very useful for debugging oauth and api req/res
@@ -47,33 +48,22 @@ function handleUserSearch(req, res) {
   };
   
   var community_search = [];
+  var state_suffix = null;
   
   if (communities && communities.length) {
     communities.forEach(c => {
+      // determine whether one of the communities is a state
+      state_suffix = communityApis.convert_state(c.replace('-', ' '), 'abbrev'); // returns false if no match
+      
       community_search.push({[Op.like]: '%"' + c + '"%'});
     });
   }
+ 
+  var preState = [{communities: {[Op.or]: community_search}}]
   
-  /*
-   for (c in communities) {
-
-   // determine whether one of the communities is a state
-   var state_suffix = communityApis.convert_state(communities[c].replace('-',' '), 'abbrev'); // returns false if no match
-
-   if (state_suffix) {
-   state = " AND profile.home: (" + communities[c] + " OR *-" + state_suffix.toLowerCase() + ")";
-   var remove = communities.indexOf(communities[c]);
-   if (remove > -1) communities.splice(remove, 1); // to avoid issues with length check
-   if (communities.length == 0) searchstring += "*";
-   } else {
-   searchstring += communities[c];
-   if (c < (communities.length - 1)) { searchstring += ' AND '; }
-   }
-   }
-   */
-  selector[Op.and].push({communities: {[Op.or]: community_search}});
-
-  //searchstring += ")" + state;
+  if (state_suffix) preState.push({home: {[Op.like]: '%-' + state_suffix.toLowerCase()}});
+  
+  selector[Op.and].push({[Op.or]: preState});
 
   if (clusters && clusters.length > 0 && clusters[0] !== '*') {
     var cluster_search = [];

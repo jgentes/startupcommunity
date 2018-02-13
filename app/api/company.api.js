@@ -1,7 +1,8 @@
 var Q = require('q'),
   url = require('url'),
   aws = require('aws-sdk'),
-  jqparam = require('jquery-param'),
+  communityApi = require(__dirname + '/community.api.js'),
+  communityApis = new communityApi(),
   { cdb, sequelize, Op } = require('../../db');
 
 //require('request-debug')(request); // Very useful for debugging oauth and api req/res
@@ -82,54 +83,45 @@ function handleCompanySearch(req, res) {
   // create searchstring
   var selector = {
     [Op.and]: [
-      {type: "company"}
+      { type: "company" }
     ]
   };
 
   var community_search = [];
+  var state_suffix = null;
   
   if (communities && communities.length) {
     communities.forEach(c => {
-      community_search.push({[Op.like]: '%"' + c + '"%'});
+      // determine whether one of the communities is a state
+      state_suffix = communityApis.convert_state(c.replace('-', ' '), 'abbrev'); // returns false if no match
+      
+      community_search.push({
+        [Op.like]: '%"' + c + '"%' });
     });
   }
   
-  /*
-   if (communities) {
-   for (c in communities) {
+  var preState = [{communities: {[Op.or]: community_search}}]
+  
+  if (state_suffix) preState.push({home: {[Op.like]: '%-' + state_suffix.toLowerCase()}});
+  
+  selector[Op.and].push({[Op.or]: preState});
 
-   // determine whether one of the communities is a state
-   var state_suffix = communityApis.convert_state(communities[c].replace('-',' '), 'abbrev'); // returns false if no match
-
-   if (state_suffix) {
-   var state = " AND profile.home: (" + communities[c] + " OR *-" + state_suffix.toLowerCase() + ")";
-   var remove = communities.indexOf(communities[c]);
-   if (remove > -1) communities.splice(remove, 1); // to avoid issues with length check
-   if (communities.length == 0) searchstring += "*";
-   } else {
-   searchstring += communities[c];
-   if (c < (communities.length - 1)) { searchstring += ' AND '; }
-   }
-   }
-   } else searchstring += '*';*/
-  selector[Op.and].push({communities: {[Op.or]: community_search}});
-
-  /* if (get_resources === "true") {
-   searchstring += ") AND resource: true" + state;
-   } else searchstring += ")" + (state ? " AND" + state : '');*/
-
-  if (get_resources == "true") selector[Op.and].push({resource: {[Op.ne]: false}});
+  if (get_resources == "true") selector[Op.and].push({ resource: {
+      [Op.not]: false } });
 
   if (clusters && clusters.length > 0 && clusters[0] !== '*') {
     var cluster_search = [];
     clusters.forEach(c => {
-      cluster_search.push({[Op.like]: '%"' + c + '"%'});
+      cluster_search.push({
+        [Op.like]: '%"' + c + '"%' });
     });
 
     selector[Op.and].push({
       [Op.or]: [
-        {skills: {[Op.or]: cluster_search}},
-        {parents: {[Op.or]: cluster_search}}
+        { skills: {
+            [Op.or]: cluster_search } },
+        { parents: {
+            [Op.or]: cluster_search } }
       ]
     });
     /*
@@ -150,7 +142,8 @@ function handleCompanySearch(req, res) {
 
   }
   if (stages && stages.length > 0 && stages[0] !== '*') {
-    selector[Op.and].push({stage: {[Op.in]: stages}});
+    selector[Op.and].push({ stage: {
+        [Op.in]: stages } });
     /* stages = stages.splice(',');
      searchstring += ' AND (';
 
@@ -164,10 +157,12 @@ function handleCompanySearch(req, res) {
   if (types && types.length > 0 && types[0] !== '*') {
     var type_search = [];
     types.forEach(t => {
-      type_search.push({[Op.like]: '%"' + t + '"%'});
+      type_search.push({
+        [Op.like]: '%"' + t + '"%' });
     })
-    
-    selector[Op.and].push({resource_types: {[Op.or]: type_search}});
+
+    selector[Op.and].push({ resource_types: {
+        [Op.or]: type_search } });
     /*types = types.splice(',');
      searchstring += ' AND (';
 
@@ -177,12 +172,12 @@ function handleCompanySearch(req, res) {
      }
      searchstring += ')';*/
   }
-  
+
   const processCompanies = companies => {
     const rows = companies.rows ? companies.rows : companies;
-    
+
     if (rows.length) {
-      
+
       try {
         rows.forEach(r => {
           if (r.parents) r.parents = JSON.parse(r.parents);
@@ -192,7 +187,8 @@ function handleCompanySearch(req, res) {
           if (r.industries) r.industries = JSON.parse(r.industries);
           if (companies.count) r.count = companies.count;
         });
-      } catch (error) {
+      }
+      catch (error) {
         console.warn('WARNING: user144 ', error);
       }
 
@@ -205,11 +201,12 @@ function handleCompanySearch(req, res) {
   }
 
   console.log('Pulling Companies: ', JSON.stringify(selector));
-  
+
   if (query && query != '*') {
     //query runs without other parameters
-    sequelize.query('SELECT * FROM communities WHERE TYPE="company" AND MATCH (name, headline, summary, skills, description) AGAINST ("'+query+'" IN NATURAL LANGUAGE MODE) LIMIT '+Number(offset)+', '+Number(limit), { model: cdb}).then(processCompanies);
-  } else cdb.findAndCountAll({ where: selector, offset: Number(offset) || 0, limit: Number(limit) || 16 }).then(processCompanies)
+    sequelize.query('SELECT * FROM communities WHERE TYPE="company" AND MATCH (name, headline, summary, skills, description) AGAINST ("' + query + '" IN NATURAL LANGUAGE MODE) LIMIT ' + Number(offset) + ', ' + Number(limit), { model: cdb }).then(processCompanies);
+  }
+  else cdb.findAndCountAll({ where: selector, offset: Number(offset) || 0, limit: Number(limit) || 16 }).then(processCompanies)
 }
 
 function handleGetLogoUrl(req, res) {
@@ -347,12 +344,13 @@ function handleDeleteCompany(req, res) {
 
             if (response) {
               const roles = {};
-              roles[params.company_key] = {[Op.ne]: null};
+              roles[params.company_key] = {
+                [Op.ne]: null };
               // company has been deleted, now delete references in user records
               cdb.findAll({
                 where: {
                   [Op.and]: [
-                    {type: 'user'}, 
+                    { type: 'user' },
                     roles
                   ]
                 }
@@ -461,45 +459,45 @@ function handleDeleteCompany(req, res) {
 var addRole = function(company_key, roles, location_key, user_key) {
 
   cdb.findById(user_key)
-  .then(response => {
-    if (response) {
-      // add new role
+    .then(response => {
+      if (response) {
+        // add new role
 
-      for (var role in roles) {
-        if (!response.roles[roles[role]]) {
-          response.roles[roles[role]] = {};
-          response.roles[roles[role]][company_key] = [location_key];
-        }
-        else if (!response.roles[roles[role]][company_key]) {
-          response.roles[roles[role]][company_key] = [location_key];
-        }
-        else if (response.roles[roles[role]][company_key].indexOf(location_key) < 0) {
-          response.roles[roles[role]][company_key].push(location_key);
-        } // else the damn thing is already there
+        for (var role in roles) {
+          if (!response.roles[roles[role]]) {
+            response.roles[roles[role]] = {};
+            response.roles[roles[role]][company_key] = [location_key];
+          }
+          else if (!response.roles[roles[role]][company_key]) {
+            response.roles[roles[role]][company_key] = [location_key];
+          }
+          else if (response.roles[roles[role]][company_key].indexOf(location_key) < 0) {
+            response.roles[roles[role]][company_key].push(location_key);
+          } // else the damn thing is already there
 
-        // add community
-        if (!response.communities) response.communities = [];
-        else response.communities = JSON.parse(response.communities);
+          // add community
+          if (!response.communities) response.communities = [];
+          else response.communities = JSON.parse(response.communities);
 
-        if (response.communities.indexOf(company_key) < 0) {
-          response.communities.push(company_key);
+          if (response.communities.indexOf(company_key) < 0) {
+            response.communities.push(company_key);
+          }
         }
+
+        cdb.update(response, { where: { id: user_key } }).then(result => {
+          if (result) {
+            console.log('User ' + user_key + ' updated with ', roles);
+          }
+          else {
+            console.warn("WARNING: ");
+          }
+        })
+
       }
-
-      cdb.update(response, { where: { id: user_key } }).then(result => {
-        if (result) {
-          console.log('User ' + user_key + ' updated with ', roles);
-        }
-        else {
-          console.warn("WARNING: ");
-        }
-      })
-
-    }
-    else {
-      console.warn("WARNING: ");
-    }
-  });
+      else {
+        console.warn("WARNING: ");
+      }
+    });
 };
 
 function handleCheckUrl(req, res) {
@@ -515,7 +513,8 @@ function handleCheckUrl(req, res) {
 
   cdb.findAll({
     where: {
-      [Op.and]: [{ type: 'company'}, {profile: website }] }
+      [Op.and]: [{ type: 'company' }, { profile: website }]
+    }
   }).then(result => {
     if (result) {
       if (result.length) {
