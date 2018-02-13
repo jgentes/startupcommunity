@@ -15,7 +15,6 @@
     "express-sslify": "^1.0.1",
     "grunt": "^1.0.1",
     "http-proxy": "^1.9.0",
-    "jquery-param": "^0.2.0",
     "jsdom": "^11.4.0",
     "jsonwebtoken": "^8.1.0",
     "knowtify-node": "^0.1.0",

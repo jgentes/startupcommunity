@@ -82,7 +82,7 @@ idb.findOne({where: {'invite_communities': {[Op.contains]: ["bendtech"]}}})
   })
   */
 /*sequelize.query(
-  "SELECT `id`, `slug`, `type`, `name`, `home`, `parents`, `communities`, `community_profiles`, `icon`, `email`, `avatar`, `linkedin`, `api_key`, `headline`, `summary`, `skills`, `roles`, `country`, `state`, `county`, `city`, `description`, `sc_logo`, `embed`, `resource`, `resource_types`, `industries`, `website`, `street`, `angellist`, `logo`, `token`, `newsletter`, `stage` FROM `communities` AS `communities` WHERE (`communities`.`type` = 'company' AND `communities`.`resource` IS NOT true AND (`communities`.`communities` LIKE '%\"bend-or\"%' AND `communities`.`communities` LIKE '%\"tech\"%'))", {model: cdb})
+  "SELECT `id`, `slug`, `type`, `name`, `home`, `parents`, `communities`, `community_profiles`, `icon`, `email`, `avatar`, `linkedin`, `api_key`, `headline`, `summary`, `skills`, `roles`, `country`, `state`, `county`, `city`, `description`, `sc_logo`, `embed`, `resource`, `resource_types`, `industries`, `website`, `street`, `angellist`, `logo`, `token`, `newsletter`, `stage` FROM `communities` AS `communities` WHERE (`communities`.`type` = 'company' AND `communities`.`resource` IS NOT true AND (`communities`.`home` LIKE '%-or'))", {model: cdb})
   .then(results => {
     console.log('results: ', results)
   }

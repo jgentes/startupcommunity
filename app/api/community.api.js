@@ -456,7 +456,7 @@ function handleGetTop(req, res) {
 
   // determine whether location is a state
   var state_suffix = handleConvert_state(location_key.replace('-', ' '), 'abbrev'); // returns false if no match
-  var state = state_suffix ? '"%-' + state_suffix.toLowerCase() + '"%' : ')';
+  var state = state_suffix ? '%-' + state_suffix.toLowerCase() : ')';
   
   // add search based on home suffix (which allows for roll-up to state level)
   var search = state_suffix ? {
