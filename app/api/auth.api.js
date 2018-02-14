@@ -638,9 +638,9 @@ function handleInviteUser(req, res) {
 
                       // create user record with email address and community data
                       var newUser = schema.invite(inviteUser.email, user.email, inviteUser.location_key, inviteUser.resources);
-                      console.log('creating user');
+                      console.log('creating user invitation');
 
-                      cdb.insert(newUser)
+                      idb.create(newUser)
                         .then(response => {
 
                           var userkey = response.id; // hope their response format doesn't change :-/
@@ -673,7 +673,7 @@ function handleInviteUser(req, res) {
                               res.status(202).send({message: "Woah! Something went wrong. We're looking into it, but also try waiting a few minutes and give it another shot."});
 
                               // rollback invitation
-                              cdb.destroy({where: {id: userkey}})
+                              idb.destroy({where: {id: userkey}})
                             });
                         })
                         .catch(function (err) {
@@ -698,10 +698,9 @@ function handleInviteUser(req, res) {
   };
 
   if (!req.user) {
-    // just take first one ?
     const where = {};
-    where['roles.leader.' + inviteUser.location_key] = {[Op.ne]:null};
-    cdb.findOne(where).then(result => {
+    //where['roles.leader.' + inviteUser.location_key] = {[Op.ne]:null};
+    cdb.findById('james').then(result => {
         if (result) {
           console.log('Found leader to use for invite.');
           req.user = result.id; 
