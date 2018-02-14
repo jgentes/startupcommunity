@@ -348,7 +348,7 @@ function handleSetupNewsletter(req,res) {
 
     updateProfile = function(brand_id, lists) {
 
-        db.insert(process.env.DB_COMMUNITIES, req.user, {
+        db.create(process.env.DB_COMMUNITIES, req.user, {
             newsletter: {
                 username: newprofile.profile.email,
                 password: settings.pass,
