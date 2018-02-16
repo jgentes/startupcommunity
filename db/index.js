@@ -16,6 +16,20 @@ const
 
 Sequelize.useCLS(cls.createNamespace('startupcommunity'));
 
+/* SENDGRID */
+/*
+const sgMail = require('@sendgrid/mail');
+sgMail.setApiKey('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');
+const msg = {
+      templateId: '9a576524-4b67-43e5-9b86-49ff2f8ef970',
+      to: 'jgentes@gmail.com',
+      from: 'james@startupcommunity.org',
+      subject: 'James has accepted your invitatino.',
+      html: '<strong>Congrats!</strong> James accepted your invitation to join the community.',
+    };
+sgMail.send(msg);*/
+
+
 /*db.create({slug: 'test6', type: 'test', name: 'testing'}).then(a => {
   console.log(a.id)
   // returns { id: 575, slug: 'test6', type: 'test', name: 'testing' }

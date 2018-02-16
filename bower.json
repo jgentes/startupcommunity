@@ -11,7 +11,6 @@
     "angular": "~1.4.11",
     "angular-bootstrap": "~1.1.2",
     "angular-h-sweetalert": "~1.4.5",
-    "angular-knowtify": "*",
     "angular-mixpanel": "~1.1.0",
     "angular-notify": "~2.0.2",
     "angular-sanitize": "~1.4.1",
