@@ -5,7 +5,9 @@ var bcrypt = require('bcryptjs'),
   NewsletterApi = require(__dirname + '/newsletter.api.js'),
   newsletterApis = new NewsletterApi(),
   {cdb, idb, mdb, Op} = require('../../db'),
-  knowtify = require('knowtify-node');
+  sgMail = require('@sendgrid/mail');
+  
+sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 //require('request-debug')(request); // Very useful for debugging oauth and api req/res
 
@@ -231,35 +233,19 @@ function handleLinkedin(req, res) {
   };
 
   var accept_invite = function (invitee_email, invitee_name, invitor_email) {
-    // update Knowtify with invitation accepted
     console.log('invite accepted: ', invitee_email);
-    var knowtifyClient = new knowtify.Knowtify(process.env.KNOWTIFY, false);
 
     // send 'invite accepted' email to person who sent the invite
-    knowtifyClient.contacts.upsert({
-      "event": 'invite_accepted',
-      "contacts": [
-        {
-          "email": invitor_email,
-          "data": {
-            "invitee_name": invitee_name
-          }
-        }
-      ]
-    });
-
-    // update record of person who accepted the invite (to prevent reminder emails)
-    knowtifyClient.contacts.upsert({
-      "contacts": [
-        {
-          "email": invitee_email,
-          "data": {
-            "invite_accepted": "true"
-          }
-        }
-      ]
-    });
-
+    
+    const msg = {
+      templateId: '9a576524-4b67-43e5-9b86-49ff2f8ef970',
+      to: invitor_email,
+      from: 'james@startupcommunity.org',
+      subject: invitee_name + ' has accepted your invitation.',
+      html: '<strong>Congrats!</strong> ' + invitee_name + ' has accepted your invitation and is now part of the community.',
+    };
+    sgMail.send(msg).catch(err => console.log('WARNING: ', err.toString()));
+/*
     // add a question for their profile
     var datetime = new Date(); // added as milliseconds since epoch
 
@@ -285,7 +271,7 @@ function handleLinkedin(req, res) {
         console.error("POST FAIL:");
         console.error(err);
       });
-
+*/
   };
 
   var delete_invite = function () {
@@ -301,24 +287,6 @@ function handleLinkedin(req, res) {
           })
       }
     })
-  };
-
-  var add_knowtify = function (user) {
-    // send user info to Knowtify
-    console.log('updating Knowtify')
-    var knowtifyClient = new knowtify.Knowtify(process.env.KNOWTIFY, false);
-
-    knowtifyClient.contacts.upsert({
-      "contacts": [
-        {
-          "email": user.profile.email,
-          "data": {
-            "name": user.profile.name,
-            "email": user.profile.email
-          }
-        }
-      ]
-    });
   };
 
   // Exchange authorization code for access token.
@@ -386,7 +354,7 @@ function handleLinkedin(req, res) {
               // yes, there is an existing user in the system that matched the linkedin id
 
               console.log("Found existing user: " + profile.firstName + ' ' + profile.lastName);
-              result.profile.linkedin = profile;
+              result.linkedin = profile;
 
               // get user account and update with latest linkedin data
 
@@ -405,7 +373,6 @@ function handleLinkedin(req, res) {
                     accept_invite(invite_profile.email, result.name, invite_profile.invitor_email);
                     delete_invite();
                   }
-                  add_knowtify(result);
                 })
                 .catch(function (err) {
                   console.error("Profile update failed: ", err);
@@ -438,7 +405,6 @@ function handleLinkedin(req, res) {
                           accept_invite(invite_profile.email, profile.firstName + ' ' + profile.lastName, invite_profile.invitor_email);
                           delete_invite();
                         }
-                        add_knowtify(result.docs[0].value);
                       })
                       .catch(function (err) {
                         console.warn("WARNING: ", err);
@@ -483,7 +449,6 @@ function handleLinkedin(req, res) {
   
                             res.send(newresponse);
   
-                            add_knowtify(new_invite_profile);
                             accept_invite(invite_profile.email, new_invite_profile.name, invitor_email);                
                           }                      
                         })
@@ -557,7 +522,28 @@ function handleInviteUser(req, res) {
 
             // add subscriber to newsletter lists
 
-            newsletterApis.addSubscriber(inviteUser.location_key, inviteUser.resources[u], inviteUser)
+            newsletterApis.addSubscriber(inviteUser.location_key, inviteUser.resources[u], inviteUser);
+          }
+          
+          var sendMessage = (invitecode, subject) => {
+            var html = user.name + ' invites you to join the' + inviteUser.location_name.split(',')[0] + ' Startup Community.';
+            const msg = {
+              templateId: '6b65d0cd-3bff-4828-a768-5e3cb2e3053d',
+              to: inviteUser.email,
+              from: user.email,
+              subject: subject || html,
+              html: html,
+              substitutions: {
+                invite_url: 'https://startupcommunity.org/' + inviteUser.location_key + '%2Fwelcome%3Finvite_code%3D' + invitecode,
+                invite_code: invitecode,
+                invite_email: inviteUser.email,
+                invite_message: inviteUser.message,
+                invitor_image: user.avatar,
+                invitor_name: user.name
+              },
+            };
+            
+            return sgMail.send(msg);
           }
 
           // check to see if the email address already exists within the system
@@ -585,7 +571,7 @@ function handleInviteUser(req, res) {
                 cdb.update(existing, {where: {id: result.id}})
                   .then(response => {
                     console.log("User updated!");
-                    res.status(200).send({message: 'Nice!  <a target="_blank" href="https://startupcommunity.org/' + result.id + '">' + result.name + '</a> is a member of the community.'});
+                    res.status(200).send({message: 'Nice!  <a target="_blank" href="https://startupcommunity.org/' + result.slug + '">' + result.name + '</a> is a member of the community.'});
                   })
                   .catch(function (err) {
                     console.log('WARNING: ', err);
@@ -600,39 +586,13 @@ function handleInviteUser(req, res) {
                     if (result) {
                       console.log("Existing invite found!");
                       res.status(200).send({message: 'An invitation has already been sent to ' + inviteUser.email + '. We will send a reminder.'});
-
-                      var knowtifyClient = new knowtify.Knowtify(process.env.KNOWTIFY, false);
-
-                      // update client with id of discovered invite
-
-                      knowtifyClient.contacts.upsert({
-                          "contacts": [
-                            {
-                              "email": inviteUser.email,
-                              "data": {
-                                "invite_code": result.id
-                              }
-                            }
-                          ]
-                        },
-                        function (success) {
-                          console.log('Record updated');
-                          knowtifyClient.contacts.upsert({
-                              "event": "reminder",
-                              "contacts": [{
-                                "email": inviteUser.email
-                              }]
-                            },
-                            function (success) {
-                              console.log('Invitation reminder sent to ' + inviteUser.email);
-                            },
-                            function (error) {
-                              console.log('WARNING:', error);
-                            });
-                        },
-                        function (error) {
-                          console.log('WARNING:', error);
-                        });
+                      
+                      sendMessage(result.id, "Invitation reminder from " + user.name)
+                      .then(() => {
+                        console.log('Invitation reminder sent to ' + inviteUser.email);
+                      }).catch(err => {
+                        console.log('WARNING: ', err.toString());
+                      });
 
                     } else {
 
@@ -643,38 +603,20 @@ function handleInviteUser(req, res) {
                       idb.create(newUser)
                         .then(response => {
 
-                          var userkey = response.id; // hope their response format doesn't change :-/
-
-                          // send email with knowtify with unique link
-                          var knowtifyClient = new knowtify.Knowtify(process.env.KNOWTIFY, false);
-
-                          knowtifyClient.contacts.upsert({
-                              "event": "invitation",
-                              "contacts": [{
-                                "email": inviteUser.email,
-                                "data": {
-                                  "invite_community": inviteUser.location_name.split(',')[0],
-                                  "invite_url": inviteUser.location_key,
-                                  "invite_code": userkey,
-                                  "invite_message": inviteUser.message,
-                                  "invitor_name": user.name,
-                                  "invitor_email": user.email,
-                                  "invitor_image": user.avatar,
-                                  "invite_accepted": false
-                                }
-                              }]
-                            },
-                            function (success) {
-                              console.log('Invitation sent to ' + inviteUser.email + ' (' + userkey + ')');
-                              res.status(200).send({message: "Done! We've sent an invitation to " + inviteUser.email});
-                            },
-                            function (error) {
-                              console.log('WARNING: ', error);
-                              res.status(202).send({message: "Woah! Something went wrong. We're looking into it, but also try waiting a few minutes and give it another shot."});
-
+                          var invitecode = response.id;
+                          
+                          sendMessage(invitecode).then(() => {
+                            console.log('Invitation sent to ' + inviteUser.email + ' (' + invitecode + ')');
+                            res.status(200).send({message: "Done! We've sent an invitation to " + inviteUser.email});
+                            
+                          }).catch(err => {
+                            console.log('WARNING: ', err.toString())
+                            res.status(202).send({message: "Woah! Something went wrong. We're looking into it, but also try waiting a few minutes and give it another shot."});
+              
                               // rollback invitation
-                              idb.destroy({where: {id: userkey}})
-                            });
+                              idb.destroy({where: {id: invitecode}})
+                          });
+                         
                         })
                         .catch(function (err) {
                           console.log('WARNING: ', err);
