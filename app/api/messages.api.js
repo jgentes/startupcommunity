@@ -1,5 +1,4 @@
-var knowtify = require('knowtify-node'),
-  path = require('path'),
+var path = require('path'),
   {mdb, cdb} = require('../../db');
 
 var MessagesApi = function() {
