@@ -1,8 +1,7 @@
 const jwt = require('jsonwebtoken'),
     request = require('request').defaults({jar: true, followAllRedirects: true}), // required to maintain session
     jsdom = require('jsdom'),
-    {cdb} = require('../../db'),
-    knowtify = require('knowtify-node');
+    {cdb} = require('../../db');
 
 var NewsletterApi = function() {
     this.setupNewsletter = handleSetupNewsletter;

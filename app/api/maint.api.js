@@ -1,6 +1,5 @@
 var path = require('path'),
-  {db, cdb, idb, mdb, Sequelize, sequelize, Op} = require('../../db'),
-  knowtify = require('knowtify-node');
+  {db, cdb, idb, mdb, Sequelize, sequelize, Op} = require('../../db');
 
 var MaintApi = function() {
     this.maintenance = handleMaintenance;
