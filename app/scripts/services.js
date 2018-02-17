@@ -303,7 +303,7 @@ angular
                   if (cluster_key) params.cluster_key = cluster_key;
                   if (industry_keys.length) params.industry_keys = industry_keys;
                     
-                  return $http.get('/api/2.1/community/' + location_key + '/' + (community_key ? community_key + '/top' : 'top'), {params}
+                  return $http.get('/api/2.1/community/' + location_key + '/' + (community_key ? community_key + '/top' : 'top'), {params: params}
                   )
 
               },

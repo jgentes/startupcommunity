@@ -2,7 +2,6 @@ var Q = require('q'),
   url = require('url'),
   jwt = require('jsonwebtoken'),
   aws = require('aws-sdk'),
-  knowtify = require('knowtify-node'),
   communityApi = require(__dirname + '/community.api.js'),
   communityApis = new communityApi(),
   { cdb, sequelize, Op } = require('../../db');
