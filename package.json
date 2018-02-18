@@ -56,6 +56,6 @@
   },
   "scripts": {
     "test": "grunt test",
-    "heroku-postbuild": "bower install"
+    "postinstall": "bower install && grunt build"
   }
 }
