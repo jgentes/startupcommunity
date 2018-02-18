@@ -2,7 +2,6 @@ var Q = require('q'),
   url = require('url'),
   jwt = require('jsonwebtoken'),
   aws = require('aws-sdk'),
-  knowtify = require('knowtify-node'),
   communityApi = require(__dirname + '/community.api.js'),
   communityApis = new communityApi(),
   { cdb, sequelize, Op } = require('../../db');
@@ -227,7 +226,7 @@ function handleContactUser(req, res) {
         if (user) {
           var contacts = [];
             //knowtifyClient = new knowtify.Knowtify(process.env.KNOWTIFY, false);
-
+  
           for (var leader in leaders) {
 
             contacts.push({
@@ -245,7 +244,7 @@ function handleContactUser(req, res) {
               }
             })
           }
-
+/*
           // send notification to leaders
           knowtifyClient.contacts.upsert({
               "event": "contact_request",
@@ -285,7 +284,7 @@ function handleContactUser(req, res) {
               console.log(err);
               res.status(202).send({message: "Something went wrong."});
             }
-          );
+          );*/
         } else {
           console.warn("WARNING: user338");
           res.status(202).send({message: "Something went wrong."});

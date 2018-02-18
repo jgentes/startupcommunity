@@ -217,8 +217,6 @@ function NavigationController($scope, $auth, $state, $window, $location, $stateP
 
             // LOAD 3RD PARTY SERVICES
 
-            knowtify.push(['load_inbox', 'knowtify', {email: user.email}]);
-
             if ($window.Bugsnag) {
                 $window.Bugsnag.user = {
                     id: user.id,

@@ -11,7 +11,6 @@
         'services',
         'angulartics',
         'angulartics.google.analytics',
-        'knowtify',
         'ngFileUpload',
         'bm.bsTour',
         'angular-ladda',

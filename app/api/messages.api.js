@@ -53,7 +53,7 @@ function handleAddMessage(req, res) {
                     var user = response;
 
                     // send email with knowtify with unique link
-                    var knowtifyClient = new knowtify.Knowtify(process.env.KNOWTIFY, false);
+                    /*var knowtifyClient = new knowtify.Knowtify(process.env.KNOWTIFY, false);
 
                     knowtifyClient.contacts.upsert({
                             "event": notify.type,
@@ -74,7 +74,7 @@ function handleAddMessage(req, res) {
                         function (error) {
                             console.log('WARNING: messages73', error);
                         });
-
+*/
                 })
                 .catch(function(err){
                     console.log('User not found, no notification sent: ', notify.to.id);
