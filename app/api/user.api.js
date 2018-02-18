@@ -2,6 +2,7 @@ var Q = require('q'),
   url = require('url'),
   jwt = require('jsonwebtoken'),
   aws = require('aws-sdk'),
+  knowtify = require('knowtify-node'),
   communityApi = require(__dirname + '/community.api.js'),
   communityApis = new communityApi(),
   { cdb, sequelize, Op } = require('../../db');
@@ -224,8 +225,8 @@ function handleContactUser(req, res) {
       cdb.findById(user_key)
       .then(user => {
         if (user) {
-          var contacts = [],
-            knowtifyClient = new knowtify.Knowtify(process.env.KNOWTIFY, false);
+          var contacts = [];
+            //knowtifyClient = new knowtify.Knowtify(process.env.KNOWTIFY, false);
 
           for (var leader in leaders) {
 

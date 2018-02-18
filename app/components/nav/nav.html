@@ -44,9 +44,6 @@
                                 <button ladda="loginbtn" class="ladda-btn btn btn-success" ng-click="loginbtn = true; login.authenticate('linkedin');" style="font-size: 16px; color: #fff;">Log In</button>
                             </div>
                         </li>
-                        <li ng-if="global.user" id="knowtify">
-                            <a>Alerts</a>
-                        </li>
                         <li ng-if="global.user">
                             <a ui-sref="settings({ location_path: global.location.slug, community_path: '', tail_path: '' })">Settings</a>
                         </li>
