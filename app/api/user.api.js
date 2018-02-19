@@ -4,7 +4,10 @@ var Q = require('q'),
   aws = require('aws-sdk'),
   communityApi = require(__dirname + '/community.api.js'),
   communityApis = new communityApi(),
-  { cdb, sequelize, Op } = require('../../db');
+  { cdb, sequelize, Op } = require('../../db'),
+  sgMail = require('@sendgrid/mail');
+  
+sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 //require('request-debug')(request); // Very useful for debugging oauth and api req/res
 
@@ -224,67 +227,50 @@ function handleContactUser(req, res) {
       cdb.findById(user_key)
       .then(user => {
         if (user) {
-          var contacts = [];
-            //knowtifyClient = new knowtify.Knowtify(process.env.KNOWTIFY, false);
+          var contacts = [], substitutions;
   
-          for (var leader in leaders) {
+          for (var leader in leaders) contacts.push(leader.email);
+          
+          substitutions = {
+            "source_name": formdata.name,
+            "source_email": formdata.email,
+            "source_company": formdata.company,
+            "source_reason": formdata.reason,
+            "target_name": user.name,
+            "target_email": user.email,
+            "target_avatar": user.avatar
+          };
 
-            contacts.push({
-              "id": leader.id,
-              "name": leader.name,
-              "email": leader.email,
-              "data": {
-                "source_name": formdata.name,
-                "source_email": formdata.email,
-                "source_company": formdata.company,
-                "source_reason": formdata.reason,
-                "target_name": user.name,
-                "target_email": user.email,
-                "target_avatar": user.avatar
-              }
-            })
-          }
-/*
           // send notification to leaders
-          knowtifyClient.contacts.upsert({
-              "event": "contact_request",
-              "contacts": contacts
-            },
-            function (success) {
+          
+          const msg = {
+            templateId: 'e4099e1f-1479-4f2f-b6a0-0b1c758bab0c',
+            to: contacts,
+            from: 'james@startupcommunity.org',
+            subject: 'Connection request: ' + formdata.name + ' would like to connect with ' + user.name,
+            substitutions: substitutions
+          };
+          sgMail.send(msg)
+          .then(() => {
               console.log('Contact request sent!');
               res.status(200).end();
-
-              // send notification to requestor.. a user id is only required if I create the record with an associated id
-              knowtifyClient.contacts.upsert({
-                  "event": "contact_receipt",
-                  "contacts": [{
-                    "email": formdata.email,
-                    "data": {
-                      "source_name": formdata.name,
-                      "source_email": formdata.email,
-                      "source_company": formdata.company,
-                      "source_reason": formdata.reason,
-                      "target_name": user.name,
-                      "target_email": user.email,
-                      "target_avatar": user.avatar
-                    }
-                  }]
-                },
-                function (success) {
-                  console.log('Contact receipt sent to ' + formdata.name);
-                },
-                function (err) {
-                  console.warn('WARNING');
-                  console.log(err);
-                }
-              );
-            },
-            function (err) {
-              console.warn('WARNING');
-              console.log(err);
-              res.status(202).send({message: "Something went wrong."});
-            }
-          );*/
+              
+              // send notification to requestor..
+              const msg2 = {
+                templateId: '926e4faf-8ac4-4ff0-8160-9b8262503d84',
+                to: formdata.email,
+                from: 'james@startupcommunity.org',
+                subject: 'Connection request sent!',
+                substitutions: substitutions
+              };
+              sgMail.send(msg2)
+              .then(() => console.log('Contact receipt sent to ' + formdata.name))
+              .catch(err => console.log('WARNING: ', err.toString()));
+              
+          })
+          .catch(err => console.log('WARNING: ', err.toString()));
+          
+          
         } else {
           console.warn("WARNING: user338");
           res.status(202).send({message: "Something went wrong."});

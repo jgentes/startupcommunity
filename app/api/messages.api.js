@@ -1,5 +1,8 @@
 var path = require('path'),
-  {mdb, cdb} = require('../../db');
+  {mdb, cdb} = require('../../db'),
+  sgMail = require('@sendgrid/mail');
+  
+sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 var MessagesApi = function() {
         this.addMessage = handleAddMessage;
@@ -37,7 +40,7 @@ function handleAddMessage(req, res) {
     var to_notify = function(message) {
 
         console.log('sending notification');
-        // note: message.type triggers Knowtify event of 'question' or 'reply'
+        // note: message.type is 'question' or 'reply'
         message["link"] = 'https://startupcommunity.org/' +
             (message.type == 'question' ?
                     message.to.id :
@@ -51,30 +54,26 @@ function handleAddMessage(req, res) {
                 .then(response => {
 
                     var user = response;
+                    
+                    const substitutions = {
+                        "from_name": notify.from.name,
+                        "from_image": notify.from.avatar,
+                        "link": notify.link,
+                        "content": notify.content,
+                        "parent": notify.parent.content
+                    };
+                    
+                    const msg2 = {
+                        templateId: '1bb022a2-6b14-40d0-8c5d-1130176de2ed',
+                        to: user.email,
+                        from: 'james@startupcommunity.org',
+                        subject: 'Direct message from ' + notify.from.name,
+                        substitutions: substitutions
+                      };
+                      sgMail.send(msg2)
+                      .then(() => console.log('Message detail was sent to ' + user.name))
+                      .catch(err => console.log('WARNING: ', err.toString()));
 
-                    // send email with knowtify with unique link
-                    /*var knowtifyClient = new knowtify.Knowtify(process.env.KNOWTIFY, false);
-
-                    knowtifyClient.contacts.upsert({
-                            "event": notify.type,
-                            "contacts": [{
-                                "email": user.email,
-                                "data": {
-                                    "from_name": notify.from.name,
-                                    "from_image": notify.from.avatar,
-                                    "link": notify.link,
-                                    "content": notify.content,
-                                    "parent": notify.parent.content
-                                }
-                            }]
-                        },
-                        function (success) {
-                            console.log('Notification sent to ' + user.email);
-                        },
-                        function (error) {
-                            console.log('WARNING: messages73', error);
-                        });
-*/
                 })
                 .catch(function(err){
                     console.log('User not found, no notification sent: ', notify.to.id);
