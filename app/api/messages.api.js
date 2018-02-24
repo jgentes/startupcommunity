@@ -1,5 +1,6 @@
 var path = require('path'),
   {mdb, cdb} = require('../../db'),
+  fs = require('fs'),
   sgMail = require('@sendgrid/mail');
   
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
@@ -56,6 +57,7 @@ function handleAddMessage(req, res) {
                     var user = response;
                     
                     const substitutions = {
+                        "title_bar": 'New Mesage',
                         "from_name": notify.from.name,
                         "from_image": notify.from.avatar,
                         "link": notify.link,
@@ -64,11 +66,13 @@ function handleAddMessage(req, res) {
                     };
                     
                     const msg2 = {
-                        templateId: '1bb022a2-6b14-40d0-8c5d-1130176de2ed',
+                        templateId: '23ce076f-8f36-4791-8086-13fa11812152',
                         to: user.email,
                         from: 'james@startupcommunity.org',
                         subject: 'Direct message from ' + notify.from.name,
-                        substitutions: substitutions
+                        html: fs.readFileSync(__dirname + '/templates/direct_message.html', 'utf8'),
+                        substitutionWrappers: ['%','%'],
+                        substitutions
                       };
                       sgMail.send(msg2)
                       .then(() => console.log('Message detail was sent to ' + user.name))
