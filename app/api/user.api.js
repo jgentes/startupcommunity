@@ -2,6 +2,7 @@ var Q = require('q'),
   url = require('url'),
   jwt = require('jsonwebtoken'),
   aws = require('aws-sdk'),
+  fs = require('fs'),
   communityApi = require(__dirname + '/community.api.js'),
   communityApis = new communityApi(),
   { cdb, sequelize, Op } = require('../../db'),
@@ -232,6 +233,7 @@ function handleContactUser(req, res) {
           for (var leader in leaders) contacts.push(leader.email);
           
           substitutions = {
+            "title_bar": 'Connection Request',
             "source_name": formdata.name,
             "source_email": formdata.email,
             "source_company": formdata.company,
@@ -244,27 +246,33 @@ function handleContactUser(req, res) {
           // send notification to leaders
           
           const msg = {
-            templateId: 'e4099e1f-1479-4f2f-b6a0-0b1c758bab0c',
+            templateId: '23ce076f-8f36-4791-8086-13fa11812152',
             to: contacts,
             from: 'james@startupcommunity.org',
             subject: 'Connection request: ' + formdata.name + ' would like to connect with ' + user.name,
-            substitutions: substitutions
+            html: fs.readFileSync(__dirname + '/templates/connection_request.html', 'utf8'),
+            substitutionWrappers: ['%','%'],
+            substitutions
           };
           sgMail.send(msg)
           .then(() => {
-              console.log('Contact request sent!');
+              console.log('Connection request sent!');
               res.status(200).end();
+              
+              substitutions['title_bar'] = 'Connection Request Sent';
               
               // send notification to requestor..
               const msg2 = {
-                templateId: '926e4faf-8ac4-4ff0-8160-9b8262503d84',
+                templateId: '23ce076f-8f36-4791-8086-13fa11812152',
                 to: formdata.email,
                 from: 'james@startupcommunity.org',
                 subject: 'Connection request sent!',
-                substitutions: substitutions
+                html: fs.readFileSync(__dirname + '/templates/connection_receipt.html', 'utf8'),
+                substitutionWrappers: ['%','%'],
+                substitutions
               };
               sgMail.send(msg2)
-              .then(() => console.log('Contact receipt sent to ' + formdata.name))
+              .then(() => console.log('Connection receipt sent to ' + formdata.name))
               .catch(err => console.log('WARNING: ', err.toString()));
               
           })

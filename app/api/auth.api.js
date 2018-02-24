@@ -1,6 +1,7 @@
 var bcrypt = require('bcryptjs'),
   request = require('request'),
   jwt = require('jsonwebtoken'),
+  fs = require('fs'),
   crypto = require('crypto'),
   NewsletterApi = require(__dirname + '/newsletter.api.js'),
   newsletterApis = new NewsletterApi(),
@@ -232,17 +233,24 @@ function handleLinkedin(req, res) {
     grant_type: 'authorization_code'
   };
 
-  var accept_invite = function (invitee_email, invitee_name, invitor_email) {
+  var accept_invite = async function (invitee_email, invitee_name, invitor_email) {
     console.log('invite accepted: ', invitee_email);
 
     // send 'invite accepted' email to person who sent the invite
     
+    const html = fs.readFileSync(__dirname + '/templates/invitation_accepted.html', 'utf8');
+    
     const msg = {
-      templateId: '9a576524-4b67-43e5-9b86-49ff2f8ef970',
+      templateId: '23ce076f-8f36-4791-8086-13fa11812152',
       to: invitor_email,
       from: 'james@startupcommunity.org',
       subject: invitee_name + ' has accepted your invitation.',
-      html: '<strong>Congrats!</strong> ' + invitee_name + ' has accepted your invitation and is now part of the community.',
+      html,
+      substitutionWrappers: ['%','%'],
+      substitutions: {
+        'title_bar': 'Invitation Accepted',
+        'content': '<strong>Congrats!</strong> ' + invitee_name + ' has accepted your invitation and is now part of the community.'
+      }
     };
     sgMail.send(msg).catch(err => console.log('WARNING: ', err.toString()));
 /*
@@ -525,21 +533,26 @@ function handleInviteUser(req, res) {
             newsletterApis.addSubscriber(inviteUser.location_key, inviteUser.resources[u], inviteUser);
           }
           
-          var sendMessage = (invitecode, subject) => {
-            var html = user.name + ' invites you to join the' + inviteUser.location_name.split(',')[0] + ' Startup Community.';
+          var sendMessage = async (invitecode, subject) => {
+            var content = user.name + ' invites you to join the ' + inviteUser.location_name.split(',')[0] + ' Startup Community.';
+            const html = fs.readFileSync(__dirname + '/templates/invitation.html', 'utf8');
+
             const msg = {
-              templateId: '6b65d0cd-3bff-4828-a768-5e3cb2e3053d',
+              templateId: '23ce076f-8f36-4791-8086-13fa11812152',
               to: inviteUser.email,
               from: user.email,
-              subject: subject || html,
-              html: html,
+              subject: subject || content,
+              html,
+              substitutionWrappers: ['%','%'],
               substitutions: {
-                invite_url: 'https://startupcommunity.org/' + inviteUser.location_key + '%2Fwelcome%3Finvite_code%3D' + invitecode,
-                invite_code: invitecode,
-                invite_email: inviteUser.email,
-                invite_message: inviteUser.message,
-                invitor_image: user.avatar,
-                invitor_name: user.name
+                'title_bar': 'Invitation',
+                'invite_url': 'https://startupcommunity.org/' + inviteUser.location_key + '%2Fwelcome%3Finvite_code%3D' + invitecode,
+                'invite_code': invitecode,
+                'invite_email': inviteUser.email,
+                'invite_message': inviteUser.message,
+                'invitor_image': user.avatar,
+                'invitor_name': user.name,
+                'content': content
               },
             };
             
@@ -642,7 +655,7 @@ function handleInviteUser(req, res) {
   if (!req.user) {
     const where = {};
     //where['roles.leader.' + inviteUser.location_key] = {[Op.ne]:null};
-    cdb.findById('james').then(result => {
+    cdb.findOne({where: {slug: 'james'}}).then(result => {
         if (result) {
           console.log('Found leader to use for invite.');
           req.user = result.id; 
