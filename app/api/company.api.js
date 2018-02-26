@@ -173,36 +173,13 @@ function handleCompanySearch(req, res) {
      searchstring += ')';*/
   }
 
-  const processCompanies = companies => {
-    const rows = companies.rows ? companies.rows : companies;
-
-    if (rows.length) {
-
-      try {
-        rows.forEach(r => {
-          if (r.parents) r.parents = JSON.parse(r.parents);
-          if (r.communities) r.communities = JSON.parse(r.communities);
-          if (r.skills) r.skills = JSON.parse(r.skills);
-          if (r.resource_types) r.resource_types = JSON.parse(r.resource_types);
-          if (r.industries) r.industries = JSON.parse(r.industries);
-          if (companies.count) r.count = companies.count;
-        });
-      }
-      catch (error) {
-        console.warn('WARNING: user144 ', error);
-      }
-
-    }
-    res.send(rows);
-  }
-
   console.log('Pulling Companies: ', JSON.stringify(selector));
 
   if (query && query != '*') {
     //query runs without other parameters
-    sequelize.query('SELECT * FROM communities WHERE TYPE="company" AND MATCH (name, headline, summary, skills, description) AGAINST ("' + query + '" IN NATURAL LANGUAGE MODE) LIMIT ' + Number(offset) + ', ' + Number(limit), { model: cdb }).then(processCompanies);
+    sequelize.query('SELECT * FROM communities WHERE TYPE="company" AND MATCH (name, headline, summary, skills, description) AGAINST ("' + query + '" IN NATURAL LANGUAGE MODE) LIMIT ' + Number(offset) + ', ' + Number(limit), { model: cdb }).then(companies => res.send(companies.rows ? companies.rows : companies));
   }
-  else cdb.findAndCountAll({ where: selector, offset: Number(offset) || 0, limit: Number(limit) || 16 }).then(processCompanies)
+  else cdb.findAndCountAll({ where: selector, offset: Number(offset) || 0, limit: Number(limit) || 16 }).then(companies => res.send(companies.rows ? companies.rows : companies))
 }
 
 function handleGetLogoUrl(req, res) {
@@ -251,7 +228,6 @@ function handleAddCompany(req, res) {
           update = false;
 
         if (!addCompany.location_key) addCompany.location_key = addCompany.community_key;
-        if (user.communities) user.communities = JSON.parse(user.communities);
         if (user.communities.indexOf(addCompany.location_key) < 0) {
           res.status(202).send({ message: 'You must be a member of this community to add a company.' });
         }
@@ -365,7 +341,6 @@ function handleDeleteCompany(req, res) {
                     }
 
                     // remove from communities
-                    if (flush_value.communities) flush_value.communities = JSON.parse(flush_value.communities);
                     if (flush_value.communities.indexOf(params.company_key) > -1) {
                       var findex = flush_value.communities.indexOf(params.company_key);
                       flush_value.communities.splice(findex, 1);
@@ -473,7 +448,6 @@ var addRole = function(company_key, roles, location_key, user_key) {
 
           // add community
           if (!response.communities) response.communities = [];
-          else response.communities = JSON.parse(response.communities);
 
           if (response.communities.indexOf(company_key) < 0) {
             response.communities.push(company_key);

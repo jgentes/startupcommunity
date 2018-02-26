@@ -5,7 +5,7 @@ const
     dialect: 'mysql',
     operatorsAliases: false,
     query: {
-      raw: true
+      raw: false
     }
   }),
   cls = require('continuation-local-storage'),
@@ -15,6 +15,19 @@ const
   Op = Sequelize.Op;
 
 Sequelize.useCLS(cls.createNamespace('startupcommunity'));
+
+cdb.prototype.getArray = val => val ? JSON.parse(val) : val;
+cdb.prototype.setArray = maybeArray => !!(maybeArray && typeof maybeArray == 'object' && maybeArray instanceof Array) ? JSON.stringify(maybeArray) : maybeArray;
+
+// can't use simple object notation here, not sure why
+exports.sequelize = sequelize;
+exports.Sequelize = Sequelize;
+exports.cdb = cdb;
+exports.idb = idb;
+exports.mdb = mdb;
+exports.Op = Op;
+
+/* -------------- USE BELOW FOR TESTING ---------------------- */
 
 /* SENDGRID */
 /*
@@ -39,8 +52,12 @@ sgMail.send(msg);*/
   })
   
 });*/
-
-//cdb.findById(496).then(f => console.log(f));
+/*
+(async () => {
+  const f = await cdb.findAll({where: {id: 496}});
+  //cdb.update({name: f.name}, {where: {id: 496}})
+})()
+*/
 //db.findOne({where: {"linkedin.id": "yc-B7Uvuxf"}}).then(u => console.log(u));
 /*db.findAll({
   where: {roles: {"keys-rock": {[Op.ne]:null}}
@@ -118,9 +135,3 @@ cdb.findOne({where: {skills: {[Op.like]: '%energies%'}}}).then(u => console.log(
   console.log('DONE: ', three.length, query.length, done.length);
 };
 go()*/
-exports.sequelize = sequelize;
-exports.Sequelize = Sequelize;
-exports.cdb = cdb;
-exports.idb = idb;
-exports.mdb = mdb;
-exports.Op = Op;

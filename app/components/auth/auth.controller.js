@@ -38,7 +38,7 @@ function LoginController($auth, $scope, $state, $mixpanel, $stateParams, sweet) 
                 postLogin(response);
             })
             .catch(function(response) {
-                if (response.data && response.data.profile) {
+                if (response.data) {
                     $mixpanel.people.set({
                         "$name": response.data.firstName + ' ' + response.data.lastName,
                         "$email": response.data.emailAddress

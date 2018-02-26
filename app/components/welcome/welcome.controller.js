@@ -16,15 +16,15 @@ function WelcomeController($scope, $auth, $location, $q, $mixpanel, $stateParams
     this.submitted = false;
 
     var checkProfile = function() {
-        if (!user.profile["name"]) $scope.global.user.profile["name"] = user.linkedin.firstName + ' ' + user.linkedin.lastName;
-        if (!user.profile["email"]) $scope.global.user.profile["email"] = user.linkedin.emailAddress;
-        if (!user.profile["headline"]) $scope.global.user.profile["headline"] = user.linkedin.headline;
-        if (!user.profile["avatar"]) $scope.global.user.profile["avatar"] = user.linkedin.pictureUrl;
-        if (!user.profile["summary"]) $scope.global.user.profile["summary"] = user.linkedin.summary;
+        if (!user.name) $scope.global.user.name = user.linkedin.firstName + ' ' + user.linkedin.lastName;
+        if (!user.email) $scope.global.user.email = user.linkedin.emailAddress;
+        if (!user.headline) $scope.global.user.headline = user.linkedin.headline;
+        if (!user.avatar) $scope.global.user.avatar = user.linkedin.pictureUrl;
+        if (!user.summary) $scope.global.user.summary = user.linkedin.summary;
 
         if (user.roles) {
             if (!self.rolelist) self["rolelist"] = {};
-            for (role in user.roles) {
+            for (var role in user.roles) {
                 if (role !== 'leader') {
                     self.rolelist[role] = true;
                 }
@@ -90,7 +90,7 @@ function WelcomeController($scope, $auth, $location, $q, $mixpanel, $stateParams
                         self.alert = { type: 'danger', message: 'There was a problem: ' + String(response.data.message) };
                     } else {
                         $scope.global.user = response.data;
-                        $scope.global.user["key"] = response.data.slug;
+                        $scope.global.user.key = response.data.slug;
                         user = $scope.global.user;
                         self.quote = false;
 
@@ -115,7 +115,7 @@ function WelcomeController($scope, $auth, $location, $q, $mixpanel, $stateParams
 
     // if already authenticated, just move straight to roles
 
-    if (user && user.profile) {
+    if (user) {
         checkProfile();
         this.panel = 'roles';
     }
@@ -136,7 +136,7 @@ function WelcomeController($scope, $auth, $location, $q, $mixpanel, $stateParams
 
                     xhr.onreadystatechange = function(e) {
                         if ( 4 == this.readyState ) {
-                            $scope.global.user.profile["avatar"] = fileUrl;
+                            $scope.global.user.avatar = fileUrl;
                             d_completed.resolve(true);
                         }
                     };
@@ -191,7 +191,7 @@ function WelcomeController($scope, $auth, $location, $q, $mixpanel, $stateParams
             user["roles"] = {};
         }
 
-        for (role in self.rolelist) {
+        for (var role in self.rolelist) {
             // do not allow founder of location
             if (!((role == 'founder'))) {
 
@@ -203,7 +203,7 @@ function WelcomeController($scope, $auth, $location, $q, $mixpanel, $stateParams
         // allow user to remove roles
         var rolenames = ['founder', 'investor', 'team', 'mentor', 'provider'];
  
-        for (dRole in rolenames) {
+        for (var dRole in rolenames) {
 
             if (self.rolelist && !self.rolelist[rolenames[dRole]]) {
                 if (user.roles[rolenames[dRole]] && user.roles[rolenames[dRole]][$stateParams.location_path])
@@ -214,10 +214,10 @@ function WelcomeController($scope, $auth, $location, $q, $mixpanel, $stateParams
         }
 
         // add skills
-        user.profile["skills"] = self.skills;
+        user.skills = self.skills;
 
         // add parent industry
-        user.profile["parents"] = [self.selectedParent.toLowerCase()];
+        user.parents = [self.selectedParent.toLowerCase()];
 
         // update user profile
         user_service.updateProfile(user)

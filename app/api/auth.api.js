@@ -337,7 +337,6 @@ function handleLinkedin(req, res) {
         if (invite_profile && invite_profile.invite_communities) {
 
           if (!user_profile.communities) user_profile.communities = [];
-          else user_profile.communities = JSON.parse(user_profile.communities);
 
           for (var i in invite_profile.invite_communities) {
 
@@ -354,7 +353,7 @@ function handleLinkedin(req, res) {
       function userCheck(invite_profile) {
 
         // check to see if this linkedin account is already linked to an existing user
-        cdb.findOne({where: {"linkedin.id": profile.id}})
+        cdb.findOne({where: {"linkedin.id": profile.id}, raw: true})
           .then(result => {
 
             if (result) {
@@ -373,7 +372,7 @@ function handleLinkedin(req, res) {
               if (!result.email) result.email = profile.emailAddress;
               
               result = addCommunities(result, invite_profile);
-
+              
               cdb.update(result, {where: {id: result.id}})
                 .then(() => {
                   console.log("Profile updated: " + result.name);
@@ -426,10 +425,10 @@ function handleLinkedin(req, res) {
                     console.log('No existing user found!');
 
                     if (invite_profile) {
-
+                      console.log(invite_profile);
                       // note that we don't validate the invite email matches the linkedin email, so anyone can use the invite once.
 
-                      var new_invite_profile = JSON.parse(JSON.stringify(invite_profile)); // must copy object or variable change will affect original object
+                      var new_invite_profile = invite_profile; // must copy object or variable change will affect original object
 
                       // update the invite record with user details
 
@@ -521,7 +520,6 @@ function handleInviteUser(req, res) {
 
           var user = response;
           
-          if (user.communities) user.communities = JSON.parse(user.communities);
           if (user.communities.indexOf(inviteUser.location_key) < 0) {
             res.status(202).send({message: 'You must be a member of this community to invite someone.'});
           }
@@ -546,7 +544,7 @@ function handleInviteUser(req, res) {
               substitutionWrappers: ['%','%'],
               substitutions: {
                 'title_bar': 'Invitation',
-                'invite_url': 'https://startupcommunity.org/' + inviteUser.location_key + '%2Fwelcome%3Finvite_code%3D' + invitecode,
+                'invite_url': 'https://startupcommunity.org/' + inviteUser.location_key + '/welcome?invite_code=' + invitecode,
                 'invite_code': invitecode,
                 'invite_email': inviteUser.email,
                 'invite_message': inviteUser.message,
@@ -569,7 +567,6 @@ function handleInviteUser(req, res) {
                 var existing = result;
 
                 if (!existing.communities) existing.communities = [];
-                else existing.communities = JSON.parse(existing.communities);
 
                 for (var n in inviteUser.resources) {
                   if (existing.communities.indexOf(inviteUser.resources[n]) == -1) {
