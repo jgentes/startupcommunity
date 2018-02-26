@@ -228,30 +228,18 @@ angular
 
     .factory('community_service', function($http) {
           return {
-              parseJSON: function(response) {
-                var community = response.data;
-                if (community.parents) community.parents = JSON.parse(community.parents);
-                if (community.communities) community.communities = JSON.parse(community.communities);
-                if (community.skills) community.skills = JSON.parse(community.skills);
-                if (community.resource_types) community.resource_types = JSON.parse(community.resource_types);
-                if (community.industries) community.industries = JSON.parse(community.industries);
-                response.data = community;
-                return response;
-              },
               getCommunity: function(community, nocache) {
-                  return $http.get('/api/2.1/community/' + community + (nocache ? '?nocache=true' : ''))
-                  .then(this.parseJSON);
+                  return $http.get('/api/2.1/community/' + community + (nocache ? '?nocache=true' : ''));
               },
               getResources: function(location_key, resources, clusters) {
                   return $http.post('/api/2.3/resources', {
                       location_key: location_key,
                       resources: resources,
                       clusters: !!clusters
-                  }).then(this.parseJSON);
+                  });
               },
               getKey: function(key) {
-                  return $http.get('/api/2.1/key/' + key)
-                    .then(this.parseJSON);
+                  return $http.get('/api/2.1/key/' + key);
               },
               getTop: function(location_key, community_key, community) {
                 
@@ -322,7 +310,7 @@ angular
                           community: community,
                           location_key: location_key
                       }
-                  }).then(this.parseJSON);
+                  });
               },
               deleteCommunity: function(community, location_key, new_community_key) {
                   return $http.post('/api/2.1/community/delete', {

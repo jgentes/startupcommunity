@@ -135,12 +135,6 @@ function handleUserSearch(req, res) {
           }
 
           if (r.newsletter) delete r.newsletter;
-          
-          if (r.parents) r.parents = JSON.parse(r.parents);
-          if (r.communities) r.communities = JSON.parse(r.communities);
-          if (r.skills) r.skills = JSON.parse(r.skills);
-          if (r.resource_types) r.resource_types = JSON.parse(r.resource_types);
-          if (r.industries) r.industries = JSON.parse(r.industries);
           if (users.count) r.count = users.count;
         });
       } catch (error) {
@@ -174,12 +168,6 @@ function handleDirectSearch(req, res) {
             if (r.linkedin.emailAddress) delete r.linkedin.emailAddress;
             if (r.linkedin.access_token) delete r.linkedin.access_token;
           }
-          
-          if (r.parents) r.parents = JSON.parse(r.parents);
-          if (r.communities) r.communities = JSON.parse(r.communities);
-          if (r.skills) r.skills = JSON.parse(r.skills);
-          if (r.resource_types) r.resource_types = JSON.parse(r.resource_types);
-          if (r.industries) r.industries = JSON.parse(r.industries);
         });
 
       } catch (error) {
@@ -406,7 +394,6 @@ function handleRemoveCommunity(req, res) {
                 }
               }
             }
-            if (response.communities) response.communities = JSON.parse(response.communities);
             if (response.communities.indexOf(community.slug) > -1) {
               response.communities.splice(response.communities.indexOf(community.slug), 1);
             }
@@ -459,7 +446,6 @@ function handleRemoveRole(req, res) {
         }
 
         if (del) {
-          if (response.communities) response.communities = JSON.parse(response.communities);
           if (response.communities.indexOf(community_key) > -1) {
             response.communities.splice(response.communities.indexOf(community_key), 1);
           }
