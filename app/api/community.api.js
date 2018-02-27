@@ -109,12 +109,12 @@ async function handleGetCommunity(req, res) {
   console.log('handleGetCommunity PARAMS: ', req.params)
   
   // sorting function for results
-  const sortCommunities = (community, items) => {
+  const sortCommunities = items => {
     items.forEach(item => {
       if (item) {
-      console.log('ITEM: ', item.slug);
+      console.log('ITEM: ', item.slug, item.type);
         // sort communities for use in nav and child dashboard pages
-
+        
         switch (item.type) {
           case "location":
             if (!community.locations) community.locations = {};
@@ -153,7 +153,6 @@ async function handleGetCommunity(req, res) {
         community[item.id] = item;
       }
     });
-    return community;
   };
   
   var sendResponse = community => res.status(200).send(community);
@@ -162,8 +161,8 @@ async function handleGetCommunity(req, res) {
   
   if (!community_slug) return res.status(404).send({message: 'Please specify a community!'});
   
-  let community = await cdb.findOne({where: {"slug": community_slug}}).catch(err => console.warn("WARNING: ", err));
-    
+  let community = await cdb.findOne({where: {"slug": community_slug}, raw: true}).catch(err => console.warn("WARNING: ", err));
+  
   if (!community) {
     console.log('INFO: Community not found!');
     return res.status(404).send({message: 'Community not found.'});
@@ -189,18 +188,19 @@ async function handleGetCommunity(req, res) {
     console.log('Ubersearch: ', ubersearch);
 
     if (ubersearch) {
-      const searchResults = await cdb.findAll({
+      await cdb.findAll({
         where: {
           slug: {
             [Op.in]: ubersearch
           }
-        }
-      }).catch(err => console.warn("WARNING: ", err));
-      
-      community = sortCommunities(community, searchResults);
+        }, 
+        raw: true
+      })
+      .then(sortCommunities)
+      .catch(err => console.warn("WARNING: ", err));
     }
     
-    const allResults = await cdb.findAll({
+    await cdb.findAll({
       where: {
         [Op.and]: [{
           [Op.not]: {
@@ -216,10 +216,11 @@ async function handleGetCommunity(req, res) {
             {parents: {[Op.like]: '%"'+community_slug+'"%'}},  
           ]
         }]
-      }
-    }).catch(err => console.warn("WARNING: ", err));
-    
-    community = sortCommunities(community, allResults);
+      }, 
+      raw: true
+    })
+    .then(sortCommunities)
+    .catch(err => console.warn("WARNING: ", err));
     
     if (community.resources && community.resources.length) {
       community.resources = community.resources.sort(function (a, b) {
@@ -231,7 +232,7 @@ async function handleGetCommunity(req, res) {
 
     // get messages for users
     if (community.type == 'user') {
-      mdb.findAll({where: {'to': community.id}, limit: 100}).then(messages => {
+      mdb.findAll({where: {'to': community.id}, limit: 100, raw: true}).then(messages => {
         if (messages.length) {
 
           messages.sort(function (a, b) {
@@ -339,7 +340,7 @@ function handleGetResources(req, res) {
 
     console.log(searchstring);
 
-    cdb.findAll({where: selector}).then(result => {
+    cdb.findAll({where: selector, raw: true}).then(result => {
       if (result.length) {
 
         var newresponse = {};
@@ -364,7 +365,7 @@ function getMore(selector, bookmark, callback) {
     selector: selector,
     limit: 1000,
     bookmark: bookmark
-  }}).then(results => callback).catch(err => console.warn("WARNING: ", err));
+  }, raw: true}).then(results => callback).catch(err => console.warn("WARNING: ", err));
 }
 
 function handleGetTop(req, res) {
@@ -481,7 +482,8 @@ function handleGetTop(req, res) {
   var pullTop = function (cache) {
 
     cdb.findAll({
-      where: selector
+      where: selector,
+      raw: true
     }).then(result => {
       if (result.length) {
         
@@ -540,7 +542,8 @@ function handleGetTop(req, res) {
         if (search) selector[Op.and].push(search);
         
         cdb.findAll({
-          where: selector
+          where: selector,
+          raw: true
         }).then(result => {
           top_results.resources = {
               count: result.length,
@@ -672,7 +675,8 @@ function handleGetTop(req, res) {
 
             cdb.findAll({
               where: selector,
-              limit: 1000
+              limit: 1000,
+              raw: true
             }).then(result => {
               if (result.length) {
                 //todo bookmark is not a thing in mysql
@@ -716,7 +720,7 @@ function handleGetTop(req, res) {
 
     console.log('Updating settings for ' + settings.location_key + ' / ' + settings.community_key);
 
-    cdb.findById(req.user).then(response => {
+    cdb.findById(req.user, {raw: true}).then(response => {
       if (response) {
         var user = response;
 
@@ -726,7 +730,7 @@ function handleGetTop(req, res) {
 
           // update the community
 
-          cdb.findOne({where: {slug: settings.community_key}}).then(response => {
+          cdb.findOne({where: {slug: settings.community_key}, raw: true}).then(response => {
             if (response) {
               if (response.type !== 'location') { // use community_profiles
                 if (response.community_profiles === undefined) { // create community_profiles
@@ -775,7 +779,7 @@ function handleGetTop(req, res) {
 
     console.log('Editing community: ' + settings.community.name + ' in ' + settings.location_key);
 
-    cdb.findById(req.user).then(response => {
+    cdb.findById(req.user, {raw: true}).then(response => {
       if (response) {
         var user = response,
           leader = false;
@@ -794,7 +798,7 @@ function handleGetTop(req, res) {
 
           // check to see if the community exists
 
-          cdb.findOne({where: {slug: pathname}}).then(response => {
+          cdb.findOne({where: {slug: pathname}, raw: true}).then(response => {
             if (response) {
               // go to .catch if community doesn't exist (on .get rather than .search)
               // if community already exists and it's the same type as what's being created, we're good to add the community profile here
@@ -922,7 +926,7 @@ function handleGetTop(req, res) {
 
     console.log('Deleting community: ' + settings.community.name + ' in ' + settings.location_key);
 
-    cdb.findById(req.user).then(response => {
+    cdb.findById(req.user, {raw: true}).then(response => {
       if (response) {
         var user = response;
 
@@ -932,7 +936,7 @@ function handleGetTop(req, res) {
 
           // get the community
 
-          cdb.findOne({where: {slug: settings.community.slug}}).then(response => {
+          cdb.findOne({where: {slug: settings.community.slug}, raw: true}).then(response => {
             if (response) {
               // remove the location profile
 
@@ -1019,7 +1023,7 @@ function handleGetTop(req, res) {
 
   var update_user = function (user_key, role, community_key, location_key, callback) {
 
-    cdb.findById(user_key).then(response => {
+    cdb.findById(user_key, {raw: true}).then(response => {
       if (response) {
         // add role
 
@@ -1165,7 +1169,7 @@ function handleGetTop(req, res) {
     console.log('Pulling id: ' + req.params.id);
 
     function pullId() {
-      cdb.findById(req.params.id).then(result => {
+      cdb.findById(req.params.id, {raw: true}).then(result => {
         if (result) {
           return res.status(200).send(result);
         } else {
