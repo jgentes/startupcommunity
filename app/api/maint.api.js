@@ -62,7 +62,7 @@ function handleMaintenance(res, req) {
                 }
 
                 console.log('Job done!');
-                res.end();
+                return res.end();
 
                 if (data.body.next) {
                     startkey = startkey + limit;
@@ -70,7 +70,7 @@ function handleMaintenance(res, req) {
                     getList(startkey, userlist, limit);
                 } else {
                     console.log('Job done!');
-                    res.status(200).end();
+                    return res.status(200).end();
 
 
                 }

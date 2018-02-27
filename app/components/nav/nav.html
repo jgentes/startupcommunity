@@ -158,7 +158,7 @@
                     </li>
                 </ul>
                 <ul class="nav nav-second-level">
-                    <li ng-repeat="item in global.nav_top.parents | orderBy: 'item' : reverse">
+                    <li ng-repeat="item in global.nav_top.parents | orderBy: 'item.value' : reverse">
                         <a ui-sref="community.dashboard({location_path: (global.location.slug || global.user.home), community_path: item.label, tail_path: ''})" ng-class="{active: global.path.includes('/' + item.label)}" ng-click="cl_working = true">
                             <span>
                                 <i ng-class="'fa ' + global.industry_icons[item.label].icon"></i>

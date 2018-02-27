@@ -141,7 +141,7 @@ function handleUserSearch(req, res) {
         console.warn('WARNING: user144 ', error);
       }
     }
-    res.send(rows);
+    return res.send(rows);
   };
   
   console.log('Pulling Users: ', JSON.stringify(selector));
@@ -174,9 +174,9 @@ function handleDirectSearch(req, res) {
         console.warn('WARNING: user206', error);
       }
 
-      res.status(200).send(rows);
+      return res.status(200).send(rows);
     } else {
-      res.status(202).send({message: "Something went wrong."});
+      return res.status(202).send({message: "Something went wrong."});
     }
   });
 }
@@ -245,7 +245,7 @@ function handleContactUser(req, res) {
           sgMail.send(msg)
           .then(() => {
               console.log('Connection request sent!');
-              res.status(200).end();
+              return res.status(200).end();
               
               substitutions['title_bar'] = 'Connection Request Sent';
               
@@ -269,13 +269,13 @@ function handleContactUser(req, res) {
           
         } else {
           console.warn("WARNING: user338");
-          res.status(202).send({message: "Something went wrong."});
+          return res.status(202).send({message: "Something went wrong."});
         }
       })
           
     } else {
       console.warn("WARNING: COULD NOT FIND LEADER FOR THIS COMMUNITY");
-        res.status(202).send({message: "Sorry, we can't seem to find a leader for this community. We took note of your request and we'll look into this and get back to you via email ASAP."});
+        return res.status(202).send({message: "Sorry, we can't seem to find a leader for this community. We took note of your request and we'll look into this and get back to you via email ASAP."});
     }
   });
 }
@@ -296,10 +296,10 @@ function handleGetProfile(req, res) {
     if (user) {
       user["key"] = userid;
       user["token"] = jwt.sign(userid, process.env.SC_TOKEN_SECRET);
-      res.status(200).send(user);
+      return res.status(200).send(user);
     } else {
       console.warn("Problem pulling user, sending 400 response. ");
-      res.status(400).send({message: "Please try logging in again."});
+      return res.status(400).send({message: "Please try logging in again."});
     }
   });
 }
@@ -329,8 +329,8 @@ function handleGetProfileUrl(req, res) {
     var objectUrl = url.format(parsedUrl);
 
     if (!err) {
-      res.send({put: signedUrl, get: objectUrl});
-    } else res.status(204).send({message: "Something went wrong."});
+      return res.send({put: signedUrl, get: objectUrl});
+    } else return res.status(204).send({message: "Something went wrong."});
 
   });
 }
@@ -353,21 +353,21 @@ function handleUpdateProfile(req, res) {
         cdb.update(profile, {where: {id: userid}})
         .then(response => {
           if (response) {
-            res.status(200).send({token: jwt.sign(userid, process.env.SC_TOKEN_SECRET), user: profile});
+            return res.status(200).send({token: jwt.sign(userid, process.env.SC_TOKEN_SECRET), user: profile});
           } else {
             console.warn("WARNING: user457");
-            res.status(202).send({message: "Something went wrong."});
+            return res.status(202).send({message: "Something went wrong."});
           }
         })
         
       } else {
         console.warn("WARNING: user457");
-        res.status(202).send({message: "Something went wrong."});
+        return res.status(202).send({message: "Something went wrong."});
       }
     });
 
   } else {
-    res.status(400).send({message: 'You may only update your own user record.'});
+    return res.status(400).send({message: 'You may only update your own user record.'});
   }
 }
 
@@ -401,26 +401,26 @@ function handleRemoveCommunity(req, res) {
             .then(response => {
               if (response) {
                 console.log('Successfully removed community from user profile.');
-                res.status(201).send({message: 'Community removed.'});
+                return res.status(201).send({message: 'Community removed.'});
               } else {
                 console.warn("WARNING: ");
-                res.status(202).send({message: "Something went wrong."});
+                return res.status(202).send({message: "Something went wrong."});
               }
             });
 
           } else {
             console.warn("WARNING: ");
-            res.status(202).send({message: "Something went wrong."});
+            return res.status(202).send({message: "Something went wrong."});
           }
         });
           
       } else {
         console.warn('WARNING:  User does not have leader role in this community.');
-        res.status(202).send({message: 'You do not have leader privileges for this community.'});
+        return res.status(202).send({message: 'You do not have leader privileges for this community.'});
       }
     } else {
       console.warn("WARNING: ");
-      res.status(202).send({message: "Something went wrong."});
+      return res.status(202).send({message: "Something went wrong."});
     }
   });
 }
@@ -455,20 +455,20 @@ function handleRemoveRole(req, res) {
         .then(response => {
           if (response) {
             console.log('Successfully removed role from user profile.');
-            res.status(201).send({message: 'Role removed.'});
+            return res.status(201).send({message: 'Role removed.'});
           } else {
             console.warn("WARNING: ");
-            res.status(202).send({message: "Something went wrong."});
+            return res.status(202).send({message: "Something went wrong."});
           }
         });
 
       } else {
         console.warn('WARNING:  User does not have the ' + role + ' role for record ' + community_key + '.');
-        res.status(202).send({message: 'You do not have the ' + role + ' role for record ' + community_key + '.'});
+        return res.status(202).send({message: 'You do not have the ' + role + ' role for record ' + community_key + '.'});
       }
     } else {
       console.warn("WARNING: ");
-      res.status(202).send({message: "Something went wrong."});
+      return res.status(202).send({message: "Something went wrong."});
     }
   });
     
@@ -487,16 +487,16 @@ function handleFeedback(req, res) {
       cdb.update(response, {where: {id: userkey}})
       .then(response => {
         if (response) {
-          res.status(201).send({message: 'Profile updated.'});
+          return res.status(201).send({message: 'Profile updated.'});
         } else {
           console.warn('WARNING: user547');
-          res.status(202).send({message: "Something went wrong."});
+          return res.status(202).send({message: "Something went wrong."});
         }
       });
         
     } else {
       console.warn('WARNING: user553');
-      res.status(202).send({message: 'Something went wrong: ' });
+      return res.status(202).send({message: 'Something went wrong: ' });
     }
   });
 }
@@ -516,10 +516,10 @@ function handleRemoveProfile(req, res) {
       .then(result => {
         if (result) {
           console.log('User removed.');
-          res.status(200).send({message: 'User removed'});
+          return res.status(200).send({message: 'User removed'});
         } else {
           console.log("Remove FAIL:");
-          res.status(202).send({message: 'Something went wrong: '});
+          return res.status(202).send({message: 'Something went wrong: '});
         }
       });
     }

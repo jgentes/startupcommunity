@@ -105,7 +105,7 @@ function handleCreateAPIToken(req, res) {
    iat: moment().valueOf(),
    exp: moment().add(90, 'days').valueOf()
    };
-   res.status(201).send(jwt.encode(payload, process.env.API_TOKEN_SECRET));*/
+   return res.status(201).send(jwt.encode(payload, process.env.API_TOKEN_SECRET));*/
 
   cdb.findById(req.user)
     .then(response => {
@@ -128,7 +128,7 @@ function handleCreateAPIToken(req, res) {
     })
     .catch(function (err) {
       console.log("WARNING: ", err);
-      res.status(202).send({message: 'Something went wrong: ' + String(err)});
+      return res.status(202).send({message: 'Something went wrong: ' + String(err)});
     });
 
 }
@@ -158,7 +158,7 @@ function handleSignup(req, res) {
 
       if (result) {
         console.log('User already exists');
-        res.status(401).send({message: 'That email address is already registered to a user.'}); //username already exists
+        return res.status(401).send({message: 'That email address is already registered to a user.'}); //username already exists
       } else {
         console.log('Email is free for use');
         cdb.create(user)
@@ -167,17 +167,17 @@ function handleSignup(req, res) {
                   console.log("USER:");
                   console.log(user);
                   // TODO put token in user record
-                  res.send({token: handleCreateToken(req, u), user: u});
+                  return res.send({token: handleCreateToken(req, u), user: u});
                 } else {
                   console.warn("WARNING: Search couldn't find user after posting new user!");
-                  res.status(401).send({message: 'Something went wrong!'});
+                  return res.status(401).send({message: 'Something went wrong!'});
                 }
           });
       }
     })
     .catch(function (err) {
       console.warn("WARNING: auth222", err);
-      res.status(202).send({message: "Something went wrong."});
+      return res.status(202).send({message: "Something went wrong."});
     });
 }
 
@@ -197,7 +197,7 @@ function handleLogin(req, res) {
         var hash = user.password;
         if (bcrypt.compareSync(req.body.password, hash)) {
           // TODO put token in user record
-          res.send({token: handleCreateToken(req, user), user});
+          return res.send({token: handleCreateToken(req, user), user});
         } else {
           console.log("PASSWORDS DO NOT MATCH");
           return res.status(401).send({message: 'Wrong email and/or password'});
@@ -209,7 +209,7 @@ function handleLogin(req, res) {
     })
     .catch(function (err) {
       console.warn("WARNING: ", err);
-      res.status(202).send('Something went wrong: ' + String(err));
+      return res.status(202).send('Something went wrong: ' + String(err));
     });
 }
 
@@ -387,7 +387,7 @@ function handleLinkedin(req, res) {
 
               var newresponse = result;
               newresponse.token = handleCreateToken(req, result);
-              res.send(newresponse);
+              return res.send(newresponse);
 
             } else {
 
@@ -419,7 +419,7 @@ function handleLinkedin(req, res) {
 
                     var newresponse = result;
                     newresponse.token = handleCreateToken(req, result);
-                    res.send(newresponse);
+                    return res.send(newresponse);
 
                   } else {
                     console.log('No existing user found!');
@@ -454,7 +454,7 @@ function handleLinkedin(req, res) {
                             var newresponse = new_invite_profile;
                             new_invite_profile.token = handleCreateToken(req, new_invite_profile);
   
-                            res.send(newresponse);
+                            return res.send(newresponse);
   
                             accept_invite(invite_profile.email, new_invite_profile.name, invitor_email);                
                           }                      
@@ -464,7 +464,7 @@ function handleLinkedin(req, res) {
                         });
 
                     } else {
-                      res.status(401).send({
+                      return res.status(401).send({
                         profile: profile,
                         message: "We couldn't find " + profile.firstName + " " + profile.lastName + " with email address '" + profile.emailAddress + "' in our system. <br/><br/>Please <a href='/' target='_self'>click here to request an invitation</a>."
                       });
@@ -474,7 +474,7 @@ function handleLinkedin(req, res) {
                 })
                 .catch(function (err) {
                   console.warn("WARNING:", err);
-                  res.status(202).send({message: "Something went wrong."});
+                  return res.status(202).send({message: "Something went wrong."});
                 });
             }
           })
@@ -521,7 +521,7 @@ function handleInviteUser(req, res) {
           var user = response;
           
           if (user.communities.indexOf(inviteUser.location_key) < 0) {
-            res.status(202).send({message: 'You must be a member of this community to invite someone.'});
+            return res.status(202).send({message: 'You must be a member of this community to invite someone.'});
           }
 
           for (var u in inviteUser.resources) {
@@ -581,11 +581,11 @@ function handleInviteUser(req, res) {
                 cdb.update(existing, {where: {id: result.id}})
                   .then(response => {
                     console.log("User updated!");
-                    res.status(200).send({message: 'Nice!  <a target="_blank" href="https://startupcommunity.org/' + result.slug + '">' + result.name + '</a> is a member of the community.'});
+                    return res.status(200).send({message: 'Nice!  <a target="_blank" href="https://startupcommunity.org/' + result.slug + '">' + result.name + '</a> is a member of the community.'});
                   })
                   .catch(function (err) {
                     console.log('WARNING: ', err);
-                    res.status(202).send({message: "Something went wrong."});
+                    return res.status(202).send({message: "Something went wrong."});
                   });
 
               } else {
@@ -595,7 +595,7 @@ function handleInviteUser(req, res) {
 
                     if (result) {
                       console.log("Existing invite found!");
-                      res.status(200).send({message: 'An invitation has already been sent to ' + inviteUser.email + '. We will send a reminder.'});
+                      return res.status(200).send({message: 'An invitation has already been sent to ' + inviteUser.email + '. We will send a reminder.'});
                       
                       sendMessage(result.id, "Invitation reminder from " + user.name)
                       .then(() => {
@@ -617,11 +617,11 @@ function handleInviteUser(req, res) {
                           
                           sendMessage(invitecode).then(() => {
                             console.log('Invitation sent to ' + inviteUser.email + ' (' + invitecode + ')');
-                            res.status(200).send({message: "Done! We've sent an invitation to " + inviteUser.email});
+                            return res.status(200).send({message: "Done! We've sent an invitation to " + inviteUser.email});
                             
                           }).catch(err => {
                             console.log('WARNING: ', err.toString())
-                            res.status(202).send({message: "Woah! Something went wrong. We're looking into it, but also try waiting a few minutes and give it another shot."});
+                            return res.status(202).send({message: "Woah! Something went wrong. We're looking into it, but also try waiting a few minutes and give it another shot."});
               
                               // rollback invitation
                               idb.destroy({where: {id: invitecode}})
@@ -630,13 +630,13 @@ function handleInviteUser(req, res) {
                         })
                         .catch(function (err) {
                           console.log('WARNING: ', err);
-                          res.status(202).send({message: "Woah! Something went wrong.  We're looking into it, but also try waiting a few minutes and give it another shot."});
+                          return res.status(202).send({message: "Woah! Something went wrong.  We're looking into it, but also try waiting a few minutes and give it another shot."});
                         })
                     }
                   })
                   .catch(function (err) {
                     console.log('WARNING: ', err);
-                    res.status(202).send({message: "Woah! Something went wrong. We're looking into it, but also try waiting a few minutes and give it another shot."});
+                    return res.status(202).send({message: "Woah! Something went wrong. We're looking into it, but also try waiting a few minutes and give it another shot."});
                   })
               }
             });
@@ -659,7 +659,7 @@ function handleInviteUser(req, res) {
           goInvite();
         } else {
           console.warn('WARNING: No leader found! Need one for user invitations to be sent.');
-          res.status(202).send({message: "There doesn't appear to be a leader for this community! We've been alerted and will look into it."});
+          return res.status(202).send({message: "There doesn't appear to be a leader for this community! We've been alerted and will look into it."});
         }
       })
   } else goInvite();

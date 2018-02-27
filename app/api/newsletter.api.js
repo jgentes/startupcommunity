@@ -64,7 +64,7 @@ function addSubscriber(location_key, resource_key, user_profile) {
                     })
                 }
             }
-            res.status(201).end();
+            return res.status(201).end();
         });
 }
 /*
@@ -114,7 +114,7 @@ function handleSetupNewsletter(req,res) {
         }
         catch (e) {
             console.log('WARNING: ', e);
-            res.status(204).send({ message: 'Something went wrong.'})
+            return res.status(204).send({ message: 'Something went wrong.'})
         }
     };
 
@@ -129,12 +129,12 @@ function handleSetupNewsletter(req,res) {
 
                 } else {
                     console.warn('WARNING:  User not found.');
-                    res.status(204).send({ message: 'Your user record was not found.'})
+                    return res.status(204).send({ message: 'Your user record was not found.'})
                 }
 
             })
             .catch(function(err){
-                res.status(204).send({ message: err});
+                return res.status(204).send({ message: err});
                 console.warn("WARNING: ", err);
             });
     };
@@ -170,7 +170,7 @@ function handleSetupNewsletter(req,res) {
 
             if (error) {
                 console.log('WARNING: ', error);
-                res.status(204).send({ message: error });
+                return res.status(204).send({ message: error });
             } else {
 
                 try {
@@ -190,7 +190,7 @@ function handleSetupNewsletter(req,res) {
                 catch (e) {
                     console.log('WARNING: ', e);
                     console.log(body);
-                    res.status(204).send({ message: e })
+                    return res.status(204).send({ message: e })
                 }
 
             }
@@ -212,7 +212,7 @@ function handleSetupNewsletter(req,res) {
 
             if (error) {
                 console.log('WARNING: ', error);
-                res.status(204).send({ message: error });
+                return res.status(204).send({ message: error });
             } else {
 
                 try {
@@ -228,7 +228,7 @@ function handleSetupNewsletter(req,res) {
                 catch (e) {
                     console.log('WARNING: ', e);
                     console.log(body);
-                    res.status(204).send({ message: e })
+                    return res.status(204).send({ message: e })
                 }
             }
         })
@@ -246,7 +246,7 @@ function handleSetupNewsletter(req,res) {
         }, function (error, response, body) {
             if (error) {
                 console.log('WARNING: ', error);
-                res.status(204).send({ message: error });
+                return res.status(204).send({ message: error });
             } else callback();
         })
     };
@@ -321,7 +321,7 @@ function handleSetupNewsletter(req,res) {
             console.log(body);
             if (error) {
                 console.log('WARNING: ', error);
-                res.status(204).send({ message: error });
+                return res.status(204).send({ message: error });
             }
         })
     };*/
@@ -338,7 +338,7 @@ function handleSetupNewsletter(req,res) {
         }, function (error, response, body) {
             if (error) {
                 console.log('WARNING: ', error);
-                res.status(204).send({ message: error });
+                return res.status(204).send({ message: error });
             }
         })
     };
@@ -419,7 +419,7 @@ function handleSetupNewsletter(req,res) {
                     }
                 }
                 
-                if (!stop) res.status(201).end();
+                if (!stop) return res.status(201).end();
                 
             });
         })
@@ -462,9 +462,9 @@ function handleUpdateNewsletter(req,res) {
 
             if (error) {
                 console.log('WARNING: ', error);
-                res.status(204).send({ message: error });
+                return res.status(204).send({ message: error });
             } else {
-                res.status(201).end();
+                return res.status(201).end();
             }
         })
     };
@@ -485,7 +485,7 @@ function handleUpdateNewsletter(req,res) {
     }
     catch (e) {
         console.log('WARNING: ', e);
-        res.status(204).send({ message: 'Something went wrong.'})
+        return res.status(204).send({ message: 'Something went wrong.'})
     }
 }
 
@@ -528,7 +528,7 @@ function handleSyncMembers(req,res) {
                             }, function (error, response, body) {
                                 if (error) {
                                     console.log('WARNING: ', error);
-                                    res.status(204).send({ message: error });
+                                    return res.status(204).send({ message: error });
                                 }
                             });
 
@@ -542,10 +542,10 @@ function handleSyncMembers(req,res) {
                         search(startKey);
                     } else {
                         console.log(resource + ' done!');
-                        res.status(201).end();
+                        return res.status(201).end();
                     }
 */
-              res.status(201).end();
+              return res.status(201).end();
                 });
         };
 

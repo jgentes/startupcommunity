@@ -165,7 +165,7 @@ function WelcomeController($scope, $auth, $location, $q, $mixpanel, $stateParams
     };
 
     this.changeRole = function(selection) {
-
+        console.log(selection, user.roles)
         if (!user.roles[selection]) {
             self.rolelist[selection] = !self.rolelist[selection];
         } else if (Object.slugs(user.roles[selection]).length == 1 && Object.slugs(user.roles[selection]).indexOf($stateParams.location_path) == 0) {

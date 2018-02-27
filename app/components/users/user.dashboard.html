@@ -21,7 +21,7 @@
                     words:1}}</span><span ng-show="profile.user.summary">, <span ng-bind-html="profile.user.headline"></span></span>
                 </h3>
                 <a ng-click="profile.ask()" class="btn btn-success btn-sm">Ask me a question</a>
-                <a ng-click="profile.contact(global.community.slug)" title="Contact {{item.name}}" class="btn btn-sm btn-info" style="margin-left: 5px;">Contact me
+                <a ng-click="profile.contact(global.community.slug)" class="btn btn-sm btn-info" style="margin-left: 5px;">Contact me
                 </a>
                 <div style="padding-top:10px; overflow: hidden; height: 50px; margin-bottom: -10px;">
                     <button ng-repeat="skill in profile.user.skills" style="margin-right: 5px;" ladda="btnworking" class="ladda-btn btn btn-outline btn-default btn-xs" ng-click="btnworking = true; nav.search(skill);">
@@ -63,7 +63,7 @@
 
             <div role="tabpanel" class="tab-pane" id="profile">
 
-                <div ng-include="'components/users/user.dashboard.html'"></div>
+                <div ng-include="'components/users/user.dashboard.profile.html'"></div>
 
             </div>
 
