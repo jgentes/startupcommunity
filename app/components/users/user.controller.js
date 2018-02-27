@@ -383,7 +383,7 @@ function InviteUserController($scope, $mixpanel, user_service, community_service
 
     if (user && user.roles && !jQuery.isEmptyObject(user.roles.leader)) {
 
-        for (l in user.roles.leader) leader.push(l);
+        for (var l in user.roles.leader) leader.push(l);
 
         community_service.getResources(undefined, leader, true)
             .then(function(response) {
@@ -401,7 +401,7 @@ function InviteUserController($scope, $mixpanel, user_service, community_service
 
             var emails = self.form.email_value.split(/\s*,\s*/),
                 message = self.form.message_value || "",
-                resources = self.form.resources ? Object.slugs(self.form.resources) : undefined,
+                resources = self.form.resources ? Object.keys(self.form.resources) : undefined,
                 formdata;
 
             if (self.form.$valid || emails.length > 0) {

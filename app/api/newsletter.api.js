@@ -26,7 +26,7 @@ function formatSearchResults(items) {
 function addSubscriber(location_key, resource_key, user_profile) {
 
     console.log('getting leaders: ' + location_key + ' / ' + resource_key);
-  cdb.findAll({where: {'roles.leader': resource_key, type: 'user'}})
+  cdb.findAll({where: {'roles.leader': resource_key, type: 'user'}, raw: true})
     .then(data => {
             for (var x in data) {
 
@@ -120,7 +120,7 @@ function handleSetupNewsletter(req,res) {
 
     getUser = function(callback) {
 
-        cdb.findById(req.user)
+        cdb.findById(req.user, {raw: true})
             .then(response => {
 
                 if (response) {
@@ -266,7 +266,7 @@ function handleSetupNewsletter(req,res) {
             search = function (startKey) {
 
                 var searchstring = resource + " AND " + location_key;
-              cdb.find({where: {type: 'user', '$text': 'communities: (' + searchstring + ')'}, skip: Number(startkey) || 0})
+              cdb.find({where: {type: 'user', '$text': 'communities: (' + searchstring + ')'}, skip: Number(startkey) || 0, raw: true})
                 .then(function(data){
                   data = formatFindResults(data);
 
@@ -508,7 +508,7 @@ function handleSyncMembers(req,res) {
 
             var searchstring = resource + " AND " + location_key;
 
-          cdb.find({selector: {type: 'user', '$text': 'communities: (' + searchstring + ')'}, skip: Number(offset) || 0})
+          cdb.find({selector: {type: 'user', '$text': 'communities: (' + searchstring + ')'}, skip: Number(offset) || 0, raw: true})
             .then(function(data){
               data = formatFindResults(data);
 

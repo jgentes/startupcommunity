@@ -51,7 +51,7 @@ function handleAddMessage(req, res) {
         if (!message.parent) message.parent = { content: "" };
 
         var go = function(notify) {
-            cdb.findById(notify.to.id)
+            cdb.findById(notify.to.id, {raw: true})
                 .then(response => {
 
                     var user = response;
