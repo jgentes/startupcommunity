@@ -15,9 +15,9 @@ function handleSearchStartups(req, res) {
             if (error || body.error) {
                 console.warn('WARNING: AngelList API ERROR');
                 console.log(error);
-                res.status(202).send({ message: 'Something went wrong: ' + error || body.error});
+                return res.status(202).send({ message: 'Something went wrong: ' + error || body.error});
             } else if (!body.status || body.status === 200) {
-                res.status(200).send(body);
+                return res.status(200).send(body);
             }
         });
 }
@@ -29,7 +29,7 @@ function handleGetStartups(req, res) {
             if (error) {
                 console.log('AngelList API ERROR');
                 console.log(error);
-                res.status(202).send({ message: 'Something went wrong: ' + error});
+                return res.status(202).send({ message: 'Something went wrong: ' + error});
             } else if (!body.status || body.status === 200) {
                 var results = JSON.parse(body),
                     newresponse = [],
@@ -40,7 +40,7 @@ function handleGetStartups(req, res) {
                         newresponse.push(results.startups[s]);
                     }
                 }
-                res.status(200).send(newresponse);
+                return res.status(200).send(newresponse);
             }
         });
 }
@@ -51,11 +51,11 @@ function handleGetStartup(req, res) {
         function(error, response, body) {
 
             if (!body.status || body.status === 200) {
-                res.status(200).send(JSON.parse(body));
+                return res.status(200).send(JSON.parse(body));
             } else {
                 console.error('Error: ' + body.message);
                 console.log(body);
-                res.status(202).send({ message: 'Something went wrong: ' + err});
+                return res.status(202).send({ message: 'Something went wrong: ' + err});
             }
         });
 

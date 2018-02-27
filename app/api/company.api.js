@@ -179,7 +179,7 @@ function handleCompanySearch(req, res) {
     //query runs without other parameters
     sequelize.query('SELECT * FROM communities WHERE TYPE="company" AND MATCH (name, headline, summary, skills, description) AGAINST ("' + query + '" IN NATURAL LANGUAGE MODE) LIMIT ' + Number(offset) + ', ' + Number(limit), { model: cdb }).then(companies => res.send(companies.rows ? companies.rows : companies));
   }
-  else cdb.findAndCountAll({ where: selector, offset: Number(offset) || 0, limit: Number(limit) || 16 }).then(companies => res.send(companies.rows ? companies.rows : companies))
+  else cdb.findAndCountAll({ where: selector, offset: Number(offset) || 0, limit: Number(limit) || 16 }).then(companies => res.send(companies.rows ? companies.rows : companies));
 }
 
 function handleGetLogoUrl(req, res) {
@@ -207,9 +207,9 @@ function handleGetLogoUrl(req, res) {
     var objectUrl = url.format(parsedUrl);
 
     if (!err) {
-      res.send({ put: signedUrl, get: objectUrl });
+      return res.send({ put: signedUrl, get: objectUrl });
     }
-    else res.status(400).send({ message: "Something went wrong." });
+    else return res.status(400).send({ message: "Something went wrong." });
 
   });
 }
@@ -229,7 +229,7 @@ function handleAddCompany(req, res) {
 
         if (!addCompany.location_key) addCompany.location_key = addCompany.community_key;
         if (user.communities.indexOf(addCompany.location_key) < 0) {
-          res.status(202).send({ message: 'You must be a member of this community to add a company.' });
+          return res.status(202).send({ message: 'You must be a member of this community to add a company.' });
         }
         else if (!addCompany.community_key || (user.roles && user.roles.leader && user.roles.leader[addCompany.community_key] && user.roles.leader[addCompany.community_key].indexOf(addCompany.location_key) < 0)) {
           console.warn("No community specified, or user is not a leader in community: " + addCompany.community_key + " for location: " + addCompany.location_key + "!");
@@ -240,7 +240,7 @@ function handleAddCompany(req, res) {
 
         var post = function() {
           companyPost(company, addCompany.role, addCompany.location_key, req.user, addCompany.slug, update, function(result) {
-            res.status(result.status).send(result.data);
+            return res.status(result.status).send(result.data);
           });
         };
 
@@ -251,7 +251,7 @@ function handleAddCompany(req, res) {
           post();
         }
         else if (addCompany.slug && (addCompany.slug !== addCompany.url)) {
-          res.status(202).send({ message: 'Sorry, a url path cannot be changed.' })
+          return res.status(202).send({ message: 'Sorry, a url path cannot be changed.' })
         }
         else {
           update = true;
@@ -261,14 +261,14 @@ function handleAddCompany(req, res) {
         /*
          } else {
          console.warn("User is not a member of community: " + addCompany.community_key + " and location: " + addCompany.location_key + "!");
-         res.status(400).send({ message: 'You must be a member of this community and/or a leader of this resource to add a company to it.' });
+         return res.status(400).send({ message: 'You must be a member of this community and/or a leader of this resource to add a company to it.' });
          }
          */
 
       }
       else {
         console.warn("WARNING: ");
-        res.status(400).send({ message: "Something went wrong. We have been alerted and will take a look and get back to you." });
+        return res.status(400).send({ message: "Something went wrong. We have been alerted and will take a look and get back to you." });
       }
     })
 
@@ -276,7 +276,7 @@ function handleAddCompany(req, res) {
 
   if (!addCompany) {
     console.warn("No company specified!");
-    res.status(400).send({ message: 'Some information was missing.' });
+    return res.status(400).send({ message: 'Some information was missing.' });
   }
   else {
     console.log('Adding company ' + addCompany.name + ' to ' + addCompany.location_key + ' / ' + addCompany.community_key);
@@ -285,7 +285,7 @@ function handleAddCompany(req, res) {
     if (!addCompany.slug) {
       cdb.findOne({ where: { slug: addCompany.url } }).then(result => {
         if (result) {
-          res.status(400).send({ message: 'That url is already in use. Please specify a different url path.' })
+          return res.status(400).send({ message: 'That url is already in use. Please specify a different url path.' })
         }
         else {
           go();
@@ -350,11 +350,11 @@ function handleDeleteCompany(req, res) {
                     cdb.update(flush_value, { where: { id: flush_key } }).then(response => {
                       if (response) {
                         console.log('Deleted ' + params.company_key + ' from ' + flush_key);
-                        res.status(204).send({ message: 'Company deleted!' });
+                        return res.status(204).send({ message: 'Company deleted!' });
                       }
                       else {
                         console.log("WARNING: ");
-                        res.status(202).send({ message: "The company has been deleted, but something else went wrong." });
+                        return res.status(202).send({ message: "The company has been deleted, but something else went wrong." });
                       }
                     })
                   }
@@ -362,25 +362,25 @@ function handleDeleteCompany(req, res) {
                 }
                 else {
                   console.log("WARNING: ");
-                  res.status(202).send({ message: "The company has been deleted, but something else went wrong." });
+                  return res.status(202).send({ message: "The company has been deleted, but something else went wrong." });
                 }
               })
             }
             else {
               console.warn('WARNING: community620');
-              res.status(202).send({ message: "Something went wrong." });
+              return res.status(202).send({ message: "Something went wrong." });
             }
           })
 
         }
         else {
           console.warn('Not a company!');
-          res.status(202).send({ message: "This isn't a company!" });
+          return res.status(202).send({ message: "This isn't a company!" });
         }
       }
       else {
         console.warn('No company found!');
-        res.status(202).send({ message: "No company found!" });
+        return res.status(202).send({ message: "No company found!" });
       }
     })
 
@@ -416,14 +416,14 @@ function handleDeleteCompany(req, res) {
             }
           }
 
-          if (!del) res.status(202).send({ message: "Only a founder or team member of this company may delete it." });
+          if (!del) return res.status(202).send({ message: "Only a founder or team member of this company may delete it." });
         }
       })
 
   }
   catch (err) {
     console.warn("WARNING: ", err);
-    res.status(202).send({ message: err });
+    return res.status(202).send({ message: err });
   }
 }
 
@@ -488,10 +488,10 @@ function handleCheckUrl(req, res) {
   }).then(result => {
     if (result) {
       if (result.length) {
-        res.status(202).send({ message: result[0].id });
+        return res.status(202).send({ message: result[0].id });
       }
       else {
-        res.status(404).send();
+        return res.status(404).send();
       }
     }
     else {

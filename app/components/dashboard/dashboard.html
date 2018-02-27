@@ -115,7 +115,7 @@
                     <div class="panel-body" ng-repeat="item in global.top.skills.entries | limitTo: 5">
                         <div class="row">
                             <div class="col-xs-10 forum-heading">
-                                <a ng-click="nav.search(item)"><h4 style="font-weight: 200;">{{item.value}}</h4>
+                                <a ng-click="nav.search(item.value)"><h4 style="font-weight: 200;">{{item.value}}</h4>
                                     <uib-progressbar ng-attr-value="(item.count/global.top.skills.entries[0].count)*100" type="info" class="progress-small full" style="margin-top: 7px;"></uib-progressbar>
                                 </a>
                             </div>

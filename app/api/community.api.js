@@ -160,13 +160,13 @@ async function handleGetCommunity(req, res) {
 
   var community_slug = req.params.community && req.params.community.replace(/\s+/g, '-');
   
-  if (!community_slug) res.status(404).send({message: 'Please specify a community!'});
+  if (!community_slug) return res.status(404).send({message: 'Please specify a community!'});
   
   let community = await cdb.findOne({where: {"slug": community_slug}}).catch(err => console.warn("WARNING: ", err));
     
   if (!community) {
     console.log('INFO: Community not found!');
-    res.status(404).send({message: 'Community not found.'});
+    return res.status(404).send({message: 'Community not found.'});
   } else {
     console.log('Pulling community for ' + community.name);
     
@@ -348,14 +348,14 @@ function handleGetResources(req, res) {
           newresponse[r.id] = r;
         });
 
-        res.status(200).send(newresponse);
+        return res.status(200).send(newresponse);
           
       } else {
         console.log('INFO: No Resources found!');
-        res.status(400).send({message: 'No resources found!'});
+        return res.status(400).send({message: 'No resources found!'});
        }
     }).catch(err => console.warn("WARNING: ", err));
-  } else res.status(404).send({message: 'Please specify a location!'});
+  } else return res.status(404).send({message: 'Please specify a location!'});
 }
 
 function getMore(selector, bookmark, callback) {
@@ -663,7 +663,7 @@ function handleGetTop(req, res) {
 
               top_results.id = community_key;
 
-              if (!cache) res.status(200).send(top_results);
+              if (!cache) return res.status(200).send(top_results);
 
              /* mc.set(selector.toString(), JSON.stringify(top_results), function (err, val) {
                 if (err) console.warn('WARNING: Memcache error: ', err)
@@ -686,13 +686,13 @@ function handleGetTop(req, res) {
 
               } else {
                 console.log("WARNING: ");
-                res.status(202).send({message: 'Something went wrong: '});
+                return res.status(202).send({message: 'Something went wrong: '});
               }
             }).catch(err => console.warn("WARNING: ", err))
         }).catch(err => console.warn("WARNING: ", err))
       } else {
         console.log("WARNING: ");
-        res.status(202).send({message: 'Something went wrong: '});
+        return res.status(202).send({message: 'Something went wrong: '});
       }
     }).catch(err => console.warn("WARNING: ", err))
 
@@ -700,7 +700,7 @@ function handleGetTop(req, res) {
   pullTop(false);
   /*mc.get(selector.toString(), function (err, value) {
     if (value) {
-      res.status(200).send(value);
+      return res.status(200).send(value);
       pullTop(true);
     } else {
       pullTop(false);
@@ -746,20 +746,20 @@ function handleGetTop(req, res) {
 
               cdb.update(response, {where: {slug: settings.community_key}}).then(finalres => {
                 if (finalres) {
-                  res.status(201).send({message: 'Community settings updated.'});
+                  return res.status(201).send({message: 'Community settings updated.'});
                 } else {
                   console.warn('WARNING: community466 ');
-                  res.status(202).send({message: "Something went wrong."});
+                  return res.status(202).send({message: "Something went wrong."});
                 }
               });
             } else {
               console.warn('WARNING: community472 ');
-              res.status(202).send({message: "Something went wrong."});
+              return res.status(202).send({message: "Something went wrong."});
             }
           });
         } else {
           console.warn("User is not a leader in location: " + settings.location_key + " and community: " + settings.community_key + "!");
-          res.status(202).send({message: 'Sorry, you must be a Leader in this community to change these settings.'});
+          return res.status(202).send({message: 'Sorry, you must be a Leader in this community to change these settings.'});
         }
       } else {
         console.warn("WARNING: community493");
@@ -833,14 +833,14 @@ function handleGetTop(req, res) {
                     if (finalres) {
                       update_user(req.user, 'leader', pathname, settings.location_key, function (good) {
                         if (good) {
-                          res.status(201).send({message: 'Industry cluster created!'});
+                          return res.status(201).send({message: 'Industry cluster created!'});
                         } else {
-                          res.status(202).send({message: "Something went wrong."});
+                          return res.status(202).send({message: "Something went wrong."});
                         }
                       })
                     } else {
                       console.warn('WARNING: community533 ');
-                      res.status(202).send({message: "Something went wrong."});
+                      return res.status(202).send({message: "Something went wrong."});
                     }
                   })
 
@@ -869,18 +869,18 @@ function handleGetTop(req, res) {
 
                     cdb.create(response).then(finalres => {
                       if (finalres) {
-                        res.status(201).send({message: 'Successfully updated!'});
+                        return res.status(201).send({message: 'Successfully updated!'});
                       } else {
                         console.warn('WARNING: ');
-                        res.status(202).send({message: "Something went wrong."});
+                        return res.status(202).send({message: "Something went wrong."});
                       }
                     })
 
-                  } else res.status(202).send({message: settings.community.name + ' already exists in this location. Please change the name or delete the other one first.'});
+                  } else return res.status(202).send({message: settings.community.name + ' already exists in this location. Please change the name or delete the other one first.'});
                 }
 
               } else {
-                res.status(202).send({message: 'That name is taken. Try changing the name.'});
+                return res.status(202).send({message: 'That name is taken. Try changing the name.'});
               }
             } else {
               // no existing path, go ahead and create
@@ -893,13 +893,13 @@ function handleGetTop(req, res) {
                 if (finalres) {
                   update_user(req.user, 'leader', pathname, settings.location_key, function (good) {
                     if (good) {
-                      res.status(201).send({message: 'Industry cluster created!'});
-                    } else res.status(202).send({message: "Something went wrong."});
+                      return res.status(201).send({message: 'Industry cluster created!'});
+                    } else return res.status(202).send({message: "Something went wrong."});
 
                   })
                 } else {
                   console.warn('WARNING: community565 ');
-                  res.status(202).send({message: "Something went wrong."});
+                  return res.status(202).send({message: "Something went wrong."});
                 }
               })
             }
@@ -907,7 +907,7 @@ function handleGetTop(req, res) {
 
         } else {
           console.warn("User is not a member of community: " + settings.community.slug + " and location: " + settings.location_key + "!");
-          res.status(202).send({message: 'You must be a member of this community to add to it.'});
+          return res.status(202).send({message: 'You must be a member of this community to add to it.'});
         }
       } else {
         console.warn("WARNING: community611");
@@ -962,9 +962,9 @@ function handleGetTop(req, res) {
                     update_user(req.user, 'delete', settings.community.slug, settings.location_key, function (good) {
                       if (good) {
                         console.log('Community deleted.');
-                        res.status(204).send({message: settings.community.type[0].toUpperCase() + settings.community.type.slice(1) + ' deleted!'});
+                        return res.status(204).send({message: settings.community.type[0].toUpperCase() + settings.community.type.slice(1) + ' deleted!'});
                       } else {
-                        res.status(202).send({message: "Something went wrong."});
+                        return res.status(202).send({message: "Something went wrong."});
                       }
                     })
                   }
@@ -979,7 +979,7 @@ function handleGetTop(req, res) {
                       wrapup();
                     } else {
                       console.warn('WARNING: community620');
-                      res.status(202).send({message: "Something went wrong."});
+                      return res.status(202).send({message: "Something went wrong."});
                     }
                   })
 
@@ -992,24 +992,24 @@ function handleGetTop(req, res) {
                       wrapup();
                     } else {
                       console.warn('WARNING: community629 ');
-                      res.status(202).send({message: "Something went wrong."});
+                      return res.status(202).send({message: "Something went wrong."});
                     }
                   })
                 }
 
               } else {
                 console.log('WARNING: Cannot delete community');
-                res.status(202).send({message: "You can't delete " + settings.community.name + " for some reason, but we've been notified and will look into it."});
+                return res.status(202).send({message: "You can't delete " + settings.community.name + " for some reason, but we've been notified and will look into it."});
               }
             } else {
               console.warn('WARNING: community644');
-              res.status(202).send({message: "Something went wrong."});
+              return res.status(202).send({message: "Something went wrong."});
             }
           })
 
         } else {
           console.warn("User is not a member of community: " + settings.community.slug + " and location: " + settings.location_key + "!");
-          res.status(202).send({message: 'You must be a leader of this community to delete it.'});
+          return res.status(202).send({message: 'You must be a leader of this community to delete it.'});
         }
       } else {
         console.warn("WARNING: community699");
@@ -1167,10 +1167,10 @@ function handleGetTop(req, res) {
     function pullId() {
       cdb.findById(req.params.id).then(result => {
         if (result) {
-          res.status(200).send(result);
+          return res.status(200).send(result);
         } else {
           console.warn('WARNING: Id not found!');
-          res.status(202).send({message: 'Id not found.'});
+          return res.status(202).send({message: 'Id not found.'});
         }
       }).catch(err => console.warn("WARNING: ", err));
     }

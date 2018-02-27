@@ -115,11 +115,11 @@ function handleAddMessage(req, res) {
             .then(function (result) {
                 addMessage["key"] = addMessage.parent.slug;
                 to_notify(addMessage);
-                res.status(200).send(message);
+                return res.status(200).send(message);
             })
             .catch(function (err) {
                 console.error("WARNING: ", err);
-                res.status(202).send({message: "Woah! Something went wrong, but we've been notified and will take care of it."});
+                return res.status(202).send({message: "Woah! Something went wrong, but we've been notified and will take care of it."});
             })
 
     } else {
@@ -127,11 +127,11 @@ function handleAddMessage(req, res) {
         mdb.create(message)
             .then(function (response) {
                 to_notify(addMessage);
-                res.status(200).send(message);
+                return res.status(200).send(message);
             })
             .catch(function (err) {
                 console.error("WARNING: ", err);
-                res.status(202).send({message: "Woah! Something went wrong, but we've been notified and will take care of it."});
+                return res.status(202).send({message: "Woah! Something went wrong, but we've been notified and will take care of it."});
             });
    /* }*/
 
