@@ -492,8 +492,8 @@ function handleGetTop(req, res) {
 
         // create array of items
         result.forEach(r => {
-          if (r.industries) industries = industries.concat(r.industries);
-          if (r.parents) parents = parents.concat(r.parents);
+          if (r.industries) industries = industries.concat(JSON.parse(r.industries));
+          if (r.parents) parents = parents.concat(JSON.parse(r.parents));
         });
 
         industries = _.countBy(industries);
@@ -573,10 +573,10 @@ function handleGetTop(req, res) {
               var parents = [];
               
               result.forEach(r => {
-                if (r.skills) skills = skills.concat(r.skills);
-                if (r.parents) parents = parents.concat(r.parents);
+                if (r.skills) skills = skills.concat(JSON.parse(r.skills));
+                if (r.parents) parents = parents.concat(JSON.parse(r.parents));
               });
-
+              
               skills = _.countBy(skills);
               parents = _.countBy(parents);
               
