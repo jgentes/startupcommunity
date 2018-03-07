@@ -262,9 +262,9 @@ function UserProfileController($scope, $stateParams, $http, $uibModal, $mixpanel
                 $stateParams.location_path;
 
         if (!$stateParams.noreload) {
-            community_service.getCommunity(userkey, $stateParams.profile ? true : false)
+            community_service.getCommunity(userkey)
                 .then(function (response) {
-                    self.user = response.data;
+                    self.user = response;
                 });
         } else self.user = $scope.global.community;
 
@@ -323,7 +323,6 @@ function UserProfileController($scope, $stateParams, $http, $uibModal, $mixpanel
                         self.working = false;
                         if (!$scope.global.community.newmessages) $scope.global.community.newmessages = {};
                         $scope.global.community.newmessages[response.data.slug] = response.data;
-                        $http.get('/api/2.1/community/' + self.user.slug); // refresh outdated cache
                     }
 
                     $mixpanel.track('Asked Question');
@@ -362,7 +361,6 @@ function UserProfileController($scope, $stateParams, $http, $uibModal, $mixpanel
                         if ($scope.global.community.messages[parent.slug]) {
                             $scope.global.community.messages[parent.slug].replies.push(response.data);
                         } else $scope.global.community.newmessages[parent.slug].replies.push(response.data);
-                        $http.get('/api/2.1/community/' + self.user.slug); // refresh outdated cache
                     }
 
                     $mixpanel.track('Replied to Question');

@@ -53,27 +53,12 @@ function NavigationController($scope, $auth, $state, $window, $location, $stateP
 
   var getCommunity = function() {
 
-    var pullCommunity = function(comm_path) {
+    var pullCommunity = async function(comm_path) {
 
-      community_service.getCommunity(comm_path)
-        .then(function(response) {
-          $scope.global.community = response.data;
-          getLocation();
-        })
-        .catch(function(response) {
-          if (response.status == 404) {
-            $state.go('404');
-          }
-          else {
-            sweet.show({
-              title: "Sorry, something went wrong.",
-              text: "Here's what we know: " + response.data.message,
-              type: "error"
-            }, function() {
-              $state.reload();
-            })
-          }
-        })
+      var comm_response = await community_service.getCommunity(comm_path);
+      
+      $scope.global.community = comm_response;
+      getLocation();
     };
 
     var next = function() {
@@ -113,7 +98,7 @@ function NavigationController($scope, $auth, $state, $window, $location, $stateP
 
   };
 
-  var getLocation = function() {
+  var getLocation = async function() {
 
     nav_community = $scope.global.community;
 
@@ -124,11 +109,10 @@ function NavigationController($scope, $auth, $state, $window, $location, $stateP
         getNavTop();
       }
       else
-        community_service.getCommunity(nav_community.home)
-        .then(function(response) {
-          $scope.global.location = response.data;
-          getNavTop();
-        })
+        var loc_response = await community_service.getCommunity(nav_community.home);
+        
+        $scope.global.location = loc_response;
+        getNavTop();
 
     }
     else if ($scope.global && $scope.global.location && $scope.global.location.slug == $stateParams.location_path) {
@@ -138,11 +122,10 @@ function NavigationController($scope, $auth, $state, $window, $location, $stateP
     else
     if ($stateParams.location_path !== nav_community.slug) {
 
-      community_service.getCommunity($stateParams.location_path)
-        .then(function(response) {
-          $scope.global.location = response.data;
-          getNavTop();
-        });
+      var path_response = await community_service.getCommunity($stateParams.location_path);
+      
+      $scope.global.location = path_response;
+      getNavTop();
     }
     else {
       $scope.global.location = nav_community;
@@ -151,7 +134,7 @@ function NavigationController($scope, $auth, $state, $window, $location, $stateP
 
   };
 
-  var getNavTop = function() {
+  var getNavTop = async function() {
 
     // check if we already have correct navigation
     if ($scope.global && $scope.global.nav_top && $scope.global.nav_top.slug == $stateParams.location_path)
@@ -163,24 +146,23 @@ function NavigationController($scope, $auth, $state, $window, $location, $stateP
         nav_community.home :
         $scope.global.location.slug;
 
-      community_service.getTop(true_loc)
-        .then(function(response) {
-          $scope.global.nav_top = response.data;
-          getCommunityTop();
-        })
+      var response = await community_service.getTop(true_loc)
+      
+      $scope.global.nav_top = response;
+      getCommunityTop();
     }
 
   };
 
-  var getCommunityTop = function() {
+  var getCommunityTop = async function() {
     if (!nav_community.type) errorLogService('getCommunityTop166: ', nav_community);
     if (nav_community && nav_community.slug && $scope.global.location && $scope.global.location.slug && (nav_community.slug !== $scope.global.location.slug && ((nav_community.type == 'location') || (nav_community.resource) || (nav_community.type == 'cluster')))) {
 
-      community_service.getTop($scope.global.location.slug, nav_community.slug, nav_community)
-        .then(function(response) {
-          $scope.global.top = response.data;
-          loadNav();
-        })
+      var response = await community_service.getTop($scope.global.location.slug, nav_community.slug, nav_community);
+      
+      console.log('top: ', response);
+      $scope.global.top = response;
+      loadNav();
     }
     else {
       $scope.global.top = $scope.global.nav_top;
@@ -473,11 +455,6 @@ function NavigationController($scope, $auth, $state, $window, $location, $stateP
             }
             else {
               sweet.show("Success!", ruser.name + " has been removed.", "success");
-              // refresh cache
-              community_service.getCommunity($scope.global.community.slug, true)
-                .then(function(response) {
-                  $window.location.href = $window.location.href;
-                });
             }
           })
       });
@@ -870,7 +847,7 @@ function CommunityController($scope, $uibModalInstance, $mixpanel, sweet, edit_c
       if (thiscommunity.slug && (thiscommunity.slug !== newCommunity.url)) rename = true; // determine if this is a rename operation (not currently used)
 
       community_service.editCommunity(newCommunity, loc_key)
-        .then(function(response) {
+        .then(async function(response) {
           self.working = false;
 
           if (response.status !== 201) {
@@ -884,27 +861,17 @@ function CommunityController($scope, $uibModalInstance, $mixpanel, sweet, edit_c
           else {
             if (rename) community_service.deleteCommunity(newCommunity, loc_key, newCommunity.url);
 
-            // refresh outdated cache
-
-            community_service.getCommunity(loc_key, true)
-              .then(function(response) {
-                $scope.global.location = response.data;
+            var key_response = await community_service.getCommunity(loc_key);
+            $scope.global.location = key_response;
+              
+              sweet.show({
+                title: "Successfully" + (self.update ? " updated!" : " created!"),
+                type: "success",
+                closeOnConfirm: true
+              }, function() {
+                $scope.global.nav_top = {};
+                $window.location.href = '/' + loc_key + '/' + newCommunity.url;
               });
-
-            community_service.getTop(loc_key)
-              .then(function(response) {
-
-                sweet.show({
-                  title: "Successfully" + (self.update ? " updated!" : " created!"),
-                  type: "success",
-                  closeOnConfirm: true
-                }, function() {
-                  $scope.global.nav_top = {};
-                  $window.location.href = '/' + loc_key + '/' + newCommunity.url;
-                });
-
-              }); // clear cache
-
 
             user_service.getProfile()
               .then(function(response) {
@@ -945,7 +912,7 @@ function CommunityController($scope, $uibModalInstance, $mixpanel, sweet, edit_c
     }, function() {
 
       community_service.deleteCommunity(community, loc_key)
-        .then(function(response) {
+        .then(async function(response) {
           self.deleting = false;
 
           if (response.status !== 204) {
@@ -958,19 +925,18 @@ function CommunityController($scope, $uibModalInstance, $mixpanel, sweet, edit_c
           }
           else {
 
-            community_service.getTop(loc_key)
-              .then(function(response) {
-                $scope.global.nav_top = response.data;
+            var top_response = await community_service.getTop(loc_key);
+            
+            $scope.global.nav_top = top_response;
 
-                sweet.show({
-                  title: "Deleted!",
-                  text: "The " + $scope.global.community.name + " community is gone.",
-                  type: "success",
-                  closeOnConfirm: true
-                }, function() {
-                  $window.location.href = '/' + loc_key + '/settings';
-                });
-              });
+            sweet.show({
+              title: "Deleted!",
+              text: "The " + $scope.global.community.name + " community is gone.",
+              type: "success",
+              closeOnConfirm: true
+            }, function() {
+              $window.location.href = '/' + loc_key + '/settings';
+            });
           }
         });
     });

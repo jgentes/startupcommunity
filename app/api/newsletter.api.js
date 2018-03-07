@@ -30,7 +30,7 @@ function addSubscriber(location_key, resource_key, user_profile) {
     .then(data => {
             for (var x in data) {
 
-                var profile = x;
+                var profile = data[x];
 
                 if (profile.newsletter && profile.newsletter.lists && profile.newsletter.lists[resource_key]) {
 

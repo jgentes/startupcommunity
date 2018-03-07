@@ -6,7 +6,8 @@ var path = require('path'),
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 var MessagesApi = function() {
-        this.addMessage = handleAddMessage;
+    this.addMessage = handleAddMessage;
+    this.getMessages = handleGetMessages;
 };
 
 var schema = {
@@ -135,6 +136,24 @@ function handleAddMessage(req, res) {
             });
    /* }*/
 
+}
+
+function handleGetMessages(req, res) {
+    // always use ensureAuth before this (to acquire req.user)
+    // this call could be 'included' with user db finds, but it's infrequent so worth separating for now
+    var userId = req.body.params;
+    
+    if (!userId) return res.status(404).send({ message: 'Please specify a userId!' });
+    
+    mdb.findAll({ where: { 'to': userId }, limit: 100, raw: true })
+    .then(messages => {
+      if (messages.length) {
+        messages.sort(function(a, b) {
+          return a.value.published < b.value.published;
+        });
+      }
+      return res.send(messages);
+  }).catch(err => console.warn("WARNING: ", err));
 }
 
 module.exports = MessagesApi;
