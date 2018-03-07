@@ -1,67 +1,67 @@
-var memjs = require('memjs'),
-  mc = memjs.Client.create(),
-  path = require('path'),
-  _ = require(path.join(__dirname, '../scripts/lodash40.js')),
-  {sequelize, cdb, mdb, Op} = require('../../db');
-  
+var path = require('path'),
+  { sequelize, cdb, mdb, Op } = require('../../db');
+
 //var util = require('util'); //for util.inspect on request
 
 //require('request-debug')(request); // Very useful for debugging oauth and api req/res
 
-var CommunityApi = function () {
+var CommunityApi = function() {
   this.getCommunity = handleGetCommunity;
+  this.getNeighbors = handleGetNeighbors;
   this.getResources = handleGetResources;
+  this.getTeam = handleGetTeam;
   this.setCommunity = handleSetCommunity;
   this.editCommunity = handleEditCommunity;
   this.deleteCommunity = handleDeleteCommunity;
   this.getId = handleGetId;
-  this.getTop = handleGetTop;
+  this.getCompanies = handleGetCompanies;
+  this.getPeople = handleGetPeople;
   this.convert_state = handleConvert_state;
 };
 
-var handleConvert_state = function (name, to) {
+var handleConvert_state = function(name, to) {
   name = name.toUpperCase();
   var states = [
-    {'name': 'Alabama', 'abbrev': 'AL'}, {'name': 'Alaska', 'abbrev': 'AK'}, {
+    { 'name': 'Alabama', 'abbrev': 'AL' }, { 'name': 'Alaska', 'abbrev': 'AK' }, {
       'name': 'Arizona',
       'abbrev': 'AZ'
-    }, {'name': 'Arkansas', 'abbrev': 'AR'}, {'name': 'California', 'abbrev': 'CA'},
-    {'name': 'Colorado', 'abbrev': 'CO'}, {'name': 'Connecticut', 'abbrev': 'CT'}, {
+    }, { 'name': 'Arkansas', 'abbrev': 'AR' }, { 'name': 'California', 'abbrev': 'CA' },
+    { 'name': 'Colorado', 'abbrev': 'CO' }, { 'name': 'Connecticut', 'abbrev': 'CT' }, {
       'name': 'Delaware',
       'abbrev': 'DE'
-    }, {'name': 'Florida', 'abbrev': 'FL'}, {'name': 'Georgia', 'abbrev': 'GA'},
-    {'name': 'Hawaii', 'abbrev': 'HI'}, {'name': 'Idaho', 'abbrev': 'ID'}, {
+    }, { 'name': 'Florida', 'abbrev': 'FL' }, { 'name': 'Georgia', 'abbrev': 'GA' },
+    { 'name': 'Hawaii', 'abbrev': 'HI' }, { 'name': 'Idaho', 'abbrev': 'ID' }, {
       'name': 'Illinois',
       'abbrev': 'IL'
-    }, {'name': 'Indiana', 'abbrev': 'IN'}, {'name': 'Iowa', 'abbrev': 'IA'},
-    {'name': 'Kansas', 'abbrev': 'KS'}, {'name': 'Kentucky', 'abbrev': 'KY'}, {
+    }, { 'name': 'Indiana', 'abbrev': 'IN' }, { 'name': 'Iowa', 'abbrev': 'IA' },
+    { 'name': 'Kansas', 'abbrev': 'KS' }, { 'name': 'Kentucky', 'abbrev': 'KY' }, {
       'name': 'Louisiana',
       'abbrev': 'LA'
-    }, {'name': 'Maine', 'abbrev': 'ME'}, {'name': 'Maryland', 'abbrev': 'MD'},
-    {'name': 'Massachusetts', 'abbrev': 'MA'}, {'name': 'Michigan', 'abbrev': 'MI'}, {
+    }, { 'name': 'Maine', 'abbrev': 'ME' }, { 'name': 'Maryland', 'abbrev': 'MD' },
+    { 'name': 'Massachusetts', 'abbrev': 'MA' }, { 'name': 'Michigan', 'abbrev': 'MI' }, {
       'name': 'Minnesota',
       'abbrev': 'MN'
-    }, {'name': 'Mississippi', 'abbrev': 'MS'}, {'name': 'Missouri', 'abbrev': 'MO'},
-    {'name': 'Montana', 'abbrev': 'MT'}, {'name': 'Nebraska', 'abbrev': 'NE'}, {
+    }, { 'name': 'Mississippi', 'abbrev': 'MS' }, { 'name': 'Missouri', 'abbrev': 'MO' },
+    { 'name': 'Montana', 'abbrev': 'MT' }, { 'name': 'Nebraska', 'abbrev': 'NE' }, {
       'name': 'Nevada',
       'abbrev': 'NV'
-    }, {'name': 'New Hampshire', 'abbrev': 'NH'}, {'name': 'New Jersey', 'abbrev': 'NJ'},
-    {'name': 'New Mexico', 'abbrev': 'NM'}, {'name': 'New York', 'abbrev': 'NY'}, {
+    }, { 'name': 'New Hampshire', 'abbrev': 'NH' }, { 'name': 'New Jersey', 'abbrev': 'NJ' },
+    { 'name': 'New Mexico', 'abbrev': 'NM' }, { 'name': 'New York', 'abbrev': 'NY' }, {
       'name': 'North Carolina',
       'abbrev': 'NC'
-    }, {'name': 'North Dakota', 'abbrev': 'ND'}, {'name': 'Ohio', 'abbrev': 'OH'},
-    {'name': 'Oklahoma', 'abbrev': 'OK'}, {'name': 'Oregon', 'abbrev': 'OR'}, {
+    }, { 'name': 'North Dakota', 'abbrev': 'ND' }, { 'name': 'Ohio', 'abbrev': 'OH' },
+    { 'name': 'Oklahoma', 'abbrev': 'OK' }, { 'name': 'Oregon', 'abbrev': 'OR' }, {
       'name': 'Pennsylvania',
       'abbrev': 'PA'
-    }, {'name': 'Rhode Island', 'abbrev': 'RI'}, {'name': 'South Carolina', 'abbrev': 'SC'},
-    {'name': 'South Dakota', 'abbrev': 'SD'}, {'name': 'Tennessee', 'abbrev': 'TN'}, {
+    }, { 'name': 'Rhode Island', 'abbrev': 'RI' }, { 'name': 'South Carolina', 'abbrev': 'SC' },
+    { 'name': 'South Dakota', 'abbrev': 'SD' }, { 'name': 'Tennessee', 'abbrev': 'TN' }, {
       'name': 'Texas',
       'abbrev': 'TX'
-    }, {'name': 'Utah', 'abbrev': 'UT'}, {'name': 'Vermont', 'abbrev': 'VT'},
-    {'name': 'Virginia', 'abbrev': 'VA'}, {'name': 'Washington', 'abbrev': 'WA'}, {
+    }, { 'name': 'Utah', 'abbrev': 'UT' }, { 'name': 'Vermont', 'abbrev': 'VT' },
+    { 'name': 'Virginia', 'abbrev': 'VA' }, { 'name': 'Washington', 'abbrev': 'WA' }, {
       'name': 'West Virginia',
       'abbrev': 'WV'
-    }, {'name': 'Wisconsin', 'abbrev': 'WI'}, {'name': 'Wyoming', 'abbrev': 'WY'}
+    }, { 'name': 'Wisconsin', 'abbrev': 'WI' }, { 'name': 'Wyoming', 'abbrev': 'WY' }
   ];
   var returnthis = false;
   for (var i = 0; i < states.length; i++) {
@@ -70,7 +70,8 @@ var handleConvert_state = function (name, to) {
         returnthis = states[i].name;
         break;
       }
-    } else if (to == 'abbrev') {
+    }
+    else if (to == 'abbrev') {
       if (states[i].name.toUpperCase() == name) {
         returnthis = states[i].abbrev;
         break;
@@ -82,7 +83,7 @@ var handleConvert_state = function (name, to) {
 
 
 var schema = {
-  community: function (community, location_key) {
+  community: function(community, location_key) {
 
     var community_profiles = {};
     community_profiles[location_key] = {
@@ -105,215 +106,164 @@ var schema = {
   }
 };
 
-async function handleGetCommunity(req, res) {
-  console.log('handleGetCommunity PARAMS: ', req.params)
-  
-  // sorting function for results
-  const sortCommunities = items => {
-    items.forEach(item => {
-      if (item) {
-      console.log('ITEM: ', item.slug, item.type);
-        // sort communities for use in nav and child dashboard pages
-        
-        switch (item.type) {
-          case "location":
-            if (!community.locations) community.locations = {};
-            community.locations[item.id] = item;
-            break;
-          case "cluster":
-            if (item.community_profiles && item.community_profiles[community_slug] && item.community_profiles[community_slug].parents) {
-              if (!community.clusters) community.clusters = {};
-              // this is for navigation
-              var cluster_type;
-              if (item.community_profiles[community_slug].parents.length) cluster_type = item.community_profiles[community_slug].parents[0];
-              if (!community.clusters[cluster_type]) community.clusters[cluster_type] = {};
-              community.clusters[cluster_type][item.id] = item;
-            }
-            break;
-          case "company":
-            if (item.resource) {
-              if (!community.resources) community.resources = [];
-              community.resources.push(item);
-            }
+var buildSearch = (community_key, location_key) => {
+  if (!location_key) return '';
+  if (!community_key || community_key == 'undefined') community_key = location_key;
 
-            if (community.type == 'user') {
-              for (var role in community.roles) {
-                if (community.roles[role][item.id]) {
+  // determine whether location is a state
+  var state_suffix = handleConvert_state(location_key.replace('-', ' '), 'abbrev'); // returns false if no match
+  var state = state_suffix ? '%-' + state_suffix.toLowerCase() : ')';
 
-                  if (!community.companies) community.companies = {"count": {}};
-                  if (!community.companies[role]) community.companies[role] = {};
-                  if (!community.companies[role][item.id]) community.companies[role][item.id] = item;
-                  if (!community.companies.count[role]) community.companies.count[role] = 0;
-                  ++community.companies.count[role];
-                }
-              }
-            }
-            break;
+  // add search based on home suffix (which allows for roll-up to state level)
+  var search = state_suffix ? {
+    [Op.or]: [
+      { home: location_key },
+      {
+        home: {
+          [Op.like]: state
         }
-        community[item.id] = item;
       }
-    });
-  };
-  
-  var sendResponse = community => res.status(200).send(community);
-
-  var community_slug = req.params.community && req.params.community.replace(/\s+/g, '-');
-  
-  if (!community_slug) return res.status(404).send({message: 'Please specify a community!'});
-  
-  let community = await cdb.findOne({where: {"slug": community_slug}, raw: true}).catch(err => console.warn("WARNING: ", err));
-  
-  if (!community) {
-    console.log('INFO: Community not found!');
-    return res.status(404).send({message: 'Community not found.'});
-  } else {
-    console.log('Pulling community for ' + community.name);
-    
-    let ubersearch = null;
-    
-    if (!community.resource || community.type !== "location") {
-
-      // pull communities within record
-      var comm_items = community.communities || [];
-
-      // grab parents
-      if (community.parents && community.parents.length) comm_items.push(community.parents[0]);
-      if (community.home && community.communities && community.communities.indexOf(community.home) < 0) comm_items.push(community.home);
-      comm_items.push(community_slug);
-
-      ubersearch = comm_items;
-
-    } else if (community.home) ubersearch = [community.home];
-
-    console.log('Ubersearch: ', ubersearch);
-
-    if (ubersearch) {
-      await cdb.findAll({
-        where: {
-          slug: {
-            [Op.in]: ubersearch
-          }
-        }, 
-        raw: true
-      })
-      .then(sortCommunities)
-      .catch(err => console.warn("WARNING: ", err));
+    ]
+  } : {
+    communities: {
+      [Op.or]: [{
+        [Op.like]: '%"' + location_key + '"%'
+      }]
     }
-    
-    await cdb.findAll({
+  };
+
+  if (community_key != '*' && !state_suffix && community_key != location_key) search.communities[Op.or].push({
+    [Op.like]: '%"' + community_key + '"%'
+  });
+
+  return search;
+}
+
+var buildClusterSearch = (cluster_key, industry_keys = []) => {
+  if (!cluster_key) return null;
+  var cluster_search = [];
+
+  if (industry_keys.length && industry_keys.indexOf('all') < 0) industry_keys.push('all');
+
+  if (industry_keys.length) {
+    industry_keys.forEach(i => {
+      cluster_search.push({
+        [Op.like]: '%"' + i + '"%'
+      });
+    });
+  }
+  else cluster_search.push({
+    [Op.like]: '%"' + cluster_key + '"%'
+  });
+
+  return cluster_search;
+}
+
+var addkeys = function(data) {
+  for (var i in data) {
+    // delete sensitive data
+    if (data[i].password) delete data[i].password;
+    if (data[i].email) delete data[i].email;
+    if (data[i].newsletter) delete data[i].newsletter;
+    if (data[i].linkedin) {
+      if (data[i].linkedin.emailAddress) delete data[i].linkedin.emailAddress;
+      if (data[i].linkedin.access_token) delete data[i].linkedin.access_token;
+    }
+  }
+  return data;
+};
+
+async function handleGetCommunity(req, res) {
+  let param = req.params.community || req.query.community;
+  if (!param) return res.status(404).send({ message: 'Please specify a community!' });
+  
+  if (!Array.isArray(param)) param = [param];
+  
+  param.forEach(p => p.replace(/\s+/g, '-')); // replace spaces with dashes if needed
+
+  console.log('Pulling community for ' + param);
+
+  const community = await cdb.findAll({
+      where: {
+        "slug": {
+          [Op.in]: param
+        }
+      }
+    })
+    .catch(err => console.warn("WARNING: ", err));
+
+  if (!community.length) {
+    console.log('INFO: Community not found!');
+    return res.status(404).send({ message: 'Community not found.' });
+  }
+
+  return res.status(200).send(community);
+}
+
+async function handleGetNeighbors(req, res) {
+  console.log('handleGetNeighbors PARAMS: ', req.params);
+
+  let param = req.params.community;
+  if (!param) return res.status(404).send({ message: 'Please specify a community!' });
+
+  param = param.replace(/\s+/g, '-');
+
+  console.log('Pulling neighbors for ' + param);
+
+  const community = await cdb.findAll({
       where: {
         [Op.and]: [{
           [Op.not]: {
             [Op.or]: [
-              {type: 'user'},
-              {type: 'company'},
-              {slug: community_slug}
+              { type: 'user' },
+              { type: 'company' },
+              { slug: param }
             ]
           }
-        },{
-          [Op.or]: [
-            {communities: {[Op.like]: '%"'+community_slug+'"%'}},
-            {parents: {[Op.like]: '%"'+community_slug+'"%'}},  
+        }, {
+          [Op.or]: [{
+              communities: {
+                [Op.like]: '%"' + param + '"%'
+              }
+            },
+            {
+              parents: {
+                [Op.like]: '%"' + param + '"%'
+              }
+            },
           ]
         }]
-      }, 
-      raw: true
+      }
     })
-    .then(sortCommunities)
     .catch(err => console.warn("WARNING: ", err));
-    
-    if (community.resources && community.resources.length) {
-      community.resources = community.resources.sort(function (a, b) {
-        var x = a.slug;
-        var y = b.slug;
-        return ((x < y) ? -1 : ((x > y) ? 1 : 0));
-      });
-    }
 
-    // get messages for users
-    if (community.type == 'user') {
-      mdb.findAll({where: {'to': community.id}, limit: 100, raw: true}).then(messages => {
-        if (messages.length) {
+  if (!community.length) console.log('INFO: No neighbors found!');
 
-          messages.sort(function (a, b) {
-            return a.value.published < b.value.published;
-          });
-          community.messages = {};
-          for (var mes in messages) {
-            community.messages[mes.id] = mes;
-          }
+  return res.status(200).send(community);
+}
 
-          
-        }
-        sendResponse(community);
-      }).catch(err => console.warn("WARNING: ", err));
+async function handleGetTeam(req, res) {
+  console.log('handleGetTeam PARAMS: ', req.params);
 
-    } else if (community.type == 'company') {
-      // get team
+  let param = req.params.community;
+  if (!param) return res.status(404).send({ message: 'Please specify a community!' });
 
-      var startkey = 0,
-        teamlist = [],
-        thiskey = community.id;
+  param = param.replace(/\s+/g, '-');
 
-      var getTeam = function (startkey, teamlist) {
-        
-        sequelize
-        .query(
-          'SELECT * FROM communities WHERE JSON_CONTAINS(roles->>\'$.*.' + thiskey + '\', \'[' + thiskey + ']\')',
-          { model: cdb}
-        ).then(team => {
-          if (team.length) {
+  console.log('Pulling team for ' + param);
 
-            teamlist.push.apply(teamlist, team);
+  sequelize
+    .query(
+      'SELECT * FROM communities WHERE JSON_CONTAINS(roles->>\'$.*.' + param + '\', \'[' + param + ']\')', { model: cdb }
+    ).then(team => {
+      if (!team.length) {
+        console.log('INFO: No team found!');
+        return res.status(404).send({ message: 'No team found.' });
+      }
 
-            var teamresponse = {},
-              count = {};
+      return res.status(200).send(addkeys(team));
 
-            for (var member in teamlist) {
-              var t = teamlist[member];
-
-              // delete sensitive data
-              if (t.password) delete t.password;
-              if (t.email) delete t.email;
-              if (t.newsletter) delete t.newsletter;
-              if (t.linkedin) {
-                if (t.linkedin.emailAddress) delete t.linkedin.emailAddress;
-                if (t.linkedin.access_token) delete t.linkedin.access_token;
-              }
-
-              // sort roles
-              for (var role in t.roles) {
-                for (var item in t.roles[role]) {
-                  if (item == thiskey) {
-                    if (!teamresponse[role]) teamresponse[role] = [];
-                    if (!count[role]) count[role] = 0;
-                    teamresponse[role].push(t);
-                    ++count[role];
-                  }
-                }
-              }
-            }
-
-            community['team'] = {
-              count: count
-            };
-
-            for (var r in teamresponse) {
-              community.team[r] = teamresponse[r].slice(0, 4); // cut the array down
-            }
-
-            sendResponse(community);
-          } else {
-            console.log("WARNING: ");
-            sendResponse(community);
-          }
-        }).catch(err => console.warn("WARNING: ", err));
-      };
-
-      getTeam(startkey, teamlist);
-
-    } else sendResponse(community);
-  }
+    }).catch(err => console.warn("WARNING: ", err));
 }
 
 function handleGetResources(req, res) {
@@ -326,493 +276,303 @@ function handleGetResources(req, res) {
   var selector = {};
 
   if (resources && resources.length) {
-    selector.id = {[Op.in]: resources};
-  } else selector.communities = {[Op.like]: '%"' + location_key + '"%'};
+    selector.id = {
+      [Op.in]: resources
+    };
+  }
+  else selector.communities = {
+    [Op.like]: '%"' + location_key + '"%'
+  };
 
   if (clusters) {
-    selector[Op.or] = [
-      {resource: {[Op.not]: false}},
-      {type: "cluster"}
+    selector[Op.or] = [{
+        resource: {
+          [Op.not]: false
+        }
+      },
+      { type: "cluster" }
     ];
-  } else selector.resource = true;
+  }
+  else selector.resource = true;
 
-  if (searchstring) {
+  if (!searchstring) return res.status(404).send({ message: 'Please specify a location!' });
 
-    console.log(searchstring);
+  console.log(searchstring);
 
-    cdb.findAll({where: selector, raw: true}).then(result => {
-      if (result.length) {
+  cdb.findAll({ where: selector }).then(result => {
+    if (result.length) {
 
-        var newresponse = {};
+      var newresponse = {};
 
-        result.forEach(r => {
-          newresponse[r.id] = r;
-        });
+      result.forEach(r => {
+        newresponse[r.id] = r;
+      });
 
-        return res.status(200).send(newresponse);
-          
-      } else {
-        console.log('INFO: No Resources found!');
-        return res.status(400).send({message: 'No resources found!'});
-       }
-    }).catch(err => console.warn("WARNING: ", err));
-  } else return res.status(404).send({message: 'Please specify a location!'});
+      return res.status(200).send(newresponse);
+
+    }
+    else {
+      console.log('INFO: No Resources found!');
+      return res.status(404).send({ message: 'No resources found!' });
+    }
+  }).catch(err => console.warn("WARNING: ", err));
+
 }
 
 function getMore(selector, bookmark, callback) {
   //todo this is likely broken because bookmark may not be a thing?
-  return cdb.findAll({where: {
-    selector: selector,
-    limit: 1000,
-    bookmark: bookmark
-  }, raw: true}).then(results => callback).catch(err => console.warn("WARNING: ", err));
+  return cdb.findAll({
+    where: {
+      selector: selector,
+      limit: 1000,
+      bookmark: bookmark
+    },
+    raw: true
+  }).then(results => callback).catch(err => console.warn("WARNING: ", err));
 }
 
-function handleGetTop(req, res) {
+function handleGetCompanies(req, res) {
+  console.log('PARAMS: ', req.params, 'QUERY: ', req.query);
 
-  //console.log(util.inspect(req)); // used for logging circular request
-  var community_key = req.params.community_key,
-    location_key = req.params.location_key,
-    cluster_key = req.query.cluster_key,
-    industry_keys = req.query.industry_keys || [],
-    has_location = true,
-    top_results = {
-      people: {},
-      companies: {},
-      skills: {},
-      people_parents: {},
-      company_parents: {}
-    },
-    cluster_search = [];
-    console.log('PARAMS: ', req.params, 'QUERY: ', req.query);
-  
-  if (industry_keys.length && industry_keys.indexOf('all') < 0) industry_keys.push('all');
-
-  if (cluster_key) {
-
-    community_key = '*';
-
-    if (location_key == cluster_key) {
-      has_location = false;
-      search = '';
-    }
-
-    if (industry_keys.length) {
-      industry_keys.forEach(i => {
-        cluster_search.push({[Op.like]: '%"' + i + '"%'});
-      });
-    } else cluster_search.push({[Op.like]: '%"' + cluster_key + '"%'});
-
-  } else if (!community_key || community_key == 'undefined') {
-    community_key = location_key;
-  }
-
-  // determine whether location is a state
-  var state_suffix = handleConvert_state(location_key.replace('-', ' '), 'abbrev'); // returns false if no match
-  var state = state_suffix ? '%-' + state_suffix.toLowerCase() : ')';
-  
-  // add search based on home suffix (which allows for roll-up to state level)
-  var search = state_suffix ? {
-    [Op.or]: [
-      {home: location_key},
-      {home: {[Op.like]: state}}
-      ]
-    }
-    : 
-    {
-      communities: {
-        [Op.or]: [
-          {[Op.like]: '%"' + location_key + '"%'}
-        ]
-      }
-    };
-    
-  if (community_key != '*' && !state_suffix && community_key != location_key) search.communities[Op.or].push({[Op.like]: '%"' + community_key + '"%'});
-  
-  // get companies and industries
+  const search = buildSearch(req.params.community_key, req.params.location_key);
+  const cluster_search = buildClusterSearch(req.query.cluster_key, req.query.industry_keys);
+  const resources = req.query.resources;
+  //if (req.query.cluster_key) community_key = '*'; // may need this
+  //if (req.params.location_key == req.query.cluster_key) search = '';
 
   //var industrysearch = cluster_search ? '(profile.parents:(' + cluster_search + ') OR profile.industries:(' + cluster_search + ')) AND ' + search : search;
-
-  var addkeys = function (data) {
-    for (var i in data) {
-      // delete sensitive data
-      if (data[i].password) delete data[i].password;
-      if (data[i].email) delete data[i].email;
-      if (data[i].newsletter) delete data[i].newsletter;
-      if (data[i].linkedin) {
-        if (data[i].linkedin.emailAddress) delete data[i].linkedin.emailAddress;
-        if (data[i].linkedin.access_token) delete data[i].linkedin.access_token;
-      }
-    }
-    return data;
-  };
-
-  var sortcounts = function (counts, newArray) {
-    var sorted = _.fromPairs(_.sortBy(_.toPairs(counts), function (a) {
-      return a[1]
-    }).reverse());
-    if (newArray) {
-      var countArray = [];
-      for (var s in sorted) {
-        countArray.push({value: s, count: sorted[s]});
-      }
-      return countArray;
-    } else return sorted;
-  };
 
   // get companies & industries
 
   var selector = {
     [Op.and]: [
-      {type: "company"},
-      {resource: {[Op.not]: true}}
+      { type: "company" },
+      {
+        resource: {
+          [Op.not]: !resources
+        }
+      }
     ]
   };
 
-  if (cluster_search.length) {
-    selector[Op.or] = [
-      {parents: {[Op.or]: cluster_search}},
-      {industries: {[Op.or]: cluster_search}}
+  if (cluster_search && cluster_search.length) {
+    selector[Op.or] = [{
+        parents: {
+          [Op.or]: cluster_search
+        }
+      },
+      {
+        industries: {
+          [Op.or]: cluster_search
+        }
+      }
     ];
     if (search) selector[Op.and].push(search);
-  } else selector[Op.and].push(search);
+  }
+  else selector[Op.and].push(search);
 
-  console.log('Pulling Top Results: ', selector);
+  console.log('Pulling ' + resources ? 'Resources' : 'Companies: ', selector);
 
-  var pullTop = function (cache) {
+  cdb.findAll({
+    where: selector
+  }).then(result => {
+    if (!result.length) return res.status(404).send({ message: 'Nothing found!' });
+    return res.status(200).send(addkeys(result));
+  }).catch(err => console.warn("WARNING: ", err));
+}
 
-    cdb.findAll({
-      where: selector,
-      raw: true
-    }).then(result => {
-      if (result.length) {
-        
-        var industries = [];
-        var parents = [];
+function handleGetPeople(req, res) {
+  console.log('PARAMS: ', req.params, 'QUERY: ', req.query);
 
-        // create array of items
-        result.forEach(r => {
-          if (r.industries) industries = industries.concat(JSON.parse(r.industries));
-          if (r.parents) parents = parents.concat(JSON.parse(r.parents));
-        });
+  const search = buildSearch(req.params.community_key, req.params.location_key);
+  const cluster_search = buildClusterSearch(req.query.cluster_key, req.query.industry_keys);
 
-        industries = _.countBy(industries);
-        parents = _.countBy(parents);
+  //if (req.query.cluster_key) community_key = '*'; // may need this
+  //if (req.params.location_key == req.query.cluster_key) search = '';
 
-        var sortedIndustries = sortcounts(industries, true);
-        var sortedParents = sortcounts(parents);
-        
-        top_results.industries = {
-          count: Object.keys(industries).length ? Object.values(industries).reduce(function (total, val) {
-            return total+val;
-          }) : [],
-          entries: sortedIndustries.slice(0,5)
-        };
+  //var industrysearch = cluster_search ? '(profile.parents:(' + cluster_search + ') OR profile.industries:(' + cluster_search + ')) AND ' + search : search;
 
-        top_results.company_parents = {
-          count: Object.keys(parents).length ? Object.values(parents).reduce(function (total, val) {
-            return total+val;
-          }) : [],
-          entries: sortedParents
-        };
-        
-        var companyResults = addkeys(result);
-
-        top_results.companies = {
-          count: result.length,
-          entries: companyResults.slice(0,5)
-        };
-
-        // get resources
-
-        selector = {
-          [Op.and]: [
-            {type: "company"}, 
-            {resource: {[Op.not]: false}}
-          ]
-        };
-
-        if (cluster_search.length) {
-          selector[Op.or] = [
-            {parents: {[Op.or]: cluster_search}}, 
-            {industries: {[Op.or]: cluster_search}}
-          ];
-        }
-        
-        if (search) selector[Op.and].push(search);
-        
-        cdb.findAll({
-          where: selector,
-          raw: true
-        }).then(result => {
-          top_results.resources = {
-              count: result.length,
-              entries: addkeys(result)
-            };
-
-            // get people & skills
-
-            selector = {
-              [Op.and]: [
-                {type: "user"}
-              ]
-            };
-
-            if (cluster_search.length) {
-              selector[Op.or] = [
-                {parents: {[Op.or]: cluster_search}}, 
-                {skills: {[Op.or]: cluster_search}}
-              ];
-            }
-            
-            if (search) selector[Op.and].push(search);
-            
-            var finish = function(result) {
-
-              var skills = [];
-              var parents = [];
-              
-              result.forEach(r => {
-                if (r.skills) skills = skills.concat(JSON.parse(r.skills));
-                if (r.parents) parents = parents.concat(JSON.parse(r.parents));
-              });
-              
-              skills = _.countBy(skills);
-              parents = _.countBy(parents);
-              
-              var sortedSkills = sortcounts(skills, true);
-              var sortedPeopleParents = sortcounts(parents);
-              
-              top_results.skills = {
-                count: Object.keys(skills).length ? Object.values(skills).reduce(function (total, val) {
-                  return total+val;
-                }) : [],
-                entries: sortedSkills.slice(0,5)
-              };
-              
-              top_results.people_parents = {
-                count: Object.keys(parents).length ? Object.values(parents).reduce(function (total, val) {
-                  return total+val;
-                }) : [],
-                entries: sortedPeopleParents
-              };
-              
-              var peopleResults = addkeys(result);
-
-              top_results.people = {
-                count: result.length,
-                entries: peopleResults.slice(0,5)
-              };
-
-              // BEGIN PARENTS (this is mostly to avoid another api call that includes both companies and users)
-
-              var c_labels = [],
-                c_numbers = [],
-                p_labels = [],
-                p_numbers = [];
-
-              for (var c in top_results.company_parents.entries) {
-                c_labels.push(c);
-                c_numbers.push(top_results.company_parents.entries[c]);
-              }
-
-              for (var p in top_results.people_parents.entries) {
-                p_labels.push(p);
-                p_numbers.push(top_results.people_parents.entries[p]);
-              }
-
-              top_results['parents'] = {
-                labels: _.union(c_labels, p_labels),
-                values: []
-              };
-
-              for (var l in top_results.parents.labels) {
-                var r = 0;
-                if (c_numbers[c_labels.indexOf(top_results.parents.labels[l])]) {
-                  r += c_numbers[c_labels.indexOf(top_results.parents.labels[l])];
-                }
-                if (p_numbers[p_labels.indexOf(top_results.parents.labels[l])]) {
-                  r += p_numbers[p_labels.indexOf(top_results.parents.labels[l])];
-                }
-                top_results.parents.values.push(r);
-              }
-              var temp = [];
-              for (var a in top_results.parents.labels) {
-                if (top_results.parents.labels[a] != 'all') {
-                  temp.push({
-                    label: top_results.parents.labels[a],
-                    value: top_results.parents.values[a]
-                  });
-                }
-              }
-
-              if (!_.isEmpty(temp)) {
-                top_results.parents = _.orderBy(temp, 'value', 'desc');
-              } else delete top_results.parents;
-
-              delete top_results.people_parents;
-              delete top_results.company_parents;
-
-              // this is for dashboard view
-
-              top_results.max = 0;
-              if (top_results.parents) {
-                for (var val in top_results.parents) {
-                  top_results.max += top_results.parents[val].value;
-                }
-              }
-
-              // END PARENTS
-
-              top_results.id = community_key;
-
-              if (!cache) return res.status(200).send(top_results);
-
-             /* mc.set(selector.toString(), JSON.stringify(top_results), function (err, val) {
-                if (err) console.warn('WARNING: Memcache error: ', err)
-              });*/
-            }
-
-            cdb.findAll({
-              where: selector,
-              limit: 1000,
-              raw: true
-            }).then(result => {
-              if (result.length) {
-                //todo bookmark is not a thing in mysql
-                if (result.bookmark) {
-                  getMore(selector, result.bookmark, function(more) {
-                    var newresult = {};
-                    newresult = result.concat(more);
-                    finish(newresult);
-                  });
-                } else finish(result);
-
-              } else {
-                console.log("WARNING: ");
-                return res.status(202).send({message: 'Something went wrong: '});
-              }
-            }).catch(err => console.warn("WARNING: ", err))
-        }).catch(err => console.warn("WARNING: ", err))
-      } else {
-        console.log("WARNING: ");
-        return res.status(202).send({message: 'Something went wrong: '});
-      }
-    }).catch(err => console.warn("WARNING: ", err))
-
+  var selector = {
+    [Op.and]: [
+      { type: "user" }
+    ]
   };
-  pullTop(false);
-  /*mc.get(selector.toString(), function (err, value) {
-    if (value) {
-      return res.status(200).send(value);
-      pullTop(true);
-    } else {
-      pullTop(false);
-    }
-  })*/
-  }
 
-  function handleSetCommunity(req, res) {
-
-    // always use ensureAuth before this (to acquire req.user)
-
-    var settings = req.body.params;
-
-    console.log('Updating settings for ' + settings.location_key + ' / ' + settings.community_key);
-
-    cdb.findById(req.user, {raw: true}).then(response => {
-      if (response) {
-        var user = response;
-
-        // validate user has leader role within the location/community
-
-        if (user.roles && user.roles.leader && user.roles.leader[settings.community_key] && user.roles.leader[settings.community_key].indexOf(settings.location_key) > -1) {
-
-          // update the community
-
-          cdb.findOne({where: {slug: settings.community_key}, raw: true}).then(response => {
-            if (response) {
-              if (response.type !== 'location') { // use community_profiles
-                if (response.community_profiles === undefined) { // create community_profiles
-                  response.community_profiles = {};
-                }
-                if (response.community_profiles[settings.location_key] === undefined) { // create this location
-                  response.community_profiles[settings.location_key] = {
-                    "name": response.name,
-                    "icon": response.icon,
-                    "logo": response.logo,
-                    "embed": settings.embed
-                  };
-                } else {
-                  response.community_profiles[settings.location_key]["embed"] = settings.embed;
-                }
-              } else response.embed = settings.embed;
-
-              cdb.update(response, {where: {slug: settings.community_key}}).then(finalres => {
-                if (finalres) {
-                  return res.status(201).send({message: 'Community settings updated.'});
-                } else {
-                  console.warn('WARNING: community466 ');
-                  return res.status(202).send({message: "Something went wrong."});
-                }
-              });
-            } else {
-              console.warn('WARNING: community472 ');
-              return res.status(202).send({message: "Something went wrong."});
-            }
-          });
-        } else {
-          console.warn("User is not a leader in location: " + settings.location_key + " and community: " + settings.community_key + "!");
-          return res.status(202).send({message: 'Sorry, you must be a Leader in this community to change these settings.'});
+  if (cluster_search && cluster_search.length) {
+    selector[Op.or] = [{
+        parents: {
+          [Op.or]: cluster_search
         }
-      } else {
-        console.warn("WARNING: community493");
+      },
+      {
+        skills: {
+          [Op.or]: cluster_search
+        }
       }
-    }).catch(err => console.warn("WARNING: ", err))
+    ];
   }
 
-  function handleEditCommunity(req, res) {
+  if (search) selector[Op.and].push(search);
 
-    // always use ensureAuth before this (to acquire req.user)
+  console.log('Pulling People: ', selector);
 
-    var settings = req.body.params;
+  cdb.findAll({
+    where: selector,
+    limit: 1000
+  }).then(result => {
+    if (!result.length) return res.status(404).send({ message: 'Nothing found!' });
+    return res.status(200).send(addkeys(result));
+  }).catch(err => console.warn("WARNING: ", err));
+}
 
-    console.log('Editing community: ' + settings.community.name + ' in ' + settings.location_key);
+function handleSetCommunity(req, res) {
 
-    cdb.findById(req.user, {raw: true}).then(response => {
-      if (response) {
-        var user = response,
-          leader = false;
+  // always use ensureAuth before this (to acquire req.user)
 
-        // validate user is a member in the location
-        if (user.communities.indexOf(settings.location_key) > -1) {
+  var settings = req.body.params;
 
-          var pathname = settings.community.url || settings.community.name.toLowerCase().replace(/\s+/g, '-');
+  console.log('Updating settings for ' + settings.location_key + ' / ' + settings.community_key);
 
-          // check to see if user is a leader of the community
+  cdb.findById(req.user, { raw: true }).then(response => {
+    if (response) {
+      var user = response;
 
-          if (user.roles && user.roles.leader && user.roles.leader[pathname] && user.roles.leader[pathname].indexOf(settings.location_key) > -1) {
-            leader = true;
-            console.log('confirmed leader');
+      // validate user has leader role within the location/community
+
+      if (user.roles && user.roles.leader && user.roles.leader[settings.community_key] && user.roles.leader[settings.community_key].indexOf(settings.location_key) > -1) {
+
+        // update the community
+
+        cdb.findOne({ where: { slug: settings.community_key }, raw: true }).then(response => {
+          if (response) {
+            if (response.type !== 'location') { // use community_profiles
+              if (response.community_profiles === undefined) { // create community_profiles
+                response.community_profiles = {};
+              }
+              if (response.community_profiles[settings.location_key] === undefined) { // create this location
+                response.community_profiles[settings.location_key] = {
+                  "name": response.name,
+                  "icon": response.icon,
+                  "logo": response.logo,
+                  "embed": settings.embed
+                };
+              }
+              else {
+                response.community_profiles[settings.location_key]["embed"] = settings.embed;
+              }
+            }
+            else response.embed = settings.embed;
+
+            cdb.update(response, { where: { slug: settings.community_key } }).then(finalres => {
+              if (finalres) {
+                return res.status(201).send({ message: 'Community settings updated.' });
+              }
+              else {
+                console.warn('WARNING: community466 ');
+                return res.status(202).send({ message: "Something went wrong." });
+              }
+            });
           }
+          else {
+            console.warn('WARNING: community472 ');
+            return res.status(202).send({ message: "Something went wrong." });
+          }
+        });
+      }
+      else {
+        console.warn("User is not a leader in location: " + settings.location_key + " and community: " + settings.community_key + "!");
+        return res.status(202).send({ message: 'Sorry, you must be a Leader in this community to change these settings.' });
+      }
+    }
+    else {
+      console.warn("WARNING: community493");
+    }
+  }).catch(err => console.warn("WARNING: ", err))
+}
 
-          // check to see if the community exists
+function handleEditCommunity(req, res) {
 
-          cdb.findOne({where: {slug: pathname}, raw: true}).then(response => {
-            if (response) {
-              // go to .catch if community doesn't exist (on .get rather than .search)
-              // if community already exists and it's the same type as what's being created, we're good to add the community profile here
+  // always use ensureAuth before this (to acquire req.user)
 
-              if (response.type && (response.type == "cluster" || response.resource) && response.type == settings.community.type) {
+  var settings = req.body.params;
 
-                // create community_profiles (leadership not required if this is a new community)
+  console.log('Editing community: ' + settings.community.name + ' in ' + settings.location_key);
 
-                if (!response.community_profiles) response.community_profiles = {};
+  cdb.findById(req.user, { raw: true }).then(response => {
+    if (response) {
+      var user = response,
+        leader = false;
 
-                if (!response.community_profiles[settings.location_key]) {
+      // validate user is a member in the location
+      if (user.communities.indexOf(settings.location_key) > -1) {
 
-                  // create this location
-                  console.log('creating location profile');
+        var pathname = settings.community.url || settings.community.name.toLowerCase().replace(/\s+/g, '-');
+
+        // check to see if user is a leader of the community
+
+        if (user.roles && user.roles.leader && user.roles.leader[pathname] && user.roles.leader[pathname].indexOf(settings.location_key) > -1) {
+          leader = true;
+          console.log('confirmed leader');
+        }
+
+        // check to see if the community exists
+
+        cdb.findOne({ where: { slug: pathname }, raw: true }).then(response => {
+          if (response) {
+            // go to .catch if community doesn't exist (on .get rather than .search)
+            // if community already exists and it's the same type as what's being created, we're good to add the community profile here
+
+            if (response.type && (response.type == "cluster" || response.resource) && response.type == settings.community.type) {
+
+              // create community_profiles (leadership not required if this is a new community)
+
+              if (!response.community_profiles) response.community_profiles = {};
+
+              if (!response.community_profiles[settings.location_key]) {
+
+                // create this location
+                console.log('creating location profile');
+
+                response.community_profiles[settings.location_key] = {
+                  "name": settings.community.name,
+                  "headline": settings.community.headline,
+                  "icon": response.icon,
+                  "parents": settings.community.parents,
+                  "industries": settings.community.industries,
+                  "embed": settings.community.embed || []
+                };
+
+                // add community
+
+                if (!response.communities) {
+                  response["communities"] = [];
+                }
+
+                if (response.communities.indexOf(settings.location_key) < 0) {
+                  response.communities.push(settings.location_key);
+                }
+
+                cdb.update(response, { where: { slug: pathname } }).then(finalres => {
+                  if (finalres) {
+                    update_user(req.user, 'leader', pathname, settings.location_key, function(good) {
+                      if (good) {
+                        return res.status(201).send({ message: 'Industry cluster created!' });
+                      }
+                      else {
+                        return res.status(202).send({ message: "Something went wrong." });
+                      }
+                    })
+                  }
+                  else {
+                    console.warn('WARNING: community533 ');
+                    return res.status(202).send({ message: "Something went wrong." });
+                  }
+                })
+
+              }
+              else {
+
+                if (leader) {
 
                   response.community_profiles[settings.location_key] = {
                     "name": settings.community.name,
@@ -825,361 +585,345 @@ function handleGetTop(req, res) {
 
                   // add community
 
-                  if (!response.communities) {
-                    response["communities"] = [];
-                  }
+                  if (!response.communities) response.communities = {};
 
                   if (response.communities.indexOf(settings.location_key) < 0) {
                     response.communities.push(settings.location_key);
                   }
 
-                  cdb.update(response, {where: {slug: pathname}}).then(finalres => {
-                    if (finalres) {
-                      update_user(req.user, 'leader', pathname, settings.location_key, function (good) {
-                        if (good) {
-                          return res.status(201).send({message: 'Industry cluster created!'});
-                        } else {
-                          return res.status(202).send({message: "Something went wrong."});
-                        }
-                      })
-                    } else {
-                      console.warn('WARNING: community533 ');
-                      return res.status(202).send({message: "Something went wrong."});
-                    }
-                  })
-
-                } else {
-
-                  if (leader) {
-
-                    response.community_profiles[settings.location_key] = {
-                      "name": settings.community.name,
-                      "headline": settings.community.headline,
-                      "icon": response.icon,
-                      "parents": settings.community.parents,
-                      "industries": settings.community.industries,
-                      "embed": settings.community.embed || []
-                    };
-
-                    // add community
-
-                    if (!response.communities) response.communities = {};
-
-                    if (response.communities.indexOf(settings.location_key) < 0) {
-                      response.communities.push(settings.location_key);
-                    }
-                    
-                    response.slug = pathname;
-
-                    cdb.create(response).then(finalres => {
-                      if (finalres) {
-                        return res.status(201).send({message: 'Successfully updated!'});
-                      } else {
-                        console.warn('WARNING: ');
-                        return res.status(202).send({message: "Something went wrong."});
-                      }
-                    })
-
-                  } else return res.status(202).send({message: settings.community.name + ' already exists in this location. Please change the name or delete the other one first.'});
-                }
-
-              } else {
-                return res.status(202).send({message: 'That name is taken. Try changing the name.'});
-              }
-            } else {
-              // no existing path, go ahead and create
-
-              var profile = schema.community(settings.community, settings.location_key);
-              
-              profile.slug = pathname;
-
-              cdb.create(profile).then(finalres => {
-                if (finalres) {
-                  update_user(req.user, 'leader', pathname, settings.location_key, function (good) {
-                    if (good) {
-                      return res.status(201).send({message: 'Industry cluster created!'});
-                    } else return res.status(202).send({message: "Something went wrong."});
-
-                  })
-                } else {
-                  console.warn('WARNING: community565 ');
-                  return res.status(202).send({message: "Something went wrong."});
-                }
-              })
-            }
-          })
-
-        } else {
-          console.warn("User is not a member of community: " + settings.community.slug + " and location: " + settings.location_key + "!");
-          return res.status(202).send({message: 'You must be a member of this community to add to it.'});
-        }
-      } else {
-        console.warn("WARNING: community611");
-      }
-    }).catch(err => console.warn("WARNING: ", err))
-  }
-
-  function handleDeleteCommunity(req, res) {
-
-    // always use ensureAuth before this (to acquire req.user)
-    var settings = req.body.params;
-
-    console.log('Deleting community: ' + settings.community.name + ' in ' + settings.location_key);
-
-    cdb.findById(req.user, {raw: true}).then(response => {
-      if (response) {
-        var user = response;
-
-        // validate user is a leader of the community in this location
-
-        if (user.roles && user.roles.leader && user.roles.leader[settings.community.slug].indexOf(settings.location_key) > -1) {
-
-          // get the community
-
-          cdb.findOne({where: {slug: settings.community.slug}, raw: true}).then(response => {
-            if (response) {
-              // remove the location profile
-
-              if (response.type && (response.type == "cluster" || response.resource) && response.type == settings.community.type) {
-
-                // community already exists, we're good to remove the community profile here
-
-                if (response.community_profiles !== undefined && response.community_profiles[settings.location_key]) {
-                  delete response.community_profiles[settings.location_key];
-                }
-
-                // remove from community
-                if (response.communities.indexOf(settings.location_key) > -1) {
-                  var index = response.communities.indexOf(settings.location_key);
-                  response.communities.splice(index, 1);
-                }
-
-                var wrapup = function () {
-                  if (settings.new_community_key) {
-
-                    // this is a rename operation
-
-                    rename_community(settings.community.slug, settings.location_key, settings.new_community_key);
-
-                  } else {
-
-                    update_user(req.user, 'delete', settings.community.slug, settings.location_key, function (good) {
-                      if (good) {
-                        console.log('Community deleted.');
-                        return res.status(204).send({message: settings.community.type[0].toUpperCase() + settings.community.type.slice(1) + ' deleted!'});
-                      } else {
-                        return res.status(202).send({message: "Something went wrong."});
-                      }
-                    })
-                  }
-                };
-
-                if (response.communities.length == 0) {
-
-                  // delete the whole thing
-
-                  cdb.destroy({where: {id: settings.community.slug}}).then(finalres => {
-                    if (finalres) {
-                      wrapup();
-                    } else {
-                      console.warn('WARNING: community620');
-                      return res.status(202).send({message: "Something went wrong."});
-                    }
-                  })
-
-                } else {
-                  
-                  response.slug = settings.community.slug;
+                  response.slug = pathname;
 
                   cdb.create(response).then(finalres => {
                     if (finalres) {
-                      wrapup();
-                    } else {
-                      console.warn('WARNING: community629 ');
-                      return res.status(202).send({message: "Something went wrong."});
+                      return res.status(201).send({ message: 'Successfully updated!' });
+                    }
+                    else {
+                      console.warn('WARNING: ');
+                      return res.status(202).send({ message: "Something went wrong." });
+                    }
+                  })
+
+                }
+                else return res.status(202).send({ message: settings.community.name + ' already exists in this location. Please change the name or delete the other one first.' });
+              }
+
+            }
+            else {
+              return res.status(202).send({ message: 'That name is taken. Try changing the name.' });
+            }
+          }
+          else {
+            // no existing path, go ahead and create
+
+            var profile = schema.community(settings.community, settings.location_key);
+
+            profile.slug = pathname;
+
+            cdb.create(profile).then(finalres => {
+              if (finalres) {
+                update_user(req.user, 'leader', pathname, settings.location_key, function(good) {
+                  if (good) {
+                    return res.status(201).send({ message: 'Industry cluster created!' });
+                  }
+                  else return res.status(202).send({ message: "Something went wrong." });
+
+                })
+              }
+              else {
+                console.warn('WARNING: community565 ');
+                return res.status(202).send({ message: "Something went wrong." });
+              }
+            })
+          }
+        })
+
+      }
+      else {
+        console.warn("User is not a member of community: " + settings.community.slug + " and location: " + settings.location_key + "!");
+        return res.status(202).send({ message: 'You must be a member of this community to add to it.' });
+      }
+    }
+    else {
+      console.warn("WARNING: community611");
+    }
+  }).catch(err => console.warn("WARNING: ", err))
+}
+
+function handleDeleteCommunity(req, res) {
+
+  // always use ensureAuth before this (to acquire req.user)
+  var settings = req.body.params;
+
+  console.log('Deleting community: ' + settings.community.name + ' in ' + settings.location_key);
+
+  cdb.findById(req.user, { raw: true }).then(response => {
+    if (response) {
+      var user = response;
+
+      // validate user is a leader of the community in this location
+
+      if (user.roles && user.roles.leader && user.roles.leader[settings.community.slug].indexOf(settings.location_key) > -1) {
+
+        // get the community
+
+        cdb.findOne({ where: { slug: settings.community.slug }, raw: true }).then(response => {
+          if (response) {
+            // remove the location profile
+
+            if (response.type && (response.type == "cluster" || response.resource) && response.type == settings.community.type) {
+
+              // community already exists, we're good to remove the community profile here
+
+              if (response.community_profiles !== undefined && response.community_profiles[settings.location_key]) {
+                delete response.community_profiles[settings.location_key];
+              }
+
+              // remove from community
+              if (response.communities.indexOf(settings.location_key) > -1) {
+                var index = response.communities.indexOf(settings.location_key);
+                response.communities.splice(index, 1);
+              }
+
+              var wrapup = function() {
+                if (settings.new_community_key) {
+
+                  // this is a rename operation
+
+                  rename_community(settings.community.slug, settings.location_key, settings.new_community_key);
+
+                }
+                else {
+
+                  update_user(req.user, 'delete', settings.community.slug, settings.location_key, function(good) {
+                    if (good) {
+                      console.log('Community deleted.');
+                      return res.status(204).send({ message: settings.community.type[0].toUpperCase() + settings.community.type.slice(1) + ' deleted!' });
+                    }
+                    else {
+                      return res.status(202).send({ message: "Something went wrong." });
                     }
                   })
                 }
+              };
 
-              } else {
-                console.log('WARNING: Cannot delete community');
-                return res.status(202).send({message: "You can't delete " + settings.community.name + " for some reason, but we've been notified and will look into it."});
+              if (response.communities.length == 0) {
+
+                // delete the whole thing
+
+                cdb.destroy({ where: { id: settings.community.slug } }).then(finalres => {
+                  if (finalres) {
+                    wrapup();
+                  }
+                  else {
+                    console.warn('WARNING: community620');
+                    return res.status(202).send({ message: "Something went wrong." });
+                  }
+                })
+
               }
-            } else {
-              console.warn('WARNING: community644');
-              return res.status(202).send({message: "Something went wrong."});
-            }
-          })
+              else {
 
-        } else {
-          console.warn("User is not a member of community: " + settings.community.slug + " and location: " + settings.location_key + "!");
-          return res.status(202).send({message: 'You must be a leader of this community to delete it.'});
-        }
-      } else {
-        console.warn("WARNING: community699");
+                response.slug = settings.community.slug;
+
+                cdb.create(response).then(finalres => {
+                  if (finalres) {
+                    wrapup();
+                  }
+                  else {
+                    console.warn('WARNING: community629 ');
+                    return res.status(202).send({ message: "Something went wrong." });
+                  }
+                })
+              }
+
+            }
+            else {
+              console.log('WARNING: Cannot delete community');
+              return res.status(202).send({ message: "You can't delete " + settings.community.name + " for some reason, but we've been notified and will look into it." });
+            }
+          }
+          else {
+            console.warn('WARNING: community644');
+            return res.status(202).send({ message: "Something went wrong." });
+          }
+        })
+
       }
-    }).catch(err => console.warn("WARNING: ", err))
-  }
+      else {
+        console.warn("User is not a member of community: " + settings.community.slug + " and location: " + settings.location_key + "!");
+        return res.status(202).send({ message: 'You must be a leader of this community to delete it.' });
+      }
+    }
+    else {
+      console.warn("WARNING: community699");
+    }
+  }).catch(err => console.warn("WARNING: ", err))
+}
 
-  var update_user = function (user_key, role, community_key, location_key, callback) {
+var update_user = function(user_key, role, community_key, location_key, callback) {
 
-    cdb.findById(user_key, {raw: true}).then(response => {
-      if (response) {
-        // add role
+  cdb.findById(user_key, { raw: true }).then(response => {
+    if (response) {
+      // add role
 
-        if (!response.roles) response.roles = {};
+      if (!response.roles) response.roles = {};
 
-        if (role == 'delete') {
+      if (role == 'delete') {
 
-          try {
-            if (response.roles.leader[community_key].indexOf(location_key) > -1) {
-              response.roles.leader[community_key].splice(response.roles.leader[community_key].indexOf(location_key), 1);
-            }
-            if (response.roles.leader[community_key].length == 0) {
-              delete response.roles.leader[community_key]
-            }
-            if (response.communities.indexOf(community_key) > -1) {
-              response.communities.splice(response.communities.indexOf(community_key), 1);
-            }
+        try {
+          if (response.roles.leader[community_key].indexOf(location_key) > -1) {
+            response.roles.leader[community_key].splice(response.roles.leader[community_key].indexOf(location_key), 1);
           }
-          catch (e) {
+          if (response.roles.leader[community_key].length == 0) {
+            delete response.roles.leader[community_key]
           }
-
-        } else {
-
-          if (!response.roles[role]) {
-            response.roles[role] = {};
-            response.roles[role][community_key] = [location_key];
-          } else if (!response.roles[role][community_key]) {
-            response.roles[role][community_key] = [location_key];
-          } else if (response.roles[role][community_key].indexOf(location_key) < 0) {
-            response.roles[role][community_key].push(location_key);
-          } // else the damn thing is already there
-
-          // add community
-
-          if (!response.communities) response.communities = [];
-
-          if (response.communities.indexOf(community_key) < 0) {
-            response.communities.push(community_key);
+          if (response.communities.indexOf(community_key) > -1) {
+            response.communities.splice(response.communities.indexOf(community_key), 1);
           }
         }
-        
-        response.slug = user_key;
+        catch (e) {}
 
-        cdb.create(response).then(result => {
-          if (result) {
-            console.log('User ' + user_key + ' updated with community role.');
-            callback(true);
-          } else {
-            console.warn("WARNING: community706");
-            callback(false);
-          }
-        });
-      } else {
-        console.warn("WARNING: community715");
-        callback(false);
+      }
+      else {
+
+        if (!response.roles[role]) {
+          response.roles[role] = {};
+          response.roles[role][community_key] = [location_key];
+        }
+        else if (!response.roles[role][community_key]) {
+          response.roles[role][community_key] = [location_key];
+        }
+        else if (response.roles[role][community_key].indexOf(location_key) < 0) {
+          response.roles[role][community_key].push(location_key);
+        } // else the damn thing is already there
+
+        // add community
+
+        if (!response.communities) response.communities = [];
+
+        if (response.communities.indexOf(community_key) < 0) {
+          response.communities.push(community_key);
+        }
+      }
+
+      response.slug = user_key;
+
+      cdb.create(response).then(result => {
+        if (result) {
+          console.log('User ' + user_key + ' updated with community role.');
+          callback(true);
+        }
+        else {
+          console.warn("WARNING: community706");
+          callback(false);
+        }
+      });
+    }
+    else {
+      console.warn("WARNING: community715");
+      callback(false);
+    }
+  }).catch(err => console.warn("WARNING: ", err));
+};
+
+var rename_community = function(old_community_key, location_key, new_community_key) {
+  var startKey = 0;
+  /*
+   console.log('Renaming ' + old_community_key + ' to ' + new_community_key);
+
+   var getUsers = function (startKey) {
+
+   db.newSearchBuilder()
+   .collection(process.env.DB_COMMUNITIES)
+   .limit(50)
+   .offset(startKey)
+   .query('communities: "' + old_community_key + '" OR roles.*.' + old_community_key + ': "' + location_key + '" OR invite_communities: "' + old_community_key + '"')
+   .then(function (data) {
+   var item;
+
+   for (item in data.body.results) {
+   var key = data.body.results[item].id,
+   newdata = data.body.results[item].doc.value; // get current record
+
+   if (newdata.type == "invite") {
+
+   // Rename community
+   if (newdata.invite_communities.indexOf(old_community_key) > -1) {
+
+   // only add the new community if the old one existed
+
+   if (newdata.invite_communities.indexOf(new_community_key) < 0) newdata.invite_communities.push(new_community_key);
+
+   newdata.invite_communities.splice(newdata.invite_communities.indexOf(old_community_key), 1);
+   }
+
+   } else {
+
+   // Rename community
+   if (newdata.communities.indexOf(old_community_key) > -1) {
+
+   // only add the new community if the old one existed
+
+   if (newdata.communities.indexOf(new_community_key) < 0) newdata.communities.push(new_community_key);
+
+   newdata.communities.splice(newdata.communities.indexOf(old_community_key), 1);
+   }
+
+   for (role in newdata.roles) {
+   for (community in newdata.roles[role]) {
+   if (community == old_community_key) {
+   if (!newdata.roles[role][new_community_key]) newdata.roles[role][new_community_key] = [];
+   if (newdata.roles[role][new_community_key].indexOf(location_key) < 0) newdata.roles[role][new_community_key].push(location_key);
+   delete newdata.roles[role][old_community_key];
+   }
+   }
+   }
+
+   }
+
+   db.put(process.env.DB_COMMUNITIES, key, newdata)
+   .then(function (result) {
+   console.log('User ' + result.id + ' updated with new community data.');
+   })
+   .catch(function (err) {
+   console.warn("WARNING: community706", err);
+   });
+
+   }
+
+   if (data.body.next) {
+   startKey = startKey + limit;
+   console.log('Getting next group..' + startKey);
+   getUsers(startKey);
+   } else {
+   console.log('Community renamed.')
+   }
+   })
+   .catch(function (err) {
+   console.warn("WARNING: community715", err);
+   });
+   };
+
+   getUsers(startKey);*/
+
+};
+
+function handleGetId(req, res) {
+  console.log('Pulling id: ' + req.params.id);
+
+  function pullId() {
+    cdb.findById(req.params.id, { raw: true }).then(result => {
+      if (result) {
+        return res.status(200).send(result);
+      }
+      else {
+        console.warn('WARNING: Id not found!');
+        return res.status(202).send({ message: 'Id not found.' });
       }
     }).catch(err => console.warn("WARNING: ", err));
-  };
-
-  var rename_community = function (old_community_key, location_key, new_community_key) {
-    var startKey = 0;
-    /*
-     console.log('Renaming ' + old_community_key + ' to ' + new_community_key);
-
-     var getUsers = function (startKey) {
-
-     db.newSearchBuilder()
-     .collection(process.env.DB_COMMUNITIES)
-     .limit(50)
-     .offset(startKey)
-     .query('communities: "' + old_community_key + '" OR roles.*.' + old_community_key + ': "' + location_key + '" OR invite_communities: "' + old_community_key + '"')
-     .then(function (data) {
-     var item;
-
-     for (item in data.body.results) {
-     var key = data.body.results[item].id,
-     newdata = data.body.results[item].doc.value; // get current record
-
-     if (newdata.type == "invite") {
-
-     // Rename community
-     if (newdata.invite_communities.indexOf(old_community_key) > -1) {
-
-     // only add the new community if the old one existed
-
-     if (newdata.invite_communities.indexOf(new_community_key) < 0) newdata.invite_communities.push(new_community_key);
-
-     newdata.invite_communities.splice(newdata.invite_communities.indexOf(old_community_key), 1);
-     }
-
-     } else {
-
-     // Rename community
-     if (newdata.communities.indexOf(old_community_key) > -1) {
-
-     // only add the new community if the old one existed
-
-     if (newdata.communities.indexOf(new_community_key) < 0) newdata.communities.push(new_community_key);
-
-     newdata.communities.splice(newdata.communities.indexOf(old_community_key), 1);
-     }
-
-     for (role in newdata.roles) {
-     for (community in newdata.roles[role]) {
-     if (community == old_community_key) {
-     if (!newdata.roles[role][new_community_key]) newdata.roles[role][new_community_key] = [];
-     if (newdata.roles[role][new_community_key].indexOf(location_key) < 0) newdata.roles[role][new_community_key].push(location_key);
-     delete newdata.roles[role][old_community_key];
-     }
-     }
-     }
-
-     }
-
-     db.put(process.env.DB_COMMUNITIES, key, newdata)
-     .then(function (result) {
-     console.log('User ' + result.id + ' updated with new community data.');
-     })
-     .catch(function (err) {
-     console.warn("WARNING: community706", err);
-     });
-
-     }
-
-     if (data.body.next) {
-     startKey = startKey + limit;
-     console.log('Getting next group..' + startKey);
-     getUsers(startKey);
-     } else {
-     console.log('Community renamed.')
-     }
-     })
-     .catch(function (err) {
-     console.warn("WARNING: community715", err);
-     });
-     };
-
-     getUsers(startKey);*/
-
-  };
-
-  function handleGetId(req, res) {
-    console.log('Pulling id: ' + req.params.id);
-
-    function pullId() {
-      cdb.findById(req.params.id, {raw: true}).then(result => {
-        if (result) {
-          return res.status(200).send(result);
-        } else {
-          console.warn('WARNING: Id not found!');
-          return res.status(202).send({message: 'Id not found.'});
-        }
-      }).catch(err => console.warn("WARNING: ", err));
-    }
-
-    pullId();
   }
 
-  module.exports = CommunityApi;
+  pullId();
+}
+
+module.exports = CommunityApi;

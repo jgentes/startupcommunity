@@ -68,7 +68,7 @@ sgMail.send(msg);*/
 /*
 sequelize
   .query(
-    "SELECT `id`, `slug`,`resource` FROM `communities` AS `communities` WHERE (`communities`.`type` = 'company' AND `communities`.`resource` IS NOT true AND (`communities`.`communities` LIKE '%\"bend-or\"%'))",
+    "SELECT `id`, `slug`, `type`, `name`, `home`, `parents`, `communities`, `community_profiles`, `icon`, `email`, `avatar`, `linkedin`, `api_key`, `headline`, `summary`, `skills`, `roles`, `country`, `state`, `county`, `city`, `description`, `sc_logo`, `embed`, `resource`, `resource_types`, `industries`, `website`, `street`, `angellist`, `logo`, `token`, `newsletter`, `stage` FROM `communities` AS `communities` WHERE (NOT ((`communities`.`type` = 'user' OR `communities`.`type` = 'company' OR `communities`.`slug` = 'bend-or')) AND (`communities`.`communities` LIKE '%\"bend-or\"%' OR `communities`.`parents` LIKE '%\"bend-or\"%'))",
     { model: cdb}
   ).then(result => {
     console.log(result.length)

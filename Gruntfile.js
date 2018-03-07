@@ -222,6 +222,7 @@ module.exports = function (grunt) {
     });
 
     grunt.loadNpmTasks('grunt-cloudflare-purge');
+    grunt.loadNpmTasks('grunt-contrib-uglify-es');
 
     grunt.registerTask('live', [
         'clean:server',

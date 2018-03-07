@@ -28,14 +28,14 @@ module.exports = function(sequelize, DataTypes) {
     parents: {
       type: DataTypes.STRING(250),
       allowNull: true,
-      get() { this.getArray(this.getDataValue('parents')) },
-      set(val) { this.setDataValue('parents', this.setArray(val)) }
+      get() { return this.getArray(this.getDataValue('parents')) },
+      set(val) { return this.setDataValue('parents', this.setArray(val)) }
     },
     communities: {
       type: DataTypes.STRING(1000),
       allowNull: true,
-      get() { this.getArray(this.getDataValue('communities')) },
-      set(val) { this.setDataValue('communities', this.setArray(val)) }
+      get() { return this.getArray(this.getDataValue('communities')) },
+      set(val) { return this.setDataValue('communities', this.setArray(val)) }
     },
     community_profiles: {
       type: DataTypes.JSON,
@@ -72,8 +72,8 @@ module.exports = function(sequelize, DataTypes) {
     skills: {
       type: DataTypes.STRING(1000),
       allowNull: true,
-      get() { this.getArray(this.getDataValue('skills')) },
-      set(val) { this.setDataValue('skills', this.setArray(val)) }
+      get() { return this.getArray(this.getDataValue('skills')) },
+      set(val) { return this.setDataValue('skills', this.setArray(val)) }
     },
     roles: {
       type: DataTypes.JSON,
@@ -114,14 +114,14 @@ module.exports = function(sequelize, DataTypes) {
     resource_types: {
       type: DataTypes.STRING(250),
       allowNull: true,
-      get() { this.getArray(this.getDataValue('resource_types')) },
-      set(val) { this.setDataValue('resource_types', this.setArray(val)) }
+      get() { return this.getArray(this.getDataValue('resource_types')) },
+      set(val) { return this.setDataValue('resource_types', this.setArray(val)) }
     },
     industries: {
       type: DataTypes.STRING(1000),
       allowNull: true,
-      get() { this.getArray(this.getDataValue('industries')) },
-      set(val) { this.setDataValue('industries', this.setArray(val)) }
+      get() { return this.getArray(this.getDataValue('industries')) },
+      set(val) { return this.setDataValue('industries', this.setArray(val)) }
     },
     website: {
       type: DataTypes.STRING(250),

@@ -239,9 +239,9 @@ function CompanyProfileController($scope, $stateParams, $mixpanel, user_service,
                 $stateParams.location_path;
 
         if (!$stateParams.noreload) {
-            community_service.getCommunity(companykey, $stateParams.profile ? true : false)
+            community_service.getCommunity(companykey)
                 .then(function (response) {
-                    $scope.global['profile'] = response.data;
+                    $scope.global['profile'] = response;
 
                 });
         } else $scope.global['profile'] = $scope.global.community;
@@ -264,9 +264,9 @@ function CompanyProfileController($scope, $stateParams, $mixpanel, user_service,
         user_service.removeRole(role, $scope.global.slug)
             .then(function(response) {
 
-                community_service.getCommunity($scope.global.slug, true)
+                community_service.getCommunity($scope.global.slug)
                     .then(function(response) {
-                        $scope.global.profile = response.data;
+                        $scope.global.profile = response;
 
                         user_service.getProfile()
                             .then(function(response2) {
@@ -439,7 +439,6 @@ function EditCompanyController($scope, $state, $stateParams, sweet, $q, $window,
             company_service.deleteCompany(company_key)
                 .then(function(response) {
                     self.del_working = false;
-                    $http.get('/' + $scope.global.user.home); // refresh outdated cache for top
 
                     if (response.status !== 204) {
                         sweet.show({
@@ -519,9 +518,9 @@ function EditCompanyController($scope, $state, $stateParams, sweet, $q, $window,
 
         if ($stateParams.community_path !== $scope.global.community.slug && $stateParams.location_path !== $scope.global.community.slug) {
             if ($stateParams.community_path !== $scope.global.location.slug && $scope.global.lastitems.indexOf($stateParams.community_path) < 0) {
-                community_service.getCommunity($stateParams.community_path, true)
+                community_service.getCommunity($stateParams.community_path)
                     .then(function (response) {
-                        $scope.global.community = response.data;
+                        $scope.global.community = response;
                         next();
                     })
             } else {

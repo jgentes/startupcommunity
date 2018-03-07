@@ -218,7 +218,7 @@ function handleContactUser(req, res) {
         if (user) {
           var contacts = [], substitutions;
   
-          for (var leader in leaders) contacts.push(leader.email);
+          for (var leader in leaders) contacts.push(leaders[leader].email);
           
           substitutions = {
             "title_bar": 'Connection Request',

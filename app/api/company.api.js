@@ -407,7 +407,7 @@ function handleDeleteCompany(req, res) {
           // need to validate whether the current user is one of the founders or team members
 
           var del = false;
-          for (var t in team.rows) {
+          for (var t in team) {
 
             if (team[t].id == req.user) {
               del = true;
