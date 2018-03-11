@@ -3,7 +3,7 @@ angular
     .controller('DashboardController', DashboardController);
 
 function DashboardController($scope, $stateParams) {
-
+    
     $scope.global.query = undefined;
     this.path = $stateParams.community_path || $stateParams.location_path;
     

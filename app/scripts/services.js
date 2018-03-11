@@ -301,13 +301,13 @@ angular
           // grab parents
           if (community.parents && community.parents.length) comm_items.push(community.parents[0]);
           if (community.home && community.communities && community.communities.indexOf(community.home) < 0) comm_items.push(community.home);
-          comm_items.push(comm);
+          //this.sortCommunities(community, [community]); // sort this community into response as a loc, cluster, etc
 
           uberSearch = comm_items;
 
         }
         else if (community.home) uberSearch = [community.home];
-      
+        
         if (uberSearch.length) {
           let uberUrl = '/api/3.0/communities?community=';
           uberSearch.forEach((u,i) => {

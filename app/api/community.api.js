@@ -142,7 +142,8 @@ var buildSearch = (community_key, location_key) => {
 var buildClusterSearch = (cluster_key, industry_keys = []) => {
   if (!cluster_key) return null;
   var cluster_search = [];
-
+  
+  if (!Array.isArray(industry_keys)) industry_keys = [industry_keys];
   if (industry_keys.length && industry_keys.indexOf('all') < 0) industry_keys.push('all');
 
   if (industry_keys.length) {

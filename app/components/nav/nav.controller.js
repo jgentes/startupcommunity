@@ -15,9 +15,10 @@ function NavigationController($scope, $auth, $state, $window, $location, $stateP
   $scope.global.lastitems = ["people", "companies", "resources", "search", "invite", "add-company", "add-resource", "welcome", "settings", "edit", "newsletter"];
   //$scope.global.industries = community_service.industries(); 
   this.state = $state; // used in header because path doesn't always update properly..
-
+  
   var nav_community;
-
+  
+  // getProfile is run first, then triggers getCommunity()
   var getProfile = function() {
     if (!$scope.global.user) {
       user_service.getProfile()
@@ -49,8 +50,8 @@ function NavigationController($scope, $auth, $state, $window, $location, $stateP
     else getCommunity();
 
   };
-
-
+  
+  // getcommunity evaluates if we already have the community in global scope, then getLocation, otherwise runs next to pull it
   var getCommunity = function() {
 
     var pullCommunity = async function(comm_path) {
@@ -159,8 +160,7 @@ function NavigationController($scope, $auth, $state, $window, $location, $stateP
     if (nav_community && nav_community.slug && $scope.global.location && $scope.global.location.slug && (nav_community.slug !== $scope.global.location.slug && ((nav_community.type == 'location') || (nav_community.resource) || (nav_community.type == 'cluster')))) {
 
       var response = await community_service.getTop($scope.global.location.slug, nav_community.slug, nav_community);
-      
-      console.log('top: ', response);
+
       $scope.global.top = response;
       loadNav();
     }
@@ -168,6 +168,7 @@ function NavigationController($scope, $auth, $state, $window, $location, $stateP
       $scope.global.top = $scope.global.nav_top;
       loadNav();
     }
+    $scope.$apply();
   };
 
   /* -------------- DEPENDENCIES HAVE BEEN RESOLVED --------------------- */
@@ -175,8 +176,7 @@ function NavigationController($scope, $auth, $state, $window, $location, $stateP
   var loadNav = function() {
 
     var path_url = $location.path().replace(/\/$/, "").split('/').pop(); // used for routing
-
-    /*  
+/*
     console.log($stateParams);
     console.log(path_url);
     console.log(nav_community);
