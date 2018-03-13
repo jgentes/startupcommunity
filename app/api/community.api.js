@@ -193,11 +193,6 @@ async function handleGetCommunity(req, res) {
     })
     .catch(err => console.warn("WARNING: ", err));
 
-  if (!community.length) {
-    console.log('INFO: Community not found!');
-    return res.status(404).send({ message: 'Community not found.' });
-  }
-
   return res.status(200).send(community);
 }
 
@@ -256,15 +251,7 @@ async function handleGetTeam(req, res) {
   sequelize
     .query(
       'SELECT * FROM communities WHERE JSON_CONTAINS(roles->>\'$.*.' + param + '\', \'[' + param + ']\')', { model: cdb }
-    ).then(team => {
-      if (!team.length) {
-        console.log('INFO: No team found!');
-        return res.status(404).send({ message: 'No team found.' });
-      }
-
-      return res.status(200).send(addkeys(team));
-
-    }).catch(err => console.warn("WARNING: ", err));
+    ).then(team => res.status(200).send(addkeys(team))).catch(err => console.warn("WARNING: ", err));
 }
 
 function handleGetResources(req, res) {
@@ -304,8 +291,7 @@ function handleGetResources(req, res) {
     where: selector,
     order: sequelize.random()
   }).then(result => {
-    if (result.length) {
-
+      result = result.toJSON();
       var newresponse = {};
 
       result.forEach(r => {
@@ -313,12 +299,6 @@ function handleGetResources(req, res) {
       });
 
       return res.status(200).send(newresponse);
-
-    }
-    else {
-      console.log('INFO: No Resources found!');
-      return res.status(404).send({ message: 'No resources found!' });
-    }
   }).catch(err => console.warn("WARNING: ", err));
 
 }
@@ -380,7 +360,6 @@ function handleGetCompanies(req, res) {
     where: selector,
     order: sequelize.random()
   }).then(result => {
-    if (!result.length) return res.status(404).send({ message: 'Nothing found!' });
     return res.status(200).send(addkeys(result));
   }).catch(err => console.warn("WARNING: ", err));
 }
@@ -425,7 +404,6 @@ function handleGetPeople(req, res) {
     limit: 1000,
     order: sequelize.random()
   }).then(result => {
-    if (!result.length) return res.status(404).send({ message: 'Nothing found!' });
     return res.status(200).send(addkeys(result));
   }).catch(err => console.warn("WARNING: ", err));
 }

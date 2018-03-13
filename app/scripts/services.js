@@ -299,7 +299,7 @@ angular
           var comm_items = community.communities || [];
 
           // grab parents
-          if (community.parents && community.parents.length) comm_items.push(community.parents[0]);
+          if (community.parents && community.parents.length && community.parents[0] != 'us') comm_items.push(community.parents[0]);
           if (community.home && community.communities && community.communities.indexOf(community.home) < 0) comm_items.push(community.home);
           //this.sortCommunities(community, [community]); // sort this community into response as a loc, cluster, etc
 
