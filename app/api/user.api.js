@@ -119,8 +119,8 @@ function handleUserSearch(req, res) {
   }
   
   const processUsers = users => {
-    const rows = users.rows ? users.rows : users;
-    
+    let rows = users.rows ? users.rows : users;
+    rows = rows.toJSON();
     if (rows.length) {
 
       try {
@@ -149,7 +149,12 @@ function handleUserSearch(req, res) {
   if (query && query != '*') {
     //query runs without other parameters
     sequelize.query('SELECT * FROM communities WHERE TYPE="user" AND MATCH (name, headline, summary, skills, description) AGAINST ("'+query+'" IN NATURAL LANGUAGE MODE) LIMIT '+Number(offset)+', '+Number(limit), { model: cdb}).then(processUsers);
-  } else cdb.findAndCountAll({ where: selector, offset: Number(offset) || 0, limit: Number(limit) || 16, raw: true }).then(processUsers);
+  } else cdb.findAndCountAll({
+    where: selector, 
+    offset: Number(offset) || 0, 
+    limit: Number(limit) || 16,
+    order: sequelize.random()
+  }).then(processUsers);
 }
 
 function handleDirectSearch(req, res) {
@@ -206,14 +211,14 @@ function handleContactUser(req, res) {
 
   console.log(selector);
 
-  cdb.findAll({where: selector, raw: true})
+  cdb.findAll({where: selector})
   .then(leaders => {
     if (leaders.length) {
    
       console.log("Found leader(s)");
 
       // now get user record for email address
-      cdb.findById(user_key, {raw: true})
+      cdb.findById(user_key)
       .then(user => {
         if (user) {
           var contacts = [], substitutions;
@@ -291,8 +296,9 @@ function handleGetProfile(req, res) {
   var userid = req.params.userid || req.user;
   console.log('Pulling user profile: ' + userid);
 
-  cdb.findById(userid, {raw: true})
+  cdb.findById(userid)
   .then(user => {
+    user = user.toJSON();
     if (user) {
       user["key"] = userid;
       user["token"] = jwt.sign(userid, process.env.SC_TOKEN_SECRET);
@@ -346,7 +352,7 @@ function handleUpdateProfile(req, res) {
   if (userid == profile.id) {
     delete profile.id;
 
-    cdb.findById(userid, {raw: true})
+    cdb.findById(userid)
     .then(user => {
       if (user) {
 
@@ -380,11 +386,11 @@ function handleRemoveCommunity(req, res) {
   console.log("Removing community '" + community.slug + "' for user " + user_key);
 
   // first confirm that req.user has leader role in community
-  cdb.findById(userid, {raw: true})
+  cdb.findById(userid)
   .then(response => {
     if (response) {
       if (response.roles.leader[community.slug]) {
-        cdb.findById(user_key, {raw: true})
+        cdb.findById(user_key)
         .then(response => {
           if (response) {
             for (var role in response.roles) {
@@ -435,7 +441,7 @@ function handleRemoveRole(req, res) {
   console.log("Removing " + role + " for community " + community_key + " for user " + userid);
 
   // confirm user has role and remove it
-  cdb.findById(userid, {raw: true})
+  cdb.findById(userid)
   .then(response => {
     if (response) {
       if (response.roles[role] && response.roles[role][community_key]) {
@@ -479,7 +485,7 @@ function handleFeedback(req, res) {
   var userid = req.user,
     data = JSON.parse(decodeURIComponent(req.query.data));
 
-  cdb.findById(userid, {raw: true})
+  cdb.findById(userid)
   .then(response => {
     if (response) {
       response['beta'] = data;
@@ -509,7 +515,7 @@ function handleFeedback(req, res) {
 
 function handleRemoveProfile(req, res) {
   var userid = req.params.userid;
-  cdb.findById(userid, {raw: true})
+  cdb.findById(userid)
   .then(result => {
     if (result) {
       cdb.destroy(userid)

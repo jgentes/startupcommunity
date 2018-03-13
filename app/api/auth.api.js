@@ -107,7 +107,7 @@ function handleCreateAPIToken(req, res) {
    };
    return res.status(201).send(jwt.encode(payload, process.env.API_TOKEN_SECRET));*/
 
-  cdb.findById(req.user, {raw: true})
+  cdb.findById(req.user)
     .then(response => {
       if (response) {
         console.log('Matching user found.');
@@ -153,7 +153,7 @@ function formatFindResults(items) {
 function handleSignup(req, res) {
   var user = schema.signupform(req.body);
 
-  cdb.findOne({where: {type: 'user', email: req.body.email}, raw: true})
+  cdb.findOne({where: {type: 'user', email: req.body.email}})
     .then(result => {
 
       if (result) {
@@ -189,7 +189,7 @@ function handleSignup(req, res) {
  */
 
 function handleLogin(req, res) {
-  cdb.findOne({where: {type: 'user', email: req.body.email}, raw: true})
+  cdb.findOne({where: {type: 'user', email: req.body.email}})
     .then(user => {
 
       if (user) {
@@ -283,7 +283,7 @@ function handleLinkedin(req, res) {
   };
 
   var delete_invite = function () {
-    idb.findById(invite_code, {raw: true}).then(i => {
+    idb.findById(invite_code).then(i => {
       if (i) {
         idb.destroy({where: {id: invite_code}})
           .then(result => {
@@ -319,7 +319,7 @@ function handleLinkedin(req, res) {
 
       // if this is an invitation, pull that invite data first
       if (invite_code) {
-        idb.findById(invite_code, {raw: true})
+        idb.findById(invite_code)
           .then(result => {
             if (result) {
               console.log('Verified invitation');
@@ -353,7 +353,7 @@ function handleLinkedin(req, res) {
       function userCheck(invite_profile) {
 
         // check to see if this linkedin account is already linked to an existing user
-        cdb.findOne({where: {"linkedin.id": profile.id}, raw: true})
+        cdb.findOne({where: {"linkedin.id": profile.id}})
           .then(result => {
 
             if (result) {
@@ -392,7 +392,7 @@ function handleLinkedin(req, res) {
             } else {
 
               // search by email
-              cdb.findOne({where: {email: profile.emailAddress}, raw: true})
+              cdb.findOne({where: {email: profile.emailAddress}})
                 .then(result => {
 
                   if (result) {
@@ -515,11 +515,10 @@ function handleInviteUser(req, res) {
   var goInvite = function () {
     // validate user has leader role within the location/community, or let them through if they are a member of the location
 
-    cdb.findById(req.user, {raw: true})
+    cdb.findById(req.user)
       .then(response => {
 
           var user = response;
-          console.log(response);
           if (user.communities.indexOf(inviteUser.location_key) < 0) {
             return res.status(202).send({message: 'You must be a member of this community to invite someone.'});
           }
@@ -558,7 +557,7 @@ function handleInviteUser(req, res) {
           }
 
           // check to see if the email address already exists within the system
-          cdb.findOne({where: {[Op.or]: [{"linkedin.emailAddress": inviteUser.email}, {email: inviteUser.email}]}, raw: true})
+          cdb.findOne({where: {[Op.or]: [{"linkedin.emailAddress": inviteUser.email}, {email: inviteUser.email}]}})
             .then(result => {
 
               if (result) {
@@ -590,7 +589,7 @@ function handleInviteUser(req, res) {
 
               } else {
                 // no existing user, so search for existing invite
-                idb.findOne({where: {email: inviteUser.email}, raw: true})
+                idb.findOne({where: {email: inviteUser.email}})
                   .then(result => {
 
                     if (result) {
@@ -650,9 +649,8 @@ function handleInviteUser(req, res) {
   };
 
   if (!req.user) {
-    const where = {};
     //where['roles.leader.' + inviteUser.location_key] = {[Op.ne]:null};
-    cdb.findOne({where: {slug: 'james'}, raw: true}).then(result => {
+    cdb.findOne({where: {slug: 'james'}}).then(result => {
         if (result) {
           console.log('Found leader to use for invite.');
           req.user = result.id; 
