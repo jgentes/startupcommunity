@@ -300,7 +300,10 @@ function handleGetResources(req, res) {
 
   console.log(searchstring);
 
-  cdb.findAll({ where: selector }).then(result => {
+  cdb.findAll({
+    where: selector,
+    order: sequelize.random()
+  }).then(result => {
     if (result.length) {
 
       var newresponse = {};
@@ -327,8 +330,7 @@ function getMore(selector, bookmark, callback) {
       selector: selector,
       limit: 1000,
       bookmark: bookmark
-    },
-    raw: true
+    }
   }).then(results => callback).catch(err => console.warn("WARNING: ", err));
 }
 
@@ -375,7 +377,8 @@ function handleGetCompanies(req, res) {
   console.log('Pulling ' + resources ? 'Resources' : 'Companies: ', selector);
 
   cdb.findAll({
-    where: selector
+    where: selector,
+    order: sequelize.random()
   }).then(result => {
     if (!result.length) return res.status(404).send({ message: 'Nothing found!' });
     return res.status(200).send(addkeys(result));
@@ -419,7 +422,8 @@ function handleGetPeople(req, res) {
 
   cdb.findAll({
     where: selector,
-    limit: 1000
+    limit: 1000,
+    order: sequelize.random()
   }).then(result => {
     if (!result.length) return res.status(404).send({ message: 'Nothing found!' });
     return res.status(200).send(addkeys(result));
@@ -434,7 +438,7 @@ function handleSetCommunity(req, res) {
 
   console.log('Updating settings for ' + settings.location_key + ' / ' + settings.community_key);
 
-  cdb.findById(req.user, { raw: true }).then(response => {
+  cdb.findById(req.user).then(response => {
     if (response) {
       var user = response;
 
@@ -444,7 +448,7 @@ function handleSetCommunity(req, res) {
 
         // update the community
 
-        cdb.findOne({ where: { slug: settings.community_key }, raw: true }).then(response => {
+        cdb.findOne({ where: { slug: settings.community_key }}).then(response => {
           if (response) {
             if (response.type !== 'location') { // use community_profiles
               if (response.community_profiles === undefined) { // create community_profiles
@@ -499,7 +503,7 @@ function handleEditCommunity(req, res) {
 
   console.log('Editing community: ' + settings.community.name + ' in ' + settings.location_key);
 
-  cdb.findById(req.user, { raw: true }).then(response => {
+  cdb.findById(req.user).then(response => {
     if (response) {
       var user = response,
         leader = false;
@@ -518,7 +522,7 @@ function handleEditCommunity(req, res) {
 
         // check to see if the community exists
 
-        cdb.findOne({ where: { slug: pathname }, raw: true }).then(response => {
+        cdb.findOne({ where: { slug: pathname }}).then(response => {
           if (response) {
             // go to .catch if community doesn't exist (on .get rather than .search)
             // if community already exists and it's the same type as what's being created, we're good to add the community profile here
@@ -657,7 +661,7 @@ function handleDeleteCommunity(req, res) {
 
   console.log('Deleting community: ' + settings.community.name + ' in ' + settings.location_key);
 
-  cdb.findById(req.user, { raw: true }).then(response => {
+  cdb.findById(req.user).then(response => {
     if (response) {
       var user = response;
 
@@ -667,7 +671,7 @@ function handleDeleteCommunity(req, res) {
 
         // get the community
 
-        cdb.findOne({ where: { slug: settings.community.slug }, raw: true }).then(response => {
+        cdb.findOne({ where: { slug: settings.community.slug }}).then(response => {
           if (response) {
             // remove the location profile
 
@@ -763,7 +767,7 @@ function handleDeleteCommunity(req, res) {
 
 var update_user = function(user_key, role, community_key, location_key, callback) {
 
-  cdb.findById(user_key, { raw: true }).then(response => {
+  cdb.findById(user_key).then(response => {
     if (response) {
       // add role
 
@@ -913,7 +917,7 @@ function handleGetId(req, res) {
   console.log('Pulling id: ' + req.params.id);
 
   function pullId() {
-    cdb.findById(req.params.id, { raw: true }).then(result => {
+    cdb.findById(req.params.id).then(result => {
       if (result) {
         return res.status(200).send(result);
       }

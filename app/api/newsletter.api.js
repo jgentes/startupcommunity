@@ -26,7 +26,7 @@ function formatSearchResults(items) {
 function addSubscriber(location_key, resource_key, user_profile) {
 
     console.log('getting leaders: ' + location_key + ' / ' + resource_key);
-  cdb.findAll({where: {'roles.leader': resource_key, type: 'user'}, raw: true})
+  cdb.findAll({where: {'roles.leader': resource_key, type: 'user'}})
     .then(data => {
             for (var x in data) {
 
@@ -67,18 +67,6 @@ function addSubscriber(location_key, resource_key, user_profile) {
             return res.status(201).end();
         });
 }
-/*
-function formatFindResults(items) {
-  if (items.docs && items.docs.length) {
-    for (i in items.docs) {
-      items.docs[i] = {
-        path: { key: items.docs[i]._id },
-        value: items.docs[i]
-      };
-    }
-  }
-  return items;
-}*/
 
 function handleSetupNewsletter(req,res) {
     console.log('setup newsletter');
@@ -120,7 +108,7 @@ function handleSetupNewsletter(req,res) {
 
     getUser = function(callback) {
 
-        cdb.findById(req.user, {raw: true})
+        cdb.findById(req.user)
             .then(response => {
 
                 if (response) {
@@ -266,12 +254,11 @@ function handleSetupNewsletter(req,res) {
             search = function (startKey) {
 
                 var searchstring = resource + " AND " + location_key;
-              cdb.find({where: {type: 'user', '$text': 'communities: (' + searchstring + ')'}, skip: Number(startkey) || 0, raw: true})
+              cdb.find({where: {type: 'user', '$text': 'communities: (' + searchstring + ')'}, skip: Number(startKey) || 0})
                 .then(function(data){
-                  data = formatFindResults(data);
 
                         var profile;
-                        for (x in data.docs) {
+                        for (var x in data.docs) {
                             profile = data.docs[x].value.profile;
                             if (profile.email) {
                                 addSubscriber(brand_id, list_id, profile.name + ',' + profile.email)
@@ -386,7 +373,7 @@ function handleSetupNewsletter(req,res) {
 
                 // create lists for resources that the user is a leader of
 
-                for (resource in newprofile.roles.leader) {
+                for (var resource in newprofile.roles.leader) {
 
                     if (newprofile.roles.leader.hasOwnProperty(resource)) {
 
@@ -508,13 +495,12 @@ function handleSyncMembers(req,res) {
 
             var searchstring = resource + " AND " + location_key;
 
-          cdb.find({selector: {type: 'user', '$text': 'communities: (' + searchstring + ')'}, skip: Number(offset) || 0, raw: true})
+          cdb.find({selector: {type: 'user', '$text': 'communities: (' + searchstring + ')'}, skip: Number(startKey) || 0})
             .then(function(data){
-              data = formatFindResults(data);
 
                     var profile;
-                    for (x in data.docs) {
-                        profile = data.docs[x].value.profile;
+                    for (var x in data) {
+                        profile = data[x];
                         if (profile.email) {
                             console.log('adding ' + profile.email);
 

@@ -179,7 +179,12 @@ function handleCompanySearch(req, res) {
     //query runs without other parameters
     sequelize.query('SELECT * FROM communities WHERE TYPE="company" AND MATCH (name, headline, summary, skills, description) AGAINST ("' + query + '" IN NATURAL LANGUAGE MODE) LIMIT ' + Number(offset) + ', ' + Number(limit), { model: cdb }).then(companies => res.send(companies.rows ? companies.rows : companies));
   }
-  else cdb.findAndCountAll({ where: selector, offset: Number(offset) || 0, limit: Number(limit) || 16, raw: true }).then(companies => res.send(companies.rows ? companies.rows : companies));
+  else cdb.findAndCountAll({
+    where: selector, 
+    offset: Number(offset) || 0, 
+    limit: Number(limit) || 16,
+    order: sequelize.random()
+  }).then(companies => res.send(companies.rows ? companies.rows : companies));
 }
 
 function handleGetLogoUrl(req, res) {
@@ -220,7 +225,7 @@ function handleAddCompany(req, res) {
 
   var go = function() {
     // validate user is a member in the location/community
-    cdb.findById(req.user, {raw: true}).then(response => {
+    cdb.findById(req.user).then(response => {
       if (response) {
         console.log(addCompany);
 
@@ -283,7 +288,7 @@ function handleAddCompany(req, res) {
 
     // if no existing key is provided, validate the company.url doesn't already exist
     if (!addCompany.slug) {
-      cdb.findOne({ where: { slug: addCompany.url }, raw: true }).then(result => {
+      cdb.findOne({ where: { slug: addCompany.url }}).then(result => {
         if (result) {
           return res.status(400).send({ message: 'That url is already in use. Please specify a different url path.' })
         }
@@ -307,7 +312,7 @@ function handleDeleteCompany(req, res) {
 
     // pull it first to make sure it's a company
 
-    cdb.findById(params.company_key, {raw: true}).then(response => {
+    cdb.findById(params.company_key).then(response => {
 
       if (response) {
         if (response.type == 'company') {
@@ -429,7 +434,7 @@ function handleDeleteCompany(req, res) {
 
 var addRole = function(company_key, roles, location_key, user_key) {
 
-  cdb.findById(user_key, {raw: true})
+  cdb.findById(user_key)
     .then(response => {
       if (response) {
         // add new role
@@ -484,8 +489,7 @@ function handleCheckUrl(req, res) {
   cdb.findAll({
     where: {
       [Op.and]: [{ type: 'company' }, { profile: website }]
-    }, 
-    raw: true
+    }
   }).then(result => {
     if (result) {
       if (result.length) {
