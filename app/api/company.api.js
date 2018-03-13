@@ -486,14 +486,14 @@ function handleCheckUrl(req, res) {
   website = website.replace(/.*?:\/\//g, "");
   if (website.match(/^www\./)) website = website.substring(4);
 
-  cdb.findAll({
+  cdb.findOne({
     where: {
       [Op.and]: [{ type: 'company' }, { profile: website }]
     }
   }).then(result => {
     if (result) {
       if (result.length) {
-        return res.status(202).send({ message: result[0].id });
+        return res.status(202).send({ message: result.id });
       }
       else {
         return res.status(404).send();
