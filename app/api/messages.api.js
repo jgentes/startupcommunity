@@ -110,11 +110,11 @@ function handleAddMessage(req, res) {
    /* // check if this is a reply to existing thread
     if (addMessage.parent) {
 
-        db.newPatchBuilder(process.env.DB_MESSAGES, addMessage.parent.slug)
+        db.newPatchBuilder(process.env.DB_MESSAGES, addMessage.parent.id)
             .append("replies", [message])
             .apply()
             .then(function (result) {
-                addMessage["key"] = addMessage.parent.slug;
+                addMessage["key"] = addMessage.parent.id;
                 to_notify(addMessage);
                 return res.status(200).send(message);
             })

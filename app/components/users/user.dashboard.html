@@ -3,7 +3,7 @@
         <div style="padding: 20px 15px;">
             <header class="heading content" style="color:#fff">
                 <a href="javascript:window.location.href=window.location.href" style="color: #eee; font-size: 7px; float: left; margin-left: -40px; margin-top: -12px;">random image</a>
-                <button ng-if="global.community.slug == global.user.slug" ui-sref="welcome({location_path: global.location.slug, go: 'welcome.roles'})" ladda="editprofile" ng-click="editprofile = true" class="ladda-btn btn btn-warning pull-right" style="margin-left:-100px;">Edit Profile</button>
+                <button ng-if="global.community.id == global.user.id" ui-sref="welcome({location_path: global.location.id, go: 'welcome.roles'})" ladda="editprofile" ng-click="editprofile = true" class="ladda-btn btn btn-warning pull-right" style="margin-left:-100px;">Edit Profile</button>
                 <img class="img-circle m-b" style="max-height:100px; max-width: 100px;" ng-src="{{profile.user.avatar || '/public/images/blank_avatar.png'}}" alt="{{profile.user.name}}" onerror="this.src='/public/images/blank_avatar.png'">
                 <div style="margin-top: -12px;">
                     <span ng-repeat="(item, val) in profile.user.roles" class="user-role" style="font-size: 24px;"><i ng-attr-title="{{item[0].toUpperCase() + item.slice(1);}}" ng-class="{'pe-7s-paper-plane' : item == 'founder', 'pe-7s-flag' : item == 'leader', 'pe-7s-study' : item == 'mentor', 'pe-7s-gleam' : item == 'investor', 'pe-7s-ball' : item == 'team', 'pe-7s-portfolio' : item == 'provider'}"></i></span>
@@ -21,7 +21,7 @@
                     words:1}}</span><span ng-show="profile.user.summary">, <span ng-bind-html="profile.user.headline"></span></span>
                 </h3>
                 <a ng-click="profile.ask()" class="btn btn-success btn-sm">Ask me a question</a>
-                <a ng-click="profile.contact(global.community.slug)" class="btn btn-sm btn-info" style="margin-left: 5px;">Contact me
+                <a ng-click="profile.contact(global.community.id)" class="btn btn-sm btn-info" style="margin-left: 5px;">Contact me
                 </a>
                 <div style="padding-top:10px; overflow: hidden; height: 50px; margin-bottom: -10px;">
                     <button ng-repeat="skill in profile.user.skills" style="margin-right: 5px;" ladda="btnworking" class="ladda-btn btn btn-outline btn-default btn-xs" ng-click="btnworking = true; nav.search(skill);">

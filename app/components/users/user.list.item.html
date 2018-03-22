@@ -1,12 +1,12 @@
 <div class="col-md-12 dash-table">
     <div>
-        <a ui-sref="user.dashboard({ location_path: item.slug, community_path: '', tail_path: '', noreload: true, profile: item, query: null })" ng-click="global.loaders[item.name] = true" title="View {{::item.name | words:0}}'s Profile">
+        <a ui-sref="user.dashboard({ location_path: item.id, community_path: '', tail_path: '', noreload: true, profile: item, query: null })" ng-click="global.loaders[item.name] = true" title="View {{::item.name | words:0}}'s Profile">
             <img ng-src="{{item.avatar || '/public/images/blank_avatar.png'}}" alt="{{::item.name}}" class="user-img widget-image img-circle pull-left" onerror="this.src='/public/images/blank_avatar.png'"/>
         </a>
     </div>
     <div class="user-row list-hr">
-        <a ng-show="(global.community.resource || global.location.resource) && global.user.roles.leader[global.community.slug]" ng-click="nav.removeUser(item)" title="Remove {{::item.name}} from {{global.community.name}}" style="font-size: 11px; color:#bbb; padding-left:4px;">remove</a>
-        <a ui-sref="user.dashboard({ location_path: item.slug, community_path: '', tail_path: '', noreload: true, profile: item, query: null })" title="View {{::item.name | words:0}}'s Profile" ng-click="global.loaders[item.name] = true" class="dash-row-div"><strong>{{::item.name}} </strong></a>
+        <a ng-show="(global.community.resource || global.location.resource) && global.user.roles.leader[global.community.id]" ng-click="nav.removeUser(item)" title="Remove {{::item.name}} from {{global.community.name}}" style="font-size: 11px; color:#bbb; padding-left:4px;">remove</a>
+        <a ui-sref="user.dashboard({ location_path: item.id, community_path: '', tail_path: '', noreload: true, profile: item, query: null })" title="View {{::item.name | words:0}}'s Profile" ng-click="global.loaders[item.name] = true" class="dash-row-div"><strong>{{::item.name}} </strong></a>
         <div class="dash-row-summary" ng-show="item.summary.length > 0">
             <a title="Show Summary" ng-click="showSummary = !showSummary" class="user-summary">&nbsp;<i style="font-size: 8px;" class="fa fa-chevron-down"></i></a>
         </div>

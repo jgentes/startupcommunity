@@ -244,18 +244,18 @@ function handleAddCompany(req, res) {
         var company = schema.company(addCompany, addCompany.location_key, addCompany.community_key);
 
         var post = function() {
-          companyPost(company, addCompany.role, addCompany.location_key, req.user, addCompany.slug, update, function(result) {
+          companyPost(company, addCompany.role, addCompany.location_key, req.user, addCompany.id, update, function(result) {
             return res.status(result.status).send(result.data);
           });
         };
 
         // add company
 
-        if (!addCompany.slug) {
-          addCompany.slug = addCompany.url.toLowerCase();
+        if (!addCompany.id) {
+          addCompany.id = addCompany.url.toLowerCase();
           post();
         }
-        else if (addCompany.slug && (addCompany.slug !== addCompany.url)) {
+        else if (addCompany.id && (addCompany.id !== addCompany.url)) {
           return res.status(202).send({ message: 'Sorry, a url path cannot be changed.' })
         }
         else {
@@ -287,8 +287,8 @@ function handleAddCompany(req, res) {
     console.log('Adding company ' + addCompany.name + ' to ' + addCompany.location_key + ' / ' + addCompany.community_key);
 
     // if no existing key is provided, validate the company.url doesn't already exist
-    if (!addCompany.slug) {
-      cdb.findOne({ where: { slug: addCompany.url }}).then(result => {
+    if (!addCompany.id) {
+      cdb.findById(addCompany.url).then(result => {
         if (result) {
           return res.status(400).send({ message: 'That url is already in use. Please specify a different url path.' })
         }
@@ -509,7 +509,7 @@ function handleCheckUrl(req, res) {
 
 var companyPost = function(company, role, location_key, user, key, update, callback) {
 
-  company.slug = key;
+  company.id = key;
   cdb.create(company).then(response => {
 
     if (response) {
