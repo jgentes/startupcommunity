@@ -329,7 +329,7 @@ angular
 
         // get messages for users
         if (community.type == 'user') {
-          const messages = await $http.get('/api/3.0/messages/' + comm.id).then(response => response.data);
+          const messages = await $http.get('/api/3.0/messages/' + comm).then(response => response.data);
           community.messages = {};
           for (var mes in messages) {
             community.messages[mes.id] = mes;

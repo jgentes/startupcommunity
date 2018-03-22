@@ -33,7 +33,7 @@ var schema = {
 
 function handleAddMessage(req, res) {
     // always use ensureAuth before this (to acquire req.user)
-    var addMessage = req.body.params;
+    var addMessage = req.params;
 
     console.log('Adding message from ' + addMessage.from.name + ' to ' + addMessage.to.name);
 
@@ -141,11 +141,11 @@ function handleAddMessage(req, res) {
 function handleGetMessages(req, res) {
     // always use ensureAuth before this (to acquire req.user)
     // this call could be 'included' with user db finds, but it's infrequent so worth separating for now
-    var userId = req.body.params;
+    var userId = req.params.userId;
     
     if (!userId) return res.status(404).send({ message: 'Please specify a userId!' });
     
-    mdb.findAll({ where: { 'to': userId }, limit: 100, raw: true })
+    mdb.findAll({ where: {to: userId}, limit: 100, raw: true })
     .then(messages => {
       if (messages.length) {
         messages.sort(function(a, b) {
@@ -153,7 +153,7 @@ function handleGetMessages(req, res) {
         });
       }
       return res.send(messages);
-  }).catch(err => console.warn("WARNING: ", err));
+    }).catch(err => console.warn("WARNING: ", err));
 }
 
 module.exports = MessagesApi;
