@@ -90,13 +90,13 @@ function WelcomeController($scope, $auth, $location, $q, $mixpanel, $stateParams
                         self.alert = { type: 'danger', message: 'There was a problem: ' + String(response.data.message) };
                     } else {
                         $scope.global.user = response.data;
-                        $scope.global.user.key = response.data.slug;
+                        $scope.global.user.key = response.data.id;
                         user = $scope.global.user;
                         self.quote = false;
 
                         checkProfile();
 
-                        $mixpanel.identify(response.data.slug);
+                        $mixpanel.identify(response.data.id);
                         $mixpanel.track('Accepted Invite');
 
                         self.panel = 'roles';
@@ -173,7 +173,7 @@ function WelcomeController($scope, $auth, $location, $q, $mixpanel, $stateParams
 
             sweet.show({
                 title: "Hold on a sec.",
-                text: "You have this role in one or more companies. You'll need to remove yourself from them before removing this role. Go to your <a href='" + $scope.global.user.slug + "'>profile page</a> to view them.",
+                text: "You have this role in one or more companies. You'll need to remove yourself from them before removing this role. Go to your <a href='" + $scope.global.user.id + "'>profile page</a> to view them.",
                 type: "warning",
                 html: true
             });
@@ -242,7 +242,7 @@ function WelcomeController($scope, $auth, $location, $q, $mixpanel, $stateParams
                     if (!$location.search().invite_code) {
                         $state.go('user.dashboard', {
                             profile: $scope.global.user,
-                            location_path: $scope.global.user.slug,
+                            location_path: $scope.global.user.id,
                             community_path: '',
                             tail_path: '',
                             tour: false

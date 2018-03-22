@@ -43,10 +43,10 @@ const msg = {
 sgMail.send(msg);*/
 
 
-/*db.create({slug: 'test6', type: 'test', name: 'testing'}).then(a => {
+/*db.create({id: 'test6', type: 'test', name: 'testing'}).then(a => {
   console.log(a.id)
-  // returns { id: 575, slug: 'test6', type: 'test', name: 'testing' }
-  db.update({slug: 'test7'}, {where: {slug: 'test6'}}).then(b => {
+  // returns { id: 575, id: 'test6', type: 'test', name: 'testing' }
+  db.update({id: 'test7'}, {where: {id: 'test6'}}).then(b => {
     //console.log(b)
     db.destroy({where: {id: a.id}});
   })
@@ -68,7 +68,7 @@ sgMail.send(msg);*/
 /*
 sequelize
   .query(
-    "SELECT `id`, `slug`, `type`, `name`, `home`, `parents`, `communities`, `community_profiles`, `icon`, `email`, `avatar`, `linkedin`, `api_key`, `headline`, `summary`, `skills`, `roles`, `country`, `state`, `county`, `city`, `description`, `sc_logo`, `embed`, `resource`, `resource_types`, `industries`, `website`, `street`, `angellist`, `logo`, `token`, `newsletter`, `stage` FROM `communities` AS `communities` WHERE (NOT ((`communities`.`type` = 'user' OR `communities`.`type` = 'company' OR `communities`.`slug` = 'bend-or')) AND (`communities`.`communities` LIKE '%\"bend-or\"%' OR `communities`.`parents` LIKE '%\"bend-or\"%'))",
+    "SELECT `id`, `type`, `name`, `home`, `parents`, `communities`, `community_profiles`, `icon`, `email`, `avatar`, `linkedin`, `api_key`, `headline`, `summary`, `skills`, `roles`, `country`, `state`, `county`, `city`, `description`, `sc_logo`, `embed`, `resource`, `resource_types`, `industries`, `website`, `street`, `angellist`, `logo`, `token`, `newsletter`, `stage` FROM `communities` AS `communities` WHERE (NOT ((`communities`.`type` = 'user' OR `communities`.`type` = 'company' OR `communities`.`id` = 'bend-or')) AND (`communities`.`communities` LIKE '%\"bend-or\"%' OR `communities`.`parents` LIKE '%\"bend-or\"%'))",
     { model: cdb}
   ).then(result => {
     console.log(result.length)
@@ -113,7 +113,7 @@ idb.findOne({where: {'invite_communities': {[Op.contains]: ["bendtech"]}}})
   })
   */
 /*sequelize.query(
-  "SELECT `id`, `slug`, `type`, `name`, `home`, `parents`, `communities`, `community_profiles`, `icon`, `email`, `avatar`, `linkedin`, `api_key`, `headline`, `summary`, `skills`, `roles`, `country`, `state`, `county`, `city`, `description`, `sc_logo`, `embed`, `resource`, `resource_types`, `industries`, `website`, `street`, `angellist`, `logo`, `token`, `newsletter`, `stage` FROM `communities` AS `communities` WHERE (`communities`.`type` = 'company' AND `communities`.`resource` IS NOT true AND (`communities`.`home` LIKE '%-or'))", {model: cdb})
+  "SELECT `id`, `type`, `name`, `home`, `parents`, `communities`, `community_profiles`, `icon`, `email`, `avatar`, `linkedin`, `api_key`, `headline`, `summary`, `skills`, `roles`, `country`, `state`, `county`, `city`, `description`, `sc_logo`, `embed`, `resource`, `resource_types`, `industries`, `website`, `street`, `angellist`, `logo`, `token`, `newsletter`, `stage` FROM `communities` AS `communities` WHERE (`communities`.`type` = 'company' AND `communities`.`resource` IS NOT true AND (`communities`.`home` LIKE '%-or'))", {model: cdb})
   .then(results => {
     console.log('results: ', results)
   }

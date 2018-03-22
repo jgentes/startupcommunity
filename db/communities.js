@@ -8,11 +8,6 @@ module.exports = function(sequelize, DataTypes) {
       primaryKey: true,
       autoIncrement: true
     },
-    slug: {
-      type: DataTypes.STRING(50),
-      unique: true,
-      allowNull: false
-    },
     type: {
       type: DataTypes.STRING(50),
       allowNull: false

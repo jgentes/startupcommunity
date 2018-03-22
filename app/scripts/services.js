@@ -241,11 +241,11 @@ angular
                 community.locations[item.id] = item;
                 break;
               case "cluster":
-                if (item.community_profiles && item.community_profiles[community.slug] && item.community_profiles[community.slug].parents) {
+                if (item.community_profiles && item.community_profiles[community.id] && item.community_profiles[community.id].parents) {
                   if (!community.clusters) community.clusters = {};
                   // this is for navigation
                   var cluster_type;
-                  if (item.community_profiles[community.slug].parents.length) cluster_type = item.community_profiles[community.slug].parents[0];
+                  if (item.community_profiles[community.id].parents.length) cluster_type = item.community_profiles[community.id].parents[0];
                   if (!community.clusters[cluster_type]) community.clusters[cluster_type] = {};
                   community.clusters[cluster_type][item.id] = item;
                 }
@@ -321,8 +321,8 @@ angular
         
         if (community.resources && community.resources.length) {
           community.resources = community.resources.sort(function(a, b) {
-            var x = a.slug;
-            var y = b.slug;
+            var x = a.id;
+            var y = b.id;
             return ((x < y) ? -1 : ((x > y) ? 1 : 0));
           });
         }
@@ -403,7 +403,7 @@ angular
             location_key = '*'; // needed to avoid communities search for cluster (companies aren't tied to the cluster via community array)
           }
 
-          var cluster_key = community.slug;
+          var cluster_key = community.id;
         }
 
         var params = {};

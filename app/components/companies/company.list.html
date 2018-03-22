@@ -104,7 +104,7 @@
                             <a><i class="fa fa-fw fa-globe themed-color-dark icon-push"></i> All</a>
                         </li>
                         <hr style="margin: 10px 0 10px 0;">
-                        <li ng-repeat="resource in nav.resources" ng-class="{'active':companies.selectedResources.indexOf(resource.slug) >= 0}" ng-click="companies.allResources=false; companies.filterResources(resource.slug);">
+                        <li ng-repeat="resource in nav.resources" ng-class="{'active':companies.selectedResources.indexOf(resource.id) >= 0}" ng-click="companies.allResources=false; companies.filterResources(resource.id);">
                             <a>{{resource.name}}</a>
                         </li>
                     </ul>

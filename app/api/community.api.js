@@ -186,7 +186,7 @@ async function handleGetCommunity(req, res) {
 
   const community = await cdb.findAll({
       where: {
-        "slug": {
+        id: {
           [Op.in]: param
         }
       }
@@ -213,7 +213,7 @@ async function handleGetNeighbors(req, res) {
             [Op.or]: [
               { type: 'user' },
               { type: 'company' },
-              { slug: param }
+              { id: param }
             ]
           }
         }, {
@@ -426,7 +426,7 @@ function handleSetCommunity(req, res) {
 
         // update the community
 
-        cdb.findOne({ where: { slug: settings.community_key }}).then(response => {
+        cdb.findById(settings.community_key).then(response => {
           if (response) {
             if (response.type !== 'location') { // use community_profiles
               if (response.community_profiles === undefined) { // create community_profiles
@@ -446,7 +446,7 @@ function handleSetCommunity(req, res) {
             }
             else response.embed = settings.embed;
 
-            cdb.update(response, { where: { slug: settings.community_key } }).then(finalres => {
+            cdb.update(response, { where: { id: settings.community_key } }).then(finalres => {
               if (finalres) {
                 return res.status(201).send({ message: 'Community settings updated.' });
               }
@@ -500,7 +500,7 @@ function handleEditCommunity(req, res) {
 
         // check to see if the community exists
 
-        cdb.findOne({ where: { slug: pathname }}).then(response => {
+        cdb.findById(pathname).then(response => {
           if (response) {
             // go to .catch if community doesn't exist (on .get rather than .search)
             // if community already exists and it's the same type as what's being created, we're good to add the community profile here
@@ -535,7 +535,7 @@ function handleEditCommunity(req, res) {
                   response.communities.push(settings.location_key);
                 }
 
-                cdb.update(response, { where: { slug: pathname } }).then(finalres => {
+                cdb.update(response, { where: { id: pathname } }).then(finalres => {
                   if (finalres) {
                     update_user(req.user, 'leader', pathname, settings.location_key, function(good) {
                       if (good) {
@@ -574,7 +574,7 @@ function handleEditCommunity(req, res) {
                     response.communities.push(settings.location_key);
                   }
 
-                  response.slug = pathname;
+                  response.id = pathname;
 
                   cdb.create(response).then(finalres => {
                     if (finalres) {
@@ -600,7 +600,7 @@ function handleEditCommunity(req, res) {
 
             var profile = schema.community(settings.community, settings.location_key);
 
-            profile.slug = pathname;
+            profile.id = pathname;
 
             cdb.create(profile).then(finalres => {
               if (finalres) {
@@ -622,7 +622,7 @@ function handleEditCommunity(req, res) {
 
       }
       else {
-        console.warn("User is not a member of community: " + settings.community.slug + " and location: " + settings.location_key + "!");
+        console.warn("User is not a member of community: " + settings.community.id + " and location: " + settings.location_key + "!");
         return res.status(202).send({ message: 'You must be a member of this community to add to it.' });
       }
     }
@@ -645,11 +645,11 @@ function handleDeleteCommunity(req, res) {
 
       // validate user is a leader of the community in this location
 
-      if (user.roles && user.roles.leader && user.roles.leader[settings.community.slug].indexOf(settings.location_key) > -1) {
+      if (user.roles && user.roles.leader && user.roles.leader[settings.community.id].indexOf(settings.location_key) > -1) {
 
         // get the community
 
-        cdb.findOne({ where: { slug: settings.community.slug }}).then(response => {
+        cdb.findById(settings.community.id).then(response => {
           if (response) {
             // remove the location profile
 
@@ -672,12 +672,12 @@ function handleDeleteCommunity(req, res) {
 
                   // this is a rename operation
 
-                  rename_community(settings.community.slug, settings.location_key, settings.new_community_key);
+                  rename_community(settings.community.id, settings.location_key, settings.new_community_key);
 
                 }
                 else {
 
-                  update_user(req.user, 'delete', settings.community.slug, settings.location_key, function(good) {
+                  update_user(req.user, 'delete', settings.community.id, settings.location_key, function(good) {
                     if (good) {
                       console.log('Community deleted.');
                       return res.status(204).send({ message: settings.community.type[0].toUpperCase() + settings.community.type.slice(1) + ' deleted!' });
@@ -693,7 +693,7 @@ function handleDeleteCommunity(req, res) {
 
                 // delete the whole thing
 
-                cdb.destroy({ where: { id: settings.community.slug } }).then(finalres => {
+                cdb.destroy({ where: { id: settings.community.id } }).then(finalres => {
                   if (finalres) {
                     wrapup();
                   }
@@ -706,7 +706,7 @@ function handleDeleteCommunity(req, res) {
               }
               else {
 
-                response.slug = settings.community.slug;
+                response.id = settings.community.id;
 
                 cdb.create(response).then(finalres => {
                   if (finalres) {
@@ -733,7 +733,7 @@ function handleDeleteCommunity(req, res) {
 
       }
       else {
-        console.warn("User is not a member of community: " + settings.community.slug + " and location: " + settings.location_key + "!");
+        console.warn("User is not a member of community: " + settings.community.id + " and location: " + settings.location_key + "!");
         return res.status(202).send({ message: 'You must be a leader of this community to delete it.' });
       }
     }
@@ -789,7 +789,7 @@ var update_user = function(user_key, role, community_key, location_key, callback
         }
       }
 
-      response.slug = user_key;
+      response.id = user_key;
 
       cdb.create(response).then(result => {
         if (result) {

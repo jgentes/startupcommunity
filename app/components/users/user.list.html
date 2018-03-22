@@ -81,7 +81,7 @@
                             <a><i class="fa fa-fw fa-globe themed-color-dark icon-push"></i> All</a>
                         </li>
                         <hr style="margin: 10px 0 10px 0;">
-                        <li ng-repeat="resource in nav.resources" ng-class="{'active':users.selectedResources.indexOf(resource.slug) >= 0}" ng-click="users.allResources=false; users.filterResources(resource.slug);">
+                        <li ng-repeat="resource in nav.resources" ng-class="{'active':users.selectedResources.indexOf(resource.id) >= 0}" ng-click="users.allResources=false; users.filterResources(resource.id);">
                             <a>{{resource.name}}</a>
                         </li>
                     </ul>

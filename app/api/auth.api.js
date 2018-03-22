@@ -432,7 +432,7 @@ function handleLinkedin(req, res) {
 
                       // update the invite record with user details
 
-                      new_invite_profile.slug = invite_code;
+                      new_invite_profile.id = invite_code;
                       new_invite_profile.type = "user";
                       new_invite_profile.linkedin = profile;
                       new_invite_profile.avatar = profile.pictureUrl;
@@ -580,7 +580,7 @@ function handleInviteUser(req, res) {
                 cdb.update(existing, {where: {id: result.id}})
                   .then(response => {
                     console.log("User updated!");
-                    return res.status(200).send({message: 'Nice!  <a target="_blank" href="https://startupcommunity.org/' + result.slug + '">' + result.name + '</a> is a member of the community.'});
+                    return res.status(200).send({message: 'Nice!  <a target="_blank" href="https://startupcommunity.org/' + result.id + '">' + result.name + '</a> is a member of the community.'});
                   })
                   .catch(function (err) {
                     console.log('WARNING: ', err);
@@ -650,7 +650,7 @@ function handleInviteUser(req, res) {
 
   if (!req.user) {
     //where['roles.leader.' + inviteUser.location_key] = {[Op.ne]:null};
-    cdb.findOne({where: {slug: 'james'}}).then(result => {
+    cdb.findById('james').then(result => {
         if (result) {
           console.log('Found leader to use for invite.');
           req.user = result.id; 
