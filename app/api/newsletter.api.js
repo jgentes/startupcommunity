@@ -23,18 +23,18 @@ function formatSearchResults(items) {
 }*/
 
 // this api is used internally and not exposed to client
-function addSubscriber(location_key, resource_key, user_profile) {
+function addSubscriber(location_id, resource_id, user_profile) {
 
-    console.log('getting leaders: ' + location_key + ' / ' + resource_key);
-  cdb.findAll({where: {'roles.leader': resource_key, type: 'user'}})
+    console.log('getting leaders: ' + location_id + ' / ' + resource_id);
+  cdb.findAll({where: {'roles.leader': resource_id, type: 'user'}})
     .then(data => {
             for (var x in data) {
 
                 var profile = data[x];
 
-                if (profile.newsletter && profile.newsletter.lists && profile.newsletter.lists[resource_key]) {
+                if (profile.newsletter && profile.newsletter.lists && profile.newsletter.lists[resource_id]) {
 
-                    var list_id = profile.newsletter.lists[resource_key];
+                    var list_id = profile.newsletter.lists[resource_id];
                     var brand_id = profile.newsletter.brand_id;
 
                     var add = function(list_id, brand_id, user_profile) {
@@ -73,7 +73,7 @@ function handleSetupNewsletter(req,res) {
 
     var settings = req.body.settings,
         resource_list = req.body.resource_list,
-        location_key = req.body.location_key,
+        location_id = req.body.location_id,
         getMembers,
         createCustomField,
         addSubscriber,
@@ -239,21 +239,21 @@ function handleSetupNewsletter(req,res) {
         })
     };
 
-    getMembers = function(location_key, resource, newprofile, brand_id, list_id) {
-        console.log('getting members: ' + location_key + ' / ' + resource);
+    getMembers = function(location_id, resource, newprofile, brand_id, list_id) {
+        console.log('getting members: ' + location_id + ' / ' + resource);
         var search;
 
         // verify user is a member of this resource in this location
         var resources = newprofile.roles.leader[resource];
 
-        if (!resources || (resources.indexOf(location_key) < 0)) {
-            console.log('WARNING: User is not a leader of ' + resource + ' in ' + location_key);
+        if (!resources || (resources.indexOf(location_id) < 0)) {
+            console.log('WARNING: User is not a leader of ' + resource + ' in ' + location_id);
             console.log(resource + ' done!');
         } else {
 
             search = function (startKey) {
 
-                var searchstring = resource + " AND " + location_key;
+                var searchstring = resource + " AND " + location_id;
               cdb.find({where: {type: 'user', '$text': 'communities: (' + searchstring + ')'}, skip: Number(startKey) || 0})
                 .then(function(data){
 
@@ -393,7 +393,7 @@ function handleSetupNewsletter(req,res) {
 
                                     // get subscribers and add them to the list
                                     try {
-                                        getMembers(location_key, list_name, newprofile, brand_id, list_id);
+                                        getMembers(location_id, list_name, newprofile, brand_id, list_id);
 
                                 }
                                 catch(e) {
@@ -477,7 +477,7 @@ function handleUpdateNewsletter(req,res) {
 }
 
 function handleSyncMembers(req,res) {
-    var location_key = req.body.location_key,
+    var location_id = req.body.location_id,
         lists = req.body.lists,
         app_id = req.body.brand_id;
 
@@ -489,11 +489,11 @@ function handleSyncMembers(req,res) {
 
         // get subscribers and add them to the list
 
-        console.log('getting members: ' + location_key + ' / ' + resource);
+        console.log('getting members: ' + location_id + ' / ' + resource);
 
         search = function(startKey) {
 
-            var searchstring = resource + " AND " + location_key;
+            var searchstring = resource + " AND " + location_id;
 
           cdb.find({selector: {type: 'user', '$text': 'communities: (' + searchstring + ')'}, skip: Number(startKey) || 0})
             .then(function(data){

@@ -5,14 +5,14 @@ var bcrypt = require('bcryptjs'),
   crypto = require('crypto'),
   NewsletterApi = require(__dirname + '/newsletter.api.js'),
   newsletterApis = new NewsletterApi(),
-  {cdb, idb, mdb, Op} = require('../../db'),
+  { cdb, idb, mdb, Op } = require('../../db'),
   sgMail = require('@sendgrid/mail');
-  
+
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 //require('request-debug')(request); // Very useful for debugging oauth and api req/res
 
-var AuthApi = function () {
+var AuthApi = function() {
   this.ensureAuthenticated = handleEnsureAuthenticated;
   this.createAPIToken = handleCreateAPIToken;
   this.createToken = handleCreateToken;
@@ -29,22 +29,22 @@ var AuthApi = function () {
  */
 
 var schema = {
-  invite: function (email, invitor_email, location_key, resources) {
+  invite: function(email, invitor_email, location_id, resources) {
 
-    var communities = [location_key];
+    var communities = [location_id];
 
     for (var n in resources) {
       communities.push(resources[n]);
     }
 
     return {
-      "home": location_key,
+      "home": location_id,
       "email": email,
       "invitor_email": invitor_email,
       "invite_communities": communities
     };
   },
-  signupform: function (formdata) {
+  signupform: function(formdata) {
     var hash = bcrypt.hashSync(formdata.password, 8);
     return {
       "type": "user",
@@ -72,7 +72,8 @@ function handleEnsureAuthenticated(req, res, next) {
 
     if (!req.user || req.user === undefined) {
       req.user = {}; //required step to pursue auth through refresh
-    } else {
+    }
+    else {
       console.log('Existing user in request');
     }
 
@@ -110,25 +111,30 @@ function handleCreateAPIToken(req, res) {
   cdb.findById(req.user)
     .then(response => {
       if (response) {
+        response = response.toJSON();
         console.log('Matching user found.');
-       /* if (response.api_key === undefined) {
-        // get user account and re-upload with api_key
-          db.update({api_key: jwt.encode(payload, process.env.API_TOKEN_SECRET)}, {where: {id: req.user}})
-            .then(function () {
-              console.log("Profile updated.");
-            })
-            .catch(function (err) {
-              console.error("Profile update failed:");
-              console.error(err.body);
-            });
-        }*/
-      } else {
+        /* if (response.api_key === undefined) {
+         // get user account and re-upload with api_key
+           db.update({api_key: jwt.encode(payload, process.env.API_TOKEN_SECRET)}, {where: {id: req.user}})
+             .then(function () {
+               console.log("Profile updated.");
+             })
+             .catch(function (err) {
+             
+               if(err.code == 'ER_EMPTY_QUERY') console.log('No changes to update..');
+         
+               console.error("Profile update failed:");
+               console.error(err.body);
+             });
+         }*/
+      }
+      else {
         console.warn('WARNING:  API Token for a user that does not exist!!');
       }
     })
-    .catch(function (err) {
+    .catch(function(err) {
       console.log("WARNING: ", err);
-      return res.status(202).send({message: 'Something went wrong: ' + String(err)});
+      return res.status(202).send({ message: 'Something went wrong: ' + String(err) });
     });
 
 }
@@ -153,31 +159,33 @@ function formatFindResults(items) {
 function handleSignup(req, res) {
   var user = schema.signupform(req.body);
 
-  cdb.findOne({where: {type: 'user', email: req.body.email}})
+  cdb.findOne({ where: { type: 'user', email: req.body.email } })
     .then(result => {
 
       if (result) {
         console.log('User already exists');
-        return res.status(401).send({message: 'That email address is already registered to a user.'}); //username already exists
-      } else {
+        return res.status(401).send({ message: 'That email address is already registered to a user.' }); //username already exists
+      }
+      else {
         console.log('Email is free for use');
         cdb.create(user)
           .then(u => {
             if (u) {
-                  console.log("USER:");
-                  console.log(user);
-                  // TODO put token in user record
-                  return res.send({token: handleCreateToken(req, u), user: u});
-                } else {
-                  console.warn("WARNING: Search couldn't find user after posting new user!");
-                  return res.status(401).send({message: 'Something went wrong!'});
-                }
+              console.log("USER:");
+              console.log(user);
+              // TODO put token in user record
+              return res.send({ token: handleCreateToken(req, u), user: u });
+            }
+            else {
+              console.warn("WARNING: Search couldn't find user after posting new user!");
+              return res.status(401).send({ message: 'Something went wrong!' });
+            }
           });
       }
     })
-    .catch(function (err) {
+    .catch(function(err) {
       console.warn("WARNING: auth222", err);
-      return res.status(202).send({message: "Something went wrong."});
+      return res.status(202).send({ message: "Something went wrong." });
     });
 }
 
@@ -189,25 +197,28 @@ function handleSignup(req, res) {
  */
 
 function handleLogin(req, res) {
-  cdb.findOne({where: {type: 'user', email: req.body.email}})
+  cdb.findOne({ where: { type: 'user', email: req.body.email } })
     .then(user => {
 
       if (user) {
+        user = user.toJSON();
         console.log("FOUND USER");
         var hash = user.password;
         if (bcrypt.compareSync(req.body.password, hash)) {
           // TODO put token in user record
-          return res.send({token: handleCreateToken(req, user), user});
-        } else {
-          console.log("PASSWORDS DO NOT MATCH");
-          return res.status(401).send({message: 'Wrong email and/or password'});
+          return res.send({ token: handleCreateToken(req, user), user });
         }
-      } else {
+        else {
+          console.log("PASSWORDS DO NOT MATCH");
+          return res.status(401).send({ message: 'Wrong email and/or password' });
+        }
+      }
+      else {
         console.log("COULD NOT FIND USER IN DB FOR SIGNIN");
-        return res.status(401).send({message: 'Wrong email and/or password'});
+        return res.status(401).send({ message: 'Wrong email and/or password' });
       }
     })
-    .catch(function (err) {
+    .catch(function(err) {
       console.warn("WARNING: ", err);
       return res.status(202).send('Something went wrong: ' + String(err));
     });
@@ -233,63 +244,64 @@ function handleLinkedin(req, res) {
     grant_type: 'authorization_code'
   };
 
-  var accept_invite = async function (invitee_email, invitee_name, invitor_email) {
+  var accept_invite = async function(invitee_email, invitee_name, invitor_email) {
     console.log('invite accepted: ', invitee_email);
 
     // send 'invite accepted' email to person who sent the invite
-    
+
     const html = fs.readFileSync(__dirname + '/templates/invitation_accepted.html', 'utf8');
-    
+
     const msg = {
       templateId: '23ce076f-8f36-4791-8086-13fa11812152',
       to: invitor_email,
       from: 'james@startupcommunity.org',
       subject: invitee_name + ' has accepted your invitation.',
       html,
-      substitutionWrappers: ['%','%'],
+      substitutionWrappers: ['%', '%'],
       substitutions: {
         'title_bar': 'Invitation Accepted',
         'content': '<strong>Congrats!</strong> ' + invitee_name + ' has accepted your invitation and is now part of the community.'
       }
     };
     sgMail.send(msg).catch(err => console.log('WARNING: ', err.toString()));
-/*
-    // add a question for their profile
-    var datetime = new Date(); // added as milliseconds since epoch
+    /*
+        // add a question for their profile
+        var datetime = new Date(); // added as milliseconds since epoch
 
-    var question = {
-      "type": 'question',
-      "from": {
-        "key": 'james',
-        "name": 'James Gentes',
-        "avatar": 'https://startupcommunity-dev.s3-us-west-2.amazonaws.com/profiles/james_me_wkids_square.png',
-        "headline": 'Founder of StartupCommunity.org'
-      },
-      "to": invite_code,
-      "published": datetime.getTime(),
-      "content": 'What are you working on right now?',
-      "replies": []
-    };
+        var question = {
+          "type": 'question',
+          "from": {
+            "key": 'james',
+            "name": 'James Gentes',
+            "avatar": 'https://startupcommunity-dev.s3-us-west-2.amazonaws.com/profiles/james_me_wkids_square.png',
+            "headline": 'Founder of StartupCommunity.org'
+          },
+          "to": invite_code,
+          "published": datetime.getTime(),
+          "content": 'What are you working on right now?',
+          "replies": []
+        };
 
-    mdb.create(question)
-      .then(function () {
-        console.log('Question posted to new user account')
-      })
-      .catch(function (err) {
-        console.error("POST FAIL:");
-        console.error(err);
-      });
-*/
+        mdb.create(question)
+          .then(function () {
+            console.log('Question posted to new user account')
+          })
+          .catch(function (err) {
+            console.error("POST FAIL:");
+            console.error(err);
+          });
+    */
   };
 
-  var delete_invite = function () {
+  var delete_invite = function() {
     idb.findById(invite_code).then(i => {
       if (i) {
-        idb.destroy({where: {id: invite_code}})
+        idb.destroy({ where: { id: invite_code } })
           .then(result => {
             if (result) {
-            console.log('Invitation applied and deleted: ' + invite_code);
-            } else {
+              console.log('Invitation applied and deleted: ' + invite_code);
+            }
+            else {
               console.warn('WARNING: Invitation was used but not deleted: ' + invite_code);
             }
           })
@@ -298,10 +310,10 @@ function handleLinkedin(req, res) {
   };
 
   // Exchange authorization code for access token.
-  request.post(accessTokenUrl, {form: params, json: true}, function (err, response, body) {
+  request.post(accessTokenUrl, { form: params, json: true }, function(err, response, body) {
 
     if (response.statusCode !== 200) {
-      return res.status(response.statusCode).send({message: body.error_description});
+      return res.status(response.statusCode).send({ message: body.error_description });
     }
 
     var params = {
@@ -310,12 +322,13 @@ function handleLinkedin(req, res) {
     };
 
     // Retrieve profile information about the current user.
-    request.get({url: peopleApiUrl, qs: params, json: true}, function (err, response, profile) {
+    request.get({ url: peopleApiUrl, qs: params, json: true }, function(err, response, profile) {
 
       if (err) {
         console.warn("WARNING: ", err);
-        return res.status(401).send({message: 'Something went wrong: ' + String(err)});
-      } else profile['access_token'] = params.oauth2_access_token;
+        return res.status(401).send({ message: 'Something went wrong: ' + String(err) });
+      }
+      else profile['access_token'] = params.oauth2_access_token;
 
       // if this is an invitation, pull that invite data first
       if (invite_code) {
@@ -324,13 +337,15 @@ function handleLinkedin(req, res) {
             if (result) {
               console.log('Verified invitation');
               userCheck(result);
-            } else {
+            }
+            else {
               console.log('Invalid invite code: ' + invite_code);
               userCheck();
               //return res.status(404).send({message: 'Sorry, this invite code is not valid: ' + invite_code});
             }
           });
-      } else userCheck();
+      }
+      else userCheck();
 
       function addCommunities(user_profile, invite_profile) {
         // add invite data to existing user record and delete invite
@@ -353,11 +368,11 @@ function handleLinkedin(req, res) {
       function userCheck(invite_profile) {
 
         // check to see if this linkedin account is already linked to an existing user
-        cdb.findOne({where: {"linkedin.id": profile.id}})
+        cdb.findOne({ where: { "linkedin.id": profile.id } })
           .then(result => {
 
             if (result) {
-
+              result = result.toJSON();
               // yes, there is an existing user in the system that matched the linkedin id
 
               console.log("Found existing user: " + profile.firstName + ' ' + profile.lastName);
@@ -370,10 +385,10 @@ function handleLinkedin(req, res) {
               if (!result.headline) result.headline = profile.headline;
               if (!result.name) result.name = profile.firstName + ' ' + profile.lastName;
               if (!result.email) result.email = profile.emailAddress;
-              
+
               result = addCommunities(result, invite_profile);
-              
-              cdb.update(result, {where: {id: result.id}})
+
+              cdb.update(result, { where: { id: result.id } })
                 .then(() => {
                   console.log("Profile updated: " + result.name);
                   if (invite_profile) {
@@ -381,31 +396,35 @@ function handleLinkedin(req, res) {
                     delete_invite();
                   }
                 })
-                .catch(function (err) {
-                  console.error("Profile update failed: ", err);
+                .catch(function(err) {
+                  if (err.code == 'ER_EMPTY_QUERY') {
+                    console.log('No changes to update..');
+                  }
+                  else console.error("Profile update failed: ", err);
                 });
 
               var newresponse = result;
               newresponse.token = handleCreateToken(req, result);
               return res.send(newresponse);
 
-            } else {
+            }
+            else {
 
               // search by email
-              cdb.findOne({where: {email: profile.emailAddress}})
+              cdb.findOne({ where: { email: profile.emailAddress } })
                 .then(result => {
 
                   if (result) {
-
+                    result = result.toJSON();
                     // yes, an existing user that matched email address of invitee.email
 
                     console.log("Found user: " + profile.firstName + ' ' + profile.lastName);
 
                     // get user account and re-upload with linkedin data
                     result = addCommunities(result, invite_profile);
-                    result.linkedin = profile;                
+                    result.linkedin = profile;
 
-                    cdb.update(result, {where: {id: result.id}})
+                    cdb.update(result, { where: { id: result.id } })
                       .then(() => {
                         console.log("Profile updated: " + profile.emailAddress);
                         if (invite_profile) {
@@ -413,15 +432,19 @@ function handleLinkedin(req, res) {
                           delete_invite();
                         }
                       })
-                      .catch(function (err) {
-                        console.warn("WARNING: ", err);
+                      .catch(function(err) {
+                        if (err.code == 'ER_EMPTY_QUERY') {
+                          console.log('No changes to update..');
+                        }
+                        else console.warn("WARNING: ", err);
                       });
 
                     var newresponse = result;
                     newresponse.token = handleCreateToken(req, result);
                     return res.send(newresponse);
 
-                  } else {
+                  }
+                  else {
                     console.log('No existing user found!');
 
                     if (invite_profile) {
@@ -444,7 +467,7 @@ function handleLinkedin(req, res) {
                       new_invite_profile.roles = {};
                       delete new_invite_profile.invite_communities;
                       var invitor_email = invite_profile.invitor_email;
-                      delete new_invite_profile.invitor_email;                  
+                      delete new_invite_profile.invitor_email;
 
                       cdb.create(new_invite_profile)
                         .then(p => {
@@ -453,17 +476,18 @@ function handleLinkedin(req, res) {
 
                             var newresponse = new_invite_profile;
                             new_invite_profile.token = handleCreateToken(req, new_invite_profile);
-  
+
                             return res.send(newresponse);
-  
-                            accept_invite(invite_profile.email, new_invite_profile.name, invitor_email);                
-                          }                      
+
+                            accept_invite(invite_profile.email, new_invite_profile.name, invitor_email);
+                          }
                         })
-                        .catch(function (err) {
+                        .catch(function(err) {
                           console.warn("WARNING: ", err);
                         });
 
-                    } else {
+                    }
+                    else {
                       return res.status(401).send({
                         profile: profile,
                         message: "We couldn't find " + profile.firstName + " " + profile.lastName + " with email address '" + profile.emailAddress + "' in our system. <br/><br/>Please <a href='/' target='_self'>click here to request an invitation</a>."
@@ -472,13 +496,13 @@ function handleLinkedin(req, res) {
 
                   }
                 })
-                .catch(function (err) {
+                .catch(function(err) {
                   console.warn("WARNING:", err);
-                  return res.status(202).send({message: "Something went wrong."});
+                  return res.status(202).send({ message: "Something went wrong." });
                 });
             }
           })
-          .catch(function (err) {
+          .catch(function(err) {
             console.warn("WARNING:", "Something went wrong. ", err);
           });
       }
@@ -510,157 +534,168 @@ function handleInviteUser(req, res) {
   var inviteUser = req.body.params;
   console.log(inviteUser);
 
-  console.log('Inviting ' + inviteUser.email + ' to ' + inviteUser.location_key + ' / ' + inviteUser.resources);
+  console.log('Inviting ' + inviteUser.email + ' to ' + inviteUser.location_id + ' / ' + inviteUser.resources);
 
-  var goInvite = function () {
+  var goInvite = function() {
     // validate user has leader role within the location/community, or let them through if they are a member of the location
 
     cdb.findById(req.user)
       .then(response => {
+        if (response) {
+          var user = response.toJSON;
+        if (user.communities.indexOf(inviteUser.location_id) < 0) {
+          return res.status(202).send({ message: 'You must be a member of this community to invite someone.' });
+        }
 
-          var user = response;
-          if (user.communities.indexOf(inviteUser.location_key) < 0) {
-            return res.status(202).send({message: 'You must be a member of this community to invite someone.'});
-          }
+        for (var u in inviteUser.resources) {
 
-          for (var u in inviteUser.resources) {
+          // add subscriber to newsletter lists
 
-            // add subscriber to newsletter lists
+          newsletterApis.addSubscriber(inviteUser.location_id, inviteUser.resources[u], inviteUser);
+        }
 
-            newsletterApis.addSubscriber(inviteUser.location_key, inviteUser.resources[u], inviteUser);
-          }
-          
-          var sendMessage = async (invitecode, subject) => {
-            var content = user.name + ' invites you to join the ' + inviteUser.location_name.split(',')[0] + ' Startup Community.';
-            const html = fs.readFileSync(__dirname + '/templates/invitation.html', 'utf8');
+        var sendMessage = async(invitecode, subject) => {
+          var content = user.name + ' invites you to join the ' + inviteUser.location_name.split(',')[0] + ' Startup Community.';
+          const html = fs.readFileSync(__dirname + '/templates/invitation.html', 'utf8');
 
-            const msg = {
-              templateId: '23ce076f-8f36-4791-8086-13fa11812152',
-              to: inviteUser.email,
-              from: user.email,
-              subject: subject || content,
-              html,
-              substitutionWrappers: ['%','%'],
-              substitutions: {
-                'title_bar': 'Invitation',
-                'invite_url': 'https://startupcommunity.org/' + inviteUser.location_key + '/welcome?invite_code=' + invitecode,
-                'invite_code': invitecode,
-                'invite_email': inviteUser.email,
-                'invite_message': inviteUser.message,
-                'invitor_image': user.avatar,
-                'invitor_name': user.name,
-                'content': content
-              },
-            };
-            
-            return sgMail.send(msg);
-          }
+          const msg = {
+            templateId: '23ce076f-8f36-4791-8086-13fa11812152',
+            to: inviteUser.email,
+            from: user.email,
+            subject: subject || content,
+            html,
+            substitutionWrappers: ['%', '%'],
+            substitutions: {
+              'title_bar': 'Invitation',
+              'invite_url': 'https://startupcommunity.org/' + inviteUser.location_id + '/welcome?invite_code=' + invitecode,
+              'invite_code': invitecode,
+              'invite_email': inviteUser.email,
+              'invite_message': inviteUser.message,
+              'invitor_image': user.avatar,
+              'invitor_name': user.name,
+              'content': content
+            },
+          };
 
-          // check to see if the email address already exists within the system
-          cdb.findOne({where: {[Op.or]: [{"linkedin.emailAddress": inviteUser.email}, {email: inviteUser.email}]}})
-            .then(result => {
+          return sgMail.send(msg);
+        }
 
-              if (result) {
-                console.log("Existing user found!");
+        // check to see if the email address already exists within the system
+        cdb.findOne({ where: {
+              [Op.or]: [{ "linkedin.emailAddress": inviteUser.email }, { email: inviteUser.email }] } })
+          .then(result => {
 
-                var existing = result;
+            if (result) {
+              console.log("Existing user found!");
 
-                if (!existing.communities) existing.communities = [];
+              var existing = result.toJSON();
 
-                for (var n in inviteUser.resources) {
-                  if (existing.communities.indexOf(inviteUser.resources[n]) == -1) {
-                    existing.communities.push(inviteUser.resources[n]);
+              if (!existing.communities) existing.communities = [];
+
+              for (var n in inviteUser.resources) {
+                if (existing.communities.indexOf(inviteUser.resources[n]) == -1) {
+                  existing.communities.push(inviteUser.resources[n]);
+                }
+              }
+
+              if (existing.communities.indexOf(inviteUser.location_id) == -1) {
+                existing.communities.push(inviteUser.location_id);
+              }
+
+              cdb.update(existing, { where: { id: result.id } })
+                .then(response => {
+                  console.log("User updated!");
+                  return res.status(200).send({ message: 'Nice!  <a target="_blank" href="https://startupcommunity.org/' + result.id + '">' + result.name + '</a> is a member of the community.' });
+                })
+                .catch(function(err) {
+
+                  if (err.code == 'ER_EMPTY_QUERY') {
+                    console.log('No changes to update..');
                   }
-                }
-
-                if (existing.communities.indexOf(inviteUser.location_key) == -1) {
-                  existing.communities.push(inviteUser.location_key);
-                }
-
-                cdb.update(existing, {where: {id: result.id}})
-                  .then(response => {
-                    console.log("User updated!");
-                    return res.status(200).send({message: 'Nice!  <a target="_blank" href="https://startupcommunity.org/' + result.id + '">' + result.name + '</a> is a member of the community.'});
-                  })
-                  .catch(function (err) {
+                  else {
                     console.log('WARNING: ', err);
-                    return res.status(202).send({message: "Something went wrong."});
-                  });
+                    return res.status(202).send({ message: "Something went wrong." });
+                  }
+                });
 
-              } else {
-                // no existing user, so search for existing invite
-                idb.findOne({where: {email: inviteUser.email}})
-                  .then(result => {
+            }
+            else {
+              // no existing user, so search for existing invite
+              idb.findOne({ where: { email: inviteUser.email } })
+                .then(result => {
 
-                    if (result) {
-                      console.log("Existing invite found!");
-                      return res.status(200).send({message: 'An invitation has already been sent to ' + inviteUser.email + '. We will send a reminder.'});
-                      
-                      sendMessage(result.id, "Invitation reminder from " + user.name)
+                  if (result) {
+                    console.log("Existing invite found!");
+                    return res.status(200).send({ message: 'An invitation has already been sent to ' + inviteUser.email + '. We will send a reminder.' });
+
+                    sendMessage(result.id, "Invitation reminder from " + user.name)
                       .then(() => {
                         console.log('Invitation reminder sent to ' + inviteUser.email);
                       }).catch(err => {
                         console.log('WARNING: ', err.toString());
                       });
 
-                    } else {
+                  }
+                  else {
 
-                      // create user record with email address and community data
-                      var newUser = schema.invite(inviteUser.email, user.email, inviteUser.location_key, inviteUser.resources);
-                      console.log('creating user invitation');
+                    // create user record with email address and community data
+                    var newUser = schema.invite(inviteUser.email, user.email, inviteUser.location_id, inviteUser.resources);
+                    console.log('creating user invitation');
 
-                      idb.create(newUser)
-                        .then(response => {
+                    idb.create(newUser)
+                      .then(response => {
 
-                          var invitecode = response.id;
-                          
-                          sendMessage(invitecode).then(() => {
-                            console.log('Invitation sent to ' + inviteUser.email + ' (' + invitecode + ')');
-                            return res.status(200).send({message: "Done! We've sent an invitation to " + inviteUser.email});
-                            
-                          }).catch(err => {
-                            console.log('WARNING: ', err.toString())
-                            return res.status(202).send({message: "Woah! Something went wrong. We're looking into it, but also try waiting a few minutes and give it another shot."});
-              
-                              // rollback invitation
-                              idb.destroy({where: {id: invitecode}})
-                          });
-                         
-                        })
-                        .catch(function (err) {
-                          console.log('WARNING: ', err);
-                          return res.status(202).send({message: "Woah! Something went wrong.  We're looking into it, but also try waiting a few minutes and give it another shot."});
-                        })
-                    }
-                  })
-                  .catch(function (err) {
-                    console.log('WARNING: ', err);
-                    return res.status(202).send({message: "Woah! Something went wrong. We're looking into it, but also try waiting a few minutes and give it another shot."});
-                  })
-              }
-            });
+                        var invitecode = response.id;
 
+                        sendMessage(invitecode).then(() => {
+                          console.log('Invitation sent to ' + inviteUser.email + ' (' + invitecode + ')');
+                          return res.status(200).send({ message: "Done! We've sent an invitation to " + inviteUser.email });
+
+                        }).catch(err => {
+                          console.log('WARNING: ', err.toString());
+                          // rollback invitation
+                          idb.destroy({ where: { id: invitecode } });
+                          return res.status(202).send({ message: "Woah! Something went wrong. We're looking into it, but also try waiting a few minutes and give it another shot." });
+
+                        });
+
+                      })
+                      .catch(function(err) {
+                        console.log('WARNING: ', err);
+                        return res.status(202).send({ message: "Woah! Something went wrong.  We're looking into it, but also try waiting a few minutes and give it another shot." });
+                      });
+                  }
+                })
+                .catch(function(err) {
+                  console.log('WARNING: ', err);
+                  return res.status(202).send({ message: "Woah! Something went wrong. We're looking into it, but also try waiting a few minutes and give it another shot." });
+                });
+            }
+          });
         }
-      )
+      })
 
-      .catch(function (err) {
+      .catch(function(err) {
         console.warn("WARNING:", err);
       });
   };
 
   if (!req.user) {
-    //where['roles.leader.' + inviteUser.location_key] = {[Op.ne]:null};
+    //where['roles.leader.' + inviteUser.location_id] = {[Op.ne]:null};
     cdb.findById('james').then(result => {
-        if (result) {
-          console.log('Found leader to use for invite.');
-          req.user = result.id; 
-          goInvite();
-        } else {
-          console.warn('WARNING: No leader found! Need one for user invitations to be sent.');
-          return res.status(202).send({message: "There doesn't appear to be a leader for this community! We've been alerted and will look into it."});
-        }
-      })
-  } else goInvite();
+      if (result) {
+        result = result.toJSON();
+        console.log('Found leader to use for invite.');
+        req.user = result.id;
+        goInvite();
+      }
+      else {
+        console.warn('WARNING: No leader found! Need one for user invitations to be sent.');
+        return res.status(202).send({ message: "There doesn't appear to be a leader for this community! We've been alerted and will look into it." });
+      }
+    })
+  }
+  else goInvite();
 
 }
 

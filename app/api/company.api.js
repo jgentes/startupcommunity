@@ -16,17 +16,17 @@ var CompanyApi = function() {
 };
 
 var schema = {
-  company: function(profile, location_key, community_key) {
+  company: function(profile, location_id, community_id) {
 
-    var communities = location_key == community_key ? [location_key] : [location_key, community_key];
+    var communities = location_id == community_id ? [location_id] : [location_id, community_id];
 
     var newprofile = {
       "type": "company",
       "resource": profile.resource,
       "resource_types": profile.resource_types,
-      "home": location_key,
+      "home": location_id,
       "name": profile.name,
-      "parents": [profile.parent.toLowerCase()],
+      "parents": profile.parent ? [profile.parent.toLowerCase()] : [],
       "headline": profile.headline,
       "summary": profile.summary,
       "avatar": profile.avatar || "",
@@ -44,7 +44,7 @@ var schema = {
       "communities": communities
     };
 
-    newprofile.community_profiles[location_key] = {
+    newprofile.community_profiles[location_id] = {
       home: newprofile.home,
       name: newprofile.name,
       parents: newprofile.parents,
@@ -89,39 +89,59 @@ function handleCompanySearch(req, res) {
 
   var community_search = [];
   var state_suffix = null;
-  
+
   if (communities && communities.length) {
     communities.forEach(c => {
       // determine whether one of the communities is a state
       state_suffix = communityApis.convert_state(c.replace('-', ' '), 'abbrev'); // returns false if no match
-      
+
       community_search.push({
-        [Op.like]: '%"' + c + '"%' });
+        [Op.like]: '%"' + c + '"%'
+      });
     });
   }
-  
-  var preState = [{communities: {[Op.or]: community_search}}]
-  
-  if (state_suffix) preState.push({home: {[Op.like]: '%-' + state_suffix.toLowerCase()}});
-  
-  selector[Op.and].push({[Op.or]: preState});
 
-  if (get_resources == "true") selector[Op.and].push({ resource: {
-      [Op.not]: false } });
+  var preState = [{
+    communities: {
+      [Op.or]: community_search
+    }
+  }]
+
+  if (state_suffix) preState.push({
+    home: {
+      [Op.like]: '%-' + state_suffix.toLowerCase()
+    }
+  });
+
+  selector[Op.and].push({
+    [Op.or]: preState
+  });
+
+  if (get_resources == "true") selector[Op.and].push({
+    resource: {
+      [Op.not]: false
+    }
+  });
 
   if (clusters && clusters.length > 0 && clusters[0] !== '*') {
     var cluster_search = [];
     clusters.forEach(c => {
       cluster_search.push({
-        [Op.like]: '%"' + c + '"%' });
+        [Op.like]: '%"' + c + '"%'
+      });
     });
 
     selector[Op.and].push({
-      [Op.or]: [
-        { skills: {
-            [Op.or]: cluster_search } },
-        { parents: {
-            [Op.or]: cluster_search } }
+      [Op.or]: [{
+          skills: {
+            [Op.or]: cluster_search
+          }
+        },
+        {
+          parents: {
+            [Op.or]: cluster_search
+          }
+        }
       ]
     });
     /*
@@ -142,8 +162,11 @@ function handleCompanySearch(req, res) {
 
   }
   if (stages && stages.length > 0 && stages[0] !== '*') {
-    selector[Op.and].push({ stage: {
-        [Op.in]: stages } });
+    selector[Op.and].push({
+      stage: {
+        [Op.in]: stages
+      }
+    });
     /* stages = stages.splice(',');
      searchstring += ' AND (';
 
@@ -158,11 +181,15 @@ function handleCompanySearch(req, res) {
     var type_search = [];
     types.forEach(t => {
       type_search.push({
-        [Op.like]: '%"' + t + '"%' });
+        [Op.like]: '%"' + t + '"%'
+      });
     })
 
-    selector[Op.and].push({ resource_types: {
-        [Op.or]: type_search } });
+    selector[Op.and].push({
+      resource_types: {
+        [Op.or]: type_search
+      }
+    });
     /*types = types.splice(',');
      searchstring += ' AND (';
 
@@ -180,8 +207,8 @@ function handleCompanySearch(req, res) {
     sequelize.query('SELECT * FROM communities WHERE TYPE="company" AND MATCH (name, headline, summary, skills, description) AGAINST ("' + query + '" IN NATURAL LANGUAGE MODE) LIMIT ' + Number(offset) + ', ' + Number(limit), { model: cdb }).then(companies => res.send(companies.rows ? companies.rows : companies));
   }
   else cdb.findAndCountAll({
-    where: selector, 
-    offset: Number(offset) || 0, 
+    where: selector,
+    offset: Number(offset) || 0,
     limit: Number(limit) || 16,
     order: sequelize.random()
   }).then(companies => res.send(companies.rows ? companies.rows : companies));
@@ -227,35 +254,35 @@ function handleAddCompany(req, res) {
     // validate user is a member in the location/community
     cdb.findById(req.user).then(response => {
       if (response) {
+        
         console.log(addCompany);
 
-        var user = response,
+        var user = response.toJSON(),
           update = false;
 
-        if (!addCompany.location_key) addCompany.location_key = addCompany.community_key;
-        if (user.communities.indexOf(addCompany.location_key) < 0) {
+        if (!addCompany.location_id) addCompany.location_id = addCompany.community_id;
+        if (user.communities.indexOf(addCompany.location_id) < 0) {
           return res.status(202).send({ message: 'You must be a member of this community to add a company.' });
         }
-        else if (!addCompany.community_key || (user.roles && user.roles.leader && user.roles.leader[addCompany.community_key] && user.roles.leader[addCompany.community_key].indexOf(addCompany.location_key) < 0)) {
-          console.warn("No community specified, or user is not a leader in community: " + addCompany.community_key + " for location: " + addCompany.location_key + "!");
-          addCompany.community_key = addCompany.location_key;
+        else if (!addCompany.community_id || (user.roles && user.roles.leader && user.roles.leader[addCompany.community_id] && user.roles.leader[addCompany.community_id].indexOf(addCompany.location_id) < 0)) {
+          console.warn("No community specified, or user is not a leader in community: " + addCompany.community_id + " for location: " + addCompany.location_id + "!");
+          addCompany.community_id = addCompany.location_id;
         }
 
-        var company = schema.company(addCompany, addCompany.location_key, addCompany.community_key);
+        var company = schema.company(addCompany.profile, addCompany.location_id, addCompany.community_id);
 
         var post = function() {
-          companyPost(company, addCompany.role, addCompany.location_key, req.user, addCompany.id, update, function(result) {
+          companyPost(company, addCompany.role, addCompany.location_id, req.user, addCompany.id, update, function(result) {
             return res.status(result.status).send(result.data);
           });
         };
 
         // add company
-
         if (!addCompany.id) {
-          addCompany.id = addCompany.url.toLowerCase();
+          addCompany.id = addCompany.profile.url.toLowerCase();
           post();
         }
-        else if (addCompany.id && (addCompany.id !== addCompany.url)) {
+        else if (addCompany.id && (addCompany.id !== addCompany.profile.url)) {
           return res.status(202).send({ message: 'Sorry, a url path cannot be changed.' })
         }
         else {
@@ -265,7 +292,7 @@ function handleAddCompany(req, res) {
 
         /*
          } else {
-         console.warn("User is not a member of community: " + addCompany.community_key + " and location: " + addCompany.location_key + "!");
+         console.warn("User is not a member of community: " + addCompany.community_id + " and location: " + addCompany.location_id + "!");
          return res.status(400).send({ message: 'You must be a member of this community and/or a leader of this resource to add a company to it.' });
          }
          */
@@ -284,11 +311,11 @@ function handleAddCompany(req, res) {
     return res.status(400).send({ message: 'Some information was missing.' });
   }
   else {
-    console.log('Adding company ' + addCompany.name + ' to ' + addCompany.location_key + ' / ' + addCompany.community_key);
+    console.log('Adding company ' + addCompany.profile.name + ' to ' + addCompany.location_id + ' / ' + addCompany.community_id);
 
     // if no existing key is provided, validate the company.url doesn't already exist
     if (!addCompany.id) {
-      cdb.findById(addCompany.url).then(result => {
+      cdb.findById(addCompany.profile.url).then(result => {
         if (result) {
           return res.status(400).send({ message: 'That url is already in use. Please specify a different url path.' })
         }
@@ -312,7 +339,7 @@ function handleDeleteCompany(req, res) {
 
     // pull it first to make sure it's a company
 
-    cdb.findById(params.company_key).then(response => {
+    cdb.findById(params.company_id).then(response => {
 
       if (response) {
         if (response.type == 'company') {
@@ -321,8 +348,9 @@ function handleDeleteCompany(req, res) {
 
             if (response) {
               const roles = {};
-              roles[params.company_key] = {
-                [Op.ne]: null };
+              roles[params.company_id] = {
+                [Op.ne]: null
+              };
               // company has been deleted, now delete references in user records
               cdb.findAll({
                 where: {
@@ -333,35 +361,38 @@ function handleDeleteCompany(req, res) {
                 }
               }).then(flush => {
                 if (flush) {
+                  flush = flush.toJSON();
                   for (var r in flush) {
                     var flush_key = flush[r].id,
                       flush_value = flush[r];
 
                     for (var i in flush_value.roles) {
                       for (var c in flush_value.roles[i]) {
-                        if (c == params.company_key) {
+                        if (c == params.company_id) {
                           delete flush_value.roles[i][c];
                         }
                       }
                     }
 
                     // remove from communities
-                    if (flush_value.communities.indexOf(params.company_key) > -1) {
-                      var findex = flush_value.communities.indexOf(params.company_key);
+                    if (flush_value.communities.indexOf(params.company_id) > -1) {
+                      var findex = flush_value.communities.indexOf(params.company_id);
                       flush_value.communities.splice(findex, 1);
                     }
 
 
                     cdb.update(flush_value, { where: { id: flush_key } }).then(response => {
                       if (response) {
-                        console.log('Deleted ' + params.company_key + ' from ' + flush_key);
+                        console.log('Deleted ' + params.company_id + ' from ' + flush_key);
                         return res.status(204).send({ message: 'Company deleted!' });
                       }
                       else {
                         console.log("WARNING: ");
                         return res.status(202).send({ message: "The company has been deleted, but something else went wrong." });
                       }
-                    })
+                    }).catch(err => {
+                      if (err.code == 'ER_EMPTY_QUERY') console.log('No changes to update..');
+                    });
                   }
 
                 }
@@ -392,13 +423,13 @@ function handleDeleteCompany(req, res) {
   };
 
   try {
-    console.log('Deleting company: ' + params.company_key);
+    console.log('Deleting company: ' + params.company_id);
 
     // first determine if the company has founders or team members. Pull from DB to prevent tampering.
     //todo need to test this!
     sequelize
       .query(
-        'SELECT * FROM communities WHERE JSON_CONTAINS(roles->>\'$.founder."' + params.company_key + '"\', \'[*]\') OR JSON_CONTAINS(roles->>\'$.team."' + params.company_key + '"\', \'[*]\')', { model: cdb }
+        'SELECT * FROM communities WHERE JSON_CONTAINS(roles->>\'$.founder."' + params.company_id + '"\', \'["*"]\') OR JSON_CONTAINS(roles->>\'$.team."' + params.company_id + '"\', \'["*"]\')', { model: cdb }
       ).then(team => {
         if (!team.length) {
 
@@ -432,41 +463,43 @@ function handleDeleteCompany(req, res) {
   }
 }
 
-var addRole = function(company_key, roles, location_key, user_key) {
+var addRole = function(company_id, roles, location_id, user_id) {
 
-  cdb.findById(user_key)
+  cdb.findById(user_id)
     .then(response => {
       if (response) {
         // add new role
-
+        response = response.toJSON();
         for (var role in roles) {
           if (!response.roles[roles[role]]) {
             response.roles[roles[role]] = {};
-            response.roles[roles[role]][company_key] = [location_key];
+            response.roles[roles[role]][company_id] = [location_id];
           }
-          else if (!response.roles[roles[role]][company_key]) {
-            response.roles[roles[role]][company_key] = [location_key];
+          else if (!response.roles[roles[role]][company_id]) {
+            response.roles[roles[role]][company_id] = [location_id];
           }
-          else if (response.roles[roles[role]][company_key].indexOf(location_key) < 0) {
-            response.roles[roles[role]][company_key].push(location_key);
+          else if (response.roles[roles[role]][company_id].indexOf(location_id) < 0) {
+            response.roles[roles[role]][company_id].push(location_id);
           } // else the damn thing is already there
 
           // add community
           if (!response.communities) response.communities = [];
 
-          if (response.communities.indexOf(company_key) < 0) {
-            response.communities.push(company_key);
+          if (response.communities.indexOf(company_id) < 0) {
+            response.communities.push(company_id);
           }
         }
 
-        cdb.update(response, { where: { id: user_key } }).then(result => {
+        cdb.update(response, { where: { id: user_id } }).then(result => {
           if (result) {
-            console.log('User ' + user_key + ' updated with ', roles);
+            console.log('User ' + user_id + ' updated with ', roles);
           }
           else {
             console.warn("WARNING: ");
           }
-        })
+        }).catch(err => {
+          if (err.code == 'ER_EMPTY_QUERY') console.log('No changes to update..');
+        });
 
       }
       else {
@@ -488,7 +521,7 @@ function handleCheckUrl(req, res) {
 
   cdb.findOne({
     where: {
-      [Op.and]: [{ type: 'company' }, { profile: website }]
+      [Op.and]: [{ type: 'company' }, { website }]
     }
   }).then(result => {
     if (result) {
@@ -507,44 +540,45 @@ function handleCheckUrl(req, res) {
 
 }
 
-var companyPost = function(company, role, location_key, user, key, update, callback) {
+var companyPost = async function(company, role, location_id, user, id, update, callback) {
 
-  company.id = key;
-  cdb.create(company).then(response => {
+  company.id = id;
+  try {
+    if (update) {
+      await cdb.update(company, { where: { id } }).catch(err => {
+        if (err.code == 'ER_EMPTY_QUERY') console.log('No changes to update..');
+      });
+    }
+    else company = await cdb.create(company);
 
-    if (response) {
-      var companykey = response.id;
+    var roles = role ? [role] : [];
+    if (company.resource) roles.push('leader');
 
-      var roles = role ? [role] : [];
-      if (company.resource) roles.push('leader');
+    if (roles.length) {
+      addRole(company.id, roles, location_id, user);
+    }
 
-      if (roles.length) {
-        addRole(companykey, roles, location_key, user);
-      }
+    if (update) {
 
-      if (update) {
+      console.log("UPDATED: " + company.name);
+      company["message"] = "Well done! " + company.name + " has been updated.";
 
-        console.log("UPDATED: " + company.name);
-        company["message"] = "Well done! " + company.name + " has been updated.";
-
-      }
-      else {
-
-        // if resource, add creator as leader
-
-        console.log("REGISTERED: " + company.name + " as " + companykey);
-        company["message"] = "Well done! You've added " + company.name + " to the community.";
-
-      }
-
-      callback({ "status": 200, "data": company });
     }
     else {
-      console.log("WARNING: ");
-      callback({ "status": 500, "data": { "message": "Something went wrong." } });
-    }
-  });
 
+      // if resource, add creator as leader
+
+      console.log("REGISTERED: " + company.name + " as " + company.id);
+      company["message"] = "Well done! You've added " + company.name + " to the community.";
+
+    }
+
+    callback({ "status": 200, "data": company });
+  }
+  catch (e) {
+    console.log("WARNING: ");
+    callback({ "status": 500, "data": { "message": "Something went wrong." } });
+  }
 };
 
 module.exports = CompanyApi;

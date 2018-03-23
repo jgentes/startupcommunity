@@ -90,7 +90,6 @@ function WelcomeController($scope, $auth, $location, $q, $mixpanel, $stateParams
                         self.alert = { type: 'danger', message: 'There was a problem: ' + String(response.data.message) };
                     } else {
                         $scope.global.user = response.data;
-                        $scope.global.user.key = response.data.id;
                         user = $scope.global.user;
                         self.quote = false;
 

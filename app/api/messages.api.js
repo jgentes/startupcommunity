@@ -11,7 +11,7 @@ var MessagesApi = function() {
 };
 
 var schema = {
-    message: function (type, from, to_key, content) {
+    message: function (type, from, to_id, content) {
 
         var datetime = new Date(); // added as milliseconds since epoch
 
@@ -23,7 +23,7 @@ var schema = {
                 "avatar": from.avatar,
                 "headline": from.headline
             },
-            "to": to_key,
+            "to": to_id,
             "published": datetime.getTime(),
             "content": content,
             "replies": []
@@ -55,7 +55,7 @@ function handleAddMessage(req, res) {
             cdb.findById(notify.to.id)
                 .then(response => {
 
-                    var user = response;
+                    var user = response.toJSON();
                     
                     const substitutions = {
                         "title_bar": 'New Mesage',

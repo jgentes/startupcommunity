@@ -68,7 +68,7 @@ sgMail.send(msg);*/
 /*
 sequelize
   .query(
-    "SELECT `id`, `type`, `name`, `home`, `parents`, `communities`, `community_profiles`, `icon`, `email`, `avatar`, `linkedin`, `api_key`, `headline`, `summary`, `skills`, `roles`, `country`, `state`, `county`, `city`, `description`, `sc_logo`, `embed`, `resource`, `resource_types`, `industries`, `website`, `street`, `angellist`, `logo`, `token`, `newsletter`, `stage` FROM `communities` AS `communities` WHERE (NOT ((`communities`.`type` = 'user' OR `communities`.`type` = 'company' OR `communities`.`id` = 'bend-or')) AND (`communities`.`communities` LIKE '%\"bend-or\"%' OR `communities`.`parents` LIKE '%\"bend-or\"%'))",
+    'SELECT * FROM communities WHERE JSON_CONTAINS(roles->>\'$.*.cascade-angels\', \'["bend-or"]\')',
     { model: cdb}
   ).then(result => {
     console.log(result.length)

@@ -132,7 +132,7 @@ app.get('/api/2.0/community/:community', communityApis.getCommunity);
 app.get('/api/2.0/angel/startups', angellistApis.getStartups);
 app.get('/api/2.0/angel/startup', angellistApis.getStartup);
 app.get('/api/2.0/profile', auth.ensureAuthenticated, userApis.getProfile); // must ensureAuth to send userid to getProfile
-app.get('/api/2.0/profile/getkey', auth.ensureAuthenticated, auth.createAPIToken);
+app.get('/api/2.0/profile/getId', auth.ensureAuthenticated, auth.createAPIToken);
 app.post('/api/2.0/invite', auth.ensureAuthenticated, auth.inviteUser);
 app.post('/api/2.0/feedback', auth.ensureAuthenticated, userApis.feedback);
 
@@ -149,7 +149,7 @@ app.get('/api/2.1/community/:community', communityApis.getCommunity);
 app.get('/api/2.1/angel/startups', angellistApis.getStartups);
 app.get('/api/2.1/angel/startup', angellistApis.getStartup);
 app.get('/api/2.1/profile', auth.ensureAuthenticated, userApis.getProfile); // must ensureAuth to send userid to getProfile
-app.get('/api/2.1/profile/getkey', auth.ensureAuthenticated, auth.createAPIToken);
+app.get('/api/2.1/profile/getId', auth.ensureAuthenticated, auth.createAPIToken);
 app.post('/api/2.1/invite', auth.ensureAuthenticated, auth.inviteUser);
 app.post('/api/2.1/join', auth.inviteUser);
 app.post('/api/2.1/feedback', auth.ensureAuthenticated, userApis.feedback);
@@ -165,8 +165,8 @@ app.post('/api/2.1/profile', auth.ensureAuthenticated, userApis.updateProfile);
 app.get('/api/2.1/profile/url', auth.ensureAuthenticated, userApis.getProfileUrl);
 app.get('/api/2.1/companies/url', auth.ensureAuthenticated, companyApis.getLogoUrl);
 app.get('/api/2.1/angel/startups/search', angellistApis.searchStartups);
-//app.get('/api/2.1/community/:location_key/top', communityApis.getTop);
-//app.get('/api/2.1/community/:location_key/:community_key/top', communityApis.getTop);
+//app.get('/api/2.1/community/:location_id/top', communityApis.getTop);
+//app.get('/api/2.1/community/:location_id/:community_id/top', communityApis.getTop);
 app.post('/api/2.1/community/edit', auth.ensureAuthenticated, communityApis.editCommunity);
 app.post('/api/2.1/community/delete', auth.ensureAuthenticated, communityApis.deleteCommunity);
 app.post('/api/2.1/messages/add', auth.ensureAuthenticated, messagesApis.addMessage);
@@ -188,10 +188,10 @@ app.get('/api/3.0/communities', communityApis.getCommunity);
 app.get('/api/3.0/neighbors/:community', communityApis.getNeighbors);
 app.get('/api/3.0/team/:community', communityApis.getTeam);
 app.get('/api/3.0/messages/:userId', auth.ensureAuthenticated, messagesApis.getMessages);
-app.get('/api/3.0/community/:location_key/companies', communityApis.getCompanies);
-app.get('/api/3.0/community/:location_key/:community_key/companies', communityApis.getCompanies);
-app.get('/api/3.0/community/:location_key/people', communityApis.getPeople);
-app.get('/api/3.0/community/:location_key/:community_key/people', communityApis.getPeople
+app.get('/api/3.0/community/:location_id/companies', communityApis.getCompanies);
+app.get('/api/3.0/community/:location_id/:community_id/companies', communityApis.getCompanies);
+app.get('/api/3.0/community/:location_id/people', communityApis.getPeople);
+app.get('/api/3.0/community/:location_id/:community_id/people', communityApis.getPeople
 );
 // Auth
 app.post('/auth/linkedin', auth.linkedin);

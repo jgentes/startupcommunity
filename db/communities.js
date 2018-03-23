@@ -76,11 +76,11 @@ module.exports = function(sequelize, DataTypes) {
     },
     country: {
       type: DataTypes.STRING(50),
-      allowNull: false
+      allowNull: true
     },
     state: {
       type: DataTypes.STRING(50),
-      allowNull: false
+      allowNull: true
     },
     county: {
       type: DataTypes.STRING(50),
@@ -88,7 +88,7 @@ module.exports = function(sequelize, DataTypes) {
     },
     city: {
       type: DataTypes.STRING(50),
-      allowNull: false
+      allowNull: true
     },
     description: {
       type: DataTypes.STRING(1000),

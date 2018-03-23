@@ -276,7 +276,7 @@ function UserProfileController($scope, $stateParams, $http, $uibModal, $mixpanel
         }
     });
 
-    this.contact = function(community_key) {
+    this.contact = function(community_id) {
 
         var modalInstance = $uibModal.open({
             templateUrl: 'components/users/user.contact.html',
@@ -287,10 +287,10 @@ function UserProfileController($scope, $stateParams, $http, $uibModal, $mixpanel
                 user: function() {
                     return self.user;
                 },
-                community_key: function() {
-                    return community_key;
+                community_id: function() {
+                    return community_id;
                 },
-                location_key: function() {
+                location_id: function() {
                     return $scope.global.location.id;
                 }
             }
