@@ -23,5 +23,5 @@
     </div>
     <div ng-if="!global.team[type.name]" style="padding-top: 10px; margin-bottom: -22px;">No {{::type.title.toLowerCase()}} yet..</div>
     <div ladda="profile[type.name]" ng-if="global.team[type.name] && global.team.count[type.name] > 4" class="ladda-button btn btn-xs btn-default" style="margin-top: 6px; float:right;" ng-click="profile[type.name] = true" ui-sref="user.list">view all</div>
-    <div ng-if="global.user.roles[type.name][global.id]" class="btn btn-xs btn-default" style="margin-top: 6px; float:left;" ng-click="profile.remove(type.name)">Remove yourself as a {{::type.title.toLowerCase().substring(0, type.title.length-1)}}</div>
+    <div ng-if="global.user.roles[type.name][global.profile.id]" class="btn btn-xs btn-default" style="margin-top: 6px; float:left;" ng-click="profile.remove(type.name)">Remove yourself as a {{::type.title.toLowerCase().substring(0, type.title.length-1)}}</div>
 </div>

@@ -1,7 +1,62 @@
 <div>
     <div class="row">
-        <div ng-if="!$state.includes('search.*') && !global.embedded" class="col-lg-2 col-md-3 col-sm-4">
-        <!-- Navigation Block -->
+        <!-- User Rows -->
+        <div ng-class="{'col-lg-10 col-md-9 col-sm-8' : !$state.includes('search.*') && !global.embedded}" style="padding-left: 15px; padding-right: 15px;">
+
+            <div class="hpanel">
+                <div class="panel-footer top">
+                    <div ng-show="!users.tag" class="pull-right">
+                        <div class="btn-group btn-group-sm" style="margin-top: -2px;">
+                            <span ng-if="users.offset > 16"><a ng-click="users.searchUsers(users.offset-(users.limit*2))" class="btn btn-sm btn-default" style="background-color: #fff;"><i class="fa fa-angle-left"></i></a></span>
+                            <span ng-if="users.count > users.offset"><a ng-click="users.searchUsers(users.offset)" class="btn btn-sm btn-default" style="background-color: #fff;"><i class="fa fa-angle-right"></i></a></span>
+                        </div>
+                    </div>
+                    <!--
+                <div class="pull-right" style="margin-right: 25px; min-width: 175px;">
+                    <ui-select multiple ng-model="users.skills.selected" theme="bootstrap" ng-disabled="disabled" limit="3">
+                        <ui-select-match placeholder="Search by skill.." class="skill-input">{{$item}}</ui-select-match>
+                        <ui-select-choices repeat="skill in users.skills.list | filter:$select.search | limitTo: 5">
+                            {{skill}}
+                        </ui-select-choices>
+                    </ui-select>
+                </div>
+                -->
+                    <span style="font-size: 17px;" ng-bind-html="users.title"></span>
+                    <span loading-bars ng-if="users.loadingUser"></span>
+                </div>
+
+                <div class="panel-body content" style="padding-top: 0;">
+                    <div class="row">
+                        <td style="border-bottom: 1px solid #fff; border-top: none; padding: 0;" colspan="3"></td>
+                    </div>
+                    <div ng-show="users.tag" style="text-align: center;" ng-cloak>
+                        <h2><br/>Searching for {{users.tag}}..</h2><br/><br/></div>
+                    <div ng-show="users.users.length == 0" style="text-align: center;" ng-cloak>
+                        <h2><br/>Nothing here!</h2><br/><br/></div>
+                    <div ng-repeat="item in users.users" ng-switch on="$index % 2">
+                        <div class="col-md-6" ng-switch-when="0">
+                            <div class="row" ng-include="'components/users/user.list.item.html'"></div>
+                        </div>
+                        <div class="col-md-6" ng-switch-when="1">
+                            <div class="row" ng-include="'components/users/user.list.item.html'"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="panel-footer" style="height:45px;">
+                    <div class="pull-left">
+                        <button ng-if="global.user" ladda="global.loaders['invite']" class="ladda-btn btn btn-xs btn-outline btn-info" ng-click="global.loaders['invite'] = true; global.invitePeople();">+ Invite People</button>
+                    </div>
+                    <div ng-show="!users.tag" class="pull-right">
+                        <div class="btn-group btn-group-sm" style="margin-top: -2px;">
+                            <span ng-if="users.offset > 16"><a ng-click="users.searchUsers(users.offset-(users.limit*2))" class="btn btn-sm btn-default" style="background-color: #fff;"><i class="fa fa-angle-left"></i></a></span>
+                            <span ng-if="users.count > users.offset"><a ng-click="users.searchUsers(users.offset)" class="btn btn-sm btn-default" style="background-color: #fff;"><i class="fa fa-angle-right"></i></a></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div ng-if="!$state.includes('search.*') && !global.embedded && $state.current.name != 'company.dashboard'" class="col-lg-2 col-md-3 col-sm-4">
+            <!-- Role Filters -->
             <div class="hpanel hgreen">
                 <div class="panel-footer top" style="font-size: 17px;">
                     <strong>Role</strong> Filters
@@ -47,7 +102,7 @@
                     </ul>
                 </div>
             </div>
-
+            <!-- Industry Filters -->
             <div class="hpanel hnavyblue">
                 <div class="panel-footer top" style="font-size: 17px;">
                     <strong>Industry</strong> Filters
@@ -69,7 +124,7 @@
                     </ul>
                 </div>
             </div>
-
+            <!-- Resource Filters -->
             <!--<div class="hpanel hblue">
                 <div class="panel-footer top" style="font-size: 17px;">
                     <strong>Resource</strong> Filters
@@ -90,59 +145,5 @@
 
         </div>
 
-
-
-    <div ng-class="{'col-lg-10 col-md-9 col-sm-8' : !$state.includes('search.*') && !global.embedded}" style="padding-left: 15px; padding-right: 15px;">
-
-        <div class="hpanel">
-            <div class="panel-footer top">
-                <div ng-show="!users.tag" class="pull-right">
-                    <div class="btn-group btn-group-sm" style="margin-top: -2px;">
-                        <span ng-if="users.offset > 16"><a ng-click="users.searchUsers(users.offset-(users.limit*2))" class="btn btn-sm btn-default" style="background-color: #fff;"><i class="fa fa-angle-left"></i></a></span>
-                        <span ng-if="users.count > users.offset"><a ng-click="users.searchUsers(users.offset)" class="btn btn-sm btn-default" style="background-color: #fff;"><i class="fa fa-angle-right"></i></a></span>
-                    </div>
-                </div>
-                <!--
-                <div class="pull-right" style="margin-right: 25px; min-width: 175px;">
-                    <ui-select multiple ng-model="users.skills.selected" theme="bootstrap" ng-disabled="disabled" limit="3">
-                        <ui-select-match placeholder="Search by skill.." class="skill-input">{{$item}}</ui-select-match>
-                        <ui-select-choices repeat="skill in users.skills.list | filter:$select.search | limitTo: 5">
-                            {{skill}}
-                        </ui-select-choices>
-                    </ui-select>
-                </div>
-                -->
-                <span style="font-size: 17px;" ng-bind-html="users.title"></span>
-                <span loading-bars ng-if="users.loadingUser"></span>
-            </div>
-
-            <div class="panel-body content" style="padding-top: 0;">
-                <div class="row">
-                    <td style="border-bottom: 1px solid #fff; border-top: none; padding: 0;" colspan="3"></td>
-                </div>
-                <div ng-show="users.tag" style="text-align: center;" ng-cloak><h2><br/>Searching for {{users.tag}}..</h2><br/><br/></div>
-                <div ng-show="users.users.length == 0" style="text-align: center;" ng-cloak><h2><br/>Nothing here!</h2><br/><br/></div>
-                <div ng-repeat="item in users.users" ng-switch on="$index % 2">
-                    <div class="col-md-6" ng-switch-when="0">
-                        <div class="row"  ng-include="'components/users/user.list.item.html'"></div>
-                    </div>
-                    <div class="col-md-6" ng-switch-when="1">
-                        <div class="row"  ng-include="'components/users/user.list.item.html'"></div>
-                    </div>
-                </div>
-            </div>
-            <div class="panel-footer" style="height:45px;">
-                <div class="pull-left">
-                    <button ng-if="global.user" ladda="global.loaders['invite']" class="ladda-btn btn btn-xs btn-outline btn-info" ng-click="global.loaders['invite'] = true; global.invitePeople();">+ Invite People</button>
-                </div>
-                <div ng-show="!users.tag" class="pull-right">
-                    <div class="btn-group btn-group-sm" style="margin-top: -2px;">
-                        <span ng-if="users.offset > 16"><a ng-click="users.searchUsers(users.offset-(users.limit*2))" class="btn btn-sm btn-default" style="background-color: #fff;"><i class="fa fa-angle-left"></i></a></span>
-                        <span ng-if="users.count > users.offset"><a ng-click="users.searchUsers(users.offset)" class="btn btn-sm btn-default" style="background-color: #fff;"><i class="fa fa-angle-right"></i></a></span>
-                    </div>
-                </div>
-            </div>
-        </div>
     </div>
-</div>
 </div>

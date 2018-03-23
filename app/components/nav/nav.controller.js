@@ -183,6 +183,7 @@ function NavigationController($scope, $auth, $state, $window, $location, $stateP
     console.log('Nav RootScope Community: ', $scope.global.community ? $scope.global.community.id : null);
     */
     // for header breadcrumbs
+    if (!$scope.global.community && $scope.global.profile) $scope.global.community = $scope.global.profile;
     if (!$scope.global.community.type) errorLogService('navController194: ', $scope.global.community);
     if ($scope.global.community.type) {
       switch ($scope.global.community.type) {
@@ -335,7 +336,7 @@ function NavigationController($scope, $auth, $state, $window, $location, $stateP
     var parents = community_service.parents();
     parents = parents.join('|').toLowerCase().split('|'); // change all to lowercase
 
-    var location_key = $scope.global.location.id;
+    var location_id = $scope.global.location.id;
 
     // For tour
     if ($stateParams.tour) {
@@ -661,7 +662,7 @@ function SettingsController($scope, community_service) {
 
   if ($scope.global.user.roles && $scope.global.user.roles.leader) {
 
-    for (l in $scope.global.user.roles.leader) leader.push(l);
+    for (var l in $scope.global.user.roles.leader) leader.push(l);
 
     community_service.getResources(undefined, leader)
       .then(function(response) {
@@ -669,14 +670,14 @@ function SettingsController($scope, community_service) {
       })
       .catch(function() {
         self.resources = {};
-      })
+      });
   }
   else self.resources = {};
 
   if ($scope.global.location && $scope.global.location.clusters) {
 
-    for (c in $scope.global.location.clusters) {
-      for (clus in $scope.global.location.clusters[c]) {
+    for (var c in $scope.global.location.clusters) {
+      for (var clus in $scope.global.location.clusters[c]) {
         self.clusters[clus] = $scope.global.location.clusters[c][clus];
       }
     }
@@ -755,7 +756,7 @@ function CommunityController($scope, $uibModalInstance, $mixpanel, sweet, edit_c
 
   var self = this,
     community = edit_community,
-    loc_key = $scope.global.location.id;
+    loc_id = $scope.global.location.id;
 
   this.update = false;
   this.communityForm = { "name": "" }; // to avoid 'undefined' for initial url
@@ -763,9 +764,9 @@ function CommunityController($scope, $uibModalInstance, $mixpanel, sweet, edit_c
 
   self.parents = community_service.parents();
 
-  if (community && community.community_profiles && community.community_profiles[loc_key]) {
+  if (community && community.community_profiles && community.community_profiles[loc_id]) {
     self.update = true;
-    self.community = community.community_profiles[loc_key];
+    self.community = community.community_profiles[loc_id];
     self.communityForm = {
       "name": self.community.name,
       "headline": self.community.headline,
@@ -839,13 +840,13 @@ function CommunityController($scope, $uibModalInstance, $mixpanel, sweet, edit_c
         newCommunity.industries = self.communityForm.industries;
       }
 
-      if (thiscommunity.community_profiles && thiscommunity.community_profiles[loc_key] && thiscommunity.community_profiles[loc_key].embed) {
-        newCommunity.embed = $scope.global.community.community_profiles[loc_key].embed;
+      if (thiscommunity.community_profiles && thiscommunity.community_profiles[loc_id] && thiscommunity.community_profiles[loc_id].embed) {
+        newCommunity.embed = $scope.global.community.community_profiles[loc_id].embed;
       }
 
       if (thiscommunity.id && (thiscommunity.id !== newCommunity.url)) rename = true; // determine if this is a rename operation (not currently used)
 
-      community_service.editCommunity(newCommunity, loc_key)
+      community_service.editCommunity(newCommunity, loc_id)
         .then(async function(response) {
           self.working = false;
 
@@ -858,9 +859,9 @@ function CommunityController($scope, $uibModalInstance, $mixpanel, sweet, edit_c
 
           }
           else {
-            if (rename) community_service.deleteCommunity(newCommunity, loc_key, newCommunity.url);
+            if (rename) community_service.deleteCommunity(newCommunity, loc_id, newCommunity.url);
 
-            var key_response = await community_service.getCommunity(loc_key);
+            var key_response = await community_service.getCommunity(loc_id);
             $scope.global.location = key_response;
               
               sweet.show({
@@ -869,7 +870,7 @@ function CommunityController($scope, $uibModalInstance, $mixpanel, sweet, edit_c
                 closeOnConfirm: true
               }, function() {
                 $scope.global.nav_top = {};
-                $window.location.href = '/' + loc_key + '/' + newCommunity.url;
+                $window.location.href = '/' + loc_id + '/' + newCommunity.url;
               });
 
             user_service.getProfile()
@@ -910,7 +911,7 @@ function CommunityController($scope, $uibModalInstance, $mixpanel, sweet, edit_c
       closeOnConfirm: false
     }, function() {
 
-      community_service.deleteCommunity(community, loc_key)
+      community_service.deleteCommunity(community, loc_id)
         .then(async function(response) {
           self.deleting = false;
 
@@ -924,7 +925,7 @@ function CommunityController($scope, $uibModalInstance, $mixpanel, sweet, edit_c
           }
           else {
 
-            var top_response = await community_service.getTop(loc_key);
+            var top_response = await community_service.getTop(loc_id);
             
             $scope.global.nav_top = top_response;
 
@@ -934,7 +935,7 @@ function CommunityController($scope, $uibModalInstance, $mixpanel, sweet, edit_c
               type: "success",
               closeOnConfirm: true
             }, function() {
-              $window.location.href = '/' + loc_key + '/settings';
+              $window.location.href = '/' + loc_id + '/settings';
             });
           }
         });

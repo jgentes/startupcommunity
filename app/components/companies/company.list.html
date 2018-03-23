@@ -1,7 +1,55 @@
 <div>
     <div class="row">
+        <div ng-class="{'col-lg-10 col-md-9 col-sm-8' : !$state.includes('search.*')}" style="padding-left: 15px; padding-right: 15px;">
+
+            <div class="hpanel">
+                <div class="panel-footer top">
+                    <div class="pull-right">
+                        <div class="btn-group btn-group-sm" style="margin-top: -2px;">
+                            <span ng-if="companies.offset > 16"><a ng-click="companies.searchCompanies(undefined, companies.offset-(companies.limit*2))" class="btn btn-sm btn-default" style="background-color: #fff;"><i class="fa fa-angle-left"></i></a></span>
+                            <span ng-if="companies.count > companies.offset"><a ng-click="companies.searchCompanies(undefined, companies.offset)" class="btn btn-sm btn-default" style="background-color: #fff;"><i class="fa fa-angle-right"></i></a></span>
+                        </div>
+                    </div>
+                    <span style="font-size: 17px;" ng-bind-html="companies.title"></span>
+                    <span loading-bars ng-if="companies.loadingCompany"></span>
+                </div>
+
+                <div class="panel-body content" style="padding-top: 0;">
+                    <div class="row">
+                        <td style="border-bottom: 1px solid #fff; border-top: none; padding: 0;" colspan="3"></td>
+                    </div>
+                    <div ng-show="companies.tag" style="text-align: center" ng-cloak>
+                        <h2><br/>Searching for {{companies.tag}}..</h2><br/><br/>
+                    </div>
+                    <div ng-show="companies.companies.length == 0" style="text-align: center" ng-cloak>
+                        <h2><br/>Nothing here!</h2><br/><br/>
+                    </div>
+                    <div ng-repeat="item in companies.companies" ng-switch on="$index % 2">
+                        <div class="col-md-6" ng-switch-when="0">
+                            <div class="row" ng-include="'components/companies/company.list.item.html'"></div>
+                        </div>
+                        <div class="col-md-6" ng-switch-when="1">
+                            <div class="row" ng-include="'components/companies/company.list.item.html'"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="panel-footer" style="height:45px;">
+                    <div class="pull-left" ng-if="global.user">
+                        <button ng-if="companies.resource_page" ladda="global.loaders['addres']" class="ladda-btn btn btn-xs btn-outline btn-success" ng-click="global.loaders['addres'] = true" ui-sref="resource.add">+ Add Resource</button>
+                        <button ng-if="!companies.resource_page" ladda="global.loaders['addco']" class="ladda-btn btn btn-xs btn-outline btn-primary" ng-click="global.loaders['addco'] = true;" ui-sref="company.add">+ Add Company</button>
+                    </div>
+                    <div class="pull-right">
+                        <div class="btn-group btn-group-sm" style="margin-top: -2px;">
+                            <span ng-if="companies.offset > 16"><a ng-click="companies.searchCompanies(undefined, companies.offset-(companies.limit*2))" class="btn btn-sm btn-default" style="background-color: #fff;"><i class="fa fa-angle-left"></i></a></span>
+                            <span ng-if="companies.count > companies.offset"><a ng-click="companies.searchCompanies(undefined, companies.offset)" class="btn btn-sm btn-default" style="background-color: #fff;"><i class="fa fa-angle-right"></i></a></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <div ng-if="!$state.includes('search.*')" class="col-lg-2 col-md-3 col-sm-4">
-            <!-- Navigation Block -->
+            <!-- Resource Filters -->
             <div ng-if="companies.resource_page" class="hpanel hgreen">
                 <div class="panel-footer top" style="font-size: 17px;">
                     <strong>Resource</strong> Filters
@@ -26,7 +74,7 @@
                     </ul>
                 </div>
             </div>
-
+            <!-- Industry Filters -->
             <div class="hpanel hnavyblue">
                 <div class="panel-footer top" style="font-size: 17px;">
                     <strong>Industry</strong> Filters
@@ -47,7 +95,7 @@
                     </ul>
                 </div>
             </div>
-
+            <!-- Stage Filters -->
             <div ng-if="!companies.resource_page" class="hpanel hgreen">
                 <div class="panel-footer top" style="font-size: 17px;">
                     <strong>Stage</strong> Filters
@@ -92,74 +140,10 @@
                     </ul>
                 </div>
             </div>
-
-           <!-- <div class="hpanel hblue">
-                <div class="panel-footer top" style="font-size: 17px;">
-                    <strong>Resource</strong> Filters
-                    <div loading-bars ng-show="companies.loadingResource" style="display: inline;"></div>
-                </div>
-                <div class="panel-body filternav">
-                    <ul class="panel-list">
-                        <li ng-init="companies.allResources=true" ng-class="{'active':companies.allResources}" ng-click="companies.loadingResource=true; companies.allResources=true; companies.filterResources();">
-                            <a><i class="fa fa-fw fa-globe themed-color-dark icon-push"></i> All</a>
-                        </li>
-                        <hr style="margin: 10px 0 10px 0;">
-                        <li ng-repeat="resource in nav.resources" ng-class="{'active':companies.selectedResources.indexOf(resource.id) >= 0}" ng-click="companies.allResources=false; companies.filterResources(resource.id);">
-                            <a>{{resource.name}}</a>
-                        </li>
-                    </ul>
-                </div>
-            </div>-->
         </div>
 
 
 
-        <div ng-class="{'col-lg-10 col-md-9 col-sm-8' : !$state.includes('search.*')}" style="padding-left: 15px; padding-right: 15px;">
 
-            <div class="hpanel">
-                <div class="panel-footer top">
-                    <div class="pull-right">
-                        <div class="btn-group btn-group-sm" style="margin-top: -2px;">
-                            <span ng-if="companies.offset > 16"><a ng-click="companies.searchCompanies(undefined, companies.offset-(companies.limit*2))" class="btn btn-sm btn-default" style="background-color: #fff;"><i class="fa fa-angle-left"></i></a></span>
-                            <span ng-if="companies.count > companies.offset"><a ng-click="companies.searchCompanies(undefined, companies.offset)" class="btn btn-sm btn-default" style="background-color: #fff;"><i class="fa fa-angle-right"></i></a></span>
-                        </div>
-                    </div>
-                    <span style="font-size: 17px;" ng-bind-html="companies.title"></span>
-                    <span loading-bars ng-if="companies.loadingCompany"></span>
-                </div>
-
-                <div class="panel-body content" style="padding-top: 0;">
-                    <div class="row">
-                        <td style="border-bottom: 1px solid #fff; border-top: none; padding: 0;" colspan="3"></td>
-                    </div>
-                    <div ng-show="companies.tag" style="text-align: center" ng-cloak>
-                        <h2><br/>Searching for {{companies.tag}}..</h2><br/><br/>
-                    </div>
-                    <div ng-show="companies.companies.length == 0" style="text-align: center" ng-cloak>
-                        <h2><br/>Nothing here!</h2><br/><br/>
-                    </div>
-                    <div ng-repeat="item in companies.companies" ng-switch on="$index % 2">
-                        <div class="col-md-6" ng-switch-when="0">
-                            <div class="row"  ng-include="'components/companies/company.list.item.html'"></div>
-                        </div>
-                        <div class="col-md-6" ng-switch-when="1">
-                            <div class="row"  ng-include="'components/companies/company.list.item.html'"></div>
-                        </div>
-                    </div>
-                </div>
-                <div class="panel-footer" style="height:45px;">
-                    <div class="pull-left" ng-if="global.user">
-                        <button ng-if="companies.resource_page" ladda="global.loaders['addres']" class="ladda-btn btn btn-xs btn-outline btn-success" ng-click="global.loaders['addres'] = true" ui-sref="resource.add">+ Add Resource</button>
-                        <button ng-if="!companies.resource_page" ladda="global.loaders['addco']" class="ladda-btn btn btn-xs btn-outline btn-primary" ng-click="global.loaders['addco'] = true;" ui-sref="company.add">+ Add Company</button>
-                    </div>
-                    <div class="pull-right">
-                        <div class="btn-group btn-group-sm" style="margin-top: -2px;">
-                            <span ng-if="companies.offset > 16"><a ng-click="companies.searchCompanies(undefined, companies.offset-(companies.limit*2))" class="btn btn-sm btn-default" style="background-color: #fff;"><i class="fa fa-angle-left"></i></a></span>
-                            <span ng-if="companies.count > companies.offset"><a ng-click="companies.searchCompanies(undefined, companies.offset)" class="btn btn-sm btn-default" style="background-color: #fff;"><i class="fa fa-angle-right"></i></a></span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
     </div>
 </div>

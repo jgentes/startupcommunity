@@ -10,7 +10,6 @@ function LoginController($auth, $scope, $state, $mixpanel, $stateParams, sweet) 
 
     var postLogin = function(auth_response) { // from getprofile
 
-        auth_response.data["key"] = auth_response.data.id;
         $scope.global.user = auth_response.data;
         if (auth_response.config.data.state !== '/login') {
             $state.reload();

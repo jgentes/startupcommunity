@@ -28,11 +28,11 @@ angular
           withCredentials: true
         });
       },
-      setupNewsletter: function(settings, resource_list, location_key) {
+      setupNewsletter: function(settings, resource_list, location_id) {
         return $http.post('/api/2.3/newsletter/setup', {
           settings: settings,
           resource_list: resource_list,
-          location_key: location_key
+          location_id: location_id
         });
       },
       updateNewsletter: function(settings, email, app_id) {
@@ -42,11 +42,11 @@ angular
           app_id: app_id
         });
       },
-      syncMembers: function(lists, brand_id, location_key) {
+      syncMembers: function(lists, brand_id, location_id) {
         return $http.post('/api/2.3/newsletter/sync', {
           lists: lists,
           brand_id: brand_id,
-          location_key: location_key
+          location_id: location_id
         });
       }
     };
@@ -54,11 +54,11 @@ angular
 
   .factory('notify_service', function($http) {
     return {
-      contact: function(user_key, formdata, location_key) {
+      contact: function(user_id, formdata, location_id) {
         return $http.post('/api/2.1/contact?' + jQuery.param({
-          user_key: user_key,
+          user_id: user_id,
           formdata: formdata,
-          location_key: location_key
+          location_id: location_id
         }));
       }
     };
@@ -113,45 +113,45 @@ angular
       getProfileUrl: function(filename) {
         return $http.get('/api/2.1/profile/url?filename=' + filename);
       },
-      inviteUser: function(email, message, location_name, location_key, resources) {
+      inviteUser: function(email, message, location_name, location_id, resources) {
         return $http.post('/api/2.1/invite', {
           params: {
             email: email,
             message: message,
             location_name: location_name,
-            location_key: location_key,
+            location_id: location_id,
             resources: resources
           }
         });
       },
-      removeCommunity: function(user_key, community) {
+      removeCommunity: function(user_id, community) {
         return $http.post('/api/2.1/remove', {
           params: {
-            user_key: user_key,
+            user_id: user_id,
             community: community
           }
         });
       },
-      removeRole: function(role, community_key) {
+      removeRole: function(role, community_id) {
         return $http.post('/api/2.3/profile/removerole', {
           params: {
             role: role,
-            community_key: community_key
+            community_id: community_id
           }
         });
       },
-      join: function(email, message, location_name, location_key) {
+      join: function(email, message, location_name, location_id) {
         return $http.post('/api/2.1/join', {
           params: {
             email: email,
             message: message,
             location_name: location_name,
-            location_key: location_key
+            location_id: location_id
           }
         });
       },
-      getKey: function() {
-        return $http.get('/api/2.1/profile/getkey');
+      getId: function() {
+        return $http.get('/api/2.1/profile/getId');
       },
       getHelpToken: function() {
         return $http.get('/auth/helpToken');
@@ -289,10 +289,11 @@ angular
         else return sorted;
       },
       getCommunity: async function(comm) {
-        let uberSearch = [], uberResult;
+        if (!comm) return;
+        let uberSearch = [];
 
         let community = await $http.get('/api/2.1/community/' + comm).then(response => response.data[0]);
-      
+
         if (!community.resource || community.type !== "location") {
 
           // pull communities within record
@@ -307,18 +308,18 @@ angular
 
         }
         else if (community.home) uberSearch = [community.home];
-        
+
         if (uberSearch.length) {
           let uberUrl = '/api/3.0/communities?community=';
-          uberSearch.forEach((u,i) => {
+          uberSearch.forEach((u, i) => {
             uberUrl += u;
-            if (i < uberSearch.length - 1) uberUrl +='&community=';
+            if (i < uberSearch.length - 1) uberUrl += '&community=';
           });
           await $http.get(uberUrl).then(response => this.sortCommunities(community, response.data));
         }
-        
+
         await $http.get('/api/3.0/neighbors/' + comm).then(response => this.sortCommunities(community, response.data));
-        
+
         if (community.resources && community.resources.length) {
           community.resources = community.resources.sort(function(a, b) {
             var x = a.id;
@@ -336,7 +337,7 @@ angular
           }
         }
         else if (community.type == 'company') {
-          
+
           // get team
           const teamresponse = {};
           const count = {};
@@ -367,52 +368,52 @@ angular
 
         return community;
       },
-      getResources: function(location_key, resources, clusters) {
+      getResources: function(location_id, resources, clusters) {
         return $http.post('/api/2.3/resources', {
-          location_key: location_key,
+          location_id: location_id,
           resources: resources,
           clusters: !!clusters
         });
       },
-      getKey: function(key) {
-        return $http.get('/api/2.1/key/' + key);
+      getId: function(id) {
+        return $http.get('/api/2.1/id/' + id);
       },
-      getTop: async function(location_key, community_key, community) {
+      getTop: async function(location_id, community_id, community) {
         // Prep to send to API
-        var industry_keys = [];
+        var industry_ids = [];
 
         if (community && community.type == 'cluster') {
           // check to see if this is a root cluster or within a location
-          if (community_key) {
-            if (community.community_profiles && community.community_profiles[location_key] && community.community_profiles[location_key].industries) {
-              industry_keys = community.community_profiles[location_key].industries;
+          if (community_id) {
+            if (community.community_profiles && community.community_profiles[location_id] && community.community_profiles[location_id].industries) {
+              industry_ids = community.community_profiles[location_id].industries;
             }
             else if (community.industries) {
-              industry_keys = community.industries;
+              industry_ids = community.industries;
             }
           }
           else {
             for (var i in community.community_profiles) {
               for (var ii in community.community_profiles[i].industries) {
-                if (industry_keys.indexOf(community.community_profiles[i].industries[ii]) == -1) {
-                  industry_keys.push(community.community_profiles[i].industries[ii]);
+                if (industry_ids.indexOf(community.community_profiles[i].industries[ii]) == -1) {
+                  industry_ids.push(community.community_profiles[i].industries[ii]);
                 }
               }
             }
 
-            location_key = '*'; // needed to avoid communities search for cluster (companies aren't tied to the cluster via community array)
+            location_id = '*'; // needed to avoid communities search for cluster (companies aren't tied to the cluster via community array)
           }
 
-          var cluster_key = community.id;
+          var cluster_id = community.id;
         }
 
         var params = {};
-        if (cluster_key) params.cluster_key = cluster_key;
-        if (industry_keys.length) params.industry_keys = industry_keys;
+        if (cluster_id) params.cluster_id = cluster_id;
+        if (industry_ids.length) params.industry_ids = industry_ids;
 
         // get companies and industries
-        const companies = await $http.get('/api/3.0/community/' + location_key + '/' + (community_key ? community_key + '/companies' : 'companies'), { params }).then(response => response.data);
-        
+        const companies = await $http.get('/api/3.0/community/' + location_id + '/' + (community_id ? community_id + '/companies' : 'companies'), { params }).then(response => response.data);
+
         var industries = [];
         var companyParents = [];
         var top_results = {
@@ -428,7 +429,7 @@ angular
           if (r.industries) industries = industries.concat(r.industries);
           if (r.parents) companyParents = companyParents.concat(r.parents);
         });
-        
+
         industries = _.countBy(industries);
         companyParents = _.countBy(companyParents);
 
@@ -453,10 +454,10 @@ angular
           count: companies.length,
           entries: companies.slice(0, 5)
         };
-        
+
         // get people & skills
-        const people = await $http.get('/api/3.0/community/' + location_key + '/' + (community_key ? community_key + '/people' : 'people'), { params }).then(response => response.data);
-        
+        const people = await $http.get('/api/3.0/community/' + location_id + '/' + (community_id ? community_id + '/people' : 'people'), { params }).then(response => response.data);
+
         var skills = [];
         var peopleParents = [];
 
@@ -464,10 +465,10 @@ angular
           if (r.skills) skills = skills.concat(r.skills);
           if (r.parents) peopleParents = peopleParents.concat(r.parents);
         });
-        
+
         skills = _.countBy(skills);
         peopleParents = _.countBy(peopleParents);
-        
+
         var sortedSkills = this.sortcounts(skills, true);
         var sortedPeopleParents = this.sortcounts(peopleParents);
 
@@ -492,7 +493,7 @@ angular
 
         // get resources
         params.resources = true;
-        const resources = await $http.get('/api/3.0/community/' + location_key + '/' + (community_key ? community_key + '/companies' : 'companies'), { params }).then(response => response.data);
+        const resources = await $http.get('/api/3.0/community/' + location_id + '/' + (community_id ? community_id + '/companies' : 'companies'), { params }).then(response => response.data);
 
         top_results.resources = {
           count: resources.length,
@@ -560,7 +561,7 @@ angular
 
         // END PARENTS
 
-        top_results.id = community_key;
+        top_results.id = community_id;
 
         return top_results;
 
@@ -575,29 +576,29 @@ angular
 
 
       },
-      setSettings: function(embed, location_key, community_key) {
+      setSettings: function(embed, location_id, community_id) {
         return $http.put('/api/2.1/settings', {
           params: {
             embed: embed,
-            location_key: location_key,
-            community_key: community_key
+            location_id: location_id,
+            community_id: community_id
           }
         });
       },
-      editCommunity: function(community, location_key) {
+      editCommunity: function(community, location_id) {
         return $http.post('/api/2.1/community/edit', {
           params: {
             community: community,
-            location_key: location_key
+            location_id: location_id
           }
         });
       },
-      deleteCommunity: function(community, location_key, new_community_key) {
+      deleteCommunity: function(community, location_id, new_community_id) {
         return $http.post('/api/2.1/community/delete', {
           params: {
             community: community,
-            location_key: location_key,
-            new_community_key: new_community_key
+            location_id: location_id,
+            new_community_id: new_community_id
           }
         });
       },
@@ -624,21 +625,21 @@ angular
         });
         return $http.get(urlString);
       },
-      addCompany: function(profile, role, location_key, community_key, company_key) {
+      addCompany: function(profile, role, location_id, community_id, company_id) {
         return $http.post('/api/2.1/companies/add', {
           params: {
             profile: profile,
             role: role,
-            location_key: location_key,
-            community_key: community_key,
-            key: company_key
+            location_id: location_id,
+            community_id: community_id,
+            id: company_id
           }
         });
       },
-      deleteCompany: function(company_key) {
+      deleteCompany: function(company_id) {
         return $http.post('/api/2.2/companies/delete', {
           params: {
-            company_key: company_key
+            company_id: company_id
           }
         });
       },
