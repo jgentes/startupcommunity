@@ -5,7 +5,7 @@
                 <i ng-class="type.icon" class="fa-2x"></i>
             </div>
             <h3 ng-bind="type.title.slice(0, -1);" style="padding-left: 5px; cursor: default;"></h3>
-            <!--<small class="text-info" ng-click="nav.addCompany();">+ Add Company</small>-->
+            <!--<small class="text-info" ng-click="nav.addCompany()">+ Add Company</small>-->
         </div>
     </div>
     <div class="col-xs-4">
@@ -19,5 +19,5 @@
             <div ng-if="$last" style="margin-bottom:-11px;"></div>
         </div>
     </div>
-    <div ng-if="!profile.user.companies[type.name]" style="padding-top: 10px;">None yet..&nbsp;<button class="btn btn-xs btn-default btn-outline" ng-if="profile.user.id == global.user.id" style="font-size:12px;" ng-href="{{global.location.id + '/add-company'}}">add one?</button></div>
+    <div ng-if="!profile.user.companies[type.name]" style="padding-top: 10px;">None yet..&nbsp;<button class="btn btn-xs btn-default btn-outline" ng-if="profile.user.id == global.user.id" style="font-size:12px;" ui-sref="company.add({location_path: global.location.id})">add one?</button></div>
 </div>

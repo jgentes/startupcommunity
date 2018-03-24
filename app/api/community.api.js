@@ -89,6 +89,7 @@ var schema = {
     community_profiles[location_id] = {
       "parents": community.parents,
       "name": community.name,
+      "home": community.home,
       "icon": "fa-circle-o",
       "headline": community.headline,
       "industries": community.industries,
@@ -98,6 +99,7 @@ var schema = {
     return {
       "type": community.type,
       "name": community.name,
+      "home": community.home,
       "icon": "fa-circle-o",
       "headline": community.headline,
       "communities": [location_id],
@@ -518,6 +520,7 @@ function handleEditCommunity(req, res) {
                 response.community_profiles[settings.location_id] = {
                   "name": settings.community.name,
                   "headline": settings.community.headline,
+                  "home": settings.community.home,
                   "icon": response.icon,
                   "parents": settings.community.parents,
                   "industries": settings.community.industries,
@@ -793,7 +796,7 @@ var update_user = function(user_id, role, community_id, location_id, callback) {
 
       response.id = user_id;
 
-      cdb.create(response).then(result => {
+      cdb.update(response, { where: { id: user_id } }).then(result => {
         if (result) {
           console.log('User ' + user_id + ' updated with community role.');
           callback(true);

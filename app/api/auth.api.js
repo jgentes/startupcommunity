@@ -542,136 +542,138 @@ function handleInviteUser(req, res) {
     cdb.findById(req.user)
       .then(response => {
         if (response) {
-          var user = response.toJSON;
-        if (user.communities.indexOf(inviteUser.location_id) < 0) {
-          return res.status(202).send({ message: 'You must be a member of this community to invite someone.' });
-        }
+          var user = response.toJSON();
+          if (user.communities.indexOf(inviteUser.location_id) < 0) {
+            return res.status(202).send({ message: 'You must be a member of this community to invite someone.' });
+          }
 
-        for (var u in inviteUser.resources) {
+          for (var u in inviteUser.resources) {
 
-          // add subscriber to newsletter lists
+            // add subscriber to newsletter lists
 
-          newsletterApis.addSubscriber(inviteUser.location_id, inviteUser.resources[u], inviteUser);
-        }
+            newsletterApis.addSubscriber(inviteUser.location_id, inviteUser.resources[u], inviteUser);
+          }
 
-        var sendMessage = async(invitecode, subject) => {
-          var content = user.name + ' invites you to join the ' + inviteUser.location_name.split(',')[0] + ' Startup Community.';
-          const html = fs.readFileSync(__dirname + '/templates/invitation.html', 'utf8');
+          var sendMessage = async(invitecode, subject) => {
+            var content = user.name + ' invites you to join the ' + inviteUser.location_name.split(',')[0] + ' Startup Community.';
+            const html = fs.readFileSync(__dirname + '/templates/invitation.html', 'utf8');
 
-          const msg = {
-            templateId: '23ce076f-8f36-4791-8086-13fa11812152',
-            to: inviteUser.email,
-            from: user.email,
-            subject: subject || content,
-            html,
-            substitutionWrappers: ['%', '%'],
-            substitutions: {
-              'title_bar': 'Invitation',
-              'invite_url': 'https://startupcommunity.org/' + inviteUser.location_id + '/welcome?invite_code=' + invitecode,
-              'invite_code': invitecode,
-              'invite_email': inviteUser.email,
-              'invite_message': inviteUser.message,
-              'invitor_image': user.avatar,
-              'invitor_name': user.name,
-              'content': content
-            },
-          };
+            const msg = {
+              templateId: '23ce076f-8f36-4791-8086-13fa11812152',
+              to: inviteUser.email,
+              from: user.email,
+              subject: subject || content,
+              html,
+              substitutionWrappers: ['%', '%'],
+              substitutions: {
+                'title_bar': 'Invitation',
+                'invite_url': 'https://startupcommunity.org/' + inviteUser.location_id + '/welcome?invite_code=' + invitecode,
+                'invite_code': invitecode,
+                'invite_email': inviteUser.email,
+                'invite_message': inviteUser.message,
+                'invitor_image': user.avatar,
+                'invitor_name': user.name,
+                'content': content
+              },
+            };
 
-          return sgMail.send(msg);
-        }
+            return sgMail.send(msg);
+          }
 
-        // check to see if the email address already exists within the system
-        cdb.findOne({ where: {
-              [Op.or]: [{ "linkedin.emailAddress": inviteUser.email }, { email: inviteUser.email }] } })
-          .then(result => {
+          // check to see if the email address already exists within the system
+          cdb.findOne({
+              where: {
+                [Op.or]: [{ "linkedin.emailAddress": inviteUser.email }, { email: inviteUser.email }]
+              }
+            })
+            .then(result => {
 
-            if (result) {
-              console.log("Existing user found!");
+              if (result) {
+                console.log("Existing user found!");
 
-              var existing = result.toJSON();
+                var existing = result.toJSON();
 
-              if (!existing.communities) existing.communities = [];
+                if (!existing.communities) existing.communities = [];
 
-              for (var n in inviteUser.resources) {
-                if (existing.communities.indexOf(inviteUser.resources[n]) == -1) {
-                  existing.communities.push(inviteUser.resources[n]);
+                for (var n in inviteUser.resources) {
+                  if (existing.communities.indexOf(inviteUser.resources[n]) == -1) {
+                    existing.communities.push(inviteUser.resources[n]);
+                  }
                 }
+
+                if (existing.communities.indexOf(inviteUser.location_id) == -1) {
+                  existing.communities.push(inviteUser.location_id);
+                }
+
+                cdb.update(existing, { where: { id: result.id } })
+                  .then(response => {
+                    console.log("User updated!");
+                    return res.status(200).send({ message: 'Nice!  <a target="_blank" href="https://startupcommunity.org/' + result.id + '">' + result.name + '</a> is a member of the community.' });
+                  })
+                  .catch(function(err) {
+
+                    if (err.code == 'ER_EMPTY_QUERY') {
+                      console.log('No changes to update..');
+                    }
+                    else {
+                      console.log('WARNING: ', err);
+                      return res.status(202).send({ message: "Something went wrong." });
+                    }
+                  });
+
               }
+              else {
+                // no existing user, so search for existing invite
+                idb.findOne({ where: { email: inviteUser.email } })
+                  .then(result => {
 
-              if (existing.communities.indexOf(inviteUser.location_id) == -1) {
-                existing.communities.push(inviteUser.location_id);
-              }
-
-              cdb.update(existing, { where: { id: result.id } })
-                .then(response => {
-                  console.log("User updated!");
-                  return res.status(200).send({ message: 'Nice!  <a target="_blank" href="https://startupcommunity.org/' + result.id + '">' + result.name + '</a> is a member of the community.' });
-                })
-                .catch(function(err) {
-
-                  if (err.code == 'ER_EMPTY_QUERY') {
-                    console.log('No changes to update..');
-                  }
-                  else {
-                    console.log('WARNING: ', err);
-                    return res.status(202).send({ message: "Something went wrong." });
-                  }
-                });
-
-            }
-            else {
-              // no existing user, so search for existing invite
-              idb.findOne({ where: { email: inviteUser.email } })
-                .then(result => {
-
-                  if (result) {
-                    console.log("Existing invite found!");
-                    return res.status(200).send({ message: 'An invitation has already been sent to ' + inviteUser.email + '. We will send a reminder.' });
-
-                    sendMessage(result.id, "Invitation reminder from " + user.name)
-                      .then(() => {
-                        console.log('Invitation reminder sent to ' + inviteUser.email);
-                      }).catch(err => {
-                        console.log('WARNING: ', err.toString());
-                      });
-
-                  }
-                  else {
-
-                    // create user record with email address and community data
-                    var newUser = schema.invite(inviteUser.email, user.email, inviteUser.location_id, inviteUser.resources);
-                    console.log('creating user invitation');
-
-                    idb.create(newUser)
-                      .then(response => {
-
-                        var invitecode = response.id;
-
-                        sendMessage(invitecode).then(() => {
-                          console.log('Invitation sent to ' + inviteUser.email + ' (' + invitecode + ')');
-                          return res.status(200).send({ message: "Done! We've sent an invitation to " + inviteUser.email });
-
+                    if (result) {
+                      console.log("Existing invite found!");
+                      sendMessage(result.id, "Invitation reminder from " + user.name)
+                        .then(() => {
+                          console.log('Invitation reminder sent to ' + inviteUser.email);
                         }).catch(err => {
                           console.log('WARNING: ', err.toString());
-                          // rollback invitation
-                          idb.destroy({ where: { id: invitecode } });
-                          return res.status(202).send({ message: "Woah! Something went wrong. We're looking into it, but also try waiting a few minutes and give it another shot." });
-
                         });
 
-                      })
-                      .catch(function(err) {
-                        console.log('WARNING: ', err);
-                        return res.status(202).send({ message: "Woah! Something went wrong.  We're looking into it, but also try waiting a few minutes and give it another shot." });
-                      });
-                  }
-                })
-                .catch(function(err) {
-                  console.log('WARNING: ', err);
-                  return res.status(202).send({ message: "Woah! Something went wrong. We're looking into it, but also try waiting a few minutes and give it another shot." });
-                });
-            }
-          });
+                      return res.status(200).send({ message: 'An invitation has already been sent to ' + inviteUser.email + '. We will send a reminder.' });
+                    }
+                    else {
+
+                      // create user record with email address and community data
+                      var newUser = schema.invite(inviteUser.email, user.email, inviteUser.location_id, inviteUser.resources);
+                      console.log('creating user invitation');
+
+                      idb.create(newUser)
+                        .then(response => {
+
+                          var invitecode = response.id;
+
+                          sendMessage(invitecode).then(() => {
+                            console.log('Invitation sent to ' + inviteUser.email + ' (' + invitecode + ')');
+                            return res.status(200).send({ message: "Done! We've sent an invitation to " + inviteUser.email });
+
+                          }).catch(err => {
+                            console.log('WARNING: ', err.toString());
+                            // rollback invitation
+                            idb.destroy({ where: { id: invitecode } });
+                            return res.status(202).send({ message: "Woah! Something went wrong. We're looking into it, but also try waiting a few minutes and give it another shot." });
+
+                          });
+
+                        })
+                        .catch(function(err) {
+                          console.log('WARNING: ', err);
+                          return res.status(202).send({ message: "Woah! Something went wrong.  We're looking into it, but also try waiting a few minutes and give it another shot." });
+                        });
+                    }
+                  })
+                  .catch(function(err) {
+                    console.log('WARNING: ', err);
+                    return res.status(202).send({ message: "Woah! Something went wrong. We're looking into it, but also try waiting a few minutes and give it another shot." });
+                  });
+              }
+            });
         }
       })
 

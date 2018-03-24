@@ -1,7 +1,7 @@
 const jwt = require('jsonwebtoken'),
-    request = require('request').defaults({jar: true, followAllRedirects: true}), // required to maintain session
+    request = require('request').defaults({ jar: true, followAllRedirects: true }), // required to maintain session
     jsdom = require('jsdom'),
-    {cdb} = require('../../db');
+    { cdb } = require('../../db');
 
 var NewsletterApi = function() {
     this.setupNewsletter = handleSetupNewsletter;
@@ -26,49 +26,50 @@ function formatSearchResults(items) {
 function addSubscriber(location_id, resource_id, user_profile) {
 
     console.log('getting leaders: ' + location_id + ' / ' + resource_id);
-  cdb.findAll({where: {'roles.leader': resource_id, type: 'user'}})
-    .then(data => {
-            for (var x in data) {
+    cdb.findAll({ where: { 'roles.leader': resource_id, type: 'user' } })
+        .then(data => {
+            if (data) {
+                for (var x in data) {
 
-                var profile = data[x];
+                    var profile = data[x];
 
-                if (profile.newsletter && profile.newsletter.lists && profile.newsletter.lists[resource_id]) {
+                    if (profile.newsletter && profile.newsletter.lists && profile.newsletter.lists[resource_id]) {
 
-                    var list_id = profile.newsletter.lists[resource_id];
-                    var brand_id = profile.newsletter.brand_id;
+                        var list_id = profile.newsletter.lists[resource_id];
+                        var brand_id = profile.newsletter.brand_id;
 
-                    var add = function(list_id, brand_id, user_profile) {
+                        var add = function(list_id, brand_id, user_profile) {
+                            request.post({
+                                url: 'https://newsletter.startupcommunity.org/includes/subscribers/line-update.php',
+                                form: {
+                                    line: (user_profile.name || '') + ',' + user_profile.email,
+                                    list_id: list_id,
+                                    app: brand_id
+                                }
+                            }, function(error, response, body) {
+                                if (error) {
+                                    console.log('WARNING: ', error, user_profile);
+                                }
+                            });
+                        };
+
                         request.post({
-                            url: 'https://newsletter.startupcommunity.org/includes/subscribers/line-update.php',
+                            url: 'https://newsletter.startupcommunity.org/includes/login/main.php',
                             form: {
-                                line: (user_profile.name || '') + ',' + user_profile.email,
-                                list_id: list_id,
-                                app: brand_id
+                                email: 'james@jgentes.com',
+                                password: 'O+af0b|Su',
+                                redirect: ""
                             }
-                        }, function (error, response, body) {
-                            if (error) {
-                                console.log('WARNING: ', error, user_profile);
-                            }
+                        }, function(error, response, body) {
+                            add(list_id, brand_id, user_profile);
                         });
-                    };
-
-                    request.post({
-                        url: 'https://newsletter.startupcommunity.org/includes/login/main.php',
-                        form: {
-                            email: 'james@jgentes.com',
-                            password: 'O+af0b|Su',
-                            redirect: ""
-                        }
-                    }, function (error, response, body) {
-                        add(list_id, brand_id, user_profile);
-                    })
+                    }
                 }
             }
-            return res.status(201).end();
         });
 }
 
-function handleSetupNewsletter(req,res) {
+function handleSetupNewsletter(req, res) {
     console.log('setup newsletter');
 
     var settings = req.body.settings,
@@ -96,13 +97,13 @@ function handleSetupNewsletter(req,res) {
                     password: 'O+af0b|Su',
                     redirect: ""
                 }
-            }, function (error, response, body) {
+            }, function(error, response, body) {
                 callback();
             })
         }
         catch (e) {
             console.log('WARNING: ', e);
-            return res.status(204).send({ message: 'Something went wrong.'})
+            return res.status(204).send({ message: 'Something went wrong.' })
         }
     };
 
@@ -115,14 +116,15 @@ function handleSetupNewsletter(req,res) {
 
                     callback(response);
 
-                } else {
+                }
+                else {
                     console.warn('WARNING:  User not found.');
-                    return res.status(204).send({ message: 'Your user record was not found.'})
+                    return res.status(204).send({ message: 'Your user record was not found.' })
                 }
 
             })
-            .catch(function(err){
-                return res.status(204).send({ message: err});
+            .catch(function(err) {
+                return res.status(204).send({ message: err });
                 console.warn("WARNING: ", err);
             });
     };
@@ -154,12 +156,13 @@ function handleSetupNewsletter(req,res) {
                 "monthly-limit": "",
                 "reset-on-day": 1
             }
-        }, function (error, response, body) {
+        }, function(error, response, body) {
 
             if (error) {
                 console.log('WARNING: ', error);
                 return res.status(204).send({ message: error });
-            } else {
+            }
+            else {
 
                 try {
                     jsdom.env(body, ["http://code.jquery.com/jquery.js"],
@@ -187,25 +190,26 @@ function handleSetupNewsletter(req,res) {
 
     createList = function(brand_id, list_name, callback) {
         //todo create different lists prefixed by location
-        
+
         console.log('creating list: ' + list_name);
-        
+
         request.post({
             url: 'https://newsletter.startupcommunity.org/includes/subscribers/import-add.php',
             form: {
                 list_name: list_name,
                 app: brand_id
             }
-        }, function (error, response, body) {
+        }, function(error, response, body) {
 
             if (error) {
                 console.log('WARNING: ', error);
                 return res.status(204).send({ message: error });
-            } else {
+            }
+            else {
 
                 try {
                     jsdom.env(body, ["http://code.jquery.com/jquery.js"],
-                        function (err, window) {
+                        function(err, window) {
                             // pull the list_id from the url by parsing the html
                             var $ = window.$;
                             var url = $("a[href*='&l=']");
@@ -231,11 +235,12 @@ function handleSetupNewsletter(req,res) {
                 id: app_id,
                 list: list_id
             }
-        }, function (error, response, body) {
+        }, function(error, response, body) {
             if (error) {
                 console.log('WARNING: ', error);
                 return res.status(204).send({ message: error });
-            } else callback();
+            }
+            else callback();
         })
     };
 
@@ -249,13 +254,14 @@ function handleSetupNewsletter(req,res) {
         if (!resources || (resources.indexOf(location_id) < 0)) {
             console.log('WARNING: User is not a leader of ' + resource + ' in ' + location_id);
             console.log(resource + ' done!');
-        } else {
+        }
+        else {
 
-            search = function (startKey) {
+            search = function(startKey) {
 
                 var searchstring = resource + " AND " + location_id;
-              cdb.find({where: {type: 'user', '$text': 'communities: (' + searchstring + ')'}, skip: Number(startKey) || 0})
-                .then(function(data){
+                cdb.find({ where: { type: 'user', '$text': 'communities: (' + searchstring + ')' }, skip: Number(startKey) || 0 })
+                    .then(function(data) {
 
                         var profile;
                         for (var x in data.docs) {
@@ -264,15 +270,15 @@ function handleSetupNewsletter(req,res) {
                                 addSubscriber(brand_id, list_id, profile.name + ',' + profile.email)
                             }
                         }
-/*
-                        if (data.body.next) {
-                            console.log('Getting next group..');
-                            startKey = startKey + 100;
-                            search(startKey);
-                        } else {
-                            console.log(resource + ' done!');
-                        }*/
-                  console.log(resource + ' done!');
+                        /*
+                                                if (data.body.next) {
+                                                    console.log('Getting next group..');
+                                                    startKey = startKey + 100;
+                                                    search(startKey);
+                                                } else {
+                                                    console.log(resource + ' done!');
+                                                }*/
+                        console.log(resource + ' done!');
                     });
             };
 
@@ -280,38 +286,38 @@ function handleSetupNewsletter(req,res) {
 
         }
     };
-/*
-    addSubscriberCSV = function(array_for_csv, app_id, list_id) {
-        // funky setup here because it needs to send a csv file along with form data
+    /*
+        addSubscriberCSV = function(array_for_csv, app_id, list_id) {
+            // funky setup here because it needs to send a csv file along with form data
 
-        var fd = new FormData();
-        fd.append("app", app_id);
-        fd.append("list_id", list_id);
-        fd.append("cron", 1);
+            var fd = new FormData();
+            fd.append("app", app_id);
+            fd.append("list_id", list_id);
+            fd.append("cron", 1);
 
-        var csv = "";
-        array_for_csv.forEach(function(infoArray, index){
+            var csv = "";
+            array_for_csv.forEach(function(infoArray, index){
 
-            dataString = infoArray.join(",");
-            csv += index < array_for_csv.length ? dataString+ "\n" : dataString;
+                dataString = infoArray.join(",");
+                csv += index < array_for_csv.length ? dataString+ "\n" : dataString;
 
-        });
+            });
 
-        var oBlob = new Buffer(new Uint8Array([csv]), { type: "text/csv"});
-        fd.append("csv_file", oBlob,'import.csv');
+            var oBlob = new Buffer(new Uint8Array([csv]), { type: "text/csv"});
+            fd.append("csv_file", oBlob,'import.csv');
 
-        request.post({
-            url: 'https://newsletter.startupcommunity.org/includes/subscribers/import-update.php',
-            form: fd,
-            headers: {'Content-Type': undefined}
-        }, function (error, response, body) {
-            console.log(body);
-            if (error) {
-                console.log('WARNING: ', error);
-                return res.status(204).send({ message: error });
-            }
-        })
-    };*/
+            request.post({
+                url: 'https://newsletter.startupcommunity.org/includes/subscribers/import-update.php',
+                form: fd,
+                headers: {'Content-Type': undefined}
+            }, function (error, response, body) {
+                console.log(body);
+                if (error) {
+                    console.log('WARNING: ', error);
+                    return res.status(204).send({ message: error });
+                }
+            })
+        };*/
 
     addSubscriber = function(brand_id, list_id, lines) {
 
@@ -322,7 +328,7 @@ function handleSetupNewsletter(req,res) {
                 list_id: list_id,
                 app: brand_id
             }
-        }, function (error, response, body) {
+        }, function(error, response, body) {
             if (error) {
                 console.log('WARNING: ', error);
                 return res.status(204).send({ message: error });
@@ -330,26 +336,26 @@ function handleSetupNewsletter(req,res) {
         })
     };
 
-/*
+    /*
 
-    updateProfile = function(brand_id, lists) {
+        updateProfile = function(brand_id, lists) {
 
-        db.create(process.env.DB_COMMUNITIES, req.user, {
-            newsletter: {
-                username: newprofile.profile.email,
-                password: settings.pass,
-                brand_id: brand_id,
-                lists: lists
-            }
-        })            
-        .then(function () {
-            console.log('profile updated', lists);
-        })
-        .catch(function (err) {
-            console.log('WARNING: ', err);
-        });
-    };
-*/
+            db.create(process.env.DB_COMMUNITIES, req.user, {
+                newsletter: {
+                    username: newprofile.profile.email,
+                    password: settings.pass,
+                    brand_id: brand_id,
+                    lists: lists
+                }
+            })            
+            .then(function () {
+                console.log('profile updated', lists);
+            })
+            .catch(function (err) {
+                console.log('WARNING: ', err);
+            });
+        };
+    */
 
     // login with primary account
 
@@ -368,7 +374,7 @@ function handleSetupNewsletter(req,res) {
             createBrand(settings, newprofile, function(brand_id) {
 
                 // push settings to user profile
-                
+
                 updateProfile(brand_id, {});
 
                 // create lists for resources that the user is a leader of
@@ -395,25 +401,25 @@ function handleSetupNewsletter(req,res) {
                                     try {
                                         getMembers(location_id, list_name, newprofile, brand_id, list_id);
 
-                                }
-                                catch(e) {
-                                    console.log('WARNING: Failure occured, res was probably sent already.')
-                                    stop = true;
-                                }
+                                    }
+                                    catch (e) {
+                                        console.log('WARNING: Failure occured, res was probably sent already.')
+                                        stop = true;
+                                    }
                                 });
                             });
                         }
                     }
                 }
-                
+
                 if (!stop) return res.status(201).end();
-                
+
             });
         })
     });
 }
 
-function handleUpdateNewsletter(req,res) {
+function handleUpdateNewsletter(req, res) {
     var brand_id = req.body.app_id,
         email = req.body.email,
         settings = req.body.settings;
@@ -445,12 +451,13 @@ function handleUpdateNewsletter(req,res) {
                 "reset-on-day": 1,
                 "current-limit": "unlimited"
             }
-        }, function (error, response, body) {
+        }, function(error, response, body) {
 
             if (error) {
                 console.log('WARNING: ', error);
                 return res.status(204).send({ message: error });
-            } else {
+            }
+            else {
                 return res.status(201).end();
             }
         })
@@ -466,17 +473,17 @@ function handleUpdateNewsletter(req,res) {
                 password: 'O+af0b|Su',
                 redirect: ""
             }
-        }, function (error, response, body) {
+        }, function(error, response, body) {
             update();
         })
     }
     catch (e) {
         console.log('WARNING: ', e);
-        return res.status(204).send({ message: 'Something went wrong.'})
+        return res.status(204).send({ message: 'Something went wrong.' })
     }
 }
 
-function handleSyncMembers(req,res) {
+function handleSyncMembers(req, res) {
     var location_id = req.body.location_id,
         lists = req.body.lists,
         app_id = req.body.brand_id;
@@ -495,8 +502,8 @@ function handleSyncMembers(req,res) {
 
             var searchstring = resource + " AND " + location_id;
 
-          cdb.find({selector: {type: 'user', '$text': 'communities: (' + searchstring + ')'}, skip: Number(startKey) || 0})
-            .then(function(data){
+            cdb.find({ selector: { type: 'user', '$text': 'communities: (' + searchstring + ')' }, skip: Number(startKey) || 0 })
+                .then(function(data) {
 
                     var profile;
                     for (var x in data) {
@@ -511,7 +518,7 @@ function handleSyncMembers(req,res) {
                                     list_id: list_id,
                                     app: app_id
                                 }
-                            }, function (error, response, body) {
+                            }, function(error, response, body) {
                                 if (error) {
                                     console.log('WARNING: ', error);
                                     return res.status(204).send({ message: error });
@@ -520,18 +527,18 @@ function handleSyncMembers(req,res) {
 
                         }
                     }
-/*
+                    /*
 
-                    if (data.body.next) {
-                        console.log('Getting next group..');
-                        startKey = startKey + 100;
-                        search(startKey);
-                    } else {
-                        console.log(resource + ' done!');
-                        return res.status(201).end();
-                    }
-*/
-              return res.status(201).end();
+                                        if (data.body.next) {
+                                            console.log('Getting next group..');
+                                            startKey = startKey + 100;
+                                            search(startKey);
+                                        } else {
+                                            console.log(resource + ' done!');
+                                            return res.status(201).end();
+                                        }
+                    */
+                    return res.status(201).end();
                 });
         };
 
