@@ -68,19 +68,7 @@ angular
     return {
       addMessage: function(type, from, to, content, parent) {
         return $http.post('/api/2.1/messages/add', {
-          params: {
-            type: type,
-            from: {
-              id: from.id,
-              profile: from.profile
-            },
-            to: {
-              id: to.id,
-              profile: to.profile
-            },
-            content: content,
-            parent: parent
-          }
+          params: { type, from, to, content, parent }
         });
       }
     };
