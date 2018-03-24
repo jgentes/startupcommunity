@@ -570,7 +570,7 @@ function handleInviteUser(req, res) {
                 'invite_url': 'https://startupcommunity.org/' + inviteUser.location_id + '/welcome?invite_code=' + invitecode,
                 'invite_code': invitecode,
                 'invite_email': inviteUser.email,
-                'invite_message': inviteUser.message,
+                'invite_message': inviteUser.message ? '"' + inviteUser.message + '"' : '',
                 'invitor_image': user.avatar,
                 'invitor_name': user.name,
                 'content': content

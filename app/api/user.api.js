@@ -145,7 +145,7 @@ function handleUserSearch(req, res) {
   }
 
   const processUsers = users => {
-    const rows = users && users.rows ? users.rows : users.toJSON();
+    const rows = users && users.rows ? users.rows : users;
     if (rows.length) {
 
       try {
