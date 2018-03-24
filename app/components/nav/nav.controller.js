@@ -15,9 +15,9 @@ function NavigationController($scope, $auth, $state, $window, $location, $stateP
   $scope.global.lastitems = ["people", "companies", "resources", "search", "invite", "add-company", "add-resource", "welcome", "settings", "edit", "newsletter"];
   //$scope.global.industries = community_service.industries(); 
   this.state = $state; // used in header because path doesn't always update properly..
-  
+
   var nav_community;
-  
+
   // getProfile is run first, then triggers getCommunity()
   var getProfile = function() {
     if (!$scope.global.user) {
@@ -50,14 +50,14 @@ function NavigationController($scope, $auth, $state, $window, $location, $stateP
     else getCommunity();
 
   };
-  
+
   // getcommunity evaluates if we already have the community in global scope, then getLocation, otherwise runs next to pull it
   var getCommunity = function() {
 
     var pullCommunity = async function(comm_path) {
 
       var comm_response = await community_service.getCommunity(comm_path);
-      
+
       $scope.global.community = comm_response;
       getLocation();
     };
@@ -102,7 +102,7 @@ function NavigationController($scope, $auth, $state, $window, $location, $stateP
   var getLocation = async function() {
 
     nav_community = $scope.global.community;
-    
+
     // if community is a user or company, pull their home and use that for location [used when refreshing page on user profile]
     if (nav_community && (nav_community.type == 'user' || nav_community.type == 'company')) {
       if ($scope.global && $scope.global.location && $scope.global.location.id == nav_community.home) {
@@ -110,7 +110,7 @@ function NavigationController($scope, $auth, $state, $window, $location, $stateP
       }
       else {
         var loc_response = await community_service.getCommunity(nav_community.home);
-        
+
         $scope.global.location = loc_response;
         getNavTop();
       }
@@ -123,7 +123,7 @@ function NavigationController($scope, $auth, $state, $window, $location, $stateP
     if ($stateParams.location_path !== nav_community.id) {
 
       var path_response = await community_service.getCommunity($stateParams.location_path);
-      
+
       $scope.global.location = path_response;
       getNavTop();
     }
@@ -147,7 +147,7 @@ function NavigationController($scope, $auth, $state, $window, $location, $stateP
         $scope.global.location.id;
 
       var response = await community_service.getTop(true_loc)
-      
+
       $scope.global.nav_top = response;
       getCommunityTop();
     }
@@ -175,13 +175,13 @@ function NavigationController($scope, $auth, $state, $window, $location, $stateP
   var loadNav = function() {
 
     var path_url = $location.path().replace(/\/$/, "").split('/').pop(); // used for routing
-/*
-    console.log($stateParams);
-    console.log(path_url);
-    console.log(nav_community);
-    console.log('Nav RootScope Location: ', $scope.global.location ? $scope.global.location.id : null);
-    console.log('Nav RootScope Community: ', $scope.global.community ? $scope.global.community.id : null);
-    */
+    /*
+        console.log($stateParams);
+        console.log(path_url);
+        console.log(nav_community);
+        console.log('Nav RootScope Location: ', $scope.global.location ? $scope.global.location.id : null);
+        console.log('Nav RootScope Community: ', $scope.global.community ? $scope.global.community.id : null);
+        */
     // for header breadcrumbs
     if (!$scope.global.community && $scope.global.profile) $scope.global.community = $scope.global.profile;
     if (!$scope.global.community.type) errorLogService('navController194: ', $scope.global.community);
@@ -827,11 +827,10 @@ function CommunityController($scope, $uibModalInstance, $mixpanel, sweet, edit_c
 
       var newCommunity = {
         type: thiscommunity.type,
-        profile: {
-          name: self.communityForm.name,
-          headline: self.communityForm.headline,
-          parents: parents
-        },
+        name: self.communityForm.name,
+        home: thiscommunity.id,
+        headline: self.communityForm.headline,
+        parents: parents,
         resource: self.communityForm.resource ? self.communityForm.resource.id : false,
         url: encodedUrl || self.communityForm.name.toLowerCase().replace(/\s+/g, '-')
       };
@@ -863,15 +862,15 @@ function CommunityController($scope, $uibModalInstance, $mixpanel, sweet, edit_c
 
             var key_response = await community_service.getCommunity(loc_id);
             $scope.global.location = key_response;
-              
-              sweet.show({
-                title: "Successfully" + (self.update ? " updated!" : " created!"),
-                type: "success",
-                closeOnConfirm: true
-              }, function() {
-                $scope.global.nav_top = {};
-                $window.location.href = '/' + loc_id + '/' + newCommunity.url;
-              });
+
+            sweet.show({
+              title: "Successfully" + (self.update ? " updated!" : " created!"),
+              type: "success",
+              closeOnConfirm: true
+            }, function() {
+              $scope.global.nav_top = {};
+              $window.location.href = '/' + loc_id + '/' + newCommunity.url;
+            });
 
             user_service.getProfile()
               .then(function(response) {
@@ -926,7 +925,7 @@ function CommunityController($scope, $uibModalInstance, $mixpanel, sweet, edit_c
           else {
 
             var top_response = await community_service.getTop(loc_id);
-            
+
             $scope.global.nav_top = top_response;
 
             sweet.show({
