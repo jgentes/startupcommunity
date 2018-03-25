@@ -1,4 +1,4 @@
-module.exports = function (grunt) {
+module.exports = function(grunt) {
 
     // Load grunt tasks automatically
     require('load-grunt-tasks')(grunt);
@@ -28,7 +28,7 @@ module.exports = function (grunt) {
             livereload: {
                 options: {
                     open: true,
-                    middleware: function (connect) {
+                    middleware: function(connect) {
                         console.log(appConfig.app);
                         return [
                             connect.static('.tmp'),
@@ -91,7 +91,7 @@ module.exports = function (grunt) {
         uglify: {
             options: {
                 mangle: false,
-                sourceMap : true
+                sourceMap: true
             }
         },
         // Clean dist folder
@@ -111,8 +111,7 @@ module.exports = function (grunt) {
         // Copies remaining files to places other tasks can use
         copy: {
             dist: {
-                files: [
-                    {
+                files: [{
                         expand: true,
                         dot: true,
                         cwd: '<%= startupcommunity.app %>',
