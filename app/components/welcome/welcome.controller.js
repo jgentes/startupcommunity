@@ -33,10 +33,11 @@ function WelcomeController($scope, $auth, $location, $q, $mixpanel, $stateParams
 
         if (user.skills) {
             self.skills = user.skills;
-        } else self.skills =[];
+        }
+        else self.skills = [];
 
-        if (user.parents) {
-            switch(user.parents[0]) {
+        if (user.parents && user.parents.length) {
+            switch (user.parents[0]) {
                 case 'consumer-goods':
                     self.selectedParent = 'Consumer-Goods';
                     break;
@@ -62,15 +63,15 @@ function WelcomeController($scope, $auth, $location, $q, $mixpanel, $stateParams
         value: 'investor',
         text: 'Investor',
         description: "You are an active investor in startup companies."
-    },{
+    }, {
         value: 'team',
         text: 'Team Member',
         description: "You are a current employee or team member of a local company."
-    },{
+    }, {
         value: 'mentor',
         text: 'Mentor',
         description: "You are willing to provide guidance to entrepreneurs without compensation - the 'give before you get' philosophy."
-    },{
+    }, {
         value: 'provider',
         text: 'Service Provider',
         description: "You provide services to community members for a fee."
@@ -80,15 +81,17 @@ function WelcomeController($scope, $auth, $location, $q, $mixpanel, $stateParams
 
         self.working = true;
         if (!$location.search().invite_code) {
-            this.alert = {type: 'danger', message: 'You must have an invitation to continue. Please check your email and click on the link provided there.'};
+            this.alert = { type: 'danger', message: 'You must have an invitation to continue. Please check your email and click on the link provided there.' };
             self.working = false;
-        } else {
-            $auth.authenticate('linkedin', {invite_code: $location.search().invite_code})
+        }
+        else {
+            $auth.authenticate('linkedin', { invite_code: $location.search().invite_code })
                 .then(function(response) {
 
                     if (response.status !== 200) {
                         self.alert = { type: 'danger', message: 'There was a problem: ' + String(response.data.message) };
-                    } else {
+                    }
+                    else {
                         $scope.global.user = response.data;
                         user = $scope.global.user;
                         self.quote = false;
@@ -104,8 +107,9 @@ function WelcomeController($scope, $auth, $location, $q, $mixpanel, $stateParams
                 })
                 .catch(function(response) {
                     if (response.error || response.data) {
-                        self.alert = {type: 'danger', message: String(response.error || response.data.message)};
-                    } else self.alert = undefined;
+                        self.alert = { type: 'danger', message: String(response.error || response.data.message) };
+                    }
+                    else self.alert = undefined;
                 });
 
             self.working = false;
@@ -120,7 +124,7 @@ function WelcomeController($scope, $auth, $location, $q, $mixpanel, $stateParams
     }
 
     // for profile pic upload to S3
-    this.uploadAvatar = function (file) {
+    this.uploadAvatar = function(file) {
 
         if (file) {
             // get the secure S3 url
@@ -134,41 +138,45 @@ function WelcomeController($scope, $auth, $location, $q, $mixpanel, $stateParams
                     xhr.file = file;
 
                     xhr.onreadystatechange = function(e) {
-                        if ( 4 == this.readyState ) {
+                        if (4 == this.readyState) {
                             $scope.global.user.avatar = fileUrl;
                             d_completed.resolve(true);
                         }
                     };
                     xhr.open('PUT', signedUrl, true);
-                    xhr.setRequestHeader("Content-Type","application/octet-stream");
+                    xhr.setRequestHeader("Content-Type", "application/octet-stream");
                     xhr.send(file);
                 })
-        } else self.alert = { type: 'danger', message: 'Please select a file!' };
+        }
+        else self.alert = { type: 'danger', message: 'Please select a file!' };
 
     };
-    
+
     this.submitProfile = function() {
 
         if (self.selectedParent) {
             self.panel = 'skills';
             self.submitted = false;
-        } else self.submitted = true;
+        }
+        else self.submitted = true;
 
     };
-    
-    this.clickToTweet = function() {
-        var getQuote = document.getElementById( "quote" ).innerHTML;
 
-        window.open( "http://twitter.com/intent/tweet?text=" + getQuote + "%20via%20StartupCommunity.org&related=startupyourcity&", "twitterwindow", "height=450, width=550, toolbar=0, location=0, menubar=0, directories=0, scrollbars=0" );
+    this.clickToTweet = function() {
+        var getQuote = document.getElementById("quote").innerHTML;
+
+        window.open("http://twitter.com/intent/tweet?text=" + getQuote + "%20via%20StartupCommunity.org&related=startupyourcity&", "twitterwindow", "height=450, width=550, toolbar=0, location=0, menubar=0, directories=0, scrollbars=0");
 
     };
 
     this.changeRole = function(selection) {
         if (!user.roles[selection]) {
             self.rolelist[selection] = !self.rolelist[selection];
-        } else if (Object.keys(user.roles[selection]).length == 1 && Object.keys(user.roles[selection]).indexOf($stateParams.location_path) == 0) {
+        }
+        else if (Object.keys(user.roles[selection]).length == 1 && Object.keys(user.roles[selection]).indexOf($stateParams.location_path) == 0) {
             self.rolelist[selection] = !self.rolelist[selection];
-        } else {
+        }
+        else {
 
             sweet.show({
                 title: "Hold on a sec.",
@@ -200,7 +208,7 @@ function WelcomeController($scope, $auth, $location, $q, $mixpanel, $stateParams
 
         // allow user to remove roles
         var rolenames = ['founder', 'investor', 'team', 'mentor', 'provider'];
- 
+
         for (var dRole in rolenames) {
 
             if (self.rolelist && !self.rolelist[rolenames[dRole]]) {
@@ -234,7 +242,8 @@ function WelcomeController($scope, $auth, $location, $q, $mixpanel, $stateParams
                             tour: true
                         });
                     });
-                } else {
+                }
+                else {
                     self.submitted = false;
                     $scope.global.user = response.data.user;
 
@@ -246,7 +255,8 @@ function WelcomeController($scope, $auth, $location, $q, $mixpanel, $stateParams
                             tail_path: '',
                             tour: false
                         });
-                    } else {
+                    }
+                    else {
                         sweet.show({
                                 title: "Welcome.",
                                 text: "Let's have a look at your community.",
@@ -255,7 +265,7 @@ function WelcomeController($scope, $auth, $location, $q, $mixpanel, $stateParams
                                 confirmButtonText: "Let's go!",
                                 closeOnConfirm: true
                             },
-                            function (isConfirm) {
+                            function(isConfirm) {
                                 if (isConfirm) {
                                     $state.go('community.dashboard', {
                                         profile: $scope.global.user,
