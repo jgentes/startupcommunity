@@ -254,7 +254,7 @@ function handleAddCompany(req, res) {
     // validate user is a member in the location/community
     cdb.findById(req.user).then(response => {
       if (response) {
-        
+
         console.log(addCompany);
 
         var user = response.toJSON(),
@@ -524,18 +524,9 @@ function handleCheckUrl(req, res) {
       [Op.and]: [{ type: 'company' }, { website }]
     }
   }).then(result => {
-    if (result) {
-      if (result.length) {
-        return res.status(202).send({ message: result.id });
-      }
-      else {
-        return res.status(404).send();
-      }
-    }
-    else {
-      console.warn("WARNING: ");
-    }
-
+    console.log(result);
+    if (result) return res.status(202).send({ message: result.id });
+    return res.status(404).send();
   });
 
 }
