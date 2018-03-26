@@ -149,7 +149,7 @@ function handleGetMessages(req, res) {
     .then(messages => {
       if (messages.length) {
         messages.sort(function(a, b) {
-          return a.value.published < b.value.published;
+          return a.published < b.published;
         });
       }
       return res.send(messages);

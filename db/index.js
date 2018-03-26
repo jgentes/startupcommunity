@@ -1,13 +1,9 @@
 const
   Sequelize = require('sequelize'),
-  sequelize = new Sequelize('otcktbzgpblfpu07', 'cd8do5g1qfary77u', 'bix38gi0i1nsf9gx', {
-    host: 'otwsl2e23jrxcqvx.cbetxkdyhwsb.us-east-1.rds.amazonaws.com',
-    dialect: 'mysql',
-    operatorsAliases: false,
-    query: {
-      raw: false
-    }
-  }),
+    sequelize = new Sequelize(process.env.JAWSDB_URL, {
+      dialect: 'mysql',
+      operatorsAliases: false
+    }),
   cls = require('continuation-local-storage'),
   cdb = sequelize.import("communities"),
   idb = sequelize.import("invitations"),

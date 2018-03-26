@@ -1,7 +1,6 @@
 const
   Sequelize = require('sequelize'),
-  sequelize = new Sequelize('otcktbzgpblfpu07', 'cd8do5g1qfary77u', 'bix38gi0i1nsf9gx', {
-    host: 'otwsl2e23jrxcqvx.cbetxkdyhwsb.us-east-1.rds.amazonaws.com',
+  sequelize = new Sequelize('mysql://bxaqqctwcaidtk79:j5b2s66qg9q3mo3l@dyud5fa2qycz1o3v.cbetxkdyhwsb.us-east-1.rds.amazonaws.com:3306/n24fuljt9b5jqowy', {
     dialect: 'mysql',
     operatorsAliases: false
   }),
@@ -31,102 +30,102 @@ sequelize.query('CREATE TABLE `invitations` (`id` int(11) NOT NULL AUTO_INCREMEN
 // Load communities and invitations from dump of communities db in couchdb
 
 community_array.forEach(async c => {
+  /*
+    if (c.type == "location") {
+      const fields = '(id, type, parents, country, state, county, city, name, description, sc_logo, embed)';
+      const values = `('${c._id}', '${c.type}', '${JSON.stringify(c.parents || [])}', '${c.profile.country}', '${c.profile.state}', '${c.profile.county}', '${c.profile.city}', '${c.profile.name}', '${c.profile.description}', '${c.profile.sc_logo}', '${JSON.stringify(c.profile.embed || {})}')`;
 
-  if (c.type == "location") {
-    const fields = '(id, type, parents, country, state, county, city, name, description, sc_logo, embed)';
-    const values = `('${c._id}', '${c.type}', '${JSON.stringify(c.parents || [])}', '${c.profile.country}', '${c.profile.state}', '${c.profile.county}', '${c.profile.city}', '${c.profile.name}', '${c.profile.description}', '${c.profile.sc_logo}', '${JSON.stringify(c.profile.embed || {})}')`;
+      await sequelize.query(
+        'INSERT INTO communities ' + fields + ' VALUES ' + values,
+        (err, results, fields) => {
+          if (err) {
+            console.log(values);
+            throw (err);
+          }
+          console.log(c.profile.name); // results contains rows returned by server
+        });
+    }
 
-    await sequelize.query(
-      'INSERT INTO communities ' + fields + ' VALUES ' + values,
-      (err, results, fields) => {
-        if (err) {
-          console.log(values);
-          throw (err);
-        }
-        console.log(c.profile.name); // results contains rows returned by server
-      });
-  }
-
-  if (c.type == "user") {
-    const fields = '(id, type, name, home, parents, email, avatar, linkedin, api_key, headline, summary, skills,  communities, roles, token, newsletter)';
-    const values = [
-      c._id,
-      'user',
-      c.profile.name || '',
-      c.profile.home || '',
-      JSON.stringify(c.profile.parents || []),
-      c.profile.email || '',
-      c.profile.avatar || '',
-      JSON.stringify(c.profile.linkedin || {}),
-      c.profile.api_key || '',
-      c.profile.headline || '',
-      c.profile.summary || '',
-      JSON.stringify(c.profile.skills || {}),
-      JSON.stringify(c.communities || []),
-      JSON.stringify(c.roles || {}),
-      c.token || '',
-      JSON.stringify(c.newsletter || {})
-    ];
-    await sequelize.query(
-      'INSERT INTO communities ' + fields + ' VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', { replacements: values }).then(console.log(c.profile.name)).catch(err => console.log('***ERROR: ', err));
-  }
+    if (c.type == "user") {
+      const fields = '(id, type, name, home, parents, email, avatar, linkedin, api_key, headline, summary, skills,  communities, roles, token, newsletter)';
+      const values = [
+        c._id,
+        'user',
+        c.profile.name || '',
+        c.profile.home || '',
+        JSON.stringify(c.profile.parents || []),
+        c.profile.email || '',
+        c.profile.avatar || '',
+        JSON.stringify(c.profile.linkedin || {}),
+        c.profile.api_key || '',
+        c.profile.headline || '',
+        c.profile.summary || '',
+        JSON.stringify(c.profile.skills || {}),
+        JSON.stringify(c.communities || []),
+        JSON.stringify(c.roles || {}),
+        c.token || '',
+        JSON.stringify(c.newsletter || {})
+      ];
+      await sequelize.query(
+        'INSERT INTO communities ' + fields + ' VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', { replacements: values }).then(console.log(c.profile.name)).catch(err => console.log('***ERROR: ', err));
+    }
 
 
-  if (c.type == "company") {
-    const fields = '(id, type, name, icon, logo, home, angellist, parents, headline, stage, industries, avatar, summary, website, street, city, state, communities, community_profiles, resource, resource_types)';
-    const values = [
-      c._id,
-      'company',
-      c.profile.name || '',
-      c.profile.icon || '',
-      c.profile.logo || '',
-      c.profile.home || '',
-      JSON.stringify(c.profile.angellist || []),
-      JSON.stringify(c.profile.parents || []),
-      c.profile.headline || '',
-      c.profile.stage || '',
-      JSON.stringify(c.profile.industries || []),
-      c.profile.avatar || '',
-      c.profile.summary || '',
-      c.profile.website || '',
-      c.profile.street || '',
-      c.profile.city || '',
-      c.profile.state || '',
-      JSON.stringify(c.communities || []),
-      JSON.stringify(c.community_profiles || {}),
-      c.resource ? 1 : 0,
-      JSON.stringify(c.resource_types || [])
-    ];
-    await sequelize.query(
-      'INSERT INTO communities ' + fields + ' VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', { replacements: values }).then(console.log(c.profile.name));
-  }
+    if (c.type == "company") {
+      const fields = '(id, type, name, icon, logo, home, angellist, parents, headline, stage, industries, avatar, summary, website, street, city, state, communities, community_profiles, resource, resource_types)';
+      const values = [
+        c._id,
+        'company',
+        c.profile.name || '',
+        c.profile.icon || '',
+        c.profile.logo || '',
+        c.profile.home || '',
+        JSON.stringify(c.profile.angellist || []),
+        JSON.stringify(c.profile.parents || []),
+        c.profile.headline || '',
+        c.profile.stage || '',
+        JSON.stringify(c.profile.industries || []),
+        c.profile.avatar || '',
+        c.profile.summary || '',
+        c.profile.website || '',
+        c.profile.street || '',
+        c.profile.city || '',
+        c.profile.state || '',
+        JSON.stringify(c.communities || []),
+        JSON.stringify(c.community_profiles || {}),
+        c.resource ? 1 : 0,
+        JSON.stringify(c.resource_types || [])
+      ];
+      await sequelize.query(
+        'INSERT INTO communities ' + fields + ' VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', { replacements: values }).then(console.log(c.profile.name));
+    }
 
-  if (c.type == "cluster") {
-    const fields = '(id, type, parents, industries, country, state, county, city, name, description, headline, sc_logo, icon, embed, communities, community_profiles)';
-    const values = [
-      c._id,
-      'cluster',
-      JSON.stringify(c.profile.parents || []),
-      JSON.stringify(c.profile.industries || []),
-      c.profile.country || '',
-      c.profile.state || '',
-      c.profile.county || '',
-      c.profile.city || '',
-      c.profile.name || '',
-      c.profile.description || '',
-      c.profile.headline || '',
-      c.profile.sc_logo || '',
-      c.profile.icon || '',
-      JSON.stringify(c.profile.embed || {}),
-      JSON.stringify(c.communities || []),
-      JSON.stringify(c.community_profiles || {})
-    ];
-    await sequelize.query(
-      'INSERT INTO communities ' + fields + ' VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', { replacements: values }).then(console.log(c.profile.name));
-  }
-
-  /* 
-   if (c.type == "invite") {
+    if (c.type == "cluster") {
+      const fields = '(id, type, parents, industries, country, state, county, city, name, description, headline, sc_logo, icon, embed, communities, community_profiles)';
+      const values = [
+        c._id,
+        'cluster',
+        JSON.stringify(c.profile.parents || []),
+        JSON.stringify(c.profile.industries || []),
+        c.profile.country || '',
+        c.profile.state || '',
+        c.profile.county || '',
+        c.profile.city || '',
+        c.profile.name || '',
+        c.profile.description || '',
+        c.profile.headline || '',
+        c.profile.sc_logo || '',
+        c.profile.icon || '',
+        JSON.stringify(c.profile.embed || {}),
+        JSON.stringify(c.communities || []),
+        JSON.stringify(c.community_profiles || {})
+      ];
+      await sequelize.query(
+        'INSERT INTO communities ' + fields + ' VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', { replacements: values }).then(console.log(c.profile.name));
+    }
+*/
+  /*
+    if (c.type == "invite") {
       const fields = '(home, email, invitor_email, invite_communities)';
       const values = [
         c.profile.home || '',
@@ -135,7 +134,7 @@ community_array.forEach(async c => {
         JSON.stringify(c.invite_communities || [])
       ];
       await sequelize.query(
-        'INSERT INTO invitations ' + fields + ' VALUES (?, ?, ?, ?)', {replacements: values}).then(console.log(c.profile.name));
+        'INSERT INTO invitations ' + fields + ' VALUES (?, ?, ?, ?)', { replacements: values }).then(console.log(c.profile.name));
     }
-    */
+  */
 });
