@@ -1,9 +1,9 @@
 const
   Sequelize = require('sequelize'),
-    sequelize = new Sequelize(process.env.JAWSDB_URL, {
-      dialect: 'mysql',
-      operatorsAliases: false
-    }),
+  sequelize = new Sequelize(process.env.JAWSDB_URL, {
+    dialect: 'mysql',
+    operatorsAliases: false
+  }),
   cls = require('continuation-local-storage'),
   cdb = sequelize.import("communities"),
   idb = sequelize.import("invitations"),
@@ -102,12 +102,12 @@ sequelize
   .then(u => {
     if (u) console.log(u.id);
   })*/
-  /*
-idb.findOne({where: {'invite_communities': {[Op.contains]: ["bendtech"]}}})
+
+/*cdb.findOne({where: {'invite_communities': {[Op.contains]: ["bendtech"]}}})
   .then(u => {
     if (u) console.log(u.id);
-  })
-  */
+  })*/
+
 /*sequelize.query(
   "SELECT `id`, `type`, `name`, `home`, `parents`, `communities`, `community_profiles`, `icon`, `email`, `avatar`, `linkedin`, `api_key`, `headline`, `summary`, `skills`, `roles`, `country`, `state`, `county`, `city`, `description`, `sc_logo`, `embed`, `resource`, `resource_types`, `industries`, `website`, `street`, `angellist`, `logo`, `token`, `newsletter`, `stage` FROM `communities` AS `communities` WHERE (`communities`.`type` = 'company' AND `communities`.`resource` IS NOT true AND (`communities`.`home` LIKE '%-or'))", {model: cdb})
   .then(results => {

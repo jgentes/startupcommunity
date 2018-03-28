@@ -56,7 +56,6 @@
                             <div class="panel-heading" style="text-align:center;">
                                 <h4 style="font-size: 25px; line-height: 1.25;">{{global.user.linkedin.firstName}}, please verify your profile:
                                 </h4><br/>
-
                                 <img class="img-circle m-b" style="height:75px;" ngf-thumbnail="global.user.avatar || file || '/public/images/blank_avatar.png'">
                                 <br/>
                                 <label class="uploader_text">
@@ -99,7 +98,21 @@
         ]
   }">{{global.user.summary || 'Nothing here!'}}</div>
                                 </div>
-
+                                <table class="form-group" style="font-size: 20px; font-weight:300; margin: auto;">
+                                    <tr>
+                                        <td style="width:20px;">
+                                            <input type="checkbox" class="form-control checkbox" ng-model="welcome.keepSynced">
+                                        </td>
+                                        <td style="padding-left:5px; padding-top:5px;">
+                                            Keep my profile in sync with Linkedin
+                                        </td>
+                                    </tr>
+                                </table>
+                                <table style="margin: auto;">
+                                    <tr>
+                                        <td colspan="2" style="font-size: 14px;">Updates your name, email, picture, headline, and summary every time you login.</td>
+                                    </tr>
+                                </table>
 
                                 <div alert-box this-alert="welcome.alert"></div>
                                 <h4 style="margin-bottom: 13px;">
@@ -149,8 +162,7 @@
                                                 </div>
                                             </div>
                                             <input type="submit" style="float:left" class="finish btn-success btn" ng-class="{'disabled' : disabled}" value="Invite Person" />
-                                            <div style="padding-top: 6px; margin-bottom: -24px;" ng-show="global.loaders.sendinvite"
-                                                loading-bars></div>
+                                            <div style="padding-top: 6px; margin-bottom: -24px;" ng-show="global.loaders.sendinvite" loading-bars></div>
                                         </form>
                                     </div>
                                 </div>
