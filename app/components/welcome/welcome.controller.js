@@ -13,6 +13,7 @@ function WelcomeController($scope, $auth, $location, $q, $mixpanel, $stateParams
     this.parents = []; // need a placeholder until next call is resolved
     this.parents = community_service.parents();
     this.quote = true;
+    this.keepSynced = user.linkedin && user.linkedin.keepSynced;
     this.submitted = false;
 
     var checkProfile = function() {
@@ -224,6 +225,9 @@ function WelcomeController($scope, $auth, $location, $q, $mixpanel, $stateParams
 
         // add parent industry
         user.parents = [self.selectedParent.toLowerCase()];
+
+        // keep in sync with Linkedin?
+        user.linkedin.keepSynced = self.keepSynced;
 
         // update user profile
         user_service.updateProfile(user)

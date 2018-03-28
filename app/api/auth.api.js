@@ -372,19 +372,22 @@ function handleLinkedin(req, res) {
           .then(result => {
 
             if (result) {
-              result = result.toJSON();
+
               // yes, there is an existing user in the system that matched the linkedin id
+              result = result.toJSON();
+              let keepSynced = result.linkedin && result.linkedin.keepSynced;
+              profile.keepSynced = keepSynced;
+              result.linkedin = profile;
 
               console.log("Found existing user: " + profile.firstName + ' ' + profile.lastName);
-              result.linkedin = profile;
 
               // get user account and update with latest linkedin data
 
-              if (!result.avatar) result.avatar = profile.pictureUrl;
-              if (!result.summary) result.summary = profile.summary;
-              if (!result.headline) result.headline = profile.headline;
-              if (!result.name) result.name = profile.firstName + ' ' + profile.lastName;
-              if (!result.email) result.email = profile.emailAddress;
+              if (!result.avatar || keepSynced) result.avatar = profile.pictureUrl;
+              if (!result.summary || keepSynced) result.summary = profile.summary;
+              if (!result.headline || keepSynced) result.headline = profile.headline;
+              if (!result.name || keepSynced) result.name = profile.firstName + ' ' + profile.lastName;
+              if (!result.email || keepSynced) result.email = profile.emailAddress;
 
               result = addCommunities(result, invite_profile);
 
