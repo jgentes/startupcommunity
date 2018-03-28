@@ -1,4 +1,5 @@
 /* Layout */
+
 html {
   margin: 0;
   padding: 0;
@@ -21,7 +22,6 @@ body {
   margin-bottom: 40px;
   overflow: hidden; // added for pseudo-element
   position: relative; // added for pseudo-element
-
   // Fixed-position background image
   &::before {
     content: ' ';
@@ -44,8 +44,7 @@ body {
   height: 62px;
   margin: 0;
   padding: 0;
-  position: relative;
-  //border-bottom: 1px solid @border-color;
+  position: relative; //border-bottom: 1px solid @border-color;
   border-left: 1px solid #eee;
   border-right: 1px solid #eee;
 }
@@ -59,7 +58,7 @@ body {
   top: 62px;
   transition: all 0.4s ease 0s;
   border-left: 1px solid #eee;
-  //border-bottom: 1px solid #eee;
+  border-right: 1px solid #eee; //border-bottom: 1px solid #eee;
 }
 
 
@@ -67,8 +66,8 @@ body {
   margin: 0 0px 0 @menu-width;
   padding: 0;
   background: @color-background;
-  border: 1px solid #eee;
-  //transition: all 0.4s ease 0s;
+  border-right: 1px solid #eee;
+  border-top: 1px solid #eee; //transition: all 0.4s ease 0s;
   position: relative;
   min-height: 100%;
 }
@@ -109,20 +108,18 @@ body {
 .color-line {
   background: @color-bright;
   height: 6px;
-  background-image: -webkit-linear-gradient(left, @color-navy-blue, @color-navy-blue 25%, @color-violet 25%, @color-violet 35%, @color-blue 35%, @color-blue 45%, @color-green 45%, @color-green 55%, @color-yellow 55%, @color-yellow 65%, @color-orange 65%, @color-orange 75%, @color-red 85%, @color-red 85%,@color-red-deep 85%, @color-red-deep 100%);
-  background-image: -moz-linear-gradient(left, @color-navy-blue, @color-navy-blue 25%, @color-violet 25%, @color-violet 35%, @color-blue 35%, @color-blue 45%, @color-green 45%, @color-green 55%, @color-yellow 55%, @color-yellow 65%, @color-orange 65%, @color-orange 75%, @color-red 85%, @color-red 85%,@color-red-deep 85%, @color-red-deep 100%);
-  background-image: -ms-linear-gradient(left, @color-navy-blue, @color-navy-blue 25%, @color-violet 25%, @color-violet 35%, @color-blue 35%, @color-blue 45%, @color-green 45%, @color-green 55%, @color-yellow 55%, @color-yellow 65%, @color-orange 65%, @color-orange 75%, @color-red 85%, @color-red 85%,@color-red-deep 85%, @color-red-deep 100%);
-  background-image: linear-gradient(to right, @color-navy-blue, @color-navy-blue 25%, @color-violet 25%, @color-violet 35%, @color-blue 35%, @color-blue 45%, @color-green 45%, @color-green 55%, @color-yellow 55%, @color-yellow 65%, @color-orange 65%, @color-orange 75%, @color-red 85%, @color-red 85%,@color-red-deep 85%, @color-red-deep 100%);
+  background-image: -webkit-linear-gradient(left, @color-navy-blue, @color-navy-blue 25%, @color-violet 25%, @color-violet 35%, @color-blue 35%, @color-blue 45%, @color-green 45%, @color-green 55%, @color-yellow 55%, @color-yellow 65%, @color-orange 65%, @color-orange 75%, @color-red 85%, @color-red 85%, @color-red-deep 85%, @color-red-deep 100%);
+  background-image: -moz-linear-gradient(left, @color-navy-blue, @color-navy-blue 25%, @color-violet 25%, @color-violet 35%, @color-blue 35%, @color-blue 45%, @color-green 45%, @color-green 55%, @color-yellow 55%, @color-yellow 65%, @color-orange 65%, @color-orange 75%, @color-red 85%, @color-red 85%, @color-red-deep 85%, @color-red-deep 100%);
+  background-image: -ms-linear-gradient(left, @color-navy-blue, @color-navy-blue 25%, @color-violet 25%, @color-violet 35%, @color-blue 35%, @color-blue 45%, @color-green 45%, @color-green 55%, @color-yellow 55%, @color-yellow 65%, @color-orange 65%, @color-orange 75%, @color-red 85%, @color-red 85%, @color-red-deep 85%, @color-red-deep 100%);
+  background-image: linear-gradient(to right, @color-navy-blue, @color-navy-blue 25%, @color-violet 25%, @color-violet 35%, @color-blue 35%, @color-blue 45%, @color-green 45%, @color-green 55%, @color-yellow 55%, @color-yellow 65%, @color-orange 65%, @color-orange 75%, @color-red 85%, @color-red 85%, @color-red-deep 85%, @color-red-deep 100%);
   background-size: 100% 6px;
   background-position: 50% 100%;
   background-repeat: no-repeat;
 }
 
 .fixed-navbar #header {
-  width: 100%;
-  //position: fixed; //changed 12/11/15
+  width: 100%; //position: fixed; //changed 12/11/15
   //z-index: 1000;  //changed 12/11/15
-
 }
 
 .fixed-navbar .wrapper {

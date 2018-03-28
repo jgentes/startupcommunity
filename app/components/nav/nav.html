@@ -187,14 +187,13 @@
 
     <!-- Main Content -->
     <div ui-view>
-        <div ng-style="{'background-color': nav.color}" ng-class="{'wrapper' : !global.embedded}">
-            <div class="splash" id="minorsplash">
-                <div class="splash-title"><a href="/"><img src="/public/images/sc_logo.png" style="width: 75%;" alt="StartupCommunity.org Logo"/></a><img src="/public/images/loading-bars.svg" width="64" height="64" /> </div>
-            </div>
+        <div class="splash" id="minorsplash" style="z-index: 99; position: absolute; margin-left: 180px; margin-top: 63px; background-color: #f1f3f6;">
+            <div class="splash-title"><a href="/"><img src="/public/images/sc_logo.png" style="width: 75%;" alt="StartupCommunity.org Logo"/></a><img src="/public/images/loading-bars.svg" width="64" height="64" /> </div>
+        </div>
+        <div ng-style="{'background-color': nav.color}" ng-class="{'wrapper' : !global.embedded}" style="z-index: 100; position: relative;">
             <div ng-style="{'background-color': nav.color}" ui-view="header"></div>
             <div ng-class="{'content' : !global.embedded}" ng-style="{'background-color': nav.color}">
-                HOLA
-                <div ui-view="content"></div>
+                <div ui-view="content" style="z-index: 100; position: relative;"></div>
             </div>
         </div>
     </div>

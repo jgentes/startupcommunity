@@ -8,8 +8,9 @@ const
   messages = require('./messages-dump.json');
 
 Sequelize.useCLS(cls.createNamespace('startupcommunity'));
+/*
 sequelize.query('CREATE TABLE `messages` (`id` int(11) NOT NULL AUTO_INCREMENT, `from` json NOT NULL, `to` tinytext COLLATE utf8_unicode_ci NOT NULL, `published` bigint(20) NOT NULL, `content` text COLLATE utf8_unicode_ci NOT NULL, `replies` json NOT NULL, PRIMARY KEY (`id`)) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci').then(console.log('created table'));
-
+*/
 const fields = '(id, from2, to2, published, content, replies)';
 /*
 messages.forEach(c => {

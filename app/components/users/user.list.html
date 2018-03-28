@@ -1,7 +1,7 @@
 <div>
     <div class="row">
         <!-- User Rows -->
-        <div ng-class="{'col-lg-10 col-md-9 col-sm-8' : !$state.includes('search.*') && !global.embedded}" style="padding-left: 15px; padding-right: 15px;">
+        <div ng-class="{'col-lg-10 col-md-9 col-sm-8' : !$state.includes('search.*') && !global.embedded && $state.current.name != 'company.dashboard'}" style="padding-left: 15px; padding-right: 15px;">
 
             <div class="hpanel">
                 <div class="panel-footer top">
