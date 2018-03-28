@@ -2,14 +2,14 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
 
     // Optimize load start
     $compileProvider
-     .debugInfoEnabled(true); // set to false for production
+        .debugInfoEnabled(true); // set to false for production
 
     $locationProvider
         .html5Mode(true);
 
     $stateProvider
 
-    // ORDER MATTERS.. first matching url wins!
+        // ORDER MATTERS.. first matching url wins!
 
         .state('login', {
             url: "/login",
@@ -192,7 +192,7 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                 }
             },
             resolve: {
-              $uibModalInstance: function() { return null; } // necessary to avoid unknown provider for $uibModalInstance when controller not invoked through modal
+                $uibModalInstance: function() { return null; } // necessary to avoid unknown provider for $uibModalInstance when controller not invoked through modal
             },
             views: {
                 "@": { // this forces override of root template
@@ -202,11 +202,14 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
             }
         })
 
-        .state('settings', { parent: 'root', url: '/settings', views: { 'content': { templateUrl: "components/settings.html", controller: "SettingsController as settings" }}})
+        .state('settings', { parent: 'root', url: '/settings', views: { 'content': { templateUrl: "components/settings.html", controller: "SettingsController as settings" } } })
 
-        .state('newsletter', { parent: 'root', url: '/newsletter', views: { 'content': { templateUrl: "components/newsletter/newsletter.html", controller: 'NewsletterController as news' }}})
+        .state('newsletter', { parent: 'root', url: '/newsletter', views: { 'content': { templateUrl: "components/newsletter/newsletter.html", controller: 'NewsletterController as news' } } })
 
-        .state('search', { parent: 'root', abstract: true, views: {
+        .state('search', {
+            parent: 'root',
+            abstract: true,
+            views: {
                 'header': {
                     templateUrl: "components/header/header_small.html"
                 },
@@ -215,7 +218,8 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                 }
             }
         })
-        .state('search.dashboard', { url: "/search",
+        .state('search.dashboard', {
+            url: "/search",
             params: {
                 tail_path: '',
                 query: '*'
@@ -233,7 +237,10 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
         })
 
         // Community views
-        .state('community', { parent: "root", abstract: true, views: {
+        .state('community', {
+            parent: "root",
+            abstract: true,
+            views: {
                 'header': {
                     templateUrl: "components/header/header_small.html"
                 },
@@ -242,16 +249,18 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                 }
             }
         })
-        .state('community.dashboard', { params: { tour: false }, views: {
+        .state('community.dashboard', {
+            params: { tour: false },
+            views: {
                 'people': {
                     templateUrl: 'components/dashboard/dashboard.html',
                     controller: "DashboardController as dashboard"
                 }
             }
         })
-        .state('community.dashboard.location',{})
-        .state('community.dashboard.cluster',{})
-        .state('community.dashboard.company',{}); // for user profile page when companies are in communities
+        .state('community.dashboard.location', {})
+        .state('community.dashboard.cluster', {})
+        .state('community.dashboard.company', {}); // for user profile page when companies are in communities
 
     // Set default unmatched url stat
     $urlRouterProvider.otherwise(
@@ -261,7 +270,7 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
             }]);
         });
 
-    }
+}
 
 
 angular
@@ -282,49 +291,41 @@ angular
 
         $rootScope.$state = $state; // allows use if $state within views
         //window.$state = $state; // allows use of $state within console
-        $rootScope.$on('$stateChangeError', function (evt, toState, toParams, fromState, fromParams, error) {
+        $rootScope.$on('$stateChangeError', function(evt, toState, toParams, fromState, fromParams, error) {
             //todo add exception logging here
             $auth.removeToken();
             console.log(evt, error);
-            $state.go('login', {alert: 'Sorry, please login again. ' + error.statusText}, {reload: true});
+            $state.go('login', { alert: 'Sorry, please login again. ' + error.statusText }, { reload: true });
         });
-        $rootScope.$on('$stateChangeSuccess',function(){
+        $rootScope.$on('$viewContentLoaded', function() {
+            // remove the splash screen
+            $('#majorsplash').css('display', 'none');
+        });
+        $rootScope.$on('$stateChangeStart',
+            function(event, toState, toParams, fromState, fromParams) {
+                $('#minorsplash').css('display', 'block');
+                /* 
+                 console.log('----------------------------');
+                 console.log('from: ' + fromState.name);
+                 console.log('to:' + toState.name);
+                 
+                 console.log(fromState);                
+                 console.log(toState);
+                 console.log(event);
+                 */
+            });
+        $rootScope.$on('$stateChangeSuccess', function() {
             $("html, body").animate({ scrollTop: 0 }, 200);
         });
-        $rootScope.$on('$viewContentLoaded', function(){
-            // remove the splash screen
-            $timeout( function() {
-                $('#majorsplash').css('display', 'none');
-                $('#minorsplash').css('display', 'none');
-            }, 500);
-        });
-
-
-        $rootScope.$on('$stateChangeStart',
-            function(event, toState, toParams, fromState, fromParams){
-                $('#minorsplash').css('display', 'block');
-               /* 
-                console.log('----------------------------');
-                console.log('from: ' + fromState.name);
-                console.log('to:' + toState.name);
-                
-                console.log(fromState);                
-                console.log(toState);
-                console.log(event);
-                */
-            })
-
-
     })
 
 
     // for Angular client exception logging to server
 
     .provider(
-        "$exceptionHandler",
-        {
-            $get: function( errorLogService ) {
-                return( errorLogService );
+        "$exceptionHandler", {
+            $get: function(errorLogService) {
+                return (errorLogService);
             }
         }
     )
@@ -332,11 +333,11 @@ angular
     // this factory pushes the exceptions to the server
     .factory(
         "errorLogService",
-        function( $log, $window) {
+        function($log, $window) {
 
-            function log( exception, cause ) {
+            function log(exception, cause) {
 
-                $log.error.apply( $log, arguments );
+                $log.error.apply($log, arguments);
 
                 try {
                     var errorMessage = exception.toString();
@@ -349,17 +350,18 @@ angular
                             errorMessage: errorMessage,
                             errorUrl: $window.location.href,
                             //stackTrace: result,
-                            cause: ( cause || "" )
+                            cause: (cause || "")
                         })
                     });
 
-                } catch ( loggingError ) {
-                    $log.warn( "Error logging failed" );
-                    $log.log( loggingError );
+                }
+                catch (loggingError) {
+                    $log.warn("Error logging failed");
+                    $log.log(loggingError);
                 }
             }
             // Return the logging function.
-            return( log );
+            return (log);
         }
     )
     // this factory is used to capture sourcemaps
@@ -375,7 +377,8 @@ angular
                 var getMapForScript = function(url) {
                     if (cache[url]) {
                         return cache[url];
-                    } else {
+                    }
+                    else {
                         var promise = $http.get(url).then(function(response) {
                             var m = response.data.match(/\/\/# sourceMappingURL=(.+\.map)/);
                             if (m) {
@@ -384,7 +387,8 @@ angular
                                 return $http.get(path + '/' + m[1]).then(function(response) {
                                     return new SMConsumer(response.data);
                                 });
-                            } else {
+                            }
+                            else {
                                 return $q.reject();
                             }
                         });
@@ -397,7 +401,10 @@ angular
                     return $q.all($.map(exception.stack.split(/\n/), function(stackLine) {
                         var match = stackLine.match(/^(.+)(http.+):(\d+):(\d+)/);
                         if (match) {
-                            var prefix = match[1], url = match[2], line = match[3], col = match[4];
+                            var prefix = match[1],
+                                url = match[2],
+                                line = match[3],
+                                col = match[4];
                             return getMapForScript(url).then(function(map) {
                                 var pos = map.originalPositionFor({
                                     line: parseInt(line, 10),
@@ -411,13 +418,15 @@ angular
                             }, function() {
                                 return stackLine;
                             });
-                        } else {
+                        }
+                        else {
                             return $q.when(stackLine);
                         }
-                    })).then(function (lines) {
+                    })).then(function(lines) {
                         return lines.join('\n');
                     });
-                } else {
+                }
+                else {
                     return $q.when('');
                 }
             };

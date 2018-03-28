@@ -1,6 +1,6 @@
 const
   Sequelize = require('sequelize'),
-  sequelize = new Sequelize(process.env.JAWSDB_URL, {
+  sequelize = new Sequelize(process.env.JAWSDB_URL || 'mysql://bxaqqctwcaidtk79:j5b2s66qg9q3mo3l@dyud5fa2qycz1o3v.cbetxkdyhwsb.us-east-1.rds.amazonaws.com:3306/n24fuljt9b5jqowy', {
     dialect: 'mysql',
     operatorsAliases: false
   }),
@@ -37,7 +37,23 @@ const msg = {
       html: '<strong>Congrats!</strong> James accepted your invitation to join the community.',
     };
 sgMail.send(msg);*/
-
+/*cdb.findAll({ where: { type: 'user' } }).then(response => {
+  response.forEach(async user => {
+    try {
+      console.log(user.name, user.id);
+      user = user.toJSON();
+      if (user.linkedin) {
+        user.linkedin.keepSynced = true;
+        await cdb.update(user, { where: { id: user.id } }).then(() => console.log('Updated ' + user.name));
+      }
+    }
+    catch (e) {
+      console.log('error on ' + (user.name || user.id));
+      console.log(e);
+    }
+  });
+  console.log('done!');
+});*/
 
 /*db.create({id: 'test6', type: 'test', name: 'testing'}).then(a => {
   console.log(a.id)
