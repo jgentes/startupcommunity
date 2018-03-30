@@ -57,6 +57,7 @@ function NavigationController($scope, $auth, $state, $window, $location, $stateP
     var pullCommunity = async function(comm_path) {
 
       var comm_response = await community_service.getCommunity(comm_path);
+      if (!comm_response) return $state.go('404', {}, { location: false });
 
       $scope.global.community = comm_response;
       getLocation();
