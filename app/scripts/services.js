@@ -1,5 +1,4 @@
 /*global _*/
-/*global angular*/
 /*global jQuery*/
 angular
   .module('services', [])
@@ -280,8 +279,11 @@ angular
         if (!comm) return;
         let uberSearch = [];
 
-        let community = await $http.get('/api/2.1/community/' + comm).then(response => response.data[0]);
+        let community =
+          await $http.get('/api/2.1/community/' + comm)
+          .then(response => response.data[0]);
 
+        if (!community) return;
         if (!community.resource || community.type !== "location") {
 
           // pull communities within record
