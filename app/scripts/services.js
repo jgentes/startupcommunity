@@ -281,7 +281,7 @@ angular
 
         let community =
           await $http.get('/api/2.1/community/' + comm)
-          .then(response => response.data[0]);
+          .then(response => response.data);
 
         if (!community) return;
         if (!community.resource || community.type !== "location") {

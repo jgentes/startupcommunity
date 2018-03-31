@@ -186,7 +186,7 @@ async function handleGetCommunity(req, res) {
 
   console.log('Pulling community for ' + param);
 
-  const community = await cdb.findAll({
+  const community = await cdb.findOne({
       where: {
         id: {
           [Op.in]: param
