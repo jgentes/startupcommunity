@@ -1,4 +1,4 @@
-(function () {
+(function() {
     angular.module('startupcommunity', [
         'ui.router',
         'ui.bootstrap',
@@ -9,12 +9,9 @@
         'analytics.mixpanel',
         'satellizer',
         'services',
-        'angulartics',
-        'angulartics.google.analytics',
         'ngFileUpload',
         'bm.bsTour',
         'angular-ladda',
         'summernote'
     ]);
 })();
-
