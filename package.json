@@ -27,7 +27,8 @@
     "request": "^2.85.0",
     "request-debug": "^0.2.0",
     "satellizer": "~0.15.5",
-    "sequelize": "^4.37.4"
+    "sequelize": "^4.37.4",
+    "spin.js": "^3.1.0"
   },
   "devDependencies": {
     "bower": "^1.8.0",
