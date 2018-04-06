@@ -454,7 +454,7 @@ function handleLinkedin(req, res) {
                       console.log(invite_profile);
                       // note that we don't validate the invite email matches the linkedin email, so anyone can use the invite once.
 
-                      var new_invite_profile = invite_profile; // must copy object or variable change will affect original object
+                      var new_invite_profile = invite_profile.toJSON(); // must copy object or variable change will affect original object
 
                       // update the invite record with user details
 
