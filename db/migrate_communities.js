@@ -22,10 +22,10 @@ sequelize.query(
 // Drop Invitations Table
 sequelize.query('DROP TABLE `invitations`').then(console.log('Table dropped!'));
 */
-/*
+
 // Create Invitations Table
 sequelize.query('CREATE TABLE `invitations` (`id` int(11) NOT NULL AUTO_INCREMENT,`home` varchar(250) NOT NULL, `email` varchar(250) NOT NULL,`invitor_email` varchar(250) NOT NULL,`invite_communities` json NOT NULL,  PRIMARY KEY (`id`)) ENGINE=InnoDB AUTO_INCREMENT=298 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci').then(console.log('finished'));
-*/
+
 
 // Load communities and invitations from dump of communities db in couchdb
 
