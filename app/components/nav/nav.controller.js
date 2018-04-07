@@ -211,18 +211,16 @@ function NavigationController($scope, $auth, $state, $window, $location, $stateP
       var user = $scope.global.user; // reference 'this' by using 'nav' from 'NavigationController as nav' - * nav is also usable in child views *
 
       // LOAD 3RD PARTY SERVICES
-
-      if ($window.Bugsnag) {
-        $window.Bugsnag.user = {
-          id: user.id,
-          name: user.name,
-          email: user.email
-        };
-      }
+      /*
+            if ($window.Bugsnag) {
+              $window.Bugsnag.user = {
+                id: user.id,
+                name: user.name,
+                email: user.email
+              };
+            }*/
 
     }
-
-    if ($window.Bugsnag && $location.host() !== 'startupcommunity.org') $window.Bugsnag.releaseStage = "development";
 
     // to set correct root path when navigating via header liniks..  craziness is needed because using bracket syntax inside of ui-sref doesn't work
 

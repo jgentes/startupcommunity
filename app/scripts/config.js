@@ -432,7 +432,6 @@ angular
             };
 
             return function(exception, cause) {
-                if ($window.Bugsnag) $window.Bugsnag.notifyException(exception);
                 getSourceMappedStackTrace(exception).then(function(final) {
                     errorLogService(final, $window);
                 });
