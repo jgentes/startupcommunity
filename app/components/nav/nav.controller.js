@@ -220,8 +220,6 @@ function NavigationController($scope, $auth, $state, $window, $location, $stateP
         };
       }
 
-      if ($window.JacoRecorder) $window.JacoRecorder.identify(user.email);
-
     }
 
     if ($window.Bugsnag && $location.host() !== 'startupcommunity.org') $window.Bugsnag.releaseStage = "development";

@@ -35,32 +35,38 @@
     <script src="https://d2wy8f7a9ursnm.cloudfront.net/bugsnag-2.min.js" data-apikey="a46f2b2ce2b4bcd599be18c86f2fe8ce">
     </script>
 
-    <script type="text/javascript">
-        (function(e, r) {
-            function n(e, r) { e[r] = function() { e.push([r].concat(Array.prototype.slice.call(arguments, 0))) } }
+    <!-- RootCause -->
+    <script>
+        var refScript = document.getElementsByTagName("script")[0];
+        var rcScript = document.createElement("script");
 
-            function o() {
-                var e = r.location.hostname.match(/[a-z0-9][a-z0-9\-]+\.[a-z\.]{2,6}$/i),
-                    n = e ? e[0] : null,
-                    o = "; domain=." + n + "; path=/; expires=" + new Date(new Date().setFullYear(new Date().getFullYear() + 1)).toUTCString();
-                r.cookie = r.referrer && -1 === r.referrer.indexOf(n) ? "jaco_referer=" + r.referrer + o : "jaco_referer=" + t + o
-            }
-            var a = "JacoRecorder",
-                t = "none";
-            ! function(e, r, t, i) {
-                if (!t.__VERSION) {
-                    e[a] = t;
-                    for (var c = ["init", "identify", "startRecording", "stopRecording", "removeUserTracking", "setUserInfo", "trackEvent"], s = 0; s < c.length; s++) n(t, c[s]);
-                    o(), t.__VERSION = 2.1, t.__INIT_TIME = 1 * new Date;
-                    var f = r.createElement("script");
-                    f.async = !0, f.setAttribute("crossorigin", "anonymous"), f.src = i;
-                    var d = r.getElementsByTagName("head")[0];
-                    d.appendChild(f)
-                }
-            }(e, r, e[a] || [], "https://recorder-assets.getjaco.com/recorder_v2.js")
-        }).call(window, window, document);
-        window.JacoRecorder.init("54ad6c47-2366-4979-bfdc-c00bd09ab7c7");
+        rcScript.async = true;
+        rcScript.crossOrigin = "anonymous";
+        rcScript.src = "https://app.therootcause.io/rootcause-full.js";
+
+        rcScript.addEventListener("load", onRCLoaded);
+        refScript.parentNode.insertBefore(rcScript, refScript);
+
+        function onRCLoaded() {
+            var logger = window.RC && new RC.Logger({
+                applicationId: "b8c2479f32128e9432fd1e389c97fe1d7392fd70",
+                recordSessionVideo: true,
+                captureScreenshot: true,
+                recordUserActions: false,
+                logConsoleOutput: true,
+                logAjaxRequests: true,
+                treatFailedAjaxAsError: false,
+                logResourceLoadFailures: false,
+                showNotificationOnError: false,
+                showFeedbackButton: false,
+                showErrorDialog: false,
+                maxNbrOfReportedErrors: 1,
+                version: "", // TODO,
+                frameworkVersion: "" // TODO
+            });
+        }
     </script>
+
 
 </head>
 
