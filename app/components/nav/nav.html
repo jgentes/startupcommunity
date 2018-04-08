@@ -5,7 +5,7 @@
         </div>
         <div id="logo" class="light-version" style="transition: all 0.4s ease 0s;">
             <a ui-sref="community.dashboard({location_path: global.location.id})">
-                <img ng-src="{{global.community.sc_logo || global.location.sc_logo || '/public/images/sc_logo_small.png' }}"/>
+                <img ng-src="{{global.location.name ? 'https://maps.googleapis.com/maps/api/staticmap?center=' + global.location.name + '&zoom=' + (global.state ? '5' : '9') + '&style=feature:poi%7Celement:labels%7Cvisibility:off&size=180x61&format=jpg&maptype=terrain&key=AIzaSyAfiMbAUxkkJhA22aLFyyPKVlKBXYyRutc' : '/public/images/sc_logo_small.png' }}"/>
             </a>
         </div>
         <nav role="navigation">
