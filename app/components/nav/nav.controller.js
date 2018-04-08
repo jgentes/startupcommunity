@@ -137,6 +137,10 @@ function NavigationController($scope, $auth, $state, $window, $location, $stateP
 
   var getNavTop = async function() {
 
+    // figure out if this a state for the google map
+    var locName = $scope.global.location && $scope.global.location.id;
+    $scope.global.state = locName && locName.indexOf('-') == -1;
+
     // check if we already have correct navigation
     if ($scope.global && $scope.global.nav_top && $scope.global.nav_top.id == $stateParams.location_path)
       getCommunityTop();
