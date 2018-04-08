@@ -70,22 +70,20 @@ sgMail.send(msg);*/
   //cdb.update({name: f.name}, {where: {id: 496}})
 })()
 */
-//db.findOne({where: {"linkedin.id": "yc-B7Uvuxf"}}).then(u => console.log(u));
+//cdb.findOne({ where: { id: 'james' } }).then(u => console.log(u.roles));
 /*db.findAll({
   where: {roles: {"keys-rock": {[Op.ne]:null}}
   }
 }).then(u => {
   if (u) u.forEach(ul => console.log(ul.name));
 })*/
-/*
-sequelize
+/*sequelize
   .query(
-    'SELECT * FROM communities WHERE JSON_CONTAINS(roles->>\'$.*.cascade-angels\', \'["bend-or"]\')',
-    { model: cdb}
+    'SELECT * FROM communities WHERE JSON_CONTAINS(roles->>\'$.*."bendtech"\', \'["bend-or"]\')', { model: cdb }
   ).then(result => {
     console.log(result.length)
   })
-  */
+*/
 /*
 sequelize
   .query(

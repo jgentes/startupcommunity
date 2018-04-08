@@ -243,16 +243,17 @@ async function handleGetNeighbors(req, res) {
 async function handleGetTeam(req, res) {
   console.log('handleGetTeam PARAMS: ', req.params);
 
-  let param = req.params.community;
-  if (!param) return res.status(404).send({ message: 'Please specify a community!' });
+  let comm = req.params.community;
+  let loc = req.query.location;
+  if (!comm || !loc) return res.status(404).send([]);
 
-  param = param.replace(/\s+/g, '-');
+  comm = comm.replace(/\s+/g, '-');
 
-  console.log('Pulling team for ' + param);
+  console.log('Pulling team for ' + comm + ' in ' + loc);
 
   sequelize
     .query(
-      'SELECT * FROM communities WHERE JSON_CONTAINS(roles->>\'$.*."' + param + '"\', \'["' + param + '"]\')', { model: cdb }
+      'SELECT * FROM communities WHERE JSON_CONTAINS(roles->>\'$.*."' + comm + '"\', \'["' + loc + '"]\')', { model: cdb }
     ).then(team => res.status(200).send(addkeys(team))).catch(err => console.warn("WARNING: ", err));
 }
 

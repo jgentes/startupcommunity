@@ -429,9 +429,9 @@ function handleDeleteCompany(req, res) {
     //todo need to test this!
     sequelize
       .query(
-        'SELECT * FROM communities WHERE JSON_CONTAINS(roles->>\'$.founder."' + params.company_id + '"\', \'["*"]\') OR JSON_CONTAINS(roles->>\'$.team."' + params.company_id + '"\', \'["*"]\')', { model: cdb }
+        'SELECT * FROM communities WHERE JSON_CONTAINS_PATH(roles, \'one\', \'$.team."' + params.company_id + '"\', \'$.founder."' + params.company_id + '"\')', { model: cdb }
       ).then(team => {
-        if (!team.length) {
+        if (team.length) {
 
           // no founders or team members, so it can be deleted by anyone
 

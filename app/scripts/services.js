@@ -331,7 +331,7 @@ angular
           // get team
           const teamresponse = {};
           const count = {};
-          let team = await $http.get('/api/3.0/team/' + community.id).then(response => response.data);
+          let team = await $http.get('/api/3.0/team/' + community.id + '?location=' + community.home).then(response => response.data);
 
           team.forEach(member => {
             // sort roles
