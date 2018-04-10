@@ -3,7 +3,7 @@ angular
     .controller('NewsletterController', NewsletterController)
     .controller('SetupNewsController', SetupNewsController);
 
-function NewsletterController(newsletter_service, $scope, user_service, $sce, errorLogService) {
+function NewsletterController(newsletter_service, $scope, user_service, $sce) {
     var self = this;
 
     this.ie = navigator.userAgent.indexOf('Trident') > 0 || navigator.userAgent.indexOf('MSIE') > 0;
@@ -15,7 +15,7 @@ function NewsletterController(newsletter_service, $scope, user_service, $sce, er
             if ($scope.global.user.newsletter) {
 
                 newsletter_service.login($scope.global.user)
-                    .then(function (response) {
+                    .then(function(response) {
 
                         self.frame_content = $sce.trustAsHtml(response.data);
 
@@ -23,10 +23,11 @@ function NewsletterController(newsletter_service, $scope, user_service, $sce, er
 
                     })
                     .catch(function(error) {
-                        errorLogService('newsletter error: ', error);
+                        $window.logger.logException('newsletter error: ', error);
                     })
 
-            } else {
+            }
+            else {
                 $state.go('settings');
             }
         });
@@ -34,11 +35,11 @@ function NewsletterController(newsletter_service, $scope, user_service, $sce, er
     // logout is not used, just for reference
     this.logout = function() {
         newsletter_service.logout()
-            .then(function (response) {
+            .then(function(response) {
                 self.frame_content = $sce.trustAsHtml(response.data);
             })
     }
-    
+
 }
 
 function SetupNewsController($uibModalInstance, $scope, sweet, community_service, newsletter_service) {
@@ -50,15 +51,15 @@ function SetupNewsController($uibModalInstance, $scope, sweet, community_service
         if (self.form.$valid) {
 
             var settings = {
-                brand_name : self.setupForm.brand_name,
-                from_name : self.setupForm.from_name,
-                from_email : self.setupForm.from_email,
-                reply_email : self.setupForm.reply_email,
-                host : self.setupForm.host,
-                port : self.setupForm.port,
-                ssl : self.setupForm.ssl.toLowerCase(),
-                username : self.setupForm.username,
-                password : self.setupForm.password
+                brand_name: self.setupForm.brand_name,
+                from_name: self.setupForm.from_name,
+                from_email: self.setupForm.from_email,
+                reply_email: self.setupForm.reply_email,
+                host: self.setupForm.host,
+                port: self.setupForm.port,
+                ssl: self.setupForm.ssl.toLowerCase(),
+                username: self.setupForm.username,
+                password: self.setupForm.password
             };
 
             if ($scope.global.user.newsletter && $scope.global.user.newsletter.brand_id) {
@@ -74,11 +75,12 @@ function SetupNewsController($uibModalInstance, $scope, sweet, community_service
                             sweet.show({
                                 title: "Newsletter settings saved!",
                                 type: "success"
-                            }, function(){
+                            }, function() {
                                 $uibModalInstance.close();
                             });
 
-                        } else {
+                        }
+                        else {
                             sweet.show({
                                 title: "Sorry, something went wrong.",
                                 text: "Here's what we know: " + response.data.message,
@@ -89,7 +91,8 @@ function SetupNewsController($uibModalInstance, $scope, sweet, community_service
                         newsletter_service.logout();
                     })
 
-            } else {
+            }
+            else {
 
                 var leader = [];
 
@@ -109,13 +112,14 @@ function SetupNewsController($uibModalInstance, $scope, sweet, community_service
                                     sweet.show({
                                         title: "Newsletter settings saved!",
                                         type: "success"
-                                    }, function(){
+                                    }, function() {
                                         $uibModalInstance.close();
                                     });
 
 
 
-                                } else {
+                                }
+                                else {
                                     sweet.show({
                                         title: "Sorry, something went wrong.",
                                         text: "Here's what we know: " + response.data.message,
@@ -127,14 +131,15 @@ function SetupNewsController($uibModalInstance, $scope, sweet, community_service
 
             }
 
-        } else {
+        }
+        else {
             self.submitted = true;
             self.working = false;
         }
 
     };
 
-    this.cancel = function () {
+    this.cancel = function() {
         self.working = false;
         $uibModalInstance.dismiss('cancel');
     };

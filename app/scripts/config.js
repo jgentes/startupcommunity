@@ -286,6 +286,25 @@ angular
             }
         });
     })
+    .config(function($provide) {
+        $provide.decorator('$exceptionHandler', ['$log', '$delegate',
+            function($log, $delegate) {
+                return function(exception, cause) {
+
+                    window.logger = window.logger || (window.RC && RC.Logger && new RC.Logger({
+                        applicationId: 'b8c2479f32128e9432fd1e389c97fe1d7392fd70',
+                        recordUserActions: true,
+                        recordSessionVideo: true
+                    }));
+
+                    window.logger && logger.logException(exception, {
+                        data: { cause: cause }
+                    });
+                    $delegate(exception, cause);
+                };
+            }
+        ]);
+    })
     .run(function($rootScope, $state, $timeout, $auth) {
         $rootScope.global = {}; // initialize my global scope object (required even though only $scope.global is used)
 
@@ -321,123 +340,123 @@ angular
 
 
     // for Angular client exception logging to server
-
+/*
     .provider(
         "$exceptionHandler", {
             $get: function(errorLogService) {
                 return (errorLogService);
             }
         }
-    )
+    )*/
 
-    // this factory pushes the exceptions to the server
-    .factory(
-        "errorLogService",
-        function($log, $window) {
-
-            function log(exception, cause) {
-
-                $log.error.apply($log, arguments);
-
-                try {
-                    var errorMessage = exception.toString();
-
-                    $.ajax({
-                        type: "POST",
-                        url: "/api/logger",
-                        contentType: "application/json",
-                        data: angular.toJson({
-                            errorMessage: errorMessage,
-                            errorUrl: $window.location.href,
-                            //stackTrace: result,
-                            cause: (cause || "")
-                        })
-                    });
-
-                }
-                catch (loggingError) {
-                    $log.warn("Error logging failed");
-                    $log.log(loggingError);
-                }
-            }
-            // Return the logging function.
-            return (log);
-        }
-    )
-    // this factory is used to capture sourcemaps
-    .factory('$exceptionHandler',
-        function($log, $window, $injector, errorLogService) {
-            var getSourceMappedStackTrace = function(exception) {
-                var $q = $injector.get('$q'),
-                    $http = $injector.get('$http'),
-                    SMConsumer = $window.sourceMap.SourceMapConsumer,
-                    cache = {};
-
-                // Retrieve a SourceMap object for a minified script URL
-                var getMapForScript = function(url) {
-                    if (cache[url]) {
-                        return cache[url];
-                    }
-                    else {
-                        var promise = $http.get(url).then(function(response) {
-                            var m = response.data.match(/\/\/# sourceMappingURL=(.+\.map)/);
-                            if (m) {
-                                var path = url.match(/^(.+)\/[^/]+$/);
-                                path = path && path[1];
-                                return $http.get(path + '/' + m[1]).then(function(response) {
-                                    return new SMConsumer(response.data);
-                                });
-                            }
-                            else {
-                                return $q.reject();
-                            }
-                        });
-                        cache[url] = promise;
-                        return promise;
-                    }
-                };
-
-                if (exception.stack) { // not all browsers support stack traces
-                    return $q.all($.map(exception.stack.split(/\n/), function(stackLine) {
-                        var match = stackLine.match(/^(.+)(http.+):(\d+):(\d+)/);
-                        if (match) {
-                            var prefix = match[1],
-                                url = match[2],
-                                line = match[3],
-                                col = match[4];
-                            return getMapForScript(url).then(function(map) {
-                                var pos = map.originalPositionFor({
-                                    line: parseInt(line, 10),
-                                    column: parseInt(col, 10)
-                                });
-                                var mangledName = prefix.match(/\s*(at)?\s*(.*?)\s*(\(|@)/);
-                                mangledName = (mangledName && mangledName[2]) || '';
-                                return '    at ' + (pos.name ? pos.name : mangledName) + ' ' +
-                                    $window.location.origin + pos.source + ':' + pos.line + ':' +
-                                    pos.column;
-                            }, function() {
-                                return stackLine;
-                            });
-                        }
-                        else {
-                            return $q.when(stackLine);
-                        }
-                    })).then(function(lines) {
-                        return lines.join('\n');
-                    });
-                }
-                else {
-                    return $q.when('');
-                }
-            };
-
-            return function(exception, cause) {
-                getSourceMappedStackTrace(exception).then(function(final) {
-                    errorLogService(final, $window);
-                });
-            };
-        });
-
+/*// this factory pushes the exceptions to the server
+  .factory(
+          "errorLogService",
+          function($log, $window) {
+  
+              function log(exception, cause) {
+  
+                  $log.error.apply($log, arguments);
+  
+                  try {
+                      var errorMessage = exception.toString();
+  
+                      $.ajax({
+                          type: "POST",
+                          url: "/api/logger",
+                          contentType: "application/json",
+                          data: angular.toJson({
+                              errorMessage: errorMessage,
+                              errorUrl: $window.location.href,
+                              //stackTrace: result,
+                              cause: (cause || "")
+                          })
+                      });
+  
+                  }
+                  catch (loggingError) {
+                      $log.warn("Error logging failed");
+                      $log.log(loggingError);
+                  }
+              }
+              // Return the logging function.
+              return (log);
+          }
+      )
+      // this factory is used to capture sourcemaps
+      .factory('$exceptionHandler',
+          function($log, $window, $injector, errorLogService) {
+              var getSourceMappedStackTrace = function(exception) {
+                  var $q = $injector.get('$q'),
+                      $http = $injector.get('$http'),
+                      SMConsumer = $window.sourceMap.SourceMapConsumer,
+                      cache = {};
+  
+                  // Retrieve a SourceMap object for a minified script URL
+                  var getMapForScript = function(url) {
+                      if (cache[url]) {
+                          return cache[url];
+                      }
+                      else {
+                          var promise = $http.get(url).then(function(response) {
+                              var m = response.data.match(/\/\/# sourceMappingURL=(.+\.map)/);
+                              if (m) {
+                                  var path = url.match(/^(.+)\/[^/]+$/);
+                                  path = path && path[1];
+                                  return $http.get(path + '/' + m[1]).then(function(response) {
+                                      return new SMConsumer(response.data);
+                                  });
+                              }
+                              else {
+                                  return $q.reject();
+                              }
+                          });
+                          cache[url] = promise;
+                          return promise;
+                      }
+                  };
+  
+                  if (exception.stack) { // not all browsers support stack traces
+                      return $q.all($.map(exception.stack.split(/\n/), function(stackLine) {
+                          var match = stackLine.match(/^(.+)(http.+):(\d+):(\d+)/);
+                          if (match) {
+                              var prefix = match[1],
+                                  url = match[2],
+                                  line = match[3],
+                                  col = match[4];
+                              return getMapForScript(url).then(function(map) {
+                                  var pos = map.originalPositionFor({
+                                      line: parseInt(line, 10),
+                                      column: parseInt(col, 10)
+                                  });
+                                  var mangledName = prefix.match(/\s*(at)?\s*(.*?)\s*(\(|@)/);
+                                  mangledName = (mangledName && mangledName[2]) || '';
+                                  return '    at ' + (pos.name ? pos.name : mangledName) + ' ' +
+                                      $window.location.origin + pos.source + ':' + pos.line + ':' +
+                                      pos.column;
+                              }, function() {
+                                  return stackLine;
+                              });
+                          }
+                          else {
+                              return $q.when(stackLine);
+                          }
+                      })).then(function(lines) {
+                          return lines.join('\n');
+                      });
+                  }
+                  else {
+                      return $q.when('');
+                  }
+              };
+  
+              return function(exception, cause) {
+                  getSourceMappedStackTrace(exception).then(function(final) {
+                      errorLogService(final, $window);
+                  });
+              };
+          });
+*/
 angular
     .module('startupcommunity')
     .config(['$mixpanelProvider', function($mixpanelProvider) {

@@ -4,7 +4,7 @@ angular
   .controller('SettingsController', SettingsController)
   .controller('EmbedSettingsController', EmbedSettingsController);
 
-function NavigationController($scope, $auth, $state, $window, $location, $stateParams, $uibModal, $mixpanel, user_service, community_service, sweet, errorLogService, newsletter_service) {
+function NavigationController($scope, $auth, $state, $window, $location, $stateParams, $uibModal, $mixpanel, user_service, community_service, sweet, newsletter_service) {
 
   var self = this;
   $scope.global.path = $location.path().replace(/\/$/, ""); //used for routing and used in view
@@ -160,7 +160,7 @@ function NavigationController($scope, $auth, $state, $window, $location, $stateP
   };
 
   var getCommunityTop = async function() {
-    if (!nav_community.type) errorLogService('getCommunityTop166: ', nav_community);
+    if (!nav_community.type) $window.logger.logException('getCommunityTop166: ', nav_community);
     if (nav_community && nav_community.id && $scope.global.location && $scope.global.location.id && (nav_community.id !== $scope.global.location.id && ((nav_community.type == 'location') || (nav_community.resource) || (nav_community.type == 'cluster')))) {
 
       var response = await community_service.getTop($scope.global.location.id, nav_community.id, nav_community);
@@ -189,7 +189,7 @@ function NavigationController($scope, $auth, $state, $window, $location, $stateP
         */
     // for header breadcrumbs
     if (!$scope.global.community && $scope.global.profile) $scope.global.community = $scope.global.profile;
-    if (!$scope.global.community.type) errorLogService('navController194: ', $scope.global.community);
+    if (!$scope.global.community.type) $window.logger.logException('navController194: ', $scope.global.community);
     if ($scope.global.community.type) {
       switch ($scope.global.community.type) {
         case ('company'):
@@ -215,14 +215,14 @@ function NavigationController($scope, $auth, $state, $window, $location, $stateP
       var user = $scope.global.user; // reference 'this' by using 'nav' from 'NavigationController as nav' - * nav is also usable in child views *
 
       // LOAD 3RD PARTY SERVICES
-      /*
-            if ($window.Bugsnag) {
-              $window.Bugsnag.user = {
-                id: user.id,
-                name: user.name,
-                email: user.email
-              };
-            }*/
+
+      if ($window.logger) {
+        $window.logger.user = {
+          id: user.id,
+          name: user.name,
+          email: user.email
+        };
+      }
 
     }
 
@@ -315,7 +315,7 @@ function NavigationController($scope, $auth, $state, $window, $location, $stateP
       }
     }
     else {
-      if (!nav_community.type) errorLogService('navController323: ', nav_community);
+      if (!nav_community.type) $window.logger.logException('navController323: ', nav_community);
       switch (nav_community.type) {
 
         case 'user':
@@ -590,7 +590,7 @@ function NavigationController($scope, $auth, $state, $window, $location, $stateP
         }
       }
       catch (e) {
-        //errorLogService('Localstorage problem: ', e);
+        //$window.logger.logException('Localstorage problem: ', e);
       }
 
       if (storage) {
@@ -607,7 +607,7 @@ function NavigationController($scope, $auth, $state, $window, $location, $stateP
           }
           catch (e) {
             embed = false;
-            errorLogService('embed problem: ', e);
+            $window.logger.logException('embed problem: ', e);
           }
 
         }
@@ -617,13 +617,13 @@ function NavigationController($scope, $auth, $state, $window, $location, $stateP
           }
           catch (e) {
             embed = false;
-            //errorLogService('embed problem2: ', e);
+            //$window.logger.logException('embed problem2: ', e);
           }
         }
       }
       catch (e) {
         embed = false;
-        errorLogService('embed problem3: ', e);
+        $window.logger.logException('embed problem3: ', e);
       }
 
       if (embed) {
@@ -642,7 +642,7 @@ function NavigationController($scope, $auth, $state, $window, $location, $stateP
               }
             }
             catch (e) {
-              //errorLogService('Localstorage problem: ', e);
+              //$window.logger.logException('Localstorage problem: ', e);
             }
             if (embed[u].full) $scope.global.embedded = false;
             break;

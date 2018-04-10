@@ -47,11 +47,11 @@
         refScript.parentNode.insertBefore(rcScript, refScript);
 
         function onRCLoaded() {
-            var logger = window.RC && new RC.Logger({
+            window.logger = window.RC && new RC.Logger({
                 applicationId: "b8c2479f32128e9432fd1e389c97fe1d7392fd70",
-                recordSessionVideo: true,
+                recordSessionVideo: false,
                 captureScreenshot: true,
-                recordUserActions: false,
+                recordUserActions: true,
                 logConsoleOutput: true,
                 logAjaxRequests: true,
                 treatFailedAjaxAsError: false,
@@ -100,7 +100,7 @@
     <script src="../public/scripts/xdomain.min.js" slave="https://newsletter.startupcommunity.org/proxy.html" crossorigin="anonymous"></script>
     -->
     <!-- Global site tag (gtag.js) - Google Analytics -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-58555092-2" crossorigin="anonymous"></script>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-58555092-2"></script>
     <script>
         window.dataLayer = window.dataLayer || [];
 
