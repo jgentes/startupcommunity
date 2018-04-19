@@ -1,0 +1,20 @@
+<div id="error-container">
+    <div class="row">
+        <div class="error-options" style="margin-left: 30px; margin-top: 20px; float: left;">
+            <a href="javascript:window.history.back()" style="font-size: 1.5em;">
+            <i class="fa fa-chevron-circle-left text-muted"></i> Go back</a>
+        </div>
+        <div class="error-options" style="margin-right: 30px; margin-top: 20px; float: right;">
+            <p style="font-size: 1.5em;"><a ui-sref="login">Login</a> <i style="font-size: .9em;" class="fa fa-chevron-circle-right text-muted"></i></p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-8 col-sm-offset-2 text-center">
+            <p style="font-size: 8em;"><i style="font-size: .9em;" class="fa fa-exclamation-triangle text-info animation-pulse"></i> 404</p>
+            <p style="font-size: 2em;">Sorry, we couldn't find that page.</p>
+            <div ng-show="error.alert" style="margin-top: 15px;">
+				<uib-alert type="{{error.alert.type}}" style="margin: 2px;" ng-click="error.alert = undefined"><span ng-bind-html="error.alert.msg | safe_html"></span></uib-alert>
+			</div>
+        </div>
+    </div>
+</div>

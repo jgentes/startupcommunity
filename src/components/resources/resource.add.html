@@ -1,0 +1,204 @@
+<div class="hpanel" style="margin-top: 20px;">
+
+    <div class="panel-body">
+
+        <div ng-if="!add.update">
+            <div class="col-xs-12">
+                <h4 class="modal-title">Add a {{ add.is_resource ? 'resource' : 'company' }} to {{global.location.name.split(',').slice(0, (global.location.name.split(',').length - 1) || 1).join()}}</h4>
+                <p class="font-bold">{{ add.is_resource ?
+                    'Resources are coworking spaces, accelerators, investment funds, networking events, and other organizations that support entrepreneurship.' :
+                    'Only add companies that are part of your local startup community.' }} </p>
+            </div>
+        </div>
+        <div ng-if="add.update">
+            <div class="col-xs-12">
+                <h4 class="modal-title">Edit {{ ::add.selectedCompany.name }}</h4>
+                <p class="font-bold">Edit this record to add your role or improve the accuracy of the information.</p>
+            </div>
+        </div>
+
+    </div>
+
+
+    <div class="panel-body" style="margin-top: 20px;">
+
+        <form>
+
+            <div class="p-m">
+
+                <div class="row">
+                    <div class="col-lg-3 text-center">
+                        <img style="max-height:150px; max-width: 150px; padding-bottom: 10px;" ngf-thumbnail="avatar || add.selectedCompany.avatar || '/public/images/browser_icon.jpg'">
+                        <br/>
+                        <label class="uploader_text">
+                            <input type="file" ng-model="avatar" name="file" ngf-pattern="'image/*'"
+                                   accept="image/*" ngf-max-size="2MB" ngf-min-height="50"
+                                   ngf-resize="{width: 150, height: 150}" ngf-select="add.uploadLogo($file)" style="display:none;"/>
+                            <h6>
+
+                                Change thumbnail..
+                                <br/>(square)
+
+                            </h6>
+                        </label>
+                    </div>
+                    <div class="col-lg-9">
+                        <div ng-show="add.step == 1">
+                            <div class="form-group col-lg-6">
+                                <h4 class="w400">
+
+                                    Name of the {{ add.is_resource ? 'resource' : 'company' }}:
+
+                                </h4>
+                                <input type="text" placeholder="Type the {{ add.is_resource ? 'resource' : 'company' }} name.." ng-model="add.selectedCompany.name" ng-model-options="{ debounce: 250, blur: 0 }" class="form-control input-lg">
+                            </div>
+                            <div class="form-group col-lg-6" style="margin-top:2px;">
+                                <h4 class="w400">
+
+                                    Your role is:
+
+                                </h4>
+                                <select class="form-control input-lg industry-select" ng-model="add.selectedRole" ng-options="r.value as r.text for r in add.selectRoles"></select>
+                            </div>
+                            <div class="form-group col-lg-6">
+                                <h4 class="w400">
+
+                                    Short headline:
+
+                                </h4>
+                                <input type="text" placeholder="One line summary.." ng-model="add.selectedCompany.headline" class="form-control input-lg">
+                            </div>
+                            <div class="form-group col-lg-6">
+                                <h4 class="w400">
+
+                                    Website:
+
+                                </h4>
+                                <input type="text" placeholder="www..." ng-model="add.selectedCompany.website" class="form-control input-lg">
+                            </div>
+                            <div class="form-group col-lg-6" ng-if="add.is_resource">
+                                <h4 class="w400">
+
+                                    What type of resource is this?
+
+                                </h4>
+                                <ui-select class="industry_select" multiple="multiple" ng-model="add.selectedCompany.resource_types">
+                                    <ui-select-match placeholder="College, Accelerator, etc">{{$item}}</ui-select-match>
+                                    <ui-select-choices repeat="p in add.resource_types">
+                                        <div ng-bind="p"></div>
+                                    </ui-select-choices>
+                                </ui-select>
+                            </div>
+                            <div class="form-group col-lg-6">
+                                <h4 class="w400">
+
+                                    Select a primary industry:
+
+                                </h4>
+                                <ui-select class="industry_select" ng-model="add.selectedCompany.parent" required>
+                                    <ui-select-match placeholder="Tech, Medical, etc" class="industry_select">{{$select.selected}}</ui-select-match>
+                                    <ui-select-choices repeat="parent in add.parents">
+                                        <div ng-bind="parent"></div>
+                                    </ui-select-choices>
+                                </ui-select>
+                            </div>
+                            <div class="form-group col-lg-6" ng-if="!add.is_resource">
+                                <h4 class="w400">
+                                    Investment stage: (optional)
+                                </h4>
+                                <ui-select class="industry_select" ng-model="add.selectedCompany.stage">
+                                    <ui-select-match placeholder="Bootstrap, Angel, etc">{{$select.selected}}</ui-select-match>
+                                    <ui-select-choices repeat="stage in add.stages">
+                                        <div ng-bind="stage"></div>
+                                    </ui-select-choices>
+                                </ui-select>
+                            </div>
+                            <div class="form-group col-lg-12">
+                                <h4 class="w400">
+
+                                    Add up to six specific markets:
+
+                                </h4>
+                                <div class="panel-body industry_select" style="padding:1px; margin-top: 6px; margin-bottom: 6px;">
+                                    <ui-select multiple ng-model="add.selectedCompany.industries" tagging="true" tagging-label="(new)" limit="6" alert_title="Sorry, only 6 items here." alert_text="Focus on markets that this organization has leadership in." alert_type="warning" style="border:none;">
+                                        <ui-select-match placeholder="Search for markets..">{{$item}}</ui-select-match>
+                                        <ui-select-choices repeat="industry in add.industries | filter:$select.search | limitTo: 25">
+                                            {{industry}}
+                                        </ui-select-choices>
+                                    </ui-select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div ng-show="add.step == 2">
+                            <div class="form-group col-lg-12">
+                                <h4 class="w400">
+
+                                    Street:
+
+                                </h4>
+                                <input type="text" ng-model="add.selectedCompany.street" class="form-control input-lg">
+                            </div>
+                            <div class="form-group col-lg-3">
+                                <h4 class="w400">
+
+                                    City:
+
+                                </h4>
+                                <input type="text" ng-model="add.selectedCompany.city" class="form-control input-lg">
+                            </div>
+                            <div class="form-group col-lg-3">
+                                <h4 class="w400">
+
+                                    State:
+
+                                </h4>
+                                <input type="text" ng-model="add.selectedCompany.state" class="form-control input-lg">
+                            </div>
+                            <div class="form-group col-lg-6">
+                                <h4 class="w400">
+
+                                    Customize the url path:
+
+                                </h4>
+                                <input type="text" class="form-control input-lg" placeholder="{{ add.selectedCompany.url }}" ng-model="add.selectedCompany.url" style="margin-bottom: 5px;" ng-disabled="add.update">
+                                <em style="font-size: 11px;" class="pull-right">The path will be: startupcommunity.org/<strong><span style="text-transform: lowercase;">{{ add.selectedCompany.url }}</span></strong></em>
+                            </div>
+                            <div class="col-lg-12">
+                                <h4 class="w400">
+
+                                    Click below to edit the summary:
+                                </h4>
+                                <div summernote class="summernote" ng-model="add.selectedCompany.summary" ng-model-options="{ debounce: 250, blur: 0 }" style="min-height: 34px;" config="{
+                                height: 50,
+    toolbar: [
+            ['edit',['undo','redo']],
+            ['headline', ['style']],
+            ['style', ['bold', 'italic', 'underline', 'clear']],
+            ['textsize', ['fontsize']],
+            ['alignment', ['ul', 'ol', 'paragraph', ]],
+            ['view', ['fullscreen']],
+            ['insert', ['link','hr']]
+        ]
+  }"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div alert-box this-alert="add.alert" style="margin-top: -20px; margin-bottom: 20px;"></div>
+
+            <button ladda="add.del_working" class="ladda-button btn btn-danger pull-left" data-style="zoom-in" data-spinner-size="25" ng-click="add.deleteCompany(global.community.id)" ng-show="add.update && !add.alert">Delete {{global.community.name || (add.is_resource ? 'Resource' : 'Company') }}</button>
+
+            <div class="text-right m-t-xs">
+                <button ng-click="add.step = 1" ng-disabled="add.step == 1" class="btn btn-default">Previous</button>
+                <button ng-click="add.checkUrl()" ng-disabled="!add.selectedCompany.name || !add.selectedCompany.parent" ng-hide="add.step == 2" class="btn btn-success">Next</button>
+                <button ladda="add.working" class="ladda-button finish btn-success btn" data-style="zoom-in" data-spinner-size="25" ng-show="add.step == 2" ng-click="add.addCompany($event)" type="submit">{{ (add.update ? 'Update ' : 'Add ') + (add.selectedCompany.name || (add.is_resource ? 'Resource' : 'Company')) }}</button>
+                <div ng-if="!add.update && !add.is_resource" class="pull-left" style="margin-top:10px;"><i><a ng-click="add.is_resource = true">Click here if this company is a resource (coworking space, accelerator, event, etc)</a></i></div>
+            </div>
+
+        </form>
+
+    </div>
+</div>

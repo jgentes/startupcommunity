@@ -1,0 +1,52 @@
+<div class="inmodal">
+    <div class="color-line"></div>
+    <div class="modal-header">
+        <h4 class="modal-title">Email Newsletter Setup</h4>
+        <p class="font-bold">You may send newsletters to people within Resources that you are a leader of. This information is similar to what you would use to setup an email client on your mobile phone.</p>
+    </div>
+    <form name="news.form" ng-submit="news.setup()">
+        <div class="modal-body">
+                <div class="hpanel">
+                    <div class="panel-heading" style="font-size: 20px;">Business Name</div>
+                    <input type="text" class="form-control input-lg" placeholder="The name of the business you're sending from" ng-model="news.setupForm.brand_name" style="margin-bottom: 5px;" required>
+                    <br>
+                    <div class="panel-heading" style="font-size: 20px;">From Name</div>
+                    <input type="text" class="form-control input-lg" placeholder="Name of the person you're sending from" ng-model="news.setupForm.from_name" style="margin-bottom: 5px;" required>
+                    <br>
+                    <div class="panel-heading" style="font-size: 20px;">From Email</div>
+                    <input type="email" class="form-control input-lg" placeholder="The email of the person you're sending from" ng-model="news.setupForm.from_email" style="margin-bottom: 5px;" required>
+                    <br>
+                    <div class="panel-heading" style="font-size: 20px;">Reply-to Email</div>
+                    <input type="email" class="form-control input-lg" placeholder="Replies will go to this email" ng-model="news.setupForm.reply_email" style="margin-bottom: 5px;" required>
+                    <br>
+                    <hr>
+                    <div class="panel-heading" style="font-size: 20px;">Email Provider SMTP Host</div>
+                    <input type="text" class="form-control input-lg" placeholder="eg. smtp.gmail.com" ng-model="news.setupForm.host" style="margin-bottom: 5px;" required>
+                    <br>
+                    <div class="panel-heading" style="font-size: 20px;">Port Number</div>
+                    <input type="number" class="form-control input-lg" placeholder="eg. 465" ng-model="news.setupForm.port" style="margin-bottom: 5px;" required>
+                    <br>
+                    <div class="panel-heading" style="font-size: 20px;">SSL / TLS</div>
+                    <select class="form-control m-b" ng-model="news.setupForm.ssl" style="margin-bottom: 5px;" required>
+                        <option>SSL</option>
+                        <option>TLS</option>
+                    </select>
+                    <br><br>
+                    <div class="panel-heading" style="font-size: 20px;">Username for Email Provider</div>
+                    <input type="text" class="form-control input-lg" placeholder="Username (usually your email)" ng-model="news.setupForm.username" style="margin-bottom: 5px;" required>
+                    <br>
+                    <div class="panel-heading" style="font-size: 20px;">Password for Email Provider</div>
+                    <input type="text" class="form-control input-lg" placeholder="Your password" ng-model="news.setupForm.password" style="margin-bottom: 5px;" required>
+                    <br>
+                </div>
+
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-default" ng-click="news.cancel()">Cancel</button>
+            <button ladda="news.working" class="ladda-button btn btn-primary" data-style="zoom-in" data-spinner-size="25">
+                Update Settings
+            </button>
+        </div>
+    </form>
+</div>
+

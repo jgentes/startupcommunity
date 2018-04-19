@@ -1,0 +1,38 @@
+<div class="row">
+    <div class="col-sm-12">
+        <div style="padding-bottom: 20px;">
+            <div>
+                <div ng-if="::global.profile.angellist.angellist_url" class="pull-right">
+                    <a href="{{::global.profile.angellist.angellist_url}}" target="_blank"><i class="fa fa-angellist btn btn-default btn-xs"></i>
+                    </a>
+                </div>
+                <div class="pull-left">
+                    <img ng-src="{{global.profile.avatar}}" style="height:60px; padding-right: 10px;"/>
+                </div>
+            </div>
+            <h3 style="padding-left: 4px;">{{::global.profile.name}}</h3>
+            <h4>
+                {{::global.profile.headline}}
+            </h4>
+        </div>
+
+    </div>
+</div>
+<div class="row">
+    <div>
+        <ul class="profile-ul">
+            <p style="font-size: 14px; padding: 2px 5px 0 20px; float: left;">Locations:</p>
+            <li ng-repeat="(loc, val) in global.locations" class="profile-roles">
+                <a ui-sref="community.dashboard({location_path: loc})" class="btn btn-xs btn-outline btn-success"><i class="fa {{global.locations[loc].icon}}"></i> {{global.locations[loc].name}}</a>
+            </li>
+        </ul>
+    </div>
+</div>
+
+<div ng-show="global.profile.summary" class="panel-footer" style="margin-top:10px;">
+    <h3>Summary</h3>
+    <p style="white-space:pre-wrap;" ng-bind-html="::global.profile.summary"></p>
+    <hr>
+    <h3 ng-show="global.profile.industries">Markets</h3>
+    <li ng-repeat="industry in global.profile.industries" class="label btn-default skills"><a href="#" ui-sref="search.dashboard({location_path: global.location.id})">{{::industry}}</a></li>
+</div>

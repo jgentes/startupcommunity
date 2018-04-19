@@ -1,0 +1,54 @@
+<div class="inmodal">
+    <div class="color-line"></div>
+    <div class="modal-header">
+        <h4 class="modal-title" ng-show="!edit.update">Add an Industry in {{global.location.name}}</h4>
+        <h4 class="modal-title" ng-show="edit.update">Update {{edit.community.name}} in {{global.location.name}}</h4>
+        <p class="font-bold">An industry cluster is an entrepreneurial ecosystem in support of a market vertical.</p>
+    </div>
+    <div class="modal-body">
+        <form name="edit.form">
+            <div class="hpanel">
+                <div class="panel-heading" style="font-size: 20px;">1. Select the primary industry this will be a part of</div>
+                <select class="form-control m-b" ng-model="edit.communityForm.parent" style="margin-bottom: 5px;" required>
+                    <option ng-repeat="parent in edit.parents">{{ parent }}</option>
+                </select>
+                <br>
+                <div class="m-t-xs" ng-show="!edit.communityForm.parent && edit.submitted">
+                    <span class="text-danger">&nbsp;&nbsp;<i class="fa fa-exclamation-triangle"></i> A parent is required.</span>
+                </div>
+                <div class="panel-heading" style="font-size: 20px;">2. Give the industry a name</div>
+                <input type="text" class="form-control input-lg" placeholder="Tech, Bio-Science, Craft Brew, etc.." ng-model="edit.communityForm.name" style="margin-bottom: 5px;" required>
+                <div class="m-t-xs" ng-show="!edit.communityForm.name && edit.submitted">
+                    <span class="text-danger">&nbsp;&nbsp;<i class="fa fa-exclamation-triangle"></i> A name is required.</span>
+                </div>
+                <br>
+                <div class="panel-heading" style="font-size: 20px;">3. Customize the url path</div>
+                <input type="text" class="form-control input-lg" placeholder="{{ edit.communityForm.name | encode }}" ng-model="edit.communityForm.url" style="margin-bottom: 5px;" ng-disabled="edit.update">
+                <em>Your url will be: https://startupcommunity.org/{{global.location.id}}/<strong><span style="text-transform: lowercase;">{{(edit.communityForm.url || edit.communityForm.name) | encode }}</span></strong></em>
+                <br><br>
+                <div class="panel-heading" style="font-size: 20px;">4. And a short description</div>
+                <input type="text" class="form-control input-lg" placeholder="Local hardware and software product companies" ng-model="edit.communityForm.headline">
+                <br>
+                <div class="panel-heading" style="font-size: 20px;">5. Select the markets that make up this industry</div>
+                <div class="panel-body industry_select" style="padding:5px; margin-bottom:5px;">
+                    <ui-select multiple ng-model="edit.communityForm.industries" style="border:none;" required>
+                        <ui-select-match placeholder="Search by industry..">{{$item}}</ui-select-match>
+                        <ui-select-choices repeat="industry in edit.industryList | filter:$select.search | limitTo: 10">
+                            {{ industry }}
+                        </ui-select-choices>
+                    </ui-select>
+                </div>
+                <em>Your industry will consist of companies that have associated themselves with these markets.</em>
+                <div class="m-t-xs" ng-show="!edit.communityForm.industries && edit.submitted">
+                    <span class="text-danger">&nbsp;&nbsp;<i class="fa fa-exclamation-triangle"></i> At least one market is required.</span>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-default" ng-click="edit.cancel()">Cancel</button>
+        <button ladda="edit.deleting" class="ladda-button btn btn-danger pull-left" ng-click="edit.deleteCommunity()" ng-show="edit.update">Delete {{edit.communityForm.name || 'Industry'}}</button>
+        <button ladda="edit.working" class="ladda-button btn btn-primary" ng-click="edit.updateCommunity('cluster')">{{(edit.update ? 'Update ' : 'Create ') + edit.communityForm.name || 'Industry'}}</button>
+    </div>
+</div>
+
