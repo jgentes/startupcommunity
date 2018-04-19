@@ -1,0 +1,32 @@
+/*
+Navbar
+=========================== */
+.submenu .nav.navbar-nav:before{
+    height: 40px;
+    bottom: 0.5px;
+}
+
+/*
+Testimonial
+=========================== */
+.wrap-testimonial{
+    width: 780px;
+    padding: 0 10px;
+}
+
+ul.list-author:after,
+ul.list-author:before{
+    display: none;
+}
+
+/*
+Gallery
+=========================== */
+.masonry.gallery{
+    border: solid 1px transparent;
+}
+
+.masonry.gallery .grid-item{
+    margin-right: -1px;
+    border: solid 1px transparent;
+}

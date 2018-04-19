@@ -1,0 +1,7 @@
+<div ng-show="profile.user.summary" style="margin-top:10px;">
+    <h3>Summary</h3>
+    <p style="white-space:pre-wrap;" ng-bind-html="profile.user.summary"></p>
+    <hr>
+    <h3 ng-show="profile.user.skills">Skills & Industries</h3>
+    <li ng-repeat="skill in profile.user.skills" class="label btn-default skills"><a href="#" ng-click="nav.search(skill)">{{skill}}</a></li>
+</div>

@@ -1,0 +1,31 @@
+<div class="col-md-12 dash-table">
+    <div>
+        <a ui-sref="user.dashboard({ location_path: item.id, community_path: '', tail_path: '', noreload: true, profile: item, query: null })" ng-click="global.loaders[item.name] = true" title="View {{::item.name | words:0}}'s Profile">
+            <img ng-src="{{item.avatar || '/public/images/blank_avatar.png'}}" alt="{{::item.name}}" class="user-img widget-image img-circle pull-left" onerror="this.src='/public/images/blank_avatar.png'"/>
+        </a>
+    </div>
+    <div class="user-row list-hr">
+        <a ng-show="(global.community.resource || global.location.resource) && global.user.roles.leader[global.community.id]" ng-click="nav.removeUser(item)" title="Remove {{::item.name}} from {{global.community.name}}" style="font-size: 11px; color:#bbb; padding-left:4px;">remove</a>
+        <a ui-sref="user.dashboard({ location_path: item.id, community_path: '', tail_path: '', noreload: true, profile: item, query: null })" title="View {{::item.name | words:0}}'s Profile" ng-click="global.loaders[item.name] = true" class="dash-row-div"><strong>{{::item.name}} </strong></a>
+        <div class="dash-row-summary" ng-show="item.summary.length > 0">
+            <a title="Show Summary" ng-click="showSummary = !showSummary" class="user-summary">&nbsp;<i style="font-size: 8px;" class="fa fa-chevron-down"></i></a>
+        </div>
+        <span loading-bars ng-if="global.loaders[item.name]"></span>
+        <li ng-repeat="(item, val) in item.roles" class="user-role role-right" ><i ng-attr-title="{{item[0].toUpperCase() + item.slice(1);}}" style="font-weight: bold;" ng-class="{'text-primary pe-7s-paper-plane' : item == 'founder', 'text-danger pe-7s-flag' : item == 'leader', 'text-info pe-7s-study' : item == 'mentor', 'text-success pe-7s-gleam' : item == 'investor', 'text-default pe-7s-ball' : item == 'team', 'text-warning pe-7s-portfolio' : item == 'provider'}"></i></li>
+        <br>
+        <div class="dash-row">
+            <span class="text-muted" ng-bind-html="::item.headline | highlight:users.lastQuery" title="{{::item.headline}}"></span>
+        </div>
+        <div ng-if="(showSummary || $state.includes('search.*')) && item.summary">
+            <div style="padding-bottom: 10px;">
+                <hr>
+                <span class="text-muted" style="white-space:pre-wrap;" ng-bind-html="::item.summary | linky:'_blank' | highlight:users.lastQuery | safe_html"></span>
+                <div id="skills" ng-if="(showSummary || users.lastQuery) && item.summary" class="skills-top">
+                    <li ng-repeat="skill in item.skills" class="label btn-default skills">
+                        <a><span ng-click="nav.search(skill)" ng-bind-html="::skill | highlight:users.lastQuery"></span></a>
+                    </li>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

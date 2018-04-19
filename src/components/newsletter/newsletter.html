@@ -1,0 +1,5 @@
+<iframe ng-if="!news.ie" srcdoc="{{news.frame_content}}" name="newsletter_frame" id="framed_newsletter" style="border: none; margin-top: 20px; height: 1500px; width: 100%;"></iframe>
+<div ng-if="news.ie">
+    Please login with username: <strong>{{global.user.newsletter.username}}</strong> and password: <strong>{{global.user.newsletter.password}}</strong> (or using a non-IE browser will fix this)
+    <iframe src="https://newsletter.startupcommunity.org" style="border: none; margin-top: 10px; height: 1500px; width: 100%;"></iframe>
+</div>

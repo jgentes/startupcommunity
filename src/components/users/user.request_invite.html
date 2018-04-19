@@ -1,0 +1,28 @@
+<div class="inmodal">
+    <div class="color-line"></div>
+    <div class="modal-header">
+        <h4 class="modal-title">Join the {{global.location.name.split(',')[0]}} Startup Community</h4>
+        <p class="font-bold"><strong>If you do not live in {{global.location.name.split(',')[0]}}</strong>, please <a class="btn btn-xs btn-default" target="_blank" href="mailto:james@startupcommunity.org?subject=Please add my city!">click here</a> to send us an email and we will help you get started with your city.</p>
+    </div>
+    <div class="modal-body">
+        <div class="hpanel">
+            <div class="panel-heading" style="font-size: 20px;">Enter your email address:</div>
+            <div style="padding-bottom: 30px;">
+                <form role="form" name="invite.form" novalidate ng-submit="invite.inviteUser()">
+                    <div class="form-group">
+                        <input type="email" placeholder="new@member.com" class="form-control input-lg" required name="email" ng-model="invite.form.email_value">
+                        <div class="m-t-xs" ng-show="invite.form.email.$invalid && invite.form.submitted">
+                            <span class="text-danger" ng-show="invite.form.email.$error">&nbsp;&nbsp;<i class="fa fa-exclamation-triangle"></i> Please enter a valid email address..</span>
+                        </div>
+                    </div>
+                    <input type="submit" style="float:left" class="finish btn-success btn" ng-class="{'disabled' : disabled}" value="Send me an invitation!" /><div style="padding-top: 6px; margin-bottom: -24px;" ng-show="invite.working" loading-bars></div>
+                </form>
+            </div>
+        </div>
+        <div alert-box this-alert="invite.alert"></div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-default" ng-click="$close();$state.reload();">Close</button>
+    </div>
+</div>
+
