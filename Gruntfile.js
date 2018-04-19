@@ -8,7 +8,7 @@ module.exports = function(grunt) {
 
     // Configurable paths for the app
     var appConfig = {
-        app: 'app',
+        app: 'src',
         dist: 'dist'
     };
 
@@ -32,7 +32,7 @@ module.exports = function(grunt) {
                         console.log(appConfig.app);
                         return [
                             connect.static('.tmp'),
-                            connect.static('bower_components'),
+                            connect.static('node_modules/@bower_components'),
                             connect.static(appConfig.app)
                         ];
                     }
@@ -134,21 +134,21 @@ module.exports = function(grunt) {
                     {
                         expand: true,
                         dot: true,
-                        cwd: 'app/fonts/pe-icon-7-stroke',
+                        cwd: 'src/fonts/pe-icon-7-stroke',
                         src: ['fonts/*.*'],
                         dest: '<%= startupcommunity.dist %>'
                     },
                     {
                         expand: true,
                         dot: true,
-                        cwd: 'bower_components/fontawesome',
+                        cwd: 'node_modules/@bower_components/fontawesome',
                         src: ['fonts/*.*'],
                         dest: '<%= startupcommunity.dist %>'
                     },
                     {
                         expand: true,
                         dot: true,
-                        cwd: 'bower_components/bootstrap/dist',
+                        cwd: 'node_modules/@bower_components/bootstrap/dist',
                         src: ['fonts/*.*'],
                         dest: '<%= startupcommunity.dist %>'
                     }
@@ -194,13 +194,13 @@ module.exports = function(grunt) {
             }
         },
         useminPrepare: {
-            html: ['<%= startupcommunity.app %>/app.html', '<%= startupcommunity.app %>/frontend.html'],
+            html: ['<%= startupcommunity.app %>/index.html', '<%= startupcommunity.app %>/frontend.html'],
             options: {
                 dest: '<%= startupcommunity.dist %>'
             }
         },
         usemin: {
-            html: ['<%= startupcommunity.dist %>/app.html', '<%= startupcommunity.dist %>/frontend.html']
+            html: ['<%= startupcommunity.dist %>/index.html', '<%= startupcommunity.dist %>/frontend.html']
         },
         protractor: {
             options: {
