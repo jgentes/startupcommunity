@@ -237,9 +237,9 @@ function CompanyController($scope, $stateParams, $state, $location, company_serv
     });
 }
 
-function CompanyProfileController($scope, $stateParams, $mixpanel, user_service, community_service, $location, sweet) {
+function CompanyProfileController($scope, $stateParams, user_service, community_service, $location, sweet) {
 
-    $mixpanel.track('Viewed Company');
+    window.mixpanel.track('Viewed Company');
 
     if (!jQuery.isEmptyObject($stateParams.profile)) $scope.global['profile'] = $stateParams.profile; // set basic profile details while pulling the rest
 

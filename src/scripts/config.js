@@ -3,8 +3,8 @@ angular.module('startupcommunity', [
     'ui.bootstrap',
     'ui.highlight',
     'ui.select',
-    'angulartics',
-    'angulartics.mixpanel',
+    'ngSanitize',
+    'hSweetAlert',
     'satellizer',
     'services',
     'ngFileUpload',
@@ -31,7 +31,7 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
             params: {
                 alert: {}
             },
-            templateUrl: 'components/auth/login.html'
+            template: require('../components/auth/login.html')
         })
         .state('logout', {
             url: "/logout",
@@ -48,18 +48,18 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
         })
 
         .state('404', {
-            templateUrl: "components/errors/404.html"
+            template: require("../components/errors/404.html")
         })
 
         .state('500', {
-            templateUrl: "components/errors/500.html"
+            template: require("../components/errors/500.html")
         })
 
         // the root state with core dependencies for injection in child states
         // note: if you set a param in root, and use/change that param in a ui-sref link, it will reload root
         .state('root', {
             url: "/:location_path/:community_path/:tail_path",
-            templateUrl: "components/nav/nav.html",
+            template: require("../components/nav/nav.html"),
             controller: "NavigationController as nav",
             params: {
                 // params must be defined here to be used in children (except for paths)
@@ -91,10 +91,10 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
             },
             views: {
                 'header': {
-                    templateUrl: "components/header/header_small.html"
+                    template: require("../components/header/header_small.html")
                 },
                 'content': {
-                    templateUrl: "components/users/user.dashboard.html",
+                    template: require("../components/users/user.dashboard.html"),
                     controller: 'UserProfileController as profile'
                 }
             }
@@ -102,10 +102,10 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
         .state('user.list', {
             views: {
                 'header': {
-                    templateUrl: "components/header/header_small.html"
+                    template: require("../components/header/header_small.html")
                 },
                 'content': {
-                    templateUrl: 'components/users/user.list.html',
+                    template: require('../components/users/user.list.html'),
                     controller: "UserController as users"
                 }
             }
@@ -123,10 +123,10 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
             },
             views: {
                 'header': {
-                    templateUrl: "components/header/header_small.html"
+                    template: require("../components/header/header_small.html")
                 },
                 'content': {
-                    templateUrl: "components/companies/company.dashboard.html",
+                    template: require("../components/companies/company.dashboard.html"),
                     controller: 'CompanyProfileController as profile'
                 }
             }
@@ -134,10 +134,10 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
         .state('company.list', {
             views: {
                 'header': {
-                    templateUrl: "components/header/header_small.html"
+                    template: require("../components/header/header_small.html")
                 },
                 'content': {
-                    templateUrl: 'components/companies/company.list.html',
+                    template: require('../components/companies/company.list.html'),
                     controller: "CompanyController as companies"
                 }
             }
@@ -146,7 +146,7 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
             url: "^/:location_path/add-company",
             views: {
                 'content': {
-                    templateUrl: 'components/resources/resource.add.html',
+                    template: require('../components/resources/resource.add.html'),
                     controller: "EditCompanyController as add"
                 }
             }
@@ -155,7 +155,7 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
             url: "/edit",
             views: {
                 'content': {
-                    templateUrl: 'components/resources/resource.add.html',
+                    template: require('../components/resources/resource.add.html'),
                     controller: "EditCompanyController as add"
                 }
             }
@@ -169,10 +169,10 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
         .state('resource.list', {
             views: {
                 'header': {
-                    templateUrl: "components/header/header_small.html"
+                    template: require("../components/header/header_small.html")
                 },
                 'content': {
-                    templateUrl: 'components/companies/company.list.html',
+                    template: require('../components/companies/company.list.html'),
                     controller: "CompanyController as companies"
                 }
             }
@@ -181,7 +181,7 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
             url: "^/:location_path/add-resource",
             views: {
                 'content': {
-                    templateUrl: 'components/resources/resource.add.html',
+                    template: require('../components/resources/resource.add.html'),
                     controller: "EditCompanyController as add"
                 }
             }
@@ -190,7 +190,7 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
             url: "/edit",
             views: {
                 'content': {
-                    templateUrl: 'components/resources/resource.add.html',
+                    template: require('../components/resources/resource.add.html'),
                     controller: "EditCompanyController as add"
                 }
             }
@@ -210,25 +210,25 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
             },
             views: {
                 "@": { // this forces override of root template
-                    templateUrl: "components/welcome/welcome.html",
+                    template: require("../components/welcome/welcome.html"),
                     controller: "WelcomeController as welcome"
                 }
             }
         })
 
-        .state('settings', { parent: 'root', url: '/settings', views: { 'content': { templateUrl: "components/settings.html", controller: "SettingsController as settings" } } })
+        .state('settings', { parent: 'root', url: '/settings', views: { 'content': { template: require("../components/settings.html"), controller: "SettingsController as settings" } } })
 
-        .state('newsletter', { parent: 'root', url: '/newsletter', views: { 'content': { templateUrl: "components/newsletter/newsletter.html", controller: 'NewsletterController as news' } } })
+        .state('newsletter', { parent: 'root', url: '/newsletter', views: { 'content': { template: require("../components/newsletter/newsletter.html"), controller: 'NewsletterController as news' } } })
 
         .state('search', {
             parent: 'root',
             abstract: true,
             views: {
                 'header': {
-                    templateUrl: "components/header/header_small.html"
+                    template: require("../components/header/header_small.html")
                 },
                 'content': {
-                    templateUrl: 'components/search/search.dashboard.html'
+                    template: require('../components/search/search.dashboard.html')
                 }
             }
         })
@@ -240,11 +240,11 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
             },
             views: {
                 'people': {
-                    templateUrl: 'components/users/user.list.html',
+                    template: require('../components/users/user.list.html'),
                     controller: "UserController as users"
                 },
                 'companies': {
-                    templateUrl: 'components/companies/company.list.html',
+                    template: require('../components/companies/company.list.html'),
                     controller: "CompanyController as companies"
                 }
             }
@@ -256,7 +256,7 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
             abstract: true,
             views: {
                 'header': {
-                    templateUrl: "components/header/header_small.html"
+                    template: require("../components/header/header_small.html")
                 },
                 'content': {
                     template: "<div ui-view='people'></div>"
@@ -267,7 +267,7 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
             params: { tour: false },
             views: {
                 'people': {
-                    templateUrl: 'components/dashboard/dashboard.html',
+                    template: require('../components/dashboard/dashboard.html'),
                     controller: "DashboardController as dashboard"
                 }
             }
@@ -452,9 +452,3 @@ angular
                 });
             };
         });
-
-angular
-    .module('startupcommunity')
-    .config(['$mixpanelProvider', function($mixpanelProvider) {
-        $mixpanelProvider.apiKey("0f110baeb6150d7e3b8968e32d7a5595");
-    }]);
