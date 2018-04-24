@@ -1,25 +1,25 @@
 const webpack = require('webpack');
 const path = require('path');
-const HtmlWebpackPlugin = require('html-webpack-plugin');
 const ProgressPlugin = require('progress-webpack-plugin');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = {
-  mode: process.env.NODE_ENV,
-  entry: path.resolve(__dirname, 'src/app.js'),
+  mode: process.env.NODE_ENV || 'development',
+  entry: ["babel-polyfill", path.resolve(__dirname, 'src/app.js')],
   output: {
     filename: 'bundle.js',
     path: path.resolve(__dirname, 'dist')
   },
-  devtool: "source-map",
+  devtool: 'source-map',
   plugins: [
     new webpack.IgnorePlugin(/^codemirror$/), // hack fix for summernote dependency,
-    new HtmlWebpackPlugin({
-      template: path.resolve(__dirname, 'src/index.html')
-    }),
     new webpack.ProvidePlugin({
       $: 'jquery',
       jQuery: 'jquery',
       'window.jQuery': 'jquery'
+    }),
+    new HtmlWebpackPlugin({
+      template: path.resolve(__dirname, 'src/index.html')
     }),
     new ProgressPlugin(true)
   ],
@@ -31,7 +31,10 @@ module.exports = {
         include: [path.resolve(__dirname, 'src/components')],
         exclude: /node_modules/,
         use: {
-          loader: 'babel-loader'
+          loader: 'babel-loader',
+          options: {
+            presets: ['@babel/preset-env']
+          }
         }
       },
       // Less
@@ -51,6 +54,17 @@ module.exports = {
           { loader: 'style-loader' },
           { loader: 'css-loader' }
         ]
+      },
+      // HTML
+      {
+        test: /\.html$/,
+        loader: 'html-loader',
+        exclude: path.resolve(__dirname, 'src/index.html'),
+        options: {
+          exportAsEs6Default: 'es6',
+          minimize: true,
+          collapseWhitespace: true,
+        }
       },
       // Fonts
       {

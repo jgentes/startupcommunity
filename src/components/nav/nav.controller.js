@@ -4,7 +4,7 @@ angular
   .controller('SettingsController', SettingsController)
   .controller('EmbedSettingsController', EmbedSettingsController);
 
-function NavigationController($scope, $auth, $state, $window, $location, $stateParams, $uibModal, $mixpanel, user_service, community_service, sweet, errorLogService, newsletter_service) {
+function NavigationController($scope, $auth, $state, $window, $location, $stateParams, $uibModal, user_service, community_service, sweet, errorLogService, newsletter_service) {
 
   var self = this;
   $scope.global.path = $location.path().replace(/\/$/, ""); //used for routing and used in view
@@ -29,7 +29,7 @@ function NavigationController($scope, $auth, $state, $window, $location, $stateP
           }
 
           if (response.id) {
-            $mixpanel.people.set({
+            window.mixpanel.people.set({
               "$name": response.name,
               "$email": response.email
             });
@@ -376,7 +376,7 @@ function NavigationController($scope, $auth, $state, $window, $location, $stateP
     self.contact = function(user) {
 
       var modalInstance = $uibModal.open({
-        templateUrl: 'components/users/user.contact.html',
+        template: require('../users/user.contact.html'),
         controller: ContactUserController,
         controllerAs: 'contact',
         windowClass: "hmodal-warning"
@@ -388,7 +388,7 @@ function NavigationController($scope, $auth, $state, $window, $location, $stateP
     self.embedSettings = function(community_id) {
 
       var modalInstance = $uibModal.open({
-        templateUrl: 'components/nav/nav.embed_settings.html',
+        template: require('./nav.embed_settings.html'),
         controller: EmbedSettingsController,
         controllerAs: 'settings',
         windowClass: "hmodal-success",
@@ -411,7 +411,7 @@ function NavigationController($scope, $auth, $state, $window, $location, $stateP
     self.editCommunity = function(community_id) {
 
       var modalInstance = $uibModal.open({
-        templateUrl: 'components/nav/nav.edit_cluster.html',
+        template: require('./nav.edit_cluster.html'),
         controller: CommunityController,
         controllerAs: 'edit',
         windowClass: "hmodal-success",
@@ -464,7 +464,7 @@ function NavigationController($scope, $auth, $state, $window, $location, $stateP
     self.setupNewsletter = function() {
 
       var modalInstance = $uibModal.open({
-        templateUrl: 'components/newsletter/setup_newsletter.html',
+        template: require('../newsletter/setup_newsletter.html'),
         controller: SetupNewsController,
         controllerAs: 'news',
         windowClass: "hmodal-warning",
@@ -514,7 +514,7 @@ function NavigationController($scope, $auth, $state, $window, $location, $stateP
     self.requestInvitation = function() {
 
       var modalInstance = $uibModal.open({
-        templateUrl: 'components/users/user.request_invite.html',
+        template: require('../users/user.request_invite.html'),
         controller: InviteUserController,
         controllerAs: 'invite',
         windowClass: "hmodal-info"
@@ -526,7 +526,7 @@ function NavigationController($scope, $auth, $state, $window, $location, $stateP
     self.invitePeople = function() {
 
       var modalInstance = $uibModal.open({
-        templateUrl: 'components/users/user.invite.html',
+        template: require('../users/user.invite.html'),
         controller: InviteUserController,
         controllerAs: 'invite',
         windowClass: "hmodal-info",
@@ -753,7 +753,7 @@ function EmbedSettingsController($scope, $uibModalInstance, sweet, embed_communi
   };
 }
 
-function CommunityController($scope, $uibModalInstance, $mixpanel, sweet, edit_community, community_service, user_service, $window) {
+function CommunityController($scope, $uibModalInstance, sweet, edit_community, community_service, user_service, $window) {
 
   var self = this,
     community = edit_community,
@@ -880,7 +880,7 @@ function CommunityController($scope, $uibModalInstance, $mixpanel, sweet, edit_c
 
 
           }
-          $mixpanel.track('Added ' + thiscommunity.type);
+          window.mixpanel.track('Added ' + thiscommunity.type);
         });
 
     }

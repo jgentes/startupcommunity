@@ -259,7 +259,7 @@ function ContactUserController($scope, $uibModalInstance, notify_service, sweet,
     };
 }
 
-function UserProfileController($scope, $stateParams, $http, $uibModal, $mixpanel, user_service, community_service, message_service) {
+function UserProfileController($scope, $stateParams, $http, $uibModal, user_service, community_service, message_service) {
 
     var self = this;
 
@@ -268,7 +268,7 @@ function UserProfileController($scope, $stateParams, $http, $uibModal, $mixpanel
     this.reply = {};
     this.team_panels = user_service.team_panels();
     this.working = false;
-    $mixpanel.track('Viewed Profile');
+    window.mixpanel.track('Viewed Profile');
 
     var loadCtrl = function() {
         onLoad(); // de-register the watcher
@@ -298,7 +298,7 @@ function UserProfileController($scope, $stateParams, $http, $uibModal, $mixpanel
     this.contact = function(community_id) {
 
         var modalInstance = $uibModal.open({
-            templateUrl: 'components/users/user.contact.html',
+            template: require('./user.contact.html'),
             controller: ContactUserController,
             controllerAs: 'contact',
             windowClass: "hmodal-warning",
@@ -346,7 +346,7 @@ function UserProfileController($scope, $stateParams, $http, $uibModal, $mixpanel
                         $scope.global.community.newmessages[response.data.id] = response.data;
                     }
 
-                    $mixpanel.track('Asked Question');
+                    window.mixpanel.track('Asked Question');
                 })
                 .catch(function(error) {
                     self.working = false;
@@ -387,7 +387,7 @@ function UserProfileController($scope, $stateParams, $http, $uibModal, $mixpanel
                         else $scope.global.community.newmessages[parent.id].replies.push(response.data);
                     }
 
-                    $mixpanel.track('Replied to Question');
+                    window.mixpanel.track('Replied to Question');
                 })
                 .catch(function(error) {
                     self.working[parent.id] = false;
@@ -398,7 +398,7 @@ function UserProfileController($scope, $stateParams, $http, $uibModal, $mixpanel
     }
 }
 
-function InviteUserController($scope, $mixpanel, user_service, community_service) {
+function InviteUserController($scope, user_service, community_service) {
     var self = this,
         user = $scope.global.user;
 
@@ -460,7 +460,7 @@ function InviteUserController($scope, $mixpanel, user_service, community_service
                                     self.alert ? self.alert.message += '<br> ' + String(response.data.message) : self.alert = { type: 'success', message: String(response.data.message || response.message) };
                                 }
 
-                                $mixpanel.track('Sent Invite');
+                                window.mixpanel.track('Sent Invite');
                             })
                             .catch(function(error) {
                                 $scope.global.loaders['sendinvite'] = false;
@@ -487,7 +487,7 @@ function InviteUserController($scope, $mixpanel, user_service, community_service
                                     self.alert = { type: 'success', message: response.data.message };
                                 }
 
-                                $mixpanel.track('Sent Invite');
+                                window.mixpanel.track('Sent Invite');
                             })
                             .catch(function(error) {
                                 $scope.global.loaders['sendinvite'] = false;

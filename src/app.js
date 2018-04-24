@@ -13,17 +13,16 @@ import "node_modules/summernote/dist/summernote.css";
 import "./fonts/pe-icon-7-stroke/css/pe-icon-7-stroke.css";
 import "./fonts/pe-icon-7-stroke/css/helper.css";
 
-import "jquery";
 import "angular";
+import "jquery";
 
 import "angular-ui-router";
 import "angular-ui-utils/modules/highlight/highlight.js";
-import "angular-bootstrap";
-import "angulartics";
-import "angulartics-mixpanel";
+import "angular-ui-bootstrap";
+import "angular-sanitize";
 import "popper.js";
 import "bootstrap";
-import "sweetalert2";
+import "sweetalert";
 import "angular-h-sweetalert";
 import "angular-notify";
 import "satellizer";

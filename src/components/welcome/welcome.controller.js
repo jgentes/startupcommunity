@@ -2,7 +2,7 @@ angular
     .module('startupcommunity')
     .controller('WelcomeController', WelcomeController);
 
-function WelcomeController($scope, $auth, $location, $q, $mixpanel, $stateParams, $state, sweet, user_service, community_service) {
+function WelcomeController($scope, $auth, $location, $q, $stateParams, $state, sweet, user_service, community_service) {
     var self = this,
         user = $scope.global.user;
 
@@ -99,8 +99,8 @@ function WelcomeController($scope, $auth, $location, $q, $mixpanel, $stateParams
 
                         checkProfile();
 
-                        $mixpanel.identify(response.data.id);
-                        $mixpanel.track('Accepted Invite');
+                        window.mixpanel.identify(response.data.id);
+                        window.mixpanel.track('Accepted Invite');
 
                         self.panel = 'roles';
                     }

@@ -72,8 +72,8 @@ if (process.env.NODE_ENV === "production" || process.env.NODE_ENV === "developme
 }
 else {
 
-  app.use("/bower_components", express.static(root + "/bower_components"));
-  app.use("/build", express.static(root + "/build"));
+  app.use("/dist", express.static(root + "/dist"));
+  app.use("/src", express.static(root + "/src"));
 
   // for better console logs
   ['log', 'warn', 'error'].forEach((methodName) => {

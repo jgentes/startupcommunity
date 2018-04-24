@@ -2,7 +2,7 @@ angular
     .module('startupcommunity')
     .controller('LoginController', LoginController);
 
-function LoginController($auth, $scope, $state, $mixpanel, $stateParams, sweet) {
+function LoginController($auth, $scope, $state, $stateParams, sweet) {
 
     if (!jQuery.isEmptyObject($stateParams.alert)) this.alert = { type: 'danger', msg: $stateParams.alert };
     var self = this;
@@ -16,8 +16,8 @@ function LoginController($auth, $scope, $state, $mixpanel, $stateParams, sweet) 
         }
         else $state.go('user.dashboard', { profile: auth_response.data, location_path: auth_response.data.id });
 
-        $mixpanel.identify(auth_response.data.id);
-        $mixpanel.track('Logged in');
+        window.mixpanel.identify(auth_response.data.id);
+        window.mixpanel.track('Logged in');
     };
 
     this.login = function() {
@@ -40,11 +40,11 @@ function LoginController($auth, $scope, $state, $mixpanel, $stateParams, sweet) 
             })
             .catch(function(response) {
                 if (response.data) {
-                    $mixpanel.people.set({
+                    window.mixpanel.people.set({
                         "$name": response.data.firstName + ' ' + response.data.lastName,
                         "$email": response.data.emailAddress
                     });
-                    $mixpanel.track('Attempted Login');
+                    window.mixpanel.track('Attempted Login');
 
                 }
                 if (response.data && response.data.message && response.data.message !== 'undefined') {
