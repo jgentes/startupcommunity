@@ -1,0 +1,13 @@
+/*
+Navbar
+=========================== */
+.submenu .nav.navbar-nav:before{
+    height: 40px;
+    width: 98px;
+    border-top: solid 1px #3a4557;
+    bottom: 0.5px;
+}
+
+.ribbon{
+    top: 11px;
+}
