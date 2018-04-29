@@ -1,139 +1,684 @@
-<!DOCTYPE html>
-<html ng-app="startupcommunity">
+<!DOCTYPE HTML>
+<!--[if lt IE 7]> <html class="no-js ie6 oldie" lang="en"> <![endif]-->
+<!--[if IE 7]>    <html class="no-js ie7 oldie" lang="en"> <![endif]-->
+<!--[if IE 8]>    <html class="no-js ie8 oldie" lang="en"> <![endif]-->
+<!--[if gt IE 8]><!-->
+<html class="no-js" lang="en">
+<!--<![endif]-->
 
 <head>
-
     <meta charset="utf-8">
+    <meta http-equiv="Content-Language" content="en">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StartupCommunity.org - Kickstart your city's entrepreneurial ecosystem</title>
+    <meta name="description" content="StartupCommunity.org helps communities build, grow and measure their entrepreneurial ecosystem.">
+    <meta name="author" content="James Gentes">
+    <meta name="robots" content="index,follow">
 
-    <base href="/">
-    <title page-title></title>
-    <link rel="shortcut icon" type="image/ico" href="../public/images/favicon.ico" />
-    <link href='https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700&lang=en' rel='stylesheet' type='text/css'>
-    <!--
-    <script src="https://d2wy8f7a9ursnm.cloudfront.net/bugsnag-2.min.js" data-apikey="a46f2b2ce2b4bcd599be18c86f2fe8ce" />
-    </script>
-     <script type="text/javascript">
-    (function(e, r) {
-        function n(e, r) { e[r] = function() { e.push([r].concat(Array.prototype.slice.call(arguments, 0))) } }
+    <link rel="icon" type="image/png" href="frontend/images/favicon.png">
 
-        function o() {
-            var e = r.location.hostname.match(/[a-z0-9][a-z0-9\-]+\.[a-z\.]{2,6}$/i),
-                n = e ? e[0] : null,
-                o = "; domain=." + n + "; path=/; expires=" + new Date(new Date().setFullYear(new Date().getFullYear() + 1)).toUTCString();
-            r.cookie = r.referrer && -1 === r.referrer.indexOf(n) ? "jaco_referer=" + r.referrer + o : "jaco_referer=" + t + o
-        }
-        var a = "JacoRecorder",
-            t = "none";
-        ! function(e, r, t, i) {
-            if (!t.__VERSION) {
-                e[a] = t;
-                for (var c = ["init", "identify", "startRecording", "stopRecording", "removeUserTracking", "setUserInfo", "trackEvent"], s = 0; s < c.length; s++) n(t, c[s]);
-                o(), t.__VERSION = 2.1, t.__INIT_TIME = 1 * new Date;
-                var f = r.createElement("script");
-                f.async = !0, f.setAttribute("crossorigin", "anonymous"), f.src = i;
-                var d = r.getElementsByTagName("head")[0];
-                d.appendChild(f)
+    <!-- Start Font -->
+    <link type="text/css" rel="stylesheet" href="frontend/fonts/open-sans/stylesheet.css">
+    <link type="text/css" rel="stylesheet" href="frontend/css/font-awesome.css" />
+    <!-- Font Icon Fontawesome -->
+    <!-- End Font -->
+
+    <link type="text/css" rel="stylesheet" href="frontend/css/bootstrap.min.css" />
+    <!-- Bootstrap -->
+    <link type="text/css" rel="stylesheet" href="frontend/css/overwrite.css" />
+    <!-- Overwrite -->
+
+    <!-- Start Owl Carousel -->
+    <link type="text/css" rel="stylesheet" href="frontend/css/owl/owl.carousel.css" />
+    <link type="text/css" rel="stylesheet" href="frontend/css/owl/owl.theme.css" />
+    <link type="text/css" rel="stylesheet" href="frontend/css/owl/owl.transitions.css" />
+
+    <!-- Start Default -->
+    <link type="text/css" rel="stylesheet" href="frontend/css/icons.css" />
+    <!-- Icons -->
+    <link type="text/css" rel="stylesheet" href="frontend/css/style.css" />
+    <!-- Overwrite -->
+    <link type="text/css" rel="stylesheet" href="frontend/css/default.css" />
+    <!-- Color -->
+    <link type="text/css" rel="stylesheet" href="frontend/css/custom.css" />
+    <!-- Color -->
+    <!-- End Default -->
+
+    <!-- Just for debugging purposes. Don't actually copy these 2 lines! -->
+    <!--[if lt IE 9]><script src="frontend/js/ie8-responsive-file-warning.js"></script><![endif]-->
+    <script src="frontend/js/ie-emulation-modes-warning.js"></script>
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+      <script src="frontend/js/html5shiv.min.js"></script>
+      <script src="frontend/js/respond.min.js"></script>
+    <![endif]-->
+
+    <!--[if IE 9]>
+        <link rel="stylesheet" type="text/css" href="frontend/css/ie9.css">
+    <![endif]-->
+    <!--[if IE 8]>
+        <link rel="stylesheet" type="text/css" href="frontend/css/ie8.css">
+    <![endif]-->
+
+    <script type="text/javascript">
+        (function(e, t) {
+            function r(e, t) {
+                e[t] = function() {
+                    e.push([t].concat(Array.prototype.slice.call(arguments, 0)));
+                };
             }
-        }(e, r, e[a] || [], "https://recorder-assets.getjaco.com/recorder_v2.js")
-    }).call(window, window, document);
-    window.JacoRecorder.init("54ad6c47-2366-4979-bfdc-c00bd09ab7c7");
-</script>
--->
+            var n = "JacoRecorder";
+            (function(e, t, i, s) {
+                if (!i.__VERSION) {
+                    e[n] = i;
+                    var o = ["init", "identify", "startRecording", "stopRecording", "removeUserTracking", "setUserInfo"];
+                    for (var u = 0; u < o.length; u++) r(i, o[u]);
+                    i.__VERSION = .9, i.__INIT_TIME = 1 * new Date;
+                    var a = t.createElement("script");
+                    a.async = !0, a.setAttribute("crossorigin", "anonymous"), a.src = s;
+                    var f = t.getElementsByTagName("head")[0];
+                    f.appendChild(a);
+                }
+            })(e, t, e[n] || [], "//recorder-assets.getjaco.com/recorder.js");
+        }).call(window, window, document), window.JacoRecorder.push(["init", "54ad6c47-2366-4979-bfdc-c00bd09ab7c7", {}]);
+    </script>
+
+</head>
+
+<body id="home">
+    <!-- Start preloading -->
+    <div id="loading" class="loading-invisible">
+        <div class="loading-center">
+            <div class="loading-center-absolute">
+                <img id="loading-logo" src="frontend/images/brand/logo.png" style="padding-bottom: 20px; margin-left: -85px;" />
+                <div class="object"></div>
+                <div class="object"></div>
+                <div class="object"></div>
+                <div class="object"></div>
+                <div class="object"></div>
+                <div class="object"></div>
+                <div class="object"></div>
+                <div class="object"></div>
+                <div class="object"></div>
+            </div>
+        </div>
+    </div>
+    <!-- End preloading -->
+
+    <!-- Start Scroll to top -->
+    <div class="scroll top">
+        <a href="#home"><span class="fa fa-chevron-up"></span></a>
+    </div>
+    <!-- End Scroll to top -->
+
+    <!-- Start Navigation -->
+    <nav class="navbar navbar-default navbar-fixed-top">
+        <!-- Start Submenu -->
+        <div class="submenu">
+            <span class="ribbon"></span>
+            <div class="container">
+                <ul class="nav navbar-nav navbar-right">
+                    <li class="link"><a href="mailto:kickstart@startupcommunity.org?subject=I'd like to launch in my city.." target="_blank"><span class="fa fa-envelope"></span> Request Invitation </a></li>
+                    <li class="link-btn"><a href="/login" class="btn btn-primary">Login</a> </li>
+                </ul>
+            </div>
+        </div>
+        <!-- End Submenu -->
+
+        <!-- Start Mainmenu -->
+        <div class="mainmenu">
+            <div class="container">
+                <!-- Brand and toggle get grouped for better mobile display -->
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#myMenu">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                  </button>
+                    <a class="navbar-brand" href="/">
+                    <img src="frontend/images/brand/logo.png" class="logo" alt="">  
+                  </a>
+                </div>
+
+                <!-- Navigation Menu -->
+                <div class="collapse navbar-collapse" id="myMenu">
+                    <ul class="nav navbar-nav navbar-right">
+                        <li class="active"><a href="#home">Home</a></li>
+                        <li><a href="#product">Product</a></li>
+                        <li><a href="#communities">Communities</a></li>
+                        <li><a href="#pricing">Pricing</a></li>
+                        <!--<li><a href="https://startupcommunity.org/blog" target="_blank">Blog</a></li>-->
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <!-- End Mainmenu -->
+    </nav>
+    <!-- End Navigation -->
+
+    <div class="clearfix"></div>
+
+    <!-- Start Home -->
+    <section id="AnimatedBg" class="home bg-animate">
+        <div class="home-container">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-10 col-md-offset-1 text-center">
+                        <h1 class="title-one">Kickstart your city's entrepreneurial ecosystem</h1>
+                        <h4 class="title-two" style="font-weight: 400;">A framework for building and measuring startup communities, from our experience creating the <a href="http://www.entrepreneur.com/article/223997" target="_blank" rel="nofollow" style="font-weight: 700; color:#337ab7; text-shadow: none;">most entrepreneurial city in America</a>.<br/>
+                            <span
+                                style="font-size:12px">(Entrepreneur Mag)</span>
+                        </h4>
+
+                        <div class="panel" style="max-width: 600px; min-width: 300px; margin:auto;">
+                            <div class="panel-body">
+                                <h4 class="text-center" style="margin-bottom: 25px; color: #000; font-size:22px; font-weight: 200;">Request an invite for your city.</h4>
+                                <form class="form-horizontal" id="inviteForm" style="margin-bottom: 0 !important;">
+                                    <div class="form-group">
+                                        <div class="col-sm-12">
+                                            <h4 class="text-center" style="color: #000; font-size: 20px; padding-left: 20px; font-weight: 200;">I am a:&nbsp;
+                                                <label class="switch switch-danger"><input id="leader" type="checkbox"><span></span></label> Leader&nbsp;
+                                                <label class="switch switch-info"><input id="mentor" type="checkbox"><span></span></label> Mentor&nbsp;
+                                                <label class="switch switch-success"><input id="investor" type="checkbox"><span></span></label> Investor&nbsp;
+                                            </h4>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="col-sm-12">
+                                            <div class="input-group">
+                                                <span class="input-group-addon"><i class="fa fa-map-marker"></i></span>
+                                                <input id="location" type="text" placeholder="City, State" class="form-control input-typeahead" autofocus>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="col-sm-12">
+                                            <div class="input-group">
+                                                <span class="input-group-addon"><i class="fa fa-envelope-o"></i></span>
+                                                <input id="email" type="text" class="form-control" placeholder="Email" required>
+                                                <div class="input-group-btn">
+                                                    <button id="signup" type="submit" class="btn btn-info" style="border-radius:0;">Request Invite</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </form>
+                                <h4 id="success" class="text-center" style="display:none; color: #6CA736;">Thanks, you're on the list!</h4>
+                            </div>
+
+                        </div>
+
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- End Home -->
+
+    <div class="clearfix"></div>
+
+    <!-- Start Work It -->
+    <a class="anchor" id="product"></a>
+    <div class="container" style="padding:50px 0;">
+        <!-- Start Title -->
+        <div class="row">
+            <div class="col-md-10 col-md-offset-1 title-section">
+                <h4 class="title"><span>Startups are the primary source of job creation in America</span> Cultivate Entrepreneurship With Our Proven Approach</h4>
+                <div class="line"><img src="frontend/images/brand/plant_80px.png" style="width: 30px;" /></div>
+            </div>
+        </div>
+        <!-- End Title -->
+        <div class="row">
+            <div class="col-md-10 col-md-offset-1">
+                <!-- Start Feature Three -->
+                <div class="row">
+                    <div class="col-md-4 col-sm-4 feature-three">
+                        <div class="img-feature">
+                            <span class="count" style="color:#fff;">1</span>
+                            <i class="icon icon-64 icon-rgb"></i>
+                        </div>
+                        <h5>Organize Your Community</h5>
+                        <p>Automatically group people and companies by industry</p>
+                    </div>
+                    <div class="col-md-4 col-sm-4 feature-three">
+                        <div class="img-feature">
+                            <span class="count" style="color:#fff;">2</span>
+                            <i class="icon icon-64 icon-contacts"></i>
+                        </div>
+                        <h5>Connect People</h5>
+                        <p>Encourage mentorship through open communication based on roles and industry experience</p>
+                    </div>
+                    <div class="col-md-4 col-sm-4 feature-three">
+                        <div class="img-feature">
+                            <span class="count" style="color:#fff;">3</span>
+                            <i class="icon icon-64 icon-piechart"></i>
+                        </div>
+                        <h5>Measure Impact</h5>
+                        <p>Track startup growth and connections between people in your community and across your region</p>
+                    </div>
+                </div>
+                <!-- End Feature Three -->
+            </div>
+        </div>
+    </div>
+
+    <!-- End Work It -->
+
+    <div class="clearfix"></div>
+
+    <!-- Start Description -->
+    <section id="services" class="gray">
+        <div class="container">
+            <div class="row">
+                <!-- Strat Description -->
+                <div class="col-md-7 col-md-push-5 img-desc">
+                    <img src="frontend/images/brand/sc_screenshot.jpg" class="img-responsive" alt="Screenshot of StartupCommunity.org" style="border: 1px solid #ddd;">
+                </div>
+                <div class="col-md-5 col-md-pull-7 content-desc">
+                    <h4>Your City, Your Community</h4>
+                    <p>
+                        Your startup ecosystem is led by individuals who champion private 'networks' or public 'industry clusters'. We help you connect accelerators, incubators, coworking spaces, mentorship groups, and investment funds, with the mentors, employees, investors,
+                        service providers, and founders who work together to support specific industry segments in your community.
+                    </p>
+                    <ul class="list-checked">
+                        <li>Identify leaders to invite founders, mentors, investors</li>
+                        <li>Create private, invite-only networks</li>
+                        <li>Create public, industry-focused clusters</li>
+                        <li>Include startup team members and service providers</li>
+                        <li>Roll up data to a regional or state-wide level</li>
+                    </ul>
+                    <div class="text-left">
+                        <a href="https://startupcommunity.org/bend-or" class="btn btn-primary" target="_blank">View Our Community</a>
+                    </div>
+                </div>
+                <!-- End Description -->
+            </div>
+        </div>
+    </section>
+    <!-- End Description -->
+
+    <div class="clearfix"></div>
+
+    <!-- Start Testimonial -->
+    <a class="anchor" id="communities"></a>
+    <div class="testimonial cp-bottom">
+        <div class="bg-primary pattern parallax"></div>
+        <div class="container">
+            <div class="row">
+                <div class="col-md-8 col-md-offset-2 wrap-testimonial">
+                    <!-- Start Testimonial -->
+                    <div id="testimonial" class="owl-carousel">
+                        <!-- Start Testimonial 1 -->
+                        <div class="item">
+                            <div class="row">
+                                <div class="col-md-8 col-sm-8 content">
+                                    <blockquote>
+                                        <p>
+                                            StartupCommunity has been instrumental in improving the way we track, engage, and connect members of our Stable of Experts mentorship group to local startups.
+                                        </p>
+                                        <footer class="text-right">
+                                            <b>Brian Vierra</b> - <a href="http://www.edcoinfo.com" target="_blank">Economic Development for Central Oregon</a>
+                                        </footer>
+                                    </blockquote>
+                                    <a href="http://www.edcoinfo.com/stable-of-experts" class="btn btn-info" target="_blank" style="float: right; margin-right: 108px;">View Community</a>
+                                </div>
+                                <div class="col-md-4 col-sm-4 photo">
+                                    <img src="frontend/images/testimonial/bend_big_white.png" style="width: 275px; padding-bottom:20px;" class="alignright" alt="Bend Logo">
+                                </div>
+                            </div>
+                        </div>
+                        <!-- End Testimonial 1 -->
+                        <!-- Start Testimonial 2 -->
+                        <div class="item">
+                            <div class="row">
+                                <div class="col-md-8 col-sm-8 col-md-push-4 col-sm-push-4 content">
+                                    <blockquote class="right">
+                                        <p>
+                                            StartupCommunity helps us connect entrepreneurs to mentors, while measuring the impact of our Startup Spokane Mentorship Program.
+                                        </p>
+                                        <footer>
+                                            <b>Ryan Arnold</b> - <a href="http://startupspokane.com" target="_blank">Greater Spokane, Inc</a>
+                                        </footer>
+                                    </blockquote>
+                                    <a href="http://startupspokane.com/expertconnect" class="btn btn-info" target="_blank" style="float: right; margin-right: 108px;">View Community</a>
+                                </div>
+                                <div class="col-md-4 col-sm-4 col-md-pull-8 col-sm-pull-8 photo">
+                                    <img src="frontend/images/testimonial/spokane.png" style="width: 275px; padding-bottom:20px;" class="alignleft" alt="Spokane Logo">
+                                </div>
+                            </div>
+                        </div>
+                        <!-- End Testimonial 2 -->
+                        <!-- Start Testimonial 3 -->
+                        <div class="item">
+                            <div class="row">
+                                <div class="col-md-8 col-sm-8 col-md-push-4 col-sm-push-4 content">
+                                    <blockquote class="right">
+                                        <p>
+                                            We use StartupCommunity as a resource for people interested in seeing what's happening in our local startup scene.
+                                        </p>
+                                        <footer>
+                                            <b>Kelly Kearsley</b> - <a href="http://startupbend.com" target="_blank">StartupBend</a>
+                                        </footer>
+                                    </blockquote>
+                                    <a href="http://startupbend.com/startups" class="btn btn-info" target="_blank" style="float: right; margin-right: 156px;">View Community</a>
+                                </div>
+                                <div class="col-md-4 col-sm-4 col-md-pull-8 col-sm-pull-8 photo">
+                                    <img src="frontend/images/testimonial/sub_logo_275w.png" style="width: 275px; padding-top:40px;" class="alignleft" alt="StartupBend Logo">
+                                </div>
+                            </div>
+                        </div>
+                        <!-- End Testimonial 3 -->
+
+                    </div>
+                    <!-- End Testimonial -->
+                </div>
+            </div>
+            <!-- Start Author -->
+            <ul id="author" class="owl-carousel list-author">
+                <li>
+                    <h6>Brian Vierra <small>EDCO</small></h6>
+                </li>
+                <li>
+                    <h6>Ryan Arnold <small>Startup Spokane</small></h6>
+                </li>
+                <li>
+                    <h6>Kelly Kearsley <small>StartupBend</small></h6>
+                </li>
+            </ul>
+            <!-- End Author -->
+            <div class="bg-dark"></div>
+        </div>
+    </div>
+    <!-- End Testimonial -->
+
+    <div class="clearfix"></div>
+
+    <!-- Start Pricing -->
+    <section id="pricing" class="gray">
+        <div class="container">
+            <!-- Start Title -->
+            <div class="row">
+                <div class="col-md-10 col-md-offset-1 title-section">
+                    <h4 class="title"><span>Pricing</span> Pay as you grow</h4>
+                    <div class="line"><i class="icon icon-24 icon-clipboard"></i></div>
+                </div>
+            </div>
+            <!-- End Title -->
+            <!-- Start Pricing -->
+            <div class="row wrap-price">
+                <div class="col-md-1"></div>
+                <div class="col-md-5">
+                    <!-- Start Pricing Success -->
+                    <div class="table-price success" style="height: 607px;">
+                        <div class="title-price">
+                            <h4>Community Members</h4>
+                        </div>
+                        <div class="price">
+                            <h2>Free</h2>
+                        </div>
+                        <ul class="list-feature">
+                            <li class="current">Connect with <strong>founders, mentors, and investors</strong></li>
+                            <li>Find <strong>startup resources</strong> in your community</li>
+                            <li class="current"><strong>Track</strong> economic growth by industry</li>
+                        </ul>
+                        <div class="footer-price">
+                            <a href="mailto:kickstart@startupcommunity.org?subject=I'd like to launch in my city.." target="_blank" class="btn btn-success">Get Started</a>
+                        </div>
+                    </div>
+                    <!-- End Pricing Success -->
+                </div>
+                <div class="col-md-5">
+                    <!-- Start Pricing Info -->
+                    <div class="table-price info" style="height: 607px;">
+                        <div class="title-price">
+                            <h4>Community Managers</h4>
+                        </div>
+                        <div class="price">
+                            <h2><span>$</span>15<small class="point">/mo</small></h2>
+                        </div>
+                        <ul class="list-feature">
+                            <li class="current">Create <strong>custom industries</strong> and <strong>private networks</strong></li>
+                            <li><strong>Manage </strong>people, companies, and resources</li>
+                            <li class="current"><strong>Track</strong> economic growth by industry</li>
+                            <li><strong>Embed</strong> in your website</li>
+                            <li class="current"><strong>Aggregate</strong> data across your state</li>
+                        </ul>
+                        <div class="footer-price">
+                            <p>+ 20&cent; per member of private networks you manage<br>New citiy one-time setup fee is $500</p>
+                            <a href="mailto:kickstart@startupcommunity.org?subject=I'd like to launch in my city.." target="_blank" class="btn btn-info">Get Started</a>
+                        </div>
+                    </div>
+                    <!-- End Pricing Info -->
+                </div>
+                <div class="col-md-1"></div>
+            </div>
+            <!-- End Pricing -->
+        </div>
+    </section>
+    <!-- End Pricing -->
+
+    <div class="clearfix"></div>
+
+    <!-- Start Call to action -->
+    <div class="cta-area">
+        <div class="bg-primary pattern parallax" style="background-color:#fff;"></div>
+        <div class="container">
+            <div class="row">
+                <div class="col-md-10 col-md-offset-1 title-section">
+                    <!-- Start Call To Action -->
+                    <h4 class="title">Ready to kickstart your community?</h4>
+                    <a href="mailto:kickstart@startupcommunity.org?subject=I'd like to launch in my city.." target="_blank" class="btn btn-success">Request an Invitation Today</a>
+                    <!-- End Call To Action -->
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- End Call to action -->
+
+    <div class="clearfix"></div>
+
+    <!-- Start Footer -->
+    <footer>
+        <div class="main-footer">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-3 footer-item">
+                        <!-- Start Network Social Icons -->
+                        <ul class="social-network" style="float: right; padding-right: 20px;">
+                            <li><a href="http://twitter.com/startupyourcity" title="Twitter" target="_blank"><i class="fa fa-twitter"></i></a></li>
+                            <!--<li><a href="https://startupcommunity.org/blog" title="Our Blog" target="_blank"><img src="frontend/images/brand/pacman_64.png" style="width:24px; height: 24px; margin: -5px 0 0 2px;opacity: .7;"/></a></li>-->
+                            <li><a href="https://startupcommunity.org/startupcommunity" title="Our Profile" target="_blank"><img src="frontend/images/brand/white_icon_64.png" style="width:24px; height: 24px; margin: -3px 0 0 1px;"/></a></li>
+                        </ul>
+                        <!-- End Network Social Icons -->
+                        <img src="frontend/images/brand/logo_dark.png" class="logo-footer" alt="StartupCommunity.org logo" style="height:80px; width: 240px;">
+                    </div>
+                    <div class="col-md-3 footer-item">
+                        <div class="row">
+                            <div class="col-md-12 col-sm-12 col-xs-12">
+                                <!-- Start Link -->
+                                <ul class="footer-link">
+                                    <li><a href="#product">Product</a></li>
+                                    <li><a href="#communities">Communities</a></li>
+                                    <li><a href="https://startupcommunity.readme.io/">API Docs</a></li>
+                                    <li><a href="//www.iubenda.com/privacy-policy/904271" class="iubenda-white iub-legal-only iubenda-embed" title="Privacy Policy" rel="nofollow">Privacy Policy</a>
+                                        <script type="text/javascript">
+                                            (function(w, d) { var loader = function() { var s = d.createElement("script"),
+                                                        tag = d.getElementsByTagName("script")[0];
+                                                    s.src = "//cdn.iubenda.com/iubenda.js";
+                                                    tag.parentNode.insertBefore(s, tag); }; if (w.addEventListener) { w.addEventListener("load", loader, false); } else if (w.attachEvent) { w.attachEvent("onload", loader); } else { w.onload = loader; } })(window, document);
+                                        </script>
+                                    </li>
+                                </ul>
+                                <!-- Start Link -->
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 footer-item">
+                        <!--  Start Subscribe
+                        <h5 class="title-footer">Learn from us</h5>
+                        <p>Subscribe to our monthly newsletter about building a regional startup ecosystem.</p>
+                        <a href="https://startupcommunity.org/blog" target="_blank">Click here to visit our blog</a>
+                         End Subscribe -->
+                    </div>
+                    <div class="col-md-3 footer-item">
+                        <h5 class="title-footer">Contact us</h5>
+                        <a href="mailto:kickstart@startupcommunity.org" target="_blank">kickstart@startupcommunity.org</a>
+                        <div style="padding-top: 33px;">
+                            <a href='//getjaco.com' rel='nofollow' target='_blank'><img src='//www.getjaco.com/images/free_with_logo/jaco-badge-white.png' alt='Jaco Analytics' /></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="sub-footer">
+            2018 &copy; <a href="#">StartupCommunity.org</a> - All rights reserved
+        </div>
+    </footer>
+    <!-- End Footer -->
+
+    <!-- START JAVASCRIPT -->
+    <script type="text/javascript" src="frontend/js/jquery-1.11.1.min.js"></script>
+    <script type="text/javascript" src="frontend/js/jquery.easing-1.3.min.js"></script>
+    <script type="text/javascript" src="frontend/js/bootstrap.min.js"></script>
+
+    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+    <script src="frontend/js/ie10-viewport-bug-workaround.js"></script>
+
+    <!-- JavaScript animatedBg -->
+    <script src="frontend/js/animatedBg/animatedBg-setting.js"></script>
+
+    <!-- Scrollspy -->
+    <script src="frontend/js/scrollspy/scrollspy.js"></script>
+
+    <!-- Owl Script -->
+    <script type="text/javascript" src="frontend/js/owl/owl.carousel.min.js"></script>
+    <script type="text/javascript" src="frontend/js/owl/setting.js"></script>
+
+    <!-- My Script -->
+    <script type="text/javascript" src="frontend/js/custom.js"></script>
+
+    <!-- END JAVASCRIPT -->
+    <script type="text/javascript" src="frontend/js/jquery.geocomplete.min.js"></script>
+
+    <script>
+        //preloader
+        $('loading-logo').on('load', function() {
+            document.getElementById("loading").className = "loading-visible";
+            var hideDiv = function() { document.getElementById("loading").className = "loading-invisible"; };
+            var oldLoad = window.onload;
+            var newLoad = oldLoad ? function() { hideDiv.call(this);
+                oldLoad.call(this); } : hideDiv;
+            window.onload = newLoad;
+        });
+
+        $(document).ready(function() {
+
+            $('#signIn').click(function() {
+                window.location.replace("/login");
+            });
+
+        });
+
+        var requestInvite = function() {
+
+            $("#location").geocomplete();
+
+            $("#inviteForm").submit(function(e) {
+                e.preventDefault();
+
+                var email = $('#email').val();
+                var location = $('#location').val();
+                var investor = $('#investor').is(':checked');
+                var founder = $('#founder').is(':checked');
+                var mentor = $('#mentor').is(':checked');
+
+                mixpanel.identify(email);
+                mixpanel.track("Signed Up");
+                mixpanel.people.set({
+                    "$email": email,
+                    "$created": Date(),
+                    "Location": location,
+                    "Founder": founder,
+                    "Mentor": mentor,
+                    "Investor": investor
+                });
+
+                $.ajax({
+                    type: 'post',
+                    url: '//startupcommunity.us9.list-manage.com/subscribe/post-json?u=e84a98eb12e090eb0b1a06b80&amp;id=ba6c99c719&amp;c=?',
+                    data: { EMAIL: email },
+                    cache: false,
+                    dataType: 'json',
+                    contentType: "application/json; charset=utf-8"
+                });
+
+                $("#success").toggle();
+                $('#email').val('');
+                $('#location').val('');
+
+            });
+        };
+
+        $.getScript("https://maps.googleapis.com/maps/api/js?sensor=false&libraries=places&callback=requestInvite");
+    </script>
+
+    <script>
+        (function(i, s, o, g, r, a, m) {
+            i['GoogleAnalyticsObject'] = r;
+            i[r] = i[r] || function() {
+                (i[r].q = i[r].q || []).push(arguments)
+            }, i[r].l = 1 * new Date();
+            a = s.createElement(o),
+                m = s.getElementsByTagName(o)[0];
+            a.async = 1;
+            a.src = g;
+            m.parentNode.insertBefore(a, m)
+        })(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
+
+        ga('create', 'UA-58555092-2', 'auto');
+        ga('send', 'pageview');
+    </script>
+
     <!-- start Mixpanel -->
     <script type="text/javascript">
-        (function(e, a) {
-            if (!a.__SV) {
-                var b = window;
-                try {
-                    var c, l, i, j = b.location,
-                        g = j.hash;
-                    c = function(a, b) { return (l = a.match(RegExp(b + "=([^&]*)"))) ? l[1] : null };
-                    g && c(g, "state") && (i = JSON.parse(decodeURIComponent(c(g, "state"))), "mpeditor" === i.action && (b.sessionStorage.setItem("_mpcehash", g), history.replaceState(i.desiredHash || "", e.title, j.pathname + j.search)))
-                }
-                catch (m) {}
-                var k, h;
-                window.mixpanel = a;
-                a._i = [];
-                a.init = function(b, c, f) {
-                    function e(b, a) {
-                        var c = a.split(".");
-                        2 == c.length && (b = b[c[0]], a = c[1]);
-                        b[a] = function() {
-                            b.push([a].concat(Array.prototype.slice.call(arguments,
-                                0)))
-                        }
+        (function(f, b) {
+            if (!b.__SV) {
+                var a, e, i, g;
+                window.mixpanel = b;
+                b._i = [];
+                b.init = function(a, e, d) {
+                    function f(b, h) {
+                        var a = h.split("."); //noinspection CommaExpressionJS
+                        2 == a.length && (b = b[a[0]], h = a[1]);
+                        b[h] = function() { b.push([h].concat(Array.prototype.slice.call(arguments, 0))) }
                     }
-                    var d = a;
-                    "undefined" !== typeof f ? d = a[f] = [] : f = "mixpanel";
-                    d.people = d.people || [];
-                    d.toString = function(b) {
-                        var a = "mixpanel";
-                        "mixpanel" !== f && (a += "." + f);
-                        b || (a += " (stub)");
-                        return a
-                    };
-                    d.people.toString = function() { return d.toString(1) + ".people (stub)" };
-                    k = "disable time_event track track_pageview track_links track_forms register register_once alias unregister identify name_tag set_config reset people.set people.set_once people.unset people.increment people.append people.union people.track_charge people.clear_charges people.delete_user".split(" ");
-                    for (h = 0; h < k.length; h++) e(d, k[h]);
-                    a._i.push([b, c, f])
+                    var c = b;
+                    "undefined" !== typeof d ? c = b[d] = [] : d = "mixpanel";
+                    c.people = c.people || [];
+                    c.toString = function(b) { var a = "mixpanel"; "mixpanel" !== d && (a += "." + d);
+                        b || (a += " (stub)"); return a };
+                    c.people.toString = function() { return c.toString(1) + ".people (stub)" };
+                    i = "disable track track_pageview track_links track_forms register register_once alias unregister identify name_tag set_config people.set people.set_once people.increment people.append people.union people.track_charge people.clear_charges people.delete_user".split(" ");
+                    for (g = 0; g < i.length; g++) f(c, i[g]);
+                    b._i.push([a, e, d])
                 };
-                a.__SV = 1.2;
-                b = e.createElement("script");
-                b.type = "text/javascript";
-                b.async = !0;
-                b.src = "undefined" !== typeof MIXPANEL_CUSTOM_LIB_URL ? MIXPANEL_CUSTOM_LIB_URL : "file:" === e.location.protocol && "//cdn.mxpnl.com/libs/mixpanel-2-latest.min.js".match(/^\/\//) ? "https://cdn.mxpnl.com/libs/mixpanel-2-latest.min.js" : "//cdn.mxpnl.com/libs/mixpanel-2-latest.min.js";
-                c = e.getElementsByTagName("script")[0];
-                c.parentNode.insertBefore(b, c)
+                b.__SV = 1.2;
+                a = f.createElement("script");
+                a.type = "text/javascript";
+                a.async = !0;
+                a.src = "undefined" !== typeof MIXPANEL_CUSTOM_LIB_URL ? MIXPANEL_CUSTOM_LIB_URL : "//cdn.mxpnl.com/libs/mixpanel-2-latest.min.js";
+                e = f.getElementsByTagName("script")[0];
+                e.parentNode.insertBefore(a, e)
             }
         })(document, window.mixpanel || []);
         mixpanel.init("0f110baeb6150d7e3b8968e32d7a5595");
     </script>
     <!-- end Mixpanel -->
-</head>
 
-<!-- Body -->
-
-<body class="{{$state.current.data.specialClass}} fixed-navbar">
-
-    <!-- Simple splash screen-->
-    <div class="splash" id="majorsplash">
-        <div class="bright-line"></div>
-        <div class="splash-title"><a href="/"><img src="../public/images/sc_logo.png" style="width: 75%;" alt="StartupCommunity.org Logo"/></a><img src="../public/images/loading-bars.svg" width="64" height="64" /> </div>
-    </div>
-    <!--[if lt IE 7]>
-        <p class="alert alert-danger">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
-        <![endif]-->
-    <!--[if lt IE 9]>
-        <script src="excanvas.js"></script>
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/es5-shim/2.2.0/es5-shim.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/Base64/0.3.0/base64.min.js"></script>
-        <script>
-            document.createElement('ui-select');
-            document.createElement('ui-select-match');
-            document.createElement('ui-select-choices');
-        </script>
-    <![endif]-->
-
-    <!-- Page view wrapper -->
-    <ui-view></ui-view>
-
-    <!-- Alternative solution for CORS
-    <script src="../public/scripts/xdomain.min.js" slave="https://newsletter.startupcommunity.org/proxy.html"></script>
-    -->
-
-    <!-- Global site tag (gtag.js) - Google Analytics -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-58555092-2"></script>
-    <script>
-        window.dataLayer = window.dataLayer || [];
-
-        function gtag() { dataLayer.push(arguments); }
-        gtag('js', new Date());
-
-        gtag('config', 'UA-58555092-2');
-    </script>
-    <script src="https://cdn.jsdelivr.net/npm/lodash@4.17.5/lodash.min.js"></script>
 </body>
 
 </html>
