@@ -1,3 +1,4 @@
+import 'babel-polyfill';
 /*
 import "node_modules/angular-notify/dist/angular-notify.min.css";
 import "node_modules/fontawesome/css/font-awesome.css";
