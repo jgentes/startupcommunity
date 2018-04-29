@@ -376,7 +376,7 @@ function NavigationController($scope, $auth, $state, $window, $location, $stateP
     self.contact = function(user) {
 
       var modalInstance = $uibModal.open({
-        template: require('../users/user.contact.html'),
+        templateUrl: require('../users/user.contact.html'),
         controller: ContactUserController,
         controllerAs: 'contact',
         windowClass: "hmodal-warning"
@@ -388,7 +388,7 @@ function NavigationController($scope, $auth, $state, $window, $location, $stateP
     self.embedSettings = function(community_id) {
 
       var modalInstance = $uibModal.open({
-        template: require('./nav.embed_settings.html'),
+        templateUrl: require('./nav.embed_settings.html'),
         controller: EmbedSettingsController,
         controllerAs: 'settings',
         windowClass: "hmodal-success",
@@ -411,7 +411,7 @@ function NavigationController($scope, $auth, $state, $window, $location, $stateP
     self.editCommunity = function(community_id) {
 
       var modalInstance = $uibModal.open({
-        template: require('./nav.edit_cluster.html'),
+        templateUrl: require('./nav.edit_cluster.html'),
         controller: CommunityController,
         controllerAs: 'edit',
         windowClass: "hmodal-success",
@@ -464,7 +464,7 @@ function NavigationController($scope, $auth, $state, $window, $location, $stateP
     self.setupNewsletter = function() {
 
       var modalInstance = $uibModal.open({
-        template: require('../newsletter/setup_newsletter.html'),
+        templateUrl: require('../newsletter/setup_newsletter.html'),
         controller: SetupNewsController,
         controllerAs: 'news',
         windowClass: "hmodal-warning",
@@ -514,7 +514,7 @@ function NavigationController($scope, $auth, $state, $window, $location, $stateP
     self.requestInvitation = function() {
 
       var modalInstance = $uibModal.open({
-        template: require('../users/user.request_invite.html'),
+        templateUrl: require('../users/user.request_invite.html'),
         controller: InviteUserController,
         controllerAs: 'invite',
         windowClass: "hmodal-info"
@@ -526,7 +526,7 @@ function NavigationController($scope, $auth, $state, $window, $location, $stateP
     self.invitePeople = function() {
 
       var modalInstance = $uibModal.open({
-        template: require('../users/user.invite.html'),
+        templateUrl: require('../users/user.invite.html'),
         controller: InviteUserController,
         controllerAs: 'invite',
         windowClass: "hmodal-info",

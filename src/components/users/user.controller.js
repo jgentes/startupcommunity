@@ -298,7 +298,7 @@ function UserProfileController($scope, $stateParams, $http, $uibModal, user_serv
     this.contact = function(community_id) {
 
         var modalInstance = $uibModal.open({
-            template: require('./user.contact.html'),
+            templateUrl: require('./user.contact.html'),
             controller: ContactUserController,
             controllerAs: 'contact',
             windowClass: "hmodal-warning",
