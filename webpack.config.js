@@ -1,13 +1,16 @@
 const webpack = require('webpack');
 const path = require('path');
 const ProgressPlugin = require('progress-webpack-plugin');
+const CleanWebpackPlugin = require('clean-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const CopyWebpackPlugin = require('copy-webpack-plugin')
 
 module.exports = {
   mode: process.env.NODE_ENV || 'development',
   entry: ["babel-polyfill", path.resolve(__dirname, 'src/app.js')],
   output: {
     filename: 'bundle.js',
+    publicPath: '',
     path: path.resolve(__dirname, 'dist')
   },
   devtool: 'source-map',
@@ -19,9 +22,22 @@ module.exports = {
       'window.jQuery': 'jquery'
     }),
     new HtmlWebpackPlugin({
-      template: path.resolve(__dirname, 'src/index.html')
+      template: path.resolve(__dirname, 'src/app.html'),
+      filename: 'app.html'
     }),
-    new ProgressPlugin(true)
+    new ProgressPlugin(true),
+    new CleanWebpackPlugin(path.resolve(__dirname, 'dist')),
+    new CopyWebpackPlugin([{
+        from: path.resolve(__dirname, 'src/frontend'),
+        to: path.resolve(__dirname, 'dist/frontend'),
+        toType: 'dir'
+      },
+      {
+        from: path.resolve(__dirname, 'src/index.html'),
+        to: path.resolve(__dirname, 'dist/index.html'),
+        toType: 'file'
+      },
+    ])
   ],
   module: {
     rules: [
@@ -29,7 +45,10 @@ module.exports = {
       {
         test: /\.js$/,
         include: [path.resolve(__dirname, 'src/components')],
-        exclude: /node_modules/,
+        exclude: [
+          /node_modules/,
+          path.resolve(__dirname, 'src/frontend')
+        ],
         use: {
           loader: 'babel-loader',
           options: {
@@ -47,7 +66,10 @@ module.exports = {
       // Less
       {
         test: /\.less$/,
-        exclude: /node_modules/,
+        exclude: [
+          /node_modules/,
+          path.resolve(__dirname, 'src/frontend')
+        ],
         use: [
           { loader: 'style-loader' },
           { loader: 'css-loader' },
@@ -57,6 +79,7 @@ module.exports = {
       // CSS
       {
         test: /\.css$/,
+        exclude: path.resolve(__dirname, 'src/frontend'),
         use: [
           { loader: 'style-loader' },
           { loader: 'css-loader' }
@@ -65,7 +88,12 @@ module.exports = {
       // HTML
       {
         test: /\.html$/,
-        exclude: path.resolve(__dirname, 'src/index.html'),
+        exclude: [
+          /node_modules/,
+          path.resolve(__dirname, 'src/frontend'),
+          path.resolve(__dirname, 'src/app.html'),
+          path.resolve(__dirname, 'src/index.html')
+        ],
         use: [{
           loader: 'file-loader',
           options: {}

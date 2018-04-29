@@ -59,9 +59,8 @@ app.use(logger('dev'));
 app.use(methodOverride());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use("/frontend", express.static(root + '/frontend'));
 app.use("/public", express.static(root + '/public'));
-app.use("/dist", express.static(root + '/dist'));
+app.use("/", express.static(root + '/dist'));
 app.use(bugsnag.errorHandler);
 
 // Production environment
@@ -209,7 +208,7 @@ app.post('/api/logger', function(req, res) {
 
 // Frontend Homepage & Blog
 app.get('/', function(req, res, next) {
-  res.sendFile("index.html", { root: root + '/frontend' });
+  res.sendFile("index.html", { root: root + '/dist' });
 });
 /*
 
@@ -225,7 +224,7 @@ ghost({
 // Backend App
 
 app.get('/*', function(req, res, next) {
-  res.sendFile("index.html", { root: root + '/dist' });
+  res.sendFile("app.html", { root: root + '/dist' });
 });
 
 var port = process.env.PORT || 8080;

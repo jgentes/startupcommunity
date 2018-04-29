@@ -60,6 +60,8 @@
     "@babel/preset-env": "7.0.0-beta.44",
     "babel-core": "7.0.0-bridge.0",
     "babel-loader": "8.0.0-beta.2",
+    "clean-webpack-plugin": "^0.1.19",
+    "copy-webpack-plugin": "^4.5.1",
     "css-loader": "0.28.11",
     "file-loader": "^1.1.11",
     "html-loader": "0.5.5",
