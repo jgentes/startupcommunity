@@ -28,12 +28,12 @@ module.exports = {
     new ProgressPlugin(true),
     new CleanWebpackPlugin(path.resolve(__dirname, 'dist')),
     new CopyWebpackPlugin([{
-        from: path.resolve(__dirname, 'src/frontend'),
+        from: path.resolve(__dirname, 'frontend'),
         to: path.resolve(__dirname, 'dist/frontend'),
         toType: 'dir'
       },
       {
-        from: path.resolve(__dirname, 'src/index.html'),
+        from: path.resolve(__dirname, 'frontend/index.html'),
         to: path.resolve(__dirname, 'dist/index.html'),
         toType: 'file'
       },
@@ -44,11 +44,8 @@ module.exports = {
       // JavaScript / ES6
       {
         test: /\.js$/,
-        include: [path.resolve(__dirname, 'src/components')],
-        exclude: [
-          /node_modules/,
-          path.resolve(__dirname, 'src/frontend')
-        ],
+        include: path.resolve(__dirname, 'src/components'),
+        exclude: /node_modules/,
         use: {
           loader: 'babel-loader',
           options: {
@@ -66,10 +63,7 @@ module.exports = {
       // Less
       {
         test: /\.less$/,
-        exclude: [
-          /node_modules/,
-          path.resolve(__dirname, 'src/frontend')
-        ],
+        exclude: /node_modules/,
         use: [
           { loader: 'style-loader' },
           { loader: 'css-loader' },
@@ -79,7 +73,6 @@ module.exports = {
       // CSS
       {
         test: /\.css$/,
-        exclude: path.resolve(__dirname, 'src/frontend'),
         use: [
           { loader: 'style-loader' },
           { loader: 'css-loader' }
@@ -90,9 +83,7 @@ module.exports = {
         test: /\.html$/,
         exclude: [
           /node_modules/,
-          path.resolve(__dirname, 'src/frontend'),
-          path.resolve(__dirname, 'src/app.html'),
-          path.resolve(__dirname, 'src/index.html')
+          path.resolve(__dirname, 'src/app.html')
         ],
         use: [{
           loader: 'file-loader',
