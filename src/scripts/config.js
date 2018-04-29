@@ -16,7 +16,7 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
 
     // Optimize load start
     $compileProvider
-        .debugInfoEnabled(true); // set to false for production
+        .debugInfoEnabled(process && process.env && process.env.NODE_ENV == 'local' || false); // set to false for production
 
     $locationProvider
         .html5Mode(true);
@@ -31,7 +31,7 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
             params: {
                 alert: {}
             },
-            template: require('../components/auth/login.html')
+            templateUrl: require('../components/auth/login.html')
         })
         .state('logout', {
             url: "/logout",
@@ -48,18 +48,18 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
         })
 
         .state('404', {
-            template: require("../components/errors/404.html")
+            templateUrl: require("../components/errors/404.html")
         })
 
         .state('500', {
-            template: require("../components/errors/500.html")
+            templateUrl: require("../components/errors/500.html")
         })
 
         // the root state with core dependencies for injection in child states
         // note: if you set a param in root, and use/change that param in a ui-sref link, it will reload root
         .state('root', {
             url: "/:location_path/:community_path/:tail_path",
-            template: require("../components/nav/nav.html"),
+            templateUrl: require("../components/nav/nav.html"),
             controller: "NavigationController as nav",
             params: {
                 // params must be defined here to be used in children (except for paths)
@@ -91,10 +91,10 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
             },
             views: {
                 'header': {
-                    template: require("../components/header/header_small.html")
+                    templateUrl: require("../components/header/header_small.html")
                 },
                 'content': {
-                    template: require("../components/users/user.dashboard.html"),
+                    templateUrl: require("../components/users/user.dashboard.html"),
                     controller: 'UserProfileController as profile'
                 }
             }
@@ -102,10 +102,10 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
         .state('user.list', {
             views: {
                 'header': {
-                    template: require("../components/header/header_small.html")
+                    templateUrl: require("../components/header/header_small.html")
                 },
                 'content': {
-                    template: require('../components/users/user.list.html'),
+                    templateUrl: require('../components/users/user.list.html'),
                     controller: "UserController as users"
                 }
             }
@@ -123,10 +123,10 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
             },
             views: {
                 'header': {
-                    template: require("../components/header/header_small.html")
+                    templateUrl: require("../components/header/header_small.html")
                 },
                 'content': {
-                    template: require("../components/companies/company.dashboard.html"),
+                    templateUrl: require("../components/companies/company.dashboard.html"),
                     controller: 'CompanyProfileController as profile'
                 }
             }
@@ -134,10 +134,10 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
         .state('company.list', {
             views: {
                 'header': {
-                    template: require("../components/header/header_small.html")
+                    templateUrl: require("../components/header/header_small.html")
                 },
                 'content': {
-                    template: require('../components/companies/company.list.html'),
+                    templateUrl: require('../components/companies/company.list.html'),
                     controller: "CompanyController as companies"
                 }
             }
@@ -146,7 +146,7 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
             url: "^/:location_path/add-company",
             views: {
                 'content': {
-                    template: require('../components/resources/resource.add.html'),
+                    templateUrl: require('../components/resources/resource.add.html'),
                     controller: "EditCompanyController as add"
                 }
             }
@@ -155,7 +155,7 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
             url: "/edit",
             views: {
                 'content': {
-                    template: require('../components/resources/resource.add.html'),
+                    templateUrl: require('../components/resources/resource.add.html'),
                     controller: "EditCompanyController as add"
                 }
             }
@@ -169,10 +169,10 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
         .state('resource.list', {
             views: {
                 'header': {
-                    template: require("../components/header/header_small.html")
+                    templateUrl: require("../components/header/header_small.html")
                 },
                 'content': {
-                    template: require('../components/companies/company.list.html'),
+                    templateUrl: require('../components/companies/company.list.html'),
                     controller: "CompanyController as companies"
                 }
             }
@@ -181,7 +181,7 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
             url: "^/:location_path/add-resource",
             views: {
                 'content': {
-                    template: require('../components/resources/resource.add.html'),
+                    templateUrl: require('../components/resources/resource.add.html'),
                     controller: "EditCompanyController as add"
                 }
             }
@@ -190,7 +190,7 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
             url: "/edit",
             views: {
                 'content': {
-                    template: require('../components/resources/resource.add.html'),
+                    templateUrl: require('../components/resources/resource.add.html'),
                     controller: "EditCompanyController as add"
                 }
             }
@@ -210,25 +210,25 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
             },
             views: {
                 "@": { // this forces override of root template
-                    template: require("../components/welcome/welcome.html"),
+                    templateUrl: require("../components/welcome/welcome.html"),
                     controller: "WelcomeController as welcome"
                 }
             }
         })
 
-        .state('settings', { parent: 'root', url: '/settings', views: { 'content': { template: require("../components/settings.html"), controller: "SettingsController as settings" } } })
+        .state('settings', { parent: 'root', url: '/settings', views: { 'content': { templateUrl: require("../components/settings.html"), controller: "SettingsController as settings" } } })
 
-        .state('newsletter', { parent: 'root', url: '/newsletter', views: { 'content': { template: require("../components/newsletter/newsletter.html"), controller: 'NewsletterController as news' } } })
+        .state('newsletter', { parent: 'root', url: '/newsletter', views: { 'content': { templateUrl: require("../components/newsletter/newsletter.html"), controller: 'NewsletterController as news' } } })
 
         .state('search', {
             parent: 'root',
             abstract: true,
             views: {
                 'header': {
-                    template: require("../components/header/header_small.html")
+                    templateUrl: require("../components/header/header_small.html")
                 },
                 'content': {
-                    template: require('../components/search/search.dashboard.html')
+                    templateUrl: require('../components/search/search.dashboard.html')
                 }
             }
         })
@@ -240,11 +240,11 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
             },
             views: {
                 'people': {
-                    template: require('../components/users/user.list.html'),
+                    templateUrl: require('../components/users/user.list.html'),
                     controller: "UserController as users"
                 },
                 'companies': {
-                    template: require('../components/companies/company.list.html'),
+                    templateUrl: require('../components/companies/company.list.html'),
                     controller: "CompanyController as companies"
                 }
             }
@@ -256,7 +256,7 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
             abstract: true,
             views: {
                 'header': {
-                    template: require("../components/header/header_small.html")
+                    templateUrl: require("../components/header/header_small.html")
                 },
                 'content': {
                     template: "<div ui-view='people'></div>"
@@ -267,7 +267,7 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
             params: { tour: false },
             views: {
                 'people': {
-                    template: require('../components/dashboard/dashboard.html'),
+                    templateUrl: require('../components/dashboard/dashboard.html'),
                     controller: "DashboardController as dashboard"
                 }
             }
@@ -378,77 +378,78 @@ angular
             return (log);
         }
     )
-    // this factory is used to capture sourcemaps
-    .factory('$exceptionHandler',
-        function($log, $window, $injector, errorLogService) {
-            var getSourceMappedStackTrace = function(exception) {
-                var $q = $injector.get('$q'),
-                    $http = $injector.get('$http'),
-                    SMConsumer = $window.sourceMap.SourceMapConsumer,
-                    cache = {};
-
-                // Retrieve a SourceMap object for a minified script URL
-                var getMapForScript = function(url) {
-                    if (cache[url]) {
-                        return cache[url];
-                    }
-                    else {
-                        var promise = $http.get(url).then(function(response) {
-                            var m = response.data.match(/\/\/# sourceMappingURL=(.+\.map)/);
-                            if (m) {
-                                var path = url.match(/^(.+)\/[^/]+$/);
-                                path = path && path[1];
-                                return $http.get(path + '/' + m[1]).then(function(response) {
-                                    return new SMConsumer(response.data);
-                                });
-                            }
-                            else {
-                                return $q.reject();
-                            }
-                        });
-                        cache[url] = promise;
-                        return promise;
-                    }
-                };
-
-                if (exception.stack) { // not all browsers support stack traces
-                    return $q.all($.map(exception.stack.split(/\n/), function(stackLine) {
-                        var match = stackLine.match(/^(.+)(http.+):(\d+):(\d+)/);
-                        if (match) {
-                            var prefix = match[1],
-                                url = match[2],
-                                line = match[3],
-                                col = match[4];
-                            return getMapForScript(url).then(function(map) {
-                                var pos = map.originalPositionFor({
-                                    line: parseInt(line, 10),
-                                    column: parseInt(col, 10)
-                                });
-                                var mangledName = prefix.match(/\s*(at)?\s*(.*?)\s*(\(|@)/);
-                                mangledName = (mangledName && mangledName[2]) || '';
-                                return '    at ' + (pos.name ? pos.name : mangledName) + ' ' +
-                                    $window.location.origin + pos.source + ':' + pos.line + ':' +
-                                    pos.column;
-                            }, function() {
-                                return stackLine;
+/*// this factory is used to capture sourcemaps
+.factory('$exceptionHandler',
+    function($log, $window, $injector, errorLogService) {
+        var getSourceMappedStackTrace = function(exception) {
+            var $q = $injector.get('$q'),
+                $http = $injector.get('$http'),
+                SMConsumer = $window.sourceMap.SourceMapConsumer,
+                cache = {};
+    
+            // Retrieve a SourceMap object for a minified script URL
+            var getMapForScript = function(url) {
+                if (cache[url]) {
+                    return cache[url];
+                }
+                else {
+                    var promise = $http.get(url).then(function(response) {
+                        var m = response.data.match(/\/\/# sourceMappingURL=(.+\.map)/);
+                        if (m) {
+                            var path = url.match(/^(.+)\/[^/]+$/);
+                            path = path && path[1];
+                            return $http.get(path + '/' + m[1]).then(function(response) {
+                                return new SMConsumer(response.data);
                             });
                         }
                         else {
-                            return $q.when(stackLine);
+                            return $q.reject();
                         }
-                    })).then(function(lines) {
-                        return lines.join('\n');
                     });
-                }
-                else {
-                    return $q.when('');
+                    cache[url] = promise;
+                    return promise;
                 }
             };
-
-            return function(exception, cause) {
-                if ($window.Bugsnag) $window.Bugsnag.notifyException(exception);
-                getSourceMappedStackTrace(exception).then(function(final) {
-                    errorLogService(final, $window);
+    
+            if (exception.stack) { // not all browsers support stack traces
+                return $q.all($.map(exception.stack.split(/\n/), function(stackLine) {
+                    var match = stackLine.match(/^(.+)(http.+):(\d+):(\d+)/);
+                    if (match) {
+                        var prefix = match[1],
+                            url = match[2],
+                            line = match[3],
+                            col = match[4];
+                        return getMapForScript(url).then(function(map) {
+                            var pos = map.originalPositionFor({
+                                line: parseInt(line, 10),
+                                column: parseInt(col, 10)
+                            });
+                            var mangledName = prefix.match(/\s*(at)?\s*(.*?)\s*(\(|@)/);
+                            mangledName = (mangledName && mangledName[2]) || '';
+                            return '    at ' + (pos.name ? pos.name : mangledName) + ' ' +
+                                $window.location.origin + pos.source + ':' + pos.line + ':' +
+                                pos.column;
+                        }, function() {
+                            return stackLine;
+                        });
+                    }
+                    else {
+                        return $q.when(stackLine);
+                    }
+                })).then(function(lines) {
+                    return lines.join('\n');
                 });
-            };
-        });
+            }
+            else {
+                return $q.when('');
+            }
+        };
+    
+        return function(exception, cause) {
+            if ($window.Bugsnag) $window.Bugsnag.notifyException(exception);
+            getSourceMappedStackTrace(exception).then(function(final) {
+                errorLogService(final, $window);
+            });
+        };
+    });
+*/

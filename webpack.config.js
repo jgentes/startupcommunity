@@ -65,13 +65,11 @@ module.exports = {
       // HTML
       {
         test: /\.html$/,
-        loader: 'html-loader',
         exclude: path.resolve(__dirname, 'src/index.html'),
-        options: {
-          exportAsEs6Default: 'es6',
-          minimize: true,
-          collapseWhitespace: true,
-        }
+        use: [{
+          loader: 'file-loader',
+          options: {}
+        }]
       },
       // Fonts
       {
