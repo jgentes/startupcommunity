@@ -8,6 +8,7 @@ import "awesome-bootstrap-checkbox/awesome-bootstrap-checkbox.css";
 import "bootstrap-tour/build/css/bootstrap-tour.min.css";
 import "ladda/dist/ladda-themeless.min.css";
 import "summernote/dist/summernote.css";
+import "./less/style.less";
 
 import "./fonts/pe-icon-7-stroke/css/pe-icon-7-stroke.css";
 import "./fonts/pe-icon-7-stroke/css/helper.css";
