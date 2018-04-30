@@ -5,7 +5,6 @@
   "private": true,
   "dependencies": {
     "@sendgrid/mail": "6.2.1",
-    "@uirouter/angularjs": "1.0.15",
     "angular": "1.4.14",
     "angular-bootstrap-tour": "0.3.3-alpha.1",
     "angular-cookies": "1.6.10",
@@ -14,6 +13,7 @@
     "angular-notify": "1.2.0",
     "angular-sanitize": "1.4.14",
     "angular-ui-bootstrap": "2.5.6",
+    "angular-ui-router": "^0.4.3",
     "angular-ui-utils": "0.1.1",
     "angulartics-google-analytics": "0.5.0",
     "awesome-bootstrap-checkbox": "1.0.1",
