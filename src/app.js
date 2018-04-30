@@ -16,7 +16,7 @@ import "./fonts/pe-icon-7-stroke/css/helper.css";
 import "angular";
 import "jquery";
 
-import "@uirouter/angularjs";
+import "angular-ui-router";
 import "angular-ui-utils/modules/highlight/highlight.js";
 import "angular-ui-bootstrap";
 import "angular-sanitize";
@@ -46,3 +46,7 @@ import "./components/auth/auth.controller.js";
 import "./components/welcome/welcome.controller.js";
 import "./components/nav/nav.controller.js";
 import "./components/newsletter/newsletter.controller.js";
+/*// for debugging ui-router
+import { trace } from "@uirouter/angularjs";
+trace.enable(1, 5);
+*/

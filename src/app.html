@@ -1,16 +1,16 @@
 <!DOCTYPE html>
 <html ng-app="startupcommunity">
 
-<head>
+    <head>
 
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <base href="/">
-    <title page-title></title>
-    <link rel="shortcut icon" type="image/ico" href="../public/images/favicon.ico" />
-    <link href='https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700&lang=en' rel='stylesheet' type='text/css'>
-    <!--
+        <base href="/">
+        <title page-title></title>
+        <link rel="shortcut icon" type="image/ico" href="../public/images/favicon.ico" />
+        <link href='https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700&lang=en' rel='stylesheet' type='text/css'>
+        <!--
     <script src="https://d2wy8f7a9ursnm.cloudfront.net/bugsnag-2.min.js" data-apikey="a46f2b2ce2b4bcd599be18c86f2fe8ce" />
     </script>
      <script type="text/javascript">
@@ -40,71 +40,103 @@
     window.JacoRecorder.init("54ad6c47-2366-4979-bfdc-c00bd09ab7c7");
 </script>
 -->
-    <!-- start Mixpanel -->
-    <script type="text/javascript">
-        (function(e, a) {
-            if (!a.__SV) {
-                var b = window;
-                try {
-                    var c, l, i, j = b.location,
-                        g = j.hash;
-                    c = function(a, b) { return (l = a.match(RegExp(b + "=([^&]*)"))) ? l[1] : null };
-                    g && c(g, "state") && (i = JSON.parse(decodeURIComponent(c(g, "state"))), "mpeditor" === i.action && (b.sessionStorage.setItem("_mpcehash", g), history.replaceState(i.desiredHash || "", e.title, j.pathname + j.search)))
-                }
-                catch (m) {}
-                var k, h;
-                window.mixpanel = a;
-                a._i = [];
-                a.init = function(b, c, f) {
-                    function e(b, a) {
-                        var c = a.split(".");
-                        2 == c.length && (b = b[c[0]], a = c[1]);
-                        b[a] = function() {
-                            b.push([a].concat(Array.prototype.slice.call(arguments,
-                                0)))
-                        }
+        <!-- start Mixpanel -->
+        <script type="text/javascript">
+            (function(e, a) {
+                if (!a.__SV) {
+                    var b = window;
+                    try {
+                        var c, l, i, j = b.location,
+                            g = j.hash;
+                        c = function(a, b) { return (l = a.match(RegExp(b + "=([^&]*)"))) ? l[1] : null };
+                        g && c(g, "state") && (i = JSON.parse(decodeURIComponent(c(g, "state"))), "mpeditor" === i.action && (b.sessionStorage.setItem("_mpcehash", g), history.replaceState(i.desiredHash || "", e.title, j.pathname + j.search)))
                     }
-                    var d = a;
-                    "undefined" !== typeof f ? d = a[f] = [] : f = "mixpanel";
-                    d.people = d.people || [];
-                    d.toString = function(b) {
-                        var a = "mixpanel";
-                        "mixpanel" !== f && (a += "." + f);
-                        b || (a += " (stub)");
-                        return a
+                    catch (m) {}
+                    var k, h;
+                    window.mixpanel = a;
+                    a._i = [];
+                    a.init = function(b, c, f) {
+                        function e(b, a) {
+                            var c = a.split(".");
+                            2 == c.length && (b = b[c[0]], a = c[1]);
+                            b[a] = function() {
+                                b.push([a].concat(Array.prototype.slice.call(arguments,
+                                    0)))
+                            }
+                        }
+                        var d = a;
+                        "undefined" !== typeof f ? d = a[f] = [] : f = "mixpanel";
+                        d.people = d.people || [];
+                        d.toString = function(b) {
+                            var a = "mixpanel";
+                            "mixpanel" !== f && (a += "." + f);
+                            b || (a += " (stub)");
+                            return a
+                        };
+                        d.people.toString = function() { return d.toString(1) + ".people (stub)" };
+                        k = "disable time_event track track_pageview track_links track_forms register register_once alias unregister identify name_tag set_config reset people.set people.set_once people.unset people.increment people.append people.union people.track_charge people.clear_charges people.delete_user".split(" ");
+                        for (h = 0; h < k.length; h++) e(d, k[h]);
+                        a._i.push([b, c, f])
                     };
-                    d.people.toString = function() { return d.toString(1) + ".people (stub)" };
-                    k = "disable time_event track track_pageview track_links track_forms register register_once alias unregister identify name_tag set_config reset people.set people.set_once people.unset people.increment people.append people.union people.track_charge people.clear_charges people.delete_user".split(" ");
-                    for (h = 0; h < k.length; h++) e(d, k[h]);
-                    a._i.push([b, c, f])
-                };
-                a.__SV = 1.2;
-                b = e.createElement("script");
-                b.type = "text/javascript";
-                b.async = !0;
-                b.src = "undefined" !== typeof MIXPANEL_CUSTOM_LIB_URL ? MIXPANEL_CUSTOM_LIB_URL : "file:" === e.location.protocol && "//cdn.mxpnl.com/libs/mixpanel-2-latest.min.js".match(/^\/\//) ? "https://cdn.mxpnl.com/libs/mixpanel-2-latest.min.js" : "//cdn.mxpnl.com/libs/mixpanel-2-latest.min.js";
-                c = e.getElementsByTagName("script")[0];
-                c.parentNode.insertBefore(b, c)
+                    a.__SV = 1.2;
+                    b = e.createElement("script");
+                    b.type = "text/javascript";
+                    b.async = !0;
+                    b.src = "undefined" !== typeof MIXPANEL_CUSTOM_LIB_URL ? MIXPANEL_CUSTOM_LIB_URL : "file:" === e.location.protocol && "//cdn.mxpnl.com/libs/mixpanel-2-latest.min.js".match(/^\/\//) ? "https://cdn.mxpnl.com/libs/mixpanel-2-latest.min.js" : "//cdn.mxpnl.com/libs/mixpanel-2-latest.min.js";
+                    c = e.getElementsByTagName("script")[0];
+                    c.parentNode.insertBefore(b, c)
+                }
+            })(document, window.mixpanel || []);
+            mixpanel.init("0f110baeb6150d7e3b8968e32d7a5595");
+        </script>
+        <!-- end Mixpanel -->
+
+        <style>
+            .splash {
+                position: absolute;
+                z-index: 2000;
+                background: white;
+                color: gray;
+                top: 0;
+                bottom: 0;
+                left: 0;
+                right: 0;
             }
-        })(document, window.mixpanel || []);
-        mixpanel.init("0f110baeb6150d7e3b8968e32d7a5595");
-    </script>
-    <!-- end Mixpanel -->
-</head>
 
-<!-- Body -->
+            .splash-title {
+                text-align: center;
+                max-width: 500px;
+                margin: 15% auto;
+                padding: 30px;
+            }
 
-<body class="{{$state.current.data.specialClass}} fixed-navbar">
+            .splash-title h1 {
+                font-size: 26px;
+            }
 
-    <!-- Simple splash screen-->
-    <div class="splash" id="majorsplash">
-        <div class="bright-line"></div>
-        <div class="splash-title"><a href="/"><img src="../public/images/sc_logo.png" style="width: 75%;" alt="StartupCommunity.org Logo"/></a><img src="../public/images/loading-bars.svg" width="64" height="64" /> </div>
-    </div>
-    <!--[if lt IE 7]>
+            .bright-line {
+                height: 1px;
+                background: #6ADA00;
+                background-size: 100% 4px;
+                background-position: 50% 100%;
+                background-repeat: no-repeat;
+            }
+        </style>
+    </head>
+
+    <!-- Body -->
+
+    <body class="{{$state.current.data.specialClass}} fixed-navbar">
+
+        <!-- Simple splash screen-->
+        <div class="splash" id="majorsplash">
+            <div class="bright-line"></div>
+            <div class="splash-title"><a href="/"><img src="../public/images/sc_logo.png" style="width: 75%;" alt="StartupCommunity.org Logo"/></a><img src="../public/images/loading-bars.svg" width="64" height="64" /> </div>
+        </div>
+        <!--[if lt IE 7]>
         <p class="alert alert-danger">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
         <![endif]-->
-    <!--[if lt IE 9]>
+        <!--[if lt IE 9]>
         <script src="excanvas.js"></script>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/es5-shim/2.2.0/es5-shim.js"></script>
@@ -116,24 +148,24 @@
         </script>
     <![endif]-->
 
-    <!-- Page view wrapper -->
-    <ui-view></ui-view>
+        <!-- Page view wrapper -->
+        <ui-view></ui-view>
 
-    <!-- Alternative solution for CORS
+        <!-- Alternative solution for CORS
     <script src="../public/scripts/xdomain.min.js" slave="https://newsletter.startupcommunity.org/proxy.html"></script>
     -->
 
-    <!-- Global site tag (gtag.js) - Google Analytics -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-58555092-2"></script>
-    <script>
-        window.dataLayer = window.dataLayer || [];
+        <!-- Global site tag (gtag.js) - Google Analytics -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=UA-58555092-2"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
 
-        function gtag() { dataLayer.push(arguments); }
-        gtag('js', new Date());
+            function gtag() { dataLayer.push(arguments); }
+            gtag('js', new Date());
 
-        gtag('config', 'UA-58555092-2');
-    </script>
-    <script src="https://cdn.jsdelivr.net/npm/lodash@4.17.5/lodash.min.js"></script>
-</body>
+            gtag('config', 'UA-58555092-2');
+        </script>
+        <script src="https://cdn.jsdelivr.net/npm/lodash@4.17.5/lodash.min.js"></script>
+    </body>
 
 </html>
