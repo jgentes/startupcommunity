@@ -40,7 +40,7 @@
         <ul class="nav nav-tabs" role="tablist">
             <li id="ask_li"><a href="#ask" aria-controls="ask" role="tab" data-toggle="tab" aria-expanded="false"><span class="pe-7s-micro"></span>Ask a Question</a></li>
             <li id="companies_li" class="active"><a href="#companies" aria-controls="companies" role="tab" data-toggle="tab" aria-expanded="true"><span class="pe-7s-power"></span>Companies</a></li>
-            <li id="profile_li" ><a href="#profile" aria-controls="profile" role="tab" data-toggle="tab" aria-expanded="false"><span class="pe-7s-note2"></span>Full Profile</a></li>
+            <li id="profile_li"><a href="#profile" aria-controls="profile" role="tab" data-toggle="tab" aria-expanded="false"><span class="pe-7s-note2"></span>Full Profile</a></li>
         </ul>
         <!--/ END Nav tabs -->
 
@@ -51,19 +51,19 @@
 
             <div role="tabpanel" class="tab-pane" id="ask">
 
-                <div ng-include="'components/users/user.dashboard.ask.html'"></div>
+                <div ng-include="'user.dashboard.ask.html'"></div>
 
             </div>
 
             <div role="tabpanel" class="tab-pane active" id="companies">
 
-                <div ng-include="'components/users/user.dashboard.companies.html'"></div>
+                <div ng-include="'user.dashboard.companies.html'"></div>
 
             </div>
 
             <div role="tabpanel" class="tab-pane" id="profile">
 
-                <div ng-include="'components/users/user.dashboard.profile.html'"></div>
+                <div ng-include="'user.dashboard.profile.html'"></div>
 
             </div>
 

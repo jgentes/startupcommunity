@@ -18,7 +18,7 @@
 <div class="panel-footer" style="background: #fff; text-align: center; padding-bottom:32px;">
     <div ng-repeat="item in global.team[type.name]" style="text-align: left;">
         <div>
-            <div class="row" ng-include="'components/users/user.list.item.html'"></div>
+            <div class="row" ng-include="'user.list.item.html'"></div>
         </div>
     </div>
     <div ng-if="!global.team[type.name]" style="padding-top: 10px; margin-bottom: -22px;">No {{::type.title.toLowerCase()}} yet..</div>

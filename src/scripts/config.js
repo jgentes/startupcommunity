@@ -292,6 +292,20 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
 angular
     .module('startupcommunity')
     .config(configState)
+    .run(['$templateCache', function($templateCache) {
+        // this caches ng-includes so they can be required by webpack
+        $templateCache.put('user.list.html', require('../components/users/user.list.html'));
+        $templateCache.put('user.list.item.html', require('../components/users/user.list.item.html'));
+        $templateCache.put('user.dashboard.ask.html', require('../components/users/user.dashboard.ask.html'));
+        $templateCache.put('user.dashboard.ask.questions.html', require('../components/users/user.dashboard.ask.questions.html'));
+        $templateCache.put('user.dashboard.ask.questions.replies.html', require('../components/users/user.dashboard.ask.questions.replies.html'));
+        $templateCache.put('user.dashboard.companies.html', require('../components/users/user.dashboard.companies.html'));
+        $templateCache.put('user.dashboard.companies.panel.html', require('../components/users/user.dashboard.companies.panel.html'));
+        $templateCache.put('user.dashboard.profile.html', require('../components/users/user.dashboard.profile.html'));
+        $templateCache.put('company.dashboard.network.html', require('../components/companies/company.dashboard.network.html'));
+        $templateCache.put('company.dashboard.profile.html', require('../components/companies/company.dashboard.profile.html'));
+        $templateCache.put('company.list.item.html', require('../components/companies/company.list.item.html'));
+    }])
     .config(function($authProvider) {
         //$authProvider.authHeader = 'x-access-token'; // to fix 400 Bad Request issue
         $authProvider.loginRedirect = false; //otherwise will go home

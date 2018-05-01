@@ -15,7 +15,7 @@
     </div>
     <div class="panel-body" style="padding:0 20px;"></div>
     <div class="panel-footer">
-        <div class="social-talk" ng-repeat="reply in question.replies" ng-include="'components/users/user.dashboard.ask.questions.replies.html'">
+        <div class="social-talk" ng-repeat="reply in question.replies" ng-include="'user.dashboard.ask.questions.replies.html'">
         </div>
         <div class="social-form">
             <form ng-submit="profile.postReply(question)">

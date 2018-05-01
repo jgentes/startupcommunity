@@ -26,10 +26,10 @@
                     </div>
                     <div ng-repeat="item in companies.companies" ng-switch on="$index % 2">
                         <div class="col-md-6" ng-switch-when="0">
-                            <div class="row" ng-include="'components/companies/company.list.item.html'"></div>
+                            <div class="row" ng-include="'company.list.item.html'"></div>
                         </div>
                         <div class="col-md-6" ng-switch-when="1">
-                            <div class="row" ng-include="'components/companies/company.list.item.html'"></div>
+                            <div class="row" ng-include="'company.list.item.html'"></div>
                         </div>
                     </div>
                 </div>
