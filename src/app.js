@@ -46,6 +46,7 @@ import "./components/auth/auth.controller.js";
 import "./components/welcome/welcome.controller.js";
 import "./components/nav/nav.controller.js";
 import "./components/newsletter/newsletter.controller.js";
+
 /*// for debugging ui-router
 import { trace } from "@uirouter/angularjs";
 trace.enable(1, 5);

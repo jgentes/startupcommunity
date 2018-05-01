@@ -24,7 +24,7 @@
                     <div class="panel-footer" style="background: #fff; text-align: center; padding-bottom:49px;">
                         <div ng-repeat="item in global.top.people.entries | limitTo: 4" style="text-align: left;">
                             <div style="margin-right: -2px; margin-bottom:-5px;">
-                                <div class="row" ng-include="'components/users/user.list.item.html'"></div>
+                                <div class="row" ng-include="'user.list.item.html'"></div>
                                 <div ng-if="$last" style="margin-bottom:-12px;"></div>
                             </div>
                         </div>
@@ -57,7 +57,7 @@
                     <div class="panel-footer" style="background: #fff; text-align: center; padding-bottom:49px;">
                         <div ng-repeat="item in global.top.companies.entries | limitTo: 4" style="text-align: left;">
                             <div style="margin-right: -2px; margin-bottom:-5px;">
-                                <div class="row" ng-include="'components/companies/company.list.item.html'"></div>
+                                <div class="row" ng-include="'company.list.item.html'"></div>
                                 <div ng-if="$last" style="margin-bottom:-12px;"></div>
                             </div>
                         </div>
@@ -90,7 +90,7 @@
                     <div class="panel-footer" style="background: #fff; text-align: center; padding-bottom:49px;">
                         <div ng-repeat="item in global.top.resources.entries | limitTo: 4" style="text-align: left;">
                             <div style="margin-right: -2px; margin-bottom:-5px;">
-                                <div class="row" ng-include="'components/companies/company.list.item.html'"></div>
+                                <div class="row" ng-include="'company.list.item.html'"></div>
                                 <div ng-if="$last" style="margin-bottom:-12px;"></div>
                             </div>
                         </div>
