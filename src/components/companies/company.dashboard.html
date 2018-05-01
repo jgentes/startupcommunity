@@ -49,15 +49,110 @@
         <div class="tab-content" style="position: static; padding: 30px;">
 
             <div role="tabpanel" class="tab-pane active" id="network">
+                <!-- ng-include company.dashboard.network.html -->
+                <div class="panel-body" style="padding: 10px 5px; margin-bottom: -12px;">
+                    <div class="col-xs-8">
+                        <div class="stats-title pull-left" style="white-space: nowrap;">
+                            <div class="stats-icon pull-left" style="margin-top: 11px; margin-right: 8px;">
+                                <i ng-class="type.icon" class="fa-2x"></i>
+                            </div>
+                            <a ui-sref="user.list">
+                                <h3 ng-bind="type.title" style="padding-left: 5px;"></h3>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="col-xs-4">
+                        <a ui-sref="user.list">
+                            <h3 class="text-info pull-right">{{global.team.count[type.name]}}</h3>
+                        </a>
+                    </div>
+                </div>
+                <div class="panel-footer" style="background: #fff; text-align: center; padding-bottom:32px;">
+                    <div ng-repeat="item in global.team[type.name]" style="text-align: left;">
+                        <div>
+                            <!-- <div class="row" ng-include="'user.list.item.html'"></div> -->
+                            <div class="col-md-12 dash-table">
+                                <div>
+                                    <a ui-sref="user.dashboard({ location_path: item.id, community_path: '', tail_path: '', noreload: true, profile: item, query: null })" ng-click="global.loaders[item.name] = true" title="View {{::item.name | words:0}}'s Profile">
+            <img ng-src="{{item.avatar || '/public/images/blank_avatar.png'}}" alt="{{::item.name}}" class="user-img widget-image img-circle pull-left" onerror="this.src='/public/images/blank_avatar.png'"/>
+        </a>
+                                </div>
+                                <div class="user-row list-hr">
+                                    <a ng-show="(global.community.resource || global.location.resource) && global.user.roles.leader[global.community.id]" ng-click="nav.removeUser(item)" title="Remove {{::item.name}} from {{global.community.name}}" style="font-size: 11px; color:#bbb; padding-left:4px;">remove</a>
+                                    <a ui-sref="user.dashboard({ location_path: item.id, community_path: '', tail_path: '', noreload: true, profile: item, query: null })" title="View {{::item.name | words:0}}'s Profile" ng-click="global.loaders[item.name] = true" class="dash-row-div"><strong>{{::item.name}} </strong></a>
+                                    <div class="dash-row-summary" ng-show="item.summary.length > 0">
+                                        <a title="Show Summary" ng-click="showSummary = !showSummary" class="user-summary">&nbsp;<i style="font-size: 8px;" class="fa fa-chevron-down"></i></a>
+                                    </div>
+                                    <span loading-bars ng-if="global.loaders[item.name]"></span>
+                                    <li ng-repeat="(item, val) in item.roles" class="user-role role-right"><i ng-attr-title="{{item[0].toUpperCase() + item.slice(1);}}" style="font-weight: bold;" ng-class="{'text-primary pe-7s-paper-plane' : item == 'founder', 'text-danger pe-7s-flag' : item == 'leader', 'text-info pe-7s-study' : item == 'mentor', 'text-success pe-7s-gleam' : item == 'investor', 'text-default pe-7s-ball' : item == 'team', 'text-warning pe-7s-portfolio' : item == 'provider'}"></i></li>
+                                    <br>
+                                    <div class="dash-row">
+                                        <span class="text-muted" ng-bind-html="::item.headline | highlight:users.lastQuery" title="{{::item.headline}}"></span>
+                                    </div>
+                                    <div ng-if="(showSummary || $state.includes('search.*')) && item.summary">
+                                        <div style="padding-bottom: 10px;">
+                                            <hr>
+                                            <span class="text-muted" style="white-space:pre-wrap;" ng-bind-html="::item.summary | linky:'_blank' | highlight:users.lastQuery | safe_html"></span>
+                                            <div id="skills" ng-if="(showSummary || users.lastQuery) && item.summary" class="skills-top">
+                                                <li ng-repeat="skill in item.skills" class="label btn-default skills">
+                                                    <a><span ng-click="nav.search(skill)" ng-bind-html="::skill | highlight:users.lastQuery"></span></a>
+                                                </li>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div ng-if="!global.team[type.name]" style="padding-top: 10px; margin-bottom: -22px;">No {{::type.title.toLowerCase()}} yet..</div>
+                    <div ladda="profile[type.name]" ng-if="global.team[type.name] && global.team.count[type.name] > 4" class="ladda-button btn btn-xs btn-default" style="margin-top: 6px; float:right;" ng-click="profile[type.name] = true" ui-sref="user.list">view all</div>
+                    <div ng-if="global.user.roles[type.name][global.profile.id]" class="btn btn-xs btn-default" style="margin-top: 6px; float:left;" ng-click="profile.remove(type.name)">Remove yourself as a {{::type.title.toLowerCase().substring(0, type.title.length-1)}}</div>
+                </div>
 
-                <div ng-include="'company.dashboard.network.html'"></div>
 
             </div>
 
             <div role="tabpanel" class="tab-pane" id="profile">
 
-                <div ng-include="'company.dashboard.profile.html'"></div>
+                <!-- <div ng-include="'company.dashboard.profile.html'"></div> -->
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div style="padding-bottom: 20px;">
+                            <div>
+                                <div ng-if="::global.profile.angellist.angellist_url" class="pull-right">
+                                    <a href="{{::global.profile.angellist.angellist_url}}" target="_blank"><i class="fa fa-angellist btn btn-default btn-xs"></i>
+                    </a>
+                                </div>
+                                <div class="pull-left">
+                                    <img ng-src="{{global.profile.avatar}}" style="height:60px; padding-right: 10px;" />
+                                </div>
+                            </div>
+                            <h3 style="padding-left: 4px;">{{::global.profile.name}}</h3>
+                            <h4>
+                                {{::global.profile.headline}}
+                            </h4>
+                        </div>
 
+                    </div>
+                </div>
+                <div class="row">
+                    <div>
+                        <ul class="profile-ul">
+                            <p style="font-size: 14px; padding: 2px 5px 0 20px; float: left;">Locations:</p>
+                            <li ng-repeat="(loc, val) in global.locations" class="profile-roles">
+                                <a ui-sref="community.dashboard({location_path: loc})" class="btn btn-xs btn-outline btn-success"><i class="fa {{global.locations[loc].icon}}"></i> {{global.locations[loc].name}}</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div ng-show="global.profile.summary" class="panel-footer" style="margin-top:10px;">
+                    <h3>Summary</h3>
+                    <p style="white-space:pre-wrap;" ng-bind-html="::global.profile.summary"></p>
+                    <hr>
+                    <h3 ng-show="global.profile.industries">Markets</h3>
+                    <li ng-repeat="industry in global.profile.industries" class="label btn-default skills"><a href="#" ui-sref="search.dashboard({location_path: global.location.id})">{{::industry}}</a></li>
+                </div>
             </div>
 
         </div>

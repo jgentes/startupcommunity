@@ -5,7 +5,7 @@
   "private": true,
   "dependencies": {
     "@sendgrid/mail": "6.2.1",
-    "angular": "1.4.14",
+    "angular": "1.6.10",
     "angular-bootstrap-tour": "0.3.3-alpha.1",
     "angular-cookies": "1.6.10",
     "angular-h-sweetalert": "1.4.7",
@@ -64,7 +64,6 @@
     "copy-webpack-plugin": "^4.5.1",
     "css-loader": "0.28.11",
     "file-loader": "^1.1.11",
-    "html-loader": "0.5.5",
     "html-webpack-plugin": "3.2.0",
     "jshint-stylish": "2.1.0",
     "less": "3.0.1",

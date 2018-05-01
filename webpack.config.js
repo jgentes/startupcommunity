@@ -10,7 +10,6 @@ module.exports = {
   entry: ["babel-polyfill", path.resolve(__dirname, 'src/app.js')],
   output: {
     filename: 'bundle.js',
-    publicPath: '',
     path: path.resolve(__dirname, 'dist')
   },
   devtool: 'source-map',
@@ -87,7 +86,9 @@ module.exports = {
         ],
         use: [{
           loader: 'file-loader',
-          options: {}
+          query: {
+            publicPath: '/'
+          }
         }]
       },
       // Fonts

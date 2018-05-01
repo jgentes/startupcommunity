@@ -51,24 +51,282 @@
 
             <div role="tabpanel" class="tab-pane" id="ask">
 
-                <div ng-include="'user.dashboard.ask.html'"></div>
+                <!-- <div ng-include="'user.dashboard.ask.html'"></div> -->
+                <form ng-if="global.user" role="form" ng-submit="profile.askQuestion()">
+                    <div id="questionbox" class="input-group">
+                        <input type="text" class="form-control input-lg" placeholder="Write a public question for {{profile.user.name | words : 0}} here.." ng-model="profile.question" required>
+                        <span class="input-group-btn">
+                            <input type="submit" value="Ask a Question" class="btn btn-success" style="height: 46px;"/>
+                        </span>
+                    </div>
+                </form>
+                <span style="text-align: center;" ng-if="!global.user">
+    <h1>Join the startup community in {{ (global.location.name | words : 0).slice(0,-1) }} to ask questions.</h1><br>
+    <h2><a class="btn btn-lg btn-info" ng-click="nav.requestInvitation()">Click here to join</a></h2>
+</span>
+                <br>
+                <div loading-bars ng-show="profile.working" style="text-align:center; margin-left: -50px; margin-bottom: 15px;"></div>
+                <div ng-show="global.community.newmessages" class="row" ng-repeat="question in global.community.newmessages">
+                    <!-- <div class="col-lg-12" ng-include="'user.dashboard.ask.questions.html'"> -->
+                    <div class="hpanel hblue">
+                        <div class="panel-heading hbuilt">
+                            <div class="media social-profile clearfix">
+                                <a class="pull-left">
+                <img class="img-circle m-b" style="height: 65px;" ng-src="{{question.from.avatar || '/public/images/blank_avatar.png'}}" alt="{{question.from.name}}" ui-sref="user.dashboard({location_path: question.from.id, profile: {}})">
+            </a>
+                                <div class="media-body">
+                                    <a class="pull-right" style="font-size: 13px; margin-top: 3px; padding-right: 10px;" ui-sref="user.dashboard({location_path: question.from.id, profile: {}})">{{question.from.headline}}</a>
+                                    <p><a style="font-weight:bold; padding-left: 4px;" ui-sref="user.dashboard({location_path: question.from.id, profile: {}})">{{question.from.name}}</a> asked:</p>
+                                    <div class="question-content">
+                                        {{ question.content }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="panel-body" style="padding:0 20px;"></div>
+                        <div class="panel-footer">
+                            <div class="social-talk" ng-repeat="reply in question.replies">
+                                <!-- ng-include="'user.dashboard.ask.questions.replies.html'" -->
+                                <div class="media social-profile clearfix">
+                                    <a class="pull-left">
+        <img ng-src="{{reply.from.avatar || '/public/images/blank_avatar.png'}}" alt="{{reply.from.name}}" ui-sref="user.dashboard({location_path: question.from.id, profile: {}})">
+    </a>
+
+                                    <div class="media-body">
+                                        <small><a class="pull-right" style="color: #999" ui-sref="user.dashboard({location_path: question.from.id, profile: {}})">{{reply.from.headline}}</a></small>
+                                        <a style="font-weight:bold;" ui-sref="user.dashboard({location_path: reply.from.id, profile: {}})">{{reply.from.name}}</a>
+                                        <small class="text-muted"> on {{ reply.published | date : 'MMM d' }}</small>
+
+                                        <div class="social-content">
+                                            {{reply.content}}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="social-form">
+                                <form ng-submit="profile.postReply(question)">
+                                    <input class="form-control input-md" ng-disabled="!global.user" placeholder="Write a reply.." ng-model="profile.reply[question.id]" required>
+                                </form>
+                                <div loading-bars ng-show="profile.working[question.id]" style="text-align:center; margin-left: -50px; margin-top: 10px;"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            <div class="row" ng-repeat="question in global.community.messages">
+                <!-- <div class="col-lg-12" ng-include="'user.dashboard.ask.questions.html'"> -->
+                <div class="hpanel hblue">
+                    <div class="panel-heading hbuilt">
+                        <div class="media social-profile clearfix">
+                            <a class="pull-left">
+                <img class="img-circle m-b" style="height: 65px;" ng-src="{{question.from.avatar || '/public/images/blank_avatar.png'}}" alt="{{question.from.name}}" ui-sref="user.dashboard({location_path: question.from.id, profile: {}})">
+            </a>
+                            <div class="media-body">
+                                <a class="pull-right" style="font-size: 13px; margin-top: 3px; padding-right: 10px;" ui-sref="user.dashboard({location_path: question.from.id, profile: {}})">{{question.from.headline}}</a>
+                                <p><a style="font-weight:bold; padding-left: 4px;" ui-sref="user.dashboard({location_path: question.from.id, profile: {}})">{{question.from.name}}</a> asked:</p>
+                                <div class="question-content">
+                                    {{ question.content }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel-body" style="padding:0 20px;"></div>
+                    <div class="panel-footer">
+                        <div class="social-talk" ng-repeat="reply in question.replies">
+                            <!-- ng-include="'user.dashboard.ask.questions.replies.html'" -->
+                            <div class="media social-profile clearfix">
+                                <a class="pull-left">
+        <img ng-src="{{reply.from.avatar || '/public/images/blank_avatar.png'}}" alt="{{reply.from.name}}" ui-sref="user.dashboard({location_path: question.from.id, profile: {}})">
+    </a>
+
+                                <div class="media-body">
+                                    <small><a class="pull-right" style="color: #999" ui-sref="user.dashboard({location_path: question.from.id, profile: {}})">{{reply.from.headline}}</a></small>
+                                    <a style="font-weight:bold;" ui-sref="user.dashboard({location_path: reply.from.id, profile: {}})">{{reply.from.name}}</a>
+                                    <small class="text-muted"> on {{ reply.published | date : 'MMM d' }}</small>
+
+                                    <div class="social-content">
+                                        {{reply.content}}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="social-form">
+                            <form ng-submit="profile.postReply(question)">
+                                <input class="form-control input-md" ng-disabled="!global.user" placeholder="Write a reply.." ng-model="profile.reply[question.id]" required>
+                            </form>
+                            <div loading-bars ng-show="profile.working[question.id]" style="text-align:center; margin-left: -50px; margin-top: 10px;"></div>
+                        </div>
+                    </div>
+                </div>
 
             </div>
-
-            <div role="tabpanel" class="tab-pane active" id="companies">
-
-                <div ng-include="'user.dashboard.companies.html'"></div>
-
-            </div>
-
-            <div role="tabpanel" class="tab-pane" id="profile">
-
-                <div ng-include="'user.dashboard.profile.html'"></div>
-
-            </div>
-
         </div>
-        <!--/ END Tab panes -->
+
 
     </div>
+
+    <div role="tabpanel" class="tab-pane active" id="companies">
+
+        <!-- <div ng-include="'user.dashboard.companies.html'"></div> -->
+        <div class="row">ASDGASF
+            <div class="col-xs-12 col-md-6">
+                <div class="hpanel" ng-class="type.color" ng-repeat="type in ::profile.team_panels" ng-if="!($index % 2)">
+                    <!-- ng-include="'user.dashboard.companies.panel.html'" -->
+                    <div class="panel-body" style="padding: 10px 5px; margin-bottom: -12px;">
+                        <div class="col-xs-8">
+                            <div class="stats-title pull-left" style="white-space: nowrap;">
+                                <div class="stats-icon pull-left" style="margin-top: 11px; margin-right: 8px;">
+                                    <i ng-class="type.icon" class="fa-2x"></i>
+                                </div>
+                                <h3 ng-bind="type.title.slice(0, -1);" style="padding-left: 5px; cursor: default;"></h3>
+                                <!--<small class="text-info" ng-click="nav.addCompany()">+ Add Company</small>-->
+                            </div>
+                        </div>
+                        <div class="col-xs-4">
+                            <h3 class="text-info pull-right" style="cursor: default;">{{profile.user.companies.count[type.name]}}</h3>
+                        </div>
+                    </div>
+                    <div class="panel-footer" style="background: #fff; text-align: center;">
+                        <div ng-repeat="item in profile.user.companies[type.name]" style="text-align: left;">
+                            <div>
+                                <div class="row">
+                                    <!-- ng-include="'company.list.item.html'" -->
+                                    <div class="col-md-12 dash-table">
+                                        <div>
+                                            <a ui-sref="company.dashboard({ location_path: item.id, community_path: '', tail_path: '', noreload: true, profile: item, query: null })" ng-click="global.loaders[item.name] = true" title="View {{::item.name | words:0}}'s Profile"><img
+                ng-src="{{item.avatar || '/public/images/browser_icon.jpg'}}" alt="{{::item.name}}" class="user-img widget-image pull-left" onerror="this.src='images/browser_icon.jpg'"/></a>
+                                        </div>
+                                        <div class="user-row list-hr">
+                                            <a ui-sref="company.dashboard({ location_path: item.id, community_path: '', tail_path: '', noreload: true, profile: item, query: null })" title="View {{::item.name | words:0}}'s Profile" ng-click="global.loaders[item.name] = true" class="dash-row-div"><strong>{{::item.name}} </strong></a>
+                                            <div class="dash-row-summary" ng-show="(item.summary).length > 0" style="margin-left: -5px;">
+                                                <a title="Show Summary" ng-click="showSummary = !showSummary" class="user-summary">&nbsp;&nbsp;<i style="font-size: 8px;" class="fa fa-chevron-down"></i></a>
+                                            </div>
+                                            <span loading-bars ng-if="global.loaders[item.name]"></span>
+                                            <span ng-if="!item.resource && item.parents[0]">
+            <li class="role-right">
+                <button style="cursor: default;" class="btn btn-xs btn-outline btn-default">{{item.parents[0][0].toUpperCase() + item.parents[0].slice(1);}}</button>
+            </li>
+        </span>
+                                            <span ng-if="item.resource && item.resource_types[0]">
+            <li class="role-right">
+                <button style="cursor: default;" class="btn btn-xs btn-outline btn-default">{{item.resource_types[0][0].toUpperCase() + item.resource_types[0].slice(1);}}</button>
+            </li>
+        </span>
+                                            <br>
+                                            <div class="dash-row">
+                                                <span class="text-muted" ng-bind-html="::item.headline | highlight:companies.lastQuery" title="{{::item.headline}}"></span>
+                                            </div>
+                                            <div ng-show="(showSummary || $state.includes('search.*')) && item.summary">
+                                                <div style="padding-bottom: 10px;">
+                                                    <hr>
+                                                    <span class="text-muted" style="white-space:pre-wrap;" ng-bind-html="::item.summary | linky:'_blank' | highlight:companies.lastQuery | safe_html"></span>
+                                                    <div id="skills" ng-if="(showSummary || companies.lastQuery) && item.summary" class="skills-top">
+                                                        <li ng-if="item.industries" ng-repeat="market in item.industries" class="label btn-default skills">
+                                                            <a><span ng-click="nav.search(market)" ng-bind-html="::market | highlight:companies.lastQuery"></span></a>
+                                                        </li>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div ng-if="$last" style="margin-bottom:-11px;"></div>
+                            </div>
+                        </div>
+                        <div ng-if="!profile.user.companies[type.name]" style="padding-top: 10px;">None yet..&nbsp;<button class="btn btn-xs btn-default btn-outline" ng-if="profile.user.id == global.user.id" style="font-size:12px;" ui-sref="company.add({location_path: global.location.id})">add one?</button></div>
+                    </div>
+
+                </div>
+            </div>
+            <div class="col-xs-12 col-md-6">
+                <div class="hpanel" ng-class="type.color" ng-repeat="type in ::profile.team_panels" ng-if="$index % 2">
+                    <!-- ng-include="'user.dashboard.companies.panel.html'" -->
+                    <div class="panel-body" style="padding: 10px 5px; margin-bottom: -12px;">
+                        <div class="col-xs-8">
+                            <div class="stats-title pull-left" style="white-space: nowrap;">
+                                <div class="stats-icon pull-left" style="margin-top: 11px; margin-right: 8px;">
+                                    <i ng-class="type.icon" class="fa-2x"></i>
+                                </div>
+                                <h3 ng-bind="type.title.slice(0, -1);" style="padding-left: 5px; cursor: default;"></h3>
+                                <!--<small class="text-info" ng-click="nav.addCompany()">+ Add Company</small>-->
+                            </div>
+                        </div>
+                        <div class="col-xs-4">
+                            <h3 class="text-info pull-right" style="cursor: default;">{{profile.user.companies.count[type.name]}}</h3>
+                        </div>
+                    </div>
+                    <div class="panel-footer" style="background: #fff; text-align: center;">
+                        <div ng-repeat="item in profile.user.companies[type.name]" style="text-align: left;">
+                            <div>
+                                <div class="row">
+                                    <!-- ng-include="'company.list.item.html'" -->
+                                    <div class="col-md-12 dash-table">
+                                        <div>
+                                            <a ui-sref="company.dashboard({ location_path: item.id, community_path: '', tail_path: '', noreload: true, profile: item, query: null })" ng-click="global.loaders[item.name] = true" title="View {{::item.name | words:0}}'s Profile"><img
+                ng-src="{{item.avatar || '/public/images/browser_icon.jpg'}}" alt="{{::item.name}}" class="user-img widget-image pull-left" onerror="this.src='images/browser_icon.jpg'"/></a>
+                                        </div>
+                                        <div class="user-row list-hr">
+                                            <a ui-sref="company.dashboard({ location_path: item.id, community_path: '', tail_path: '', noreload: true, profile: item, query: null })" title="View {{::item.name | words:0}}'s Profile" ng-click="global.loaders[item.name] = true" class="dash-row-div"><strong>{{::item.name}} </strong></a>
+                                            <div class="dash-row-summary" ng-show="(item.summary).length > 0" style="margin-left: -5px;">
+                                                <a title="Show Summary" ng-click="showSummary = !showSummary" class="user-summary">&nbsp;&nbsp;<i style="font-size: 8px;" class="fa fa-chevron-down"></i></a>
+                                            </div>
+                                            <span loading-bars ng-if="global.loaders[item.name]"></span>
+                                            <span ng-if="!item.resource && item.parents[0]">
+            <li class="role-right">
+                <button style="cursor: default;" class="btn btn-xs btn-outline btn-default">{{item.parents[0][0].toUpperCase() + item.parents[0].slice(1);}}</button>
+            </li>
+        </span>
+                                            <span ng-if="item.resource && item.resource_types[0]">
+            <li class="role-right">
+                <button style="cursor: default;" class="btn btn-xs btn-outline btn-default">{{item.resource_types[0][0].toUpperCase() + item.resource_types[0].slice(1);}}</button>
+            </li>
+        </span>
+                                            <br>
+                                            <div class="dash-row">
+                                                <span class="text-muted" ng-bind-html="::item.headline | highlight:companies.lastQuery" title="{{::item.headline}}"></span>
+                                            </div>
+                                            <div ng-show="(showSummary || $state.includes('search.*')) && item.summary">
+                                                <div style="padding-bottom: 10px;">
+                                                    <hr>
+                                                    <span class="text-muted" style="white-space:pre-wrap;" ng-bind-html="::item.summary | linky:'_blank' | highlight:companies.lastQuery | safe_html"></span>
+                                                    <div id="skills" ng-if="(showSummary || companies.lastQuery) && item.summary" class="skills-top">
+                                                        <li ng-if="item.industries" ng-repeat="market in item.industries" class="label btn-default skills">
+                                                            <a><span ng-click="nav.search(market)" ng-bind-html="::market | highlight:companies.lastQuery"></span></a>
+                                                        </li>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div ng-if="$last" style="margin-bottom:-11px;"></div>
+                            </div>
+                        </div>
+                        <div ng-if="!profile.user.companies[type.name]" style="padding-top: 10px;">None yet..&nbsp;<button class="btn btn-xs btn-default btn-outline" ng-if="profile.user.id == global.user.id" style="font-size:12px;" ui-sref="company.add({location_path: global.location.id})">add one?</button></div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+
+    <div role="tabpanel" class="tab-pane" id="profile">
+
+        <!-- <div ng-include="'user.dashboard.profile.html'"></div> -->
+        <div ng-show="profile.user.summary" style="margin-top:10px;">
+            <h3>Summary</h3>
+            <p style="white-space:pre-wrap;" ng-bind-html="profile.user.summary"></p>
+            <hr>
+            <h3 ng-show="profile.user.skills">Skills & Industries</h3>
+            <li ng-repeat="skill in profile.user.skills" class="label btn-default skills"><a href="#" ng-click="nav.search(skill)">{{skill}}</a></li>
+        </div>
+    </div>
+
+</div>
+<!--/ END Tab panes -->
+
+</div>
 </div>
