@@ -15,7 +15,47 @@
 <div class="panel-footer" style="background: #fff; text-align: center;">
     <div ng-repeat="item in profile.user.companies[type.name]" style="text-align: left;">
         <div>
-            <div class="row" ng-include="'company.list.item.html'"></div>
+            <div class="row">
+                <!-- ng-include="'company.list.item.html'" -->
+                <div class="col-md-12 dash-table">
+                    <div>
+                        <a ui-sref="company.dashboard({ location_path: item.id, community_path: '', tail_path: '', noreload: true, profile: item, query: null })" ng-click="global.loaders[item.name] = true" title="View {{::item.name | words:0}}'s Profile"><img
+                ng-src="{{item.avatar || '/public/images/browser_icon.jpg'}}" alt="{{::item.name}}" class="user-img widget-image pull-left" onerror="this.src='images/browser_icon.jpg'"/></a>
+                    </div>
+                    <div class="user-row list-hr">
+                        <a ui-sref="company.dashboard({ location_path: item.id, community_path: '', tail_path: '', noreload: true, profile: item, query: null })" title="View {{::item.name | words:0}}'s Profile" ng-click="global.loaders[item.name] = true" class="dash-row-div"><strong>{{::item.name}} </strong></a>
+                        <div class="dash-row-summary" ng-show="(item.summary).length > 0" style="margin-left: -5px;">
+                            <a title="Show Summary" ng-click="showSummary = !showSummary" class="user-summary">&nbsp;&nbsp;<i style="font-size: 8px;" class="fa fa-chevron-down"></i></a>
+                        </div>
+                        <span loading-bars ng-if="global.loaders[item.name]"></span>
+                        <span ng-if="!item.resource && item.parents[0]">
+            <li class="role-right">
+                <button style="cursor: default;" class="btn btn-xs btn-outline btn-default">{{item.parents[0][0].toUpperCase() + item.parents[0].slice(1);}}</button>
+            </li>
+        </span>
+                        <span ng-if="item.resource && item.resource_types[0]">
+            <li class="role-right">
+                <button style="cursor: default;" class="btn btn-xs btn-outline btn-default">{{item.resource_types[0][0].toUpperCase() + item.resource_types[0].slice(1);}}</button>
+            </li>
+        </span>
+                        <br>
+                        <div class="dash-row">
+                            <span class="text-muted" ng-bind-html="::item.headline | highlight:companies.lastQuery" title="{{::item.headline}}"></span>
+                        </div>
+                        <div ng-show="(showSummary || $state.includes('search.*')) && item.summary">
+                            <div style="padding-bottom: 10px;">
+                                <hr>
+                                <span class="text-muted" style="white-space:pre-wrap;" ng-bind-html="::item.summary | linky:'_blank' | highlight:companies.lastQuery | safe_html"></span>
+                                <div id="skills" ng-if="(showSummary || companies.lastQuery) && item.summary" class="skills-top">
+                                    <li ng-if="item.industries" ng-repeat="market in item.industries" class="label btn-default skills">
+                                        <a><span ng-click="nav.search(market)" ng-bind-html="::market | highlight:companies.lastQuery"></span></a>
+                                    </li>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
             <div ng-if="$last" style="margin-bottom:-11px;"></div>
         </div>
     </div>
