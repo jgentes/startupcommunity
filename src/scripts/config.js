@@ -414,7 +414,7 @@ angular
             }
         )
     /*/
-    // this factory is used to capture sourcemaps
+    /*// this factory is used to capture sourcemaps
     .factory('$exceptionHandler',
         function($log, $window, $injector, errorLogService) {
             var getSourceMappedStackTrace = function(exception) {
@@ -422,7 +422,7 @@ angular
                     $http = $injector.get('$http'),
                     SMConsumer = $window.sourceMap.SourceMapConsumer,
                     cache = {};
-
+    
                 // Retrieve a SourceMap object for a minified script URL
                 var getMapForScript = function(url) {
                     if (cache[url]) {
@@ -446,7 +446,7 @@ angular
                         return promise;
                     }
                 };
-
+    
                 if (exception.stack) { // not all browsers support stack traces
                     return $q.all($.map(exception.stack.split(/\n/), function(stackLine) {
                         var match = stackLine.match(/^(.+)(http.+):(\d+):(\d+)/);
@@ -480,7 +480,7 @@ angular
                     return $q.when('');
                 }
             };
-
+    
             return function(exception, cause) {
                 if ($window.Bugsnag) $window.Bugsnag.notifyException(exception);
                 getSourceMappedStackTrace(exception).then(function(final) {
@@ -488,4 +488,4 @@ angular
                 });
             };
         });
-*/
+    */
