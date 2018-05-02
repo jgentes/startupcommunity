@@ -88,6 +88,6 @@
   "scripts": {
     "test": "grunt test",
     "build": "webpack",
-    "heroku-postbuild": "webpack"
+    "heroku-postinstall": "webpack"
   }
 }
