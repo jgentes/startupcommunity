@@ -627,7 +627,7 @@ function NavigationController($scope, $auth, $state, $window, $location, $stateP
       }
 
       if (embed) {
-        for (u in embed) {
+        for (const u in embed) {
           if (embed[u].url == domain) {
             try {
               if ($window.localStorage) {
