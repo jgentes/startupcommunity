@@ -87,6 +87,7 @@
   },
   "scripts": {
     "test": "grunt test",
-    "build": "webpack"
+    "build": "webpack",
+    "postbuild": "webpack"
   }
 }
