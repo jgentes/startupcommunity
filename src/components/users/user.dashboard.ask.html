@@ -1,0 +1,110 @@
+<form ng-if="global.user" role="form" ng-submit="profile.askQuestion()">
+    <div id="questionbox" class="input-group">
+        <input type="text" class="form-control input-lg" placeholder="Write a public question for {{profile.user.name | words : 0}} here.." ng-model="profile.question" required>
+        <span class="input-group-btn">
+                            <input type="submit" value="Ask a Question" class="btn btn-success" style="height: 46px;"/>
+                        </span>
+    </div>
+</form>
+<span style="text-align: center;" ng-if="!global.user">
+    <h1>Join the startup community in {{ (global.location.name | words : 0).slice(0,-1) }} to ask questions.</h1><br>
+    <h2><a class="btn btn-lg btn-info" ng-click="nav.requestInvitation()">Click here to join</a></h2>
+</span>
+<br>
+<div loading-bars ng-show="profile.working" style="text-align:center; margin-left: -50px; margin-bottom: 15px;"></div>
+<div ng-show="global.community.newmessages" class="row" ng-repeat="question in global.community.newmessages">
+    <!-- <div class="col-lg-12" ng-include="'user.dashboard.ask.questions.html'"> -->
+    <div class="hpanel hblue">
+        <div class="panel-heading hbuilt">
+            <div class="media social-profile clearfix">
+                <a class="pull-left">
+                <img class="img-circle m-b" style="height: 65px;" ng-src="{{question.from.avatar || '/public/images/blank_avatar.png'}}" alt="{{question.from.name}}" ui-sref="user.dashboard({location_path: question.from.id, profile: {}})">
+            </a>
+                <div class="media-body">
+                    <a class="pull-right" style="font-size: 13px; margin-top: 3px; padding-right: 10px;" ui-sref="user.dashboard({location_path: question.from.id, profile: {}})">{{question.from.headline}}</a>
+                    <p><a style="font-weight:bold; padding-left: 4px;" ui-sref="user.dashboard({location_path: question.from.id, profile: {}})">{{question.from.name}}</a> asked:</p>
+                    <div class="question-content">
+                        {{ question.content }}
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="panel-body" style="padding:0 20px;"></div>
+        <div class="panel-footer">
+            <div class="social-talk" ng-repeat="reply in question.replies">
+                <!-- ng-include="'user.dashboard.ask.questions.replies.html'" -->
+                <div class="media social-profile clearfix">
+                    <a class="pull-left">
+        <img ng-src="{{reply.from.avatar || '/public/images/blank_avatar.png'}}" alt="{{reply.from.name}}" ui-sref="user.dashboard({location_path: question.from.id, profile: {}})">
+    </a>
+
+                    <div class="media-body">
+                        <small><a class="pull-right" style="color: #999" ui-sref="user.dashboard({location_path: question.from.id, profile: {}})">{{reply.from.headline}}</a></small>
+                        <a style="font-weight:bold;" ui-sref="user.dashboard({location_path: reply.from.id, profile: {}})">{{reply.from.name}}</a>
+                        <small class="text-muted"> on {{ reply.published | date : 'MMM d' }}</small>
+
+                        <div class="social-content">
+                            {{reply.content}}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="social-form">
+                <form ng-submit="profile.postReply(question)">
+                    <input class="form-control input-md" ng-disabled="!global.user" placeholder="Write a reply.." ng-model="profile.reply[question.id]" required>
+                </form>
+                <div loading-bars ng-show="profile.working[question.id]" style="text-align:center; margin-left: -50px; margin-top: 10px;"></div>
+            </div>
+        </div>
+    </div>
+
+</div>
+</div>
+<div class="row" ng-repeat="question in global.community.messages">
+    <!-- <div class="col-lg-12" ng-include="'user.dashboard.ask.questions.html'"> -->
+    <div class="hpanel hblue">
+        <div class="panel-heading hbuilt">
+            <div class="media social-profile clearfix">
+                <a class="pull-left">
+                <img class="img-circle m-b" style="height: 65px;" ng-src="{{question.from.avatar || '/public/images/blank_avatar.png'}}" alt="{{question.from.name}}" ui-sref="user.dashboard({location_path: question.from.id, profile: {}})">
+            </a>
+                <div class="media-body">
+                    <a class="pull-right" style="font-size: 13px; margin-top: 3px; padding-right: 10px;" ui-sref="user.dashboard({location_path: question.from.id, profile: {}})">{{question.from.headline}}</a>
+                    <p><a style="font-weight:bold; padding-left: 4px;" ui-sref="user.dashboard({location_path: question.from.id, profile: {}})">{{question.from.name}}</a> asked:</p>
+                    <div class="question-content">
+                        {{ question.content }}
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="panel-body" style="padding:0 20px;"></div>
+        <div class="panel-footer">
+            <div class="social-talk" ng-repeat="reply in question.replies">
+                <!-- ng-include="'user.dashboard.ask.questions.replies.html'" -->
+                <div class="media social-profile clearfix">
+                    <a class="pull-left">
+        <img ng-src="{{reply.from.avatar || '/public/images/blank_avatar.png'}}" alt="{{reply.from.name}}" ui-sref="user.dashboard({location_path: question.from.id, profile: {}})">
+    </a>
+
+                    <div class="media-body">
+                        <small><a class="pull-right" style="color: #999" ui-sref="user.dashboard({location_path: question.from.id, profile: {}})">{{reply.from.headline}}</a></small>
+                        <a style="font-weight:bold;" ui-sref="user.dashboard({location_path: reply.from.id, profile: {}})">{{reply.from.name}}</a>
+                        <small class="text-muted"> on {{ reply.published | date : 'MMM d' }}</small>
+
+                        <div class="social-content">
+                            {{reply.content}}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="social-form">
+                <form ng-submit="profile.postReply(question)">
+                    <input class="form-control input-md" ng-disabled="!global.user" placeholder="Write a reply.." ng-model="profile.reply[question.id]" required>
+                </form>
+                <div loading-bars ng-show="profile.working[question.id]" style="text-align:center; margin-left: -50px; margin-top: 10px;"></div>
+            </div>
+        </div>
+    </div>
+
+</div>
+</div>
