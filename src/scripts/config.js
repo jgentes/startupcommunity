@@ -414,7 +414,7 @@ angular
             }
         )
     /*/
-    / this factory is used to capture sourcemaps
+    // this factory is used to capture sourcemaps
     .factory('$exceptionHandler',
         function($log, $window, $injector, errorLogService) {
             var getSourceMappedStackTrace = function(exception) {
