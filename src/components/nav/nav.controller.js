@@ -4,7 +4,7 @@ angular
   .controller('SettingsController', SettingsController)
   .controller('EmbedSettingsController', EmbedSettingsController);
 
-function NavigationController($scope, $auth, $state, $window, $location, $stateParams, $uibModal, user_service, community_service, sweet, errorLogService, newsletter_service) {
+function NavigationController($scope, $auth, $state, $window, $location, $stateParams, $uibModal, user_service, community_service, sweet, newsletter_service) {
 
   var self = this;
   $scope.global.path = $location.path().replace(/\/$/, ""); //used for routing and used in view
