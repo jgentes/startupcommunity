@@ -50,7 +50,7 @@ app.use(function(req, res, next) {
     next();
 });
 
-var root = process.env.NODE_ENV == 'local' ? '/home/ubuntu/workspace' : '/app'; // returns /app for heroku
+var root = process.env.NODE_ENV == 'local' ? '/home/ubuntu/workspace' : __dirname; // returns /app for heroku
 
 // Order really matters here..!
 app.disable('x-powered-by');
