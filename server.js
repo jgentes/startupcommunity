@@ -50,7 +50,7 @@ app.use(function(req, res, next) {
     next();
 });
 
-var root = process.env.NODE_ENV == 'local' ? '/home/ubuntu/workspace' : __dirname.substring(0, __dirname.lastIndexOf('/')) || __dirname.substring(0, __dirname.lastIndexOf('\\')); // returns /app for heroku
+var root = process.env.NODE_ENV == 'local' ? '/home/ubuntu/workspace' : (__dirname.substring(0, __dirname.lastIndexOf('/')) || __dirname.substring(0, __dirname.lastIndexOf('\\'))); // returns /app for heroku
 console.log('ROOT: ', root)
 // Order really matters here..!
 app.disable('x-powered-by');
