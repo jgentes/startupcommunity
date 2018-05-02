@@ -335,13 +335,13 @@ angular
             function(event, toState, toParams, fromState, fromParams) {
                 $('#minorsplash').css('display', 'block');
 
-                console.log('----------------------------');
+               /*console.log('----------------------------');
                 console.log('from: ' + fromState.name);
                 console.log('to:' + toState.name);
-
+               
                 console.log(fromState);
                 console.log(toState);
-                console.log(event);
+                console.log(event);*/
 
             });
         $rootScope.$on('$stateChangeSuccess', function() {
