@@ -1,3 +1,5 @@
+/*global angular*/
+/*global $*/
 angular
     .module('startupcommunity')
     .controller('DashboardController', DashboardController);

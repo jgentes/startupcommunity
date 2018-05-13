@@ -1,3 +1,6 @@
+/*global angular*/
+/*global jQuery*/
+/*global $*/
 angular
   .module('startupcommunity')
   .controller('NavigationController', NavigationController)
@@ -7,12 +10,12 @@ angular
 function NavigationController($scope, $auth, $state, $window, $location, $stateParams, $uibModal, user_service, community_service, sweet, newsletter_service) {
 
   var self = this;
-  $scope.global.path = $location.path().replace(/\/$/, ""); //used for routing and used in view
+  $scope.global.path = $location.path().replace(/\/$/, ''); //used for routing and used in view
   $scope.global.query = undefined;
   $scope.global.top = undefined;
   $scope.global.community = undefined;
   $scope.global.loaders = {};
-  $scope.global.lastitems = ["people", "companies", "resources", "search", "invite", "add-company", "add-resource", "welcome", "settings", "edit", "newsletter"];
+  $scope.global.lastitems = ['people', 'companies', 'resources', 'search', 'invite', 'add-company', 'add-resource', 'welcome', 'settings', 'edit', 'newsletter'];
   //$scope.global.industries = community_service.industries(); 
   this.state = $state; // used in header because path doesn't always update properly..
 
@@ -30,8 +33,8 @@ function NavigationController($scope, $auth, $state, $window, $location, $stateP
 
           if (response.id) {
             window.mixpanel.people.set({
-              "$name": response.name,
-              "$email": response.email
+              '$name': response.name,
+              '$email': response.email
             });
           }
 
@@ -54,7 +57,7 @@ function NavigationController($scope, $auth, $state, $window, $location, $stateP
   // getcommunity evaluates if we already have the community in global scope, then getLocation, otherwise runs next to pull it
   var getCommunity = function() {
 
-    var pullCommunity = async function(comm_path) {
+    var pullCommunity = async comm_path => {
 
       var comm_response = await community_service.getCommunity(comm_path);
       if (!comm_response) return $state.go('404', {}, { location: false });
@@ -65,7 +68,7 @@ function NavigationController($scope, $auth, $state, $window, $location, $stateP
 
     var next = function() {
 
-      var url = $location.path().replace(/\/$/, "").split('/'),
+      var url = $location.path().replace(/\/$/, '').split('/'),
         lastitem = url.pop(),
         root = url.pop();
 
@@ -151,7 +154,7 @@ function NavigationController($scope, $auth, $state, $window, $location, $stateP
         nav_community.home :
         $scope.global.location.id;
 
-      var response = await community_service.getTop(true_loc)
+      var response = await community_service.getTop(true_loc);
 
       $scope.global.nav_top = response;
       getCommunityTop();
@@ -179,7 +182,7 @@ function NavigationController($scope, $auth, $state, $window, $location, $stateP
 
   var loadNav = function() {
 
-    var path_url = $location.path().replace(/\/$/, "").split('/').pop(); // used for routing
+    var path_url = $location.path().replace(/\/$/, '').split('/').pop(); // used for routing
     /*
         console.log($stateParams);
         console.log(path_url);
@@ -332,7 +335,7 @@ function NavigationController($scope, $auth, $state, $window, $location, $stateP
     }
 
     // the industry_icons save me a db call on every controller reload :) because top doesn't include item values.. maybe combine this with 'parents' service?
-    $scope.global.industry_icons = { "construction": { "icon": "fa-wrench" }, "legal": { "icon": "fa-gavel" }, "tech": { "icon": "fa-code" }, "medical": { "icon": "fa-stethoscope" }, "healthcare": { "icon": "fa-ambulance" }, "recreation": { "icon": "fa-sun-o" }, "art": { "icon": "fa-picture-o" }, "transportation": { "icon": "fa-road" }, "consumer-goods": { "icon": "fa-barcode" }, "non-profit": { "icon": "fa-heart-o" }, "corporate": { "icon": "fa-building-o" }, "government": { "icon": "fa-university" }, "finance": { "icon": "fa-pie-chart" }, "education": { "icon": "fa-graduation-cap" }, "manufacturing": { "icon": "fa-cube" }, "agriculture": { "icon": "fa-pagelines" }, "services": { "icon": "fa-bell-o" } };
+    $scope.global.industry_icons = { 'construction': { 'icon': 'fa-wrench' }, 'legal': { 'icon': 'fa-gavel' }, 'tech': { 'icon': 'fa-code' }, 'medical': { 'icon': 'fa-stethoscope' }, 'healthcare': { 'icon': 'fa-ambulance' }, 'recreation': { 'icon': 'fa-sun-o' }, 'art': { 'icon': 'fa-picture-o' }, 'transportation': { 'icon': 'fa-road' }, 'consumer-goods': { 'icon': 'fa-barcode' }, 'non-profit': { 'icon': 'fa-heart-o' }, 'corporate': { 'icon': 'fa-building-o' }, 'government': { 'icon': 'fa-university' }, 'finance': { 'icon': 'fa-pie-chart' }, 'education': { 'icon': 'fa-graduation-cap' }, 'manufacturing': { 'icon': 'fa-cube' }, 'agriculture': { 'icon': 'fa-pagelines' }, 'services': { 'icon': 'fa-bell-o' } };
 
     var parents = community_service.parents();
     parents = parents.join('|').toLowerCase().split('|'); // change all to lowercase
@@ -356,16 +359,16 @@ function NavigationController($scope, $auth, $state, $window, $location, $stateP
 
     self.search = function(query) {
 
-      if ($scope.global.community.type == "cluster" || $scope.global.community.resource) {
+      if ($scope.global.community.type == 'cluster' || $scope.global.community.resource) {
         $stateParams.location_path == $scope.global.community.id ?
-          $state.go('search.dashboard', { location_path: $stateParams.location_path, query: query, tail_path: '' }, { notify: !!$scope.global.query ? true : false, location: !!$scope.global.query ? false : true }) :
+          $state.go('search.dashboard', { location_path: $stateParams.location_path, query: query, tail_path: '' }, { notify: $scope.global.query ? true : false, location: $scope.global.query ? false : true }) :
           $state.go('search.dashboard', { location_path: $stateParams.location_path, community_path: $scope.global.community.id, query: query, tail_path: '' }, { reload: true });
       }
-      else if ($scope.global.community.type == "user" || $scope.global.community.type == "company") {
+      else if ($scope.global.community.type == 'user' || $scope.global.community.type == 'company') {
         $state.go('search.dashboard', { location_path: $scope.global.community.home, query: query, tail_path: '' }, { notify: false });
       }
       else if ($scope.global.lastitems.indexOf($stateParams.community_path) > -1) {
-        $state.go('search.dashboard', { location_path: $stateParams.location_path, community_path: '', query: query, tail_path: '' }, { location: false })
+        $state.go('search.dashboard', { location_path: $stateParams.location_path, community_path: '', query: query, tail_path: '' }, { location: false });
       }
       else $state.go('search.dashboard', { query: query, tail_path: '' }, { notify: false });
 
@@ -377,9 +380,8 @@ function NavigationController($scope, $auth, $state, $window, $location, $stateP
 
       var modalInstance = $uibModal.open({
         templateUrl: require('../users/user.contact.html'),
-        controller: ContactUserController,
-        controllerAs: 'contact',
-        windowClass: "hmodal-warning"
+        controller: 'ContactUserController as contact',
+        windowClass: 'hmodal-warning'
       });
     };
 
@@ -391,7 +393,7 @@ function NavigationController($scope, $auth, $state, $window, $location, $stateP
         templateUrl: require('./nav.embed_settings.html'),
         controller: EmbedSettingsController,
         controllerAs: 'settings',
-        windowClass: "hmodal-success",
+        windowClass: 'hmodal-success',
         resolve: {
           embed_community: function() {
 
@@ -400,7 +402,7 @@ function NavigationController($scope, $auth, $state, $window, $location, $stateP
               .then(function(response) {
                 $scope.global.community = response.data;
                 return response.data;
-              })
+              });
           }
         }
       });
@@ -414,7 +416,7 @@ function NavigationController($scope, $auth, $state, $window, $location, $stateP
         templateUrl: require('./nav.edit_cluster.html'),
         controller: CommunityController,
         controllerAs: 'edit',
-        windowClass: "hmodal-success",
+        windowClass: 'hmodal-success',
         resolve: {
           edit_community: function() {
 
@@ -425,7 +427,7 @@ function NavigationController($scope, $auth, $state, $window, $location, $stateP
                 .then(function(response) {
                   $scope.global.community = response.data;
                   return response.data;
-                })
+                });
 
             }
             else return null;
@@ -436,28 +438,28 @@ function NavigationController($scope, $auth, $state, $window, $location, $stateP
 
     self.removeUser = function(ruser) {
       sweet.show({
-        title: "Are you sure?",
-        text: "Removing this user from " + $scope.global.community.name + " does not remove them from the entire community. You can easily add them to the resource again in the future.",
-        type: "warning",
+        title: 'Are you sure?',
+        text: 'Removing this user from ' + $scope.global.community.name + ' does not remove them from the entire community. You can easily add them to the resource again in the future.',
+        type: 'warning',
         showCancelButton: true,
-        confirmButtonColor: "#DD6B55",
-        confirmButtonText: "Yes, remove " + ruser.name,
+        confirmButtonColor: '#DD6B55',
+        confirmButtonText: 'Yes, remove ' + ruser.name,
         closeOnConfirm: false
       }, function() {
         user_service.removeCommunity(ruser.id, $scope.global.community)
           .then(function(response) {
             if (response.status !== 201) {
               sweet.show({
-                title: "Sorry, something went wrong.",
-                text: "Here's what we know: " + response.data.message,
-                type: "error"
+                title: 'Sorry, something went wrong.',
+                text: 'Here\'s what we know: ' + response.data.message,
+                type: 'error'
               });
 
             }
             else {
-              sweet.show("Success!", ruser.name + " has been removed.", "success");
+              sweet.show('Success!', ruser.name + ' has been removed.', 'success');
             }
-          })
+          });
       });
     };
 
@@ -465,9 +467,8 @@ function NavigationController($scope, $auth, $state, $window, $location, $stateP
 
       var modalInstance = $uibModal.open({
         templateUrl: require('../newsletter/setup_newsletter.html'),
-        controller: SetupNewsController,
-        controllerAs: 'news',
-        windowClass: "hmodal-warning",
+        controller: 'SetupNewsController as news',
+        windowClass: 'hmodal-warning',
         resolve: {
           user: function() {
             return $scope.global.user;
@@ -485,7 +486,7 @@ function NavigationController($scope, $auth, $state, $window, $location, $stateP
         user_service.getProfile()
           .then(function(response) {
             $scope.global.user = response.data;
-          })
+          });
       });
 
     };
@@ -497,14 +498,14 @@ function NavigationController($scope, $auth, $state, $window, $location, $stateP
           self.syncworking = false;
           if (response.status !== 201) {
             sweet.show({
-              title: "Sorry, something went wrong.",
-              text: "Here's what we know: " + response.data.message,
-              type: "error"
+              title: 'Sorry, something went wrong.',
+              text: 'Here\'s what we know: ' + response.data.message,
+              type: 'error'
             });
 
           }
           else {
-            sweet.show("Success!", "Your lists have been synchronized.", "success");
+            sweet.show('Success!', 'Your lists have been synchronized.', 'success');
           }
         });
     };
@@ -515,9 +516,8 @@ function NavigationController($scope, $auth, $state, $window, $location, $stateP
 
       var modalInstance = $uibModal.open({
         templateUrl: require('../users/user.request_invite.html'),
-        controller: InviteUserController,
-        controllerAs: 'invite',
-        windowClass: "hmodal-info"
+        controller: 'InviteUserController as invite',
+        windowClass: 'hmodal-info'
       });
     };
 
@@ -527,9 +527,8 @@ function NavigationController($scope, $auth, $state, $window, $location, $stateP
 
       var modalInstance = $uibModal.open({
         templateUrl: require('../users/user.invite.html'),
-        controller: InviteUserController,
-        controllerAs: 'invite',
-        windowClass: "hmodal-info",
+        controller: 'InviteUserController as invite',
+        windowClass: 'hmodal-info',
         resolve: {
           user: function() {
             return $scope.global.user;
@@ -568,12 +567,12 @@ function NavigationController($scope, $auth, $state, $window, $location, $stateP
 
       angular.element(document).ready(function() {
         setTimeout(function() {
-          $("body").toggleClass("hide-sidebar");
+          $('body').toggleClass('hide-sidebar');
         }, 1000);
       });
 
       //find & remove protocol (http, ftp, etc.) and get domain
-      if (document.referrer.indexOf("://") > -1) {
+      if (document.referrer.indexOf('://') > -1) {
         domain = document.referrer.split('/')[2];
       }
       else {
@@ -633,8 +632,8 @@ function NavigationController($scope, $auth, $state, $window, $location, $stateP
               if ($window.localStorage) {
                 var domain_embed = {};
                 domain_embed[domain] = {
-                  "color": embed[u].color || '#fff',
-                  "full": embed[u].full || false
+                  'color': embed[u].color || '#fff',
+                  'full': embed[u].full || false
                 };
 
                 $window.localStorage.setItem('startupcommunity-embed', JSON.stringify(domain_embed));
@@ -704,10 +703,10 @@ function EmbedSettingsController($scope, $uibModalInstance, sweet, embed_communi
       }
 
       self.embed.push({
-        "url": self.formdata.embed_url_value,
-        "color": self.formdata.embed_color_value || '#fff',
-        "full": self.formdata.embed_full_value || false,
-        "creator": $scope.global.user.id
+        'url': self.formdata.embed_url_value,
+        'color': self.formdata.embed_color_value || '#fff',
+        'full': self.formdata.embed_full_value || false,
+        'creator': $scope.global.user.id
       });
 
     }
@@ -731,16 +730,16 @@ function EmbedSettingsController($scope, $uibModalInstance, sweet, embed_communi
 
         if (response.status !== 201) {
           sweet.show({
-            title: "Sorry, something went wrong.",
+            title: 'Sorry, something went wrong.',
             text: response.data.message,
-            type: "error"
+            type: 'error'
           });
 
         }
         else {
           sweet.show({
-            title: "Settings saved!",
-            type: "success"
+            title: 'Settings saved!',
+            type: 'success'
           }, function() {
             $uibModalInstance.close();
           });
@@ -760,7 +759,7 @@ function CommunityController($scope, $uibModalInstance, sweet, edit_community, c
     loc_id = $scope.global.location.id;
 
   this.update = false;
-  this.communityForm = { "name": "" }; // to avoid 'undefined' for initial url
+  this.communityForm = { 'name': '' }; // to avoid 'undefined' for initial url
   this.industryList = community_service.industries();
 
   self.parents = community_service.parents();
@@ -769,10 +768,10 @@ function CommunityController($scope, $uibModalInstance, sweet, edit_community, c
     self.update = true;
     self.community = community.community_profiles[loc_id];
     self.communityForm = {
-      "name": self.community.name,
-      "headline": self.community.headline,
-      "industries": self.community.industries,
-      "url": decodeURI(community.id)
+      'name': self.community.name,
+      'headline': self.community.headline,
+      'industries': self.community.industries,
+      'url': decodeURI(community.id)
     };
 
     if (self.community.parents) {
@@ -814,8 +813,8 @@ function CommunityController($scope, $uibModalInstance, sweet, edit_community, c
         }
         catch (e) {
           sweet.show({
-            title: "Sorry, something is wrong with the url path.",
-            type: "error"
+            title: 'Sorry, something is wrong with the url path.',
+            type: 'error'
           });
           self.submitted = true;
         }
@@ -852,9 +851,9 @@ function CommunityController($scope, $uibModalInstance, sweet, edit_community, c
 
           if (response.status !== 201) {
             sweet.show({
-              title: "Sorry, something went wrong.",
+              title: 'Sorry, something went wrong.',
               text: response.data.message,
-              type: "error"
+              type: 'error'
             });
 
           }
@@ -865,8 +864,8 @@ function CommunityController($scope, $uibModalInstance, sweet, edit_community, c
             $scope.global.location = key_response;
 
             sweet.show({
-              title: "Successfully" + (self.update ? " updated!" : " created!"),
-              type: "success",
+              title: 'Successfully' + (self.update ? ' updated!' : ' created!'),
+              type: 'success',
               closeOnConfirm: true
             }, function() {
               $scope.global.nav_top = {};
@@ -894,20 +893,20 @@ function CommunityController($scope, $uibModalInstance, sweet, edit_community, c
     self.deleting = true;
 
     if ($scope.global.community.type == 'cluster') {
-      var text = "You can recreate this cluster at any time.";
+      var text = 'You can recreate this cluster at any time.';
     }
     else if ($scope.global.community.resource) {
-      text = "Members will be removed from the resource, but they will remain in the community."
+      text = 'Members will be removed from the resource, but they will remain in the community.';
     }
-    else text = "";
+    else text = '';
 
     sweet.show({
-      title: "Are you sure?",
+      title: 'Are you sure?',
       text: text,
-      type: "warning",
+      type: 'warning',
       showCancelButton: true,
-      confirmButtonColor: "#DD6B55",
-      confirmButtonText: "Yes, delete " + $scope.global.community.name + "!",
+      confirmButtonColor: '#DD6B55',
+      confirmButtonText: 'Yes, delete ' + $scope.global.community.name + '!',
       closeOnConfirm: false
     }, function() {
 
@@ -917,9 +916,9 @@ function CommunityController($scope, $uibModalInstance, sweet, edit_community, c
 
           if (response.status !== 204) {
             sweet.show({
-              title: "Sorry, something went wrong.",
+              title: 'Sorry, something went wrong.',
               text: response.data.message,
-              type: "error"
+              type: 'error'
             });
 
           }
@@ -930,9 +929,9 @@ function CommunityController($scope, $uibModalInstance, sweet, edit_community, c
             $scope.global.nav_top = top_response;
 
             sweet.show({
-              title: "Deleted!",
-              text: "The " + $scope.global.community.name + " community is gone.",
-              type: "success",
+              title: 'Deleted!',
+              text: 'The ' + $scope.global.community.name + ' community is gone.',
+              type: 'success',
               closeOnConfirm: true
             }, function() {
               $window.location.href = '/' + loc_id + '/settings';

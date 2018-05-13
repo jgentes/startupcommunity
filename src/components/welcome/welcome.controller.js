@@ -1,3 +1,5 @@
+/*global angular*/
+/*global jQuery*/
 angular
     .module('startupcommunity')
     .controller('WelcomeController', WelcomeController);
@@ -24,7 +26,7 @@ function WelcomeController($scope, $auth, $location, $q, $stateParams, $state, s
         if (!user.summary) $scope.global.user.summary = user.linkedin.summary;
 
         if (user.roles) {
-            if (!self.rolelist) self["rolelist"] = {};
+            if (!self.rolelist) self['rolelist'] = {};
             for (var role in user.roles) {
                 if (role !== 'leader') {
                     self.rolelist[role] = true;
@@ -39,14 +41,14 @@ function WelcomeController($scope, $auth, $location, $q, $stateParams, $state, s
 
         if (user.parents && user.parents.length) {
             switch (user.parents[0]) {
-                case 'consumer-goods':
-                    self.selectedParent = 'Consumer-Goods';
-                    break;
-                case 'non-profit':
-                    self.selectedParent = 'Non-Profit';
-                    break;
-                default:
-                    self.selectedParent = user.parents[0][0].toUpperCase() + user.parents[0].slice(1);
+            case 'consumer-goods':
+                self.selectedParent = 'Consumer-Goods';
+                break;
+            case 'non-profit':
+                self.selectedParent = 'Non-Profit';
+                break;
+            default:
+                self.selectedParent = user.parents[0][0].toUpperCase() + user.parents[0].slice(1);
             }
         }
     };
@@ -59,23 +61,23 @@ function WelcomeController($scope, $auth, $location, $q, $stateParams, $state, s
     }, {
         value: 'founder',
         text: 'Founder',
-        description: "You have started or co-founded a business venture."
+        description: 'You have started or co-founded a business venture.'
     }, {
         value: 'investor',
         text: 'Investor',
-        description: "You are an active investor in startup companies."
+        description: 'You are an active investor in startup companies.'
     }, {
         value: 'team',
         text: 'Team Member',
-        description: "You are a current employee or team member of a local company."
+        description: 'You are a current employee or team member of a local company.'
     }, {
         value: 'mentor',
         text: 'Mentor',
-        description: "You are willing to provide guidance to entrepreneurs without compensation - the 'give before you get' philosophy."
+        description: 'You are willing to provide guidance to entrepreneurs without compensation - the \'give before you get\' philosophy.'
     }, {
         value: 'provider',
         text: 'Service Provider',
-        description: "You provide services to community members for a fee."
+        description: 'You provide services to community members for a fee.'
     }];
 
     this.authenticate = function() {
@@ -145,9 +147,9 @@ function WelcomeController($scope, $auth, $location, $q, $stateParams, $state, s
                         }
                     };
                     xhr.open('PUT', signedUrl, true);
-                    xhr.setRequestHeader("Content-Type", "application/octet-stream");
+                    xhr.setRequestHeader('Content-Type', 'application/octet-stream');
                     xhr.send(file);
-                })
+                });
         }
         else self.alert = { type: 'danger', message: 'Please select a file!' };
 
@@ -164,9 +166,9 @@ function WelcomeController($scope, $auth, $location, $q, $stateParams, $state, s
     };
 
     this.clickToTweet = function() {
-        var getQuote = document.getElementById("quote").innerHTML;
+        var getQuote = document.getElementById('quote').innerHTML;
 
-        window.open("http://twitter.com/intent/tweet?text=" + getQuote + "%20via%20StartupCommunity.org&related=startupyourcity&", "twitterwindow", "height=450, width=550, toolbar=0, location=0, menubar=0, directories=0, scrollbars=0");
+        window.open('http://twitter.com/intent/tweet?text=' + getQuote + '%20via%20StartupCommunity.org&related=startupyourcity&', 'twitterwindow', 'height=450, width=550, toolbar=0, location=0, menubar=0, directories=0, scrollbars=0');
 
     };
 
@@ -180,9 +182,9 @@ function WelcomeController($scope, $auth, $location, $q, $stateParams, $state, s
         else {
 
             sweet.show({
-                title: "Hold on a sec.",
-                text: "You have this role in one or more companies. You'll need to remove yourself from them before removing this role. Go to your <a href='" + $scope.global.user.id + "'>profile page</a> to view them.",
-                type: "warning",
+                title: 'Hold on a sec.',
+                text: 'You have this role in one or more companies. You\'ll need to remove yourself from them before removing this role. Go to your <a href=\'' + $scope.global.user.id + '\'>profile page</a> to view them.',
+                type: 'warning',
                 html: true
             });
         }
@@ -195,7 +197,7 @@ function WelcomeController($scope, $auth, $location, $q, $stateParams, $state, s
 
         // add roles
         if (!user.roles) {
-            user["roles"] = {};
+            user['roles'] = {};
         }
 
         for (var role in self.rolelist) {
@@ -235,9 +237,9 @@ function WelcomeController($scope, $auth, $location, $q, $stateParams, $state, s
                 if (response.status !== 200) {
                     self.submitted = false;
                     sweet.show({
-                        title: "Sorry, something went wrong.",
-                        text: "Here's what we know: " + response.data.message,
-                        type: "error"
+                        title: 'Sorry, something went wrong.',
+                        text: 'Here\'s what we know: ' + response.data.message,
+                        type: 'error'
                     }, function() {
                         $state.go('community.dashboard', {
                             location_path: $stateParams.location_path,
@@ -262,24 +264,24 @@ function WelcomeController($scope, $auth, $location, $q, $stateParams, $state, s
                     }
                     else {
                         sweet.show({
-                                title: "Welcome.",
-                                text: "Let's have a look at your community.",
-                                type: "success",
-                                showCancelButton: false,
-                                confirmButtonText: "Let's go!",
-                                closeOnConfirm: true
-                            },
-                            function(isConfirm) {
-                                if (isConfirm) {
-                                    $state.go('community.dashboard', {
-                                        profile: $scope.global.user,
-                                        location_path: $stateParams.location_path,
-                                        community_path: '',
-                                        tail_path: '',
-                                        tour: true
-                                    });
-                                }
-                            });
+                            title: 'Welcome.',
+                            text: 'Let\'s have a look at your community.',
+                            type: 'success',
+                            showCancelButton: false,
+                            confirmButtonText: 'Let\'s go!',
+                            closeOnConfirm: true
+                        },
+                        function(isConfirm) {
+                            if (isConfirm) {
+                                $state.go('community.dashboard', {
+                                    profile: $scope.global.user,
+                                    location_path: $stateParams.location_path,
+                                    community_path: '',
+                                    tail_path: '',
+                                    tour: true
+                                });
+                            }
+                        });
                     }
 
                 }

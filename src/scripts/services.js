@@ -1,3 +1,4 @@
+/*global angular*/
 /*global _*/
 /*global jQuery*/
 angular
@@ -12,7 +13,7 @@ angular
           data: $httpParamSerializer({
             email: user.newsletter.username,
             password: user.newsletter.password,
-            redirect: ""
+            redirect: ''
           }),
           withCredentials: true,
           headers: {
@@ -159,61 +160,61 @@ angular
         }, {
           value: 'founder',
           text: 'Founder',
-          description: "You have started or co-founded a business venture."
+          description: 'You have started or co-founded a business venture.'
         }, {
           value: 'investor',
           text: 'Investor',
-          description: "You are an active investor in startup companies."
+          description: 'You are an active investor in startup companies.'
         }, {
           value: 'team',
           text: 'Team Member',
-          description: "You are a current employee or team member of a local company."
+          description: 'You are a current employee or team member of a local company.'
         }, {
           value: 'mentor',
           text: 'Mentor',
-          description: "You are willing to provide guidance to entrepreneurs without compensation - the 'give before you get' philosophy."
+          description: 'You are willing to provide guidance to entrepreneurs without compensation - the \'give before you get\' philosophy.'
         }, {
           value: 'provider',
           text: 'Service Provider',
-          description: "You provide services to community members for a fee."
+          description: 'You provide services to community members for a fee.'
         }];
       },
       team_panels: function() {
         return [{
-            title: "Leaders",
-            name: "leader",
-            icon: "pe-7s-flag",
-            color: "hred"
+            title: 'Leaders',
+            name: 'leader',
+            icon: 'pe-7s-flag',
+            color: 'hred'
           },
           {
-            title: "Investors",
-            name: "investor",
-            icon: "pe-7s-gleam",
-            color: "hgreen"
+            title: 'Investors',
+            name: 'investor',
+            icon: 'pe-7s-gleam',
+            color: 'hgreen'
           },
           {
-            title: "Founders",
-            name: "founder",
-            icon: "pe-7s-paper-plane",
-            color: "hnavyblue"
+            title: 'Founders',
+            name: 'founder',
+            icon: 'pe-7s-paper-plane',
+            color: 'hnavyblue'
           },
           {
-            title: "Mentors",
-            name: "mentor",
-            icon: "pe-7s-study",
-            color: "hblue"
+            title: 'Mentors',
+            name: 'mentor',
+            icon: 'pe-7s-study',
+            color: 'hblue'
           },
           {
-            title: "Team Members",
-            name: "team",
-            icon: "pe-7s-ball",
-            color: "hviolet"
+            title: 'Team Members',
+            name: 'team',
+            icon: 'pe-7s-ball',
+            color: 'hviolet'
           },
           {
-            title: "Service Providers",
-            name: "provider",
-            icon: "pe-7s-portfolio",
-            color: "hyellow"
+            title: 'Service Providers',
+            name: 'provider',
+            icon: 'pe-7s-portfolio',
+            color: 'hyellow'
           }
         ];
       }
@@ -229,11 +230,11 @@ angular
             // sort communities for use in nav and child dashboard pages
 
             switch (item.type) {
-              case "location":
+              case 'location':
                 if (!community.locations) community.locations = {};
                 community.locations[item.id] = item;
                 break;
-              case "cluster":
+              case 'cluster':
                 if (item.community_profiles && item.community_profiles[community.id] && item.community_profiles[community.id].parents) {
                   if (!community.clusters) community.clusters = {};
                   // this is for navigation
@@ -243,7 +244,7 @@ angular
                   community.clusters[cluster_type][item.id] = item;
                 }
                 break;
-              case "company":
+              case 'company':
                 if (item.resource) {
                   if (!community.resources) community.resources = [];
                   community.resources.push(item);
@@ -253,7 +254,7 @@ angular
                   for (var role in community.roles) {
                     if (community.roles[role][item.id]) {
 
-                      if (!community.companies) community.companies = { "count": {} };
+                      if (!community.companies) community.companies = { 'count': {} };
                       if (!community.companies[role]) community.companies[role] = {};
                       if (!community.companies[role][item.id]) community.companies[role][item.id] = item;
                       if (!community.companies.count[role]) community.companies.count[role] = 0;
@@ -285,12 +286,11 @@ angular
         if (!comm) return;
         let uberSearch = [];
 
-        let community =
-          await $http.get('/api/2.1/community/' + comm)
+        let community = await $http.get('/api/2.1/community/' + comm)
           .then(response => response.data);
 
         if (!community) return;
-        if (!community.resource || community.type !== "location") {
+        if (!community.resource || community.type !== 'location') {
 
           // pull communities within record
           var comm_items = community.communities || [];
@@ -640,7 +640,7 @@ angular
         });
       },
       getLogoUrl: function(file, company_name) {
-        return $http.get('/api/2.1/companies/url?filename=' + file + '&company_name=' + company_name)
+        return $http.get('/api/2.1/companies/url?filename=' + file + '&company_name=' + company_name);
       },
       checkUrl: function(website) {
         return $http.post('/api/2.3/companies/checkurl', {
