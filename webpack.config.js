@@ -43,7 +43,6 @@ module.exports = {
       // JavaScript / ES6
       {
         test: /\.js$/,
-        include: path.resolve(__dirname, 'src/components'),
         exclude: /node_modules/,
         use: {
           loader: 'babel-loader',
