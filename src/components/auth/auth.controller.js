@@ -1,3 +1,5 @@
+/*global angular*/
+/*global jQuery*/
 angular
     .module('startupcommunity')
     .controller('LoginController', LoginController);
@@ -41,8 +43,8 @@ function LoginController($auth, $scope, $state, $stateParams, sweet) {
             .catch(function(response) {
                 if (response.data) {
                     window.mixpanel.people.set({
-                        "$name": response.data.firstName + ' ' + response.data.lastName,
-                        "$email": response.data.emailAddress
+                        '$name': response.data.firstName + ' ' + response.data.lastName,
+                        '$email': response.data.emailAddress
                     });
                     window.mixpanel.track('Attempted Login');
 
@@ -50,9 +52,9 @@ function LoginController($auth, $scope, $state, $stateParams, sweet) {
                 if (response.data && response.data.message && response.data.message !== 'undefined') {
                     self.alert = { type: 'danger', msg: String(response.data.message) };
                     sweet.show({
-                        title: "Woah!",
+                        title: 'Woah!',
                         text: String(response.data.message),
-                        type: "error",
+                        type: 'error',
                         html: true
                     });
                 }
@@ -66,9 +68,9 @@ function LoginController($auth, $scope, $state, $stateParams, sweet) {
     };
 
     this.clickToTweet = function() {
-        var getQuote = document.getElementById("quote").innerHTML;
+        var getQuote = document.getElementById('quote').innerHTML;
 
-        window.open("http://twitter.com/intent/tweet?text=" + getQuote + "%20via%20StartupCommunity.org&related=startupyourcity&", "twitterwindow", "height=450, width=550, toolbar=0, location=0, menubar=0, directories=0, scrollbars=0");
+        window.open('http://twitter.com/intent/tweet?text=' + getQuote + '%20via%20StartupCommunity.org&related=startupyourcity&', 'twitterwindow', 'height=450, width=550, toolbar=0, location=0, menubar=0, directories=0, scrollbars=0');
 
-    }
+    };
 }

@@ -1,3 +1,5 @@
+/*global angular*/
+/*global jQuery*/
 angular
     .module('startupcommunity')
     .controller('CompanyController', CompanyController)
@@ -18,8 +20,8 @@ function CompanyController($scope, $stateParams, $state, $location, company_serv
     this.resource_types = company_service.resource_types();
 
     this.url = $stateParams.community_path && $stateParams.location_path ?
-        "({community_path: val})" :
-        "({location_path: val})";
+        '({community_path: val})' :
+        '({location_path: val})';
 
     // Title of list box changes based on context
     var setTitle = function() {
@@ -28,7 +30,7 @@ function CompanyController($scope, $stateParams, $state, $location, company_serv
         self.cluster = '';
 
         if (self.selectedStage[0] == '*') {
-            self.stage = self.resource_page ? "Resources" : "Companies";
+            self.stage = self.resource_page ? 'Resources' : 'Companies';
         }
         else {
             for (item in self.selectedStage) {
@@ -41,7 +43,7 @@ function CompanyController($scope, $stateParams, $state, $location, company_serv
                 }
             }
 
-            self.stage += " Companies";
+            self.stage += ' Companies';
         }
 
         if (self.selectedClusters.length == 0) {
@@ -51,7 +53,7 @@ function CompanyController($scope, $stateParams, $state, $location, company_serv
             else self.selection = $scope.global.community.name;
         }
         else {
-            self.selection = "";
+            self.selection = '';
             for (item in self.selectedClusters) {
                 self.selection += self.selectedClusters[item][0].toUpperCase() + self.selectedClusters[item].slice(1);
                 if (item < self.selectedClusters.length - 1) {
@@ -65,7 +67,7 @@ function CompanyController($scope, $stateParams, $state, $location, company_serv
 
         $scope.global.query = $stateParams.query || undefined;
 
-        if (!$scope.global.query || $scope.global.query == "*") {
+        if (!$scope.global.query || $scope.global.query == '*') {
             self.title = '<strong>' + self.stage + '</strong> in ' + self.selection;
         }
         else {
@@ -252,8 +254,8 @@ function CompanyProfileController($scope, $stateParams, user_service, community_
         var companyId = ($scope.global.profile && $scope.global.profile.id) ?
             $scope.global.profile.id :
             $stateParams.community_path ?
-            $stateParams.community_path :
-            $stateParams.location_path;
+                $stateParams.community_path :
+                $stateParams.location_path;
 
         if (!$stateParams.noreload && companyId) {
             community_service.getCommunity(companyId)
@@ -294,27 +296,27 @@ function CompanyProfileController($scope, $stateParams, user_service, community_
 
                 if (response.status !== 201) {
                     sweet.show({
-                        title: "Sorry, something went wrong.",
+                        title: 'Sorry, something went wrong.',
                         text: response.data.message,
-                        type: "error"
+                        type: 'error'
                     });
 
                 }
                 else {
                     sweet.show({
-                        title: "Success!",
+                        title: 'Success!',
                         text: response.data.message,
-                        type: "success"
+                        type: 'success'
                     });
                 }
-            })
+            });
     };
 
     this.getResource = function(alturl) {
         self.loadingUser = true;
 
         // remove random sort
-        if (alturl) alturl = alturl.replace(/([&\?]sort=_random*$|sort=_random&|[?&]sort=_random(?=#))/, '');
+        if (alturl) alturl = alturl.replace(/([&\?]sort=_random*$|sort=_random&|[?&]sort=_random(?=#))/, ''); //eslint-ignore no-useless-escape
 
         var limit = $location.search().limit || 16;
 
@@ -361,15 +363,16 @@ function EditCompanyController($scope, $state, $stateParams, sweet, $q, $window,
                 xhr.file = file;
 
                 xhr.onreadystatechange = function(e) {
+                    if (e) console.log(e);
                     if (4 == this.readyState) {
                         self.selectedCompany.avatar = fileUrl;
                         d_completed.resolve(true);
                     }
                 };
                 xhr.open('PUT', signedUrl, true);
-                xhr.setRequestHeader("Content-Type", "application/octet-stream");
+                xhr.setRequestHeader('Content-Type', 'application/octet-stream');
                 xhr.send(file);
-            })
+            });
     };
 
     this.addCompany = function(e) {
@@ -391,17 +394,17 @@ function EditCompanyController($scope, $state, $stateParams, sweet, $q, $window,
                 var wrap = function() {
                     if (response.status !== 200) {
                         sweet.show({
-                            title: "Sorry, something went wrong.",
+                            title: 'Sorry, something went wrong.',
                             text: response.data.message,
-                            type: "error"
+                            type: 'error'
                         });
 
                     }
                     else {
                         sweet.show({
-                            title: "Success!",
+                            title: 'Success!',
                             text: response.data.message,
-                            type: "success"
+                            type: 'success'
                         }, function() {
                             $window.location.href = '/' + $scope.global.profile.id;
                         });
@@ -415,7 +418,7 @@ function EditCompanyController($scope, $state, $stateParams, sweet, $q, $window,
             .catch(function(error) {
                 self.working = false;
                 self.alert = { type: 'danger', message: String(error.data.message) };
-            })
+            });
 
     };
 
@@ -437,10 +440,11 @@ function EditCompanyController($scope, $state, $stateParams, sweet, $q, $window,
 
                 })
                 .catch(function(err) {
+                    if (err) console.log(err);
                     // 404 no existing company
                     self.alert = undefined;
                     self.step++;
-                })
+                });
         }
         else self.step++;
     };
@@ -449,12 +453,12 @@ function EditCompanyController($scope, $state, $stateParams, sweet, $q, $window,
         self.del_working = true;
 
         sweet.show({
-            title: "Are you sure?",
-            text: "If this resource has founders or team members in the system, only they can delete it.",
-            type: "warning",
+            title: 'Are you sure?',
+            text: 'If this resource has founders or team members in the system, only they can delete it.',
+            type: 'warning',
             showCancelButton: true,
-            confirmButtonColor: "#DD6B55",
-            confirmButtonText: "Yes, delete " + self.selectedCompany.name + "!",
+            confirmButtonColor: '#DD6B55',
+            confirmButtonText: 'Yes, delete ' + self.selectedCompany.name + '!',
             closeOnConfirm: false
         }, function() {
 
@@ -464,20 +468,20 @@ function EditCompanyController($scope, $state, $stateParams, sweet, $q, $window,
 
                     if (response.status !== 204) {
                         sweet.show({
-                            title: "Sorry, something went wrong.",
+                            title: 'Sorry, something went wrong.',
                             text: response.data.message,
-                            type: "error"
+                            type: 'error'
                         });
 
                     }
                     else {
                         sweet.show({
-                            title: "Deleted!",
-                            text: self.selectedCompany.name + " is gone.",
-                            type: "success"
+                            title: 'Deleted!',
+                            text: self.selectedCompany.name + ' is gone.',
+                            type: 'success'
                         }, function() {
                             $window.location.href = '/' + $scope.global.user.home;
-                        })
+                        });
                     }
                 });
         });
@@ -509,14 +513,14 @@ function EditCompanyController($scope, $state, $stateParams, sweet, $q, $window,
 
                 if (self.selectedCompany.parents && self.selectedCompany.parents.length) {
                     switch (self.selectedCompany.parents[0]) {
-                        case 'consumer-goods':
-                            self.selectedCompany['parent'] = 'Consumer Goods';
-                            break;
-                        case 'non-profit':
-                            self.selectedCompany['parent'] = 'Non-Profit';
-                            break;
-                        default:
-                            self.selectedCompany['parent'] = self.selectedCompany.parents[0][0].toUpperCase() + self.selectedCompany.parents[0].slice(1);
+                    case 'consumer-goods':
+                        self.selectedCompany['parent'] = 'Consumer Goods';
+                        break;
+                    case 'non-profit':
+                        self.selectedCompany['parent'] = 'Non-Profit';
+                        break;
+                    default:
+                        self.selectedCompany['parent'] = self.selectedCompany.parents[0][0].toUpperCase() + self.selectedCompany.parents[0].slice(1);
                     }
                 }
 
@@ -545,7 +549,7 @@ function EditCompanyController($scope, $state, $stateParams, sweet, $q, $window,
                     .then(function(response) {
                         $scope.global.community = response;
                         next();
-                    })
+                    });
             }
             else {
                 $scope.global.community = $scope.global.location;

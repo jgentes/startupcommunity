@@ -1,9 +1,10 @@
+/*global angular*/
 angular
     .module('startupcommunity')
     .controller('NewsletterController', NewsletterController)
     .controller('SetupNewsController', SetupNewsController);
 
-function NewsletterController(newsletter_service, $scope, user_service, $sce) {
+function NewsletterController(newsletter_service, $scope, $window, $state, user_service, $sce) {
     var self = this;
 
     this.ie = navigator.userAgent.indexOf('Trident') > 0 || navigator.userAgent.indexOf('MSIE') > 0;
@@ -24,7 +25,7 @@ function NewsletterController(newsletter_service, $scope, user_service, $sce) {
                     })
                     .catch(function(error) {
                         $window.logger.logException('newsletter error: ', error);
-                    })
+                    });
 
             }
             else {
@@ -37,8 +38,8 @@ function NewsletterController(newsletter_service, $scope, user_service, $sce) {
         newsletter_service.logout()
             .then(function(response) {
                 self.frame_content = $sce.trustAsHtml(response.data);
-            })
-    }
+            });
+    };
 
 }
 
@@ -73,8 +74,8 @@ function SetupNewsController($uibModalInstance, $scope, sweet, community_service
                         if (response.status == 201) {
 
                             sweet.show({
-                                title: "Newsletter settings saved!",
-                                type: "success"
+                                title: 'Newsletter settings saved!',
+                                type: 'success'
                             }, function() {
                                 $uibModalInstance.close();
                             });
@@ -82,21 +83,21 @@ function SetupNewsController($uibModalInstance, $scope, sweet, community_service
                         }
                         else {
                             sweet.show({
-                                title: "Sorry, something went wrong.",
-                                text: "Here's what we know: " + response.data.message,
-                                type: "error"
+                                title: 'Sorry, something went wrong.',
+                                text: 'Here\'s what we know: ' + response.data.message,
+                                type: 'error'
                             });
                         }
 
                         newsletter_service.logout();
-                    })
+                    });
 
             }
             else {
 
                 var leader = [];
 
-                for (l in $scope.global.user.roles.leader) leader.push(l);
+                for (var l in $scope.global.user.roles.leader) leader.push(l);
 
                 community_service.getResources(undefined, leader)
                     .then(function(response) {
@@ -110,8 +111,8 @@ function SetupNewsController($uibModalInstance, $scope, sweet, community_service
                                 if (response.status == 201) {
 
                                     sweet.show({
-                                        title: "Newsletter settings saved!",
-                                        type: "success"
+                                        title: 'Newsletter settings saved!',
+                                        type: 'success'
                                     }, function() {
                                         $uibModalInstance.close();
                                     });
@@ -121,13 +122,13 @@ function SetupNewsController($uibModalInstance, $scope, sweet, community_service
                                 }
                                 else {
                                     sweet.show({
-                                        title: "Sorry, something went wrong.",
-                                        text: "Here's what we know: " + response.data.message,
-                                        type: "error"
+                                        title: 'Sorry, something went wrong.',
+                                        text: 'Here\'s what we know: ' + response.data.message,
+                                        type: 'error'
                                     });
                                 }
-                            })
-                    })
+                            });
+                    });
 
             }
 

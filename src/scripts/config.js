@@ -1,3 +1,9 @@
+/*global angular*/
+/*global process*/
+/*global require*/
+/*global $*/
+/*global RC*/
+/*global logger*/
 angular.module('startupcommunity', [
     'ui.router',
     'ui.bootstrap',
@@ -26,15 +32,15 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
         // ORDER MATTERS.. first matching url wins!
 
         .state('login', {
-            url: "/login",
-            controller: "LoginController as auth",
+            url: '/login',
+            controller: 'LoginController as auth',
             params: {
                 alert: {}
             },
             templateUrl: require('../components/auth/login.html')
         })
         .state('logout', {
-            url: "/logout",
+            url: '/logout',
             onEnter: function($auth, $location) {
                 $auth.logout()
                     .then(function() {
@@ -48,19 +54,19 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
         })
 
         .state('404', {
-            templateUrl: require("../components/errors/404.html")
+            templateUrl: require('../components/errors/404.html')
         })
 
         .state('500', {
-            templateUrl: require("../components/errors/500.html")
+            templateUrl: require('../components/errors/500.html')
         })
 
         // the root state with core dependencies for injection in child states
         // note: if you set a param in root, and use/change that param in a ui-sref link, it will reload root
         .state('root', {
-            url: "/:location_path/:community_path/:tail_path",
-            templateUrl: require("../components/nav/nav.html"),
-            controller: "NavigationController as nav",
+            url: '/:location_path/:community_path/:tail_path',
+            templateUrl: require('../components/nav/nav.html'),
+            controller: 'NavigationController as nav',
             params: {
                 // params must be defined here to be used in children (except for paths)
                 location_path: {
@@ -93,10 +99,10 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
             },
             views: {
                 'header': {
-                    templateUrl: require("../components/header/header_small.html")
+                    templateUrl: require('../components/header/header_small.html')
                 },
                 'content': {
-                    templateUrl: require("../components/users/user.dashboard.html"),
+                    templateUrl: require('../components/users/user.dashboard.html'),
                     controller: 'UserProfileController as profile'
                 }
             }
@@ -104,11 +110,11 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
         .state('user.list', {
             views: {
                 'header': {
-                    templateUrl: require("../components/header/header_small.html")
+                    templateUrl: require('../components/header/header_small.html')
                 },
                 'content': {
                     templateUrl: require('../components/users/user.list.html'),
-                    controller: "UserController as users"
+                    controller: 'UserController as users'
                 }
             }
         })
@@ -125,10 +131,10 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
             },
             views: {
                 'header': {
-                    templateUrl: require("../components/header/header_small.html")
+                    templateUrl: require('../components/header/header_small.html')
                 },
                 'content': {
-                    templateUrl: require("../components/companies/company.dashboard.html"),
+                    templateUrl: require('../components/companies/company.dashboard.html'),
                     controller: 'CompanyProfileController as profile'
                 }
             }
@@ -136,29 +142,29 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
         .state('company.list', {
             views: {
                 'header': {
-                    templateUrl: require("../components/header/header_small.html")
+                    templateUrl: require('../components/header/header_small.html')
                 },
                 'content': {
                     templateUrl: require('../components/companies/company.list.html'),
-                    controller: "CompanyController as companies"
+                    controller: 'CompanyController as companies'
                 }
             }
         })
         .state('company.add', {
-            url: "^/:location_path/add-company",
+            url: '^/:location_path/add-company',
             views: {
                 'content': {
                     templateUrl: require('../components/resources/resource.add.html'),
-                    controller: "EditCompanyController as add"
+                    controller: 'EditCompanyController as add'
                 }
             }
         })
         .state('company.edit', {
-            url: "/edit",
+            url: '/edit',
             views: {
                 'content': {
                     templateUrl: require('../components/resources/resource.add.html'),
-                    controller: "EditCompanyController as add"
+                    controller: 'EditCompanyController as add'
                 }
             }
         })
@@ -171,36 +177,36 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
         .state('resource.list', {
             views: {
                 'header': {
-                    templateUrl: require("../components/header/header_small.html")
+                    templateUrl: require('../components/header/header_small.html')
                 },
                 'content': {
                     templateUrl: require('../components/companies/company.list.html'),
-                    controller: "CompanyController as companies"
+                    controller: 'CompanyController as companies'
                 }
             }
         })
         .state('resource.add', {
-            url: "^/:location_path/add-resource",
+            url: '^/:location_path/add-resource',
             views: {
                 'content': {
                     templateUrl: require('../components/resources/resource.add.html'),
-                    controller: "EditCompanyController as add"
+                    controller: 'EditCompanyController as add'
                 }
             }
         })
         .state('resource.edit', {
-            url: "/edit",
+            url: '/edit',
             views: {
                 'content': {
                     templateUrl: require('../components/resources/resource.add.html'),
-                    controller: "EditCompanyController as add"
+                    controller: 'EditCompanyController as add'
                 }
             }
         })
 
         .state('welcome', {
-            parent: "root",
-            url: "^/:location_path/:community_path/welcome",
+            parent: 'root',
+            url: '^/:location_path/:community_path/welcome',
             params: {
                 community_path: {
                     value: null,
@@ -211,23 +217,23 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                 $uibModalInstance: function() { return null; } // necessary to avoid unknown provider for $uibModalInstance when controller not invoked through modal
             },
             views: {
-                "@": { // this forces override of root template
-                    templateUrl: require("../components/welcome/welcome.html"),
-                    controller: "WelcomeController as welcome"
+                '@': { // this forces override of root template
+                    templateUrl: require('../components/welcome/welcome.html'),
+                    controller: 'WelcomeController as welcome'
                 }
             }
         })
 
-        .state('settings', { parent: 'root', url: '/settings', views: { 'content': { templateUrl: require("../components/settings.html"), controller: "SettingsController as settings" } } })
+        .state('settings', { parent: 'root', url: '/settings', views: { 'content': { templateUrl: require('../components/settings.html'), controller: 'SettingsController as settings' } } })
 
-        .state('newsletter', { parent: 'root', url: '/newsletter', views: { 'content': { templateUrl: require("../components/newsletter/newsletter.html"), controller: 'NewsletterController as news' } } })
+        .state('newsletter', { parent: 'root', url: '/newsletter', views: { 'content': { templateUrl: require('../components/newsletter/newsletter.html'), controller: 'NewsletterController as news' } } })
 
         .state('search', {
             parent: 'root',
             abstract: true,
             views: {
                 'header': {
-                    templateUrl: require("../components/header/header_small.html")
+                    templateUrl: require('../components/header/header_small.html')
                 },
                 'content': {
                     templateUrl: require('../components/search/search.dashboard.html')
@@ -235,7 +241,7 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
             }
         })
         .state('search.dashboard', {
-            url: "/search",
+            url: '/search',
             params: {
                 tail_path: '',
                 query: '*'
@@ -243,25 +249,25 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
             views: {
                 'people': {
                     templateUrl: require('../components/users/user.list.html'),
-                    controller: "UserController as users"
+                    controller: 'UserController as users'
                 },
                 'companies': {
                     templateUrl: require('../components/companies/company.list.html'),
-                    controller: "CompanyController as companies"
+                    controller: 'CompanyController as companies'
                 }
             }
         })
 
         // Community views
         .state('community', {
-            parent: "root",
+            parent: 'root',
             abstract: true,
             views: {
                 'header': {
-                    templateUrl: require("../components/header/header_small.html")
+                    templateUrl: require('../components/header/header_small.html')
                 },
                 'content': {
-                    template: "<div ui-view='people'></div>"
+                    template: '<div ui-view=\'people\'></div>'
                 }
             }
         })
@@ -270,7 +276,7 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
             views: {
                 'people': {
                     templateUrl: require('../components/dashboard/dashboard.html'),
-                    controller: "DashboardController as dashboard"
+                    controller: 'DashboardController as dashboard'
                 }
             }
         })
@@ -293,24 +299,24 @@ angular
     .module('startupcommunity')
     .config(configState)
     /*.run(['$templateCache', function($templateCache) {
-        // this caches ng-includes so they can be required by webpack
-        $templateCache.put('user.list.html', require('../components/users/user.list.html'));
-        $templateCache.put('user.list.item.html', require('../components/users/user.list.item.html'));
-        $templateCache.put('user.dashboard.ask.html', require('../components/users/user.dashboard.ask.html'));
-        $templateCache.put('user.dashboard.ask.questions.html', require('../components/users/user.dashboard.ask.questions.html'));
-        $templateCache.put('user.dashboard.ask.questions.replies.html', require('../components/users/user.dashboard.ask.questions.replies.html'));
-        $templateCache.put('user.dashboard.companies.html', require('../components/users/user.dashboard.companies.html'));
-        $templateCache.put('user.dashboard.companies.panel.html', require('../components/users/user.dashboard.companies.panel.html'));
-        $templateCache.put('user.dashboard.profile.html', require('../components/users/user.dashboard.profile.html'));
-        $templateCache.put('company.dashboard.network.html', require('../components/companies/company.dashboard.network.html'));
-        $templateCache.put('company.dashboard.profile.html', require('../components/companies/company.dashboard.profile.html'));
-        $templateCache.put('company.list.item.html', require('../components/companies/company.list.item.html'));
-    }])*/
+    		        // this caches ng-includes so they can be required by webpack
+    		        $templateCache.put('user.list.html', require('../components/users/user.list.html'));
+    		        $templateCache.put('user.list.item.html', require('../components/users/user.list.item.html'));
+    		        $templateCache.put('user.dashboard.ask.html', require('../components/users/user.dashboard.ask.html'));
+    		        $templateCache.put('user.dashboard.ask.questions.html', require('../components/users/user.dashboard.ask.questions.html'));
+    		        $templateCache.put('user.dashboard.ask.questions.replies.html', require('../components/users/user.dashboard.ask.questions.replies.html'));
+    		        $templateCache.put('user.dashboard.companies.html', require('../components/users/user.dashboard.companies.html'));
+    		        $templateCache.put('user.dashboard.companies.panel.html', require('../components/users/user.dashboard.companies.panel.html'));
+    		        $templateCache.put('user.dashboard.profile.html', require('../components/users/user.dashboard.profile.html'));
+    		        $templateCache.put('company.dashboard.network.html', require('../components/companies/company.dashboard.network.html'));
+    		        $templateCache.put('company.dashboard.profile.html', require('../components/companies/company.dashboard.profile.html'));
+    		        $templateCache.put('company.list.item.html', require('../components/companies/company.list.item.html'));
+    		    }])*/
     .config(function($authProvider) {
         //$authProvider.authHeader = 'x-access-token'; // to fix 400 Bad Request issue
         $authProvider.loginRedirect = false; //otherwise will go home
         $authProvider.linkedin({
-            clientId: "75bqixdv58z1az",
+            clientId: '75bqixdv58z1az',
             state: function() {
                 return window.location.pathname;
             }
@@ -364,13 +370,13 @@ angular
 
             });
         $rootScope.$on('$stateChangeSuccess', function() {
-            $("html, body").animate({ scrollTop: 0 }, 200);
+            $('html, body').animate({ scrollTop: 0 }, 200);
         });
-    })
+    });
 
 
-    // for Angular client exception logging to server
-    /*
+// for Angular client exception logging to server
+/*
         .provider(
             "$exceptionHandler", {
                 $get: function(errorLogService) {
@@ -414,7 +420,7 @@ angular
             }
         )
     /*/
-    /*// this factory is used to capture sourcemaps
+/*// this factory is used to capture sourcemaps
     .factory('$exceptionHandler',
         function($log, $window, $injector, errorLogService) {
             var getSourceMappedStackTrace = function(exception) {

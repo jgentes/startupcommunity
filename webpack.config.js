@@ -44,19 +44,23 @@ module.exports = {
       {
         test: /\.js$/,
         exclude: /node_modules/,
-        use: {
-          loader: 'babel-loader',
-          options: {
-            presets: [
-              ['@babel/preset-env', {
-                shippedProposals: true,
-                targets: {
-                  browsers: ['>2%']
-                }
-              }]
-            ]
+        use: [{
+            loader: 'babel-loader',
+            options: {
+              presets: [
+                ['@babel/preset-env', {
+                  shippedProposals: true,
+                  targets: {
+                    browsers: ['>2%']
+                  }
+                }]
+              ]
+            }
+          },
+          {
+            loader: 'eslint-loader'
           }
-        }
+        ]
       },
       // Less
       {

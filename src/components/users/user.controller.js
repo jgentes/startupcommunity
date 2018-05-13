@@ -1,3 +1,6 @@
+/*global angular*/
+/*global jQuery*/
+/*global $*/
 angular
     .module('startupcommunity')
     .controller('UserController', UserController)
@@ -16,8 +19,8 @@ function UserController($scope, $stateParams, $location, user_service, $sce) {
     var self = this; // for accessing 'this' in child functions
 
     this.url = $stateParams.community_path && $stateParams.location_path ?
-        "({community_path: val})" :
-        "({location_path: val})";
+        '({community_path: val})' :
+        '({location_path: val})';
 
     // Title of list box changes based on context
     var setTitle = function() {
@@ -26,7 +29,7 @@ function UserController($scope, $stateParams, $location, user_service, $sce) {
         self.cluster = '';
 
         if (self.selectedRole[0] == '*') {
-            self.role = "People";
+            self.role = 'People';
         }
         else {
             for (item in self.selectedRole) {
@@ -47,7 +50,7 @@ function UserController($scope, $stateParams, $location, user_service, $sce) {
             else self.selection = $scope.global.community.name;
         }
         else {
-            self.selection = "";
+            self.selection = '';
             for (item in self.selectedClusters) {
                 self.selection += (self.selectedClusters[item][0].toUpperCase() + self.selectedClusters[item].slice(1));
                 if (item < self.selectedClusters.length - 1) {
@@ -61,7 +64,7 @@ function UserController($scope, $stateParams, $location, user_service, $sce) {
 
         $scope.global.query = $stateParams.query || undefined;
 
-        if (!$scope.global.query || $scope.global.query == "*") {
+        if (!$scope.global.query || $scope.global.query == '*') {
             self.title = '<strong>' + self.role + '</strong> in ' + self.selection;
         }
         else {
@@ -101,7 +104,7 @@ function UserController($scope, $stateParams, $location, user_service, $sce) {
                     self.users = response.data;
                     self.loadingUser = false;
                     self.lastQuery = $scope.global.query;
-                    self.offset = (offset || 0) + limit
+                    self.offset = (offset || 0) + limit;
                     self.count = response.data[0] ? response.data[0].count : 0;
                     self.limit = limit;
                 });
@@ -217,10 +220,10 @@ function ContactUserController($scope, $uibModalInstance, notify_service, sweet,
 
         if (self.form.$valid) {
             var formdata = {
-                "name": self.form.name_value,
-                "email": self.form.email_value,
-                "company": self.form.company_value,
-                "reason": self.form.reason_value
+                'name': self.form.name_value,
+                'email': self.form.email_value,
+                'company': self.form.company_value,
+                'reason': self.form.reason_value
             };
 
 
@@ -231,17 +234,17 @@ function ContactUserController($scope, $uibModalInstance, notify_service, sweet,
 
                     if (response.status !== 200) {
                         sweet.show({
-                            title: "Sorry, something went wrong.",
-                            text: "Here's what we know: " + response.data.message,
-                            type: "error"
+                            title: 'Sorry, something went wrong.',
+                            text: 'Here\'s what we know: ' + response.data.message,
+                            type: 'error'
                         });
 
                     }
                     else {
                         sweet.show({
-                            title: "Connection Request Sent!",
-                            text: "Expect to hear a response soon.",
-                            type: "success"
+                            title: 'Connection Request Sent!',
+                            text: 'Expect to hear a response soon.',
+                            type: 'success'
                         });
                     }
 
@@ -259,7 +262,7 @@ function ContactUserController($scope, $uibModalInstance, notify_service, sweet,
     };
 }
 
-function UserProfileController($scope, $stateParams, $http, $uibModal, user_service, community_service, message_service) {
+function UserProfileController($scope, $stateParams, $http, $uibModal, user_service, community_service, message_service, sweet) {
 
     var self = this;
 
@@ -301,7 +304,7 @@ function UserProfileController($scope, $stateParams, $http, $uibModal, user_serv
             templateUrl: require('./user.contact.html'),
             controller: ContactUserController,
             controllerAs: 'contact',
-            windowClass: "hmodal-warning",
+            windowClass: 'hmodal-warning',
             resolve: {
                 user: function() {
                     return self.user;
@@ -321,10 +324,10 @@ function UserProfileController($scope, $stateParams, $http, $uibModal, user_serv
             user_service.getKey()
                 .then(function(response) {
                     var api_key = response.data;
-                    notify({ title: "See our <a href='http://startupcommunity.readme.io?appkey=" + api_key + "' target='_blank'>API documentation</a> for help using your key:", message: "<pre>" + api_key + "</pre>" });
+                    sweet.show({ title: 'See our <a href=\'http://startupcommunity.readme.io?appkey=' + api_key + '\' target=\'_blank\'>API documentation</a> for help using your key:', message: '<pre>' + api_key + '</pre>' });
                 });
         }
-        else notify({ title: "See our <a href='http://startupcommunity.readme.io?appkey=" + api_key + "' target='_blank'>API documentation</a> for help using your key:", message: "<pre>" + api_key + "</pre>" });
+        else sweet.show({ title: 'See our <a href=\'http://startupcommunity.readme.io?appkey=' + $scope.global.user.api_key + '\' target=\'_blank\'>API documentation</a> for help using your key:', message: '<pre>' + $scope.global.user.api_key + '</pre>' });
     };
 
     this.askQuestion = function() {
@@ -395,7 +398,7 @@ function UserProfileController($scope, $stateParams, $http, $uibModal, user_serv
                 });
         }
         else self.alert = { type: 'danger', message: 'Please login before posting a comment' };
-    }
+    };
 }
 
 function InviteUserController($scope, user_service, community_service) {
@@ -424,20 +427,20 @@ function InviteUserController($scope, user_service, community_service) {
         if (self.form.email_value) {
 
             var emails = self.form.email_value.split(/\s*,\s*/),
-                message = self.form.message_value || "",
+                message = self.form.message_value || '',
                 resources = self.form.resources ? Object.keys(self.form.resources) : undefined,
                 formdata;
 
             if (self.form.$valid || emails.length > 0) {
 
-                for (e in emails) {
+                for (var e in emails) {
 
                     $scope.global.loaders['sendinvite'] = true;
 
                     formdata = {
-                        "email": emails[e],
-                        "message": message,
-                        "resources": resources
+                        'email': emails[e],
+                        'message': message,
+                        'resources': resources
                     };
 
                     if (user) {
@@ -448,8 +451,8 @@ function InviteUserController($scope, user_service, community_service) {
                                 self.working = false;
                                 self.form = {
                                     submitted: false,
-                                    email_value: "",
-                                    message_value: "",
+                                    email_value: '',
+                                    message_value: '',
                                     resources: {}
                                 };
 
@@ -467,7 +470,7 @@ function InviteUserController($scope, user_service, community_service) {
                                 self.working = false;
                                 self.form = { submitted: false };
                                 self.alert = { type: 'danger', message: String(error.data.message) };
-                            })
+                            });
                     }
                     else {
                         user_service.join(formdata.email, formdata.message, $scope.global.location.name, $scope.global.location.id)
@@ -476,8 +479,8 @@ function InviteUserController($scope, user_service, community_service) {
                                 self.working = false;
                                 self.form = {
                                     submitted: false,
-                                    email_value: "",
-                                    message_value: ""
+                                    email_value: '',
+                                    message_value: ''
                                 };
 
                                 if (response.status !== 200) {
@@ -494,7 +497,7 @@ function InviteUserController($scope, user_service, community_service) {
                                 self.working = false;
                                 self.form = { submitted: false };
                                 self.alert = { type: 'danger', message: String(error.data.message) };
-                            })
+                            });
                     }
 
                 }
