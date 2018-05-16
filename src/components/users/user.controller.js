@@ -285,7 +285,7 @@ function UserProfileController($scope, $stateParams, $http, $uibModal, user_serv
         if (!$stateParams.noreload) {
             community_service.getCommunity(userkey)
                 .then(function(response) {
-                    self.user = response;
+                    self.user = response.find(c => c.id == userkey);
                 });
         }
         else self.user = $scope.global.community;

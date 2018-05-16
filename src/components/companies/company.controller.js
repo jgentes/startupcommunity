@@ -254,14 +254,13 @@ function CompanyProfileController($scope, $stateParams, user_service, community_
         var companyId = ($scope.global.profile && $scope.global.profile.id) ?
             $scope.global.profile.id :
             $stateParams.community_path ?
-                $stateParams.community_path :
-                $stateParams.location_path;
+            $stateParams.community_path :
+            $stateParams.location_path;
 
         if (!$stateParams.noreload && companyId) {
             community_service.getCommunity(companyId)
                 .then(function(response) {
-                    $scope.global['profile'] = response;
-
+                    $scope.global['profile'] = response.find(c => c.id == companyId);
                 });
         }
         else $scope.global['profile'] = $scope.global.community;
@@ -286,7 +285,7 @@ function CompanyProfileController($scope, $stateParams, user_service, community_
 
                 community_service.getCommunity($scope.global.profile.id)
                     .then(function(response) {
-                        $scope.global.profile = response;
+                        $scope.global.profile = response.find(c => c.id == $scope.global.profile.id);
 
                         user_service.getProfile()
                             .then(function(response2) {
@@ -513,14 +512,14 @@ function EditCompanyController($scope, $state, $stateParams, sweet, $q, $window,
 
                 if (self.selectedCompany.parents && self.selectedCompany.parents.length) {
                     switch (self.selectedCompany.parents[0]) {
-                    case 'consumer-goods':
-                        self.selectedCompany['parent'] = 'Consumer Goods';
-                        break;
-                    case 'non-profit':
-                        self.selectedCompany['parent'] = 'Non-Profit';
-                        break;
-                    default:
-                        self.selectedCompany['parent'] = self.selectedCompany.parents[0][0].toUpperCase() + self.selectedCompany.parents[0].slice(1);
+                        case 'consumer-goods':
+                            self.selectedCompany['parent'] = 'Consumer Goods';
+                            break;
+                        case 'non-profit':
+                            self.selectedCompany['parent'] = 'Non-Profit';
+                            break;
+                        default:
+                            self.selectedCompany['parent'] = self.selectedCompany.parents[0][0].toUpperCase() + self.selectedCompany.parents[0].slice(1);
                     }
                 }
 
@@ -547,7 +546,7 @@ function EditCompanyController($scope, $state, $stateParams, sweet, $q, $window,
             if ($stateParams.community_path !== $scope.global.location.id && $scope.global.lastitems.indexOf($stateParams.community_path) < 0) {
                 community_service.getCommunity($stateParams.community_path)
                     .then(function(response) {
-                        $scope.global.community = response;
+                        $scope.global.community = response.find(c => c.id == $stateParams.community_path);
                         next();
                     });
             }
