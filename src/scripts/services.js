@@ -264,7 +264,7 @@ angular
                 }
                 break;
             }
-            community[item.id] = item;
+            //community[item.id] = item;
           }
         });
         return community;
@@ -311,10 +311,10 @@ angular
             uberUrl += u;
             if (i < uberSearch.length - 1) uberUrl += '&community=';
           });
-          await $http.get(uberUrl).then(response => this.sortCommunities(community, response.data));
+          community = await $http.get(uberUrl).then(response => this.sortCommunities(community, response.data));
         }
 
-        await $http.get('/api/3.0/neighbors/' + comm).then(response => this.sortCommunities(community, response.data));
+        if (community.type == 'location') community = await $http.get('/api/3.0/neighbors/' + comm).then(response => this.sortCommunities(community, response.data));
 
         if (community.resources && community.resources.length) {
           community.resources = community.resources.sort(function(a, b) {
@@ -333,7 +333,7 @@ angular
           }
         }
         else if (community.type == 'company') {
-
+          /*
           // get team
           const teamresponse = {};
           const count = {};
@@ -360,6 +360,7 @@ angular
           for (var r in teamresponse) {
             community.team[r] = teamresponse[r].slice(0, 4); // cut the array down
           }
+          */
         }
 
         return community;

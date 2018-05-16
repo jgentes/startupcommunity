@@ -55,18 +55,20 @@ function NavigationController($scope, $auth, $state, $window, $location, $stateP
   };
 
   // getcommunity evaluates if we already have the community in global scope, then getLocation, otherwise runs next to pull it
-  var getCommunity = function() {
+  var getCommunity = () => {
 
     var pullCommunity = async comm_path => {
 
       var comm_response = await community_service.getCommunity(comm_path);
       if (!comm_response) return $state.go('404', {}, { location: false });
+      console.log(comm_path, comm_response);
+      $scope.global.community = comm_response.find(c => c.id == comm_path);
+      //comm_response is lost here!
 
-      $scope.global.community = comm_response;
       getLocation();
     };
 
-    var next = function() {
+    var next = () => {
 
       var url = $location.path().replace(/\/$/, '').split('/'),
         lastitem = url.pop(),
@@ -115,7 +117,7 @@ function NavigationController($scope, $auth, $state, $window, $location, $stateP
       else {
         var loc_response = await community_service.getCommunity(nav_community.home);
 
-        $scope.global.location = loc_response;
+        $scope.global.location = loc_response.find(c => c.id == nav_community.home);
         getNavTop();
       }
     }
@@ -128,7 +130,7 @@ function NavigationController($scope, $auth, $state, $window, $location, $stateP
 
       var path_response = await community_service.getCommunity($stateParams.location_path);
 
-      $scope.global.location = path_response;
+      $scope.global.location = path_response.find(c => c.id == $stateParams.location_path);
       getNavTop();
     }
     else {
@@ -861,7 +863,7 @@ function CommunityController($scope, $uibModalInstance, sweet, edit_community, c
             if (rename) community_service.deleteCommunity(newCommunity, loc_id, newCommunity.url);
 
             var key_response = await community_service.getCommunity(loc_id);
-            $scope.global.location = key_response;
+            $scope.global.location = key_response.find(c => c.id == loc_id);
 
             sweet.show({
               title: 'Successfully' + (self.update ? ' updated!' : ' created!'),

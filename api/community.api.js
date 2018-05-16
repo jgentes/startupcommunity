@@ -186,14 +186,29 @@ async function handleGetCommunity(req, res) {
 
   console.log('Pulling community for ' + param);
 
-  const community = await cdb.findOne({
+  const fetchCommunities = comm => cdb.findAll({
       where: {
         id: {
-          [Op.in]: param
+          [Op.in]: comm
         }
       }
     })
     .catch(err => console.warn("WARNING: ", err));
+
+  let community = await fetchCommunities(param);
+
+  if (community.length == 1) {
+    community = community[0].toJSON();
+    if (community.communities && community.communities.length) {
+      // todo this could be replaced with a sequelize 'include' above
+      const communities = await fetchCommunities(community.communities);
+      if (communities) {
+        community.relatives = {};
+        communities.forEach(c => community.relatives[c.id] = c);
+      }
+    }
+    community = [community];
+  }
 
   return res.status(200).send(community);
 }
