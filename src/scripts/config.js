@@ -22,7 +22,7 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
 
     // Optimize load start
     $compileProvider
-        .debugInfoEnabled(process && process.env && process.env.NODE_ENV == 'local' || false); // set to false for production
+        .debugInfoEnabled(process && process.env && process.env.NODE_ENV == 'development' || false); // set to false for production
 
     $locationProvider
         .html5Mode(true);

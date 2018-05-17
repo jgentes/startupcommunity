@@ -61,9 +61,8 @@ function NavigationController($scope, $auth, $state, $window, $location, $stateP
 
       var comm_response = await community_service.getCommunity(comm_path);
       if (!comm_response) return $state.go('404', {}, { location: false });
-      console.log(comm_path, comm_response);
+
       $scope.global.community = comm_response.find(c => c.id == comm_path);
-      //comm_response is lost here!
 
       getLocation();
     };
@@ -108,6 +107,11 @@ function NavigationController($scope, $auth, $state, $window, $location, $stateP
   var getLocation = async function() {
 
     nav_community = $scope.global.community;
+
+    // see if we've already got the location in relatives
+    if (nav_community && nav_community.relatives && nav_community.relatives[nav_community.home]) {
+      $scope.global.location = nav_community.relatives[nav_community.home];
+    }
 
     // if community is a user or company, pull their home and use that for location [used when refreshing page on user profile]
     if (nav_community && (nav_community.type == 'user' || nav_community.type == 'company')) {
@@ -156,9 +160,13 @@ function NavigationController($scope, $auth, $state, $window, $location, $stateP
         nav_community.home :
         $scope.global.location.id;
 
-      var response = await community_service.getTop(true_loc);
+      //** var response = await community_service.getTop(true_loc);
+      var response = await community_service.getNav(true_loc);
 
-      $scope.global.nav_top = response;
+      if (!$scope.global.nav_top) {
+        $scope.global.nav_top = { parents: response };
+      }
+      else $scope.global.nav_top.parents = response;
       getCommunityTop();
     }
 
