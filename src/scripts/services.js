@@ -375,6 +375,9 @@ angular
       getId: function(id) {
         return $http.get('/api/2.1/id/' + id);
       },
+      getNav: async(location_id, community_id) => {
+        return await $http.get('/api/3.0/industries?location=' + location_id + (community_id ? '&community=' + community_id : '')).then(response => response.data);
+      },
       getTop: async function(location_id, community_id, community) {
         // Prep to send to API
         var industry_ids = [];

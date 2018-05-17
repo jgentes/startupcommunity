@@ -1,4 +1,5 @@
 var path = require('path'),
+  _ = require('lodash'),
   { sequelize, cdb, mdb, Op } = require('../db');
 
 //var util = require('util'); //for util.inspect on request
@@ -6,6 +7,7 @@ var path = require('path'),
 //require('request-debug')(request); // Very useful for debugging oauth and api req/res
 
 var CommunityApi = function() {
+  this.getIndustries = handleGetIndustries;
   this.getCommunity = handleGetCommunity;
   this.getNeighbors = handleGetNeighbors;
   this.getResources = handleGetResources;
@@ -175,6 +177,55 @@ var addkeys = function(data) {
   }
   return data;
 };
+
+var sortcounts = function(counts, newArray) {
+  var sorted = _.fromPairs(_.sortBy(_.toPairs(counts), function(a) {
+    return a[1];
+  }).reverse());
+  if (newArray) {
+    var countArray = [];
+    for (var s in sorted) {
+      countArray.push({ label: s, count: sorted[s] });
+    }
+    return countArray;
+  }
+  else return sorted;
+};
+
+async function handleGetIndustries(req, res) {
+  let location_id = req.query.location;
+  let community_id = req.query.community;
+  if (!location_id) return res.status(404).send({ message: 'Please specify a location!' });
+
+  console.log('Pulling industries for ' + location_id);
+
+  let companies = await cdb.findAll({
+      attributes: ['parents'],
+      where: {
+        [Op.and]: [{
+          type: 'company',
+          communities: {
+            [Op.like]: '%"' + location_id + '"%'
+          }
+        }]
+      }
+    })
+    .catch(err => console.warn("WARNING: ", err));
+
+  // create array of items
+  let top = [];
+  companies.forEach(r => {
+    const items = Array.isArray(r.parents) ? r.parents : JSON.parse(r.parents);
+    if (items) items.forEach(i => { if (i != 'all') top = top.concat(i) });
+  });
+
+  top = _.countBy(top);
+
+  var sortedTop = sortcounts(top, true);
+
+  return res.status(200).send(sortedTop);
+
+}
 
 async function handleGetCommunity(req, res) {
   let param = req.params.community || req.query.community;

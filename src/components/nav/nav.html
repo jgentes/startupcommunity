@@ -160,7 +160,7 @@
                     </li>
                 </ul>
                 <ul class="nav nav-second-level">
-                    <li ng-repeat="item in global.nav_top.parents | orderBy: 'item.value' : reverse">
+                    <li ng-repeat="item in global.nav_top.parents">
                         <a ui-sref="community.dashboard({location_path: (global.location.id || global.user.home), community_path: item.label, tail_path: ''})" ng-class="{active: global.path.includes('/' + item.label)}" ng-click="cl_working = $state.params.location_path != (global.location.id || global.user.home) || $state.params.community_path != item.label || $state.params.tail_path != ''">
                             <span>
                                 <i ng-class="'fa ' + global.industry_icons[item.label].icon"></i>
