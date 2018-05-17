@@ -265,7 +265,7 @@ function CompanyProfileController($scope, $stateParams, user_service, community_
         }
         else $scope.global['profile'] = $scope.global.community;
 
-        user_service.getProfile()
+        if (!$scope.global.user) user_service.getProfile()
             .then(function(response) {
                 $scope.global.user = response.data;
             });
