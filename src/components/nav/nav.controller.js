@@ -174,7 +174,7 @@ function NavigationController($scope, $auth, $state, $window, $location, $stateP
 
   var getCommunityTop = async function() {
     if (!nav_community.type) $window.logger.logException('getCommunityTop166: ', nav_community);
-    if (nav_community && nav_community.id && $scope.global.location && $scope.global.location.id && (nav_community.id !== $scope.global.location.id && ((nav_community.type == 'location') || (nav_community.resource) || (nav_community.type == 'cluster')))) {
+    if (nav_community && nav_community.id && $scope.global.location && $scope.global.location.id && (nav_community.id !== $scope.global.location.id && ((nav_community.type == 'location') || (nav_community.type == 'cluster')))) {
 
       var response = await community_service.getTop($scope.global.location.id, nav_community.id, nav_community);
 
