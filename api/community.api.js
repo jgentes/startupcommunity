@@ -193,6 +193,7 @@ var sortcounts = function(counts, newArray) {
 };
 
 async function handleGetIndustries(req, res) {
+  // this is used for left-hand nav industry population
   let location_id = req.query.location;
   let community_id = req.query.community;
   if (!location_id) return res.status(404).send({ message: 'Please specify a location!' });

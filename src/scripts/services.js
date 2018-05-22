@@ -379,6 +379,10 @@ angular
         return await $http.get('/api/3.0/industries?location=' + location_id + (community_id ? '&community=' + community_id : '')).then(response => response.data);
       },
       getTop: async function(location_id, community_id, community) {
+
+        // HOW TO REPLICATE THE ESSENTIAL FEATURES OF THIS METHOD WITHOUT ALL THE WORK?
+        // maybe use COUNT from sequelize and limit?
+
         // Prep to send to API
         var industry_ids = [];
 
