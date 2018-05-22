@@ -145,6 +145,10 @@ module.exports = function(sequelize, DataTypes) {
     stage: {
       type: DataTypes.STRING(50),
       allowNull: true
+    },
+    stats: {
+      type: DataTypes.JSON,
+      allowNull: true
     }
   }, {
     tableName: 'communities',

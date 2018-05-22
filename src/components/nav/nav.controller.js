@@ -81,21 +81,27 @@ function NavigationController($scope, $auth, $state, $window, $location, $stateP
       }
     };
 
-    // replace spaces in urls with hyphens
-    if ($stateParams.community_path) $stateParams.community_path = $stateParams.community_path.replace(/\s+/g, '-');
-    if ($stateParams.location_path) $stateParams.location_path = $stateParams.location_path.replace(/\s+/g, '-');
-
     // check if community is already in $scope.global
 
-    if ($stateParams.community_path && $scope.global.lastitems.indexOf($stateParams.community_path) < 0) {
-      if ($scope.global.location && $scope.global.location.id == $stateParams.community_path) {
+    const community_path_not_in_global_last_items = $stateParams.community_path && $scope.global.lastitems.indexOf($stateParams.community_path) < 0;
+    const community_path_is_global_location = $scope.global.location && $scope.global.location.id == $stateParams.community_path;
+    const location_path_is_global_location = $scope.global.location && $scope.global.location.id == $stateParams.location_path;
+    const there_is_a_location_path = !!$stateParams.location_path;
+    const this_is_a_community_path = !!$stateParams.community_path;
+
+    // replace spaces in urls with hyphens
+    if (this_is_a_community_path) $stateParams.community_path = $stateParams.community_path.replace(/\s+/g, '-');
+    if (there_is_a_location_path) $stateParams.location_path = $stateParams.location_path.replace(/\s+/g, '-');
+
+    if (community_path_not_in_global_last_items) {
+      if (community_path_is_global_location) {
         $scope.global.community = $scope.global.location;
         getLocation();
       }
       else next();
     }
-    else if ($stateParams.location_path) {
-      if ($scope.global.location && $scope.global.location.id == $stateParams.location_path) {
+    else if (there_is_a_location_path) {
+      if (location_path_is_global_location) {
         $scope.global.community = $scope.global.location;
         getLocation();
       }
@@ -108,14 +114,22 @@ function NavigationController($scope, $auth, $state, $window, $location, $stateP
 
     nav_community = $scope.global.community;
 
-    // see if we've already got the location in relatives
-    if (nav_community && nav_community.relatives && nav_community.relatives[nav_community.home]) {
+    const nav_community_exists = !!nav_community;
+    const home_is_in_community_relatives = !!(nav_community_exists && nav_community.relatives && nav_community.relatives[nav_community.home]);
+    const nav_community_is_user = nav_community_exists && nav_community.type == 'user';
+    const nav_community_is_company = nav_community_exists && nav_community.type == 'company';
+    const nav_community_is_location_path = $stateParams.location_path == nav_community.id;
+    const global_location_exists = !!($scope.global && $scope.global.location);
+    const global_location_is_nav_community_home = global_location_exists && $scope.global.location.id == nav_community.home;
+    const global_location_is_location_path = global_location_exists && $scope.global.location.id == $stateParams.location_path;
+
+    if (home_is_in_community_relatives) {
       $scope.global.location = nav_community.relatives[nav_community.home];
     }
 
     // if community is a user or company, pull their home and use that for location [used when refreshing page on user profile]
-    if (nav_community && (nav_community.type == 'user' || nav_community.type == 'company')) {
-      if ($scope.global && $scope.global.location && $scope.global.location.id == nav_community.home) {
+    if (nav_community_is_user || nav_community_is_company) {
+      if (global_location_is_nav_community_home) {
         getNavTop();
       }
       else {
@@ -125,12 +139,12 @@ function NavigationController($scope, $auth, $state, $window, $location, $stateP
         getNavTop();
       }
     }
-    else if ($scope.global && $scope.global.location && $scope.global.location.id == $stateParams.location_path) {
+    else if (global_location_is_location_path) {
       // check if location is already in $scope.global
       getNavTop();
     }
     else
-    if ($stateParams.location_path !== nav_community.id) {
+    if (!nav_community_is_location_path) {
 
       var path_response = await community_service.getCommunity($stateParams.location_path);
 
@@ -146,25 +160,27 @@ function NavigationController($scope, $auth, $state, $window, $location, $stateP
 
   var getNavTop = async function() {
 
+    const navtop_exists = !!($scope.global && $scope.global.nav_top);
+    const navtop_is_location_path = navtop_exists && $scope.global.nav_top.id == $stateParams.location_path;
+    const nav_community_is_user = nav_community && nav_community.type == 'user';
+
     // figure out if this a state for the google map
     var locName = $scope.global.location && $scope.global.location.id;
     $scope.global.state = locName && locName.indexOf('-') == -1;
 
     // check if we already have correct navigation
-    if ($scope.global && $scope.global.nav_top && $scope.global.nav_top.id == $stateParams.location_path)
+    if (navtop_is_location_path)
       getCommunityTop();
 
     else {
       // if it's a user, pull home
-      var true_loc = nav_community && nav_community.type == 'user' ?
-        nav_community.home :
-        $scope.global.location.id;
+      var true_loc = nav_community_is_user ? nav_community.home : $scope.global.location.id;
 
       //** var response = await community_service.getTop(true_loc);
       var response = await community_service.getNav(true_loc);
 
       if (!$scope.global.nav_top) {
-        $scope.global.nav_top = { parents: response };
+        $scope.global.nav_top = { id: true_loc, parents: response };
       }
       else $scope.global.nav_top.parents = response;
       getCommunityTop();
@@ -174,7 +190,13 @@ function NavigationController($scope, $auth, $state, $window, $location, $stateP
 
   var getCommunityTop = async function() {
     if (!nav_community.type) $window.logger.logException('getCommunityTop166: ', nav_community);
-    if (nav_community && nav_community.id && $scope.global.location && $scope.global.location.id && (nav_community.id !== $scope.global.location.id && ((nav_community.type == 'location') || (nav_community.type == 'cluster')))) {
+    const nav_community_exists = !!(nav_community && nav_community.id);
+    const global_location_exists = !!($scope.global.location && $scope.global.location.id);
+    const nav_community_is_location = nav_community_exists && nav_community.type == 'location';
+    const nav_community_is_cluster = nav_community_exists && nav_community.type == 'cluster';
+    const nav_community_is_global_location = nav_community_exists && global_location_exists && nav_community.id == $scope.global.location.id;
+
+    if (!nav_community_is_global_location && (nav_community_is_location || nav_community_is_cluster)) {
 
       var response = await community_service.getTop($scope.global.location.id, nav_community.id, nav_community);
 
@@ -182,6 +204,7 @@ function NavigationController($scope, $auth, $state, $window, $location, $stateP
       loadNav();
     }
     else {
+      // this is the culprit, i need ability to just pull dashboard necessities here
       $scope.global.top = $scope.global.nav_top;
       loadNav();
     }
