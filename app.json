@@ -1,0 +1,106 @@
+{
+  "name": "startupcommunity",
+  "scripts": {
+  },
+  "env": {
+    "ANGELLIST_CLIENTID": {
+      "required": true
+    },
+    "ANGELLIST_CLIENTTOKEN": {
+      "required": true
+    },
+    "API_BASE_URL": {
+      "required": true
+    },
+    "AWS_ACCESS_KEY_ID": {
+      "required": true
+    },
+    "AWS_BUCKET": {
+      "required": true
+    },
+    "AWS_SECRET_ACCESS_KEY": {
+      "required": true
+    },
+    "BONSAI_URL": {
+      "required": true
+    },
+    "BUILDPACK_URL": {
+      "required": true
+    },
+    "DB_ACCOUNT": {
+      "required": true
+    },
+    "DB_COMMUNITIES": {
+      "required": true
+    },
+    "DB_MESSAGES": {
+      "required": true
+    },
+    "DB_PASSWORD": {
+      "required": true
+    },
+    "HELPCRUNCH": {
+      "required": true
+    },
+    "JAWSDB_URL": {
+      "required": true
+    },
+    "KNOWTIFY": {
+      "required": true
+    },
+    "LINKEDIN_CLIENTID": {
+      "required": true
+    },
+    "LINKEDIN_CLIENTSECRET": {
+      "required": true
+    },
+    "MAILCHIMP": {
+      "required": true
+    },
+    "MONGODB_URI": {
+      "required": true
+    },
+    "NODE_ENV": {
+      "required": true
+    },
+    "NODE_MODULES_CACHE": {
+      "required": true
+    },
+    "NPM_CONFIG_LOGLEVEL": {
+      "required": true
+    },
+    "PAPERTRAIL_API_TOKEN": {
+      "required": true
+    },
+    "SC_API_TOKEN_SECRET": {
+      "required": true
+    },
+    "SC_PATH": {
+      "required": true
+    },
+    "SC_TOKEN_SECRET": {
+      "required": true
+    },
+    "SENDGRID_API_KEY": {
+      "required": true
+    },
+    "WWWHISPER_URL": {
+      "required": true
+    }
+  },
+  "formation": {
+    "web": {
+      "quantity": 1
+    }
+  },
+  "addons": [
+    "papertrail",
+    "jawsdb",
+    "wwwhisper"
+  ],
+  "buildpacks": [
+    {
+      "url": "https://github.com/mbuchetics/heroku-buildpack-nodejs-grunt.git"
+    }
+  ]
+}
