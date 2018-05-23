@@ -8,7 +8,7 @@
                             <div class="stats-title pull-left">
                                 <a ui-sref="user.list">
                                     <h3>People
-                                        <span loading-bars ng-if="!global.top"></span>
+                                        <span loading-bars ng-if="!global.community.stats"></span>
                                     </h3>
                                 </a>
                             </div>
@@ -16,13 +16,13 @@
                         <div class="col-xs-4">
                             <div class="stats-icon pull-right">
                                 <a ui-sref="user.list">
-                                    <h3>{{global.top.people.count}}</h3>
+                                    <h3>{{global.community.stats.people.count}}</h3>
                                 </a>
                             </div>
                         </div>
                     </div>
                     <div class="panel-footer" style="background: #fff; text-align: center; padding-bottom:49px;">
-                        <div ng-repeat="item in global.top.people.entries | limitTo: 4" style="text-align: left;">
+                        <div ng-repeat="item in global.community.stats.people.entries | limitTo: 4" style="text-align: left;">
                             <div style="margin-right: -2px; margin-bottom:-5px;">
                                 <div class="row">
                                     <!-- ng-include="'user.list.item.html'" -->
@@ -63,7 +63,7 @@
                         </div>
                         <button ng-if="!global.user" ladda="global.loaders['invite']" class="ladda-btn btn btn-xs btn-outline btn-info" style="margin-top: 20px; float:left;" ng-click="global.loaders['invite'] = true; nav.requestInvitation();">+ Invite People</button>
                         <button ng-if="global.user" ladda="global.loaders['invite']" class="ladda-btn btn btn-xs btn-outline btn-info" style="margin-top: 20px; float:left;" ng-click="global.loaders['invite'] = true; nav.invitePeople();">+ Invite People</button>
-                        <button ng-if="global.top.people.count > 4" class="btn btn-xs btn-default" style="margin-top: 20px; float:right;" ui-sref="user.list({location_path: global.location.id, community_path: global.nav.people.community, tail_path: global.nav.people.tail, query: undefined})">view all</button>
+                        <button ng-if="global.community.stats.people.count > 4" class="btn btn-xs btn-default" style="margin-top: 20px; float:right;" ui-sref="user.list({location_path: global.location.id, community_path: global.nav.people.community, tail_path: global.nav.people.tail, query: undefined})">view all</button>
                     </div>
                 </div>
             </div>
@@ -74,7 +74,7 @@
                             <div class="stats-title pull-left">
                                 <a ui-sref="company.list">
                                     <h3>Companies
-                                        <span loading-bars ng-if="!global.top"></span>
+                                        <span loading-bars ng-if="!global.community.stats"></span>
                                     </h3>
                                 </a>
                             </div>
@@ -82,13 +82,13 @@
                         <div class="col-xs-4">
                             <div class="stats-icon pull-right">
                                 <a ui-sref="company.list">
-                                    <h3>{{global.top.companies.count}}</h3>
+                                    <h3>{{global.community.stats.companies.count}}</h3>
                                 </a>
                             </div>
                         </div>
                     </div>
                     <div class="panel-footer" style="background: #fff; text-align: center; padding-bottom:49px;">
-                        <div ng-repeat="item in global.top.companies.entries | limitTo: 4" style="text-align: left;">
+                        <div ng-repeat="item in global.community.stats.companies.entries | limitTo: 4" style="text-align: left;">
                             <div style="margin-right: -2px; margin-bottom:-5px;">
                                 <div class="row">
                                     <!-- ng-include="'company.list.item.html'" -->
@@ -136,7 +136,7 @@
                         </div>
                         <button ng-if="!global.user" ladda="global.loaders['addco']" class="ladda-btn btn btn-xs btn-outline btn-primary" style="margin-top: 20px; float:left;" ng-click="global.loaders['addco'] = true; nav.requestInvitation();">+ Add Company</button>
                         <button ng-if="global.user" ladda="global.loaders['addco']" class="ladda-btn btn btn-xs btn-outline btn-primary" style="margin-top: 20px; float:left;" ng-click="global.loaders['addco'] = true;" ui-sref="company.add">+ Add Company</button>
-                        <button ng-if="global.top.companies.count > 4" class="btn btn-xs btn-default" style="margin-top: 20px; float: right;" ui-sref="company.list({location_path: global.location.id, community_path: global.nav.companies.community, tail_path: global.nav.companies.tail, query: undefined})">view all</button>
+                        <button ng-if="global.community.stats.companies.count > 4" class="btn btn-xs btn-default" style="margin-top: 20px; float: right;" ui-sref="company.list({location_path: global.location.id, community_path: global.nav.companies.community, tail_path: global.nav.companies.tail, query: undefined})">view all</button>
                     </div>
                 </div>
             </div>
@@ -147,7 +147,7 @@
                             <div class="stats-title pull-left">
                                 <a ui-sref="resource.list">
                                     <h3>Resources
-                                        <span loading-bars ng-if="!global.top"></span>
+                                        <span loading-bars ng-if="!global.community.stats"></span>
                                     </h3>
                                 </a>
                             </div>
@@ -155,13 +155,13 @@
                         <div class="col-xs-4">
                             <div class="stats-icon pull-right">
                                 <a ui-sref="resource.list">
-                                    <h3>{{global.top.resources.count}}</h3>
+                                    <h3>{{global.community.stats.resources.count}}</h3>
                                 </a>
                             </div>
                         </div>
                     </div>
                     <div class="panel-footer" style="background: #fff; text-align: center; padding-bottom:49px;">
-                        <div ng-repeat="item in global.top.resources.entries | limitTo: 4" style="text-align: left;">
+                        <div ng-repeat="item in global.community.stats.resources.entries | limitTo: 4" style="text-align: left;">
                             <div style="margin-right: -2px; margin-bottom:-5px;">
                                 <div class="row">
                                     <!-- ng-include="'company.list.item.html'" -->
@@ -209,7 +209,7 @@
                         </div>
                         <button ng-if="!global.user" ladda="global.loaders['addres']" class="ladda-btn btn btn-xs btn-outline btn-success" style="margin-top: 20px; float:left;" ng-click="global.loaders['addres'] = true; nav.requestInvitation();">+ Add Resource</button>
                         <button ng-if="global.user" ladda="global.loaders['addres']" class="ladda-btn btn btn-xs btn-outline btn-success" style="margin-top: 20px; float:left;" ng-click="global.loaders['addres'] = true" ui-sref="resource.add">+ Add Resource</button>
-                        <button ng-if="global.top.resources.count > 4" class="btn btn-xs btn-default" style="margin-top: 20px; float: right;" ui-sref="resource.list({location_path: global.location.id, community_path: global.nav.resources.community, tail_path: global.nav.resources.tail, query: undefined})">view all</button>
+                        <button ng-if="global.community.stats.resources.count > 4" class="btn btn-xs btn-default" style="margin-top: 20px; float: right;" ui-sref="resource.list({location_path: global.location.id, community_path: global.nav.resources.community, tail_path: global.nav.resources.tail, query: undefined})">view all</button>
                     </div>
                 </div>
             </div>
@@ -220,17 +220,17 @@
 
                     <div class="panel-heading" style="border-bottom: 2px solid #3498db">
                         <h3>Top Skills
-                            <span loading-bars ng-if="!global.top"></span>
+                            <span loading-bars ng-if="!global.community.stats"></span>
                         </h3>
                         <small class="small-column-title"># People</small>
                     </div>
 
-                    <div class="panel-body" ng-repeat="item in global.top.skills.entries | limitTo: 5">
+                    <div class="panel-body" ng-repeat="item in global.community.stats.skills.entries | limitTo: 5">
                         <div class="row">
                             <div class="col-xs-10 forum-heading">
                                 <a ng-click="nav.search(item.value)">
                                     <h4 style="font-weight: 200;">{{item.value}}</h4>
-                                    <uib-progressbar ng-attr-value="(item.count/global.top.skills.entries[0].count)*100" type="info" class="progress-small full" style="margin-top: 7px;"></uib-progressbar>
+                                    <uib-progressbar ng-attr-value="(item.count/global.community.stats.skills.entries[0].count)*100" type="info" class="progress-small full" style="margin-top: 7px;"></uib-progressbar>
                                 </a>
                             </div>
                             <div class="col-xs-2 forum-info">
@@ -248,17 +248,17 @@
 
                     <div class="panel-heading" style="border-bottom: 2px solid #34495E;">
                         <h3>Top Markets
-                            <span loading-bars ng-if="!global.top"></span>
+                            <span loading-bars ng-if="!global.community.stats"></span>
                         </h3>
                         <small class="small-column-title"># Companies</small>
                     </div>
 
-                    <div class="panel-body" ng-repeat="item in global.top.industries.entries | limitTo: 5">
+                    <div class="panel-body" ng-repeat="item in global.community.stats.industries.entries | limitTo: 5">
                         <div class="row">
                             <div class="col-xs-10 forum-heading">
                                 <a ng-click="nav.search(item.value)">
                                     <h4 style="font-weight: 200;">{{item.value}}</h4>
-                                    <uib-progressbar ng-attr-value="(item.count/global.top.industries.entries[0].count)*100" type="default" class="progress-small full" style="margin-top: 7px;"></uib-progressbar>
+                                    <uib-progressbar ng-attr-value="(item.count/global.community.stats.industries.entries[0].count)*100" type="default" class="progress-small full" style="margin-top: 7px;"></uib-progressbar>
                                 </a>
                             </div>
                             <div class="col-xs-2 forum-info">
@@ -276,21 +276,21 @@
 
                     <div class="panel-heading" style="border-bottom: 2px solid #34495E;">
                         <h3>Top Industries
-                            <span loading-bars ng-if="!global.top"></span>
+                            <span loading-bars ng-if="!global.community.stats"></span>
                         </h3>
                     </div>
 
-                    <div class="panel-body" ng-repeat="item in global.top.parents | limitTo: 5">
+                    <div class="panel-body" ng-repeat="item in global.community.stats.parents | limitTo: 5">
                         <div class="row">
                             <div class="col-xs-10 forum-heading">
                                 <a ng-click="nav.search(item.value)">
                                     <h4 style="font-weight: 200;">{{item.label[0].toUpperCase() + item.label.slice(1);}}</h4>
-                                    <uib-progressbar value="item.value" max="global.top.max" type="success" class="progress-small full" style="margin-top: 7px;"></uib-progressbar>
+                                    <uib-progressbar value="item.value" max="global.community.stats.max" type="success" class="progress-small full" style="margin-top: 7px;"></uib-progressbar>
                                 </a>
                             </div>
                             <div class="col-xs-2 forum-info">
                                 <a ng-click="nav.search(item.value)">
-                                    <span class="number number-column">{{((item.value / global.top.max)*100).toFixed(0)}}%</span>
+                                    <span class="number number-column">{{((item.value / global.community.stats.max)*100).toFixed(0)}}%</span>
                                 </a>
                             </div>
                         </div>
