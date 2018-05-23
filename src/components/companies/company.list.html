@@ -169,7 +169,7 @@
                             <a><i class="fa fa-fw fa-globe themed-color-dark icon-push"></i> {{global.community.name}}</a>
                         </li>
                         <hr style="margin: 10px 0 10px 0;">
-                        <li ng-if="global.community.type !== 'cluster'" ng-repeat="cluster in global.top.parents" ng-class="{'active':companies.selectedClusters.indexOf(cluster.label) >= 0}" ng-click="companies.loadingCluster=true;  companies.allClusters=false; companies.filterClusters(cluster.label);">
+                        <li ng-if="global.community.type !== 'cluster'" ng-repeat="cluster in global.community.stats.parents" ng-class="{'active':companies.selectedClusters.indexOf(cluster.label) >= 0}" ng-click="companies.loadingCluster=true;  companies.allClusters=false; companies.filterClusters(cluster.label);">
                             <a>{{cluster.label[0].toUpperCase() + cluster.label.slice(1)}}</a>
                         </li>
                     </ul>

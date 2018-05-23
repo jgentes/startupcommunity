@@ -12,7 +12,6 @@ function NavigationController($scope, $auth, $state, $window, $location, $stateP
   var self = this;
   $scope.global.path = $location.path().replace(/\/$/, ''); //used for routing and used in view
   $scope.global.query = undefined;
-  $scope.global.top = undefined;
   $scope.global.community = undefined;
   $scope.global.loaders = {};
   $scope.global.lastitems = ['people', 'companies', 'resources', 'search', 'invite', 'add-company', 'add-resource', 'welcome', 'settings', 'edit', 'newsletter'];
@@ -189,21 +188,17 @@ function NavigationController($scope, $auth, $state, $window, $location, $stateP
   };
 
   var getCommunityTop = async function() {
-    let stats = $scope.global.community.stats;
-    if (!stats) {
-      let getStats = await community_service.getTop($scope.global.location.id, nav_community.id, nav_community);
-      stats = getStats.data;
+    if (!$scope.global.community.stats) {
+      let stats = await community_service.getTop($scope.global.location.id, nav_community.id, nav_community);
+      $scope.global.community.stats = stats.data;
     }
     else {
       // compile stats and put them into communtiy record for next pull
       community_service.getTop($scope.global.location.id, nav_community.id, nav_community);
     }
 
-    $scope.global.top = stats;
-
     loadNav();
     $scope.$apply();
-
   };
 
   /* -------------- DEPENDENCIES HAVE BEEN RESOLVED --------------------- */
