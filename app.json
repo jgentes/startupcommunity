@@ -1,7 +1,7 @@
 {
   "name": "startupcommunity",
-  "scripts": {
-  },
+  "stack": "heroku-16",
+  "scripts": {},
   "env": {
     "ANGELLIST_CLIENTID": {
       "required": true
@@ -98,9 +98,7 @@
     "jawsdb",
     "wwwhisper"
   ],
-  "buildpacks": [
-    {
-      "url": "https://github.com/mbuchetics/heroku-buildpack-nodejs-grunt.git"
-    }
-  ]
+  "buildpacks": [{
+    "url": "https://github.com/mbuchetics/heroku-buildpack-nodejs-grunt.git"
+  }]
 }
