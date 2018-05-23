@@ -2,7 +2,8 @@ const
   Sequelize = require('sequelize'),
   sequelize = new Sequelize(process.env.JAWSDB_URL || 'mysql://bxaqqctwcaidtk79:j5b2s66qg9q3mo3l@dyud5fa2qycz1o3v.cbetxkdyhwsb.us-east-1.rds.amazonaws.com:3306/n24fuljt9b5jqowy', {
     dialect: 'mysql',
-    operatorsAliases: false
+    operatorsAliases: false,
+    logging: process.env.NODE_ENV == 'development'
   }),
   cls = require('continuation-local-storage'),
   cdb = sequelize.import("communities"),
