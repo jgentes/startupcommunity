@@ -183,6 +183,7 @@ app.post('/api/2.3/companies/checkurl', companyApis.checkUrl);
 app.post('/api/2.3/profile/removerole', auth.ensureAuthenticated, userApis.removeRole);
 
 // new for 3.0
+app.post('/api/3.0/stats', communityApis.setCommunityStats);
 app.get('/api/3.0/industries', communityApis.getIndustries);
 app.get('/api/3.0/communities', communityApis.getCommunity);
 app.get('/api/3.0/neighbors/:community', communityApis.getNeighbors);

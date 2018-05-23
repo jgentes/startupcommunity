@@ -378,10 +378,7 @@ angular
       getNav: async(location_id, community_id) => {
         return await $http.get('/api/3.0/industries?location=' + location_id + (community_id ? '&community=' + community_id : '')).then(response => response.data);
       },
-      getTop: async function(location_id, community_id, community) {
-
-        // HOW TO REPLICATE THE ESSENTIAL FEATURES OF THIS METHOD WITHOUT ALL THE WORK?
-        // maybe use COUNT from sequelize and limit?
+      getTop: function(location_id, community_id, community) {
 
         // Prep to send to API
         var industry_ids = [];
@@ -411,174 +408,13 @@ angular
           var cluster_id = community.id;
         }
 
-        var params = {};
+        var params = { community_id, location_id };
         if (cluster_id) params.cluster_id = cluster_id;
         if (industry_ids.length) params.industry_ids = industry_ids;
 
-        // get companies and industries
-        const companies = await $http.get('/api/3.0/community/' + location_id + '/' + (community_id ? community_id + '/companies' : 'companies'), { params }).then(response => response.data);
-
-        var industries = [];
-        var companyParents = [];
-        var top_results = {
-          people: {},
-          companies: {},
-          skills: {},
-          people_parents: {},
-          company_parents: {}
-        };
-
-        // create array of items
-        companies.forEach(r => {
-          if (r.industries) industries = industries.concat(r.industries);
-          if (r.parents) companyParents = companyParents.concat(r.parents);
-        });
-
-        industries = _.countBy(industries);
-        companyParents = _.countBy(companyParents);
-
-        var sortedIndustries = this.sortcounts(industries, true);
-        var sortedParents = this.sortcounts(companyParents);
-
-        top_results.industries = {
-          count: Object.keys(industries).length ? Object.values(industries).reduce(function(total, val) {
-            return total + val;
-          }) : [],
-          entries: sortedIndustries.slice(0, 5)
-        };
-
-        top_results.company_parents = {
-          count: Object.keys(companyParents).length ? Object.values(companyParents).reduce(function(total, val) {
-            return total + val;
-          }) : [],
-          entries: sortedParents
-        };
-
-        top_results.companies = {
-          count: companies.length,
-          entries: companies.slice(0, 5)
-        };
-
-        // get people & skills
-        const people = await $http.get('/api/3.0/community/' + location_id + '/' + (community_id ? community_id + '/people' : 'people'), { params }).then(response => response.data);
-
-        var skills = [];
-        var peopleParents = [];
-
-        people.forEach(r => {
-          if (r.skills) skills = skills.concat(r.skills);
-          if (r.parents) peopleParents = peopleParents.concat(r.parents);
-        });
-
-        skills = _.countBy(skills);
-        peopleParents = _.countBy(peopleParents);
-
-        var sortedSkills = this.sortcounts(skills, true);
-        var sortedPeopleParents = this.sortcounts(peopleParents);
-
-        top_results.skills = {
-          count: Object.keys(skills).length ? Object.values(skills).reduce(function(total, val) {
-            return total + val;
-          }) : [],
-          entries: sortedSkills.slice(0, 5)
-        };
-
-        top_results.people_parents = {
-          count: Object.keys(peopleParents).length ? Object.values(peopleParents).reduce(function(total, val) {
-            return total + val;
-          }) : [],
-          entries: sortedPeopleParents
-        };
-
-        top_results.people = {
-          count: people.length,
-          entries: people.slice(0, 5)
-        };
-
-        // get resources
-        params.resources = true;
-        const resources = await $http.get('/api/3.0/community/' + location_id + '/' + (community_id ? community_id + '/companies' : 'companies'), { params }).then(response => response.data);
-
-        top_results.resources = {
-          count: resources.length,
-          entries: resources
-        };
-
-        // BEGIN PARENTS (this is mostly to avoid another api call that includes both companies and users)
-
-        var c_labels = [],
-          c_numbers = [],
-          p_labels = [],
-          p_numbers = [];
-
-        for (var c in top_results.company_parents.entries) {
-          c_labels.push(c);
-          c_numbers.push(top_results.company_parents.entries[c]);
-        }
-
-        for (var p in top_results.people_parents.entries) {
-          p_labels.push(p);
-          p_numbers.push(top_results.people_parents.entries[p]);
-        }
-
-        top_results['parents'] = {
-          labels: _.union(c_labels, p_labels),
-          values: []
-        };
-
-        for (var l in top_results.parents.labels) {
-          var r = 0;
-          if (c_numbers[c_labels.indexOf(top_results.parents.labels[l])]) {
-            r += c_numbers[c_labels.indexOf(top_results.parents.labels[l])];
-          }
-          if (p_numbers[p_labels.indexOf(top_results.parents.labels[l])]) {
-            r += p_numbers[p_labels.indexOf(top_results.parents.labels[l])];
-          }
-          top_results.parents.values.push(r);
-        }
-        var temp = [];
-        for (var a in top_results.parents.labels) {
-          if (top_results.parents.labels[a] != 'all') {
-            temp.push({
-              label: top_results.parents.labels[a],
-              value: top_results.parents.values[a]
-            });
-          }
-        }
-
-        if (!_.isEmpty(temp)) {
-          top_results.parents = _.orderBy(temp, 'value', 'desc');
-        }
-        else delete top_results.parents;
-
-        delete top_results.people_parents;
-        delete top_results.company_parents;
-
-        // this is for dashboard view
-
-        top_results.max = 0;
-        if (top_results.parents) {
-          for (var val in top_results.parents) {
-            top_results.max += top_results.parents[val].value;
-          }
-        }
-
-        // END PARENTS
-
-        top_results.id = community_id;
-
-        return top_results;
-
-        // todo if more results, get more
-        /*
-        getMore(selector, result.bookmark, function(more) {
-                var newresult = {};
-                newresult = result.concat(more);
-                finish(newresult);
-              });
-        */
-
-
+        // trigger getstats
+        $http.post('/api/3.0/stats', { params });
+        return;
       },
       setSettings: function(embed, location_id, community_id) {
         return $http.put('/api/2.1/settings', {
