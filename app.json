@@ -61,7 +61,8 @@
       "required": true
     },
     "NODE_ENV": {
-      "required": true
+      "required": true,
+      "value": "production"
     },
     "NODE_MODULES_CACHE": {
       "required": true
