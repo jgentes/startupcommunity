@@ -1,7 +1,7 @@
 {
   "name": "startupcommunity",
-  "scripts": {
-  },
+  "stack": "heroku-16",
+  "scripts": {},
   "env": {
     "ANGELLIST_CLIENTID": {
       "required": true
@@ -61,7 +61,8 @@
       "required": true
     },
     "NODE_ENV": {
-      "required": true
+      "required": true,
+      "value": "production"
     },
     "NODE_MODULES_CACHE": {
       "required": true
@@ -90,7 +91,8 @@
   },
   "formation": {
     "web": {
-      "quantity": 1
+      "quantity": 1,
+      "size": "hobby"
     }
   },
   "addons": [
@@ -98,9 +100,7 @@
     "jawsdb",
     "wwwhisper"
   ],
-  "buildpacks": [
-    {
-      "url": "https://github.com/mbuchetics/heroku-buildpack-nodejs-grunt.git"
-    }
-  ]
+  "buildpacks": [{
+    "url": "https://github.com/heroku/heroku-buildpack-nodejs.git"
+  }]
 }
