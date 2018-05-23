@@ -13,6 +13,7 @@ var CommunityApi = function() {
   this.getResources = handleGetResources;
   this.getTeam = handleGetTeam;
   this.setCommunity = handleSetCommunity;
+  this.setCommunityStats = handleSetCommunityStats;
   this.editCommunity = handleEditCommunity;
   this.deleteCommunity = handleDeleteCommunity;
   this.getId = handleGetId;
@@ -230,7 +231,7 @@ async function handleGetIndustries(req, res) {
 
 async function handleGetCommunity(req, res) {
   let param = req.params.community || req.query.community;
-  if (!param) return res.status(404).send({ message: 'Please specify a community!' });
+  if (!param && res) return res.status(404).send({ message: 'Please specify a community!' });
 
   if (!Array.isArray(param)) param = [param];
 
@@ -262,6 +263,7 @@ async function handleGetCommunity(req, res) {
     community = [community];
   }
 
+  if (!res) return community;
   return res.status(200).send(community);
 }
 
@@ -324,7 +326,7 @@ async function handleGetTeam(req, res) {
     ).then(team => res.status(200).send(addkeys(team))).catch(err => console.warn("WARNING: ", err));
 }
 
-function handleGetResources(req, res) {
+async function handleGetResources(req, res) {
 
   var location_id = req.body.location_id,
     resources = req.body.resources,
@@ -379,12 +381,12 @@ function getMore(selector, bookmark, callback) {
   }).then(results => callback).catch(err => console.warn("WARNING: ", err));
 }
 
-function handleGetCompanies(req, res) {
-  console.log('PARAMS: ', req.params, 'QUERY: ', req.query);
-
+async function handleGetCompanies(req, res) {
   const search = buildSearch(req.params.community_id, req.params.location_id);
-  const cluster_search = buildClusterSearch(req.query.cluster_id, req.query.industry_ids);
-  const resources = req.query.resources;
+  const cluster_id = req.query.cluster_id || req.params.cluster_id;
+  const industry_ids = req.query.industry_ids || req.params.industry_ids;
+  const cluster_search = buildClusterSearch(cluster_id, industry_ids);
+  const resources = req.query.resources || req.params.resources;
   //if (req.query.cluster_id) community_id = '*'; // may need this
   //if (req.params.location_id == req.query.cluster_id) search = '';
 
@@ -421,19 +423,22 @@ function handleGetCompanies(req, res) {
 
   console.log('Pulling ' + resources ? 'Resources' : 'Companies: ', selector);
 
-  cdb.findAll({
+  var result = await cdb.findAll({
     where: selector,
     order: sequelize.random()
-  }).then(result => {
-    return res.status(200).send(addkeys(result));
   }).catch(err => console.warn("WARNING: ", err));
+
+  if (!res) return addkeys(result);
+  return res.status(200).send(addkeys(result));
 }
 
-function handleGetPeople(req, res) {
+async function handleGetPeople(req, res) {
   console.log('PARAMS: ', req.params, 'QUERY: ', req.query);
 
   const search = buildSearch(req.params.community_id, req.params.location_id);
-  const cluster_search = buildClusterSearch(req.query.cluster_id, req.query.industry_ids);
+  const cluster_id = req.query.cluster_id || req.params.cluster_id;
+  const industry_ids = req.query.industry_ids || req.params.industry_ids;
+  const cluster_search = buildClusterSearch(cluster_id, industry_ids);
 
   //if (req.query.cluster_id) community_id = '*'; // may need this
   //if (req.params.location_id == req.query.cluster_id) search = '';
@@ -464,13 +469,14 @@ function handleGetPeople(req, res) {
 
   console.log('Pulling People: ', selector);
 
-  cdb.findAll({
+  const result = await cdb.findAll({
     where: selector,
     limit: 1000,
     order: sequelize.random()
-  }).then(result => {
-    return res.status(200).send(addkeys(result));
   }).catch(err => console.warn("WARNING: ", err));
+
+  if (!res) return addkeys(result);
+  return res.status(200).send(addkeys(result));
 }
 
 function handleSetCommunity(req, res) {
@@ -702,6 +708,179 @@ function handleEditCommunity(req, res) {
       console.warn("WARNING: community611");
     }
   }).catch(err => console.warn("WARNING: ", err))
+}
+
+async function handleSetCommunityStats(req, res) {
+  var { location_id, community_id } = req.body.params;
+  if (!location_id && !community_id) return res.status(400);
+
+  console.log('Setting community stats for location: ' + location_id + ' and community: ' + community_id);
+  req.params = req.body.params; // for sending to other 'GET' services
+
+  // get companies and industries
+  const companies = await handleGetCompanies(req);
+
+  var industries = [];
+  var companyParents = [];
+  var top_results = {
+    people: {},
+    companies: {},
+    skills: {},
+    people_parents: {},
+    company_parents: {}
+  };
+
+  // create array of items
+  companies.forEach(r => {
+    if (r.industries) industries = industries.concat(r.industries);
+    if (r.parents) companyParents = companyParents.concat(r.parents);
+  });
+  console.log(industries);
+  industries = _.countBy(industries);
+  companyParents = _.countBy(companyParents);
+
+  var sortedIndustries = sortcounts(industries, true);
+  var sortedParents = sortcounts(companyParents);
+
+  top_results.industries = {
+    count: Object.keys(industries).length ? Object.values(industries).reduce(function(total, val) {
+      return total + val;
+    }) : [],
+    entries: sortedIndustries.slice(0, 5)
+  };
+
+  top_results.company_parents = {
+    count: Object.keys(companyParents).length ? Object.values(companyParents).reduce(function(total, val) {
+      return total + val;
+    }) : [],
+    entries: sortedParents
+  };
+
+  top_results.companies = {
+    count: companies.length,
+    entries: companies.slice(0, 5)
+  };
+
+  // get people & skills
+  const people = await handleGetPeople(req);
+
+  var skills = [];
+  var peopleParents = [];
+
+  people.forEach(r => {
+    if (r.skills) skills = skills.concat(r.skills);
+    if (r.parents) peopleParents = peopleParents.concat(r.parents);
+  });
+
+  skills = _.countBy(skills);
+  peopleParents = _.countBy(peopleParents);
+
+  var sortedSkills = sortcounts(skills, true);
+  var sortedPeopleParents = sortcounts(peopleParents);
+
+  top_results.skills = {
+    count: Object.keys(skills).length ? Object.values(skills).reduce(function(total, val) {
+      return total + val;
+    }) : [],
+    entries: sortedSkills.slice(0, 5)
+  };
+
+  top_results.people_parents = {
+    count: Object.keys(peopleParents).length ? Object.values(peopleParents).reduce(function(total, val) {
+      return total + val;
+    }) : [],
+    entries: sortedPeopleParents
+  };
+
+  top_results.people = {
+    count: people.length,
+    entries: people.slice(0, 5)
+  };
+
+  // get resources
+  req.body.params.resources = true;
+  const resources = await handleGetCompanies(req);
+
+  top_results.resources = {
+    count: resources.length,
+    entries: resources
+  };
+
+  // BEGIN PARENTS (this is mostly to avoid another api call that includes both companies and users)
+
+  var c_labels = [],
+    c_numbers = [],
+    p_labels = [],
+    p_numbers = [];
+
+  for (var c in top_results.company_parents.entries) {
+    c_labels.push(c);
+    c_numbers.push(top_results.company_parents.entries[c]);
+  }
+
+  for (var p in top_results.people_parents.entries) {
+    p_labels.push(p);
+    p_numbers.push(top_results.people_parents.entries[p]);
+  }
+
+  top_results['parents'] = {
+    labels: _.union(c_labels, p_labels),
+    values: []
+  };
+
+  for (var l in top_results.parents.labels) {
+    var r = 0;
+    if (c_numbers[c_labels.indexOf(top_results.parents.labels[l])]) {
+      r += c_numbers[c_labels.indexOf(top_results.parents.labels[l])];
+    }
+    if (p_numbers[p_labels.indexOf(top_results.parents.labels[l])]) {
+      r += p_numbers[p_labels.indexOf(top_results.parents.labels[l])];
+    }
+    top_results.parents.values.push(r);
+  }
+  var temp = [];
+  for (var a in top_results.parents.labels) {
+    if (top_results.parents.labels[a] != 'all') {
+      temp.push({
+        label: top_results.parents.labels[a],
+        value: top_results.parents.values[a]
+      });
+    }
+  }
+
+  if (!_.isEmpty(temp)) {
+    top_results.parents = _.orderBy(temp, 'value', 'desc');
+  }
+  else delete top_results.parents;
+
+  delete top_results.people_parents;
+  delete top_results.company_parents;
+
+  // this is for dashboard view
+
+  top_results.max = 0;
+  if (top_results.parents) {
+    for (var val in top_results.parents) {
+      top_results.max += top_results.parents[val].value;
+    }
+  }
+
+  // END PARENTS
+
+  top_results.id = community_id;
+
+  // todo if more results, get more
+  /*
+  getMore(selector, result.bookmark, function(more) {
+          var newresult = {};
+          newresult = result.concat(more);
+          finish(newresult);
+        });
+  */
+  // todo may need to put stats in community.community_profiles[location_id]
+  // TEST TECH IN PORTLAND to see if it has same stats as bend
+  await cdb.update({ stats: top_results }, { where: { id: top_results.id } });
+  return res.send(200);
 }
 
 function handleDeleteCommunity(req, res) {
