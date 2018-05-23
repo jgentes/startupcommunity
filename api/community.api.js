@@ -166,17 +166,20 @@ var buildClusterSearch = (cluster_id, industry_ids = []) => {
 }
 
 var addkeys = function(data) {
+  var entries = [];
   for (var i in data) {
+    var entry = data[i].toJSON();
     // delete sensitive data
-    if (data[i].password) delete data[i].password;
-    if (data[i].email) delete data[i].email;
-    if (data[i].newsletter) delete data[i].newsletter;
-    if (data[i].linkedin) {
-      if (data[i].linkedin.emailAddress) delete data[i].linkedin.emailAddress;
-      if (data[i].linkedin.access_token) delete data[i].linkedin.access_token;
+    if (entry.password) delete entry.password;
+    if (entry.email) delete entry.email;
+    if (entry.newsletter) delete entry.newsletter;
+    if (entry.linkedin) {
+      if (entry.linkedin.emailAddress) delete entry.linkedin.emailAddress;
+      if (entry.linkedin.access_token) delete entry.linkedin.access_token;
     }
+    entries.push(entry);
   }
-  return data;
+  return entries;
 };
 
 var sortcounts = function(counts, newArray) {
@@ -735,7 +738,7 @@ async function handleSetCommunityStats(req, res) {
     if (r.industries) industries = industries.concat(r.industries);
     if (r.parents) companyParents = companyParents.concat(r.parents);
   });
-  console.log(industries);
+
   industries = _.countBy(industries);
   companyParents = _.countBy(companyParents);
 
@@ -880,7 +883,7 @@ async function handleSetCommunityStats(req, res) {
   // todo may need to put stats in community.community_profiles[location_id]
   // TEST TECH IN PORTLAND to see if it has same stats as bend
   await cdb.update({ stats: top_results }, { where: { id: top_results.id } });
-  return res.send(200);
+  return res.status(200).send(top_results);
 }
 
 function handleDeleteCommunity(req, res) {
