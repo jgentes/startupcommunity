@@ -189,20 +189,21 @@ function NavigationController($scope, $auth, $state, $window, $location, $stateP
   };
 
   var getCommunityTop = async function() {
-    if (!nav_community.type) $window.logger.logException('getCommunityTop166: ', nav_community);
-    const nav_community_exists = !!(nav_community && nav_community.id);
-    const global_location_exists = !!($scope.global.location && $scope.global.location.id);
-    const nav_community_is_location = nav_community_exists && nav_community.type == 'location';
-    const nav_community_is_cluster = nav_community_exists && nav_community.type == 'cluster';
-    const nav_community_is_global_location = nav_community_exists && global_location_exists && nav_community.id == $scope.global.location.id;
+    let stats = $scope.global.community.stats;
+    if (!stats) {
+      let getStats = await community_service.getTop($scope.global.location.id, nav_community.id, nav_community);
+      stats = getStats.data;
+    }
+    else {
+      // compile stats and put them into communtiy record for next pull
+      community_service.getTop($scope.global.location.id, nav_community.id, nav_community);
+    }
 
-    $scope.global.top = $scope.global.community.stats;
+    $scope.global.top = stats;
 
     loadNav();
     $scope.$apply();
 
-    // compile stats and put them into communtiy record for next pull
-    community_service.getTop($scope.global.location.id, nav_community.id, nav_community);
   };
 
   /* -------------- DEPENDENCIES HAVE BEEN RESOLVED --------------------- */
