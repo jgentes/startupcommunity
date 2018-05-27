@@ -729,7 +729,7 @@ async function handleSetCommunityStats(req, res) {
 
   // get companies and industries
   const companies = await handleGetCompanies(req);
-  if (!companies) return; // need to provide some status to user here
+  if (!companies) return; // need to provide some status to user here? issue is with user pulls.. why are we doing top?
 
   var industries = [];
   var companyParents = [];

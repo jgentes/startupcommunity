@@ -174,14 +174,12 @@ function NavigationController($scope, $auth, $state, $window, $location, $stateP
     else {
       // if it's a user, pull home
       var true_loc = nav_community_is_user ? nav_community.home : $scope.global.location.id;
-
-      //** var response = await community_service.getTop(true_loc);
-      var response = await community_service.getNav(true_loc);
+      var parents = await community_service.getNav(true_loc);
 
       if (!$scope.global.nav_top) {
-        $scope.global.nav_top = { id: true_loc, parents: response };
+        $scope.global.nav_top = { id: true_loc, parents };
       }
-      else $scope.global.nav_top.parents = response;
+      else $scope.global.nav_top.parents = parents;
       getCommunityTop();
     }
 
@@ -198,7 +196,7 @@ function NavigationController($scope, $auth, $state, $window, $location, $stateP
     }
 
     loadNav();
-    $scope.$apply();
+    //$scope.$apply();
   };
 
   /* -------------- DEPENDENCIES HAVE BEEN RESOLVED --------------------- */

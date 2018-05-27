@@ -57,6 +57,7 @@ app.disable('x-powered-by');
 app.use(bugsnag.requestHandler);
 app.use(logger('dev'));
 app.use(methodOverride());
+app.use(bodyParser({ limit: '10mb' }));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use("/public", express.static(root + '/public'));
