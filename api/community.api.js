@@ -729,6 +729,7 @@ async function handleSetCommunityStats(req, res) {
 
   // get companies and industries
   const companies = await handleGetCompanies(req);
+  if (!companies) return; // need to provide some status to user here
 
   var industries = [];
   var companyParents = [];
