@@ -428,12 +428,14 @@ async function handleGetCompanies(req, res) {
 
   try {
     var result = await cdb.findAll({
-      where: selector,
-      order: sequelize.random()
-    }).catch(err => console.warn("WARNING: ", err));
-
-    if (!res) return addkeys(result);
-    return res.status(200).send(addkeys(result));
+        where: selector,
+        order: sequelize.random()
+      })
+      .then(result => {
+        if (!res) return addkeys(result);
+        return res.status(200).send(addkeys(result));
+      })
+      .catch(err => console.warn("WARNING: ", err));
   }
   catch (e) {
     console.log('WARNING: CAUGHT SELECTOR: ', selector);
