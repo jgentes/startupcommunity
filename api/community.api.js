@@ -729,48 +729,52 @@ async function handleSetCommunityStats(req, res) {
 
   // get companies and industries
   const companies = await handleGetCompanies(req);
-  if (!companies) return; // need to provide some status to user here? issue is with user pulls.. why are we doing top?
 
   var industries = [];
   var companyParents = [];
+  var defaultObj = { count: 0, entries: [] };
   var top_results = {
-    people: {},
-    companies: {},
-    skills: {},
-    people_parents: {},
-    company_parents: {}
+    people: defaultObj,
+    skills: defaultObj,
+    people_parents: defaultObj,
+    companies: defaultObj,
+    industries: defaultObj,
+    company_parents: defaultObj,
+    resources: defaultObj
   };
 
-  // create array of items
-  companies.forEach(r => {
-    if (r.industries) industries = industries.concat(r.industries);
-    if (r.parents) companyParents = companyParents.concat(r.parents);
-  });
+  if (companies && companies.length) {
+    // create array of items
+    companies.forEach(r => {
+      if (r.industries) industries = industries.concat(r.industries);
+      if (r.parents) companyParents = companyParents.concat(r.parents);
+    });
 
-  industries = _.countBy(industries);
-  companyParents = _.countBy(companyParents);
+    industries = _.countBy(industries);
+    companyParents = _.countBy(companyParents);
 
-  var sortedIndustries = sortcounts(industries, true);
-  var sortedParents = sortcounts(companyParents);
+    var sortedIndustries = sortcounts(industries, true);
+    var sortedParents = sortcounts(companyParents);
 
-  top_results.industries = {
-    count: Object.keys(industries).length ? Object.values(industries).reduce(function(total, val) {
-      return total + val;
-    }) : [],
-    entries: sortedIndustries.slice(0, 5)
-  };
+    top_results.industries = {
+      count: Object.keys(industries).length ? Object.values(industries).reduce(function(total, val) {
+        return total + val;
+      }) : [],
+      entries: sortedIndustries.slice(0, 5)
+    };
 
-  top_results.company_parents = {
-    count: Object.keys(companyParents).length ? Object.values(companyParents).reduce(function(total, val) {
-      return total + val;
-    }) : [],
-    entries: sortedParents
-  };
+    top_results.company_parents = {
+      count: Object.keys(companyParents).length ? Object.values(companyParents).reduce(function(total, val) {
+        return total + val;
+      }) : [],
+      entries: sortedParents
+    };
 
-  top_results.companies = {
-    count: companies.length,
-    entries: companies.slice(0, 5)
-  };
+    top_results.companies = {
+      count: companies.length,
+      entries: companies.slice(0, 5)
+    };
+  }
 
   // get people & skills
   const people = await handleGetPeople(req);
@@ -778,44 +782,48 @@ async function handleSetCommunityStats(req, res) {
   var skills = [];
   var peopleParents = [];
 
-  people.forEach(r => {
-    if (r.skills) skills = skills.concat(r.skills);
-    if (r.parents) peopleParents = peopleParents.concat(r.parents);
-  });
+  if (people && people.length) {
+    people.forEach(r => {
+      if (r.skills) skills = skills.concat(r.skills);
+      if (r.parents) peopleParents = peopleParents.concat(r.parents);
+    });
 
-  skills = _.countBy(skills);
-  peopleParents = _.countBy(peopleParents);
+    skills = _.countBy(skills);
+    peopleParents = _.countBy(peopleParents);
 
-  var sortedSkills = sortcounts(skills, true);
-  var sortedPeopleParents = sortcounts(peopleParents);
+    var sortedSkills = sortcounts(skills, true);
+    var sortedPeopleParents = sortcounts(peopleParents);
 
-  top_results.skills = {
-    count: Object.keys(skills).length ? Object.values(skills).reduce(function(total, val) {
-      return total + val;
-    }) : [],
-    entries: sortedSkills.slice(0, 5)
-  };
+    top_results.skills = {
+      count: Object.keys(skills).length ? Object.values(skills).reduce(function(total, val) {
+        return total + val;
+      }) : [],
+      entries: sortedSkills.slice(0, 5)
+    };
 
-  top_results.people_parents = {
-    count: Object.keys(peopleParents).length ? Object.values(peopleParents).reduce(function(total, val) {
-      return total + val;
-    }) : [],
-    entries: sortedPeopleParents
-  };
+    top_results.people_parents = {
+      count: Object.keys(peopleParents).length ? Object.values(peopleParents).reduce(function(total, val) {
+        return total + val;
+      }) : [],
+      entries: sortedPeopleParents
+    };
 
-  top_results.people = {
-    count: people.length,
-    entries: people.slice(0, 5)
-  };
+    top_results.people = {
+      count: people.length,
+      entries: people.slice(0, 5)
+    };
+  }
 
   // get resources
   req.body.params.resources = true;
   const resources = await handleGetCompanies(req);
 
-  top_results.resources = {
-    count: resources.length,
-    entries: resources
-  };
+  if (resources && resources.length) {
+    top_results.resources = {
+      count: resources.length,
+      entries: resources
+    };
+  }
 
   // BEGIN PARENTS (this is mostly to avoid another api call that includes both companies and users)
 

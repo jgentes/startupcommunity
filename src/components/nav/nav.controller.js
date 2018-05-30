@@ -196,7 +196,7 @@ function NavigationController($scope, $auth, $state, $window, $location, $stateP
     }
 
     loadNav();
-    //$scope.$apply();
+    $scope.$apply();
   };
 
   /* -------------- DEPENDENCIES HAVE BEEN RESOLVED --------------------- */

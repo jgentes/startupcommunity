@@ -378,7 +378,7 @@ angular
       getNav: async(location_id, community_id) => {
         return await $http.get('/api/3.0/industries?location=' + location_id + (community_id ? '&community=' + community_id : '')).then(response => response.data);
       },
-      getTop: async function(location_id, community_id, community) {
+      getTop: function(location_id, community_id, community) {
 
         // Prep to send to API
         var industry_ids = [];
@@ -413,7 +413,7 @@ angular
         if (industry_ids.length) params.industry_ids = industry_ids;
 
         // trigger getstats
-        return await $http.post('/api/3.0/stats', { params });
+        return $http.post('/api/3.0/stats', { params });
       },
       setSettings: function(embed, location_id, community_id) {
         return $http.put('/api/2.1/settings', {
