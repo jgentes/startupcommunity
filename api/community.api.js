@@ -424,18 +424,17 @@ async function handleGetCompanies(req, res) {
   }
   else selector[Op.and].push(search);
 
-  console.log('Pulling ' + resources ? 'Resources' : 'Companies: ', selector);
+  console.log('Pulling ' + (resources ? 'Resources' : 'Companies: '), selector);
 
   try {
     var result = await cdb.findAll({
         where: selector,
         order: sequelize.random()
       })
-      .then(result => {
-        if (!res) return addkeys(result);
-        return res.status(200).send(addkeys(result));
-      })
       .catch(err => console.warn("WARNING: ", err));
+
+    if (!res) return addkeys(result);
+    return res.status(200).send(addkeys(result));
   }
   catch (e) {
     console.log('WARNING: CAUGHT SELECTOR: ', selector);
