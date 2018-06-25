@@ -527,17 +527,22 @@ function handleSetCommunity(req, res) {
             }
             else response.embed = settings.embed;
 
-            cdb.update(response, { where: { id: settings.community_id } }).then(finalres => {
-              if (finalres) {
-                return res.status(201).send({ message: 'Community settings updated.' });
-              }
-              else {
-                console.warn('WARNING: community466 ');
-                return res.status(202).send({ message: "Something went wrong." });
-              }
-            }).catch(err => {
-              if (err.code == 'ER_EMPTY_QUERY') console.log('No changes to update..');
-            });
+            try {
+              cdb.update(response, { where: { id: settings.community_id } }).then(finalres => {
+                if (finalres) {
+                  return res.status(201).send({ message: 'Community settings updated.' });
+                }
+                else {
+                  console.warn('WARNING: community466 ');
+                  return res.status(202).send({ message: "Something went wrong." });
+                }
+              }).catch(err => {
+                if (err.code == 'ER_EMPTY_QUERY') console.log('No changes to update..');
+              });
+            }
+            catch (e) {
+              console.warn('YA, THERESA PROBLEM BRO: ', e);
+            }
           }
           else {
             console.warn('WARNING: community472 ');
