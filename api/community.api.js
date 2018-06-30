@@ -902,7 +902,12 @@ async function handleSetCommunityStats(req, res) {
   */
   // todo may need to put stats in community.community_profiles[location_id]
   // TEST TECH IN PORTLAND to see if it has same stats as bend
-  await cdb.update({ stats: top_results }, { where: { id: top_results.id } });
+  try {
+    await cdb.update({ stats: top_results }, { where: { id: top_results.id } });
+  }
+  catch (e) {
+    console.log('CATCH WARNING: STATS UPDATE FAILED! ID: ', top_results.id);
+  }
   return res.status(200).send(top_results);
 }
 
