@@ -344,7 +344,7 @@ function handleDeleteCompany(req, res) {
       if (response) {
         if (response.type == 'company') {
 
-          cdb.destroy(response.id).then(response => {
+          cdb.destroy({ where: { id: response.id } }).then(response => {
 
             if (response) {
               const roles = {};
