@@ -752,6 +752,7 @@ async function handleSetCommunityStats(req, res) {
     companies.forEach(r => {
       if (r.industries) industries = industries.concat(r.industries);
       if (r.parents) companyParents = companyParents.concat(r.parents);
+      if (r.stats) delete r.stats;
     });
 
     industries = _.countBy(industries);
@@ -790,6 +791,7 @@ async function handleSetCommunityStats(req, res) {
     people.forEach(r => {
       if (r.skills) skills = skills.concat(r.skills);
       if (r.parents) peopleParents = peopleParents.concat(r.parents);
+      if (r.stats) delete r.stats;
     });
 
     skills = _.countBy(skills);
@@ -823,6 +825,7 @@ async function handleSetCommunityStats(req, res) {
   const resources = await handleGetCompanies(req);
 
   if (resources && resources.length) {
+    resources.forEach(r => { if (r.stats) delete r.stats });
     top_results.resources = {
       count: resources.length,
       entries: resources
