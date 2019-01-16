@@ -37,7 +37,7 @@
     "jsonwebtoken": "8.2.0",
     "ladda": "1.0.6",
     "lodash": "4.17.5",
-    "method-override": "2.3.5",
+    "method-override": ">=2.3.10",
     "metismenu": "2.7.7",
     "moment": "2.22.1",
     "morgan": "1.6.1",
