@@ -317,7 +317,7 @@ angular
         $authProvider.loginRedirect = false; //otherwise will go home
         $authProvider.linkedin({
             clientId: '75bqixdv58z1az',
-            authorizationEndpoint: 'https://www.linkedin.com/oauth2/v2/authorization',
+            authorizationEndpoint: 'https://www.linkedin.com/oauth/v2/authorization',
             state: function() {
                 return window.location.pathname;
             }
