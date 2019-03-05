@@ -89,7 +89,7 @@
   },
   "scripts": {
     "test": "grunt test",
-    "build": "webpack",
-    "postinstall": "webpack"
-  }
+    "build": "webpack"
+  },
+  "heroku-run-build-script": true
 }
