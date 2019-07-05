@@ -234,7 +234,7 @@ function handleLinkedin(req, res) {
   // this function handles new user invites as well as existing user login
   var invite_code = req.body.invite_code,
     accessTokenUrl = 'https://www.linkedin.com/oauth/v2/accessToken',
-    peopleApiUrl = 'https://api.linkedin.com/v1/people/~:(id,first-name,last-name,email-address,picture-url;secure=true,headline,location,summary,industry,public-profile-url)';
+    peopleApiUrl = 'https://api.linkedin.com/v2/me?projection=(id,firstName,lastName,profilePicture(displayImage~:playableStreams))'
 
   var params = {
     client_id: process.env.LINKEDIN_CLIENTID,
@@ -311,8 +311,6 @@ function handleLinkedin(req, res) {
 
   // Exchange authorization code for access token.
   request.post(accessTokenUrl, { form: params, json: true }, function(err, response, body) {
-    console.log('AUTH TOKEN RESPONSE BODY: ', body, response);
-
     if (response.statusCode !== 200) {
       return res.status(response.statusCode).send({ message: body.error_description });
     }
@@ -325,7 +323,6 @@ function handleLinkedin(req, res) {
     // Retrieve profile information about the current user.
     request.get({ url: peopleApiUrl, qs: params, json: true }, function(err, response, profile) {
       console.log('LINKEDIN PEOPLE URL [prfoiel]: ', profile)
-      console.log('LINKEDIN PEOPLE URL RESULT: ', response)
       if (err) {
         console.warn("WARNING: ", err);
         return res.status(401).send({ message: 'Something went wrong: ' + String(err) });
