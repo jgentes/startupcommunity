@@ -238,10 +238,11 @@ function handleLinkedin(req, res) {
 
   var params = {
     client_id: process.env.LINKEDIN_CLIENTID,
-    redirect_uri: req.body.redirectUri + '&scope=r_liteprofile',
+    redirect_uri: req.body.redirectUri,
     client_secret: process.env.LINKEDIN_CLIENTSECRET,
     code: req.body.code,
-    grant_type: 'authorization_code'
+    grant_type: 'authorization_code',
+    scope: 'r_liteprofile'
   };
 
   var accept_invite = async function(invitee_email, invitee_name, invitor_email) {
