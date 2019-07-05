@@ -120,9 +120,9 @@ function handleCreateAPIToken(req, res) {
                console.log("Profile updated.");
              })
              .catch(function (err) {
-             
+
                if(err.code == 'ER_EMPTY_QUERY') console.log('No changes to update..');
-         
+
                console.error("Profile update failed:");
                console.error(err.body);
              });
@@ -311,6 +311,7 @@ function handleLinkedin(req, res) {
 
   // Exchange authorization code for access token.
   request.post(accessTokenUrl, { form: params, json: true }, function(err, response, body) {
+    console.log('AUTH TOKEN RESPONSE BODY: ', body, response);
 
     if (response.statusCode !== 200) {
       return res.status(response.statusCode).send({ message: body.error_description });
@@ -323,7 +324,8 @@ function handleLinkedin(req, res) {
 
     // Retrieve profile information about the current user.
     request.get({ url: peopleApiUrl, qs: params, json: true }, function(err, response, profile) {
-
+      console.log('LINKEDIN PEOPLE URL [prfoiel]: ', profile)
+      console.log('LINKEDIN PEOPLE URL RESULT: ', response)
       if (err) {
         console.warn("WARNING: ", err);
         return res.status(401).send({ message: 'Something went wrong: ' + String(err) });
