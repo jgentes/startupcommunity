@@ -242,7 +242,8 @@ function handleLinkedin(req, res) {
     client_secret: process.env.LINKEDIN_CLIENTSECRET,
     code: req.body.code,
     response_type: 'code',
-    scope: 'r_liteprofile%20r_emailaddress'
+    scope: 'r_liteprofile%20r_emailaddress',
+    grant_type: 'authorization_code'
   };
 
   var accept_invite = async function(invitee_email, invitee_name, invitor_email) {
@@ -312,6 +313,7 @@ function handleLinkedin(req, res) {
 
   // Exchange authorization code for access token.
   request.post(accessTokenUrl, { form: params, json: true }, function(err, response, body) {
+    console.log('LINKEDIN AUTH BOYD:', body)
     if (response.statusCode !== 200) {
       return res.status(response.statusCode).send({ message: body.error_description });
     }
