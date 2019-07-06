@@ -510,6 +510,7 @@ angular
   .factory('auth_service', function($http) {
     return {
       getAuth: function() {
+        console.log('IN GETAUTH')
         var urlString = 'www.linkedin.com/oauth/v2/authorization?' + jQuery.param({
           response_type: 'code',
           client_id: process.env.LINKEDIN_CLIENTID,
