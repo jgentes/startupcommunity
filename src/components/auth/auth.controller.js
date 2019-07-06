@@ -4,7 +4,7 @@ angular
     .module('startupcommunity')
     .controller('LoginController', LoginController);
 
-function LoginController($scope, $state, $stateParams, auth_service, sweet) {
+function LoginController($auth, $scope, $state, $stateParams, auth_service, sweet) {
 
     if (!jQuery.isEmptyObject($stateParams.alert)) this.alert = { type: 'danger', msg: $stateParams.alert };
     var self = this;
@@ -23,7 +23,7 @@ function LoginController($scope, $state, $stateParams, auth_service, sweet) {
     };
 
     this.login = function() {
-       /* $auth.login({ email: this.email, password: this.password })
+        $auth.login({ email: this.email, password: this.password })
             .then(function(response) {
                 postLogin(response.data.user);
             })
@@ -32,14 +32,13 @@ function LoginController($scope, $state, $stateParams, auth_service, sweet) {
                     self.alert = { type: 'danger', msg: String(response.data.message) };
                 }
                 else self.alert = undefined;
-            });*/
+            });
     };
     this.authenticate = function(provider) {
         self.working = true;
         auth_service.getAuth().then(function(response) {
             console.log('GETAUTH RESPONES: ', response.data)
         })
-        /*
         $auth.authenticate(provider)
             .then(function(response) {
                 postLogin(response);
@@ -69,7 +68,6 @@ function LoginController($scope, $state, $stateParams, auth_service, sweet) {
 
                 self.working = false;
             });
-            */
     };
 
     this.clickToTweet = function() {

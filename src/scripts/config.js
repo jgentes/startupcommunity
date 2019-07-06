@@ -33,7 +33,7 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
 
         .state('login', {
             url: '/login',
-            controller: 'LoginController as auth',
+            controller: 'LoginController as login',
             params: {
                 alert: {}
             },
@@ -364,7 +364,7 @@ angular
                 /*console.log('----------------------------');
                  console.log('from: ' + fromState.name);
                  console.log('to:' + toState.name);
-               
+
                  console.log(fromState);
                  console.log(toState);
                  console.log(event);*/
@@ -429,7 +429,7 @@ angular
                     $http = $injector.get('$http'),
                     SMConsumer = $window.sourceMap.SourceMapConsumer,
                     cache = {};
-    
+
                 // Retrieve a SourceMap object for a minified script URL
                 var getMapForScript = function(url) {
                     if (cache[url]) {
@@ -453,7 +453,7 @@ angular
                         return promise;
                     }
                 };
-    
+
                 if (exception.stack) { // not all browsers support stack traces
                     return $q.all($.map(exception.stack.split(/\n/), function(stackLine) {
                         var match = stackLine.match(/^(.+)(http.+):(\d+):(\d+)/);
@@ -487,7 +487,7 @@ angular
                     return $q.when('');
                 }
             };
-    
+
             return function(exception, cause) {
                 if ($window.Bugsnag) $window.Bugsnag.notifyException(exception);
                 getSourceMappedStackTrace(exception).then(function(final) {
