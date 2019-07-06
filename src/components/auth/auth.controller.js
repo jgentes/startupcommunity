@@ -37,9 +37,34 @@ function LoginController($auth, $scope, $state, $stateParams, auth_service, swee
     this.authenticate = function(provider) {
         self.working = true;
         auth_service.getAuth().then(function(response) {
-            console.log('GETAUTH RESPONES: ', response.data)
+            postLogin(response);
         })
-        $auth.authenticate(provider)
+          .catch(function(response) {
+            if (response.data) {
+                window.mixpanel.people.set({
+                    '$name': response.data.firstName + ' ' + response.data.lastName,
+                    '$email': response.data.emailAddress
+                });
+                window.mixpanel.track('Attempted Login');
+
+            }
+            if (response.data && response.data.message && response.data.message !== 'undefined') {
+                self.alert = { type: 'danger', msg: String(response.data.message) };
+                sweet.show({
+                    title: 'Woah!',
+                    text: String(response.data.message),
+                    type: 'error',
+                    html: true
+                });
+            }
+            else if (response.statusText) {
+                self.alert = { type: 'danger', msg: response.statusText + ': We just cleared your browser token, please try again.' };
+                $auth.removeToken();
+            }
+
+            self.working = false;
+        });
+        /*$auth.authenticate(provider)
             .then(function(response) {
                 postLogin(response);
             })
@@ -67,7 +92,7 @@ function LoginController($auth, $scope, $state, $stateParams, auth_service, swee
                 }
 
                 self.working = false;
-            });
+            });*/
     };
 
     this.clickToTweet = function() {
