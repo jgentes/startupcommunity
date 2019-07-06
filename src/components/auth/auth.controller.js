@@ -34,9 +34,9 @@ function LoginController($auth, $scope, $state, $stateParams, auth_service, swee
                 else self.alert = undefined;
             });
     };
-    this.authenticate = function(provider) {
+    this.authenticate = async function(provider) {
         self.working = true;
-        auth_service.getAuth().then(function(response) {
+        await auth_service.getAuth().then(function(response) {
             console.log('GETAUTH RESPONES: ', response.data)
         })
         $auth.authenticate(provider)
