@@ -506,4 +506,17 @@ angular
         return $http.get('/api/2.1/angel/startup?id=' + id);
       }
     };
+  })
+  .factory('auth_service', function($http) {
+    return {
+      getAuth: function() {
+        var urlString = 'www.linkedin.com/oauth/v2/authorization?' + jQuery.param({
+          response_type: 'code',
+          client_id: process.env.LINKEDIN_CLIENTID,
+          redirect_uri: req.body.redirectUri,
+          scope: 'r_liteprofile%20r_emailaddress'
+        });
+        return $http.get(urlString);
+      }
+    };
   });

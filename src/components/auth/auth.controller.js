@@ -4,7 +4,7 @@ angular
     .module('startupcommunity')
     .controller('LoginController', LoginController);
 
-function LoginController($auth, $scope, $state, $stateParams, sweet) {
+function LoginController($auth, $scope, $state, $stateParams, auth_service, sweet) {
 
     if (!jQuery.isEmptyObject($stateParams.alert)) this.alert = { type: 'danger', msg: $stateParams.alert };
     var self = this;
@@ -36,6 +36,9 @@ function LoginController($auth, $scope, $state, $stateParams, sweet) {
     };
     this.authenticate = function(provider) {
         self.working = true;
+        auth_service.getAuth().then(function(response) {
+            console.log('GETAUTH RESPONES: ', response.data)
+        })
         $auth.authenticate(provider)
             .then(function(response) {
                 postLogin(response);
