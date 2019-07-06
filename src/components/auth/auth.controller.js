@@ -34,11 +34,12 @@ function LoginController($auth, $scope, $state, $stateParams, auth_service, swee
                 else self.alert = undefined;
             });
     };
-    this.authenticate = async function(provider) {
+    this.authenticate = function(provider) {
         self.working = true;
-        await auth_service.getAuth().then(function(response) {
+        auth_service.getAuth().then(function(response) {
             console.log('GETAUTH RESPONES: ', response.data)
         })
+        /*
         $auth.authenticate(provider)
             .then(function(response) {
                 postLogin(response);
@@ -68,6 +69,7 @@ function LoginController($auth, $scope, $state, $stateParams, auth_service, swee
 
                 self.working = false;
             });
+            */
     };
 
     this.clickToTweet = function() {
