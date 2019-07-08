@@ -515,7 +515,7 @@ angular
         var urlString = 'https://www.linkedin.com/oauth/v2/authorization?' + jQuery.param({
           response_type: 'code',
           client_id: '75bqixdv58z1az',
-          redirect_uri: 'https://dev.startupcommunity.org',
+          redirect_uri: 'https://dev.startupcommunity.org/login',
           scope: ['r_liteprofile', 'r_emailaddress']
         });
         return $window.open(urlString, '_blank','height=600,width=600');
