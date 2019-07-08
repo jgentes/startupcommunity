@@ -35,8 +35,8 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
             url: '/login',
             controller: 'LoginController as auth',
             onEnter: function($window, $location) {
-                var code = $location.search && $location.search.code;
-                console.log('ONENTER LOGIN: ', $location.search)
+                var code = $location.search && $location.search().code;
+                console.log('ONENTER LOGIN: ', $location().search)
                 if (code) $window.authCode(code);
             },
             params: {
