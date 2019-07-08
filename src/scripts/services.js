@@ -511,7 +511,7 @@ angular
     return {
       getAuth: function() {
         console.log('IN GETAUTH')
-        var urlString = 'www.linkedin.com/oauth/v2/authorization?' + jQuery.param({
+        var urlString = 'https://www.linkedin.com/oauth/v2/authorization?' + jQuery.param({
           response_type: 'code',
           client_id: '75bqixdv58z1az',
           redirect_uri: 'https:/dev.startupcommunity.org',
