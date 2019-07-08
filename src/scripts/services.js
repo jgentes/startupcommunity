@@ -508,6 +508,7 @@ angular
     };
   })
   .factory('auth_service', function($http, $window) {
+    $window.aTest = () => 1;
     return {
       getAuth: function() {
         console.log('IN GETAUTH4')
