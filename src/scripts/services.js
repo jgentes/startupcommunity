@@ -511,7 +511,7 @@ angular
     return {
       getAuth: function(code) {
         console.log('in auth_service')
-        return $http.post('/auth/linkedin?code='+code);
+        return $http.post('/auth/linkedin', {code});
       }
     };
   });
