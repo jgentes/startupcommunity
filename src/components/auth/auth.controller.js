@@ -34,13 +34,11 @@ function LoginController($auth, $scope, $state, $stateParams, auth_service, swee
                 else self.alert = undefined;
             });
     };
-    this.authenticate = async function(provider) {
+    this.authenticate = function(provider) {
         self.working = true;
-        await auth_service.getAuth().then(function(response) {
-            console.log('RESP BODY: ', response.body)
-            postLogin(response);
-        })
-          .catch(function(response) {
+        var test = auth_service.getAuth()
+        console.log('TEST: ', test)
+         /* .catch(function(response) {
             if (response.data) {
                 window.mixpanel.people.set({
                     '$name': response.data.firstName + ' ' + response.data.lastName,
@@ -64,7 +62,7 @@ function LoginController($auth, $scope, $state, $stateParams, auth_service, swee
             }
 
             self.working = false;
-        });
+        });*/
         /*$auth.authenticate(provider)
             .then(function(response) {
                 postLogin(response);
