@@ -507,18 +507,10 @@ angular
       }
     };
   })
-  .factory('auth_service', function($http, $window) {
-    $window.aTest = () => 1;
+  .factory('auth_service', function($http) {
     return {
-      getAuth: function() {
-        console.log('IN GETAUTH4')
-        var urlString = 'https://www.linkedin.com/oauth/v2/authorization?' + jQuery.param({
-          response_type: 'code',
-          client_id: '75bqixdv58z1az',
-          redirect_uri: 'https://dev.startupcommunity.org/login',
-          scope: ['r_liteprofile', 'r_emailaddress']
-        });
-        return $window.open(urlString, '_blank','height=600,width=600');
+      getAuth: function(code) {
+        return $http.post('/auth/linkedin?code='+code);
       }
     };
   });

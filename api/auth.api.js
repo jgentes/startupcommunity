@@ -241,8 +241,6 @@ function handleLinkedin(req, res) {
     redirect_uri: req.body.redirectUri,
     client_secret: process.env.LINKEDIN_CLIENTSECRET,
     code: req.body.code,
-    response_type: 'code',
-    scope: 'r_liteprofile%20r_emailaddress',
     grant_type: 'authorization_code'
   };
 

@@ -4,7 +4,7 @@ angular
     .module('startupcommunity')
     .controller('LoginController', LoginController);
 
-function LoginController($auth, $scope, $state, $stateParams, auth_service, sweet) {
+function LoginController($auth, $scope, $state, $stateParams, auth_service, sweet, $window) {
 
     if (!jQuery.isEmptyObject($stateParams.alert)) this.alert = { type: 'danger', msg: $stateParams.alert };
     var self = this;
@@ -34,36 +34,21 @@ function LoginController($auth, $scope, $state, $stateParams, auth_service, swee
                 else self.alert = undefined;
             });
     };
-    this.authenticate = function(provider) {
+    this.authenticate = function(provider, auth_service) {
         self.working = true;
-        var test = auth_service.getAuth()
-        console.log('TEST OEPENER: ', test.opener)
 
-         /* .catch(function(response) {
-            if (response.data) {
-                window.mixpanel.people.set({
-                    '$name': response.data.firstName + ' ' + response.data.lastName,
-                    '$email': response.data.emailAddress
-                });
-                window.mixpanel.track('Attempted Login');
+        var urlString = 'https://www.linkedin.com/oauth/v2/authorization?' + jQuery.param({
+            response_type: 'code',
+            client_id: '75bqixdv58z1az',
+            redirect_uri: 'https://dev.startupcommunity.org/login',
+            scope: ['r_liteprofile', 'r_emailaddress']
+        });
 
-            }
-            if (response.data && response.data.message && response.data.message !== 'undefined') {
-                self.alert = { type: 'danger', msg: String(response.data.message) };
-                sweet.show({
-                    title: 'Woah!',
-                    text: String(response.data.message),
-                    type: 'error',
-                    html: true
-                });
-            }
-            else if (response.statusText) {
-                self.alert = { type: 'danger', msg: response.statusText + ': We just cleared your browser token, please try again.' };
-                $auth.removeToken();
-            }
+        $window.authCode = code => auth_service.authCode(code);
 
-            self.working = false;
-        });*/
+        return $window.open(urlString, '_blank','height=600,width=600');
+
+
         /*$auth.authenticate(provider)
             .then(function(response) {
                 postLogin(response);
