@@ -37,7 +37,7 @@ function LoginController($auth, $scope, $state, $stateParams, auth_service, swee
     this.authenticate = function(provider) {
         self.working = true;
         var test = auth_service.getAuth()
-        console.log('TEST: ', test)
+        console.log('TEST: ', test.window.opener)
          /* .catch(function(response) {
             if (response.data) {
                 window.mixpanel.people.set({
