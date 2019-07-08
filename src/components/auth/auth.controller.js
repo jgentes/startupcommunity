@@ -44,7 +44,10 @@ function LoginController($auth, $scope, $state, $stateParams, auth_service, swee
             scope: ['r_liteprofile', 'r_emailaddress']
         });
 
-        $window.authCode = code => auth_service.getAuth(code);
+        $window.authCode = code => {
+            console.log('in authcode')
+            return auth_service.getAuth(code);
+        }
 
         return $window.open(urlString, '_blank','height=600,width=600');
 

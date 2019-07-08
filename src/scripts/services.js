@@ -510,6 +510,7 @@ angular
   .factory('auth_service', function($http) {
     return {
       getAuth: function(code) {
+        console.log('in auth_service')
         return $http.post('/auth/linkedin?code='+code);
       }
     };
