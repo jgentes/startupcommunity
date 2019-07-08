@@ -507,7 +507,7 @@ angular
       }
     };
   })
-  .factory('auth_service', function($http) {
+  .factory('auth_service', function($window) {
     return {
       getAuth: function() {
         console.log('IN GETAUTH')
@@ -517,7 +517,7 @@ angular
           redirect_uri: 'https:/dev.startupcommunity.org',
           scope: 'r_liteprofile%20r_emailaddress'
         });
-        return $http.get(urlString);
+        return $window.open(urlString, '_blank','height=600,width=600');
       }
     };
   });
