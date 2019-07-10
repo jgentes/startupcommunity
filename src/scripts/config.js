@@ -40,11 +40,15 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
 
                 if (code) {
                     $window.opener.getAuth(code, $location.protocol() + '://' + $location.host() + $location.path()).then(auth_response => {
-                        $rootScope.global.user = auth_response.data;
+                        console.log('AUTH RESPONSE: ', auth_response.data)
+                        $scope.global.user = auth_response.data;
                         if (auth_response.config.data.state !== '/login') {
                             $state.reload();
                         }
                         else $state.go('user.dashboard', { profile: auth_response.data, location_path: auth_response.data.id });
+
+                        $window.mixpanel.identify(auth_response.data.id);
+                        $window.mixpanel.track('Logged in');
                     })
                     $window.close();
                 }
