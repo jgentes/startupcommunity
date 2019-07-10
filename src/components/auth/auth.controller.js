@@ -34,7 +34,7 @@ function LoginController($auth, $scope, $state, $stateParams, auth_service, swee
                 else self.alert = undefined;
             });
     };
-    this.authenticate = function(provider, auth_service) {
+    this.authenticate = function(provider) {
         self.working = true;
 
         var urlString = 'https://www.linkedin.com/oauth/v2/authorization?' + jQuery.param({
