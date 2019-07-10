@@ -36,7 +36,7 @@ function LoginController($auth, $scope, $state, $stateParams, auth_service, swee
     };
     this.authenticate = function(provider) {
         self.working = true;
-console.log('LOCATION:', $location.absUrl, $location.absUrl)
+console.log('LOCATION:', $location.absUrl, $location.absUrl())
         var urlString = 'https://www.linkedin.com/oauth/v2/authorization?' + jQuery.param({
             response_type: 'code',
             client_id: '75bqixdv58z1az',
