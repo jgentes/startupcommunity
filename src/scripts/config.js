@@ -37,10 +37,10 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
             onEnter: function(auth_service, $location, $window) {
                 var code = $location.search().code;
                 $window.getAuth = auth_service.getAuth;
-                console.log('ONENTER LOGIN .')
+
                 if (code) {
-                    console.log('getAuth:', $window.opener.getAuth);
-                    $window.opener.getAuth(code)
+                    $window.opener.getAuth(code, $location.href);
+                    $window.close();
                 }
 
             },
