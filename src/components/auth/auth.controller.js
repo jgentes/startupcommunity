@@ -37,12 +37,11 @@ function LoginController($auth, $scope, $state, $stateParams, auth_service, swee
     this.authenticate = function(provider) {
         self.working = true;
 
-        var urlString = 'https://www.linkedin.com/oauth/v2/authorization?' + jQuery.param({
-            response_type: 'code',
-            client_id: '75bqixdv58z1az',
-            redirect_uri: $location.absUrl(),
-            scope: 'r_liteprofile%20r_emailaddress'
-        });
+        var urlString = 'https://www.linkedin.com/oauth/v2/authorization' +
+          '?scope=r_liteprofile%20r_emailaddress' +
+          '&response_type=code' +
+          '&client_id=75bqixdv58z1az' +
+          '&redirect_uri=' + $location.absUrl();
 
         return $window.open(urlString, '_blank','height=600,width=600');
 
