@@ -313,6 +313,7 @@ function handleLinkedin(req, res) {
   request.post(accessTokenUrl, { form: params, json: true }, function(err, response, body) {
     console.log('LINKEDIN AUTH BOYD:', body)
     if (response.statusCode !== 200) {
+      console.log('ERROR: ', err || body)
       return res.status(response.statusCode).send({ message: body.error_description });
     }
 
