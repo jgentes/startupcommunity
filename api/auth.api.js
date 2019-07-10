@@ -311,16 +311,12 @@ function handleLinkedin(req, res) {
 
   // Exchange authorization code for access token.
   request.post(accessTokenUrl, { form: params, json: true }, function(err, response, body) {
-    console.log('LINKEDIN AUTH BOYD:', body)
     if (response.statusCode !== 200) {
       console.log('ERROR: ', err || body)
       return res.status(response.statusCode).send({ message: body.error_description });
     }
 
-    var params = {
-      oauth2_access_token: body.access_token,
-      format: 'json'
-    };
+    var params = {oauth2_access_token: body.access_token};
 
     // Retrieve profile information about the current user.
     request.get({ url: peopleApiUrl, qs: params, json: true }, function(err, response, profile) {
