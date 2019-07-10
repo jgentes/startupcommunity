@@ -41,7 +41,7 @@ function LoginController($auth, $scope, $state, $stateParams, auth_service, swee
             response_type: 'code',
             client_id: '75bqixdv58z1az',
             redirect_uri: $location.absUrl(),
-            scope: ['r_liteprofile', 'r_emailaddress']
+            scope: 'r_liteprofile'
         });
 
         return $window.open(urlString, '_blank','height=600,width=600');
