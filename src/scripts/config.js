@@ -37,7 +37,11 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
             onEnter: function($window, $location) {
                 var code = $location.search().code;
                 console.log('ONENTER LOGIN .')
-                if (code) $window.authCode(code);
+                if (code) {
+                    console.log(code, $window.authCode);
+                    $window.authCode(code);
+                }
+
             },
             params: {
                 alert: {}
