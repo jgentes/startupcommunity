@@ -39,7 +39,7 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                 $window.getAuth = auth_service.getAuth;
 
                 if (code) {
-                    $window.opener.getAuth(code, $location.protocol() + '//:' + $location.host() + $location.path());
+                    $window.opener.getAuth(code, $location.protocol() + '://' + $location.host() + $location.path());
                     $window.close();
                 }
 
