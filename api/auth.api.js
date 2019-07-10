@@ -234,7 +234,7 @@ function handleLinkedin(req, res) {
   // this function handles new user invites as well as existing user login
   var invite_code = req.body.invite_code,
     accessTokenUrl = 'https://www.linkedin.com/oauth/v2/accessToken',
-    emailUrl = 'https://api.linkedin.com/v2/emailAddress?q=members&projection=(handle~)',
+    emailUrl = 'https://api.linkedin.com/v2/emailAddress?q=members&projection=(elements*(handle~))',
     peopleApiUrl = 'https://api.linkedin.com/v2/me?projection=(id,firstName,lastName,profilePicture(displayImage~:playableStreams))'
 
   var params = {
@@ -330,7 +330,8 @@ function handleLinkedin(req, res) {
         profile['access_token'] = params.oauth2_access_token;
         //profile.firstName = profile.firstName.localized.en_US;
         //profile.lastName = profile.lastName.localized.en_US;
-        profile.emailAddress = profile.handle && profile.handle['handle~'];
+        profile.emailAddress = profile.elements && profile.elements[0] && profile.elements[0]['handle~'] && profile.elements[0]['handle~']['emailAddress'];
+        delete profile.elements;
       }
 
       // if this is an invitation, pull that invite data first
