@@ -424,7 +424,7 @@ function handleLinkedin(req, res) {
                   if (result) {
                     result = result.toJSON();
                     // yes, an existing user that matched email address of invitee.email
-
+                    console.log('*************** RESULT:', result)
                     console.log("Found user: " + profile.firstName + ' ' + profile.lastName);
 
                     // get user account and re-upload with linkedin data
