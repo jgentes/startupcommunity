@@ -10,30 +10,6 @@ function LoginController($auth, $scope, $state, $stateParams, auth_service, swee
     var self = this;
     this.working = false;
 
-    var postLogin = function(auth_response) { // from getprofile
-
-        $scope.global.user = auth_response.data;
-        if (auth_response.config.data.state !== '/login') {
-            $state.reload();
-        }
-        else $state.go('user.dashboard', { profile: auth_response.data, location_path: auth_response.data.id });
-
-        window.mixpanel.identify(auth_response.data.id);
-        window.mixpanel.track('Logged in');
-    };
-
-    this.login = function() {
-        $auth.login({ email: this.email, password: this.password })
-            .then(function(response) {
-                postLogin(response.data.user);
-            })
-            .catch(function(response) {
-                if (response.data && response.data.message && response.data.message !== 'undefined') {
-                    self.alert = { type: 'danger', msg: String(response.data.message) };
-                }
-                else self.alert = undefined;
-            });
-    };
     this.authenticate = function(provider) {
         self.working = true;
 
@@ -44,37 +20,6 @@ function LoginController($auth, $scope, $state, $stateParams, auth_service, swee
           '&redirect_uri=' + $location.absUrl();
 
         return $window.open(urlString, '_blank','height=600,width=600');
-
-
-        /*$auth.authenticate(provider)
-            .then(function(response) {
-                postLogin(response);
-            })
-            .catch(function(response) {
-                if (response.data) {
-                    window.mixpanel.people.set({
-                        '$name': response.data.firstName + ' ' + response.data.lastName,
-                        '$email': response.data.emailAddress
-                    });
-                    window.mixpanel.track('Attempted Login');
-
-                }
-                if (response.data && response.data.message && response.data.message !== 'undefined') {
-                    self.alert = { type: 'danger', msg: String(response.data.message) };
-                    sweet.show({
-                        title: 'Woah!',
-                        text: String(response.data.message),
-                        type: 'error',
-                        html: true
-                    });
-                }
-                else if (response.statusText) {
-                    self.alert = { type: 'danger', msg: response.statusText + ': We just cleared your browser token, please try again.' };
-                    $auth.removeToken();
-                }
-
-                self.working = false;
-            });*/
     };
 
     this.clickToTweet = function() {

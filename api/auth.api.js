@@ -321,7 +321,6 @@ function handleLinkedin(req, res) {
 
     // Retrieve profile information about the current user.
     request.get({ url: emailUrl, qs: params, json: true }, function(err, response, profile) {
-      console.log('LINKEDIN PEOPLE URL [prfoiel]: ', profile)
       if (err) {
         console.warn("WARNING: ", err);
         return res.status(401).send({ message: 'Something went wrong: ' + String(err) });
@@ -424,8 +423,7 @@ function handleLinkedin(req, res) {
                   if (result) {
                     result = result.toJSON();
                     // yes, an existing user that matched email address of invitee.email
-                    console.log('*************** RESULT:', result)
-                    console.log("Found user: " + profile.firstName + ' ' + profile.lastName);
+                    console.log("Found user: " + result.name);
 
                     // get user account and re-upload with linkedin data
                     result = addCommunities(result, invite_profile);
@@ -435,7 +433,7 @@ function handleLinkedin(req, res) {
                       .then(() => {
                         console.log("Profile updated: " + profile.emailAddress);
                         if (invite_profile) {
-                          accept_invite(invite_profile.email, profile.firstName + ' ' + profile.lastName, invite_profile.invitor_email);
+                          accept_invite(invite_profile.email, result.name, invite_profile.invitor_email);
                           delete_invite();
                         }
                       })
