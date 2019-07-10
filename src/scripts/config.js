@@ -34,12 +34,21 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
         .state('login', {
             url: '/login',
             controller: 'LoginController as auth',
-            onEnter: function(auth_service, $location, $window) {
+            onEnter: function(auth_service, $location, $window, $scope, $state) {
                 var code = $location.search().code;
                 $window.getAuth = auth_service.getAuth;
 
                 if (code) {
-                    $window.opener.getAuth(code, $location.protocol() + '://' + $location.host() + $location.path());
+                    $window.opener.getAuth(code, $location.protocol() + '://' + $location.host() + $location.path()).then(auth_response => {
+                        $scope.global.user = auth_response.data;
+                        if (auth_response.config.data.state !== '/login') {
+                            $state.reload();
+                        }
+                        else $state.go('user.dashboard', { profile: auth_response.data, location_path: auth_response.data.id });
+
+                        $window.mixpanel.identify(auth_response.data.id);
+                        $window.mixpanel.track('Logged in');
+                    })
                     $window.close();
                 }
 

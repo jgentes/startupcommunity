@@ -507,19 +507,10 @@ angular
       }
     };
   })
-  .factory('auth_service', function($http, $window, $scope, $state) {
+  .factory('auth_service', function($http) {
     return {
       getAuth: function(code, redirect_uri) {
-        $http.post('/auth/linkedin', {code, redirect_uri}).then(auth_response => {
-          $scope.global.user = auth_response.data;
-          if (auth_response.config.data.state !== '/login') {
-            $state.reload();
-          }
-          else $state.go('user.dashboard', { profile: auth_response.data, location_path: auth_response.data.id });
-
-          $window.mixpanel.identify(auth_response.data.id);
-          $window.mixpanel.track('Logged in');
-        })
+        return $http.post('/auth/linkedin', {code, redirect_uri})
       }
     };
   });
