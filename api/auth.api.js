@@ -234,7 +234,7 @@ function handleLinkedin(req, res) {
   // this function handles new user invites as well as existing user login
   var invite_code = req.body.invite_code,
     accessTokenUrl = 'https://www.linkedin.com/oauth/v2/accessToken',
-    emailUrl = 'https://api.linkedin.com/v2/emailAddress',
+    emailUrl = 'https://api.linkedin.com/v2/emailAddress?q=members&projection=(handle~)',
     peopleApiUrl = 'https://api.linkedin.com/v2/me?projection=(id,firstName,lastName,profilePicture(displayImage~:playableStreams))'
 
   var params = {
