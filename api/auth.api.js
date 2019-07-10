@@ -238,7 +238,7 @@ function handleLinkedin(req, res) {
 
   var params = {
     client_id: process.env.LINKEDIN_CLIENTID,
-    redirect_uri: req.body.redirectUri,
+    redirect_uri: req.body.redirect_uri,
     client_secret: process.env.LINKEDIN_CLIENTSECRET,
     code: req.body.code,
     grant_type: 'authorization_code'
