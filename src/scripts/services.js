@@ -507,7 +507,7 @@ angular
       }
     };
   })
-  .factory('auth_service', function($http, $window, $scope) {
+  .factory('auth_service', function($http, $window, $scope, $state) {
     return {
       getAuth: function(code, redirect_uri) {
         $http.post('/auth/linkedin', {code, redirect_uri}).then(auth_response => {
