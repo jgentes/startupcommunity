@@ -45,9 +45,6 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
                             $state.reload();
                         }
                         else $state.go('user.dashboard', { profile: auth_response.data, location_path: auth_response.data.id });
-
-                        $window.mixpanel.identify(auth_response.data.id);
-                        $window.mixpanel.track('Logged in');
                     })
                     $window.close();
                 }

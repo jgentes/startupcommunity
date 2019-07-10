@@ -8,7 +8,7 @@ angular
     .controller('InviteUserController', InviteUserController)
     .controller('ContactUserController', ContactUserController);
 
-function UserController($scope, $stateParams, $location, user_service, $sce) {
+function UserController($rootScope, $scope, $stateParams, $location, user_service, $sce) {
     //todo usercontroller and company controller are dups, need to be consolidated
 
     this.selectedClusters = [];
@@ -132,6 +132,7 @@ function UserController($scope, $stateParams, $location, user_service, $sce) {
         if ($scope.global.community && $scope.global.community.type) {
             loadCtrl();
         }
+        if ($rootScope.global.user) $scope.global.user = $rootScope.global.user;
     });
 
 
