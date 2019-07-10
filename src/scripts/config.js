@@ -34,12 +34,13 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
         .state('login', {
             url: '/login',
             controller: 'LoginController as auth',
-            onEnter: function(auth_service, $location) {
+            onEnter: function(auth_service, $location, $window) {
                 var code = $location.search().code;
+                $window.getAuth = auth_service.getAuth;
                 console.log('ONENTER LOGIN .')
                 if (code) {
-                    console.log('getAuth:', auth_service.getAuth);
-                    auth_service.getAuth(code)
+                    console.log('getAuth:', $window.opener.getAuth);
+                    $window.opener.getAuth(code)
                 }
 
             },
