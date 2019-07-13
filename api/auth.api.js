@@ -336,6 +336,7 @@ function handleLinkedin(req, res) {
         if (err) console.warn("WARNING: Problem obtaining profile details:", err);
         profile.firstName = person.firstName.localized.en_US;
         profile.lastName = person.lastName.localized.en_US;
+        profile.name = profile.firstName + ' ' + profile.lastName;
         profile.profilePicture = person.profilePicture.displayImage;
         profile.id = person.id;
         resolve(person)
@@ -431,6 +432,8 @@ function handleLinkedin(req, res) {
                   if (result) {
                     result = result.toJSON();
                     // yes, an existing user that matched email address of invitee.email
+                    if (result.name !== profile.name) result.name = profile.name;
+
                     console.log("Found user: " + result.name);
 
                     // get user account and re-upload with linkedin data
