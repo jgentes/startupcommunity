@@ -334,7 +334,7 @@ function handleLinkedin(req, res) {
       }
 
       // let's get their name as well
-      new Promise(resolve => request.get({ url: peopleApiUrl, qs: params, json: true }, function(err, response, person) {
+      await new Promise(resolve => request.get({ url: peopleApiUrl, qs: params, json: true }, function(err, response, person) {
         if (err) console.warn("WARNING: Problem obtaining profile details:", err);
         console.log('PEOPLE PROFILE: ', person);
         resolve(person)
