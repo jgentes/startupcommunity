@@ -334,10 +334,11 @@ function handleLinkedin(req, res) {
       }
 
       // let's get their name as well
-      await request.get({ url: peopleApiUrl, qs: params, json: true }, function(err, response, person) {
+      new Promise(resolve => request.get({ url: peopleApiUrl, qs: params, json: true }, function(err, response, person) {
         if (err) console.warn("WARNING: Problem obtaining profile details:", err);
         console.log('PEOPLE PROFILE: ', person);
-      });
+        resolve(person)
+      }));
 
       // if this is an invitation, pull that invite data first
       if (invite_code) {
