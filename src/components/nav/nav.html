@@ -41,7 +41,7 @@
                         </li>
                         <li ng-if="!global.user">
                             <div style="margin-left: 20px;" ng-controller="LoginController as login">
-                                <button ladda="loginbtn" class="ladda-btn btn btn-success" ng-click="loginbtn = true; login.logout();" style="font-size: 16px; color: #fff;">Log In</button>
+                                <button ladda="loginbtn" class="ladda-btn btn btn-success" ng-click="loginbtn = true; login.login();" style="font-size: 16px; color: #fff;">Log In</button>
                             </div>
                         </li>
                         <li ng-if="global.user">
