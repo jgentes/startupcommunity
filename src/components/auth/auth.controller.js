@@ -22,6 +22,8 @@ function LoginController($auth, $scope, $state, $stateParams, auth_service, swee
         return $window.open(urlString, '_blank','height=600,width=600');
     };
 
+    this.login = () => $location.url('/logout');
+
     this.clickToTweet = function() {
         var getQuote = document.getElementById('quote').innerHTML;
 
