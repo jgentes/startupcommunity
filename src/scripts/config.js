@@ -37,13 +37,8 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
             onEnter: function(auth_service, $location, $window, $rootScope, $state) {
                 var code = $location.search().code;
                 $window.getAuth = (code, uri) => auth_service.getAuth(code, uri).then(auth_response => {
-                    console.log('RESPONSE CONFIG data: ', auth_response.config.data)
-                    console.log('RESPONSE CONFIG: ', auth_response.config)
                     $rootScope.global.user = auth_response.data;
-                    if (auth_response.config.data.state !== '/login') {
-                        $state.reload();
-                    }
-                    else $state.go('user.dashboard', { profile: auth_response.data, location_path: auth_response.data.id });
+                    $state.go('user.dashboard', { profile: auth_response.data, location_path: auth_response.data.id });
                 })
 
                 if (code) {
@@ -379,7 +374,7 @@ angular
         $rootScope.$on('$stateChangeStart',
             function(event, toState, toParams, fromState, fromParams) {
                 $('#minorsplash').css('display', 'block');
-
+/*
                 console.log('----------------------------');
                  console.log('from: ' + fromState.name);
                  console.log('to:' + toState.name);
@@ -387,7 +382,7 @@ angular
                  console.log(fromState);
                  console.log(toState);
                  console.log(event);
-
+*/
             });
         $rootScope.$on('$stateChangeSuccess', function() {
             $('html, body').animate({ scrollTop: 0 }, 200);
