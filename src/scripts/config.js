@@ -36,7 +36,7 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
             controller: 'LoginController as auth',
             onEnter: function(auth_service, $location, $window, $rootScope, $state) {
                 var code = $location.search().code;
-                $window.getAuth = auth_service.getAuth.then(auth_response => {
+                $window.getAuth = (code, uri) => auth_service.getAuth(code, uri).then(auth_response => {
                     console.log('AUTH RESPONSE: ', auth_response.data)
                     $rootScope.global.user = auth_response.data;
                     if (auth_response.config.data.state !== '/login') {
