@@ -391,14 +391,14 @@ function handleLinkedin(req, res) {
               profile.keepSynced = keepSynced;
               result.linkedin = profile;
 
-              console.log("Found existing user: " + profile.firstName + ' ' + profile.lastName);
+              console.log("Found existing user: " + profile.name);
 
               // get user account and update with latest linkedin data
 
               if (!result.avatar || keepSynced) result.avatar = profile.pictureUrl;
               if (!result.summary || keepSynced) result.summary = profile.summary;
               if (!result.headline || keepSynced) result.headline = profile.headline;
-              if (!result.name || keepSynced) result.name = profile.firstName + ' ' + profile.lastName;
+              if (!result.name || keepSynced || result.name !== profile.name) result.name = profile.name;
               if (!result.email || keepSynced) result.email = profile.emailAddress;
 
               result = addCommunities(result, invite_profile);
