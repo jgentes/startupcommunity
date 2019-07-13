@@ -263,7 +263,7 @@ function ContactUserController($scope, $uibModalInstance, notify_service, sweet,
     };
 }
 
-function UserProfileController($scope, $stateParams, $http, $uibModal, user_service, community_service, message_service, sweet) {
+function UserProfileController($rootScope, $scope, $stateParams, $http, $uibModal, user_service, community_service, message_service, sweet) {
 
     var self = this;
 
@@ -276,6 +276,8 @@ function UserProfileController($scope, $stateParams, $http, $uibModal, user_serv
 
     var loadCtrl = function() {
         onLoad(); // de-register the watcher
+
+        if ($rootScope.global.user) $scope.global.user = $rootScope.global.user;
 
         var userkey = (self.user && self.user.id) ?
             self.user.id :
