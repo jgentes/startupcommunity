@@ -37,8 +37,9 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
             onEnter: function(auth_service, $location, $window, $rootScope, $state) {
                 var code = $location.search().code;
                 $window.getAuth = (code, uri) => auth_service.getAuth(code, uri).then(auth_response => {
-                    $rootScope.global.user = auth_response.data;
-                    $state.go('user.dashboard', { profile: auth_response.data, location_path: auth_response.data.id });
+                    const profile = JSON.parse(auth_response.data);
+                    $rootScope.global.user = profile;
+                    $state.go('user.dashboard', { profile, location_path: profile.id });
                 })
 
                 if (code) {
