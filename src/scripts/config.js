@@ -37,6 +37,8 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
             onEnter: function(auth_service, $location, $window, $rootScope, $state) {
                 var code = $location.search().code;
                 $window.getAuth = (code, uri) => auth_service.getAuth(code, uri).then(auth_response => {
+                    console.log('RESPONSE CONFIG data: ', auth_response.config.data)
+                    console.log('RESPONSE CONFIG: ', auth_response.config)
                     $rootScope.global.user = auth_response.data;
                     if (auth_response.config.data.state !== '/login') {
                         $state.reload();
