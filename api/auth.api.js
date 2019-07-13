@@ -415,7 +415,7 @@ function handleLinkedin(req, res) {
 
             }
             else {
-
+              console.log('************************************************************* PROFILE: ', profile)
               // search by email
               cdb.findOne({ where: { email: profile.emailAddress } })
                 .then(result => {
