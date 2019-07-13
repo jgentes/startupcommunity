@@ -320,7 +320,7 @@ function handleLinkedin(req, res) {
     var params = {oauth2_access_token: body.access_token};
 
     // Retrieve profile information about the current user.
-    request.get({ url: emailUrl, qs: params, json: true }, function(err, response, profile) {
+    request.get({ url: emailUrl, qs: params, json: true }, async function(err, response, profile) {
       if (err) {
         console.warn("WARNING: ", err);
         return res.status(401).send({ message: 'Something went wrong: ' + String(err) });
@@ -332,6 +332,12 @@ function handleLinkedin(req, res) {
         profile.emailAddress = profile.elements && profile.elements[0] && profile.elements[0]['handle~'] && profile.elements[0]['handle~']['emailAddress'];
         delete profile.elements;
       }
+
+      // let's get their name as well
+      await request.get({ url: peopleApiUrl, qs: params, json: true }, function(err, response, person) {
+        if (err) console.warn("WARNING: Problem obtaining profile details:", err);
+        console.log('PEOPLE PROFILE: ', person);
+      });
 
       // if this is an invitation, pull that invite data first
       if (invite_code) {
@@ -415,7 +421,7 @@ function handleLinkedin(req, res) {
 
             }
             else {
-              console.log('************************************************************* PROFILE: ', profile)
+
               // search by email
               cdb.findOne({ where: { email: profile.emailAddress } })
                 .then(result => {
