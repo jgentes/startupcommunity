@@ -482,9 +482,9 @@ function handleLinkedin(req, res) {
                             var newresponse = new_invite_profile;
                             new_invite_profile.token = handleCreateToken(req, new_invite_profile);
 
-                            return res.send(newresponse);
-
                             accept_invite(invite_profile.email, new_invite_profile.name, invitor_email);
+
+                            return res.send(newresponse);
                           }
                         })
                         .catch(function(err) {
