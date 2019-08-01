@@ -78,7 +78,7 @@
                     </li>
                     <li ng-if="!global.user" class="dropdown">
                         <div style="padding-top: 12px; margin-right: 26px;" ng-controller="LoginController as login">
-                            <button ladda="loginbtn" class="ladda-btn btn btn-success" ng-click="loginbtn = true; login.authenticate('linkedin');" style="font-size: 16px; color: #fff;">Log In</button>
+                            <button ladda="loginbtn" class="ladda-btn btn btn-success" ng-click="loginbtn = true; login.login();" style="font-size: 16px; color: #fff;">Log In</button>
                         </div>
                     </li>
                     <li class="dropdown">
