@@ -17,12 +17,12 @@ function LoginController($auth, $scope, $state, $stateParams, auth_service, swee
           '?scope=r_liteprofile%20r_emailaddress' +
           '&response_type=code' +
           '&client_id=75bqixdv58z1az' +
-          '&redirect_uri=' + $location.protocol() + '://' + $location.host() + '/login';
+          '&redirect_uri=' + $location.absUrl();
 
         return $window.open(urlString, '_blank','height=600,width=600');
     };
 
-    this.login = () => $location.url('/logout');
+    this.login = () => $location.url('/login');
 
     this.clickToTweet = function() {
         var getQuote = document.getElementById('quote').innerHTML;
