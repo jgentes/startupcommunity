@@ -32,8 +32,8 @@ var UserApi = function() {
  */
 
 function handleUserSearch(req, res) {
-  var communities = req.query.communities,
-    clusters = req.query.clusters,
+  var communities = req.query.communities || [],
+    clusters = req.query.clusters || [],
     roles = req.query.roles,
     query = req.query.query,
     limit = req.query.limit,
@@ -52,6 +52,11 @@ function handleUserSearch(req, res) {
 
   var community_search = [];
   var state_suffix = null;
+
+  // remove dups
+  communities = [...new Set(communities)];
+  clusters = [...new Set(clusters)];
+  roles = [...new Set(roles)];
 
   if (communities && communities.length) {
     communities.forEach(c => {

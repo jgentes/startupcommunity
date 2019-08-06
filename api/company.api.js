@@ -90,6 +90,12 @@ function handleCompanySearch(req, res) {
   var community_search = [];
   var state_suffix = null;
 
+  // remove dups
+  communities = [...new Set(communities)];
+  clusters = [...new Set(clusters)];
+  stages = [...new Set(stages)];
+  types = [...new Set(types)];
+
   if (communities && communities.length) {
     communities.forEach(c => {
       // determine whether one of the communities is a state
