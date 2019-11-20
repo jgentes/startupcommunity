@@ -5,7 +5,7 @@
   "private": true,
   "dependencies": {
     "@sendgrid/mail": "6.2.1",
-    "angular": "1.6.10",
+    "angular": "1.7.9",
     "angular-bootstrap-tour": "0.3.3-alpha.1",
     "angular-cookies": "1.6.10",
     "angular-h-sweetalert": "1.4.7",
