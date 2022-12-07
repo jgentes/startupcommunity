@@ -29,7 +29,7 @@ exports.Op = Op;
 /* SENDGRID */
 /*
 const sgMail = require('@sendgrid/mail');
-sgMail.setApiKey('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');
+sgMail.setApiKey(');
 const msg = {
       templateId: '9a576524-4b67-43e5-9b86-49ff2f8ef970',
       to: 'jgentes@gmail.com',
