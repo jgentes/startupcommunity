@@ -56,7 +56,7 @@
     "ui-select": "0.19.8"
   },
   "devDependencies": {
-    "@babel/core": "7.0.0-beta.44",
+    "@babel/core": "7.20.5",
     "@babel/preset-env": "7.0.0-beta.44",
     "babel-core": "7.0.0-bridge.0",
     "babel-loader": "8.0.0-beta.2",
