@@ -56,8 +56,8 @@ function addSubscriber(location_id, resource_id, user_profile) {
                         request.post({
                             url: 'https://newsletter.startupcommunity.org/includes/login/main.php',
                             form: {
-                                email: 'james@jgentes.com',
-                                password: 'O+af0b|Su',
+                                email: '',
+                                password: '',
                                 redirect: ""
                             }
                         }, function(error, response, body) {
@@ -93,8 +93,8 @@ function handleSetupNewsletter(req, res) {
             request.post({
                 url: 'https://newsletter.startupcommunity.org/includes/login/main.php',
                 form: {
-                    email: 'james@jgentes.com',
-                    password: 'O+af0b|Su',
+                    email: '',
+                    password: '',
                     redirect: ""
                 }
             }, function(error, response, body) {
@@ -469,8 +469,8 @@ function handleUpdateNewsletter(req, res) {
         request.post({
             url: 'https://newsletter.startupcommunity.org/includes/login/main.php',
             form: {
-                email: 'james@jgentes.com',
-                password: 'O+af0b|Su',
+                email: '',
+                password: '',
                 redirect: ""
             }
         }, function(error, response, body) {
