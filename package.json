@@ -28,7 +28,7 @@
     "continuation-local-storage": "3.2.1",
     "es5-shim": "4.5.10",
     "eslint": "^4.19.1",
-    "express": "4.16.3",
+    "express": "4.17.3",
     "express-sslify": "1.0.1",
     "font-awesome": "4.7.0",
     "fontawesome": "4.7.2",
