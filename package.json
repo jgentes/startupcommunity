@@ -36,7 +36,7 @@
     "jsdom": "11.7.0",
     "jsonwebtoken": "8.2.0",
     "ladda": "1.0.6",
-    "lodash": "^4.17.11",
+    "lodash": "^4.17.21",
     "method-override": "^2.3.10",
     "metismenu": "2.7.7",
     "moment": "2.22.1",
