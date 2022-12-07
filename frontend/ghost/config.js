@@ -26,7 +26,7 @@ config = {
             connection: {
                 host: '52.33.123.128',
                 user: 'ghost',
-                password: 'f@b!Mbdp3',
+                password: '',
                 database: 'ghost',
                 charset: 'utf8'
             },
